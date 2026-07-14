@@ -34,7 +34,7 @@ perso/
     ├── homelab.html            Homelab & self-hosting : Docker, reverse proxy, Pi-hole, backup
     ├── exchange-securite.html  Exchange 2019 + PKI + crypto asymétrique + AD CS
     ├── rds.html                Bureau à distance (RDSH/RDCB/RDWA, RemoteApp)
-    ├── linux-debian.html       Debian : terminal, permissions, redirections, grep/sed/awk, réseau, APT, SSH, systemd (21 chapitres)
+    ├── linux-debian.html       Debian : terminal, permissions, redirections, grep/sed/awk, réseau, APT, SSH, systemd (22 chapitres)
     ├── sharepoint.html         SharePoint Server SE (théorie + pratique, guide complet)
     └── _template.html          Gabarit de démarrage pour un nouveau module
 ```

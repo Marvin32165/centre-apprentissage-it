@@ -79,6 +79,7 @@
             <li><a class="toc__link" href="#chap19"><span>19</span> Logs &amp; audit</a></li>
             <li><a class="toc__link" href="#chap20"><span>20</span> Partitions, GRUB &amp; virtu</a></li>
             <li><a class="toc__link" href="#chap21"><span>21</span> Raccourcis &amp; réflexes</a></li>
+            <li><a class="toc__link" href="#chap22"><span>22</span> Commandes : mémo complet</a></li>
         </ul>
     </aside>
 
@@ -1208,6 +1209,187 @@ iface ens33 inet <span class="k">static</span>
                 <p class="takeaway__label">Les 3 réflexes du débutant</p>
                 <p><strong>1.</strong> <code>Tab</code> pour compléter les noms au lieu de tout taper. <strong>2.</strong> <code>man commande</code> pour lire le manuel de n'importe quelle commande (<code>q</code> pour quitter). <strong>3.</strong> Relire toute commande destructive (<code>rm</code>, <code>chmod</code>, <code>dd</code>) avant d'appuyer sur Entrée.</p>
             </div>
+        </section>
+
+        <!-- 22 -->
+        <section class="chapter" id="chap22">
+            <p class="chapter__num">22</p>
+            <h2 class="chapter__title">Commandes : mémo complet</h2>
+            <p class="chapter__intro">Toutes les commandes du module, rangées par catégorie, avec leurs options les plus utiles — pour retrouver vite la bonne syntaxe.</p>
+
+            <h3>Navigation &amp; localisation</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>pwd</code></td><td>—</td><td>affiche le dossier courant</td></tr>
+                    <tr><td><code>cd chemin</code></td><td><code>cd ..</code> · <code>cd ~</code> · <code>cd -</code></td><td>se déplacer / remonter / accueil / dossier précédent</td></tr>
+                    <tr><td><code>ls</code></td><td><code>-l</code> détail · <code>-a</code> cachés · <code>-h</code> tailles lisibles · <code>-i</code> inode · <code>-t</code> tri par date</td><td>lister le contenu d'un dossier</td></tr>
+                    <tr><td><code>tree</code></td><td><code>-L n</code> profondeur</td><td>arborescence graphique (<code>apt install tree</code>)</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Fichiers &amp; dossiers</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>mkdir nom</code></td><td><code>-p</code> arborescence complète</td><td>créer un dossier</td></tr>
+                    <tr><td><code>touch fichier</code></td><td>—</td><td>créer un fichier vide / mettre à jour sa date</td></tr>
+                    <tr><td><code>cp src dest</code></td><td><code>-r</code> récursif (dossier) · <code>-v</code> détaillé</td><td>copier un fichier / un dossier</td></tr>
+                    <tr><td><code>mv src dest</code></td><td>—</td><td>déplacer ou renommer</td></tr>
+                    <tr><td><code>rm fichier</code></td><td><code>-r</code> récursif · <code>-f</code> forcer (sans confirmation)</td><td>supprimer (définitif, sans corbeille)</td></tr>
+                    <tr><td><code>ln cible lien</code></td><td><code>-s</code> lien symbolique (sinon lien physique)</td><td>créer un lien</td></tr>
+                    <tr><td><code>diff f1 f2</code></td><td>—</td><td>afficher les différences entre deux fichiers</td></tr>
+                    <tr><td>Jokers <code>*</code> / <code>?</code></td><td><code>*</code> = toute suite de caractères · <code>?</code> = 1 caractère</td><td>désigner plusieurs fichiers d'un coup</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Lecture &amp; édition</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>cat fichier</code></td><td><code>-n</code> numéros de ligne</td><td>afficher tout le contenu</td></tr>
+                    <tr><td><code>less fichier</code></td><td><code>-N</code> numéros · <code>-i</code> ignore la casse · <code>-S</code> pas de retour auto · <code>F</code> mode suivi</td><td>parcourir page par page (recherche <code>/motif</code>, quitter <code>q</code>)</td></tr>
+                    <tr><td><code>head</code> / <code>tail fichier</code></td><td><code>-n 10</code> nb de lignes · <code>-f</code> suivre en direct (logs)</td><td>début / fin d'un fichier</td></tr>
+                    <tr><td><code>wc fichier</code></td><td><code>-l</code> lignes · <code>-w</code> mots · <code>-c</code> octets</td><td>compter</td></tr>
+                    <tr><td><code>nano fichier</code></td><td><code>Ctrl+O</code> sauver · <code>Ctrl+X</code> quitter · <code>Ctrl+W</code> chercher</td><td>éditer (le plus simple)</td></tr>
+                    <tr><td><code>vim fichier</code></td><td><code>i</code> insertion · <code>Échap</code> commande · <code>:%s/a/b/g</code> remplacer · <code>:wq</code> sauver+quitter</td><td>éditer (avancé)</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Recherche &amp; filtres texte</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>grep "motif" fichier</code></td><td><code>-r</code> récursif · <code>-i</code> casse · <code>-c</code> compter · <code>-n</code> n° de ligne · <code>-v</code> inverse · <code>-E</code> regex étendue · <code>-A/-B/-C n</code> contexte</td><td>chercher du texte</td></tr>
+                    <tr><td><code>find /chemin -name motif</code></td><td><code>-type f/d</code> fichier/dossier · <code>-mtime -7</code> modifié récemment · <code>-size +10M</code></td><td>chercher un fichier</td></tr>
+                    <tr><td><code>sort fichier</code></td><td><code>-n</code> numérique · <code>-r</code> inverse · <code>-u</code> unique</td><td>trier des lignes</td></tr>
+                    <tr><td><code>cut -d: -f1 fichier</code></td><td><code>-d</code> séparateur · <code>-f</code> champ</td><td>extraire une colonne</td></tr>
+                    <tr><td><code>sed 's/a/b/g' fichier</code></td><td><code>-i</code> modifier sur place</td><td>rechercher/remplacer</td></tr>
+                    <tr><td><code>awk '{print $1}' fichier</code></td><td><code>-F:</code> séparateur</td><td>extraire/traiter des colonnes</td></tr>
+                    <tr><td><code>tee fichier</code></td><td><code>-a</code> ajouter</td><td>afficher ET écrire dans un fichier (via pipe)</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Redirections &amp; enchaînement</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Symbole</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>&gt;</code> / <code>&gt;&gt;</code></td><td>écrire dans un fichier (écrase / ajoute)</td></tr>
+                    <tr><td><code>&lt;</code></td><td>donner un fichier en entrée</td></tr>
+                    <tr><td><code>|</code></td><td>envoyer la sortie d'une commande vers une autre</td></tr>
+                    <tr><td><code>&amp;&amp;</code> / <code>||</code></td><td>exécuter si la précédente réussit / échoue</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Utilisateurs, groupes &amp; permissions</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>whoami</code> / <code>id</code></td><td>—</td><td>qui suis-je / mes UID, GID et groupes</td></tr>
+                    <tr><td><code>sudo commande</code></td><td>—</td><td>exécuter en administrateur</td></tr>
+                    <tr><td><code>su - user</code></td><td>—</td><td>changer d'utilisateur</td></tr>
+                    <tr><td><code>passwd</code></td><td>—</td><td>changer son mot de passe (<code>sudo passwd user</code> pour un autre)</td></tr>
+                    <tr><td><code>sudo adduser nom</code></td><td>—</td><td>créer un utilisateur (compte, groupe, /home)</td></tr>
+                    <tr><td><code>sudo deluser nom</code></td><td><code>--remove-home</code> supprime aussi le /home</td><td>supprimer un utilisateur</td></tr>
+                    <tr><td><code>sudo addgroup</code> / <code>delgroup nom</code></td><td>—</td><td>créer / supprimer un groupe</td></tr>
+                    <tr><td><code>sudo usermod user</code></td><td><code>-aG groupe</code> ajoute à un groupe · <code>-g groupe</code> groupe principal · <code>-l nouveau</code> renomme</td><td>modifier un utilisateur</td></tr>
+                    <tr><td><code>groups user</code> / <code>getent group nom</code></td><td>—</td><td>groupes d'un utilisateur / membres d'un groupe</td></tr>
+                    <tr><td><code>chmod</code> droits fichier</td><td>octal <code>755</code> ou symbolique <code>u+x</code>, <code>g-w</code>, <code>o=r</code></td><td>changer les permissions</td></tr>
+                    <tr><td><code>chown user:groupe fichier</code></td><td><code>-R</code> récursif</td><td>changer le propriétaire (et groupe)</td></tr>
+                    <tr><td><code>chgrp groupe fichier</code></td><td>—</td><td>changer uniquement le groupe</td></tr>
+                    <tr><td><code>getfacl</code> / <code>setfacl -m g:g:rwx dossier</code></td><td>—</td><td>lire / poser des ACL (droits fins par utilisateur ou groupe)</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Réseau &amp; SSH</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>ip a</code></td><td>—</td><td>voir les adresses IP</td></tr>
+                    <tr><td><code>ip route</code></td><td>—</td><td>voir la table de routage / passerelle</td></tr>
+                    <tr><td><code>ping hôte</code></td><td><code>-c 4</code> nb de paquets</td><td>tester la connectivité</td></tr>
+                    <tr><td><code>ss -tuln</code></td><td><code>-t</code> TCP · <code>-u</code> UDP · <code>-l</code> écoute · <code>-n</code> pas de résolution</td><td>ports ouverts / connexions</td></tr>
+                    <tr><td><code>ssh user@hôte</code></td><td><code>-p port</code></td><td>connexion distante sécurisée</td></tr>
+                    <tr><td><code>scp fichier user@hôte:chemin</code></td><td><code>-r</code> récursif</td><td>copier un fichier via SSH</td></tr>
+                    <tr><td><code>ssh-keygen</code></td><td>—</td><td>générer une paire de clés SSH</td></tr>
+                    <tr><td><code>ssh-copy-id user@hôte</code></td><td>—</td><td>déployer sa clé publique pour se connecter sans mot de passe</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Paquets (APT)</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>sudo apt update</code></td><td>rafraîchir la liste des paquets (ne modifie rien)</td></tr>
+                    <tr><td><code>sudo apt upgrade</code> / <code>full-upgrade</code></td><td>installer les mises à jour (simple / complète)</td></tr>
+                    <tr><td><code>sudo apt install paquet</code></td><td>installer un logiciel</td></tr>
+                    <tr><td><code>sudo apt remove</code> / <code>purge paquet</code></td><td>désinstaller (garde la config / supprime tout)</td></tr>
+                    <tr><td><code>sudo apt autoremove</code></td><td>nettoyer les dépendances inutiles</td></tr>
+                    <tr><td><code>apt search nom</code> / <code>apt show paquet</code></td><td>chercher / voir les infos d'un paquet</td></tr>
+                    <tr><td><code>apt list --installed</code></td><td>lister ce qui est installé</td></tr>
+                    <tr><td><code>sudo dpkg -i paquet.deb</code></td><td>installer un .deb téléchargé à la main</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Processus &amp; services</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>ps aux</code> / <code>ps -ef</code></td><td><code>--sort=+pmem</code> / <code>+pcpu</code></td><td>lister les processus</td></tr>
+                    <tr><td><code>top</code> / <code>htop</code></td><td>—</td><td>moniteur interactif CPU/RAM en direct</td></tr>
+                    <tr><td><code>kill PID</code></td><td><code>-9</code> forcer</td><td>arrêter un processus</td></tr>
+                    <tr><td><code>killall nom</code></td><td>—</td><td>arrêter tous les processus de ce nom</td></tr>
+                    <tr><td><code>commande &amp;</code> / <code>jobs</code> / <code>fg</code> / <code>bg</code></td><td>—</td><td>lancer en fond / lister / 1er plan / reprendre en fond</td></tr>
+                    <tr><td><code>sudo systemctl start/stop/restart service</code></td><td>—</td><td>démarrer / arrêter / redémarrer un service</td></tr>
+                    <tr><td><code>systemctl status service</code></td><td>—</td><td>voir l'état d'un service</td></tr>
+                    <tr><td><code>sudo systemctl enable/disable service</code></td><td>—</td><td>activer / désactiver au démarrage</td></tr>
+                    <tr><td><code>journalctl -u service</code></td><td><code>-f</code> suivre en direct</td><td>logs d'un service</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Disques, archives &amp; système</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>df -h</code></td><td>—</td><td>espace disque libre par partition</td></tr>
+                    <tr><td><code>du -sh dossier</code></td><td>—</td><td>taille d'un dossier</td></tr>
+                    <tr><td><code>lsblk</code> / <code>sudo fdisk -l</code></td><td>—</td><td>lister disques et partitions</td></tr>
+                    <tr><td><code>sudo mount /dev/sdX /mnt</code></td><td><code>umount /mnt</code> pour démonter</td><td>monter un disque/partition</td></tr>
+                    <tr><td><code>blkid</code></td><td>—</td><td>UUID des partitions</td></tr>
+                    <tr><td><code>uname -a</code> / <code>free -h</code> / <code>uptime</code></td><td>—</td><td>noyau / RAM / temps depuis le démarrage</td></tr>
+                    <tr><td><code>lsb_release -a</code> / <code>cat /etc/os-release</code></td><td>—</td><td>version de Debian</td></tr>
+                    <tr><td><code>tar -czf archive.tar.gz dossier/</code></td><td><code>-xzf</code> pour extraire</td><td>compresser / extraire une archive tar.gz</td></tr>
+                    <tr><td><code>zip archive.zip fichiers</code></td><td><code>unzip archive.zip</code> pour extraire</td><td>créer / extraire un zip</td></tr>
+                    <tr><td><code>sudo update-grub</code></td><td>—</td><td>régénérer la config GRUB après modification</td></tr>
+                    <tr><td><code>sudo shutdown -h now</code></td><td><code>-r now</code> redémarrer</td><td>éteindre / redémarrer</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Logs &amp; audit</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>last</code></td><td>historique des connexions (lit /var/log/wtmp)</td></tr>
+                    <tr><td><code>last | grep reboot</code></td><td>uniquement les redémarrages</td></tr>
+                    <tr><td><code>who</code></td><td>qui est connecté en ce moment</td></tr>
+                    <tr><td><code>w</code></td><td>qui est connecté + ce qu'il fait + inactivité</td></tr>
+                    <tr><td><code>journalctl -f</code></td><td>tous les logs systemd en direct</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Raccourcis clavier</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Raccourci</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>Tab</code></td><td>auto-complétion</td></tr>
+                    <tr><td><code>↑ / ↓</code></td><td>naviguer dans l'historique des commandes</td></tr>
+                    <tr><td><code>Ctrl+R</code></td><td>chercher dans l'historique</td></tr>
+                    <tr><td><code>Ctrl+C</code></td><td>interrompre la commande en cours</td></tr>
+                    <tr><td><code>Ctrl+Z</code></td><td>suspendre (reprendre avec <code>fg</code>)</td></tr>
+                    <tr><td><code>Ctrl+L</code></td><td>effacer l'écran</td></tr>
+                    <tr><td><code>Ctrl+D</code></td><td>fermer le terminal / se déconnecter</td></tr>
+                </tbody>
+            </table></div>
         </section>
 
     </main>
