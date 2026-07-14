@@ -1221,12 +1221,48 @@ iface ens33 inet <span class="k">static</span>
             <div class="table-wrap"><table>
                 <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
                 <tbody>
-                    <tr><td><code>pwd</code></td><td>—</td><td>affiche le dossier courant</td></tr>
-                    <tr><td><code>cd chemin</code></td><td><code>cd ..</code> · <code>cd ~</code> · <code>cd -</code></td><td>se déplacer / remonter / accueil / dossier précédent</td></tr>
-                    <tr><td><code>ls</code></td><td><code>-l</code> détail · <code>-a</code> cachés · <code>-h</code> tailles lisibles · <code>-i</code> inode · <code>-t</code> tri par date</td><td>lister le contenu d'un dossier</td></tr>
+                    <tr><td><code>pwd</code></td><td>—</td><td>affiche le dossier courant (print working directory)</td></tr>
+                    <tr><td><code>cd chemin</code></td><td><code>cd ..</code> remonter · <code>cd ~</code> accueil · <code>cd -</code> dossier précédent</td><td>se déplacer</td></tr>
+                    <tr><td><code>ls</code></td><td><code>-l</code> détail · <code>-a</code> cachés · <code>-h</code> tailles lisibles · <code>-i</code> inode · <code>-t</code> tri par date · <code>-r</code> inverse · <code>-R</code> récursif</td><td>lister le contenu d'un dossier</td></tr>
                     <tr><td><code>tree</code></td><td><code>-L n</code> profondeur</td><td>arborescence graphique (<code>apt install tree</code>)</td></tr>
+                    <tr><td><code>history</code></td><td><code>!42</code> rejouer la ligne n°42 · <code>!motif</code> dernière commande commençant par motif</td><td>historique des commandes (aussi <code>Ctrl+R</code>)</td></tr>
+                    <tr><td><code>alias nom='commande'</code></td><td><code>alias</code> seul liste tous les alias</td><td>créer un raccourci de commande (à ajouter dans <code>~/.bashrc</code> pour le garder)</td></tr>
                 </tbody>
             </table></div>
+
+            <h3>Aide &amp; découverte de commandes</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>man commande</code></td><td><code>/motif</code> chercher · <code>n</code>/<code>N</code> occurrence suiv./préc. · <code>q</code> quitter</td><td>manuel complet d'une commande</td></tr>
+                    <tr><td><code>help commande</code></td><td>—</td><td>aide d'une commande interne au shell (ex. <code>help echo</code>)</td></tr>
+                    <tr><td><code>commande --help</code></td><td>—</td><td>aide rapide d'une commande externe</td></tr>
+                    <tr><td><code>whatis commande</code></td><td>—</td><td>rôle d'une commande en une ligne</td></tr>
+                    <tr><td><code>type commande</code></td><td>—</td><td>indique si une commande est interne (shell builtin) ou externe</td></tr>
+                    <tr><td><code>which commande</code></td><td>—</td><td>chemin du binaire exécuté pour cette commande</td></tr>
+                    <tr><td><code>file chemin</code></td><td>—</td><td>type d'un fichier (texte, binaire, noyau…)</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Variables &amp; environnement</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>var=valeur</code></td><td>pas d'espace autour du <code>=</code></td><td>créer une variable de shell (locale à la session)</td></tr>
+                    <tr><td><code>echo $var</code></td><td><code>-e</code> active les codes d'échappement (<code>\n</code>, <code>\t</code>, couleurs <code>\033[...m</code>) · <code>-n</code> pas de retour à la ligne</td><td>afficher une variable / un texte</td></tr>
+                    <tr><td><code>export var=valeur</code></td><td>—</td><td>transformer une variable shell en variable d'environnement (visible des autres processus)</td></tr>
+                    <tr><td><code>env</code> / <code>printenv</code></td><td>—</td><td>lister les variables d'environnement</td></tr>
+                    <tr><td><code>unset var</code></td><td>—</td><td>supprimer une variable (pour la session en cours)</td></tr>
+                    <tr><td><code>echo $PATH</code></td><td><code>export PATH=$PATH:/chemin</code> ajouter un dossier</td><td>liste des dossiers où le shell cherche les commandes</td></tr>
+                    <tr><td><code>source ~/.bashrc</code></td><td>équivalent : <code>. ~/.bashrc</code></td><td>recharger un fichier de config sans se reconnecter</td></tr>
+                    <tr><td><code>$PS1</code></td><td><code>\u</code> user · <code>\h</code> host · <code>\w</code> dossier courant · <code>\$</code> $ ou # · <code>\d</code> date</td><td>variable qui définit l'invite de commande (prompt)</td></tr>
+                </tbody>
+            </table></div>
+
+            <div class="tip">
+                <p class="tip__label">Variable persistante</p>
+                <p>Une variable créée en session disparaît à la déconnexion. Pour la rendre permanente : ajouter <code>export var=valeur</code> dans <code>~/.bashrc</code> (un seul utilisateur) ou dans un fichier <code>.sh</code> sous <code>/etc/profile.d/</code> (tous les utilisateurs).</p>
+            </div>
 
             <h3>Fichiers &amp; dossiers</h3>
             <div class="table-wrap"><table>
@@ -1281,38 +1317,68 @@ iface ens33 inet <span class="k">static</span>
                 </tbody>
             </table></div>
 
-            <h3>Utilisateurs, groupes &amp; permissions</h3>
+            <h3>Utilisateurs &amp; groupes</h3>
             <div class="table-wrap"><table>
                 <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
                 <tbody>
-                    <tr><td><code>whoami</code> / <code>id</code></td><td>—</td><td>qui suis-je / mes UID, GID et groupes</td></tr>
+                    <tr><td><code>whoami</code></td><td>—</td><td>nom de l'utilisateur courant</td></tr>
+                    <tr><td><code>id</code> user</td><td><code>-g</code> GID principal · <code>-G</code> tous les GID · <code>-Gn</code> tous les groupes en texte</td><td>UID/GID et groupes (utilisateur courant si omis)</td></tr>
                     <tr><td><code>sudo commande</code></td><td>—</td><td>exécuter en administrateur</td></tr>
-                    <tr><td><code>su - user</code></td><td>—</td><td>changer d'utilisateur</td></tr>
+                    <tr><td><code>su - user</code></td><td>—</td><td>changer d'utilisateur (avec son environnement)</td></tr>
                     <tr><td><code>passwd</code></td><td>—</td><td>changer son mot de passe (<code>sudo passwd user</code> pour un autre)</td></tr>
-                    <tr><td><code>sudo adduser nom</code></td><td>—</td><td>créer un utilisateur (compte, groupe, /home)</td></tr>
-                    <tr><td><code>sudo deluser nom</code></td><td><code>--remove-home</code> supprime aussi le /home</td><td>supprimer un utilisateur</td></tr>
-                    <tr><td><code>sudo addgroup</code> / <code>delgroup nom</code></td><td>—</td><td>créer / supprimer un groupe</td></tr>
-                    <tr><td><code>sudo usermod user</code></td><td><code>-aG groupe</code> ajoute à un groupe · <code>-g groupe</code> groupe principal · <code>-l nouveau</code> renomme</td><td>modifier un utilisateur</td></tr>
-                    <tr><td><code>groups user</code> / <code>getent group nom</code></td><td>—</td><td>groupes d'un utilisateur / membres d'un groupe</td></tr>
-                    <tr><td><code>chmod</code> droits fichier</td><td>octal <code>755</code> ou symbolique <code>u+x</code>, <code>g-w</code>, <code>o=r</code></td><td>changer les permissions</td></tr>
-                    <tr><td><code>chown user:groupe fichier</code></td><td><code>-R</code> récursif</td><td>changer le propriétaire (et groupe)</td></tr>
-                    <tr><td><code>chgrp groupe fichier</code></td><td>—</td><td>changer uniquement le groupe</td></tr>
-                    <tr><td><code>getfacl</code> / <code>setfacl -m g:g:rwx dossier</code></td><td>—</td><td>lire / poser des ACL (droits fins par utilisateur ou groupe)</td></tr>
+                    <tr><td><code>sudo adduser nom</code></td><td>—</td><td>créer un utilisateur (compte, groupe perso, /home depuis /etc/skel) — spécifique Debian</td></tr>
+                    <tr><td><code>sudo useradd nom</code></td><td>—</td><td>équivalent Unix générique (plus basique, <code>passwd</code> à lancer soi-même)</td></tr>
+                    <tr><td><code>sudo deluser nom</code></td><td><code>--remove-home</code> supprime aussi le /home</td><td>supprimer un utilisateur (sans confirmation)</td></tr>
+                    <tr><td><code>sudo addgroup</code> / <code>delgroup nom</code></td><td>—</td><td>créer / supprimer un groupe (Debian ; <code>groupadd</code>/<code>groupdel</code> ailleurs)</td></tr>
+                    <tr><td><code>sudo usermod user</code></td><td><code>-l nouveau</code> renomme (le /home garde son nom) · <code>-g groupe</code> change le groupe <strong>principal</strong> · <code>-G groupe</code> remplace tous les groupes secondaires · <code>-aG groupe</code> ajoute un groupe secondaire sans perdre les autres</td><td>modifier un utilisateur</td></tr>
+                    <tr><td><code>groups</code> user</td><td>—</td><td>groupes d'un utilisateur (courant si omis)</td></tr>
+                    <tr><td><code>getent group</code> nom</td><td>sans nom : tous les groupes</td><td>membres d'un groupe</td></tr>
                 </tbody>
             </table></div>
 
-            <h3>Réseau &amp; SSH</h3>
+            <h3>Permissions</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>chmod</code> droits fichier</td><td>octal <code>755</code> ou symbolique <code>u+x</code>, <code>g-w</code>, <code>o=r</code> · <code>4xxx</code> SetUID · <code>2xxx</code> SetGID · <code>1xxx</code> Sticky Bit</td><td>changer les permissions</td></tr>
+                    <tr><td><code>chown user:groupe fichier</code></td><td><code>-R</code> récursif</td><td>changer le propriétaire (et groupe)</td></tr>
+                    <tr><td><code>chgrp groupe fichier</code></td><td>—</td><td>changer uniquement le groupe propriétaire</td></tr>
+                    <tr><td><code>umask</code></td><td><code>-S</code> affichage symbolique · <code>umask 0022</code> pour fixer</td><td>droits retirés par défaut à la création (fichiers/dossiers) — persistant dans <code>~/.bashrc</code> ou <code>/etc/profile</code></td></tr>
+                    <tr><td><code>getfacl</code> dossier</td><td>—</td><td>afficher les ACL en place</td></tr>
+                    <tr><td><code>setfacl -m g:groupe:rwx dossier</code></td><td><code>sudo apt install acl</code> requis</td><td>poser une ACL (droits fins par utilisateur ou groupe précis)</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Réseau</h3>
             <div class="table-wrap"><table>
                 <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
                 <tbody>
                     <tr><td><code>ip a</code></td><td>—</td><td>voir les adresses IP</td></tr>
-                    <tr><td><code>ip route</code></td><td>—</td><td>voir la table de routage / passerelle</td></tr>
+                    <tr><td><code>ip link</code></td><td><code>set eth0 up/down</code></td><td>lister / activer / désactiver les interfaces</td></tr>
+                    <tr><td><code>ip addr add IP/masque dev eth0</code></td><td>temporaire (perdu au reboot)</td><td>attribuer une IP à une interface</td></tr>
+                    <tr><td><code>ip route</code> (ou <code>route list</code>)</td><td><code>add default via IP dev eth0</code> · <code>del default via IP</code></td><td>table de routage / passerelle par défaut</td></tr>
                     <tr><td><code>ping hôte</code></td><td><code>-c 4</code> nb de paquets</td><td>tester la connectivité</td></tr>
-                    <tr><td><code>ss -tuln</code></td><td><code>-t</code> TCP · <code>-u</code> UDP · <code>-l</code> écoute · <code>-n</code> pas de résolution</td><td>ports ouverts / connexions</td></tr>
+                    <tr><td><code>ss -tuln</code></td><td><code>-t</code> TCP · <code>-u</code> UDP · <code>-l</code> écoute · <code>-n</code> pas de résolution · <code>-p</code> PID du processus</td><td>ports ouverts / connexions</td></tr>
+                    <tr><td><code>dmesg</code></td><td><code>| less</code></td><td>messages du noyau (détection matérielle, cartes réseau…)</td></tr>
+                    <tr><td><code>hostnamectl status</code></td><td><code>set-hostname nom</code> pour changer</td><td>voir / modifier le nom de la machine</td></tr>
+                </tbody>
+            </table></div>
+            <div class="tip">
+                <p class="tip__label">Config réseau permanente (Debian)</p>
+                <p>La commande <code>ip</code> ne modifie rien de façon persistante : pour survivre au reboot, écrire l'adresse dans <code>/etc/network/interfaces</code> (<code>auto eth1</code> / <code>iface eth1 inet static</code> / <code>address</code> / <code>netmask</code> / <code>gateway</code>), puis <code>sudo systemctl restart networking.service</code>. La résolution de noms se règle dans <code>/etc/hosts</code> (statique) et <code>/etc/resolv.conf</code> (serveurs DNS).</p>
+            </div>
+
+            <h3>SSH &amp; transfert de fichiers</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
+                <tbody>
                     <tr><td><code>ssh user@hôte</code></td><td><code>-p port</code></td><td>connexion distante sécurisée</td></tr>
-                    <tr><td><code>scp fichier user@hôte:chemin</code></td><td><code>-r</code> récursif</td><td>copier un fichier via SSH</td></tr>
-                    <tr><td><code>ssh-keygen</code></td><td>—</td><td>générer une paire de clés SSH</td></tr>
+                    <tr><td><code>ssh-keygen</code></td><td><code>-t rsa -b 4096</code> type/taille · <code>-f chemin</code> · <code>-N ''</code> sans passphrase</td><td>générer une paire de clés SSH</td></tr>
                     <tr><td><code>ssh-copy-id user@hôte</code></td><td>—</td><td>déployer sa clé publique pour se connecter sans mot de passe</td></tr>
+                    <tr><td><code>scp source destination</code></td><td><code>-r</code> récursif · <code>-P port</code> · <code>-i clé</code></td><td>copier un fichier via SSH (local ↔ distant)</td></tr>
+                    <tr><td>Client SFTP (ex. FileZilla)</td><td>protocole <code>sftp://</code>, port 22</td><td>transfert de fichiers en mode graphique via SSH</td></tr>
+                    <tr><td><code>wget url</code></td><td><code>-O nom</code> fichier de sortie · <code>-r</code> récursif · <code>-i liste.txt</code> depuis une liste · <code>-c</code> reprendre</td><td>télécharger un fichier (HTTP, FTP)</td></tr>
+                    <tr><td><code>curl url</code></td><td><code>-o nom</code> fichier de sortie · <code>-O</code> garde le nom distant · <code>-C -</code> reprendre · <code>--user</code></td><td>télécharger / interroger une URL (beaucoup plus de protocoles que wget, mais pas récursif)</td></tr>
                 </tbody>
             </table></div>
 
@@ -1369,13 +1435,20 @@ iface ens33 inet <span class="k">static</span>
             <div class="table-wrap"><table>
                 <thead><tr><th>Commande</th><th>Action</th></tr></thead>
                 <tbody>
-                    <tr><td><code>last</code></td><td>historique des connexions (lit /var/log/wtmp)</td></tr>
+                    <tr><td><code>last</code></td><td>historique des connexions (lit /var/log/wtmp, binaire)</td></tr>
                     <tr><td><code>last | grep reboot</code></td><td>uniquement les redémarrages</td></tr>
                     <tr><td><code>who</code></td><td>qui est connecté en ce moment</td></tr>
-                    <tr><td><code>w</code></td><td>qui est connecté + ce qu'il fait + inactivité</td></tr>
-                    <tr><td><code>journalctl -f</code></td><td>tous les logs systemd en direct</td></tr>
+                    <tr><td><code>w</code></td><td>qui est connecté + ce qu'il fait + inactivité (idle)</td></tr>
+                    <tr><td><code>journalctl</code></td><td><code>-u service</code> logs d'un service · <code>-f</code> suivre en direct · <code>| grep sshd</code> filtrer</td></tr>
+                    <tr><td><code>grep motif /var/log/auth.log</code></td><td>authentifications, connexions SSH, élévations sudo (Debian)</td></tr>
+                    <tr><td><code>grep motif /var/log/syslog</code></td><td>journal général du système</td></tr>
+                    <tr><td><code>grep motif /var/log/kern.log</code></td><td>messages du noyau (détection matérielle, cartes réseau)</td></tr>
                 </tbody>
             </table></div>
+            <div class="tip">
+                <p class="tip__label">Centraliser les logs (rsyslog)</p>
+                <p>Le service <code>rsyslog</code> (config <code>/etc/rsyslog.conf</code>) collecte les traces de la plupart des processus. Pour centraliser sur un serveur : décommenter la réception UDP/TCP côté serveur (<code>systemctl restart rsyslog</code>), et ajouter une ligne <code>*.* @IP:514</code> (UDP, une arobase) ou <code>@@IP:514</code> (TCP, deux arobases) côté client à envoyer.</p>
+            </div>
 
             <h3>Raccourcis clavier</h3>
             <div class="table-wrap"><table>
