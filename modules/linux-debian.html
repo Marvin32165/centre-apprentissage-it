@@ -1272,7 +1272,8 @@ iface ens33 inet <span class="k">static</span>
                     <tr><td><code>touch fichier</code></td><td>—</td><td>créer un fichier vide / mettre à jour sa date</td></tr>
                     <tr><td><code>cp src dest</code></td><td><code>-r</code> récursif (dossier) · <code>-v</code> détaillé</td><td>copier un fichier / un dossier</td></tr>
                     <tr><td><code>mv src dest</code></td><td>—</td><td>déplacer ou renommer</td></tr>
-                    <tr><td><code>rm fichier</code></td><td><code>-r</code> récursif · <code>-f</code> forcer (sans confirmation)</td><td>supprimer (définitif, sans corbeille)</td></tr>
+                    <tr><td><code>rm fichier</code></td><td><code>-r</code> récursif · <code>-f</code> forcer · <code>-i</code> confirmer · <code>-v</code> détaillé</td><td>supprimer (définitif, sans corbeille)</td></tr>
+                    <tr><td><code>rmdir dossier</code></td><td>—</td><td>supprimer un dossier <strong>vide</strong> (sinon utiliser <code>rm -r</code>)</td></tr>
                     <tr><td><code>ln cible lien</code></td><td><code>-s</code> lien symbolique (sinon lien physique)</td><td>créer un lien</td></tr>
                     <tr><td><code>diff f1 f2</code></td><td>—</td><td>afficher les différences entre deux fichiers</td></tr>
                     <tr><td>Jokers <code>*</code> / <code>?</code></td><td><code>*</code> = toute suite de caractères · <code>?</code> = 1 caractère</td><td>désigner plusieurs fichiers d'un coup</td></tr>
@@ -1286,7 +1287,7 @@ iface ens33 inet <span class="k">static</span>
                     <tr><td><code>cat fichier</code></td><td><code>-n</code> numéros de ligne</td><td>afficher tout le contenu</td></tr>
                     <tr><td><code>less fichier</code></td><td><code>-N</code> numéros · <code>-i</code> ignore la casse · <code>-S</code> pas de retour auto · <code>F</code> mode suivi</td><td>parcourir page par page (recherche <code>/motif</code>, quitter <code>q</code>)</td></tr>
                     <tr><td><code>head</code> / <code>tail fichier</code></td><td><code>-n 10</code> nb de lignes · <code>-f</code> suivre en direct (logs)</td><td>début / fin d'un fichier</td></tr>
-                    <tr><td><code>wc fichier</code></td><td><code>-l</code> lignes · <code>-w</code> mots · <code>-c</code> octets</td><td>compter</td></tr>
+                    <tr><td><code>wc fichier</code></td><td><code>-l</code> lignes · <code>-w</code> mots · <code>-c</code> octets · <code>-L</code> longueur de la plus longue ligne</td><td>compter</td></tr>
                     <tr><td><code>nano fichier</code></td><td><code>Ctrl+O</code> sauver · <code>Ctrl+X</code> quitter · <code>Ctrl+W</code> chercher</td><td>éditer (le plus simple)</td></tr>
                     <tr><td><code>vim fichier</code></td><td><code>i</code> insertion · <code>Échap</code> commande · <code>:%s/a/b/g</code> remplacer · <code>:wq</code> sauver+quitter</td><td>éditer (avancé)</td></tr>
                 </tbody>
@@ -1297,12 +1298,15 @@ iface ens33 inet <span class="k">static</span>
                 <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
                 <tbody>
                     <tr><td><code>grep "motif" fichier</code></td><td><code>-r</code> récursif · <code>-i</code> casse · <code>-c</code> compter · <code>-n</code> n° de ligne · <code>-v</code> inverse · <code>-E</code> regex étendue · <code>-A/-B/-C n</code> contexte</td><td>chercher du texte</td></tr>
-                    <tr><td><code>find /chemin -name motif</code></td><td><code>-type f/d</code> fichier/dossier · <code>-mtime -7</code> modifié récemment · <code>-size +10M</code></td><td>chercher un fichier</td></tr>
-                    <tr><td><code>sort fichier</code></td><td><code>-n</code> numérique · <code>-r</code> inverse · <code>-u</code> unique</td><td>trier des lignes</td></tr>
-                    <tr><td><code>cut -d: -f1 fichier</code></td><td><code>-d</code> séparateur · <code>-f</code> champ</td><td>extraire une colonne</td></tr>
-                    <tr><td><code>sed 's/a/b/g' fichier</code></td><td><code>-i</code> modifier sur place</td><td>rechercher/remplacer</td></tr>
-                    <tr><td><code>awk '{print $1}' fichier</code></td><td><code>-F:</code> séparateur</td><td>extraire/traiter des colonnes</td></tr>
-                    <tr><td><code>tee fichier</code></td><td><code>-a</code> ajouter</td><td>afficher ET écrire dans un fichier (via pipe)</td></tr>
+                    <tr><td><code>find chemin critères</code></td><td><code>-name</code>/<code>-iname</code> nom · <code>-type f/d/l</code> · <code>-size +10M</code> · <code>-mtime -7</code> · <code>-newermt "date"</code> · <code>-perm</code>/<code>-user</code></td><td>chercher un fichier</td></tr>
+                    <tr><td><code>find ... -exec cmd {} \;</code></td><td><code>-delete</code> supprime directement · <code>-ok</code> demande confirmation</td><td>agir sur chaque résultat de find</td></tr>
+                    <tr><td><code>sort fichier</code></td><td><code>-n</code> numérique · <code>-r</code> décroissant · <code>-u</code> sans doublons · <code>-k N</code> champ N · <code>-h</code> tailles 1K/2M · <code>-o</code> vers fichier</td><td>trier des lignes</td></tr>
+                    <tr><td><code>uniq</code></td><td><code>-c</code> compte les occurrences (nécessite un tri préalable)</td><td>dédoublonner des lignes adjacentes</td></tr>
+                    <tr><td><code>cut fichier</code></td><td><code>-d','</code> délimiteur · <code>-f 1,3</code> champs · <code>-c 1-5</code> caractères · <code>--complement</code> tout sauf</td><td>extraire une colonne</td></tr>
+                    <tr><td><code>sed 's/a/b/g' fichier</code></td><td><code>-i</code> modifier sur place · <code>-n 2,6p</code> afficher seulement les lignes 2-6</td><td>rechercher/remplacer (Stream EDitor)</td></tr>
+                    <tr><td><code>awk '{print $1}' fichier</code></td><td><code>-F:</code> séparateur · <code>NR==2,NR==4</code> plage de lignes · <code>gsub(/a/,"b")</code> remplacer</td><td>extraire/traiter des colonnes</td></tr>
+                    <tr><td><code>tee fichier</code></td><td><code>-a</code> ajouter (sinon écrase)</td><td>afficher ET écrire dans un fichier (utile après <code>sudo</code>: <code>echo x | sudo tee fichier</code>)</td></tr>
+                    <tr><td><code>iconv -f ENC1 -t ENC2 f -o out</code></td><td>ex. <code>-f ISO-8859-1 -t UTF-8</code></td><td>convertir l'encodage d'un fichier texte</td></tr>
                 </tbody>
             </table></div>
 
@@ -1312,6 +1316,8 @@ iface ens33 inet <span class="k">static</span>
                 <tbody>
                     <tr><td><code>&gt;</code> / <code>&gt;&gt;</code></td><td>écrire dans un fichier (écrase / ajoute)</td></tr>
                     <tr><td><code>&lt;</code></td><td>donner un fichier en entrée</td></tr>
+                    <tr><td><code>&lt;&lt;&lt;</code></td><td>here string : une chaîne comme entrée (<code>grep "x" &lt;&lt;&lt; "texte"</code>)</td></tr>
+                    <tr><td><code>&lt;&lt; EOF ... EOF</code></td><td>here document : écrire un bloc multi-lignes sans éditeur</td></tr>
                     <tr><td><code>|</code></td><td>envoyer la sortie d'une commande vers une autre</td></tr>
                     <tr><td><code>&amp;&amp;</code> / <code>||</code></td><td>exécuter si la précédente réussit / échoue</td></tr>
                 </tbody>
@@ -1353,12 +1359,15 @@ iface ens33 inet <span class="k">static</span>
             <div class="table-wrap"><table>
                 <thead><tr><th>Commande</th><th>Options utiles</th><th>Action</th></tr></thead>
                 <tbody>
-                    <tr><td><code>ip a</code></td><td>—</td><td>voir les adresses IP</td></tr>
+                    <tr><td><code>ip a</code> (ou <code>ip addr</code>)</td><td>—</td><td>voir les adresses IP (équivalent <code>ipconfig</code> Windows)</td></tr>
+                    <tr><td><code>hostname -I</code></td><td>—</td><td>mes adresses IP, version courte</td></tr>
                     <tr><td><code>ip link</code></td><td><code>set eth0 up/down</code></td><td>lister / activer / désactiver les interfaces</td></tr>
                     <tr><td><code>ip addr add IP/masque dev eth0</code></td><td>temporaire (perdu au reboot)</td><td>attribuer une IP à une interface</td></tr>
-                    <tr><td><code>ip route</code> (ou <code>route list</code>)</td><td><code>add default via IP dev eth0</code> · <code>del default via IP</code></td><td>table de routage / passerelle par défaut</td></tr>
+                    <tr><td><code>ip r</code> (ou <code>ip route</code>)</td><td><code>add default via IP dev eth0</code> · <code>del default via IP</code></td><td>table de routage / passerelle par défaut</td></tr>
                     <tr><td><code>ping hôte</code></td><td><code>-c 4</code> nb de paquets</td><td>tester la connectivité</td></tr>
                     <tr><td><code>ss -tuln</code></td><td><code>-t</code> TCP · <code>-u</code> UDP · <code>-l</code> écoute · <code>-n</code> pas de résolution · <code>-p</code> PID du processus</td><td>ports ouverts / connexions</td></tr>
+                    <tr><td><code>nslookup domaine</code> / <code>dig domaine</code></td><td>—</td><td>tester la résolution DNS</td></tr>
+                    <tr><td><code>curl -I url</code></td><td>—</td><td>afficher uniquement les en-têtes HTTP (test rapide d'un site)</td></tr>
                     <tr><td><code>dmesg</code></td><td><code>| less</code></td><td>messages du noyau (détection matérielle, cartes réseau…)</td></tr>
                     <tr><td><code>hostnamectl status</code></td><td><code>set-hostname nom</code> pour changer</td><td>voir / modifier le nom de la machine</td></tr>
                 </tbody>
@@ -1379,6 +1388,7 @@ iface ens33 inet <span class="k">static</span>
                     <tr><td>Client SFTP (ex. FileZilla)</td><td>protocole <code>sftp://</code>, port 22</td><td>transfert de fichiers en mode graphique via SSH</td></tr>
                     <tr><td><code>wget url</code></td><td><code>-O nom</code> fichier de sortie · <code>-r</code> récursif · <code>-i liste.txt</code> depuis une liste · <code>-c</code> reprendre</td><td>télécharger un fichier (HTTP, FTP)</td></tr>
                     <tr><td><code>curl url</code></td><td><code>-o nom</code> fichier de sortie · <code>-O</code> garde le nom distant · <code>-C -</code> reprendre · <code>--user</code></td><td>télécharger / interroger une URL (beaucoup plus de protocoles que wget, mais pas récursif)</td></tr>
+                    <tr><td><code>chmod 700 ~/.ssh</code></td><td>—</td><td>permissions requises sur le dossier .ssh (sinon SSH refuse de l'utiliser)</td></tr>
                 </tbody>
             </table></div>
 
