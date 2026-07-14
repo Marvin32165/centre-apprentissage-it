@@ -580,8 +580,31 @@
 <span class="k">chmod</span> <span class="p">1744</span> fichier   <span class="c"># pose le Sticky Bit (apparaît comme un "t")</span></pre>
             </div>
 
-            <h3>umask &amp; ACL</h3>
-            <p><code>umask</code> définit quels droits sont <strong>retirés</strong> par défaut à la création d'un fichier ou dossier. Valeur typique : <code>0022</code>, qui donne des fichiers en 644 et des dossiers en 755 (jamais l'exécution sur un fichier créé « normalement »). Elle se règle dans <code>/etc/profile</code>, <code>/etc/login.defs</code>, <code>/etc/bash.bashrc</code> ou <code>~/.bashrc</code>. Les <strong>ACL</strong> vont plus loin en donnant des droits à un utilisateur ou groupe précis :</p>
+            <h3>umask — les droits par défaut, et pourquoi</h3>
+            <p>Quand vous créez un fichier ou un dossier, d'où viennent ses droits ? Le système part d'une <strong>base</strong> et en <strong>retire</strong> ce qu'indique le <code>umask</code>. La base est fixe :</p>
+            <ul>
+                <li>un <strong>fichier</strong> naît avec <code>666</code> (<code>rw-rw-rw-</code>) — jamais l'exécution : Linux ne rend pas exécutable un fichier créé normalement ;</li>
+                <li>un <strong>dossier</strong> naît avec <code>777</code> (<code>rwxrwxrwx</code>) — l'exécution sur un dossier = droit d'y entrer.</li>
+            </ul>
+            <p>Le <code>umask</code> (typiquement <code>0022</code>) est ce qu'on <strong>soustrait</strong> à cette base — en réutilisant <code>r=4 w=2 x=1</code> vus plus haut :</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th></th><th>Base</th><th>− umask</th><th>= droits obtenus</th></tr></thead>
+                <tbody>
+                    <tr><td>Fichier</td><td><code>666</code> rw-rw-rw-</td><td><code>022</code></td><td><code>644</code> rw-r--r--</td></tr>
+                    <tr><td>Dossier</td><td><code>777</code> rwxrwxrwx</td><td><code>022</code></td><td><code>755</code> rwxr-xr-x</td></tr>
+                </tbody>
+            </table></div>
+            <p>Le <code>2</code> du milieu et de droite (=<code>w</code>) explique pourquoi, par défaut, ni le groupe ni les autres ne peuvent écrire. Changer le <code>umask</code> change donc les droits par défaut de tout ce que vous créez ensuite.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — umask</span></div>
+                <pre class="terminal__code"><span class="k">umask</span>            <span class="c"># affiche la valeur en cours (ex : 0022)</span>
+<span class="k">umask</span> <span class="p">-S</span>         <span class="c"># même chose en clair : u=rwx,g=rx,o=rx</span>
+<span class="k">umask</span> 0027       <span class="c"># plus strict : les "autres" n'ont plus aucun droit sur les nouveaux fichiers</span></pre>
+            </div>
+            <p>La valeur se règle durablement dans <code>~/.bashrc</code> (un utilisateur) ou, pour tout le système, <code>/etc/profile</code>, <code>/etc/login.defs</code> ou <code>/etc/bash.bashrc</code>.</p>
+
+            <h3>ACL — des droits pour un utilisateur ou groupe précis</h3>
+            <p>Le triplet u/g/o ne connaît qu'<em>un</em> propriétaire et <em>un</em> groupe. Pour donner des droits à un utilisateur ou un groupe <strong>supplémentaire</strong> sans toucher au reste, on utilise les <strong>ACL</strong> (Access Control Lists) :</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — ACL</span></div>
                 <pre class="terminal__code"><span class="k">sudo apt</span> install acl
