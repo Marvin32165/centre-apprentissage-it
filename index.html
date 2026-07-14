@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centre d'apprentissage IT — Portail</title>
+    <meta name="description" content="Portail personnel d'auto-apprentissage IT : virtualisation (Proxmox), Windows Server, PowerShell, réseau/CCNA, subnetting, cybersécurité, Linux, homelab. Modules pas à pas + ressources.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow">Centre d'apprentissage IT · Auto-formation · Admin système orienté virtualisation</p>
+        <h1 class="hero__title">Mon centre<br>d'apprentissage <em>IT</em>.</h1>
+        <p class="hero__lead">Un portail unique où j'apprends l'infrastructure en autodidacte, à mon rythme, sans dépendre d'un centre de formation. Chaque domaine est un module que je construis et enrichis au fil de ma progression : virtualisation, Windows Server, réseau, sécurité, Linux… Théorie synthétisée, labos reproductibles chez soi et les meilleures ressources en ligne pour aller plus loin.</p>
+        <div class="hero__meta">
+            <span class="chip">11 modules</span>
+            <span class="chip">Proxmox · Virtualisation</span>
+            <span class="chip">Windows Server 2025</span>
+            <span class="chip">CCNA · Réseau</span>
+            <span class="chip">Cybersécurité</span>
+            <span class="chip">Homelab</span>
+            <span class="chip">Linux</span>
+        </div>
+        <div class="search">
+            <input type="search" id="site-search" class="search__input" placeholder="Chercher une commande, une procédure… (ex. « créer utilisateur »)" autocomplete="off">
+            <div id="site-search-results" class="search__results" hidden></div>
+        </div>
+    </div>
+</header>
+
+<!-- ════════ MODULES ════════ -->
+<section class="portal">
+    <div class="portal__head">
+        <div>
+            <p class="section-tag">Les modules</p>
+            <h2>Choisis un domaine</h2>
+            <p>Théorie synthétisée + labos pas à pas, reproductibles sur ta propre machine.</p>
+        </div>
+    </div>
+
+    <div class="grid">
+
+        <!-- Proxmox / Virtualisation -->
+        <a class="mod" data-c="px" href="modules/proxmox.html">
+            <div class="mod__top">
+                <div class="mod__icon">PVE</div>
+                <span class="mod__status">9 chapitres</span>
+            </div>
+            <div class="mod__title">Proxmox &amp; Virtualisation</div>
+            <p class="mod__desc">Le cœur du métier : Proxmox VE, VM (KVM) vs conteneurs LXC, stockage ZFS, snapshots &amp; backups, réseau (bridges/VLAN), cluster et haute disponibilité.</p>
+            <div class="mod__tags"><span class="tg">Proxmox VE</span><span class="tg">KVM</span><span class="tg">LXC</span><span class="tg">ZFS</span><span class="tg">Cluster</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <!-- Windows Server -->
+        <a class="mod" data-c="server" href="modules/windows-server.html">
+            <div class="mod__top">
+                <div class="mod__icon">WS</div>
+                <span class="mod__status">7 chapitres</span>
+            </div>
+            <div class="mod__title">Windows Server 2025</div>
+            <p class="mod__desc">Rôles &amp; fonctionnalités, déploiement par image (SYSPREP), Active Directory, DNS/DHCP, DFS et sécurité du serveur.</p>
+            <div class="mod__tags"><span class="tg">AD DS</span><span class="tg">SYSPREP</span><span class="tg">DNS</span><span class="tg">DFS</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <!-- PowerShell -->
+        <a class="mod" data-c="ps" href="modules/powershell.html">
+            <div class="mod__top">
+                <div class="mod__icon">PS</div>
+                <span class="mod__status">6 chapitres</span>
+            </div>
+            <div class="mod__title">PowerShell &amp; Automatisation</div>
+            <p class="mod__desc">Créer des VM Hyper-V, configurer le réseau, promouvoir un domaine, joindre des serveurs et provisionner un GMSA — tout en scripts.</p>
+            <div class="mod__tags"><span class="tg">Hyper-V</span><span class="tg">AD DS</span><span class="tg">GMSA</span><span class="tg">cmdlets</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <!-- CCNA / Réseau -->
+        <a class="mod" data-c="net" href="modules/ccna-reseau.html">
+            <div class="mod__top">
+                <div class="mod__icon">NET</div>
+                <span class="mod__status">9 chapitres</span>
+            </div>
+            <div class="mod__title">CCNA — Réseau Cisco</div>
+            <p class="mod__desc">Modèle OSI, config routeurs/switches, VLAN &amp; inter-VLAN, DHCP, subnetting VLSM, routage (OSPF/EIGRP/BGP), NAT et ACL.</p>
+            <div class="mod__tags"><span class="tg">VLAN</span><span class="tg">VLSM</span><span class="tg">OSPF</span><span class="tg">NAT</span><span class="tg">ACL</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <!-- Réseau & Subnetting -->
+        <a class="mod" data-c="sub" href="modules/subnetting.html">
+            <div class="mod__top">
+                <div class="mod__icon">/24</div>
+                <span class="mod__status">7 chapitres</span>
+            </div>
+            <div class="mod__title">Réseau &amp; Subnetting</div>
+            <p class="mod__desc">Le module qui fait enfin « cliquer » les sous-réseaux : binaire, masques, CIDR, VLSM pas à pas, calcul mental et exercices corrigés. Façon NetworkChuck.</p>
+            <div class="mod__tags"><span class="tg">Binaire</span><span class="tg">CIDR</span><span class="tg">VLSM</span><span class="tg">Exercices</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <!-- Cybersécurité -->
+        <a class="mod" data-c="sec" href="modules/securite.html">
+            <div class="mod__top">
+                <div class="mod__icon">SEC</div>
+                <span class="mod__status">8 chapitres</span>
+            </div>
+            <div class="mod__title">Cybersécurité &amp; Hacking éthique</div>
+            <p class="mod__desc">Fondamentaux offensifs et défensifs, en labo isolé : Kali, méthodologie de pentest, reconnaissance, hardening, pare-feu, VPN et hygiène numérique. Usage éthique.</p>
+            <div class="mod__tags"><span class="tg">Kali</span><span class="tg">Pentest</span><span class="tg">Hardening</span><span class="tg">VPN</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <!-- Homelab & Self-hosting -->
+        <a class="mod" data-c="lab" href="modules/homelab.html">
+            <div class="mod__top">
+                <div class="mod__icon">LAB</div>
+                <span class="mod__status">8 chapitres</span>
+            </div>
+            <div class="mod__title">Homelab &amp; Self-hosting</div>
+            <p class="mod__desc">Monter son labo maison et héberger ses propres services : Docker &amp; Compose, reverse proxy, DNS local (Pi-hole), *arr / médias, sauvegardes et accès distant sécurisé.</p>
+            <div class="mod__tags"><span class="tg">Docker</span><span class="tg">Reverse proxy</span><span class="tg">Pi-hole</span><span class="tg">Backup</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <!-- Exchange & Sécurité -->
+        <a class="mod" data-c="exch" href="modules/exchange-securite.html">
+            <div class="mod__top">
+                <div class="mod__icon">EX</div>
+                <span class="mod__status">6 chapitres</span>
+            </div>
+            <div class="mod__title">Exchange &amp; PKI</div>
+            <p class="mod__desc">Messagerie Exchange 2019, gestion des boîtes aux lettres, PKI et chaîne de confiance, chiffrement asymétrique, certificats et AD CS.</p>
+            <div class="mod__tags"><span class="tg">Exchange</span><span class="tg">PKI</span><span class="tg">Certificats</span><span class="tg">AD CS</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <!-- RDS -->
+        <a class="mod" data-c="rds" href="modules/rds.html">
+            <div class="mod__top">
+                <div class="mod__icon">RD</div>
+                <span class="mod__status">5 chapitres</span>
+            </div>
+            <div class="mod__title">Bureau à distance (RDS)</div>
+            <p class="mod__desc">Architecture RDS, déploiement session-based, rôles RDSH/RDCB/RDWA, collections, publication de RemoteApp et certificats.</p>
+            <div class="mod__tags"><span class="tg">RDSH</span><span class="tg">RDCB</span><span class="tg">RemoteApp</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <!-- SharePoint -->
+        <a class="mod" data-c="sp" href="modules/sharepoint.html">
+            <div class="mod__top">
+                <div class="mod__icon">SP</div>
+                <span class="mod__status">18 chapitres</span>
+            </div>
+            <div class="mod__title">SharePoint Server SE</div>
+            <p class="mod__desc">Le guide complet : théorie (Server vs Online, architecture) et pratique (SQL, installation, ferme, droits, backup).</p>
+            <div class="mod__tags"><span class="tg">Théorie</span><span class="tg">Pratique</span><span class="tg">Ferme</span></div>
+            <div class="mod__go">Ouvrir le guide →</div>
+        </a>
+
+        <!-- Linux Debian -->
+        <a class="mod" data-c="linux" href="modules/linux-debian.html">
+            <div class="mod__top">
+                <div class="mod__icon">LX</div>
+                <span class="mod__status">21 chapitres</span>
+            </div>
+            <div class="mod__title">Linux Debian</div>
+            <p class="mod__desc">Du premier login root à la maîtrise du terminal : fichiers, permissions chmod et lecture de ls -l, redirections, filtres texte (grep, sed, awk, find), réseau IP/DNS, dépôts APT, SSH, processus et services systemd.</p>
+            <div class="mod__tags"><span class="tg">Terminal</span><span class="tg">Permissions</span><span class="tg">grep/sed/awk</span><span class="tg">APT</span><span class="tg">SSH</span><span class="tg">systemd</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <!-- Carte d'ajout -->
+        <a class="mod mod--add" href="modules/_template.html">
+            <div class="mod__big">+</div>
+            <div class="mod__title" style="font-size:1rem;">Ajouter un module</div>
+            <p class="mod__desc" style="flex:0;">Duplique <code>_template.html</code>, ajoute une carte ici. <br>Voir le README.</p>
+        </a>
+
+    </div>
+</section>
+
+<!-- ════════ RESSOURCES & VEILLE ════════ -->
+<section class="resources">
+    <div class="resources__head">
+        <p class="section-tag">Pour aller plus loin</p>
+        <h2>Ressources &amp; veille</h2>
+        <p>Les chaînes, pages de liens et sites que je suis pour progresser en continu. La plupart sont en anglais et touchent régulièrement à l'IA. Chaque module renvoie vers la ressource la plus pertinente pour son sujet.</p>
+    </div>
+
+    <div class="res-group">
+        <p class="res-group__title">IT · Réseau · Virtualisation</p>
+        <div class="res-grid">
+            <a class="res" href="https://www.youtube.com/@NetworkChuck" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--yt">YouTube</span><span class="res__name">NetworkChuck</span></div>
+                <p class="res__desc">Ex-instructeur CCNA. Réseau, subnetting, Linux, sécurité et homelab, avec beaucoup d'énergie. Playlists <em>Subnetting</em> et <em>CCNA</em> incontournables.</p>
+                <span class="res__url">youtube.com/@NetworkChuck</span>
+            </a>
+            <a class="res" href="https://www.youtube.com/@VirtualizationHowto" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--yt">YouTube</span><span class="res__name">Virtualization HowTo</span></div>
+                <p class="res__desc">Très orienté Proxmox, virtualisation et homelab. Tutos concrets et à jour — la référence pour le module Proxmox.</p>
+                <span class="res__url">youtube.com/@VirtualizationHowto</span>
+            </a>
+            <a class="res" href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--yt">YouTube</span><span class="res__name">TechnoTim</span></div>
+                <p class="res__desc">Homelab, self-hosting, Docker, Kubernetes, reverse proxy et automatisation. Guides propres et bien expliqués.</p>
+                <span class="res__url">youtube.com/@TechnoTim</span>
+            </a>
+            <a class="res" href="https://www.youtube.com/@TechHut" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--yt">YouTube</span><span class="res__name">TechHut</span></div>
+                <p class="res__desc">Linux, self-hosting et outils du homelab. Bons sujets pour découvrir de nouveaux services à héberger.</p>
+                <span class="res__url">youtube.com/@TechHut</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="res-group">
+        <p class="res-group__title">Sécurité</p>
+        <div class="res-grid">
+            <a class="res" href="https://www.youtube.com/@zSecurity" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--yt">YouTube</span><span class="res__name">zSecurity</span></div>
+                <p class="res__desc">Hacking éthique et cybersécurité : Kali, tests d'intrusion, réseau et défense. À pratiquer uniquement en labo isolé et sur des systèmes autorisés.</p>
+                <span class="res__url">youtube.com/@zSecurity</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="res-group">
+        <p class="res-group__title">IA · Culture tech</p>
+        <div class="res-grid">
+            <a class="res" href="https://www.youtube.com/@Underscore_" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--yt">YouTube</span><span class="res__name">Underscore_</span></div>
+                <p class="res__desc">Émission tech francophone : IA, dev, hardware, actualité. Format long et débats de fond — une des rares en français.</p>
+                <span class="res__url">youtube.com/@Underscore_</span>
+            </a>
+            <a class="res" href="https://www.youtube.com/@SiliconValleyGirl" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--yt">YouTube</span><span class="res__name">Silicon Valley Girl</span></div>
+                <p class="res__desc">IA, productivité et carrière tech vue de la Silicon Valley. Bon pour la veille sur les usages de l'IA.</p>
+                <span class="res__url">youtube.com/@SiliconValleyGirl</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="res-group">
+        <p class="res-group__title">Veille &amp; liens (fourre-tout)</p>
+        <div class="res-grid">
+            <a class="res" href="https://www.youtube.com/@ITFab" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--yt">YouTube</span><span class="res__name">ITFab</span></div>
+                <p class="res__desc">Chaîne « fourre-tout » IT : un peu de tout au gré des découvertes et des tests.</p>
+                <span class="res__url">youtube.com/@ITFab</span>
+            </a>
+            <a class="res" href="https://papaly.com/c/ChFr" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--web">Liens</span><span class="res__name">Papaly — ChFr</span></div>
+                <p class="res__desc">Page de marque-pages : une collection de liens IT intéressants, classés par thème.</p>
+                <span class="res__url">papaly.com/c/ChFr</span>
+            </a>
+            <a class="res" href="https://www.bowlman.org/" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--web">Web</span><span class="res__name">bowlman.org</span></div>
+                <p class="res__desc">Site de ressources et de notes à explorer pour compléter la veille.</p>
+                <span class="res__url">bowlman.org</span>
+            </a>
+            <a class="res" href="https://guns.lol/tunisiano" target="_blank" rel="noopener">
+                <div class="res__top"><span class="res__badge res__badge--web">Profil</span><span class="res__name">guns.lol/tunisiano</span></div>
+                <p class="res__desc">Page « où me trouver » : GitHub, GitLab, Pinterest et autres liens regroupés.</p>
+                <span class="res__url">guns.lol/tunisiano</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ════════ MÉTHODE ════════ -->
+<section class="roadmap">
+    <p class="section-tag">Méthode</p>
+    <h2 style="font-family:var(--font-display);font-weight:800;font-size:1.8rem;letter-spacing:-.02em;margin-top:4px;">Comment j'apprends chaque module en solo</h2>
+    <div class="road">
+        <div class="road__step"><div class="road__n">01</div><h4>Comprendre</h4><p>La théorie synthétisée : à quoi sert la brique, où elle se place dans l'infra.</p></div>
+        <div class="road__step"><div class="road__n">02</div><h4>Monter le labo</h4><p>Topologie, VM ou conteneur, plan d'adressage IP — reproductible chez soi.</p></div>
+        <div class="road__step"><div class="road__n">03</div><h4>Pratiquer</h4><p>Les commandes exactes (PowerShell, Bash, Cisco IOS), copiables et testées.</p></div>
+        <div class="road__step"><div class="road__n">04</div><h4>Retenir &amp; approfondir</h4><p>Les encadrés « À retenir » + les ressources vidéo pour creuser le sujet.</p></div>
+    </div>
+</section>
+
+<footer>
+    <p><strong>Centre d'apprentissage IT</strong> — portail personnel d'auto-formation de Marvin</p>
+    <p>Admin système orienté virtualisation · Proxmox · Windows Server · Réseau · Sécurité · Linux · Homelab</p>
+</footer>
+
+<script src="assets/app.js"></script>
+<script src="assets/search-index.js"></script>
+<script src="assets/search.js"></script>
+</body>
+</html>

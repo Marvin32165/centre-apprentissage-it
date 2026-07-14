@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réseau &amp; Subnetting — Module</title>
+    <meta name="description" content="Le subnetting enfin clair : binaire, masques, CIDR, calcul mental (block size / magic number), VLSM pas à pas et exercices corrigés.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body data-domain="sub">
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Réseau · Subnetting</p>
+        <h1 class="hero__title">Réseau &amp;<br><em>Subnetting</em></h1>
+        <p class="hero__lead">Le module qui fait enfin « cliquer » les sous-réseaux. On démonte le binaire, le masque et le CIDR, puis on apprend à découper un réseau <em>de tête</em> avec la méthode du « block size », avant d'attaquer le VLSM et une série d'exercices corrigés.</p>
+        <div class="hero__meta">
+            <span class="chip">Binaire</span><span class="chip">Masque</span><span class="chip">CIDR</span><span class="chip">Block size</span><span class="chip">VLSM</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Subnetting</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#pourquoi"><span>01</span> Pourquoi découper</a></li>
+            <li><a class="toc__link" href="#binaire"><span>02</span> Le binaire sans douleur</a></li>
+            <li><a class="toc__link" href="#masque"><span>03</span> Masque &amp; CIDR</a></li>
+            <li><a class="toc__link" href="#decouper"><span>04</span> Découper un réseau</a></li>
+            <li><a class="toc__link" href="#mental"><span>05</span> Calcul mental rapide</a></li>
+            <li><a class="toc__link" href="#vlsm"><span>06</span> VLSM pas à pas</a></li>
+            <li><a class="toc__link" href="#exos"><span>07</span> Exercices corrigés</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Subnetting IPv4</div>
+                <div class="section-banner__desc">Du binaire au VLSM, avec la méthode du calcul mental</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="pourquoi">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Pourquoi découper un réseau</h2>
+            <p class="chapter__intro">Une adresse IPv4 fait 32 bits, écrits en 4 octets décimaux (ex. <code>192.168.1.10</code>). Elle se coupe en deux parties : une partie <strong>réseau</strong> (commune à tous les hôtes du segment) et une partie <strong>hôte</strong> (unique par machine). Le subnetting, c'est déplacer la frontière entre les deux.</p>
+
+            <h3>À quoi ça sert concrètement</h3>
+            <ul>
+                <li><strong>Segmenter</strong> — séparer serveurs, postes, Wi-Fi invité, VoIP… chacun son sous-réseau.</li>
+                <li><strong>Sécuriser</strong> — un pare-feu ou des ACL filtrent entre sous-réseaux (cf. module <a href="ccna-reseau.html">CCNA</a>).</li>
+                <li><strong>Réduire le bruit</strong> — un domaine de broadcast plus petit = moins de trafic parasite.</li>
+                <li><strong>Économiser les adresses</strong> — donner juste ce qu'il faut à chaque segment (VLSM).</li>
+            </ul>
+
+            <h3>Les classes, un vieux repère</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Classe</th><th>1er octet</th><th>Masque « par défaut »</th><th>Plages privées (RFC 1918)</th></tr></thead>
+                    <tbody>
+                        <tr><td>A</td><td>1 – 126</td><td>/8 (255.0.0.0)</td><td>10.0.0.0 – 10.255.255.255</td></tr>
+                        <tr><td>B</td><td>128 – 191</td><td>/16 (255.255.0.0)</td><td>172.16.0.0 – 172.31.255.255</td></tr>
+                        <tr><td>C</td><td>192 – 223</td><td>/24 (255.255.255.0)</td><td>192.168.0.0 – 192.168.255.255</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">Les classes ne servent plus qu'à situer une adresse : depuis le <strong>CIDR</strong>, le masque est libre et découplé de la classe.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Une IPv4 = <strong>32 bits</strong> = partie <strong>réseau</strong> + partie <strong>hôte</strong>. Subnetter, c'est allonger la partie réseau pour créer plusieurs sous-réseaux plus petits.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="binaire">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Le binaire sans douleur</h2>
+            <p class="chapter__intro">Tout le subnetting tient dans un octet de 8 bits et ses puissances de 2. Apprends cette ligne par cœur, et 90 % du travail est fait.</p>
+
+            <h3>La ligne magique (valeurs des bits d'un octet)</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Bit</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr></thead>
+                    <tbody>
+                        <tr><td>Valeur</td><td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td><td>2</td><td>1</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Un octet = la somme des valeurs dont le bit vaut 1. Chaque bit à 1 « allume » sa valeur :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Conversion binaire → décimal</span></div>
+                <pre class="terminal__code"><span class="c"># 11000000  →  128 + 64                    = 192</span>
+<span class="c"># 10101000  →  128 +      32 +      8       = 168</span>
+<span class="c"># 11111111  →  128+64+32+16+8+4+2+1         = 255</span>
+<span class="c"># Donc 11000000.10101000.00000001.00001010 = 192.168.1.10</span></pre>
+            </div>
+
+            <h3>Décimal → binaire : la méthode « je soustrais »</h3>
+            <p>Pour convertir <code>200</code> : je prends les valeurs de gauche à droite. 128 ≤ 200 → bit 1, reste 72. 64 ≤ 72 → bit 1, reste 8. 32,16 &gt; 8 → bits 0. 8 ≤ 8 → bit 1, reste 0. Le reste à 0 → tout le reste est 0. Résultat : <code>11001000</code>.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>128-64-32-16-8-4-2-1</strong> : la seule chose à connaître par cœur. Un octet plein (<code>11111111</code>) = 255. Sait convertir dans les deux sens et tu tiens le subnetting.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="masque">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Le masque de sous-réseau &amp; le CIDR</h2>
+            <p class="chapter__intro">Le masque dit où s'arrête le réseau et où commence l'hôte : les bits à <strong>1</strong> = réseau, les bits à <strong>0</strong> = hôte. La notation CIDR <code>/n</code> compte simplement le nombre de bits à 1.</p>
+
+            <h3>Masque décimal ⇄ CIDR</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>CIDR</th><th>Masque décimal</th><th>Bits hôte</th><th>Hôtes utilisables</th><th>Block size</th></tr></thead>
+                    <tbody>
+                        <tr><td>/24</td><td>255.255.255.0</td><td>8</td><td>254</td><td>256</td></tr>
+                        <tr><td>/25</td><td>255.255.255.128</td><td>7</td><td>126</td><td>128</td></tr>
+                        <tr><td>/26</td><td>255.255.255.192</td><td>6</td><td>62</td><td>64</td></tr>
+                        <tr><td>/27</td><td>255.255.255.224</td><td>5</td><td>30</td><td>32</td></tr>
+                        <tr><td>/28</td><td>255.255.255.240</td><td>4</td><td>14</td><td>16</td></tr>
+                        <tr><td>/29</td><td>255.255.255.248</td><td>3</td><td>6</td><td>8</td></tr>
+                        <tr><td>/30</td><td>255.255.255.252</td><td>2</td><td>2</td><td>4</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Les deux formules qui gouvernent tout</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Nombre d'hôtes</h4>
+                    <ul>
+                        <li><strong>2<sup>(bits hôte)</sup> − 2</strong></li>
+                        <li>Le « −2 » = adresse réseau + broadcast, non attribuables</li>
+                        <li>Ex. /26 → 2<sup>6</sup> − 2 = <strong>62</strong> hôtes</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Nombre de sous-réseaux</h4>
+                    <ul>
+                        <li><strong>2<sup>(bits empruntés)</sup></strong></li>
+                        <li>Bits « empruntés » à la partie hôte pour agrandir le réseau</li>
+                        <li>Ex. d'un /24 vers /26 → 2 bits → <strong>4</strong> sous-réseaux</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Masque = 1 pour le réseau, 0 pour l'hôte. Hôtes = <strong>2<sup>h</sup> − 2</strong> ; sous-réseaux = <strong>2<sup>bits empruntés</sup></strong>. La colonne « block size » (256 − dernier octet du masque) est ton meilleur ami au chapitre suivant.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="decouper">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Découper un réseau, étape par étape</h2>
+            <p class="chapter__intro">Prenons un cas concret : on nous donne <code>192.168.10.0/24</code> et on veut <strong>4 sous-réseaux</strong>. Voici la démarche complète, réutilisable à chaque fois.</p>
+
+            <ul class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Combien de bits emprunter ?</strong>4 sous-réseaux → 2<sup>2</sup> = 4, donc j'emprunte <strong>2 bits</strong>. Le /24 devient <strong>/26</strong> (24 + 2).</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Nouveau masque &amp; block size</strong>/26 = 255.255.255.<strong>192</strong>. Block size = 256 − 192 = <strong>64</strong>. Les sous-réseaux avancent donc de 64 en 64.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Lister les sous-réseaux</strong>On part de 0 et on ajoute le block size : <code>.0</code>, <code>.64</code>, <code>.128</code>, <code>.192</code>. Ce sont les 4 adresses <em>réseau</em>.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Broadcast &amp; plage utilisable</strong>Le broadcast d'un sous-réseau = l'adresse juste avant le suivant. La plage utilisable = entre réseau+1 et broadcast−1.</div></li>
+            </ul>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Sous-réseau</th><th>Réseau</th><th>1ᵉʳ hôte</th><th>Dernier hôte</th><th>Broadcast</th></tr></thead>
+                    <tbody>
+                        <tr><td>#1</td><td>192.168.10.0</td><td>.1</td><td>.62</td><td>192.168.10.63</td></tr>
+                        <tr><td>#2</td><td>192.168.10.64</td><td>.65</td><td>.126</td><td>192.168.10.127</td></tr>
+                        <tr><td>#3</td><td>192.168.10.128</td><td>.129</td><td>.190</td><td>192.168.10.191</td></tr>
+                        <tr><td>#4</td><td>192.168.10.192</td><td>.193</td><td>.254</td><td>192.168.10.255</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>La recette : <strong>bits empruntés → nouveau masque → block size (256 − octet) → on avance de block size en block size</strong>. Le broadcast, c'est toujours « l'adresse juste avant le sous-réseau suivant ».</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="mental">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Le calcul mental rapide</h2>
+            <p class="chapter__intro">La question type d'exam : « À quel sous-réseau appartient <code>172.16.20.170/27</code> ? » On répond en 15 secondes, sans binaire, grâce au block size.</p>
+
+            <ul class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Block size</strong>/27 → masque 255.255.255.<strong>224</strong>. Block size = 256 − 224 = <strong>32</strong>.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Multiples du block size</strong>Dans l'octet concerné (le 4ᵉ ici) : 0, 32, 64, 96, 128, 160, <strong>192</strong>… Je cherche le multiple juste ≤ 170.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Encadrer l'adresse</strong>160 ≤ 170 &lt; 192. Donc réseau = <code>172.16.20.160</code>, broadcast = <code>172.16.20.191</code> (juste avant 192).</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Réponse</strong>Sous-réseau <code>172.16.20.160/27</code> · hôtes utilisables <code>.161 → .190</code>. L'adresse .170 est bien un hôte valide.</div></li>
+            </ul>
+
+            <div class="tip">
+                <p class="tip__label">Le réflexe « block size »</p>
+                <p><strong>256 − dernier octet non-nul du masque = block size.</strong> Les sous-réseaux tombent sur les multiples de ce nombre. C'est la clé pour tout faire de tête, sans jamais poser une conversion binaire.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Pour situer une IP : trouve le block size, liste ses multiples, encadre l'adresse entre deux multiples. Le multiple du bas = le réseau, le suivant − 1 = le broadcast.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="vlsm">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">VLSM — des sous-réseaux sur mesure</h2>
+            <p class="chapter__intro">Le VLSM (Variable Length Subnet Mask) utilise des masques <em>différents</em> selon les besoins. Au lieu de gaspiller un /24 entier pour une liaison à 2 hôtes, on donne à chaque segment juste ce qu'il lui faut. Règle d'or : <strong>servir les plus gros besoins d'abord</strong>.</p>
+
+            <h3>Cas d'école — bloc 192.168.1.0/24</h3>
+            <p>Besoins : <strong>Ventes</strong> 50 hôtes · <strong>IT</strong> 25 hôtes · <strong>Wi-Fi</strong> 10 hôtes · <strong>Liaison</strong> WAN 2 hôtes. On classe du plus grand au plus petit, puis on choisit le plus petit masque qui contient chaque besoin.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Segment</th><th>Besoin</th><th>Masque choisi</th><th>Capacité</th><th>Bloc alloué</th></tr></thead>
+                    <tbody>
+                        <tr><td>Ventes</td><td>50</td><td>/26</td><td>62</td><td>192.168.1.0 → .63</td></tr>
+                        <tr><td>IT</td><td>25</td><td>/27</td><td>30</td><td>192.168.1.64 → .95</td></tr>
+                        <tr><td>Wi-Fi</td><td>10</td><td>/28</td><td>14</td><td>192.168.1.96 → .111</td></tr>
+                        <tr><td>Liaison WAN</td><td>2</td><td>/30</td><td>2</td><td>192.168.1.112 → .115</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">Chaque bloc commence là où le précédent s'arrête. Il reste <code>.116 → .255</code> de libre pour la croissance future : c'est tout l'intérêt du VLSM, zéro gaspillage.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>VLSM = un masque par besoin. <strong>Trie du plus grand au plus petit</strong>, prends le plus petit masque qui couvre le besoin (2<sup>h</sup> − 2 ≥ besoin), et empile les blocs sans trou. Une liaison point-à-point = toujours un <strong>/30</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="exos">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Exercices corrigés</h2>
+            <p class="chapter__intro">Entraîne-toi : cache la correction, réponds, puis vérifie. Refais-les jusqu'à répondre de tête en moins de 30 secondes.</p>
+
+            <h3>Exercice 1 — situer une adresse</h3>
+            <p><strong>Question :</strong> pour <code>10.0.0.201/26</code>, donne le réseau, le broadcast et la plage d'hôtes.</p>
+            <div class="tip">
+                <p class="tip__label">Correction</p>
+                <p>/26 → masque .192 → block size 64. Multiples : 0, 64, 128, <strong>192</strong>, 256. 192 ≤ 201 &lt; 256 → réseau <code>10.0.0.192</code>, broadcast <code>10.0.0.255</code>, hôtes <code>.193 → .254</code>.</p>
+            </div>
+
+            <h3>Exercice 2 — combien de sous-réseaux &amp; d'hôtes ?</h3>
+            <p><strong>Question :</strong> on découpe <code>172.16.0.0/16</code> en /24. Combien de sous-réseaux ? Combien d'hôtes chacun ?</p>
+            <div class="tip">
+                <p class="tip__label">Correction</p>
+                <p>Bits empruntés = 24 − 16 = 8 → 2<sup>8</sup> = <strong>256 sous-réseaux</strong>. Bits hôte = 32 − 24 = 8 → 2<sup>8</sup> − 2 = <strong>254 hôtes</strong> par sous-réseau.</p>
+            </div>
+
+            <h3>Exercice 3 — VLSM express</h3>
+            <p><strong>Question :</strong> sur <code>192.168.50.0/24</code>, alloue un segment de 100 hôtes, un de 50, puis une liaison /30.</p>
+            <div class="tip">
+                <p class="tip__label">Correction</p>
+                <p>100 → /25 (126 hôtes) : <code>.0 → .127</code>. 50 → /26 (62 hôtes) : <code>.128 → .191</code>. Liaison /30 : <code>.192 → .195</code>. Reste <code>.196 → .255</code> disponible.</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Pour aller plus loin</p>
+                <p>La référence vidéo sur ce sujet : la <a href="https://www.youtube.com/watch?v=5WfiTHiU4x8&list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF" target="_blank" rel="noopener">playlist Subnetting de NetworkChuck</a>. Enchaîne ensuite avec le module <a href="ccna-reseau.html">CCNA</a> pour appliquer ces plans d'adressage sur de vrais équipements Cisco.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le subnetting se maîtrise par la <strong>répétition</strong> : block size pour situer, 2<sup>h</sup> − 2 pour compter, VLSM du plus grand au plus petit. Fais-en 5 par jour pendant une semaine et ça devient automatique.</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>Réseau &amp; Subnetting</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · Pour approfondir : <a href="https://www.youtube.com/watch?v=5WfiTHiU4x8&list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF" target="_blank" rel="noopener">Subnetting — NetworkChuck</a></p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>

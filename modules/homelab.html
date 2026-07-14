@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homelab &amp; Self-hosting — Module</title>
+    <meta name="description" content="Monter son labo maison et héberger ses propres services : Docker & Compose, reverse proxy et HTTPS, DNS local (Pi-hole), services (médias, cloud), stockage/NAS, sauvegardes et accès distant sécurisé.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body data-domain="lab">
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Homelab · Self-hosting</p>
+        <h1 class="hero__title">Homelab &amp;<br><em>Self-hosting</em></h1>
+        <p class="hero__lead">Le meilleur terrain d'apprentissage, c'est le sien. Un homelab, c'est un serveur à soi pour héberger ses services, casser des choses sans risque et apprendre en vrai. On part de Docker pour arriver à une stack complète : reverse proxy, DNS local, cloud perso, sauvegardes et accès distant sécurisé.</p>
+        <div class="hero__meta">
+            <span class="chip">Docker</span><span class="chip">Compose</span><span class="chip">Reverse proxy</span><span class="chip">Pi-hole</span><span class="chip">NAS</span><span class="chip">VPN</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Homelab</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#pourquoi"><span>01</span> C'est quoi, un homelab</a></li>
+            <li><a class="toc__link" href="#docker"><span>02</span> Docker &amp; Compose</a></li>
+            <li><a class="toc__link" href="#proxy"><span>03</span> Reverse proxy &amp; HTTPS</a></li>
+            <li><a class="toc__link" href="#dns"><span>04</span> DNS local &amp; Pi-hole</a></li>
+            <li><a class="toc__link" href="#services"><span>05</span> Les services à héberger</a></li>
+            <li><a class="toc__link" href="#stockage"><span>06</span> Stockage &amp; NAS</a></li>
+            <li><a class="toc__link" href="#backup"><span>07</span> Sauvegardes &amp; résilience</a></li>
+            <li><a class="toc__link" href="#distant"><span>08</span> Accès distant sécurisé</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Homelab &amp; Self-hosting</div>
+                <div class="section-banner__desc">Héberger ses propres services, apprendre en cassant sans risque</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="pourquoi">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">C'est quoi, un homelab</h2>
+            <p class="chapter__intro">Un homelab est un environnement informatique personnel — d'un simple Raspberry Pi à un vieux serveur d'entreprise — sur lequel on apprend, on teste et on héberge ses propres services. C'est le complément idéal des modules <a href="proxmox.html">Proxmox</a> et <a href="linux-debian.html">Linux</a>.</p>
+
+            <h3>Pourquoi s'en monter un</h3>
+            <ul>
+                <li><strong>Apprendre en vrai</strong> — rien ne remplace un service qu'on installe, casse et répare soi-même.</li>
+                <li><strong>Reprendre le contrôle de ses données</strong> — son cloud, ses médias, ses mots de passe chez soi.</li>
+                <li><strong>Automatiser sa maison</strong> — DNS local, domotique, sauvegardes centralisées.</li>
+                <li><strong>Un CV vivant</strong> — un homelab documenté vaut mieux qu'une ligne « je connais Docker ».</li>
+            </ul>
+
+            <h3>Le matériel : commencer petit</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Option</th><th>Pour qui</th><th>Atouts</th></tr></thead>
+                    <tbody>
+                        <tr><td>Raspberry Pi</td><td>Débuter, faible conso</td><td>Silencieux, ~5 W, parfait pour Pi-hole</td></tr>
+                        <tr><td>Mini-PC (NUC, Tiny)</td><td>Le meilleur rapport</td><td>x86, silencieux, tient plein de conteneurs</td></tr>
+                        <tr><td>PC recyclé / tour</td><td>Récup gratuite</td><td>Extensible (RAM, disques), idéal Proxmox</td></tr>
+                        <tr><td>Serveur d'occasion</td><td>Aller loin</td><td>Beaucoup de RAM/cœurs — mais bruit &amp; conso</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un homelab n'a pas besoin d'être gros : un <strong>mini-PC</strong> ou un vieux PC sous <a href="proxmox.html">Proxmox</a> suffit pour démarrer. On commence petit, on ajoute des services au fil de l'envie et des besoins.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="docker">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Docker &amp; Compose : la brique de base</h2>
+            <p class="chapter__intro">Docker empaquette une application et toutes ses dépendances dans un <strong>conteneur</strong> : ça tourne pareil partout, ça s'installe et se supprime proprement. C'est le format standard du self-hosting moderne.</p>
+
+            <h3>Image, conteneur, volume</h3>
+            <ul>
+                <li><strong>Image</strong> — le modèle figé d'une appli (ex. <code>nginx:latest</code>).</li>
+                <li><strong>Conteneur</strong> — une instance qui tourne, créée à partir d'une image.</li>
+                <li><strong>Volume</strong> — le stockage <em>persistant</em> : les données survivent à la suppression du conteneur.</li>
+            </ul>
+
+            <h3>Docker Compose : décrire sa stack en YAML</h3>
+            <p>Plutôt que de longues commandes, on décrit les services dans un fichier <code>docker-compose.yml</code>, versionnable et rejouable. Exemple minimal :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">docker-compose.yml</span></div>
+                <pre class="terminal__code"><span class="k">services</span>:
+  <span class="k">web</span>:
+    <span class="p">image</span>: <span class="s">nginx:latest</span>
+    <span class="p">container_name</span>: <span class="s">mon-web</span>
+    <span class="p">ports</span>:
+      - <span class="s">"8080:80"</span>          <span class="c"># hôte:conteneur</span>
+    <span class="p">volumes</span>:
+      - <span class="s">./site:/usr/share/nginx/html:ro</span>
+    <span class="p">restart</span>: <span class="s">unless-stopped</span>  <span class="c"># redémarre tout seul</span></pre>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Lancer &amp; gérer la stack</span></div>
+                <pre class="terminal__code"><span class="k">docker</span> compose up <span class="p">-d</span>      <span class="c"># démarrer en arrière-plan</span>
+<span class="k">docker</span> compose logs <span class="p">-f</span>    <span class="c"># suivre les journaux</span>
+<span class="k">docker</span> compose pull &amp;&amp; <span class="k">docker</span> compose up <span class="p">-d</span>  <span class="c"># mettre à jour</span>
+<span class="k">docker</span> compose down       <span class="c"># tout arrêter proprement</span></pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Astuce</p>
+                <p>Ajoute <strong>Portainer</strong> pour piloter tes conteneurs depuis une interface web, et <strong>Watchtower</strong> ou <em>Diun</em> pour être averti des mises à jour d'images. Garde chaque service dans son propre dossier avec son <code>docker-compose.yml</code> et un <code>.env</code>.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Docker Compose = ta stack décrite dans un fichier <code>.yml</code> versionnable. <strong>Volumes</strong> pour les données persistantes, <code>restart: unless-stopped</code> pour la résilience, un dossier par service. C'est reproductible et propre.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="proxy">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Reverse proxy &amp; HTTPS</h2>
+            <p class="chapter__intro">Sans reverse proxy, chaque service vit sur un port différent (<code>:8080</code>, <code>:9000</code>…) et sans chiffrement. Un reverse proxy met tout derrière de jolis noms en <strong>https://</strong> et gère les certificats automatiquement.</p>
+
+            <div class="net">
+                <div class="node"><b>Navigateur</b><span class="ip">https://jelly.homelab.lan</span><span>Un nom, un cadenas</span></div>
+                <div class="node"><b>Reverse proxy</b><span class="ip">:443</span><span>Aiguille selon le nom + termine le TLS</span></div>
+                <div class="node"><b>Jellyfin</b><span class="ip">:8096</span><span>Service réel, en HTTP interne</span></div>
+                <div class="node"><b>Nextcloud</b><span class="ip">:8080</span><span>Autre service derrière le même proxy</span></div>
+            </div>
+
+            <h3>Quel proxy choisir</h3>
+            <ul>
+                <li><strong>Nginx Proxy Manager (NPM)</strong> — interface web, idéal pour débuter : on ajoute un « proxy host » et on clique pour obtenir un certificat Let's Encrypt.</li>
+                <li><strong>Traefik</strong> — puissant, config par labels Docker, auto-découverte des conteneurs. Plus technique.</li>
+                <li><strong>Caddy</strong> — minimaliste, HTTPS automatique en une ligne de config.</li>
+            </ul>
+
+            <p>Pour un certificat <em>valide</em> (cadenas vert) sans exposer le service, on utilise un domaine réel et le <strong>challenge DNS</strong> de Let's Encrypt : le certificat est émis sans ouvrir de port entrant. C'est le prolongement du module <a href="exchange-securite.html">PKI &amp; certificats</a>.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un reverse proxy = <strong>un point d'entrée unique</strong> qui aiguille par nom de domaine et gère le HTTPS. Débute avec <strong>Nginx Proxy Manager</strong> ; passe à Traefik quand tu veux l'auto-découverte. Certificats via Let's Encrypt (challenge DNS = pas de port à ouvrir).</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="dns">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">DNS local &amp; filtrage — Pi-hole</h2>
+            <p class="chapter__intro">Pi-hole est un serveur DNS pour tout ton réseau qui bloque pubs et traceurs à la source. Bonus : il sert de DNS local pour donner des noms à tes machines (au lieu de retenir des IP).</p>
+
+            <h3>Comment ça marche</h3>
+            <p>On déclare le Pi-hole comme <strong>serveur DNS</strong> du réseau (dans le DHCP de la box/routeur). Chaque requête DNS passe par lui : il répond « adresse inexistante » pour les domaines publicitaires, et transmet le reste à un DNS amont (ou à <em>Unbound</em> pour de la résolution récursive privée).</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>Ce que Pi-hole apporte</h4>
+                    <ul>
+                        <li>Blocage pubs/traceurs sur tous les appareils</li>
+                        <li>DNS local : <code>nas.homelab.lan → 192.168.1.20</code></li>
+                        <li>Statistiques de requêtes du réseau</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Bonnes pratiques</h4>
+                    <ul>
+                        <li>Prévoir un DNS de secours (sinon plus d'Internet si le Pi-hole tombe)</li>
+                        <li>Le mettre sur une IP fixe</li>
+                        <li>Alternative équivalente : AdGuard Home</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Pi-hole = <strong>DNS + bloqueur de pub</strong> pour tout le réseau, et un annuaire local pour nommer tes services. Point de vigilance : c'est un point unique de défaillance — prévois un DNS de secours et une IP fixe.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="services">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Les services à héberger</h2>
+            <p class="chapter__intro">La partie fun : peupler son homelab. Voici les grands classiques, du plus utile au plus geek. Chacun s'installe en quelques lignes de Docker Compose.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Besoin</th><th>Service</th><th>Remplace</th></tr></thead>
+                    <tbody>
+                        <tr><td>Cloud perso (fichiers, agenda)</td><td>Nextcloud</td><td>Google Drive / iCloud</td></tr>
+                        <tr><td>Médiathèque (films, séries)</td><td>Jellyfin</td><td>Netflix (ta propre bibliothèque)</td></tr>
+                        <tr><td>Mots de passe</td><td>Vaultwarden</td><td>LastPass (cf. module <a href="securite.html">Sécurité</a>)</td></tr>
+                        <tr><td>Tableau de bord</td><td>Homepage / Homarr</td><td>Un point d'entrée vers tous tes services</td></tr>
+                        <tr><td>Domotique</td><td>Home Assistant</td><td>Les apps propriétaires des objets connectés</td></tr>
+                        <tr><td>Notes / wiki</td><td>Obsidian sync / Wiki.js</td><td>Notion</td></tr>
+                        <tr><td>Photos</td><td>Immich</td><td>Google Photos</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Astuce — n'en fais pas trop d'un coup</p>
+                <p>L'erreur du débutant : installer 20 services en un week-end, tout casser, se décourager. Ajoute <strong>un service à la fois</strong>, comprends-le, documente-le (un README par service), sauvegarde, puis passe au suivant.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>On commence par ce qui apporte une valeur immédiate (Pi-hole, un cloud, un tableau de bord), puis on étend. Chaque service = son dossier, son <code>docker-compose.yml</code>, son volume de données à sauvegarder.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="stockage">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Stockage &amp; NAS</h2>
+            <p class="chapter__intro">Tôt ou tard, il faut de l'espace fiable et partagé : c'est le rôle du NAS (Network Attached Storage). On y centralise fichiers, médias et données de conteneurs.</p>
+
+            <h3>Faire son NAS</h3>
+            <ul>
+                <li><strong>Solutions clé en main</strong> — TrueNAS (basé ZFS), Unraid (souple pour disques de tailles mixtes), OpenMediaVault (léger, sur Debian).</li>
+                <li><strong>Sur Proxmox</strong> — un pool <strong>ZFS</strong> (cf. module <a href="proxmox.html">Proxmox</a>) partagé en SMB/NFS, ou une VM TrueNAS avec passthrough des disques.</li>
+            </ul>
+
+            <h3>Partager un dossier (SMB &amp; NFS)</h3>
+            <ul>
+                <li><strong>SMB/CIFS</strong> — le partage universel, lu par Windows, macOS et Linux. Idéal pour les postes.</li>
+                <li><strong>NFS</strong> — partage Unix→Unix, plus léger, parfait entre serveurs/VM.</li>
+            </ul>
+
+            <div class="tip">
+                <p class="tip__label">RAID n'est pas une sauvegarde</p>
+                <p>Un miroir ou un RAIDZ protège d'une <em>panne disque</em>, pas d'une suppression accidentelle, d'un rançongiciel ou d'un incendie. Le NAS reste une source à sauvegarder ailleurs (chapitre suivant).</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un NAS centralise le stockage et le partage (SMB pour les postes, NFS entre serveurs). TrueNAS/Unraid/OMV clé en main, ou ZFS sur Proxmox. <strong>RAID = disponibilité, pas sauvegarde.</strong></p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="backup">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Sauvegardes &amp; résilience</h2>
+            <p class="chapter__intro">Un homelab sans sauvegarde, c'est une perte de données qui attend son heure. La bonne nouvelle : quelques outils rendent ça simple et automatique.</p>
+
+            <h3>Que sauvegarder</h3>
+            <ul>
+                <li>Les <strong>volumes Docker</strong> et fichiers <code>docker-compose.yml</code> (toute ta config).</li>
+                <li>Les <strong>VM/CT</strong> côté hyperviseur (backups Proxmox, cf. son chapitre dédié).</li>
+                <li>Les <strong>données du NAS</strong> (documents, photos, médias irremplaçables en priorité).</li>
+            </ul>
+
+            <h3>Avec quoi</h3>
+            <ul>
+                <li><strong>Restic / Borg / Kopia</strong> — sauvegarde chiffrée, dédupliquée, incrémentale, vers un disque externe ou du cloud.</li>
+                <li><strong>Proxmox Backup Server</strong> — pour les VM et conteneurs.</li>
+                <li><strong>rsync</strong> — pour de la simple recopie de dossiers.</li>
+            </ul>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Règle du 3-2-1</p>
+                <p><strong>3</strong> copies, sur <strong>2</strong> supports, dont <strong>1</strong> hors site. Et surtout : <strong>teste une restauration</strong>. Une sauvegarde jamais restaurée n'est qu'une hypothèse — automatise le backup, vérifie qu'il tourne, restaure pour de vrai de temps en temps.</p>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="distant">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Accès distant sécurisé</h2>
+            <p class="chapter__intro">Accéder à son homelab depuis l'extérieur est tentant — et c'est le premier moyen de se faire pirater si on s'y prend mal. La règle : <strong>ne jamais exposer un service directement sur Internet</strong>. On passe par un tunnel chiffré.</p>
+
+            <h3>Les bonnes approches</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>VPN — WireGuard</h4>
+                    <ul>
+                        <li>Un tunnel chiffré vers ton réseau maison</li>
+                        <li>Un seul port UDP à ouvrir (ou zéro avec un relais)</li>
+                        <li>Moderne, rapide, simple à configurer</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Mesh VPN — Tailscale</h4>
+                    <ul>
+                        <li>Basé sur WireGuard, <strong>zéro port à ouvrir</strong></li>
+                        <li>Relie tes appareils comme un réseau privé</li>
+                        <li>Le plus simple pour débuter</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Ne fais surtout pas ça</p>
+                <p>Ouvrir un <em>port forwarding</em> direct vers un service (RDP, une appli web, un NAS) est la cause n°1 de compromission de homelab. Passe <strong>toujours</strong> par un VPN (WireGuard/Tailscale). Si un service doit vraiment être public, mets-le derrière un reverse proxy durci, avec authentification et à jour.</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Pour aller plus loin</p>
+                <p>Chaînes de référence pour ce module : <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a> (homelab, Docker, reverse proxy) et <a href="https://www.youtube.com/@TechHut" target="_blank" rel="noopener">TechHut</a> (self-hosting). L'infra tourne idéalement sur <a href="proxmox.html">Proxmox</a>, et la sécurité se travaille avec le module <a href="securite.html">Cybersécurité</a>.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Accès distant = <strong>VPN uniquement</strong> (WireGuard, ou Tailscale pour le zéro-config). Jamais de port forwarding direct vers un service. Un homelab bien fait est invisible depuis Internet.</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>Homelab &amp; Self-hosting</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · Pour approfondir : <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a> · <a href="https://www.youtube.com/@TechHut" target="_blank" rel="noopener">TechHut</a></p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>

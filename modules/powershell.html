@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerShell &amp; Automatisation — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body data-domain="ps">
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 02 · Automatisation</p>
+        <h1 class="hero__title">PowerShell &amp;<br><em>Automatisation</em></h1>
+        <p class="hero__lead">Monter un environnement entier sans toucher à la souris : créer les VM Hyper-V, configurer le réseau, promouvoir un domaine, joindre les serveurs et provisionner un compte de service managé — le tout en scripts rejouables.</p>
+        <div class="hero__meta">
+            <span class="chip">Hyper-V</span><span class="chip">New-VM</span><span class="chip">AD DS</span><span class="chip">GMSA</span><span class="chip">Cheat-sheet</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">PowerShell</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#bases"><span>01</span> Les bases du langage</a></li>
+            <li><a class="toc__link" href="#vm"><span>02</span> Créer des VM Hyper-V</a></li>
+            <li><a class="toc__link" href="#reseau"><span>03</span> Réseau &amp; renommage</a></li>
+            <li><a class="toc__link" href="#ad"><span>04</span> Promotion AD</a></li>
+            <li><a class="toc__link" href="#gmsa"><span>05</span> Compte managé (GMSA)</a></li>
+            <li><a class="toc__link" href="#memo"><span>06</span> Mémo des cmdlets</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">PowerShell</div>
+                <div class="section-banner__desc">Le script comme documentation vivante de l'infrastructure</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="bases">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Les bases du langage</h2>
+            <p class="chapter__intro">PowerShell n'est pas un shell de texte mais un shell <strong>orienté objet</strong> : chaque commande renvoie de vrais objets .NET que l'on peut filtrer, trier et chaîner dans un pipeline.</p>
+
+            <h3>Le verbe-nom : une grammaire prévisible</h3>
+            <p>Toutes les commandes (<em>cmdlets</em>) suivent le motif <strong>Verbe-Nom</strong> : <code>Get-</code>, <code>New-</code>, <code>Set-</code>, <code>Remove-</code>, <code>Install-</code>… Connaître le verbe suffit souvent à deviner la commande.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — découverte</span></div>
+                <pre class="terminal__code"><span class="c"># Chercher une commande</span>
+<span class="k">Get-Command</span> <span class="p">-Verb</span> New <span class="p">-Noun</span> *VM*
+
+<span class="c"># Lire l'aide et des exemples</span>
+<span class="k">Get-Help</span> <span class="k">New-VM</span> <span class="p">-Examples</span>
+
+<span class="c"># Inspecter les propriétés d'un objet</span>
+<span class="k">Get-NetAdapter</span> | <span class="k">Get-Member</span>
+
+<span class="c"># Pipeline : filtrer puis afficher</span>
+<span class="k">Get-Service</span> | <span class="k">Where-Object</span> Status <span class="p">-eq</span> <span class="s">"Running"</span> | <span class="k">Select-Object</span> Name, Status</pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Réflexe</p>
+                <p>Bloqué ? <code>Get-Help &lt;cmdlet&gt; -Examples</code> et <code>&lt;objet&gt; | Get-Member</code> répondent à 90 % des questions sans quitter la console.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="vm">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Créer des VM Hyper-V</h2>
+            <p class="chapter__intro">Toute la mise en place du labo commence par un <strong>commutateur virtuel privé</strong> et des VM de génération 2 créées sur des <strong>disques différentiels</strong> pointant vers l'image SYSPREP de référence.</p>
+
+            <h3>Le commutateur et un serveur</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — hôte Hyper-V</span></div>
+                <pre class="terminal__code"><span class="c"># Un réseau privé isolé pour le labo</span>
+<span class="k">New-VMSwitch</span> <span class="p">-Name</span> <span class="s">"LABOPS"</span> <span class="p">-SwitchType</span> Private
+
+<span class="c"># Disque enfant basé sur l'image généralisée</span>
+<span class="k">New-VHD</span> <span class="p">-Path</span> <span class="s">.\SRV-AD01-DISK1-DIFF.vhdx</span> `
+    <span class="p">-ParentPath</span> <span class="s">"C:\PARENT\TEST-SYSPREP.vhdx"</span> <span class="p">-Differencing</span>
+
+<span class="c"># La VM (Gen 2, 8 Go, branchée sur LABOPS)</span>
+<span class="k">New-VM</span> <span class="p">-Name</span> <span class="s">"SRV-AD01"</span> <span class="p">-Generation</span> 2 <span class="p">-MemoryStartupBytes</span> 8GB `
+    <span class="p">-VHDPath</span> <span class="s">.\SRV-AD01-DISK1-DIFF.vhdx</span> <span class="p">-Path</span> <span class="s">.\</span> <span class="p">-SwitchName</span> <span class="s">"LABOPS"</span>
+
+<span class="c"># Mémoire statique + 2 vCPU</span>
+<span class="k">Set-VMMemory</span> <span class="p">-VMName</span> SRV-AD01 <span class="p">-DynamicMemoryEnabled</span> $false
+<span class="k">Set-VMProcessor</span> <span class="p">-VMName</span> SRV-AD01 <span class="p">-Count</span> 2</pre>
+            </div>
+
+            <h3>Un client Windows 11 (ISO + TPM)</h3>
+            <p>Un client part d'un disque vierge, démarre sur l'ISO, et exige le <strong>TPM virtuel</strong> + <strong>Secure Boot</strong> requis par Windows 11.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — VM client</span></div>
+                <pre class="terminal__code"><span class="k">New-VHD</span> <span class="p">-Path</span> <span class="s">.\CLIENT-WIN11-DISK1.vhdx</span> <span class="p">-SizeBytes</span> 127GB <span class="p">-Dynamic</span>
+<span class="k">New-VM</span> <span class="p">-Name</span> <span class="s">"CLIENT-WIN11"</span> <span class="p">-Generation</span> 2 <span class="p">-MemoryStartupBytes</span> 8GB `
+    <span class="p">-VHDPath</span> <span class="s">.\CLIENT-WIN11-DISK1.vhdx</span> <span class="p">-SwitchName</span> <span class="s">"LABOPS"</span>
+
+<span class="c"># Monter l'ISO et démarrer dessus</span>
+<span class="k">Add-VMDvdDrive</span> <span class="p">-VMName</span> CLIENT-WIN11 <span class="p">-Path</span> <span class="s">"...\Win11_25H2_x64.iso"</span>
+<span class="k">Set-VMFirmware</span> <span class="p">-VMName</span> CLIENT-WIN11 <span class="p">-FirstBootDevice</span> (<span class="k">Get-VMDvdDrive</span> <span class="p">-VMName</span> CLIENT-WIN11)
+
+<span class="c"># Exigé par Windows 11 : TPM virtuel + Secure Boot</span>
+<span class="k">Set-VMKeyProtector</span> <span class="p">-VMName</span> CLIENT-WIN11 <span class="p">-NewLocalKeyProtector</span>
+<span class="k">Enable-VMTPM</span> <span class="p">-VMName</span> CLIENT-WIN11</pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Switch privé → VHDX <strong>différentiel</strong> sur le parent SYSPREP → <code>New-VM -Generation 2</code> → mémoire statique. Les serveurs réutilisent l'image ; le client Windows 11 part d'un disque neuf avec <strong>TPM + Secure Boot</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="reseau">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Réseau &amp; renommage</h2>
+            <p class="chapter__intro">Après le premier démarrage, chaque serveur reçoit son <strong>identité réseau définitive</strong> : adresse IP fixe, serveur DNS, désactivation d'IPv6 si inutile, puis renommage et redémarrage.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — post-déploiement</span></div>
+                <pre class="terminal__code"><span class="c"># 1. Identifier la carte</span>
+<span class="k">Get-NetAdapter</span>
+
+<span class="c"># 2. IP fixe + passerelle</span>
+<span class="k">New-NetIPAddress</span> <span class="p">-InterfaceAlias</span> <span class="s">"Ethernet"</span> <span class="p">-IPAddress</span> 172.16.50.10 `
+    <span class="p">-PrefixLength</span> 24 <span class="p">-DefaultGateway</span> 172.16.50.1
+
+<span class="c"># 3. Serveur DNS (le DC pointe vers lui-même)</span>
+<span class="k">Set-DnsClientServerAddress</span> <span class="p">-InterfaceAlias</span> <span class="s">"Ethernet"</span> <span class="p">-ServerAddresses</span> 172.16.50.10
+
+<span class="c"># 4. Désactiver IPv6 (labo)</span>
+<span class="k">Disable-NetAdapterBinding</span> <span class="p">-Name</span> <span class="s">"Ethernet"</span> <span class="p">-ComponentID</span> ms_tcpip6
+
+<span class="c"># 5. Renommer puis redémarrer</span>
+<span class="k">Rename-Computer</span> <span class="p">-NewName</span> <span class="s">"SRV-AD01"</span> <span class="p">-Restart</span></pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Ordre des opérations</p>
+                <p>Toujours fixer <strong>réseau + nom</strong> <em>avant</em> de promouvoir le domaine ou de joindre une machine. Renommer un contrôleur de domaine après promotion est bien plus délicat.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="ad">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Promotion AD en script</h2>
+            <p class="chapter__intro">La promotion d'un contrôleur de domaine et la création de toute l'arborescence (OU, groupes, utilisateurs) se scriptent intégralement — ce qui rend l'environnement <strong>reconstructible à l'identique</strong>.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
+                <pre class="terminal__code"><span class="k">Install-WindowsFeature</span> AD-Domain-Services, DNS <span class="p">-IncludeManagementTools</span>
+<span class="k">Install-ADDSForest</span> <span class="p">-DomainName</span> <span class="s">"orion.local"</span> <span class="p">-DomainNetbiosName</span> <span class="s">"ORION"</span> <span class="p">-InstallDns</span>
+
+<span class="c"># Arborescence : OU racine → départements → groupes → users</span>
+<span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"ORION-DPT"</span> <span class="p">-Path</span> <span class="s">"DC=orion,DC=local"</span>
+<span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"Management"</span>  <span class="p">-Path</span> <span class="s">"OU=ORION-DPT,DC=orion,DC=local"</span>
+<span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"Development"</span> <span class="p">-Path</span> <span class="s">"OU=ORION-DPT,DC=orion,DC=local"</span>
+<span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"Accounting"</span>  <span class="p">-Path</span> <span class="s">"OU=ORION-DPT,DC=orion,DC=local"</span>
+
+<span class="k">New-ADGroup</span> <span class="p">-Name</span> <span class="s">"MGMT-GRP"</span> <span class="p">-GroupScope</span> Global <span class="p">-GroupCategory</span> Security `
+    <span class="p">-Path</span> <span class="s">"OU=Management,OU=ORION-DPT,DC=orion,DC=local"</span>
+
+<span class="k">New-ADUser</span> <span class="p">-Name</span> <span class="s">"Mathis Thomas"</span> <span class="p">-SamAccountName</span> <span class="s">"mth"</span> `
+    <span class="p">-UserPrincipalName</span> <span class="s">"mth@orion.local"</span> `
+    <span class="p">-Path</span> <span class="s">"OU=Management,OU=ORION-DPT,DC=orion,DC=local"</span> `
+    <span class="p">-AccountPassword</span> (<span class="k">Read-Host</span> <span class="p">-AsSecureString</span> <span class="s">"Mot de passe"</span>) <span class="p">-Enabled</span> $true
+<span class="k">Add-ADGroupMember</span> <span class="p">-Identity</span> <span class="s">"MGMT-GRP"</span> <span class="p">-Members</span> <span class="s">"mth"</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Ne jamais écrire un mot de passe en clair dans un script : <code>Read-Host -AsSecureString</code> le saisit de façon masquée. Pour rejouer en masse, on boucle sur un <code>Import-Csv</code> d'utilisateurs.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="gmsa">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Compte de service managé (GMSA)</h2>
+            <p class="chapter__intro">Un <strong>gMSA</strong> (Group Managed Service Account) est un compte de service dont Active Directory gère <strong>automatiquement le mot de passe</strong> — long, complexe, renouvelé tout seul. Idéal pour SQL Server, IIS ou un planificateur de tâches : plus de mot de passe à connaître ni à faire tourner à la main.</p>
+
+            <h3>Mise en place (vue dans le labo SharePoint/SQL)</h3>
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Créer la clé racine KDS</strong>Une seule fois par forêt. Elle permet à AD de générer les mots de passe gMSA.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Préparer un groupe</strong>Une OU « GMSA », un groupe <code>GS_GMSA_SQL</code> dont les membres sont les serveurs autorisés (ex. <code>SRV-SQL01</code>).</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Créer le compte gMSA</strong>En autorisant ce groupe à récupérer le mot de passe managé.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Installer sur le serveur cible</strong>Sur SRV-SQL01 : <code>Install-ADServiceAccount</code>, puis on l'affecte au service.</div></li>
+            </ol>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — sur le contrôleur de domaine</span></div>
+                <pre class="terminal__code"><span class="c"># 1. Clé racine KDS — UNE SEULE FOIS dans l'environnement</span>
+<span class="k">Add-KdsRootKey</span> <span class="p">-EffectiveTime</span> ((<span class="k">Get-Date</span>).AddHours(-10))
+
+<span class="c"># 2. Groupe des serveurs autorisés (membre : SRV-SQL01)</span>
+<span class="c">#    créé dans une OU dédiée « GMSA »</span>
+
+<span class="c"># 3. Le compte managé</span>
+<span class="k">New-ADServiceAccount</span> GMSA_SQL <span class="p">-DNSHostName</span> gmsa_sql.marvin.lan `
+    <span class="p">-PrincipalsAllowedToRetrieveManagedPassword</span> GS_GMSA_SQL
+
+<span class="c"># 4. Sur SRV-SQL01 :</span>
+<span class="c"># Install-ADServiceAccount GMSA_SQL</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le gMSA résout le cauchemar des <strong>mots de passe de comptes de service</strong> : AD les gère et les renouvelle seul. <code>Add-KdsRootKey</code> ne s'exécute <strong>qu'une fois</strong> par forêt ; le décalage <code>-10h</code> évite d'attendre la propagation.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="memo">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Mémo des cmdlets</h2>
+            <p class="chapter__intro">La trousse à outils du labo, regroupée par domaine — à garder sous la main.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Domaine</th><th>Cmdlet</th><th>Rôle</th></tr></thead>
+                    <tbody>
+                        <tr><td>Hyper-V</td><td><code>New-VMSwitch</code></td><td>Créer un commutateur virtuel</td></tr>
+                        <tr><td>Hyper-V</td><td><code>New-VHD -Differencing</code></td><td>Disque enfant basé sur un parent</td></tr>
+                        <tr><td>Hyper-V</td><td><code>New-VM</code> / <code>Set-VMProcessor</code></td><td>Créer / dimensionner une VM</td></tr>
+                        <tr><td>Hyper-V</td><td><code>Enable-VMTPM</code></td><td>Activer le TPM virtuel (Windows 11)</td></tr>
+                        <tr><td>Réseau</td><td><code>New-NetIPAddress</code></td><td>Adresse IP fixe</td></tr>
+                        <tr><td>Réseau</td><td><code>Set-DnsClientServerAddress</code></td><td>Serveur DNS du client</td></tr>
+                        <tr><td>Système</td><td><code>Rename-Computer</code></td><td>Renommer + redémarrer</td></tr>
+                        <tr><td>Système</td><td><code>Install-WindowsFeature</code></td><td>Ajouter un rôle/fonctionnalité</td></tr>
+                        <tr><td>AD</td><td><code>Install-ADDSForest</code></td><td>Créer forêt + domaine</td></tr>
+                        <tr><td>AD</td><td><code>New-ADOrganizationalUnit</code></td><td>Créer une OU</td></tr>
+                        <tr><td>AD</td><td><code>New-ADUser</code> / <code>New-ADGroup</code></td><td>Créer utilisateurs / groupes</td></tr>
+                        <tr><td>AD</td><td><code>Add-Computer</code></td><td>Joindre une machine au domaine</td></tr>
+                        <tr><td>Sécurité</td><td><code>New-ADServiceAccount</code></td><td>Compte de service managé (gMSA)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Bonne pratique</p>
+                <p>Scripter toute opération répétitive plutôt que de cliquer : le script devient la <strong>documentation vivante</strong> de l'environnement et permet de tout reconstruire après un incident. Versionner ces scripts sur GitHub (c'est déjà le cas ici 👍).</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>PowerShell &amp; Automatisation</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · Synthèse des scripts <code>.ps1</code> du labo</p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>

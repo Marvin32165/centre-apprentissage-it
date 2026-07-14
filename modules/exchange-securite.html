@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exchange &amp; Sécurité (PKI) — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body data-domain="exch">
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 03 · Messagerie &amp; Cryptographie</p>
+        <h1 class="hero__title">Exchange &amp;<br><em>Sécurité</em> (PKI)</h1>
+        <p class="hero__lead">Déployer une messagerie Exchange 2019, gérer les boîtes aux lettres, puis comprendre en profondeur ce qui sécurise tout cela : la cryptographie asymétrique, les certificats, la chaîne de confiance et l'autorité de certification interne.</p>
+        <div class="hero__meta">
+            <span class="chip">Exchange 2019</span><span class="chip">Mailbox</span><span class="chip">PKI</span><span class="chip">Crypto asymétrique</span><span class="chip">AD CS</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Exchange &amp; Sécurité</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#archi"><span>01</span> Architecture du labo</a></li>
+            <li><a class="toc__link" href="#mailbox"><span>02</span> Boîtes aux lettres</a></li>
+            <li><a class="toc__link" href="#crypto"><span>03</span> Crypto asymétrique</a></li>
+            <li><a class="toc__link" href="#pki"><span>04</span> PKI &amp; chaîne de confiance</a></li>
+            <li><a class="toc__link" href="#adcs"><span>05</span> CA interne (AD CS)</a></li>
+            <li><a class="toc__link" href="#certs-exch"><span>06</span> Certificats Exchange</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Exchange &amp; Sécurité</div>
+                <div class="section-banner__desc">De la boîte mail à la signature cryptographique qui la protège</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="archi">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Architecture du labo Exchange</h2>
+            <p class="chapter__intro">Exchange ne vit jamais seul : il s'appuie sur Active Directory (pour les comptes) et sur le DNS (pour le routage du courrier). Le labo type réunit trois machines dans le domaine <code>m.zepp.lan</code> (NetBIOS <code>MZEPP</code>).</p>
+
+            <div class="net">
+                <div class="node"><b>AD</b><span class="ip">10.10.28.121</span><span>Contrôleur de domaine + DNS — <code>m.zepp.lan</code></span></div>
+                <div class="node"><b>EXCHANGE</b><span class="ip">10.10.28.122</span><span>Serveur de messagerie Exchange 2019 (<code>EXCHANGE-MZEPP</code>)</span></div>
+                <div class="node"><b>CLIENT</b><span class="ip">10.10.28.123</span><span>Poste de test — Outlook / OWA</span></div>
+                <div class="node"><b>Passerelle</b><span class="ip">10.10.28.254</span><span>Default gateway</span></div>
+            </div>
+
+            <h3>Mise en place initiale</h3>
+            <ul>
+                <li>Créer un utilisateur <strong>technicien</strong> disposant de tous les droits d'administration.</li>
+                <li>Joindre les machines au domaine <code>m.zepp.lan</code>.</li>
+                <li>Exchange étend le schéma AD : il faut les droits <em>Schema Admins / Enterprise Admins</em> à la préparation.</li>
+            </ul>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Exchange = <strong>AD + DNS + serveur de messagerie</strong>. Les boîtes aux lettres sont liées à des comptes AD ; le routage SMTP dépend du DNS (enregistrements <code>MX</code>). On prépare donc toujours l'annuaire avant d'installer Exchange.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="mailbox">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Gérer les boîtes aux lettres</h2>
+            <p class="chapter__intro">Toute l'administration passe par l'<strong>Exchange Management Shell</strong>. Deux cas : créer un compte <em>et</em> sa boîte d'un coup, ou activer une boîte sur un compte AD qui existe déjà.</p>
+
+            <h3>Créer un compte + sa boîte (<code>New-Mailbox</code>)</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Exchange Management Shell</span></div>
+                <pre class="terminal__code"><span class="k">New-Mailbox</span> <span class="p">-Name</span> <span class="s">'Jean Dupont'</span> <span class="p">-Alias</span> <span class="s">'jean.dupont'</span> `
+    <span class="p">-FirstName</span> <span class="s">'Jean'</span> <span class="p">-LastName</span> <span class="s">'Dupont'</span> <span class="p">-DisplayName</span> <span class="s">'Jean Dupont'</span> `
+    <span class="p">-UserPrincipalName</span> <span class="s">'jean.dupont@m.zepp.lan'</span> `
+    <span class="p">-OrganizationalUnit</span> <span class="s">'m.zepp.lan/Admin'</span> `
+    <span class="p">-Database</span> <span class="s">'Mailbox Database 0112725915'</span> `
+    <span class="p">-Password</span> (<span class="k">ConvertTo-SecureString</span> <span class="s">'P@ssw0rd!'</span> <span class="p">-AsPlainText</span> <span class="p">-Force</span>) `
+    <span class="p">-ResetPasswordOnNextLogon</span> $true</pre>
+            </div>
+
+            <h3>Activer une boîte sur un compte AD existant (<code>Enable-Mailbox</code>)</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Exchange Management Shell</span></div>
+                <pre class="terminal__code"><span class="c"># Le compte 'marie.martin' existe déjà dans AD…</span>
+<span class="k">Enable-Mailbox</span> <span class="p">-Identity</span> <span class="s">'marie.martin'</span> <span class="p">-Database</span> <span class="s">'Mailbox Database 0112725915'</span>
+
+<span class="c"># Vérifier le résultat</span>
+<span class="k">Get-Mailbox</span> <span class="p">-Identity</span> <span class="s">'marie.martin'</span> |
+    <span class="k">Format-List</span> Name, Alias, PrimarySmtpAddress, Database</pre>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Commande</th><th>Effet</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>New-Mailbox</code></td><td>Crée le compte AD <em>et</em> sa boîte aux lettres</td></tr>
+                        <tr><td><code>Enable-Mailbox</code></td><td>Ajoute une boîte à un compte AD déjà existant</td></tr>
+                        <tr><td><code>Get-Mailbox</code></td><td>Affiche les propriétés d'une boîte</td></tr>
+                        <tr><td><code>Remove-Mailbox</code></td><td>Supprime la boîte <strong>et</strong> le compte associé</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Attention</p>
+                <p><code>Remove-Mailbox</code> supprime aussi le <strong>compte AD</strong>, pas seulement la boîte. Pour ne retirer que la messagerie en gardant l'utilisateur, on utilise <code>Disable-Mailbox</code>.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="crypto">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Chiffrement asymétrique — les deux sens</h2>
+            <p class="chapter__intro">Tout repose sur une <strong>paire de clés</strong> : ce qu'<em>une</em> clé verrouille, <em>l'autre</em> seule peut le déverrouiller. Selon la clé utilisée pour « fermer », on obtient <strong>deux services radicalement différents</strong>.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>&nbsp;</th><th>Sens 1 — Confidentialité</th><th>Sens 2 — Signature</th></tr></thead>
+                    <tbody>
+                        <tr><td>On chiffre avec…</td><td>la clé <strong>publique</strong> du destinataire</td><td>sa <strong>propre clé privée</strong></td></tr>
+                        <tr><td>On déchiffre avec…</td><td>la clé <strong>privée</strong> du destinataire</td><td>la clé <strong>publique</strong> de l'émetteur</td></tr>
+                        <tr><td>But</td><td><span class="yes">Secret</span> : seul le destinataire lit</td><td><span class="yes">Authenticité + intégrité</span></td></tr>
+                        <tr><td>Cache le contenu ?</td><td>Oui</td><td>Non (tout le monde a la clé publique)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Le sens contre-intuitif : « chiffrer avec la clé privée »</h3>
+            <p>Je « chiffre » (= <strong>je signe</strong>) avec <strong>ma</strong> clé privée, que je suis seul à posséder. N'importe qui peut « déchiffrer » (= <strong>vérifier</strong>) avec ma clé publique… qui est publique. <strong>Donc ça ne cache rien.</strong> Le but n'est pas le secret mais la <strong>preuve d'origine</strong> :</p>
+            <div class="takeaway">
+                <p class="takeaway__label">L'intuition</p>
+                <p>« Si ça se déchiffre correctement avec la clé publique de Marvin, alors <strong>seul Marvin</strong> a pu le produire — lui seul détient la clé privée. » C'est exactement une <strong>signature numérique</strong>.</p>
+            </div>
+
+            <h3>Comment ça marche vraiment (le hash)</h3>
+            <p>On ne signe pas tout le message (trop lent). En pratique :</p>
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Empreinte</strong>On calcule un <strong>hash</strong> du message (ex. SHA-256) → une suite courte et unique.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Signature</strong>On chiffre cette empreinte avec la <strong>clé privée</strong> → c'est la signature.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Envoi</strong>On transmet le message <em>en clair</em> + la signature.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Vérification</strong>Le destinataire recalcule le hash, déchiffre la signature avec la <strong>clé publique</strong>, et <strong>compare</strong>. Identiques → bon émetteur et message intact. Différents → rejet.</div></li>
+            </ol>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir (formule)</p>
+                <p><strong>Clé publique pour chiffrer → on protège un secret.</strong><br><strong>Clé privée pour chiffrer (= signer) → on prouve une identité.</strong><br>La signature ne cache rien ; elle garantit <em>qui</em> a écrit et <em>que rien n'a bougé</em>.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="pki">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">PKI &amp; chaîne de confiance</h2>
+            <p class="chapter__intro">Une clé publique seule ne prouve aucune identité — n'importe qui peut dire « cette clé est celle du serveur Exchange ». La <strong>PKI</strong> (Public Key Infrastructure) ajoute une <strong>autorité</strong> qui signe les certificats et transforme une clé en <strong>identité vérifiable</strong>.</p>
+
+            <h3>Du certificat auto-signé à la CA</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Situation</th><th>Qui affirme l'identité ?</th><th>Confiance</th></tr></thead>
+                    <tbody>
+                        <tr><td>« Je m'appelle Marvin Zepp »</td><td>Moi-même → certificat <strong>auto-signé</strong></td><td class="no">Aucune (mensonge possible)</td></tr>
+                        <tr><td>Un tiers reconnu le garantit</td><td>Une <strong>CA</strong> (autorité de certification)</td><td class="yes">Oui, si on fait confiance au tiers</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Je crée une autorité, ex. <code>CA_MARVIN</code>. Avec elle je <strong>délivre et signe</strong> les certificats de tout le monde (<code>stagiaire1</code>, <code>serveur web</code>, <code>mail.m.zepp.lan</code>…). Ce n'est plus le sujet qui s'auto-atteste : c'est un <strong>tiers</strong> qui atteste.</p>
+
+            <h3>Établir puis vérifier la confiance</h3>
+            <p>J'importe le <strong>certificat racine</strong> de <code>CA_MARVIN</code> dans le magasin « Autorités racines de confiance » de tous les PC (via <strong>GPO</strong> en AD). Dès lors, chaque machine fait confiance à <strong>tout ce que <code>CA_MARVIN</code> a signé</strong>. À réception d'un certificat, le PC regarde <em>qui l'a émis</em> et <strong>remonte la chaîne</strong> jusqu'à une racine connue.</p>
+
+            <h4>Exemple réel — le certificat de <code>*.google.com</code></h4>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Visionneuse de certificats — lecture de bas en haut</span></div>
+                <pre class="terminal__code">GTS Root R1          <span class="c">← CA RACINE — préinstallée dans Windows</span>
+  └─ WR2             <span class="c">← CA INTERMÉDIAIRE — signée par la racine</span>
+       └─ *.google.com   <span class="c">← CERTIFICAT SERVEUR (feuille, wildcard)</span></pre>
+            </div>
+            <p>Le serveur présente <code>*.google.com</code>, signé par <code>WR2</code>, lui-même signé par <code>GTS Root R1</code> (préinstallée) → la chaîne remonte à une racine connue → <strong>cadenas vert</strong>. Une chaîne réelle a souvent <strong>3 niveaux</strong> : l'intermédiaire évite d'exposer la clé privée de la racine au quotidien.</p>
+
+            <h3>Pourquoi c'est sûr — le point qui blinde l'oral</h3>
+            <p>La CA signe le certificat avec sa <strong>clé privée</strong> (qu'elle seule possède) ; le PC vérifie avec la <strong>clé publique</strong> de la CA (dans le certificat racine importé). Un attaquant <strong>ne peut pas fabriquer un faux « certificat signé CA_MARVIN »</strong> sans voler la clé privée de la CA. C'est la <strong>signature cryptographique</strong>, pas le nom écrit dessus, qui fait foi.</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>Les 3 types de CA</h4>
+                    <ul>
+                        <li><strong>Auto-signé</strong> — confiance nulle part (tests, labo).</li>
+                        <li><strong>CA interne</strong> (<code>CA_MARVIN</code>) — de confiance sur les PC où la racine est importée (réseau AD).</li>
+                        <li><strong>CA publique</strong> (DigiCert, Let's Encrypt) — de confiance partout (services exposés sur Internet).</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Briques de gestion</h4>
+                    <ul>
+                        <li><strong>CSR</strong> — la demande envoyée à la CA pour obtenir un certificat.</li>
+                        <li><strong>Révocation</strong> (CRL / OCSP) — invalider un certificat avant son expiration.</li>
+                        <li><strong>Expiration</strong> — tout certificat a une fin ; il faut le renouveler.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">En une phrase</p>
+                <p>Un certificat auto-signé dit « c'est moi qui le dis » ; la PKI ajoute une <strong>autorité de confiance</strong> qui signe à ma place, et chaque machine valide en <strong>remontant la chaîne</strong> jusqu'à une racine qu'elle connaît déjà.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="adcs">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Créer une CA interne (AD CS)</h2>
+            <p class="chapter__intro">Concrètement, la CA d'entreprise s'installe sur le contrôleur de domaine via le rôle <strong>AD CS</strong> (Active Directory Certificate Services). Une fois en place, elle peut signer les certificats du domaine — dont celui d'Exchange.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — sur l'AD</span></div>
+                <pre class="terminal__code"><span class="c"># Rôle CA + inscription web</span>
+<span class="k">Install-WindowsFeature</span> AD-Certificate <span class="p">-IncludeManagementTools</span>
+<span class="k">Install-WindowsFeature</span> ADCS-Web-Enrollment
+
+<span class="c"># Promouvoir l'autorité racine d'entreprise</span>
+<span class="k">Install-AdcsCertificationAuthority</span> <span class="p">-CAType</span> EnterpriseRootCA `
+    <span class="p">-CACommonName</span> <span class="s">"CATECHNOCITE"</span> `
+    <span class="p">-KeyLength</span> 2048 <span class="p">-HashAlgorithmName</span> SHA256 <span class="p">-Force</span></pre>
+            </div>
+
+            <ul>
+                <li><strong>EnterpriseRootCA</strong> — intégrée à AD : la racine est <em>automatiquement</em> distribuée aux membres du domaine (plus besoin d'importer à la main, c'est l'avantage majeur vs une CA autonome).</li>
+                <li><strong>KeyLength / HashAlgorithm</strong> — robustesse de la clé et de l'empreinte (2048 bits, SHA-256 au minimum).</li>
+            </ul>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Une <strong>Enterprise Root CA</strong> publie sa racine dans AD : tous les postes du domaine lui font confiance sans manipulation. C'est ce qui permet à Outlook/OWA de se connecter à Exchange <strong>sans alerte de certificat</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="certs-exch">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Certificats Exchange</h2>
+            <p class="chapter__intro">Le serveur <code>EXCHANGE-MZEPP</code> présente un certificat pour <code>mail.m.zepp.lan</code>. Selon qui l'a signé, le client se connecte sans bruit… ou affiche une alerte.</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>Signé par la CA d'entreprise</h4>
+                    <ul>
+                        <li>La racine est connue de tous les PC du domaine.</li>
+                        <li>Outlook / OWA se connectent <strong>sans avertissement</strong>.</li>
+                        <li>Situation cible en production.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Auto-signé</h4>
+                    <ul>
+                        <li>Fonctionne techniquement…</li>
+                        <li>…mais le client affiche une <strong>alerte de sécurité</strong>.</li>
+                        <li>Cas classique en labo rapide.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Le cycle d'un certificat serveur</h3>
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Générer la demande (CSR)</strong>Côté Exchange : <code>New-ExchangeCertificate -GenerateRequest</code> produit un CSR pour <code>mail.m.zepp.lan</code>.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Faire signer par la CA</strong>On soumet le CSR à <code>CATECHNOCITE</code> (inscription web AD CS) qui renvoie le certificat signé.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Importer &amp; assigner</strong>On importe le certificat dans Exchange et on l'affecte aux services (IIS pour OWA, SMTP, IMAP…).</div></li>
+            </ol>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Boucle complète : <strong>CSR sur Exchange → signature par la CA interne → assignation aux services</strong>. Comme la racine de la CA est dans le magasin de confiance via AD, le client valide <code>mail.m.zepp.lan</code> sans alerte. C'est la PKI du chapitre 4 appliquée à un cas réel.</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>Exchange &amp; Sécurité (PKI)</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · Synthèse des fiches PKI &amp; du TP Exchange 2019</p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>

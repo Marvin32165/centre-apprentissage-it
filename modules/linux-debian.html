@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux Debian — Du premier login à la maîtrise du terminal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+    <style>
+        /* ── Visuels spécifiques au module Linux (permissions), version thème clair ── */
+        .lsline { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; background:#F8FAFC; border:1px solid var(--border); border-radius:var(--r); padding:20px 16px; margin:16px 0; }
+        .lsseg { display:flex; flex-direction:column; align-items:center; gap:6px; }
+        .lsseg .val { font-family:var(--font-mono); font-size:.88rem; color:var(--ink); background:#fff; padding:6px 12px; border-radius:6px; border:2px solid var(--border-md); }
+        .lsseg .lab { font-size:.67rem; color:var(--ink-soft); text-align:center; max-width:110px; }
+        .lsseg.c1 .val{border-color:#0EA5E9} .lsseg.c2 .val{border-color:#7C3AED} .lsseg.c3 .val{border-color:var(--accent)}
+        .lsseg.c4 .val{border-color:var(--warn)} .lsseg.c5 .val{border-color:var(--yes)} .lsseg.c6 .val{border-color:var(--warn)} .lsseg.c7 .val{border-color:#0EA5E9}
+
+        .octal { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin:16px 0; }
+        .oct { text-align:center; background:#F8FAFC; border:1px solid var(--border); border-radius:var(--r-sm); padding:12px 20px; }
+        .oct .big { font-size:1.5rem; font-weight:700; color:var(--accent); }
+        .oct .m { color:var(--ink-soft); font-family:var(--font-mono); font-size:.82rem; }
+        .oct small { color:var(--ink-faint); font-size:.72rem; }
+
+        .triplet { margin:18px 0; overflow-x:auto; }
+        .triplet-groups { display:flex; justify-content:center; gap:8px; min-width:520px; }
+        .tg-group { flex:1; text-align:center; }
+        .tg-group .glabel { font-family:var(--font-mono); font-weight:600; font-size:.78rem; padding-bottom:6px; margin-bottom:8px; border-bottom:2px solid; }
+        .tg-u .glabel{color:#0EA5E9;border-color:#0EA5E9} .tg-g .glabel{color:var(--warn);border-color:var(--warn)} .tg-o .glabel{color:var(--accent);border-color:var(--accent)}
+        .tg-cells { display:flex; gap:5px; justify-content:center; }
+        .tcell { flex:1; }
+        .tcell .cbox { background:#0F172A; color:#fff; border-radius:5px; font-family:var(--font-mono); font-weight:700; font-size:1.05rem; padding:8px 0; border:2px solid transparent; }
+        .tg-u .tcell .cbox{border-color:#0EA5E9} .tg-g .tcell .cbox{border-color:var(--warn)} .tg-o .tcell .cbox{border-color:var(--accent)}
+        .tcell .stem { width:1px; height:14px; background:var(--border-md); margin:4px auto; }
+        .tcell .cdesc { background:#F8FAFC; border:1px solid var(--border); border-radius:5px; padding:6px 7px; font-size:.67rem; color:var(--ink-soft); line-height:1.4; }
+        .tcell .cdesc strong { display:block; color:var(--ink); font-size:.73rem; margin-bottom:2px; }
+        .tcell .cdesc .maybe { color:var(--yes); font-family:var(--font-mono); }
+    </style>
+</head>
+<body data-domain="linux">
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 07 · Systèmes Linux</p>
+        <h1 class="hero__title">Linux <em>Debian</em><br>pour bien démarrer</h1>
+        <p class="hero__lead">De la première connexion root jusqu'à la maîtrise du terminal : fichiers, permissions, redirections, filtres texte (grep, sed, awk, find), réseau, APT, SSH, processus et services — tout ce qu'il faut pour administrer un serveur Debian.</p>
+        <div class="hero__meta">
+            <span class="chip">Debian 11 · 12 · 13</span><span class="chip">Terminal / Bash</span><span class="chip">Permissions</span><span class="chip">APT</span><span class="chip">SSH</span><span class="chip">systemd</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Linux Debian</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#chap1"><span>01</span> Linux &amp; le terminal</a></li>
+            <li><a class="toc__link" href="#chap2"><span>02</span> Premiers pas post-install</a></li>
+            <li><a class="toc__link" href="#chap3"><span>03</span> Chemins de base (paths)</a></li>
+            <li><a class="toc__link" href="#chap4"><span>04</span> Fichiers &amp; navigation</a></li>
+            <li><a class="toc__link" href="#chap5"><span>05</span> Lire &amp; éditer</a></li>
+            <li><a class="toc__link" href="#chap6"><span>06</span> Liens &amp; inodes</a></li>
+            <li><a class="toc__link" href="#chap7"><span>07</span> Utilisateurs, groupes &amp; permissions</a></li>
+            <li><a class="toc__link" href="#chap8"><span>08</span> Redirections &amp; pipes</a></li>
+            <li><a class="toc__link" href="#chap9"><span>09</span> sort, cut, wc, tee</a></li>
+            <li><a class="toc__link" href="#chap10"><span>10</span> sed, awk &amp; regex</a></li>
+            <li><a class="toc__link" href="#chap11"><span>11</span> find</a></li>
+            <li><a class="toc__link" href="#chap12"><span>12</span> Variables &amp; prompt</a></li>
+            <li><a class="toc__link" href="#chap13"><span>13</span> PATH &amp; aide</a></li>
+            <li><a class="toc__link" href="#chap14"><span>14</span> Configurer le réseau</a></li>
+            <li><a class="toc__link" href="#chap15"><span>15</span> Réseau &amp; SSH</a></li>
+            <li><a class="toc__link" href="#chap16"><span>16</span> APT &amp; les dépôts</a></li>
+            <li><a class="toc__link" href="#chap17"><span>17</span> Processus &amp; services</a></li>
+            <li><a class="toc__link" href="#chap18"><span>18</span> Disques &amp; système</a></li>
+            <li><a class="toc__link" href="#chap19"><span>19</span> Logs &amp; audit</a></li>
+            <li><a class="toc__link" href="#chap20"><span>20</span> Partitions, GRUB &amp; virtu</a></li>
+            <li><a class="toc__link" href="#chap21"><span>21</span> Raccourcis &amp; réflexes</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Linux Debian</div>
+                <div class="section-banner__desc">Du premier login à la maîtrise du terminal — pour débutant complet</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="chap1">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Linux &amp; le terminal</h2>
+            <p class="chapter__intro">Avant de taper la moindre commande, comprenons de quoi on parle.</p>
+
+            <p><strong>Linux</strong> est un système d'exploitation, comme Windows ou macOS. <strong>Debian</strong> est une « distribution » Linux : un ensemble complet, stable et gratuit, très utilisé sur les serveurs. Le <strong>terminal</strong> (ou shell) est l'outil principal pour l'administrer : on tape des commandes en texte au lieu de cliquer — plus rapide, plus précis, et ça fonctionne même sans interface graphique.</p>
+
+            <h3>Anatomie d'une commande</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">ls</span> <span class="p">-la</span> <span class="s">/home</span>   <span class="c"># commande + options + cible</span></pre>
+            </div>
+            <ul>
+                <li><code>ls</code> — le nom de la commande (ici : lister des fichiers) ;</li>
+                <li><code>-la</code> — des options qui modifient son comportement ;</li>
+                <li><code>/home</code> — l'argument : sur quoi la commande agit.</li>
+            </ul>
+
+            <h3>Les versions de Debian</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Nom de code</th><th>Version</th></tr></thead>
+                <tbody>
+                    <tr><td>bullseye</td><td>Debian 11</td></tr>
+                    <tr><td>bookworm</td><td>Debian 12</td></tr>
+                    <tr><td>trixie</td><td>Debian 13</td></tr>
+                    <tr><td>stable / testing / unstable</td><td>stable actuelle / future / à éviter en production</td></tr>
+                </tbody>
+            </table></div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Pour connaître sa version : <code>lsb_release -a</code> ou <code>cat /etc/os-release</code>. Le nom de code (ex. <strong>trixie</strong>) sert partout, notamment dans la configuration des dépôts APT.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="chap2">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Premiers pas post-install</h2>
+            <p class="chapter__intro">Debian vient d'être installé. Voici les toutes premières actions : créer son utilisateur et lui donner les droits sudo.</p>
+
+            <p>À la première connexion, on entre avec le compte <code>root</code> — le « super-utilisateur » qui a tous les droits. Travailler en permanence avec est dangereux : une commande mal tapée peut détruire le système. La bonne pratique : un utilisateur normal + <code>sudo</code> pour élever ses droits ponctuellement.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Installer sudo</strong><p>Connecté en root : <code>apt install sudo</code></p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Créer l'utilisateur</strong><p><code>adduser apprenant</code> (si pas déjà fait pendant l'installation).</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>L'ajouter au groupe sudo</strong><p><code>usermod -aG sudo apprenant</code> puis vérifier avec <code>groups apprenant</code> — « sudo » doit apparaître.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Se reconnecter</strong><p><code>exit</code> pour quitter root, puis se reconnecter avec le nouvel utilisateur.</p></div></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — en root</span></div>
+                <pre class="terminal__code"><span class="k">apt</span> install sudo
+<span class="k">adduser</span> apprenant
+<span class="k">usermod</span> <span class="p">-aG</span> sudo apprenant
+<span class="k">groups</span> apprenant        <span class="c"># vérifier que "sudo" apparaît</span>
+<span class="k">exit</span></pre>
+            </div>
+
+            <h3>Vérifications de base</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">lsblk</span>                    <span class="c"># disques et partitions</span>
+<span class="k">ip</span> a                     <span class="c"># adresses IP</span>
+<span class="k">apt</span> list <span class="p">--upgradable</span>    <span class="c"># mises à jour disponibles</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Ensuite, on préfixe les commandes d'administration par <code>sudo</code> : par exemple <code>sudo apt update</code>. Le système demande votre mot de passe, pas celui de root.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="chap3">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Les chemins de base (paths)</h2>
+            <p class="chapter__intro">Sous Debian, tout part de la racine <code>/</code> — l'équivalent du <code>C:\</code> de Windows. Pas de lettres de lecteurs : disques et clés USB sont « montés » dans l'arborescence.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Arborescence du système de fichiers</span></div>
+                <pre class="terminal__code"><span class="k">/</span>                        <span class="c">← la racine (= C:\)</span>
+├── <span class="k">bin/</span>     <span class="c">commandes de base : ls, cp, bash…</span>
+├── <span class="k">boot/</span>    <span class="c">noyau Linux + GRUB (démarrage)</span>
+├── <span class="k">dev/</span>     <span class="c">les périphériques (disques, terminaux)</span>
+├── <span class="k">etc/</span>     <span class="c">TOUTE la configuration du système</span>
+├── <span class="k">home/</span>    <span class="c">dossiers des utilisateurs</span>
+│   └── <span class="k">marvin/</span>  <span class="c">= C:\Users\marvin</span>
+├── <span class="k">lib/</span>     <span class="c">bibliothèques partagées (.so ≈ .dll)</span>
+├── <span class="k">media/</span>   <span class="c">clés USB / CD montés automatiquement</span>
+├── <span class="k">mnt/</span>     <span class="c">montages manuels / temporaires</span>
+├── <span class="k">opt/</span>     <span class="c">logiciels ajoutés hors gestionnaire de paquets</span>
+├── <span class="k">proc/</span>    <span class="c">infos système (virtuel, en direct)</span>
+├── <span class="k">root/</span>    <span class="c">dossier perso de l'admin (root)</span>
+├── <span class="k">sbin/</span>    <span class="c">commandes d'administration</span>
+├── <span class="k">srv/</span>     <span class="c">données servies (web, ftp)</span>
+├── <span class="k">tmp/</span>     <span class="c">fichiers temporaires (vidé au reboot)</span>
+├── <span class="k">usr/</span>     <span class="c">programmes et données installés</span>
+└── <span class="k">var/</span>     <span class="c">données variables : logs, mails, sites…</span></pre>
+            </div>
+
+            <div class="table-wrap"><table>
+                <thead><tr><th>Chemin Linux</th><th>Équivalent Windows</th><th>Contenu (à peu près)</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/</code></td><td>C:\</td><td>La racine : tout le système part d'ici.</td></tr>
+                    <tr><td><code>/bin</code></td><td>C:\Windows\System32</td><td>Commandes essentielles : ls, cp, mv, cat, bash…</td></tr>
+                    <tr><td><code>/sbin</code></td><td>Outils d'admin Windows</td><td>Commandes d'administration réservées à root.</td></tr>
+                    <tr><td><code>/boot</code></td><td>bootmgr, dossier Boot</td><td>Fichiers de démarrage : noyau Linux (vmlinuz), GRUB.</td></tr>
+                    <tr><td><code>/dev</code></td><td>Gestionnaire de périphériques</td><td>Périphériques vus comme des fichiers : /dev/sda, /dev/tty.</td></tr>
+                    <tr><td><code>/etc</code></td><td>Registre + ProgramData</td><td>Tous les fichiers de configuration : passwd, fstab, hosts…</td></tr>
+                    <tr><td><code>/home</code></td><td>C:\Users</td><td>Dossiers personnels des utilisateurs.</td></tr>
+                    <tr><td><code>/root</code></td><td>C:\Users\Administrateur</td><td>Dossier perso du super-utilisateur (≠ de /).</td></tr>
+                    <tr><td><code>/lib</code>, <code>/lib64</code></td><td>DLL de System32</td><td>Bibliothèques partagées (.so = équivalent des .dll).</td></tr>
+                    <tr><td><code>/media</code></td><td>Lettres D:, E:… (auto)</td><td>Montage automatique des supports amovibles.</td></tr>
+                    <tr><td><code>/mnt</code></td><td>Lettres de lecteurs (manuel)</td><td>Points de montage manuels temporaires.</td></tr>
+                    <tr><td><code>/opt</code></td><td>C:\Program Files</td><td>Logiciels optionnels installés en bloc.</td></tr>
+                    <tr><td><code>/proc</code></td><td>Gestionnaire des tâches</td><td>Virtuel : infos processus et système.</td></tr>
+                    <tr><td><code>/srv</code></td><td>C:\inetpub (IIS)</td><td>Données servies : sites web, FTP.</td></tr>
+                    <tr><td><code>/tmp</code></td><td>C:\Windows\Temp</td><td>Fichiers temporaires, vidés au redémarrage.</td></tr>
+                    <tr><td><code>/usr</code></td><td>C:\Program Files</td><td>La majorité des programmes : /usr/bin, /usr/lib, /usr/share.</td></tr>
+                    <tr><td><code>/var</code></td><td>ProgramData, logs</td><td>Données variables : /var/log, /var/mail, /var/www.</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Les raccourcis de chemin</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Symbole</th><th>Signification</th></tr></thead>
+                <tbody>
+                    <tr><td><code>~</code></td><td>Votre dossier personnel (/home/utilisateur)</td></tr>
+                    <tr><td><code>.</code></td><td>Le dossier courant</td></tr>
+                    <tr><td><code>..</code></td><td>Le dossier parent</td></tr>
+                    <tr><td><code>cd -</code></td><td>Revenir au dossier précédent</td></tr>
+                </tbody>
+            </table></div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Attention</p>
+                <p>Linux est sensible à la casse : <code>/Home</code> et <code>/home</code> sont différents. Le séparateur est <code>/</code> (pas <code>\</code>).</p>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Où chercher quoi ?</p>
+                <p>Config système → <code>/etc</code> · Journaux → <code>/var/log</code> · Programmes → <code>/usr/bin</code>, <code>/opt</code> · Vos fichiers → <code>/home/votre_nom</code></p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="chap4">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Se déplacer &amp; gérer ses fichiers</h2>
+            <p class="chapter__intro">Sous Linux, tout est fichier. Le système part de la racine <code>/</code> ; votre dossier personnel est <code>/home/votre_nom</code>, abrégé <code>~</code>.</p>
+
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>pwd</code></td><td>où suis-je ? (dossier courant)</td></tr>
+                    <tr><td><code>ls</code> / <code>ls -la</code></td><td>lister (tout, y compris les fichiers cachés)</td></tr>
+                    <tr><td><code>cd /chemin</code> / <code>cd ..</code> / <code>cd ~</code></td><td>se déplacer / remonter / retour à l'accueil</td></tr>
+                    <tr><td><code>mkdir nom</code> / <code>mkdir -p a/b/c</code></td><td>créer un dossier / une arborescence</td></tr>
+                    <tr><td><code>touch fichier</code></td><td>créer un fichier vide</td></tr>
+                    <tr><td><code>cp src dest</code> / <code>cp -r src dest</code></td><td>copier un fichier / un dossier</td></tr>
+                    <tr><td><code>mv src dest</code></td><td>déplacer ou renommer</td></tr>
+                    <tr><td><code>rm fichier</code> / <code>rm -rf dossier</code></td><td>supprimer un fichier / un dossier entier</td></tr>
+                    <tr><td><code>find / -name nom</code></td><td>chercher un fichier partout</td></tr>
+                    <tr><td><code>tree /</code></td><td>arborescence graphique (<code>apt install tree</code>)</td></tr>
+                </tbody>
+            </table></div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Attention</p>
+                <p><code>rm -rf</code> supprime <strong>définitivement</strong>, sans corbeille et sans confirmation. Relire la commande avant d'appuyer sur Entrée.</p>
+            </div>
+
+            <h3>Les jokers (wildcards) : * et ?</h3>
+            <p>Utilisables avec la plupart des commandes (<code>ls</code>, <code>cp</code>, <code>rm</code>…) pour désigner plusieurs fichiers à la fois :</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Joker</th><th>Signification</th><th>Exemple</th></tr></thead>
+                <tbody>
+                    <tr><td><code>*</code></td><td>n'importe quelle suite de caractères (y compris aucun)</td><td><code>cp /etc/*.conf repb</code> — tous les .conf</td></tr>
+                    <tr><td><code>?</code></td><td>exactement un caractère</td><td><code>ls /etc/?e*</code> — « e » en 2ᵉ position</td></tr>
+                </tbody>
+            </table></div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">cp</span> <span class="s">/bin/sh*</span> repb          <span class="c"># copie tout ce qui commence par "sh"</span>
+<span class="k">rm</span> mon*                   <span class="c"># supprime tout ce qui commence par "mon"</span></pre>
+            </div>
+
+            <h3>Comparer, monter, éteindre</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">diff</span> fichier1.txt fichier2.txt   <span class="c"># affiche les lignes qui diffèrent</span>
+<span class="k">lsblk</span>                             <span class="c"># repérer la partition (ex : /dev/sdb1)</span>
+<span class="k">sudo mount</span> <span class="s">/dev/sdb1</span> tp           <span class="c"># monte la partition dans le dossier tp</span>
+<span class="k">sudo shutdown</span> <span class="p">-h</span> now             <span class="c"># extinction immédiate</span></pre>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="chap5">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Lire &amp; éditer des fichiers</h2>
+            <p class="chapter__intro">Afficher, parcourir, chercher, modifier — sans quitter le terminal.</p>
+
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>cat fichier</code> / <code>cat -n</code></td><td>afficher tout le contenu / avec numéros de ligne</td></tr>
+                    <tr><td><code>less fichier</code></td><td>page par page (<code>q</code> pour quitter)</td></tr>
+                    <tr><td><code>head -n 10</code> / <code>tail -n 10</code></td><td>les 10 premières / dernières lignes</td></tr>
+                    <tr><td><code>tail -f fichier</code></td><td>suivre en direct (parfait pour les logs)</td></tr>
+                    <tr><td><code>grep "motif" fichier</code></td><td>chercher un texte dans un fichier</td></tr>
+                    <tr><td><code>grep -r "motif" dossier/</code></td><td>chercher dans tout un dossier</td></tr>
+                    <tr><td><code>wc -l fichier</code></td><td>compter les lignes</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>cat, more ou less : lequel choisir ?</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Avantage</th><th>Inconvénient</th></tr></thead>
+                <tbody>
+                    <tr><td><code>cat</code></td><td>affiche tout le contenu d'un coup</td><td>inutilisable pour les gros fichiers</td></tr>
+                    <tr><td><code>more</code></td><td>affiche page par page</td><td>pas de retour en arrière</td></tr>
+                    <tr><td><code>less</code></td><td>navigation bidirectionnelle, recherche, marquage</td><td>aucun — le meilleur choix pour du texte</td></tr>
+                </tbody>
+            </table></div>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Dans less</th><th>Effet</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/motif</code> puis <code>n</code>/<code>N</code></td><td>chercher vers l'avant, occurrence suivante/précédente</td></tr>
+                    <tr><td><code>G</code> / <code>g</code></td><td>fin / début du fichier</td></tr>
+                    <tr><td><code>&amp;motif</code></td><td>filtrer : n'affiche que les lignes contenant motif</td></tr>
+                    <tr><td><code>F</code></td><td>mode suivi, comme <code>tail -f</code></td></tr>
+                    <tr><td><code>-N</code> / <code>-i</code> / <code>-S</code></td><td>numéros de ligne / recherche insensible à la casse / pas de retour à la ligne</td></tr>
+                </tbody>
+            </table></div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">less</span> <span class="p">-N</span> <span class="s">/etc/passwd</span>            <span class="c"># explorer avec numéros de ligne</span>
+<span class="k">less</span> <span class="p">-S -N</span> <span class="s">/var/log/syslog</span>     <span class="c"># log avec lignes longues, sans retour auto</span>
+<span class="k">dmesg</span> | <span class="k">less</span>                   <span class="c"># parcourir les messages du noyau</span></pre>
+            </div>
+
+            <h3>grep : options utiles</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Option</th><th>Effet</th></tr></thead>
+                <tbody>
+                    <tr><td><code>-i</code></td><td>ignore la casse</td></tr>
+                    <tr><td><code>-c</code></td><td>compte les lignes correspondantes</td></tr>
+                    <tr><td><code>-n</code></td><td>affiche le numéro de ligne</td></tr>
+                    <tr><td><code>-w</code> / <code>-x</code></td><td>mots entiers / la ligne entière doit correspondre</td></tr>
+                    <tr><td><code>-A n</code> / <code>-B n</code> / <code>-C n</code></td><td>n lignes après / avant / autour de chaque résultat</td></tr>
+                    <tr><td><code>-E</code></td><td>expressions régulières étendues (<code>|</code>, <code>+</code>, <code>?</code>)</td></tr>
+                    <tr><td><code>-o</code> / <code>-v</code></td><td>seulement la partie qui correspond / inverse (lignes qui ne matchent pas)</td></tr>
+                </tbody>
+            </table></div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">grep</span> <span class="p">-v</span> <span class="s">'^$'</span> fichier.txt              <span class="c"># enlever les lignes vides</span>
+<span class="k">grep</span> <span class="p">-E</span> <span class="s">"root|admin"</span> <span class="s">/etc/passwd</span>      <span class="c"># "root" OU "admin"</span>
+<span class="k">grep</span> <span class="p">-c</span> <span class="s">""</span> fichier.txt                <span class="c"># compter les lignes, fiable même sans retour final</span></pre>
+            </div>
+
+            <h3>Éditer avec nano (le plus simple)</h3>
+            <ul>
+                <li><code>Ctrl+O</code> puis <code>Entrée</code> — sauvegarder ;</li>
+                <li><code>Ctrl+X</code> — quitter ;</li>
+                <li><code>Ctrl+W</code> — chercher (<code>Ctrl+W</code> puis <code>Ctrl+R</code> — rechercher-remplacer) ;</li>
+                <li><code>Ctrl+K</code> / <code>Ctrl+U</code> — couper / coller une ligne.</li>
+            </ul>
+            <div class="tip">
+                <p class="tip__label">Et vim ?</p>
+                <p><code>vim</code> est plus puissant mais plus complexe : pour débuter, rester sur <code>nano</code>. Coincé dans vim ? <code>Échap</code> puis <code>:q!</code> puis <code>Entrée</code>. Deux modes : <strong>commande</strong> (défaut) et <strong>insertion</strong> (<code>i</code>). Remplacer partout : <code>:%s/avant/après/g</code> · sauver et quitter : <code>:wq</code>.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="chap6">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Liens &amp; inodes</h2>
+            <p class="chapter__intro">Comprendre l'inode explique pourquoi <code>mv</code> est instantané et ce qui distingue vraiment un lien physique d'un raccourci.</p>
+
+            <p>Chaque fichier est décrit par une structure appelée <strong>inode</strong> : taille, propriétaire, permissions, dates, et les adresses des blocs de données sur le disque. Le nom du fichier, lui, n'est qu'une entrée dans un dossier qui pointe vers un inode — un même inode peut avoir plusieurs noms.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">ls</span> <span class="p">-li</span> fichier      <span class="c"># -i affiche le numéro d'inode en 1re colonne</span></pre>
+            </div>
+
+            <h3>Liens physiques (hard links)</h3>
+            <p>Un lien physique fait pointer un <strong>second nom</strong> vers le <strong>même inode</strong>. Modifier l'un modifie l'autre : c'est littéralement le même fichier.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">ln</span> fichier1 fichier4
+<span class="k">ls</span> <span class="p">-li</span>               <span class="c"># même inode pour fichier1 et fichier4, compteur de liens = 2</span>
+<span class="k">rm</span> fichier1          <span class="c"># fichier4 reste intact : le contenu n'est libéré que si TOUS les liens disparaissent</span></pre>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Limite</p>
+                <p>Impossible de créer un lien physique vers un dossier. Pour un dossier, on utilise un lien symbolique.</p>
+            </div>
+
+            <h3>Liens symboliques (raccourcis)</h3>
+            <p>Un lien symbolique (<code>l</code> en 1er caractère dans <code>ls -l</code>) est un <strong>fichier à part</strong> qui contient juste le chemin vers la cible — comme un raccourci Windows.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">ln</span> <span class="p">-s</span> fichier4 fichier5
+<span class="k">ls</span> <span class="p">-li</span>               <span class="c"># inode DIFFÉRENT de fichier4, colonne des droits commence par "l"</span></pre>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Lien cassé</p>
+                <p>Si la cible d'un lien symbolique est supprimée, le lien devient « orphelin » (souvent affiché en rouge/clignotant par <code>ls</code>) : il pointe vers un chemin qui n'existe plus.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="chap7">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Utilisateurs, permissions &amp; lecture de ls -l</h2>
+            <p class="chapter__intro">Qui a le droit de faire quoi ? Le cœur de la sécurité Linux — et comment vérifier le résultat d'un <code>chmod</code> dans la sortie de <code>ls -l</code>.</p>
+
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>whoami</code> / <code>id</code></td><td>qui suis-je / mes identifiants et groupes</td></tr>
+                    <tr><td><code>sudo commande</code></td><td>exécuter une commande en administrateur</td></tr>
+                    <tr><td><code>su - utilisateur</code></td><td>changer d'utilisateur</td></tr>
+                    <tr><td><code>passwd</code> / <code>sudo passwd user</code></td><td>changer son mot de passe / celui d'un autre</td></tr>
+                    <tr><td><code>sudo adduser nom</code> / <code>deluser nom</code></td><td>créer / supprimer un utilisateur</td></tr>
+                    <tr><td><code>sudo usermod -aG groupe user</code></td><td>ajouter un utilisateur à un groupe</td></tr>
+                    <tr><td><code>groups user</code></td><td>voir les groupes d'un utilisateur</td></tr>
+                    <tr><td><code>chmod 755 fichier</code></td><td>changer les permissions</td></tr>
+                    <tr><td><code>chown user:groupe fichier</code></td><td>changer le propriétaire</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Le triplet des droits : u, g, o</h3>
+            <p>Les droits Linux sont définis à l'aide de 3 bits (r/w/x) répétés pour 3 catégories d'utilisateur (u/g/o). Exemple avec <code>rwxr-x---</code> — chaque case ci-dessous est reliée à ce qu'elle peut contenir :</p>
+            <div class="triplet">
+                <div class="triplet-groups">
+                    <div class="tg-group tg-u">
+                        <div class="glabel">u — propriétaire (user)</div>
+                        <div class="tg-cells">
+                            <div class="tcell"><div class="cbox">r</div><div class="stem"></div><div class="cdesc"><strong>lecture</strong>position 2 — <span class="maybe">r</span> (présent) ou <span class="maybe">-</span> (absent)</div></div>
+                            <div class="tcell"><div class="cbox">w</div><div class="stem"></div><div class="cdesc"><strong>écriture</strong>position 1 — <span class="maybe">w</span> ou <span class="maybe">-</span></div></div>
+                            <div class="tcell"><div class="cbox">x</div><div class="stem"></div><div class="cdesc"><strong>exécution</strong>position 0 — <span class="maybe">x</span> ou <span class="maybe">-</span></div></div>
+                        </div>
+                    </div>
+                    <div class="tg-group tg-g">
+                        <div class="glabel">g — groupe (group)</div>
+                        <div class="tg-cells">
+                            <div class="tcell"><div class="cbox">r</div><div class="stem"></div><div class="cdesc"><strong>lecture</strong>même règle, pour le groupe propriétaire du fichier</div></div>
+                            <div class="tcell"><div class="cbox">-</div><div class="stem"></div><div class="cdesc"><strong>écriture</strong><span class="maybe">-</span> ici : le groupe ne peut pas écrire</div></div>
+                            <div class="tcell"><div class="cbox">x</div><div class="stem"></div><div class="cdesc"><strong>exécution</strong>le groupe peut exécuter (pour un dossier : « traverser »)</div></div>
+                        </div>
+                    </div>
+                    <div class="tg-group tg-o">
+                        <div class="glabel">o — autres (others)</div>
+                        <div class="tg-cells">
+                            <div class="tcell"><div class="cbox">-</div><div class="stem"></div><div class="cdesc"><strong>lecture</strong>absente : personne d'autre ne peut lire</div></div>
+                            <div class="tcell"><div class="cbox">-</div><div class="stem"></div><div class="cdesc"><strong>écriture</strong>toujours absente pour « others » ici</div></div>
+                            <div class="tcell"><div class="cbox">-</div><div class="stem"></div><div class="cdesc"><strong>exécution</strong>accès nul pour tous les autres</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p><code>chmod</code> accepte aussi une notation symbolique, relative aux droits déjà en place :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — chmod symbolique</span></div>
+                <pre class="terminal__code"><span class="k">chmod</span> <span class="p">u+rwx</span> fichier   <span class="c"># ajoute lecture+écriture+exécution au propriétaire</span>
+<span class="k">chmod</span> <span class="p">g+w</span> fichier     <span class="c"># ajoute l'écriture au groupe</span>
+<span class="k">chmod</span> <span class="p">o-r</span> fichier     <span class="c"># retire la lecture aux autres</span>
+<span class="k">chmod</span> <span class="p">u=rwx,g=rx,o=r</span> fichier   <span class="c"># fixe les droits (pas relatif) : équivaut à 754</span></pre>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Cas pratique : dossier partagé en équipe</p>
+                <p>Pour qu'un groupe puisse déposer des fichiers dans un dossier commun sans casser les droits du propriétaire : <code>chmod g+w dossier_partage</code> ajoute l'écriture au groupe en gardant intacts les droits de <code>u</code> et <code>o</code> (contrairement à <code>chmod 775</code> qui réécrit tout le triplet).</p>
+            </div>
+
+            <h3>Lire les permissions dans la sortie de ls -l</h3>
+            <p>La commande <code>ls -l</code> affiche une ligne détaillée par fichier. Exemple réel pris sur un système Debian :</p>
+            <div class="lsline">
+                <div class="lsseg c1"><span class="val">-rw-r--r--</span><span class="lab">1 · Permissions</span></div>
+                <div class="lsseg c2"><span class="val">1</span><span class="lab">2 · Nb de liens</span></div>
+                <div class="lsseg c3"><span class="val">root</span><span class="lab">3 · Propriétaire</span></div>
+                <div class="lsseg c4"><span class="val">root</span><span class="lab">4 · Groupe</span></div>
+                <div class="lsseg c5"><span class="val">26</span><span class="lab">5 · Taille (octets)</span></div>
+                <div class="lsseg c6"><span class="val">7 juil. 10h26</span><span class="lab">6 · Date de modif.</span></div>
+                <div class="lsseg c7"><span class="val">subgid</span><span class="lab">7 · Nom</span></div>
+            </div>
+            <p>Le bloc des permissions (colonne 1) fait 10 caractères : 1 pour le type de fichier, puis les 3 groupes u/g/o vus plus haut.</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Symbole</th><th>Type de fichier (1er caractère)</th></tr></thead>
+                <tbody>
+                    <tr><td><code>-</code></td><td>Fichier normal</td></tr>
+                    <tr><td><code>d</code></td><td>Dossier (directory)</td></tr>
+                    <tr><td><code>l</code></td><td>Lien symbolique (raccourci)</td></tr>
+                    <tr><td><code>c</code></td><td>Périphérique caractère (ex : clavier)</td></tr>
+                    <tr><td><code>b</code></td><td>Périphérique bloc (ex : disque)</td></tr>
+                    <tr><td><code>p</code></td><td>Tube nommé (pipe)</td></tr>
+                    <tr><td><code>s</code></td><td>Socket</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Comprendre chmod : les chiffres</h3>
+            <p>Chaque fichier a 3 permissions (<strong>r</strong>ead = lire, <strong>w</strong>rite = écrire, e<strong>x</strong>ecute = exécuter) pour 3 publics (propriétaire, groupe, autres). On additionne : <code>r=4  w=2  x=1</code></p>
+            <div class="octal">
+                <div class="oct"><div class="m">rw-</div><div class="m">4+2+0</div><div class="big">6</div><small>propriétaire</small></div>
+                <div class="oct"><div class="m">r--</div><div class="m">4+0+0</div><div class="big">4</div><small>groupe</small></div>
+                <div class="oct"><div class="m">r--</div><div class="m">4+0+0</div><div class="big">4</div><small>autres</small></div>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Exemple ci-dessus (-rw-r--r--) : 644</p>
+                <p>On écrirait donc <code>chmod 644 subgid</code> pour appliquer ces droits.</p>
+            </div>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Valeur</th><th>Signification</th><th>Usage typique</th></tr></thead>
+                <tbody>
+                    <tr><td><code>755</code></td><td>rwx r-x r-x</td><td>scripts, dossiers</td></tr>
+                    <tr><td><code>740</code></td><td>rwx r-- ---</td><td>propriétaire exécute, groupe lit seulement, rien pour les autres</td></tr>
+                    <tr><td><code>644</code></td><td>rw- r-- r--</td><td>fichiers normaux</td></tr>
+                    <tr><td><code>600</code></td><td>rw- --- ---</td><td>fichiers privés (clés, mots de passe)</td></tr>
+                    <tr><td><code>444</code></td><td>r-- r-- r--</td><td>lecture seule pour tout le monde (même le propriétaire ne peut pas écrire)</td></tr>
+                </tbody>
+            </table></div>
+            <div class="takeaway">
+                <p class="takeaway__label">Le fichier /etc/passwd</p>
+                <p><code>cat /etc/passwd</code> liste tous les utilisateurs du système (les mots de passe, eux, sont chiffrés ailleurs, dans <code>/etc/shadow</code>).</p>
+            </div>
+
+            <h3>Les autres colonnes de ls -l</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Colonne</th><th>Exemple</th><th>Signification</th></tr></thead>
+                <tbody>
+                    <tr><td>2 · Nombre de liens</td><td><code>1</code></td><td>Liens physiques vers le fichier. Pour un dossier, compte aussi . et ..</td></tr>
+                    <tr><td>3 · Propriétaire</td><td><code>root</code></td><td>Utilisateur propriétaire ; il a les droits du 1er groupe.</td></tr>
+                    <tr><td>4 · Groupe</td><td><code>root</code></td><td>Groupe propriétaire ; ses membres ont les droits du 2e groupe.</td></tr>
+                    <tr><td>5 · Taille</td><td><code>26</code></td><td>Taille en octets. <code>ls -lh</code> l'affiche en Ko/Mo/Go.</td></tr>
+                    <tr><td>6 · Date de modif.</td><td><code>7 juil. 10h26</code></td><td>Récent → jour/mois/heure ; ancien → jour/mois/année.</td></tr>
+                    <tr><td>7 · Nom</td><td><code>subgid</code></td><td>Nom débutant par un point = fichier caché (<code>ls -a</code>).</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Gérer les utilisateurs et les groupes</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>sudo adduser nom</code></td><td>crée le compte, son groupe personnel, son <code>/home</code> (copié depuis <code>/etc/skel</code>) et demande le mot de passe</td></tr>
+                    <tr><td><code>sudo deluser nom</code></td><td>supprime le compte (garde le <code>/home</code>)</td></tr>
+                    <tr><td><code>sudo deluser --remove-home nom</code></td><td>supprime aussi le <code>/home</code> et ses fichiers</td></tr>
+                    <tr><td><code>sudo addgroup nom</code> / <code>delgroup nom</code></td><td>créer / supprimer un groupe</td></tr>
+                    <tr><td><code>sudo usermod -l nouveau ancien</code></td><td>renomme un utilisateur (le nom du <code>/home</code> ne change pas)</td></tr>
+                    <tr><td><code>sudo usermod -g groupe user</code></td><td>change le groupe <strong>principal</strong> de l'utilisateur</td></tr>
+                    <tr><td><code>sudo usermod -aG groupe user</code></td><td>ajoute à un groupe <strong>secondaire</strong> (sans <code>-a</code>, <code>-G</code> seul remplace tous les groupes secondaires !)</td></tr>
+                    <tr><td><code>sudo chown user:groupe fichier</code></td><td>change le propriétaire (et le groupe) ; <code>-R</code> pour récursif</td></tr>
+                    <tr><td><code>sudo chgrp groupe fichier</code></td><td>change uniquement le groupe propriétaire</td></tr>
+                    <tr><td><code>id user</code> / <code>getent group nom</code></td><td>UID/GID et groupes / membres d'un groupe</td></tr>
+                </tbody>
+            </table></div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">adduser vs useradd</p>
+                <p><code>adduser</code>/<code>deluser</code>/<code>addgroup</code>/<code>delgroup</code> sont spécifiques à Debian (scripts conviviaux, interactifs). Les commandes Unix universelles <code>useradd</code>/<code>userdel</code>/<code>groupadd</code>/<code>groupdel</code> existent partout mais sont plus basiques (avec <code>useradd</code>, il faut lancer <code>passwd</code> soi-même pour activer le compte).</p>
+            </div>
+
+            <h3>Droits spéciaux : SetUID, SetGID et Sticky Bit</h3>
+            <p>En plus de <code>rwx</code>, 3 bits spéciaux existent :</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Droit</th><th>Sur un fichier exécutable</th><th>Octal</th><th>Exemple</th></tr></thead>
+                <tbody>
+                    <tr><td>SetUID (<code>s</code> sur le propriétaire)</td><td>s'exécute avec les droits du <strong>propriétaire</strong> du fichier, pas de qui le lance</td><td>4xxx</td><td><code>/usr/bin/passwd</code> (rws) permet d'écrire dans <code>/etc/shadow</code></td></tr>
+                    <tr><td>SetGID</td><td>s'exécute avec les droits du <strong>groupe</strong> propriétaire</td><td>2xxx</td><td><code>chmod 2754 fichier</code></td></tr>
+                    <tr><td>Sticky Bit (<code>t</code> sur les autres)</td><td>dans un dossier partagé, seuls le propriétaire du fichier et root peuvent le supprimer</td><td>1xxx</td><td><code>/tmp</code> et <code>/var/tmp</code></td></tr>
+                </tbody>
+            </table></div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">chmod</span> <span class="p">4754</span> fichier   <span class="c"># pose le SetUID (apparaît comme un "s" à la place du x propriétaire)</span>
+<span class="k">chmod</span> <span class="p">1744</span> fichier   <span class="c"># pose le Sticky Bit (apparaît comme un "t")</span></pre>
+            </div>
+
+            <h3>umask &amp; ACL</h3>
+            <p><code>umask</code> définit quels droits sont <strong>retirés</strong> par défaut à la création d'un fichier ou dossier. Valeur typique : <code>0022</code>, qui donne des fichiers en 644 et des dossiers en 755 (jamais l'exécution sur un fichier créé « normalement »). Elle se règle dans <code>/etc/profile</code>, <code>/etc/login.defs</code>, <code>/etc/bash.bashrc</code> ou <code>~/.bashrc</code>. Les <strong>ACL</strong> vont plus loin en donnant des droits à un utilisateur ou groupe précis :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — ACL</span></div>
+                <pre class="terminal__code"><span class="k">sudo apt</span> install acl
+<span class="k">getfacl</span> dossier                    <span class="c"># afficher les ACL en place</span>
+<span class="k">setfacl</span> <span class="p">-m</span> g:sav:rwx dossier       <span class="c"># donner rwx au groupe "sav" sur ce dossier</span></pre>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="chap8">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Redirections &amp; pipes</h2>
+            <p class="chapter__intro">La vraie puissance du terminal : brancher les commandes entre elles.</p>
+
+            <div class="table-wrap"><table>
+                <thead><tr><th>Symbole</th><th>Rôle</th></tr></thead>
+                <tbody>
+                    <tr><td><code>&gt;</code></td><td>écrit la sortie dans un fichier (<strong>écrase</strong> l'existant)</td></tr>
+                    <tr><td><code>&gt;&gt;</code></td><td>écrit la sortie dans un fichier (<strong>ajoute</strong> à la fin)</td></tr>
+                    <tr><td><code>&lt;</code></td><td>donne un fichier en entrée à une commande</td></tr>
+                    <tr><td><code>|</code></td><td>envoie la sortie d'une commande vers une autre (le « pipe »)</td></tr>
+                    <tr><td><code>&amp;&amp;</code></td><td>exécute la 2ᵉ commande seulement si la 1ʳᵉ réussit</td></tr>
+                    <tr><td><code>||</code></td><td>exécute la 2ᵉ commande seulement si la 1ʳᵉ échoue</td></tr>
+                </tbody>
+            </table></div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — exemples concrets</span></div>
+                <pre class="terminal__code"><span class="k">ls</span> &gt; liste.txt               <span class="c"># écrit le résultat dans liste.txt (écrase)</span>
+<span class="k">echo</span> <span class="s">"log"</span> &gt;&gt; liste.txt      <span class="c"># ajoute une ligne à la fin</span>
+<span class="k">wc</span> <span class="p">-l</span> &lt; liste.txt            <span class="c"># compte les lignes du fichier</span>
+<span class="k">cat</span> liste.txt | <span class="k">grep</span> <span class="s">"log"</span>   <span class="c"># cherche "log" dans le contenu</span>
+<span class="k">sudo apt</span> update &amp;&amp; <span class="k">sudo apt</span> upgrade   <span class="c"># upgrade SI update a réussi</span></pre>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>echo $?</code> affiche le code de sortie de la dernière commande : <strong>0</strong> = succès, autre chose = erreur. C'est ce que <code>&amp;&amp;</code> et <code>||</code> utilisent pour décider.</p>
+            </div>
+
+            <h3>Les 3 canaux de toute commande</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Canal</th><th>N°</th><th>Rôle</th><th>Par défaut</th></tr></thead>
+                <tbody>
+                    <tr><td>stdin (entrée standard)</td><td><code>0</code></td><td>ce que la commande lit</td><td>le clavier</td></tr>
+                    <tr><td>stdout (sortie standard)</td><td><code>1</code></td><td>le résultat normal</td><td>l'écran</td></tr>
+                    <tr><td>stderr (sortie d'erreur)</td><td><code>2</code></td><td>les messages d'erreur</td><td>l'écran</td></tr>
+                </tbody>
+            </table></div>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Symbole</th><th>Nom</th><th>Exemple</th></tr></thead>
+                <tbody>
+                    <tr><td><code>2&gt;</code> / <code>2&gt;&gt;</code></td><td>erreurs (écrase / ajoute)</td><td><code>ls /inexistant 2&gt; erreurs.txt</code></td></tr>
+                    <tr><td><code>&amp;&gt;</code></td><td>sortie ET erreurs ensemble</td><td><code>ls /ok /inexistant &amp;&gt; tout.txt</code></td></tr>
+                    <tr><td><code>&lt;&lt;</code></td><td>here document : un bloc de texte comme entrée</td><td>voir ci-dessous</td></tr>
+                    <tr><td><code>&lt;&lt;&lt;</code></td><td>here string : une chaîne comme entrée</td><td><code>grep "mot" &lt;&lt;&lt; "texte à chercher"</code></td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Here document : écrire un fichier multi-lignes sans éditeur</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">cat</span> &lt;&lt; EOF &gt; fichier.txt
+Ligne 1
+Ligne 2
+Ligne 3
+EOF</pre>
+            </div>
+            <p>Tout ce qui est tapé entre <code>&lt;&lt; EOF</code> et la ligne <code>EOF</code> est envoyé comme entrée à la commande — pratique pour générer un fichier de plusieurs lignes directement dans un script.</p>
+        </section>
+
+        <!-- 09 -->
+        <section class="chapter" id="chap9">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">sort, cut, wc, tee — flux &amp; fichiers structurés</h2>
+            <p class="chapter__intro">Quatre outils simples, chacun avec un rôle précis, qui se combinent par pipe pour traiter du texte structuré (CSV, listes, logs) sans écrire de script.</p>
+
+            <h3>wc, sort, cut : les options clés</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Outil</th><th>Options utiles</th></tr></thead>
+                <tbody>
+                    <tr><td><code>wc</code></td><td><code>-l</code> lignes · <code>-w</code> mots · <code>-c</code> octets · <code>-L</code> longueur de la plus longue ligne</td></tr>
+                    <tr><td><code>sort</code></td><td><code>-r</code> décroissant · <code>-n</code> numérique · <code>-k N</code> champ N · <code>-u</code> sans doublons · <code>-h</code> tailles 1K/2M · <code>-o</code> vers fichier</td></tr>
+                    <tr><td><code>cut</code></td><td><code>-c 1-5</code> caractères · <code>-f 1,3</code> champs · <code>-d','</code> délimiteur · <code>--complement</code> tout sauf</td></tr>
+                </tbody>
+            </table></div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">ls</span> <span class="s">/etc</span> | <span class="k">wc</span> <span class="p">-l</span>                              <span class="c"># nombre de fichiers dans /etc</span>
+<span class="k">ls</span> <span class="p">-l</span> | <span class="k">sort</span> <span class="p">-n -k5</span>                         <span class="c"># trier par taille (5e colonne)</span>
+<span class="k">du</span> <span class="p">-h</span> <span class="s">/home/*</span> | <span class="k">sort</span> <span class="p">-h</span>                     <span class="c"># tailles de dossiers, triées 1K → 1G</span>
+<span class="k">cut</span> <span class="p">-d:</span> <span class="p">-f1</span> <span class="s">/etc/passwd</span> | <span class="k">sort</span> | <span class="k">uniq</span> <span class="p">-c</span> | <span class="k">sort</span> <span class="p">-nr</span>   <span class="c"># utilisateurs par fréquence</span></pre>
+            </div>
+
+            <h3>tee — afficher ET sauvegarder en même temps</h3>
+            <p><code>tee</code> lit l'entrée standard et l'écrit à la fois vers un fichier et vers l'écran. Utile pour écrire dans un fichier protégé avec <code>sudo</code> : <code>sudo echo "x" &gt; /etc/fichier</code> échoue car la redirection <code>&gt;</code> est interprétée par le shell AVANT que <code>sudo</code> s'applique.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">echo</span> <span class="s">"config"</span> | <span class="k">sudo tee</span> <span class="s">/etc/fichier</span>            <span class="c"># écrit avec les droits root, affiche aussi</span>
+<span class="k">echo</span> <span class="s">"config"</span> | <span class="k">sudo tee</span> <span class="s">/etc/fichier</span> &gt; /dev/null   <span class="c"># idem, sans afficher</span>
+<span class="k">date</span> | <span class="k">tee</span> <span class="p">-a</span> journal.log                        <span class="c"># -a : ajoute au lieu d'écraser</span></pre>
+            </div>
+
+            <h3>Exercice guidé : grep, cut, uniq, sort et tubes</h3>
+            <p>Un carnet d'adresses <code>telephone.txt</code> (12 personnes, format <code>nom&lt;TAB&gt;prénom&lt;TAB&gt;numéro</code>) sert de terrain d'entraînement classique pour enchaîner ces commandes.</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Question</th><th>Commande</th></tr></thead>
+                <tbody>
+                    <tr><td>Répertoires de connexion des utilisateurs</td><td><code>cut -d: -f6 /etc/passwd</code></td></tr>
+                    <tr><td>Nombre de shells différents</td><td><code>cut -d: -f7 /etc/passwd | sort | uniq | wc -l</code></td></tr>
+                    <tr><td>Carnet trié par ordre alphabétique</td><td><code>sort telephone.txt</code></td></tr>
+                    <tr><td>Nombre de personnes dans le carnet</td><td><code>wc -l telephone.txt</code></td></tr>
+                    <tr><td>Toutes les lignes des « Dupond »</td><td><code>grep "Dupond" telephone.txt</code></td></tr>
+                    <tr><td>Toutes les lignes hors « Dupond »</td><td><code>grep -v "Dupond" telephone.txt</code></td></tr>
+                    <tr><td>Téléphone du 1er « Dupond » du fichier</td><td><code>grep "Dupond" telephone.txt | head -1 | cut -f3</code></td></tr>
+                    <tr><td>Téléphone du 1er « Dupond » par ordre alpha de prénom</td><td><code>grep "Dupond" telephone.txt | sort | head -1 | cut -f3</code></td></tr>
+                </tbody>
+            </table></div>
+            <p>Pour la dernière ligne : <code>grep</code> garde les 4 Dupond, <code>sort</code> les trie — comme « Dupond » est identique pour tous, le tri se fait de fait sur le 2e champ (le prénom) — puis <code>head -1</code> garde le premier (Agnès) et <code>cut -f3</code> extrait son numéro.</p>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Piège : wc -l vs grep -c ""</p>
+                <p>Si la dernière ligne du fichier n'a pas de retour à la ligne final, <code>wc -l</code> sous-compte d'une unité (11 au lieu de 12). <code>grep -c "" telephone.txt</code> compte les lignes réelles peu importe la fin de fichier — un réflexe plus fiable.</p>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Piège d'encodage rencontré en pratique</p>
+                <p>Un fichier transféré depuis Windows peut être en ISO-8859-1 au lieu d'UTF-8 : les accents (« Agnès ») posent alors problème à <code>grep</code> (qui peut signaler « binary file matches »). Diagnostic : <code>file telephone.txt</code> · correction : <code>iconv -f ISO-8859-1 -t UTF-8 telephone.txt -o telephone.utf8.txt</code>.</p>
+            </div>
+        </section>
+
+        <!-- 10 -->
+        <section class="chapter" id="chap10">
+            <p class="chapter__num">10</p>
+            <h2 class="chapter__title">sed, awk &amp; expressions régulières</h2>
+            <p class="chapter__intro">Transformer un flux de texte à la volée, sans ouvrir d'éditeur — indispensable pour scripter des traitements.</p>
+
+            <h3>Les méta-caractères de base</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Symbole</th><th>Signification</th><th>Exemple</th></tr></thead>
+                <tbody>
+                    <tr><td><code>.</code></td><td>n'importe quel caractère</td><td><code>S.B</code> → SEB, SAB, SSB…</td></tr>
+                    <tr><td><code>?</code></td><td>0 ou 1 fois</td><td><code>S.?B</code> → SB ou SEB</td></tr>
+                    <tr><td><code>*</code></td><td>0 ou n fois</td><td><code>S.*B</code> → SB, SEB, SAEIOUB…</td></tr>
+                    <tr><td><code>+</code></td><td>1 ou n fois</td><td></td></tr>
+                    <tr><td><code>^</code> / <code>$</code></td><td>début / fin de ligne</td><td></td></tr>
+                    <tr><td><code>[a-z]</code></td><td>un caractère parmi cet ensemble</td><td><code>[^abc]</code> = tout SAUF a, b, c</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>sed — Stream EDitor</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">sed</span> <span class="s">'s/Debian/Ubuntu/'</span> <span class="s">/etc/os-release</span>   <span class="c"># remplace la 1re occurrence par ligne, affiche seulement</span>
+<span class="k">sed</span> <span class="p">-i</span> <span class="s">'s/Debian/Ubuntu/'</span> fichier        <span class="c"># -i modifie le fichier directement (in place)</span>
+<span class="k">sed</span> <span class="p">-n</span> 2,6p <span class="s">/etc/passwd</span>                  <span class="c"># affiche uniquement les lignes 2 à 6</span></pre>
+            </div>
+
+            <h3>awk — traitement par colonnes</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">awk</span> <span class="s">'{gsub(/.ebian/,"Ubuntu")}1'</span> <span class="s">/etc/os-release</span>   <span class="c"># cherche et remplace</span>
+<span class="k">awk</span> <span class="s">'!/.ebian/'</span> <span class="s">/etc/os-release</span>                    <span class="c"># supprime les lignes qui matchent</span>
+<span class="k">awk</span> <span class="s">'NR==2,NR==4'</span> <span class="s">/etc/os-release</span>                  <span class="c"># affiche seulement les lignes 2 à 4</span></pre>
+            </div>
+
+            <h3>Enchaîner grep, sort, cut avec le pipe</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">cat</span> <span class="s">/etc/passwd</span> | <span class="k">grep</span> nologin | <span class="k">sort</span> | <span class="k">cut</span> <span class="p">-d:</span> <span class="p">-f1</span>
+<span class="c"># filtre les comptes "nologin", trie, ne garde que le login (1er champ)</span></pre>
+            </div>
+        </section>
+
+        <!-- 11 -->
+        <section class="chapter" id="chap11">
+            <p class="chapter__num">11</p>
+            <h2 class="chapter__title">find — rechercher des fichiers avec précision</h2>
+            <p class="chapter__intro"><code>find</code> parcourt une arborescence et filtre par nom, type, taille, date ou permissions — et peut agir directement sur les résultats trouvés.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Syntaxe</span></div>
+                <pre class="terminal__code"><span class="k">find</span> [chemin] [critères] [action]</pre>
+            </div>
+
+            <div class="table-wrap"><table>
+                <thead><tr><th>Critère</th><th>Effet</th></tr></thead>
+                <tbody>
+                    <tr><td><code>-name "*.txt"</code> / <code>-iname</code></td><td>par nom (sensible / insensible à la casse)</td></tr>
+                    <tr><td><code>-type f</code> / <code>d</code> / <code>l</code></td><td>fichiers / dossiers / liens symboliques</td></tr>
+                    <tr><td><code>-size +10M</code> / <code>-size 0</code></td><td>plus de 10 Mo / fichiers vides</td></tr>
+                    <tr><td><code>-mtime -7</code> / <code>-mtime +30</code></td><td>modifiés il y a moins de 7 j / plus de 30 j</td></tr>
+                    <tr><td><code>-newermt "2026-01-01"</code></td><td>modifiés après une date donnée</td></tr>
+                    <tr><td><code>-perm -u=x</code> / <code>-user root</code></td><td>par permission / par propriétaire</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Combiner des critères et agir</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Action</th><th>Effet</th></tr></thead>
+                <tbody>
+                    <tr><td><code>-exec cmd {} \;</code></td><td>exécute cmd sur chaque résultat</td></tr>
+                    <tr><td><code>-delete</code></td><td>supprime chaque résultat</td></tr>
+                    <tr><td><code>-ok cmd {} \;</code></td><td>comme <code>-exec</code> mais demande confirmation</td></tr>
+                </tbody>
+            </table></div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">find</span> <span class="s">/</span> <span class="p">-type f</span> \( <span class="p">-name</span> <span class="s">"*.log"</span> <span class="p">-or</span> <span class="p">-name</span> <span class="s">"*.txt"</span> \)   <span class="c"># OU logique</span>
+<span class="k">find</span> <span class="s">/tmp</span> <span class="p">-name</span> <span class="s">"*.tmp"</span> <span class="p">-exec</span> rm {} \;              <span class="c"># supprimer tous les .tmp</span>
+<span class="k">find</span> ~ <span class="p">-name</span> <span class="s">"*.bak"</span> <span class="p">-delete</span>                       <span class="c"># supprimer tous les .bak</span></pre>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">-exec vs -delete</p>
+                <p><code>-exec ... rm {} \;</code> lance une commande <code>rm</code> par fichier trouvé (plus lent mais flexible) ; <code>-delete</code> est l'option native de <code>find</code>, plus rapide pour une simple suppression.</p>
+            </div>
+        </section>
+
+        <!-- 12 -->
+        <section class="chapter" id="chap12">
+            <p class="chapter__num">12</p>
+            <h2 class="chapter__title">Variables &amp; personnalisation du prompt</h2>
+            <p class="chapter__intro">Le shell garde des informations en mémoire dans des variables — dont certaines pilotent l'apparence même du terminal.</p>
+
+            <h3>Créer, exporter, afficher une variable</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code">prenom=<span class="s">"jean-denis"</span>
+<span class="k">echo</span> $prenom                  <span class="c"># affiche la valeur</span>
+<span class="k">export</span> formation=<span class="s">"Linux"</span>     <span class="c"># devient une variable d'environnement</span>
+<span class="k">env</span> | <span class="k">grep</span> formation         <span class="c"># maintenant visible par les autres processus</span>
+<span class="k">unset</span> formation              <span class="c"># supprime la variable (session en cours)</span></pre>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Variable shell ≠ variable d'environnement</p>
+                <p>Une variable créée simplement (<code>formation=Linux</code>) n'existe que dans le shell courant : invisible pour les autres processus (absente de <code>env</code>). Il faut l'<strong>exporter</strong>. Pour qu'elle survive à la fermeture du terminal, ajouter la ligne <code>export</code> dans <code>~/.bashrc</code> (un utilisateur) ou un <code>.sh</code> sous <code>/etc/profile.d/</code> (tous), puis <code>source ~/.bashrc</code>.</p>
+            </div>
+
+            <h3>echo et les codes d'échappement</h3>
+            <p><code>echo</code> n'interprète les codes d'échappement (comme <code>\n</code>) qu'avec l'option <code>-e</code> : <code>echo -e "Bonjour\nÀ bientôt"</code>. Codes utiles : <code>\n</code> retour à la ligne · <code>\t</code> tabulation · <code>\\</code> backslash littéral.</p>
+
+            <h3>Personnaliser le prompt avec PS1</h3>
+            <p>La variable <code>$PS1</code> définit l'apparence de l'invite de commande.</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Code</th><th>Signification</th></tr></thead>
+                <tbody>
+                    <tr><td><code>\u</code></td><td>nom d'utilisateur</td></tr>
+                    <tr><td><code>\h</code></td><td>nom d'hôte (court)</td></tr>
+                    <tr><td><code>\w</code></td><td>répertoire courant (<code>~</code> pour le home)</td></tr>
+                    <tr><td><code>\$</code></td><td><code>$</code> pour un utilisateur normal, <code>#</code> pour root</td></tr>
+                    <tr><td><code>\d</code></td><td>date</td></tr>
+                </tbody>
+            </table></div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code">PS1=<span class="s">'\u@\h:\w\$ '</span>                 <span class="c"># exemple de prompt personnalisé</span>
+<span class="k">echo</span> <span class="s">"PS1='\u@\h:\w\$ '"</span> &gt;&gt; ~/.bashrc   <span class="c"># le rendre permanent</span></pre>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Ajouter de la couleur</p>
+                <p>Syntaxe : <code>\[\033[ATTRIBUT;COULEURm\]</code>. Exemple : <code>PS1='\[\033[32m\]\u@\h\[\033[0m\] '</code> affiche <code>utilisateur@hôte</code> en vert. Toujours réinitialiser avec <code>\033[0m</code> à la fin.</p>
+            </div>
+        </section>
+
+        <!-- 13 -->
+        <section class="chapter" id="chap13">
+            <p class="chapter__num">13</p>
+            <h2 class="chapter__title">Commandes internes/externes, PATH &amp; aide</h2>
+            <p class="chapter__intro">D'où vient une commande, comment la retrouver, et comment obtenir de l'aide dessus.</p>
+
+            <h3>Commandes internes vs externes</h3>
+            <p>Une commande <strong>interne</strong> (builtin) fait partie du shell lui-même (ex : <code>cd</code>, <code>echo</code>). Une commande <strong>externe</strong> est un fichier binaire ou script séparé, cherché dans les dossiers de <code>$PATH</code>.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">type</span> echo     <span class="c"># "echo is a shell builtin" → interne</span>
+<span class="k">type</span> bash     <span class="c"># "bash is /usr/bin/bash" → externe</span>
+<span class="k">which</span> which   <span class="c"># affiche le chemin complet d'une commande externe</span>
+<span class="k">file</span> fichier  <span class="c"># type d'un fichier : exécutable, texte ASCII/UTF-8…</span></pre>
+            </div>
+
+            <h3>La variable PATH</h3>
+            <p><code>$PATH</code> liste les dossiers où le shell cherche les commandes externes, séparés par <code>:</code>. C'est pourquoi un script dans le dossier courant doit être lancé avec <code>./script.sh</code> (le dossier courant n'est pas dans PATH par défaut).</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">echo</span> $PATH
+<span class="k">chmod</span> <span class="p">+x</span> ma_commande.sh
+./ma_commande.sh                    <span class="c"># fonctionne : chemin explicite</span>
+ma_commande.sh                      <span class="c"># échoue : "commande introuvable"</span>
+<span class="k">export</span> PATH=$PATH:/root             <span class="c"># ajoute /root à la recherche (temporaire)</span></pre>
+            </div>
+
+            <h3>Obtenir de l'aide, historique &amp; alias</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Usage</th></tr></thead>
+                <tbody>
+                    <tr><td><code>help commande</code></td><td>aide d'une commande interne (ex : <code>help echo</code>)</td></tr>
+                    <tr><td><code>commande --help</code></td><td>aide d'une commande externe</td></tr>
+                    <tr><td><code>man commande</code></td><td>manuel complet ; <code>/motif</code> pour chercher, <code>q</code> pour quitter</td></tr>
+                    <tr><td><code>whatis commande</code></td><td>résumé en une ligne du rôle d'une commande</td></tr>
+                    <tr><td><code>history</code> / <code>!42</code></td><td>historique / relancer la commande n°42</td></tr>
+                    <tr><td><code>alias ll='ls -lrtha'</code></td><td>créer un raccourci (permanent via <code>~/.bashrc</code>)</td></tr>
+                </tbody>
+            </table></div>
+        </section>
+
+        <!-- 14 -->
+        <section class="chapter" id="chap14">
+            <p class="chapter__num">14</p>
+            <h2 class="chapter__title">Configurer le réseau</h2>
+            <p class="chapter__intro">Sans réseau, pas de mises à jour ni d'installation de logiciels. On configure l'IP, la passerelle et le DNS.</p>
+
+            <h3>IP statique — /etc/network/interfaces</h3>
+            <p>On vérifie d'abord l'existant avec <code>ip a</code> (l'équivalent de <code>ipconfig</code> sous Windows) et <code>ip r</code> (table de routage), puis on édite le fichier des interfaces :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">sudo nano /etc/network/interfaces</span></div>
+                <pre class="terminal__code">auto lo
+iface lo inet loopback
+
+auto ens33
+iface ens33 inet <span class="k">static</span>
+    <span class="p">address</span> <span class="s">192.168.1.10</span>
+    <span class="p">netmask</span> <span class="s">255.255.255.0</span>
+    <span class="p">gateway</span> <span class="s">192.168.1.2</span>
+    <span class="p">dns-nameservers</span> <span class="s">8.8.8.8</span></pre>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">sudo systemctl</span> restart networking
+<span class="k">ip</span> a               <span class="c"># vérifier l'adresse</span>
+<span class="k">ping</span> 8.8.8.8       <span class="c"># tester internet (Ctrl+C pour arrêter)</span></pre>
+            </div>
+
+            <h3>DNS — /etc/resolv.conf</h3>
+            <p>Le DNS traduit <code>www.google.fr</code> en adresse IP. S'il manque, on ajoute <code>nameserver 8.8.8.8</code> dans <code>/etc/resolv.conf</code>, puis on teste avec <code>ping www.google.fr</code>.</p>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Diagnostic express</p>
+                <p>Si <code>ping 8.8.8.8</code> fonctionne mais pas <code>ping www.google.fr</code>, le réseau est bon : c'est le <strong>DNS</strong> qui est en cause → vérifier <code>/etc/resolv.conf</code>.</p>
+            </div>
+
+            <h3>Gérer les interfaces à chaud avec la commande ip</h3>
+            <p>Le paquet <code>iproute2</code> (commande <code>ip</code>) remplace l'ancien <code>net-tools</code> (<code>ifconfig</code>, non maintenu depuis 2009). Les changements faits avec <code>ip</code> sont <strong>temporaires</strong> : perdus au redémarrage si non écrits dans <code>/etc/network/interfaces</code>.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">ip</span> link show                              <span class="c"># liste les interfaces (up/down, MAC)</span>
+<span class="k">sudo ip</span> link set eth0 down                <span class="c"># désactive l'interface</span>
+<span class="k">sudo ip</span> addr add 192.168.76.10/24 dev eth1   <span class="c"># IP temporaire sur eth1</span>
+<span class="k">sudo ip</span> route add default via 192.168.76.1 dev eth1   <span class="c"># passerelle par défaut</span></pre>
+            </div>
+
+            <h3>Résolution de noms : l'ordre de priorité</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Fichier</th><th>Rôle</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/etc/nsswitch.conf</code></td><td>définit l'ordre de résolution (ligne <code>hosts: files dns</code> → fichier local avant DNS)</td></tr>
+                    <tr><td><code>/etc/hosts</code></td><td>dictionnaire de résolution local (ex : <code>192.168.1.31 Facir</code>)</td></tr>
+                    <tr><td><code>/etc/resolv.conf</code></td><td>liste des serveurs DNS interrogés (<code>nameserver ...</code>)</td></tr>
+                </tbody>
+            </table></div>
+        </section>
+
+        <!-- 15 -->
+        <section class="chapter" id="chap15">
+            <p class="chapter__num">15</p>
+            <h2 class="chapter__title">Réseau &amp; SSH au quotidien</h2>
+            <p class="chapter__intro">Diagnostiquer le réseau et prendre la main à distance.</p>
+
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>ip a</code> / <code>ip r</code></td><td>adresses IP / table de routage</td></tr>
+                    <tr><td><code>hostname -I</code></td><td>mes adresses IP (version courte)</td></tr>
+                    <tr><td><code>ping hôte</code></td><td>tester la connexion</td></tr>
+                    <tr><td><code>ss -tuln</code></td><td>voir les ports en écoute</td></tr>
+                    <tr><td><code>nslookup domaine</code> / <code>dig domaine</code></td><td>tester la résolution DNS</td></tr>
+                    <tr><td><code>curl -I url</code> / <code>wget url</code></td><td>en-têtes HTTP / télécharger un fichier</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>SSH : le terminal à distance, chiffré</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — côté serveur Debian</span></div>
+                <pre class="terminal__code"><span class="k">sudo apt</span> install ssh
+<span class="k">sudo systemctl</span> enable ssh     <span class="c"># démarrage automatique au boot</span>
+<span class="k">systemctl</span> status ssh          <span class="c"># vérifier que le service tourne</span></pre>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Depuis une autre machine (Windows, Mac, Linux)</span></div>
+                <pre class="terminal__code"><span class="k">ssh</span> apprenant@192.168.1.10                <span class="c"># ouvrir une session distante</span>
+<span class="k">scp</span> fichier apprenant@192.168.1.10:/home  <span class="c"># copier un fichier via SSH</span></pre>
+            </div>
+
+            <h3>Se connecter sans mot de passe (authentification par clé)</h3>
+            <p>SSH combine deux types de cryptographie : <strong>asymétrique</strong> (clé publique/privée) pour établir la connexion de façon sûre, puis <strong>symétrique</strong> (plus rapide) pour le reste de la session. On génère une paire de clés côté client et on diffuse la clé publique sur le serveur :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — côté client</span></div>
+                <pre class="terminal__code"><span class="k">ssh-keygen</span> <span class="p">-t</span> rsa <span class="p">-b</span> 4096 <span class="p">-f</span> ~/.ssh/id_rsa   <span class="c"># génère la paire (privée + .pub)</span>
+<span class="k">ssh-copy-id</span> <span class="p">-i</span> ~/.ssh/id_rsa.pub user@serveur <span class="c"># diffuse la clé publique</span></pre>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Permissions du dossier .ssh</p>
+                <p>Le dossier <code>~/.ssh</code> doit être en <code>700</code> (accès au seul propriétaire) sinon SSH refuse de l'utiliser : <code>chmod 700 ~/.ssh</code>.</p>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Transfert de fichiers</p>
+                <p><code>wget url</code> / <code>curl -O url</code> téléchargent un fichier ; <code>scp -r dossier user@hôte:/dest</code> copie récursivement via SSH. Pour un transfert interactif façon explorateur, un client SFTP (FileZilla, WinSCP) se connecte sur le port 22 — le même service que SSH.</p>
+            </div>
+        </section>
+
+        <!-- 16 -->
+        <section class="chapter" id="chap16">
+            <p class="chapter__num">16</p>
+            <h2 class="chapter__title">Installer des logiciels (APT)</h2>
+            <p class="chapter__intro">APT est le « magasin d'applications » de Debian, en ligne de commande. Les logiciels viennent de serveurs appelés dépôts (ou miroirs).</p>
+
+            <h3>sources.list — d'où viennent les paquets</h3>
+            <p>Les dépôts sont listés dans <code>/etc/apt/sources.list</code>. Exemple pour Debian 13 avec un miroir français :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">sudo nano /etc/apt/sources.list</span></div>
+                <pre class="terminal__code"><span class="k">deb</span> <span class="s">http://ftp.fr.debian.org/debian</span> trixie <span class="p">main contrib non-free non-free-firmware</span>
+<span class="k">deb</span> <span class="s">http://ftp.fr.debian.org/debian</span> trixie-updates <span class="p">main contrib non-free non-free-firmware</span>
+<span class="k">deb</span> <span class="s">http://security.debian.org/debian-security</span> trixie-security <span class="p">main contrib non-free non-free-firmware</span></pre>
+            </div>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Composant</th><th>Contenu</th></tr></thead>
+                <tbody>
+                    <tr><td><code>main</code></td><td>paquets 100 % libres</td></tr>
+                    <tr><td><code>contrib</code></td><td>libres, mais dépendent de logiciels non libres</td></tr>
+                    <tr><td><code>non-free</code></td><td>logiciels propriétaires</td></tr>
+                    <tr><td><code>non-free-firmware</code></td><td>pilotes/firmwares propriétaires (Wi-Fi, GPU…)</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Les commandes essentielles</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>sudo apt update</code></td><td>rafraîchir la liste des paquets (ne modifie rien)</td></tr>
+                    <tr><td><code>sudo apt upgrade</code> / <code>full-upgrade</code></td><td>installer les mises à jour (simple / complète)</td></tr>
+                    <tr><td><code>sudo apt install paquet</code></td><td>installer un logiciel</td></tr>
+                    <tr><td><code>sudo apt remove</code> / <code>purge</code></td><td>désinstaller (garde la config / supprime tout)</td></tr>
+                    <tr><td><code>sudo apt autoremove</code></td><td>nettoyer les dépendances inutiles</td></tr>
+                    <tr><td><code>apt search nom</code> / <code>apt show paquet</code></td><td>chercher / voir les infos d'un paquet</td></tr>
+                    <tr><td><code>apt list --installed</code></td><td>lister ce qui est installé</td></tr>
+                    <tr><td><code>sudo dpkg -i paquet.deb</code></td><td>installer un .deb téléchargé à la main</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Erreurs courantes</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Erreur</th><th>Cause</th><th>Solution</th></tr></thead>
+                <tbody>
+                    <tr><td><code>Unable to locate package</code></td><td>paquet absent des dépôts</td><td>vérifier version et composants dans sources.list</td></tr>
+                    <tr><td><code>index files failed to download</code></td><td>miroir inaccessible</td><td>changer de miroir</td></tr>
+                    <tr><td><code>Could not resolve</code></td><td>problème DNS</td><td>vérifier <code>/etc/resolv.conf</code></td></tr>
+                    <tr><td><code>Release file ... not valid yet</code></td><td>date/heure incorrecte</td><td><code>date -s "YYYY-MM-DD HH:MM:SS"</code></td></tr>
+                    <tr><td><code>does not have a Release file</code></td><td>mauvais nom de code</td><td>vérifier avec <code>lsb_release -a</code></td></tr>
+                </tbody>
+            </table></div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Utiliser un miroir proche (France : <strong>ftp.fr.debian.org</strong> ou <strong>mirror.ovh.net</strong>), ne jamais omettre le dépôt <strong>security</strong>, et toujours faire <code>apt update</code> après avoir modifié <code>sources.list</code>.</p>
+            </div>
+        </section>
+
+        <!-- 17 -->
+        <section class="chapter" id="chap17">
+            <p class="chapter__num">17</p>
+            <h2 class="chapter__title">Processus &amp; services</h2>
+            <p class="chapter__intro">Voir ce qui tourne, arrêter ce qui bloque, gérer les services système avec systemd.</p>
+
+            <h3>Les processus (programmes en cours)</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>ps aux</code> / <code>ps -ef</code></td><td>lister tous les processus (hiérarchie complète avec PPID)</td></tr>
+                    <tr><td><code>top</code> / <code>htop</code></td><td>moniteur interactif (CPU, RAM, en direct)</td></tr>
+                    <tr><td><code>kill PID</code> / <code>kill -9 PID</code></td><td>arrêter / forcer l'arrêt</td></tr>
+                    <tr><td><code>killall nom</code></td><td>arrêter tous les processus de ce nom</td></tr>
+                    <tr><td><code>commande &amp;</code> / <code>jobs</code> / <code>fg</code> / <code>bg</code></td><td>lancer en fond / voir / ramener au 1er plan / reprendre en fond</td></tr>
+                </tbody>
+            </table></div>
+            <div class="takeaway">
+                <p class="takeaway__label">Le processus n°1</p>
+                <p>Au démarrage, Linux lance un premier processus d'ID 1 (<code>init</code> ou <code>systemd</code>). Tous les autres en sont les fils, petits-fils, etc. — visible avec <code>ps -ef</code> (colonne PPID = parent).</p>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">ps</span> <span class="p">-ef</span> | <span class="k">grep</span> nom                   <span class="c"># filtrer par nom/utilisateur</span>
+<span class="k">ps</span> <span class="p">-edf</span> <span class="p">--sort=+pmem</span> | <span class="k">tail</span> <span class="p">-5</span>      <span class="c"># les 5 processus qui consomment le plus de RAM</span>
+<span class="k">ps</span> <span class="p">-edf</span> <span class="p">--sort=+pcpu</span> | <span class="k">tail</span> <span class="p">-5</span>      <span class="c"># les 5 qui consomment le plus de CPU</span></pre>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Raccourcis dans top</p>
+                <p><code>t</code> bascule l'affichage CPU, <code>m</code> l'affichage RAM, <code>h</code> l'aide, <code>q</code> quitte. Le « load average » en haut indique le nombre de processus en attente de CPU sur 1/5/15 minutes.</p>
+            </div>
+
+            <h3>Les services (systemd)</h3>
+            <p>Un <strong>service</strong> est un programme qui tourne en permanence en arrière-plan (serveur web, SSH…). On les gère avec <code>systemctl</code> :</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>sudo systemctl start/stop/restart service</code></td><td>démarrer / arrêter / redémarrer</td></tr>
+                    <tr><td><code>systemctl status service</code></td><td>voir l'état</td></tr>
+                    <tr><td><code>sudo systemctl enable/disable service</code></td><td>activer / désactiver au démarrage</td></tr>
+                    <tr><td><code>journalctl -u service</code> / <code>journalctl -f</code></td><td>logs d'un service / tous les logs en direct</td></tr>
+                </tbody>
+            </table></div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>start</code> agit maintenant, <code>enable</code> agit au prochain démarrage. Pour un service qui doit toujours tourner (comme SSH), il faut les <strong>deux</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 18 -->
+        <section class="chapter" id="chap18">
+            <p class="chapter__num">18</p>
+            <h2 class="chapter__title">Disques, archives &amp; infos système</h2>
+            <p class="chapter__intro">Surveiller l'espace disque, compresser, et connaître sa machine.</p>
+
+            <div class="table-wrap"><table>
+                <thead><tr><th>Commande</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>df -h</code></td><td>espace disque libre (par partition)</td></tr>
+                    <tr><td><code>du -sh dossier</code></td><td>taille d'un dossier</td></tr>
+                    <tr><td><code>lsblk</code> / <code>sudo fdisk -l</code></td><td>lister disques et partitions</td></tr>
+                    <tr><td><code>sudo mount /dev/sdX /mnt</code> / <code>umount /mnt</code></td><td>monter / démonter un disque</td></tr>
+                    <tr><td><code>blkid</code></td><td>UUID des partitions</td></tr>
+                    <tr><td><code>uname -a</code> / <code>free -h</code> / <code>uptime</code></td><td>noyau / RAM / temps depuis le démarrage</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>Archives</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">tar</span> <span class="p">-czf</span> archive.tar.gz dossier/   <span class="c"># compresser un dossier</span>
+<span class="k">tar</span> <span class="p">-xzf</span> archive.tar.gz            <span class="c"># extraire</span>
+<span class="k">zip</span> archive.zip fichiers           <span class="c"># créer un zip</span>
+<span class="k">unzip</span> archive.zip                  <span class="c"># extraire un zip</span></pre>
+            </div>
+        </section>
+
+        <!-- 19 -->
+        <section class="chapter" id="chap19">
+            <p class="chapter__num">19</p>
+            <h2 class="chapter__title">Logs système &amp; audit</h2>
+            <p class="chapter__intro">Où regarder quand quelque chose s'est mal passé, ou pour savoir qui a fait quoi.</p>
+
+            <p>La plupart des processus envoient leurs traces au service <code>rsyslog</code> (config dans <code>/etc/rsyslog.conf</code>). Sur les systèmes récents (systemd), <code>journalctl</code> centralise aussi les logs.</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Fichier / commande</th><th>Contenu</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/var/log/auth.log</code></td><td>authentifications, connexions SSH, élévations de privilèges (Debian)</td></tr>
+                    <tr><td><code>/var/log/syslog</code></td><td>journal général du système</td></tr>
+                    <tr><td><code>/var/log/kern.log</code></td><td>messages du noyau (détection matérielle, cartes réseau…)</td></tr>
+                    <tr><td><code>/var/log/wtmp</code></td><td>historique des connexions/redémarrages (binaire, lire avec <code>last</code>)</td></tr>
+                    <tr><td><code>journalctl -u service</code> / <code>-f</code></td><td>logs d'un service précis / suivre en direct</td></tr>
+                </tbody>
+            </table></div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — qui a fait quoi ?</span></div>
+                <pre class="terminal__code"><span class="k">last</span>                     <span class="c"># historique des connexions (lit /var/log/wtmp)</span>
+<span class="k">last</span> | <span class="k">grep</span> reboot       <span class="c"># uniquement les redémarrages du système</span>
+<span class="k">who</span>                      <span class="c"># qui est connecté en ce moment</span>
+<span class="k">w</span>                        <span class="c"># qui est connecté + ce qu'il fait + temps d'inactivité</span></pre>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Pourquoi wtmp est en binaire</p>
+                <p>Contrairement aux logs texte, <code>/var/log/wtmp</code> est stocké en binaire par le noyau : plus difficile à trafiquer pour effacer ses traces qu'un simple fichier texte.</p>
+            </div>
+        </section>
+
+        <!-- 20 -->
+        <section class="chapter" id="chap20">
+            <p class="chapter__num">20</p>
+            <h2 class="chapter__title">Partitions, GRUB &amp; réseaux de virtualisation</h2>
+            <p class="chapter__intro">Des notions utiles dès l'installation ou quand on travaille avec des machines virtuelles (VMware, Hyper-V, VirtualBox).</p>
+
+            <h3>Les partitions principales sous Debian</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Partition</th><th>Rôle</th><th>Analogie Windows</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/</code> (racine)</td><td>tout le système : binaires, config, logs. Si elle est pleine, le système peut devenir instable.</td><td><code>C:\Windows</code> + <code>Program Files</code></td></tr>
+                    <tr><td><code>/home</code></td><td>données des utilisateurs. La séparer permet de réinstaller le système sans perdre les données perso.</td><td><code>C:\Users</code></td></tr>
+                    <tr><td><code>swap</code></td><td>mémoire virtuelle sur disque, utilisée quand la RAM sature (plus lent, évite le crash)</td><td><code>pagefile.sys</code></td></tr>
+                </tbody>
+            </table></div>
+            <div class="tip">
+                <p class="tip__label">Taille de swap recommandée</p>
+                <p>RAM ≤ 2 Go → swap = 2× la RAM · RAM 2-8 Go → swap = RAM · RAM &gt; 8 Go → 4-8 Go suffisent souvent.</p>
+            </div>
+
+            <h3>GRUB : le démarrage du système</h3>
+            <p>GRUB (GRand Unified Bootloader) est le premier programme lancé après le BIOS/UEFI : il charge le noyau Linux. Équivalent du Windows Boot Manager (<code>bootmgr</code>). Il permet de choisir quel OS ou quelle version du noyau démarrer, et sa config est générée dans <code>/boot/grub/grub.cfg</code> (ne pas éditer directement) à partir de <code>/etc/default/grub</code>.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <pre class="terminal__code"><span class="k">sudo update-grub</span>              <span class="c"># régénère grub.cfg après modif de /etc/default/grub</span>
+<span class="k">sudo grub-install</span> <span class="s">/dev/sda</span>    <span class="c"># réinstalle GRUB (problème de boot)</span></pre>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Mode recovery</p>
+                <p>Si le système ne démarre plus normalement, GRUB permet de démarrer en mode « single »/« recovery » pour réparer, ou de revenir à un ancien noyau si une mise à jour a posé problème.</p>
+            </div>
+
+            <h3>Modes réseau en virtualisation</h3>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Mode</th><th>Accès Internet</th><th>Accessible de l'extérieur</th><th>Cas d'usage</th></tr></thead>
+                <tbody>
+                    <tr><td>Host-only / Interne / Privé</td><td class="no">non</td><td class="no">non</td><td>lab isolé, VMs qui se parlent entre elles sans sortir sur le réseau réel</td></tr>
+                    <tr><td>NAT</td><td class="yes">oui (via l'hôte)</td><td class="no">non</td><td>VM qui a juste besoin d'internet, sans être exposée</td></tr>
+                    <tr><td>Bridged / Externe</td><td class="yes">oui (direct)</td><td class="yes">oui</td><td>serveur accessible par d'autres machines du réseau local</td></tr>
+                </tbody>
+            </table></div>
+            <div class="takeaway">
+                <p class="takeaway__label">Sous Hyper-V</p>
+                <p>Ces 3 modes correspondent aux « commutateurs virtuels » : Externe (bridged), Interne (communique avec l'hôte mais pas le réseau physique) et Privé (isolé, même l'hôte ne communique pas avec les VMs).</p>
+            </div>
+        </section>
+
+        <!-- 21 -->
+        <section class="chapter" id="chap21">
+            <p class="chapter__num">21</p>
+            <h2 class="chapter__title">Raccourcis &amp; réflexes</h2>
+            <p class="chapter__intro">Les gestes qui font gagner un temps fou au quotidien.</p>
+
+            <div class="table-wrap"><table>
+                <thead><tr><th>Raccourci</th><th>Action</th></tr></thead>
+                <tbody>
+                    <tr><td><code>Tab</code></td><td>auto-complétion — LE raccourci indispensable</td></tr>
+                    <tr><td><code>↑ / ↓</code></td><td>naviguer dans l'historique des commandes</td></tr>
+                    <tr><td><code>Ctrl+R</code></td><td>chercher dans l'historique</td></tr>
+                    <tr><td><code>Ctrl+C</code></td><td>interrompre la commande en cours</td></tr>
+                    <tr><td><code>Ctrl+Z</code></td><td>suspendre (reprendre avec <code>fg</code>)</td></tr>
+                    <tr><td><code>Ctrl+L</code></td><td>effacer l'écran</td></tr>
+                    <tr><td><code>Ctrl+D</code></td><td>fermer le terminal / se déconnecter</td></tr>
+                </tbody>
+            </table></div>
+            <div class="takeaway">
+                <p class="takeaway__label">Les 3 réflexes du débutant</p>
+                <p><strong>1.</strong> <code>Tab</code> pour compléter les noms au lieu de tout taper. <strong>2.</strong> <code>man commande</code> pour lire le manuel de n'importe quelle commande (<code>q</code> pour quitter). <strong>3.</strong> Relire toute commande destructive (<code>rm</code>, <code>chmod</code>, <code>dd</code>) avant d'appuyer sur Entrée.</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>Linux Debian</strong> — Module du centre d'apprentissage IT · Terminal, fichiers, permissions, filtres texte, réseau, APT, SSH et administration de base</p>
+    <p><a href="../index.html">← Retour au portail</a></p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>

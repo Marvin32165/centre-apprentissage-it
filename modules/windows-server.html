@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Server 2025 — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body data-domain="server">
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 01 · Infrastructure</p>
+        <h1 class="hero__title">Windows <em>Server</em> 2025</h1>
+        <p class="hero__lead">Le socle de toute l'infrastructure : installer des rôles, déployer des serveurs en série par image, bâtir un annuaire Active Directory, résoudre les noms avec DNS et partager les fichiers avec DFS.</p>
+        <div class="hero__meta">
+            <span class="chip">AD DS</span><span class="chip">SYSPREP</span><span class="chip">DNS / DHCP</span><span class="chip">DFS</span><span class="chip">Server Core</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Windows Server</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#roles"><span>01</span> Rôles &amp; fonctionnalités</a></li>
+            <li><a class="toc__link" href="#sysprep"><span>02</span> SYSPREP &amp; déploiement</a></li>
+            <li><a class="toc__link" href="#adds"><span>03</span> Active Directory : OU, groupes, utilisateurs</a></li>
+            <li><a class="toc__link" href="#dns-dhcp"><span>04</span> DNS &amp; DHCP</a></li>
+            <li><a class="toc__link" href="#dfs"><span>05</span> DFS Namespace</a></li>
+            <li><a class="toc__link" href="#securite"><span>06</span> Sécurité du serveur</a></li>
+            <li><a class="toc__link" href="#labo"><span>07</span> Labo final</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Windows Server</div>
+                <div class="section-banner__desc">Du rôle isolé à la forêt Active Directory complète</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="roles">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Rôles &amp; fonctionnalités</h2>
+            <p class="chapter__intro">Windows Server est une base neutre que l'on spécialise en lui ajoutant des <strong>rôles</strong> (ce que le serveur <em>fait</em> : contrôleur de domaine, serveur web, DHCP…) et des <strong>fonctionnalités</strong> (briques de support : outils d'administration, sauvegarde…).</p>
+
+            <h3>Desktop Experience vs Server Core</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Desktop Experience</h4>
+                    <ul>
+                        <li>Interface graphique complète (bureau, explorateur).</li>
+                        <li>Plus simple à apprendre et à administrer localement.</li>
+                        <li>Surface d'attaque et empreinte disque plus grandes.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Server Core</h4>
+                    <ul>
+                        <li>Pas d'interface : administration en ligne de commande / à distance.</li>
+                        <li>Moins de mises à jour, moins de surface d'attaque.</li>
+                        <li>Console de configuration : <code>sconfig.cmd</code>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Ajouter un rôle — deux voies</h3>
+            <p>Via le <strong>Server Manager</strong> : <em>Manage → Add Roles and Features</em>, puis on choisit le type d'installation (basé rôle/fonctionnalité ou services Bureau à distance), le serveur cible, et on coche le rôle voulu.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — équivalent en script</span></div>
+                <pre class="terminal__code"><span class="c"># Lister les rôles/fonctionnalités disponibles</span>
+<span class="k">Get-WindowsFeature</span>
+
+<span class="c"># Installer un rôle + ses outils d'administration</span>
+<span class="k">Install-WindowsFeature</span> AD-Domain-Services, DNS <span class="p">-IncludeManagementTools</span>
+
+<span class="c"># Sur Server Core : ouvrir la console de configuration</span>
+sconfig.cmd</pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Astuce labo</p>
+                <p>Sur le terrain, <strong>ne cochez pas « redémarrer automatiquement »</strong> pendant l'ajout d'un rôle : vous gardez la main sur le moment du reboot. En PowerShell, ajoutez <code>-Restart</code> seulement quand vous êtes prêt.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="sysprep">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">SYSPREP &amp; déploiement par image</h2>
+            <p class="chapter__intro">Réinstaller Windows manuellement sur 10 serveurs est une perte de temps. La bonne méthode : préparer <strong>une seule image de référence</strong>, la « généraliser » avec SYSPREP, puis créer toutes les VM à partir de ce disque parent en quelques secondes via des <strong>disques différentiels</strong>.</p>
+
+            <h3>Pourquoi généraliser ?</h3>
+            <p>Chaque installation Windows porte un identifiant unique (<strong>SID</strong>) et un nom machine. Cloner brutalement un disque dupliquerait ces identifiants — interdit dans un domaine. <strong>SYSPREP en mode <em>generalize</em></strong> efface ces éléments propres à la machine : au prochain démarrage, Windows repasse par l'écran de configuration (OOBE) et reçoit une nouvelle identité.</p>
+
+            <h3>Préparer l'image de référence (exercice du labo)</h3>
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Créer la VM modèle</strong>VM Hyper-V « SYSPREP » : 8 Go RAM, 2 vCPU, ISO Windows Server 2025, installation <em>Standard (Desktop Experience)</em>.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Pré-configurer Windows</strong>Fuseau horaire, désactivation de IE Enhanced Security, IP, Bureau à distance, pare-feu. Partitionner le disque en deux : <code>C:\</code> ≈ 40 % du VHDX (127 Go) et <code>D:\</code>.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Lancer SYSPREP</strong>Exécuter <code>C:\Windows\System32\Sysprep\sysprep.exe</code> en mode <strong>OOBE</strong>, cocher <strong>Généraliser</strong>, action <strong>Arrêter le système</strong>.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Archiver le disque parent</strong>Supprimer la VM d'Hyper-V (on garde le disque), renommer le VHDX en <code>TEST-SYSPREP.vhdx</code> et le déposer dans <code>C:\PARENT</code>.</div></li>
+                <li class="step"><div class="step__num">05</div><div class="step__body"><strong>Cloner à volonté</strong>Créer les VM (ex. LAB-WS01, LAB-WS02) à partir de disques <em>différentiels</em> pointant vers ce parent. Les deux machines doivent pouvoir se <code>ping</code>.</div></li>
+            </ol>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — clonage par disque différentiel</span></div>
+                <pre class="terminal__code"><span class="c"># Un disque enfant qui ne stocke QUE les différences avec le parent</span>
+<span class="k">New-VHD</span> <span class="p">-Path</span> <span class="s">.\LAB-WS01-DIFF.vhdx</span> `
+    <span class="p">-ParentPath</span> <span class="s">"C:\PARENT\TEST-SYSPREP.vhdx"</span> <span class="p">-Differencing</span>
+
+<span class="k">New-VM</span> <span class="p">-Name</span> <span class="s">"LAB-WS01"</span> <span class="p">-Generation</span> 2 <span class="p">-MemoryStartupBytes</span> 8GB `
+    <span class="p">-VHDPath</span> <span class="s">.\LAB-WS01-DIFF.vhdx</span> <span class="p">-SwitchName</span> <span class="s">"LABOPS"</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Image de référence → <strong>SYSPREP /generalize /oobe</strong> → disque parent figé → <strong>disques différentiels</strong>. On déploie en secondes, sans dupliquer le SID, et on économise un disque entier par machine.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="adds">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Active Directory Domain Services</h2>
+            <p class="chapter__intro">AD DS est l'<strong>annuaire central</strong> du réseau : il authentifie les utilisateurs, organise les ordinateurs et applique des stratégies. Tout part d'une <strong>forêt</strong> contenant un <strong>domaine</strong>, structuré en <strong>unités d'organisation (OU)</strong>.</p>
+
+            <h3>La hiérarchie</h3>
+            <ul>
+                <li><strong>Forêt</strong> — frontière de sécurité la plus haute ; contient un ou plusieurs domaines.</li>
+                <li><strong>Domaine</strong> — ex. <code>orion.local</code> (nom NetBIOS <code>ORION</code>) : la base d'authentification commune.</li>
+                <li><strong>Unité d'organisation (OU)</strong> — conteneur logique (par département, par site) sur lequel on applique des <strong>GPO</strong> et on délègue l'administration.</li>
+                <li><strong>Objets</strong> — utilisateurs, groupes, ordinateurs.</li>
+            </ul>
+
+            <h3>Promouvoir le premier contrôleur de domaine</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
+                <pre class="terminal__code"><span class="c"># Rôle AD DS + DNS</span>
+<span class="k">Install-WindowsFeature</span> AD-Domain-Services, DNS <span class="p">-IncludeManagementTools</span>
+
+<span class="c"># Créer la forêt + le domaine + le DNS intégré</span>
+<span class="k">Install-ADDSForest</span> <span class="p">-DomainName</span> <span class="s">"orion.local"</span> `
+    <span class="p">-DomainNetbiosName</span> <span class="s">"ORION"</span> <span class="p">-InstallDns</span></pre>
+            </div>
+
+            <h3>Structurer : OU, groupes, utilisateurs</h3>
+            <p>Modèle du labo Orion : une OU racine <code>ORION-DPT</code>, trois départements (<em>Management</em>, <em>Development</em>, <em>Accounting</em>), un groupe de sécurité par département et des utilisateurs rattachés.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — arborescence AD</span></div>
+                <pre class="terminal__code"><span class="c"># OU racine + une OU par département</span>
+<span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"ORION-DPT"</span> <span class="p">-Path</span> <span class="s">"DC=orion,DC=local"</span>
+<span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"Development"</span> <span class="p">-Path</span> <span class="s">"OU=ORION-DPT,DC=orion,DC=local"</span>
+
+<span class="c"># Groupe de sécurité global</span>
+<span class="k">New-ADGroup</span> <span class="p">-Name</span> <span class="s">"DEV-GRP"</span> <span class="p">-GroupScope</span> Global <span class="p">-GroupCategory</span> Security `
+    <span class="p">-Path</span> <span class="s">"OU=Development,OU=ORION-DPT,DC=orion,DC=local"</span>
+
+<span class="c"># Utilisateur (mot de passe saisi de façon masquée)</span>
+<span class="k">New-ADUser</span> <span class="p">-Name</span> <span class="s">"Sébastien Sotiaux"</span> <span class="p">-SamAccountName</span> <span class="s">"sso"</span> `
+    <span class="p">-UserPrincipalName</span> <span class="s">"sso@orion.local"</span> `
+    <span class="p">-Path</span> <span class="s">"OU=Development,OU=ORION-DPT,DC=orion,DC=local"</span> `
+    <span class="p">-AccountPassword</span> (<span class="k">Read-Host</span> <span class="p">-AsSecureString</span> <span class="s">"Mot de passe"</span>) <span class="p">-Enabled</span> $true
+
+<span class="k">Add-ADGroupMember</span> <span class="p">-Identity</span> <span class="s">"DEV-GRP"</span> <span class="p">-Members</span> <span class="s">"sso"</span></pre>
+            </div>
+
+            <h3>Joindre une machine au domaine</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — membre du domaine</span></div>
+                <pre class="terminal__code"><span class="k">Add-Computer</span> <span class="p">-DomainName</span> <span class="s">"orion.local"</span> <span class="p">-Restart</span>
+<span class="c"># Alternative en cmd :</span>
+<span class="c"># netdom join SRV-FILE01 /domain:orion.local /userd:ORION\Administrator /passwordd:*</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Forêt → domaine → OU → objets. On <strong>applique les GPO</strong> et on <strong>délègue</strong> au niveau de l'OU, on <strong>autorise</strong> via les groupes. <code>Install-ADDSForest</code> crée tout le socle ; pour le 2<sup>e</sup> DC on utilise <code>Install-ADDSDomainController</code>.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="dns-dhcp">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">DNS &amp; DHCP</h2>
+            <p class="chapter__intro">Deux services réseau indissociables d'Active Directory : <strong>DNS</strong> traduit les noms en adresses IP (et localise les contrôleurs de domaine), <strong>DHCP</strong> distribue automatiquement les adresses IP aux clients.</p>
+
+            <h3>DNS — l'annuaire des noms</h3>
+            <ul>
+                <li><strong>Zone de recherche directe</strong> — nom → IP (<code>srv-ad01.orion.local → 172.16.50.10</code>).</li>
+                <li><strong>Zone de recherche inversée</strong> — IP → nom.</li>
+                <li><strong>Enregistrements clés</strong> : <code>A</code> (hôte), <code>CNAME</code> (alias), <code>MX</code> (messagerie), <code>SRV</code> (services — c'est ainsi que les clients trouvent le DC).</li>
+                <li>AD <strong>dépend</strong> du DNS : un client ne peut ouvrir une session que s'il résout les enregistrements <code>SRV</code> du domaine.</li>
+            </ul>
+
+            <h3>Configuration réseau d'un serveur</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — IP fixe + DNS</span></div>
+                <pre class="terminal__code"><span class="k">Get-NetAdapter</span>
+<span class="k">New-NetIPAddress</span> <span class="p">-InterfaceAlias</span> <span class="s">"Ethernet"</span> <span class="p">-IPAddress</span> 172.16.50.10 `
+    <span class="p">-PrefixLength</span> 24 <span class="p">-DefaultGateway</span> 172.16.50.1
+<span class="k">Set-DnsClientServerAddress</span> <span class="p">-InterfaceAlias</span> <span class="s">"Ethernet"</span> <span class="p">-ServerAddresses</span> 172.16.50.10
+<span class="c"># Désactiver IPv6 si non utilisé dans le labo</span>
+<span class="k">Disable-NetAdapterBinding</span> <span class="p">-Name</span> <span class="s">"Ethernet"</span> <span class="p">-ComponentID</span> ms_tcpip6</pre>
+            </div>
+
+            <h3>DHCP — l'attribution automatique</h3>
+            <p>Le client diffuse une demande (<strong>DORA</strong> : Discover → Offer → Request → Acknowledge) ; le serveur DHCP lui prête une adresse d'une <strong>étendue (scope)</strong> pour une durée de bail. En environnement AD, le serveur DHCP doit être <strong>autorisé</strong> dans l'annuaire avant de distribuer.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Sur un contrôleur de domaine, le serveur pointe son DNS <strong>vers lui-même</strong>. Sans DNS fonctionnel, pas d'ouverture de session AD. DHCP simplifie l'adressage des clients via les 4 étapes <strong>DORA</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="dfs">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">DFS Namespace</h2>
+            <p class="chapter__intro">DFS (Distributed File System) offre aux utilisateurs <strong>un seul chemin réseau logique</strong> qui masque l'emplacement physique réel des partages — même s'ils sont répartis sur plusieurs serveurs.</p>
+
+            <h3>Le problème résolu</h3>
+            <p>Sans DFS, l'utilisateur doit connaître <code>\\SRV-FILE01\Compta</code>, <code>\\SRV-FILE02\RH</code>… Si on déplace un partage, tous les raccourcis cassent. Avec DFS, tout passe par un chemin unique stable : <code>\\orion.local\Partages\Compta</code>.</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>Namespace (espace de noms)</h4>
+                    <ul>
+                        <li>Le chemin logique unique présenté aux utilisateurs.</li>
+                        <li>Des <em>dossiers</em> pointent (targets) vers les vrais partages.</li>
+                        <li>On peut déplacer le partage réel sans changer le chemin.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Replication (DFS-R)</h4>
+                    <ul>
+                        <li>Réplique le contenu entre plusieurs serveurs.</li>
+                        <li>Tolérance de panne : si un serveur tombe, l'autre répond.</li>
+                        <li>Répartition de charge entre sites.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>DFS Namespace = <strong>abstraction du chemin</strong> (un seul nom pour l'utilisateur). DFS Replication = <strong>copies synchronisées</strong> pour la disponibilité. Les deux se combinent pour un partage de fichiers résilient.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="securite">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Sécurité du serveur</h2>
+            <p class="chapter__intro">Sécuriser un serveur, c'est réduire la <strong>surface d'attaque</strong> et appliquer le <strong>moindre privilège</strong> : n'installer que le nécessaire, ne donner que les droits indispensables, et tout journaliser.</p>
+
+            <h3>Les bons réflexes</h3>
+            <ul>
+                <li><strong>Moindre privilège</strong> — un compte de service n'a que les droits dont il a besoin (voir les <em>GMSA</em> dans le module PowerShell).</li>
+                <li><strong>Server Core</strong> quand l'interface n'est pas requise : moins de composants = moins de failles.</li>
+                <li><strong>Pare-feu Windows Defender</strong> — n'ouvrir que les ports des services réellement exposés.</li>
+                <li><strong>Mises à jour</strong> — planifier WSUS / Windows Update pour combler les vulnérabilités.</li>
+                <li><strong>GPO de sécurité</strong> — stratégies de mots de passe, verrouillage de compte, droits utilisateur.</li>
+                <li><strong>Sauvegarde testée</strong> — règle <strong>3-2-1</strong> : 3 copies, 2 supports, 1 hors site.</li>
+            </ul>
+
+            <h3>Le principe de la chaîne de confiance</h3>
+            <p>Beaucoup de sécurité Windows repose sur les <strong>certificats</strong> et une <strong>autorité de certification (CA)</strong> interne. Ce sujet est traité en profondeur dans le module <a href="exchange-securite.html">Exchange &amp; Sécurité</a> (PKI, chaîne de confiance, AD CS).</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Point de vigilance</p>
+                <p>La sécurité n'est pas une case à cocher : c'est <strong>moindre privilège + surface réduite + journalisation + sauvegarde testée</strong>, en continu. Une sauvegarde jamais restaurée n'est qu'une hypothèse.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="labo">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Labo final — topologie de référence</h2>
+            <p class="chapter__intro">L'environnement Orion qui sert de fil rouge : un commutateur privé Hyper-V, un plan d'adressage <code>172.16.50.x/24</code>, deux contrôleurs de domaine, un serveur de fichiers et un client Windows 11.</p>
+
+            <div class="net">
+                <div class="node"><b>SRV-AD01</b><span class="ip">172.16.50.10</span><span>Contrôleur de domaine principal + DNS — <code>orion.local</code></span></div>
+                <div class="node"><b>SRV-AD02</b><span class="ip">172.16.50.11</span><span>Contrôleur de domaine secondaire (réplication / tolérance de panne)</span></div>
+                <div class="node"><b>SRV-FILE01</b><span class="ip">172.16.50.20</span><span>Serveur de fichiers — partages &amp; DFS</span></div>
+                <div class="node"><b>CLIENT-WIN11</b><span class="ip">DHCP</span><span>Poste client joint au domaine</span></div>
+                <div class="node"><b>Passerelle</b><span class="ip">172.16.50.1</span><span>Default gateway du réseau LABOPS (commutateur privé)</span></div>
+            </div>
+
+            <p>Le détail des scripts de création de VM, de configuration réseau et de promotion AD se trouve dans le module <a href="powershell.html">PowerShell &amp; Automatisation</a>.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un labo réussi part toujours d'un <strong>plan d'adressage écrit</strong> et d'un <strong>nommage cohérent</strong> (rôle dans le nom : <code>SRV-AD</code>, <code>SRV-FILE</code>). Le second DC n'est pas un luxe : c'est la tolérance de panne de l'authentification.</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>Windows Server 2025</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · Synthèse des notes de labo</p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCNA — Réseau Cisco — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+    <style>
+        /* Accent réseau dédié (cyan-indigo) pour ce module */
+        body[data-domain="net"] { --accent:#0EA5E9; --accent-2:#0369A1; --accent-soft:#F0F9FF; --accent-ink:#075985; }
+        .mod__icon, .net .node { }
+    </style>
+</head>
+<body data-domain="net">
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Réseau · CCNA</p>
+        <h1 class="hero__title">CCNA —<br>Réseau <em>Cisco</em></h1>
+        <p class="hero__lead">Du modèle OSI à l'exercice final : configurer des routeurs et des switches Cisco, segmenter en VLAN, router entre eux, distribuer le DHCP, découper les sous-réseaux en VLSM, puis router dynamiquement, traduire les adresses (NAT) et filtrer (ACL).</p>
+        <div class="hero__meta">
+            <span class="chip">OSI</span><span class="chip">VLAN</span><span class="chip">Inter-VLAN</span><span class="chip">DHCP</span><span class="chip">OSPF / EIGRP</span><span class="chip">NAT</span><span class="chip">ACL</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">CCNA — Réseau</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#osi"><span>01</span> Modèle OSI</a></li>
+            <li><a class="toc__link" href="#base"><span>02</span> Config de base &amp; sécurité</a></li>
+            <li><a class="toc__link" href="#vlan"><span>03</span> VLAN &amp; trunk</a></li>
+            <li><a class="toc__link" href="#intervlan"><span>04</span> Routage inter-VLAN</a></li>
+            <li><a class="toc__link" href="#dhcp"><span>05</span> DHCP sur Cisco</a></li>
+            <li><a class="toc__link" href="#subnet"><span>06</span> Subnetting &amp; VLSM</a></li>
+            <li><a class="toc__link" href="#routage"><span>07</span> Routage statique &amp; dynamique</a></li>
+            <li><a class="toc__link" href="#nat-acl"><span>08</span> NAT &amp; ACL</a></li>
+            <li><a class="toc__link" href="#final"><span>09</span> Exercice final</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">CCNA — Réseau Cisco</div>
+                <div class="section-banner__desc">Packet Tracer · de la commande de base à la topologie d'entreprise</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="osi">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Le modèle OSI</h2>
+            <p class="chapter__intro">Sept couches qui décrivent comment deux machines communiquent, de l'application jusqu'au câble. Chaque couche rend service à celle du dessus et s'appuie sur celle du dessous — c'est la grille de lecture de tout problème réseau.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>#</th><th>Couche</th><th>Rôle</th><th>Exemples</th></tr></thead>
+                    <tbody>
+                        <tr><td>7</td><td>Application</td><td>Interface avec l'utilisateur / le logiciel</td><td>HTTP, DNS, SMTP</td></tr>
+                        <tr><td>6</td><td>Présentation</td><td>Format, chiffrement, encodage</td><td>TLS, ASCII, JPEG</td></tr>
+                        <tr><td>5</td><td>Session</td><td>Ouvre / maintient le dialogue</td><td>Sessions, RPC</td></tr>
+                        <tr><td>4</td><td>Transport</td><td>Fiabilité, ports</td><td>TCP, UDP</td></tr>
+                        <tr><td>3</td><td>Réseau</td><td>Adressage logique &amp; routage</td><td>IP, ICMP, OSPF</td></tr>
+                        <tr><td>2</td><td>Liaison</td><td>Adressage physique (MAC), trames</td><td>Ethernet, VLAN, STP</td></tr>
+                        <tr><td>1</td><td>Physique</td><td>Bits sur le support</td><td>Câble, fibre, Wi-Fi</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Moyen mnémotechnique</p>
+                <p><strong>P</strong>our <strong>L</strong>e <strong>R</strong>éseau <strong>T</strong>out <strong>S</strong>e <strong>P</strong>asse <strong>A</strong>utomatiquement → <strong>P</strong>hysique · <strong>L</strong>iaison · <strong>R</strong>éseau · <strong>T</strong>ransport · <strong>S</strong>ession · <strong>P</strong>résentation · <strong>A</strong>pplication (de la couche 1 à la 7).</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="base">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Configuration de base &amp; sécurité</h2>
+            <p class="chapter__intro">On accède au routeur par le <strong>câble console (rollover)</strong> branché sur le port RS-232 du PC. La configuration suit toujours la même séquence : nom, mots de passe, bannière, lignes d'accès, puis chiffrement et SSH.</p>
+
+            <h3>Les modes de l'IOS</h3>
+            <ul>
+                <li><code>Router&gt;</code> — mode utilisateur (lecture seule).</li>
+                <li><code>Router#</code> — mode privilégié (<code>enable</code>).</li>
+                <li><code>Router(config)#</code> — mode configuration globale (<code>configure terminal</code>).</li>
+            </ul>
+
+            <h3>Séquence de base + sécurité</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Cisco IOS — R1</span></div>
+                <pre class="terminal__code"><span class="k">enable</span>
+<span class="k">configure terminal</span>
+ <span class="k">hostname</span> R1
+ <span class="k">no ip domain-lookup</span>              <span class="c">! évite les recherches DNS sur fautes de frappe</span>
+ <span class="k">banner motd</span> #Admin seulement#
+
+ <span class="k">enable secret</span> ciscocisco         <span class="c">! mot de passe privilégié (chiffré)</span>
+ <span class="k">service password-encryption</span>       <span class="c">! chiffre tous les mots de passe en clair</span>
+ <span class="k">security passwords min-length</span> 10
+
+ <span class="k">line console</span> 0                    <span class="c">! accès par le câble console</span>
+  <span class="k">password</span> cisco
+  <span class="k">login</span>
+  <span class="k">exec-timeout</span> 5
+ <span class="k">exit</span></pre>
+            </div>
+
+            <h3>Activer SSH (et bannir Telnet)</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Cisco IOS — SSH</span></div>
+                <pre class="terminal__code"> <span class="k">ip domain name</span> cisco.lan
+ <span class="k">username</span> admin <span class="k">privilege</span> 15 <span class="k">secret</span> motdepasse
+ <span class="k">crypto key generate rsa</span>             <span class="c">! choisir 1024 ou 2048 bits</span>
+ <span class="k">ip ssh version</span> 2
+
+ <span class="k">line vty</span> 0 15                       <span class="c">! lignes d'accès distant</span>
+  <span class="k">login local</span>                       <span class="c">! authentifie via les comptes locaux</span>
+  <span class="k">transport input ssh</span>               <span class="c">! SSH uniquement, pas Telnet</span>
+ <span class="k">exit</span>
+<span class="k">end</span>
+<span class="k">write</span>                                 <span class="c">! enregistre la running-config</span></pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Réflexes utiles</p>
+                <p><code>do show running-config</code> (ou <code>do sh run</code>) pour voir la config sans quitter le mode config ; <code>do write</code> (ou <code>do wr</code>) pour sauvegarder. <code>enable secret</code> est chiffré, <code>enable password</code> ne l'est pas — toujours préférer <code>secret</code>.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="vlan">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">VLAN &amp; trunk</h2>
+            <p class="chapter__intro">Un <strong>VLAN</strong> segmente un switch physique en plusieurs réseaux logiques isolés. Un port <strong>access</strong> appartient à un seul VLAN (un PC) ; un port <strong>trunk</strong> transporte tous les VLAN entre équipements grâce au marquage <strong>802.1Q (dot1q)</strong>.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Cisco IOS — SW1</span></div>
+                <pre class="terminal__code"><span class="k">enable</span>
+<span class="k">configure terminal</span>
+ <span class="k">hostname</span> SW1
+
+ <span class="c">! Déclarer les VLAN</span>
+ <span class="k">vlan</span> 10
+  <span class="k">name</span> WIFIGUEST_V10
+ <span class="k">vlan</span> 20
+  <span class="k">name</span> SERVERS_V20
+
+ <span class="c">! Port trunk vers le routeur / un autre switch</span>
+ <span class="k">interface</span> g0/1
+  <span class="k">switchport mode trunk</span>
+  <span class="k">switchport trunk allowed vlan all</span>
+  <span class="k">no shutdown</span>
+
+ <span class="c">! Port access vers un PC du VLAN 10</span>
+ <span class="k">interface</span> fa0/2
+  <span class="k">switchport mode access</span>
+  <span class="k">switchport access vlan</span> 10
+  <span class="k">spanning-tree portfast</span>        <span class="c">! port d'extrémité : pas de calcul STP</span>
+  <span class="k">no shutdown</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>Access</strong> = un VLAN, un terminal. <strong>Trunk</strong> = tous les VLAN, marqués en <strong>dot1q</strong>, entre switches/routeurs. Sans trunk, deux PC du même VLAN sur deux switches différents ne se parleraient pas.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="intervlan">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Routage inter-VLAN (router-on-a-stick)</h2>
+            <p class="chapter__intro">Les VLAN sont isolés par conception : pour les faire communiquer, il faut un routeur. La méthode <strong>router-on-a-stick</strong> utilise une seule interface physique découpée en <strong>sous-interfaces</strong>, une par VLAN, chacune servant de passerelle.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Cisco IOS — R1 (g0/0/0 = routeur/module/port)</span></div>
+                <pre class="terminal__code"><span class="k">interface</span> g0/0/0
+ <span class="k">no shutdown</span>                       <span class="c">! l'interface physique reste sans IP</span>
+
+<span class="c">! Une sous-interface = une passerelle de VLAN</span>
+<span class="k">interface</span> g0/0/0.10
+ <span class="k">encapsulation dot1q</span> 10            <span class="c">! associe la sous-interface au VLAN 10</span>
+ <span class="k">ip address</span> 172.16.0.1 255.255.192.0
+ <span class="k">no shutdown</span>
+
+<span class="k">interface</span> g0/0/0.20
+ <span class="k">encapsulation dot1q</span> 20
+ <span class="k">ip address</span> 172.16.64.1 255.255.240.0
+ <span class="k">no shutdown</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>La passerelle d'un VLAN = l'IP de sa sous-interface sur le routeur. La notation <code>g0/0/0</code> se lit <strong>routeur / module / port</strong> ; le <code>.10</code> est la sous-interface, liée au VLAN par <code>encapsulation dot1q 10</code>. Sur un switch L3, on remplacerait cela par des interfaces <code>vlan X</code> (SVI).</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="dhcp">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">DHCP sur Cisco</h2>
+            <p class="chapter__intro">Le routeur peut jouer le serveur DHCP de chaque VLAN : on définit un <strong>pool</strong> par réseau, on exclut les adresses fixes (passerelle, serveurs) et on fournit passerelle, DNS et nom de domaine.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Cisco IOS — pool DHCP</span></div>
+                <pre class="terminal__code"><span class="c">! Réserver les adresses qui ne doivent PAS être distribuées</span>
+<span class="k">ip dhcp excluded-address</span> 172.16.0.1 172.16.0.20
+
+<span class="k">ip dhcp pool</span> WIFI-GUEST_V10
+ <span class="k">network</span> 172.16.0.0 255.255.192.0
+ <span class="k">default-router</span> 172.16.0.1         <span class="c">! la passerelle = sous-interface du VLAN</span>
+ <span class="k">dns-server</span> 172.16.64.11
+ <span class="k">domain-name</span> wifiguest.vlan10.lan
+<span class="k">exit</span></pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Piège classique</p>
+                <p>Toujours <strong>exclure la passerelle</strong> et les adresses statiques <em>avant</em> de définir le pool, sinon le routeur risque de les attribuer à un client et de créer un conflit d'adresses IP.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="subnet">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Subnetting &amp; VLSM</h2>
+            <p class="chapter__intro">Le <strong>VLSM</strong> (Variable Length Subnet Mask) découpe un grand bloc en sous-réseaux de tailles <em>différentes</em>, ajustées au nombre d'hôtes de chaque VLAN — sans gaspiller d'adresses.</p>
+
+            <h3>La règle de calcul</h3>
+            <ul>
+                <li>Un préfixe <code>/n</code> laisse <code>32 − n</code> bits d'hôte → <code>2^(32−n) − 2</code> adresses utilisables (on retire l'adresse réseau et le broadcast).</li>
+                <li>On classe les VLAN <strong>du plus grand au plus petit</strong>, puis on attribue les blocs dans l'ordre pour éviter les chevauchements.</li>
+            </ul>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Préfixe</th><th>Masque</th><th>Hôtes utiles</th></tr></thead>
+                    <tbody>
+                        <tr><td>/24</td><td>255.255.255.0</td><td>254</td></tr>
+                        <tr><td>/22</td><td>255.255.252.0</td><td>1022</td></tr>
+                        <tr><td>/20</td><td>255.255.240.0</td><td>4094</td></tr>
+                        <tr><td>/18</td><td>255.255.192.0</td><td>16382</td></tr>
+                        <tr><td>/27</td><td>255.255.255.224</td><td>30</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Exemple de plan (bloc <code>192.168.0.0/17</code>)</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Plan VLSM par VLAN</span></div>
+                <pre class="terminal__code">VLAN 10  Wifi_guest   192.168.0.0/18    (16382 hôtes)
+VLAN 20  Servers      192.168.64.0/20   (4094 hôtes)
+VLAN 30  Hosts        192.168.80.0/20   (4094 hôtes)
+VLAN 40  Management   192.168.96.0/22   (1022 hôtes)
+VLAN 50  Wifi         192.168.100.0/22  (1022 hôtes)
+VLAN 60  IoT          192.168.104.0/24  (254 hôtes)
+VLAN 70  Printers     192.168.105.0/27  (30 hôtes)</pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>VLSM = <strong>la bonne taille pour chaque réseau</strong>. On commence par le VLAN le plus peuplé pour réserver les grands blocs, puis on descend. Méthode infaillible : trier par nombre d'hôtes décroissant et avancer séquentiellement dans l'espace d'adressage.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="routage">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Routage statique &amp; dynamique</h2>
+            <p class="chapter__intro">Un routeur ne connaît au départ que ses réseaux directement connectés. Pour atteindre les autres, on lui indique les routes — soit à la main (<strong>statique</strong>), soit via un protocole qui les apprend tout seul (<strong>dynamique</strong>).</p>
+
+            <h3>Route statique</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Cisco IOS</span></div>
+                <pre class="terminal__code"><span class="c">! Route précise : pour atteindre 10.2.0.0/18, passer par 10.0.0.2</span>
+<span class="k">ip route</span> 10.2.0.0 255.255.192.0 10.0.0.2
+
+<span class="c">! Route par défaut : tout le reste part vers la passerelle</span>
+<span class="k">ip route</span> 0.0.0.0 0.0.0.0 10.0.0.2</pre>
+            </div>
+
+            <h3>Les protocoles dynamiques rencontrés</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Protocole</th><th>Type</th><th>Idée clé</th></tr></thead>
+                    <tbody>
+                        <tr><td>RIP v2</td><td>Vecteur de distance</td><td>Simple, métrique = nombre de sauts (max 15)</td></tr>
+                        <tr><td>OSPF</td><td>État de lien</td><td>Calcule le plus court chemin (coût), notion d'aires</td></tr>
+                        <tr><td>EIGRP</td><td>Hybride (Cisco)</td><td>Convergence rapide, métrique composite</td></tr>
+                        <tr><td>BGP</td><td>Vecteur de chemin</td><td>Routage entre systèmes autonomes (Internet)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Cisco IOS — OSPF mono-aire (exemple)</span></div>
+                <pre class="terminal__code"><span class="k">router ospf</span> 1
+ <span class="k">network</span> 10.2.0.0 0.0.63.255 <span class="k">area</span> 0
+ <span class="k">network</span> 10.0.0.0 0.0.0.3 <span class="k">area</span> 0</pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>Statique</strong> : maîtrise totale, mais à maintenir à la main → parfait pour les petits réseaux et la route par défaut. <strong>Dynamique</strong> (OSPF, EIGRP) : les routeurs s'échangent leurs routes et s'adaptent aux pannes → indispensable dès que le réseau grandit. <strong>FHRP</strong> (HSRP) ajoute une passerelle virtuelle redondante.</p>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="nat-acl">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">NAT &amp; ACL</h2>
+            <p class="chapter__intro">Deux briques de bordure : le <strong>NAT</strong> traduit les adresses privées en adresses publiques pour sortir sur Internet ; les <strong>ACL</strong> filtrent le trafic selon des règles autorisant ou bloquant des flux.</p>
+
+            <h3>NAT — trois saveurs</h3>
+            <ul>
+                <li><strong>NAT statique</strong> — une privée ↔ une publique, fixe (ex. publier un serveur).</li>
+                <li><strong>NAT dynamique</strong> — un pool de publiques partagé à la demande.</li>
+                <li><strong>PAT (overload)</strong> — <em>toutes</em> les privées derrière une seule publique, distinguées par le port. C'est le NAT « de la box ».</li>
+            </ul>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Cisco IOS — PAT</span></div>
+                <pre class="terminal__code"><span class="k">access-list</span> 1 <span class="k">permit</span> 192.168.0.0 0.0.255.255
+<span class="k">ip nat inside source list</span> 1 <span class="k">interface</span> g0/0/1 <span class="k">overload</span>
+
+<span class="k">interface</span> g0/0/0
+ <span class="k">ip nat inside</span>
+<span class="k">interface</span> g0/0/1
+ <span class="k">ip nat outside</span></pre>
+            </div>
+
+            <h3>ACL — filtrer le trafic</h3>
+            <p>Une ACL est une liste ordonnée de règles <em>permit/deny</em> évaluée de haut en bas ; la première qui correspond s'applique, avec un <code>deny any</code> implicite à la fin.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Cisco IOS — port-security + ACL</span></div>
+                <pre class="terminal__code"><span class="c">! Port-security : limiter les MAC sur un port d'accès</span>
+<span class="k">interface</span> fa0/2
+ <span class="k">switchport port-security</span>
+ <span class="k">switchport port-security maximum</span> 2
+ <span class="k">switchport port-security violation</span> shutdown
+
+<span class="c">! ACL standard : autoriser seulement le VLAN management vers vty</span>
+<span class="k">access-list</span> 10 <span class="k">permit</span> 10.2.104.0 0.0.7.255
+<span class="k">line vty</span> 0 15
+ <span class="k">access-class</span> 10 <span class="k">in</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>NAT/PAT</strong> = sortir sur Internet en économisant les adresses publiques. <strong>ACL</strong> = pare-feu basique, évalué dans l'ordre avec un <code>deny</code> implicite final — d'où l'importance de l'ordre des règles. <strong>Port-security</strong> verrouille un port d'accès sur les MAC autorisées.</p>
+            </div>
+        </section>
+
+        <!-- 09 -->
+        <section class="chapter" id="final">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">Exercice final — la topologie d'entreprise</h2>
+            <p class="chapter__intro">Le capstone réunit tout : un plan VLSM sur <code>10.2.0.0</code>, une douzaine de VLAN dimensionnés, le DHCP par VLAN, la sécurité (SSH, mots de passe), le routage inter-VLAN et la sortie Internet. C'est l'exercice de synthèse, à refaire de zéro dans Packet Tracer pour valider le module.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>VLAN</th><th>Usage</th><th>Hôtes</th><th>Réseau</th></tr></thead>
+                    <tbody>
+                        <tr><td>10</td><td>Hosts (PC)</td><td>1000</td><td>10.2.112.0/21</td></tr>
+                        <tr><td>30</td><td>WiFi corporate</td><td>2712</td><td>10.2.64.0/20</td></tr>
+                        <tr><td>50</td><td>VoIP</td><td>1512</td><td>10.2.88.0/21</td></tr>
+                        <tr><td>70</td><td>Servers</td><td>508</td><td>10.2.120.0/22</td></tr>
+                        <tr><td>80</td><td>Sécurité (IP cam)</td><td>1600</td><td>10.2.80.0/21</td></tr>
+                        <tr><td>90</td><td>IoT</td><td>10760</td><td>10.2.0.0/18</td></tr>
+                        <tr><td>99</td><td>Management</td><td>1024</td><td>10.2.104.0/21</td></tr>
+                        <tr><td>100</td><td>DMZ</td><td>—</td><td>10.2.126.0/24</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="note">Extrait du plan complet (12 VLAN). Le serveur DNS de référence du labo est <code>10.2.254.254</code>, domaine <code>marsu2.local</code>.</p>
+
+            <h3>La méthode en 6 temps</h3>
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Plan VLSM</strong>Trier les VLAN par nombre d'hôtes, attribuer les blocs sans chevauchement.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Sécuriser les équipements</strong>Hostname, <code>enable secret</code>, <code>service password-encryption</code>, SSHv2, <code>login local</code>.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>VLAN &amp; trunks</strong>Créer les VLAN sur les switches, ports access pour les terminaux, trunks entre équipements.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Routage inter-VLAN</strong>Sous-interfaces dot1q (router-on-a-stick) ou SVI sur switch L3, une passerelle par VLAN.</div></li>
+                <li class="step"><div class="step__num">05</div><div class="step__body"><strong>DHCP par VLAN</strong>Un pool par réseau, exclusions des passerelles, DNS &amp; domaine.</div></li>
+                <li class="step"><div class="step__num">06</div><div class="step__body"><strong>Sortie &amp; filtrage</strong>Route par défaut, NAT/PAT vers Internet, ACL pour cloisonner les VLAN sensibles.</div></li>
+            </ol>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un projet réseau complet s'enchaîne toujours dans cet ordre : <strong>adressage → sécurité → VLAN → routage → services (DHCP/DNS) → bordure (NAT/ACL)</strong>. Maîtriser cette séquence, c'est tenir l'examen pratique CCNA.</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>CCNA — Réseau Cisco</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · Labos Packet Tracer · Pour approfondir : <a href="https://www.youtube.com/watch?v=S7MNX_UD7vY&list=PLIhvC56v63IJVXv0GJcl9vO5Z6znCVb1P" target="_blank" rel="noopener">playlist CCNA de NetworkChuck</a></p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>

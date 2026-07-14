@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bureau à distance (RDS) — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body data-domain="rds">
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 04 · Bureau à distance</p>
+        <h1 class="hero__title">Bureau à<br>distance <em>(RDS)</em></h1>
+        <p class="hero__lead">Centraliser les applications et les sessions sur des serveurs : les utilisateurs travaillent à distance sur des bureaux ou des applications publiées (RemoteApp), sans rien installer localement. Déploiement session-based de bout en bout.</p>
+        <div class="hero__meta">
+            <span class="chip">RDSH</span><span class="chip">RDCB</span><span class="chip">RDWA</span><span class="chip">Collections</span><span class="chip">RemoteApp</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">RDS</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#concepts"><span>01</span> Concepts &amp; rôles</a></li>
+            <li><a class="toc__link" href="#labo"><span>02</span> Topologie du labo</a></li>
+            <li><a class="toc__link" href="#deploiement"><span>03</span> Déploiement</a></li>
+            <li><a class="toc__link" href="#collections"><span>04</span> Collections &amp; RemoteApp</a></li>
+            <li><a class="toc__link" href="#certif"><span>05</span> Certificat</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Bureau à distance</div>
+                <div class="section-banner__desc">Un seul point d'accès, des applications centralisées</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="concepts">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Concepts &amp; rôles RDS</h2>
+            <p class="chapter__intro">RDS (Remote Desktop Services) déporte l'exécution sur le serveur : le poste client n'affiche qu'une image. Le rôle se découpe en plusieurs <strong>services de rôle</strong> qui collaborent.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Rôle</th><th>Sigle</th><th>Fonction</th></tr></thead>
+                    <tbody>
+                        <tr><td>Session Host</td><td>RDSH</td><td>Exécute réellement les sessions et les applications des utilisateurs</td></tr>
+                        <tr><td>Connection Broker</td><td>RDCB</td><td>Répartit les connexions, gère les collections et la reconnexion aux sessions</td></tr>
+                        <tr><td>Web Access</td><td>RDWA</td><td>Portail web : l'utilisateur voit ses bureaux et RemoteApp publiés dans le navigateur</td></tr>
+                        <tr><td>Gateway</td><td>RD Gateway</td><td>Passerelle sécurisée (HTTPS) pour accéder au RDS depuis Internet sans VPN</td></tr>
+                        <tr><td>Licensing</td><td>RD Licensing</td><td>Gère les licences d'accès client (RDS CAL)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Session-based vs VDI</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Session-based (RDSH)</h4>
+                    <ul>
+                        <li>Plusieurs utilisateurs partagent un même serveur.</li>
+                        <li>Léger, économique, idéal pour applications métier.</li>
+                        <li>Le déploiement de ce labo.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>VDI (bureaux virtuels)</h4>
+                    <ul>
+                        <li>Une VM complète par utilisateur.</li>
+                        <li>Isolation maximale, plus gourmand.</li>
+                        <li>Pour postes personnalisés / lourds.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le trio de base : <strong>RDSH</strong> exécute, <strong>RDCB</strong> répartit, <strong>RDWA</strong> publie. La <strong>Gateway</strong> ajoute l'accès sécurisé depuis l'extérieur. En session-based, plusieurs utilisateurs se partagent un serveur — c'est le modèle le plus courant.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="labo">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Topologie du labo</h2>
+            <p class="chapter__intro">L'environnement <code>orion.local</code> (réseau <code>192.168.1.x</code>) : un contrôleur de domaine, deux Session Hosts pour la redondance, un Broker, un Web Access et un client.</p>
+
+            <div class="net">
+                <div class="node"><b>DC</b><span class="ip">192.168.1.10</span><span>Contrôleur de domaine + DNS</span></div>
+                <div class="node"><b>RDSH1</b><span class="ip">192.168.1.11</span><span>Session Host n°1</span></div>
+                <div class="node"><b>RDSH2</b><span class="ip">192.168.1.12</span><span>Session Host n°2 (redondance / charge)</span></div>
+                <div class="node"><b>RDCB</b><span class="ip">192.168.1.13</span><span>Connection Broker</span></div>
+                <div class="node"><b>RDWA</b><span class="ip">192.168.1.14</span><span>Web Access — portail <code>rdwa.orion.local</code></span></div>
+                <div class="node"><b>CLIENT</b><span class="ip">192.168.1.15</span><span>Poste de test</span></div>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="deploiement">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Déploiement session-based</h2>
+            <p class="chapter__intro">Le déploiement se pilote depuis le <strong>Server Manager du contrôleur de domaine</strong>, qui orchestre l'installation des rôles sur les serveurs distants en une seule passe.</p>
+
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Ajouter les serveurs au pool</strong>Sur le DC : <em>Manage → Add Servers</em>, sélectionner les 3 VM (RDSH, RDCB, RDWA).</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Lancer l'installation RDS</strong><em>Manage → Add Roles and Features → Remote Desktop Services installation → Standard deployment → Session-based</em>.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Affecter les rôles</strong>Désigner chaque serveur pour son rôle (RDSH = Session Host, RDCB = Connection Broker, RDWA = Web Access), puis <em>Deploy</em>.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Vérifier la vue d'ensemble</strong>Dans <em>Remote Desktop Services → Overview</em>, le schéma du déploiement doit afficher les trois rôles au vert.</div></li>
+            </ol>
+
+            <div class="tip">
+                <p class="tip__label">Astuce</p>
+                <p>Tous les serveurs doivent être <strong>membres du domaine</strong> et visibles dans le pool avant de lancer le déploiement. Le Broker (RDCB) est le point d'orchestration : c'est lui qui « connaît » toute la ferme RDS.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="collections">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Collections &amp; RemoteApp</h2>
+            <p class="chapter__intro">Une <strong>collection de sessions</strong> regroupe un ou plusieurs Session Hosts et définit qui y a accès. On y publie ensuite soit un bureau complet, soit des <strong>RemoteApp</strong> (applications isolées qui s'ouvrent comme des fenêtres locales).</p>
+
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Créer la collection</strong><em>Remote Desktop Services → Collections → Tasks → Create Session Collection</em>. Nom : <code>Collection1</code>, choisir les Session Hosts, valider les groupes d'utilisateurs autorisés. Décocher l'option de disques de profil utilisateur si non nécessaire, puis <em>Create</em>.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Publier des RemoteApp</strong>Dans la collection : <em>Tasks → Publish RemoteApp Programs</em>, sélectionner les applications à exposer (ex. WordPad, une appli métier).</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Tester côté client</strong>Le client ouvre <code>https://rdwa.orion.local/RDWeb</code>, s'authentifie et lance la RemoteApp — elle s'affiche comme une fenêtre locale.</div></li>
+            </ol>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Bureau complet <em>ou</em> RemoteApp : la <strong>collection</strong> est l'unité de publication et de contrôle d'accès. La RemoteApp donne l'illusion d'une application locale alors qu'elle s'exécute sur le RDSH — idéal pour distribuer une seule appli métier sans publier tout le bureau.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="certif">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Certificat du Web Access</h2>
+            <p class="chapter__intro">Le portail RD Web Access est servi en HTTPS : il lui faut un certificat. En labo, on en génère un <strong>auto-signé</strong> pour le nom <code>rdwa.orion.local</code> (en production, on le ferait signer par la CA d'entreprise — voir le module <a href="exchange-securite.html">Sécurité / PKI</a>).</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — sur RDWA</span></div>
+                <pre class="terminal__code"><span class="c"># Certificat auto-signé pour le portail Web Access</span>
+<span class="k">New-SelfSignedCertificate</span> <span class="p">-DnsName</span> <span class="s">"rdwa.orion.local"</span> `
+    <span class="p">-CertStoreLocation</span> <span class="s">"cert:\LocalMachine\My"</span> `
+    <span class="p">-NotAfter</span> (<span class="k">Get-Date</span>).AddYears(2) `
+    <span class="p">-KeyLength</span> 4096 <span class="p">-KeyExportPolicy</span> Exportable `
+    <span class="p">-FriendlyName</span> <span class="s">"RDWA"</span>
+
+<span class="c"># Puis : certlm.msc → Personal → Certificates pour le consulter/exporter</span></pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Labo vs production</p>
+                <p>Un certificat <strong>auto-signé</strong> déclenche une alerte sur le client (chaîne de confiance non remontée). En production, on déploie un certificat signé par la <strong>CA d'entreprise</strong> et distribué par GPO — la même logique de PKI que pour Exchange.</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>Bureau à distance (RDS)</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · Synthèse du labo RDS</p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>

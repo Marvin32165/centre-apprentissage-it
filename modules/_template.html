@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════
+  GABARIT DE MODULE — copie ce fichier pour créer un nouveau module.
+  3 étapes :
+    1. Duplique-le, renomme-le (ex. azure.html).
+    2. Choisis une couleur : data-domain="server|ps|exch|rds|sp"
+       (ou ajoute la tienne dans assets/theme.css).
+    3. Remplis le héro, le sommaire (toc) et les chapitres,
+       puis ajoute une carte <a class="mod"> dans ../index.html.
+  Composants dispo : .terminal .takeaway .tip .steps .cards .table-wrap
+                     .net/.node .timeline  (voir les autres modules).
+  ════════════════════════════════════════════════════════════════
+-->
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau module — Titre</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body data-domain="server"><!-- ← change la couleur ici -->
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module XX · Catégorie</p>
+        <h1 class="hero__title">Titre du<br><em>module</em></h1>
+        <p class="hero__lead">Une phrase qui résume ce que ce module apprend et pourquoi c'est utile.</p>
+        <div class="hero__meta">
+            <span class="chip">Mot-clé</span><span class="chip">Mot-clé</span><span class="chip">Mot-clé</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Nom du module</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#chap1"><span>01</span> Premier chapitre</a></li>
+            <li><a class="toc__link" href="#chap2"><span>02</span> Deuxième chapitre</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Nom du module</div>
+                <div class="section-banner__desc">Sous-titre du module</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="chap1">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Premier chapitre</h2>
+            <p class="chapter__intro">Introduction du chapitre : pose le contexte en une ou deux phrases.</p>
+
+            <h3>Un sous-titre</h3>
+            <p>Le texte explicatif. On met du <strong>gras</strong>, du <code>code inline</code>, des listes.</p>
+            <ul>
+                <li>Point un.</li>
+                <li>Point deux.</li>
+            </ul>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell / Cisco IOS / Bash</span></div>
+                <pre class="terminal__code"><span class="c"># un commentaire</span>
+<span class="k">Get-Quelquechose</span> <span class="p">-Param</span> <span class="s">"valeur"</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le point clé du chapitre, formulé pour être mémorisé.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="chap2">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Deuxième chapitre</h2>
+            <p class="chapter__intro">Et ainsi de suite — duplique ce bloc &lt;section class="chapter"&gt; autant de fois que nécessaire.</p>
+
+            <div class="tip">
+                <p class="tip__label">Astuce</p>
+                <p>Pense à ajouter chaque chapitre au sommaire (toc) ci-dessus avec le même <code>id</code>.</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>Nom du module</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a></p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>
