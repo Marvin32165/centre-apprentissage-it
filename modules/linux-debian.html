@@ -152,17 +152,25 @@
 <span class="k">exit</span></pre>
             </div>
 
+            <h3>Pourquoi ça marche</h3>
+            <p>On ne « donne » pas les droits d'admin à l'utilisateur directement : on le fait <strong>entrer dans le groupe <code>sudo</code></strong>. Debian a configuré à l'avance (dans le fichier <code>/etc/sudoers</code>) que <em>tout membre du groupe <code>sudo</code></em> peut exécuter des commandes en administrateur. Devenir admin, c'est donc simplement rejoindre ce groupe — c'est pour ça qu'on vérifie l'appartenance avec <code>groups</code>.</p>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Le piège du -a dans usermod -aG</p>
+                <p><code>-G</code> <strong>remplace</strong> la liste des groupes secondaires de l'utilisateur. Le <code>-a</code> (pour <em>append</em>, « ajouter ») dit « ajoute ce groupe sans effacer les autres ». Oublier le <code>-a</code> et écrire <code>usermod -G sudo apprenant</code> retirerait l'utilisateur de tous ses autres groupes — d'où le réflexe : toujours <code>-aG</code> pour ajouter.</p>
+            </div>
+
             <h3>Vérifications de base</h3>
+            <p>Avant de travailler, on prend le pouls de la machine. Chaque commande répond à une question précise :</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
-                <pre class="terminal__code"><span class="k">lsblk</span>                    <span class="c"># disques et partitions</span>
-<span class="k">ip</span> a                     <span class="c"># adresses IP</span>
-<span class="k">apt</span> list <span class="p">--upgradable</span>    <span class="c"># mises à jour disponibles</span></pre>
+                <pre class="terminal__code"><span class="k">lsblk</span>                    <span class="c"># « ai-je assez de disque, et où ? » → disques et partitions</span>
+<span class="k">ip</span> a                     <span class="c"># « suis-je sur le réseau ? » → adresses IP attribuées</span>
+<span class="k">apt</span> list <span class="p">--upgradable</span>    <span class="c"># « mon système est-il à jour ? » → paquets à mettre à jour</span></pre>
             </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Ensuite, on préfixe les commandes d'administration par <code>sudo</code> : par exemple <code>sudo apt update</code>. Le système demande votre mot de passe, pas celui de root.</p>
+                <p>Ensuite, on préfixe les commandes d'administration par <code>sudo</code> : par exemple <code>sudo apt update</code>. Le système demande <strong>votre</strong> mot de passe (pas celui de root) et vérifie que vous êtes bien dans le groupe <code>sudo</code> avant d'autoriser.</p>
             </div>
         </section>
 
@@ -180,7 +188,7 @@
 ├── <span class="k">dev/</span>     <span class="c">les périphériques (disques, terminaux)</span>
 ├── <span class="k">etc/</span>     <span class="c">TOUTE la configuration du système</span>
 ├── <span class="k">home/</span>    <span class="c">dossiers des utilisateurs</span>
-│   └── <span class="k">marvin/</span>  <span class="c">= C:\Users\marvin</span>
+│   └── <span class="k">apprenant/</span>  <span class="c">= C:\Users\apprenant</span>
 ├── <span class="k">lib/</span>     <span class="c">bibliothèques partagées (.so ≈ .dll)</span>
 ├── <span class="k">media/</span>   <span class="c">clés USB / CD montés automatiquement</span>
 ├── <span class="k">mnt/</span>     <span class="c">montages manuels / temporaires</span>
@@ -881,7 +889,11 @@ ma_commande.sh                      <span class="c"># échoue : "commande introu
             <p class="chapter__intro">Sans réseau, pas de mises à jour ni d'installation de logiciels. On configure l'IP, la passerelle et le DNS.</p>
 
             <h3>IP statique — /etc/network/interfaces</h3>
-            <p>On vérifie d'abord l'existant avec <code>ip a</code> (l'équivalent de <code>ipconfig</code> sous Windows) et <code>ip r</code> (table de routage), puis on édite le fichier des interfaces :</p>
+            <p>On vérifie d'abord l'existant avec <code>ip a</code> (l'équivalent de <code>ipconfig</code> sous Windows) et <code>ip r</code> (table de routage), puis on édite le fichier des interfaces. Ici l'interface s'appelle <code>ens33</code> :</p>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Le nom de l'interface varie</p>
+                <p>Selon la machine, votre carte réseau peut s'appeler <code>ens33</code>, <code>enp0s3</code>, <code>eth0</code>… Repérez le vôtre avec <code>ip a</code> et remplacez <code>ens33</code> par ce nom dans tous les exemples de ce chapitre.</p>
+            </div>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">sudo nano /etc/network/interfaces</span></div>
                 <pre class="terminal__code">auto lo
@@ -909,13 +921,14 @@ iface ens33 inet <span class="k">static</span>
             </div>
 
             <h3>Gérer les interfaces à chaud avec la commande ip</h3>
-            <p>Le paquet <code>iproute2</code> (commande <code>ip</code>) remplace l'ancien <code>net-tools</code> (<code>ifconfig</code>, non maintenu depuis 2009). Les changements faits avec <code>ip</code> sont <strong>temporaires</strong> : perdus au redémarrage si non écrits dans <code>/etc/network/interfaces</code>.</p>
+            <p>Le paquet <code>iproute2</code> (commande <code>ip</code>) remplace l'ancien <code>net-tools</code> (<code>ifconfig</code>, non maintenu depuis 2009). Les changements faits avec <code>ip</code> sont <strong>temporaires</strong> : perdus au redémarrage si non écrits dans <code>/etc/network/interfaces</code>. Ils servent surtout à tester une configuration avant de la rendre permanente.</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
-                <pre class="terminal__code"><span class="k">ip</span> link show                              <span class="c"># liste les interfaces (up/down, MAC)</span>
-<span class="k">sudo ip</span> link set eth0 down                <span class="c"># désactive l'interface</span>
-<span class="k">sudo ip</span> addr add 192.168.76.10/24 dev eth1   <span class="c"># IP temporaire sur eth1</span>
-<span class="k">sudo ip</span> route add default via 192.168.76.1 dev eth1   <span class="c"># passerelle par défaut</span></pre>
+                <pre class="terminal__code"><span class="k">ip</span> link show                                   <span class="c"># liste les interfaces (up/down, MAC)</span>
+<span class="k">sudo ip</span> link set ens33 down                     <span class="c"># désactive l'interface</span>
+<span class="k">sudo ip</span> link set ens33 up                       <span class="c"># la réactive</span>
+<span class="k">sudo ip</span> addr add 192.168.1.10/24 dev ens33      <span class="c"># attribue une IP (temporaire)</span>
+<span class="k">sudo ip</span> route add default via 192.168.1.2 dev ens33   <span class="c"># passerelle par défaut (temporaire)</span></pre>
             </div>
 
             <h3>Résolution de noms : l'ordre de priorité</h3>
@@ -1215,7 +1228,7 @@ iface ens33 inet <span class="k">static</span>
         <section class="chapter" id="chap22">
             <p class="chapter__num">22</p>
             <h2 class="chapter__title">Commandes : mémo complet</h2>
-            <p class="chapter__intro">Toutes les commandes du module, rangées par catégorie, avec leurs options les plus utiles — pour retrouver vite la bonne syntaxe.</p>
+            <p class="chapter__intro">Ce chapitre ne présente rien de nouveau : c'est un <strong>aide-mémoire de révision</strong>. Chaque commande ci-dessous a été expliquée — avec le pourquoi et le contexte — dans les chapitres précédents. Ici on la retrouve vite, rangée par tâche, une fois qu'on a compris ce qu'elle fait. Si une ligne reste obscure, c'est le signe qu'il faut relire le chapitre correspondant plutôt que de la recopier.</p>
 
             <h3>Navigation &amp; localisation</h3>
             <div class="table-wrap"><table>
@@ -1361,9 +1374,9 @@ iface ens33 inet <span class="k">static</span>
                 <tbody>
                     <tr><td><code>ip a</code> (ou <code>ip addr</code>)</td><td>—</td><td>voir les adresses IP (équivalent <code>ipconfig</code> Windows)</td></tr>
                     <tr><td><code>hostname -I</code></td><td>—</td><td>mes adresses IP, version courte</td></tr>
-                    <tr><td><code>ip link</code></td><td><code>set eth0 up/down</code></td><td>lister / activer / désactiver les interfaces</td></tr>
-                    <tr><td><code>ip addr add IP/masque dev eth0</code></td><td>temporaire (perdu au reboot)</td><td>attribuer une IP à une interface</td></tr>
-                    <tr><td><code>ip r</code> (ou <code>ip route</code>)</td><td><code>add default via IP dev eth0</code> · <code>del default via IP</code></td><td>table de routage / passerelle par défaut</td></tr>
+                    <tr><td><code>ip link</code></td><td><code>set ens33 up/down</code></td><td>lister / activer / désactiver les interfaces</td></tr>
+                    <tr><td><code>ip addr add IP/masque dev ens33</code></td><td>temporaire (perdu au reboot)</td><td>attribuer une IP à une interface</td></tr>
+                    <tr><td><code>ip r</code> (ou <code>ip route</code>)</td><td><code>add default via IP dev ens33</code> · <code>del default via IP</code></td><td>table de routage / passerelle par défaut</td></tr>
                     <tr><td><code>ping hôte</code></td><td><code>-c 4</code> nb de paquets</td><td>tester la connectivité</td></tr>
                     <tr><td><code>ss -tuln</code></td><td><code>-t</code> TCP · <code>-u</code> UDP · <code>-l</code> écoute · <code>-n</code> pas de résolution · <code>-p</code> PID du processus</td><td>ports ouverts / connexions</td></tr>
                     <tr><td><code>nslookup domaine</code> / <code>dig domaine</code></td><td>—</td><td>tester la résolution DNS</td></tr>
@@ -1374,7 +1387,7 @@ iface ens33 inet <span class="k">static</span>
             </table></div>
             <div class="tip">
                 <p class="tip__label">Config réseau permanente (Debian)</p>
-                <p>La commande <code>ip</code> ne modifie rien de façon persistante : pour survivre au reboot, écrire l'adresse dans <code>/etc/network/interfaces</code> (<code>auto eth1</code> / <code>iface eth1 inet static</code> / <code>address</code> / <code>netmask</code> / <code>gateway</code>), puis <code>sudo systemctl restart networking.service</code>. La résolution de noms se règle dans <code>/etc/hosts</code> (statique) et <code>/etc/resolv.conf</code> (serveurs DNS).</p>
+                <p>La commande <code>ip</code> ne modifie rien de façon persistante : pour survivre au reboot, écrire l'adresse dans <code>/etc/network/interfaces</code> (<code>auto ens33</code> / <code>iface ens33 inet static</code> / <code>address</code> / <code>netmask</code> / <code>gateway</code>), puis <code>sudo systemctl restart networking.service</code>. La résolution de noms se règle dans <code>/etc/hosts</code> (statique) et <code>/etc/resolv.conf</code> (serveurs DNS).</p>
             </div>
 
             <h3>SSH &amp; transfert de fichiers</h3>
