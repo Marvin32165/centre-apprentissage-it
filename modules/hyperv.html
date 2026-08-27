@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper-V — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body data-domain="hv">
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 14 · Virtualisation</p>
+        <h1 class="hero__title">Hyper-V<br><em>monter son labo</em></h1>
+        <p class="hero__lead">Créer des VM Windows Server sur son propre poste, en fabriquer une image Sysprep réutilisable, puis déployer des machines en quelques secondes avec les disques de différenciation.</p>
+        <div class="hero__meta">
+            <span class="chip">Génération 2</span><span class="chip">Sysprep</span><span class="chip">Disque parent</span><span class="chip">Commutateur virtuel</span><span class="chip">Windows Server 2025</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Hyper-V</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#activer"><span>01</span> Activer Hyper-V &amp; créer une VM</a></li>
+            <li><a class="toc__link" href="#reglages"><span>02</span> Régler la VM : génération, RAM, CPU, boot</a></li>
+            <li><a class="toc__link" href="#installer-ws"><span>03</span> Installer Windows Server dans la VM</a></li>
+            <li><a class="toc__link" href="#post-install"><span>04</span> Configurer le serveur au premier démarrage</a></li>
+            <li><a class="toc__link" href="#sysprep"><span>05</span> Sysprep : fabriquer une image réutilisable</a></li>
+            <li><a class="toc__link" href="#differenciation"><span>06</span> Déployer des VM en série (disque parent)</a></li>
+            <li><a class="toc__link" href="#commutateurs"><span>07</span> Choisir son commutateur virtuel</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Hyper-V</div>
+                <div class="section-banner__desc">De la première VM à un labo Windows Server déployable en série</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="activer">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Activer Hyper-V &amp; créer une VM</h2>
+            <p class="chapter__intro">Hyper-V est déjà dans Windows — il suffit de l'allumer. C'est l'hyperviseur qui portera tout le labo Windows Server du parcours.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Activer la fonctionnalité</strong><p>Panneau de configuration → <em>Fonctionnalités Windows</em> → cocher <strong>Hyper-V</strong>. Redémarrage nécessaire.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Ouvrir le gestionnaire</strong><p><strong>Hyper-V Manager</strong> : c'est la console qui pilote toutes les VM.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Créer la machine</strong><p><em>New → Virtual Machine</em>, puis dérouler l'assistant.</p></div></div>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Lancer une console en administrateur</p>
+                <p>Depuis <kbd>Win</kbd> + <kbd>R</kbd>, valider avec <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>Entrée</kbd> au lieu de <kbd>Entrée</kbd> : le programme démarre directement en tant qu'administrateur.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="reglages">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Régler la VM : génération, RAM, CPU, boot</h2>
+            <p class="chapter__intro">Quatre réglages décident du confort du labo. Un seul est irréversible : la génération.</p>
+
+            <h3>Génération 1 ou 2 ?</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Génération 1</h4>
+                    <p>Équivalent <strong>BIOS</strong>. Pour les OS anciens ou 32 bits.</p>
+                </div>
+                <div class="card">
+                    <h4>Génération 2</h4>
+                    <p>Équivalent <strong>UEFI</strong>. Démarrage sécurisé, boot plus rapide, disques SCSI. <strong>C'est le choix par défaut ici.</strong></p>
+                </div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Choix définitif</p>
+                <p>La génération se fixe à la création et <strong>ne peut plus être changée</strong> ensuite. Se tromper oblige à recréer la VM.</p>
+            </div>
+
+            <h3>Les réglages de l'assistant</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Mémoire</strong><p>Décocher la <strong>mémoire dynamique</strong> et attribuer une valeur fixe — 8192 Mo pour un Windows Server.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Connexion réseau</strong><p><em>Default Switch</em> pour commencer (il fournit un accès Internet via NAT). On créera un commutateur dédié au chapitre 07.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Support d'installation</strong><p>Installer un système d'exploitation à partir d'un fichier <strong>ISO</strong>.</p></div></div>
+            </div>
+
+            <h3>Ajustements après création</h3>
+            <p>Clic droit sur la machine → <strong>Paramètres</strong> :</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Rubrique</th><th>À faire</th><th>Pourquoi</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Microprogramme</strong></td><td>C'est l'ordre de démarrage (<em>boot order</em>)</td><td>Pour booter sur l'ISO, puis sur le disque</td></tr>
+                        <tr><td><strong>Sécurité</strong></td><td>Désactiver le <strong>démarrage sécurisé</strong> pour une VM Linux</td><td>Secure Boot rejette les chargeurs non signés Microsoft</td></tr>
+                        <tr><td><strong>Mémoire</strong></td><td>Ne pas activer la mémoire dynamique</td><td>Évite les à-coups sur un serveur</td></tr>
+                        <tr><td><strong>Processeurs</strong></td><td>Passer de 12 (valeur native) à <strong>2</strong></td><td>Laisse des cœurs à l'hôte et aux autres VM</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="installer-ws">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Installer Windows Server dans la VM</h2>
+            <p class="chapter__intro">L'installation elle-même est classique — trois détails la font rater quand on ne les connaît pas.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Démarrer et « spammer » une touche</strong><p>Se connecter à la VM, démarrer, puis appuyer répétitivement sur une touche : la fenêtre pour booter sur le DVD virtuel ne s'affiche que quelques secondes.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Choisir l'édition</strong><p>Windows Server 2025 <strong>Standard (Desktop Experience)</strong> — c'est la version avec interface graphique.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Définir le mot de passe administrateur</strong><p>Un mot de passe fort, jamais versionné ni recopié dans des notes partagées.</p></div></div>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Aucun disque proposé à l'installation ?</p>
+                <p>Sur un serveur <em>physique</em>, cela signifie que Windows n'a pas le pilote du contrôleur de stockage : il faut le charger depuis l'assistant. En VM Hyper-V, le disque est toujours reconnu.</p>
+            </div>
+
+            <h3>Deux commandes de confort</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Invite de commandes (admin)</span></div>
+                <pre class="terminal__code"><span class="c"># Réarmer la période d'évaluation (180 jours)</span>
+<span class="k">slmgr</span> <span class="p">/rearm</span></pre>
+            </div>
+            <p>Activer aussi la <strong>session étendue</strong> dans la fenêtre de connexion à la VM : l'affichage s'adapte alors dynamiquement à la taille de la fenêtre, et le presse-papiers devient partagé avec l'hôte.</p>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="post-install">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Configurer le serveur au premier démarrage</h2>
+            <p class="chapter__intro">Une check-list à dérouler dans l'ordre — le renommage en dernier, parce qu'il redémarre la machine.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Sortir du DHCP</strong><p>Un serveur ne reste jamais en adressage automatique : son adresse doit être prévisible.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Fuseau horaire</strong><p>Depuis <em>Local Server</em> dans le Gestionnaire de serveur.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>IE Enhanced Security Configuration → OFF</strong><p>Sans quoi le navigateur bloque à peu près tout, y compris les consoles web d'administration.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Configurer la carte réseau</strong><p>Via le lien à droite d'<em>Ethernet</em>, ou <kbd>Win</kbd>+<kbd>R</kbd> → <code>ncpa.cpl</code>. Dans les propriétés : décocher IPv6, puis IPv4 en <code>192.168.1.1</code> / <code>255.255.255.0</code>.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Autoriser le Bureau à distance</strong><p><em>Allow remote connections to this computer</em> — port RDP <strong>3389</strong>.</p></div></div>
+                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Windows Update</strong><p>Le passer en <em>download updates only</em> pour éviter un redémarrage en plein TP.</p></div></div>
+                <div class="step"><div class="step__num">7</div><div class="step__body"><strong>Renommer la machine — en dernier</strong><p><em>Computer Name → Change</em> → <code>WS01</code>. Cette opération redémarre le serveur, d'où sa position en fin de liste.</p></div></div>
+            </div>
+
+            <h3>Le pare-feu en labo</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Invite de commandes (admin)</span></div>
+                <pre class="terminal__code"><span class="c"># Désactiver le pare-feu sur tous les profils</span>
+<span class="k">netsh</span> advfirewall set allprofiles state <span class="s">off</span>
+
+<span class="c"># Le réactiver — à faire dès que le TP est terminé</span>
+<span class="k">netsh</span> advfirewall set allprofiles state <span class="s">on</span></pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Réservé au labo</p>
+                <p>Couper le pare-feu fait gagner du temps quand on débogue un TP, et <strong>uniquement</strong> dans ce cadre. Sur un serveur réel, on ouvre les ports nécessaires — on ne désarme pas la machine. Penser à le rallumer avant de faire un Sysprep : l'état est capturé dans l'image.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="sysprep">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Sysprep : fabriquer une image réutilisable</h2>
+            <p class="chapter__intro">Réinstaller Windows Server à chaque TP prend une demi-heure. Sysprep permet de le faire <em>une fois</em>, puis de repartir de cette image pour toutes les VM suivantes.</p>
+
+            <p>Sysprep « généralise » l'installation : il retire le SID unique de la machine, son nom et ses identifiants matériels. L'image redevient neutre, prête à être clonée.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Lancer l'outil</strong><p>Ouvrir <code>C:\Windows\System32\Sysprep</code> et exécuter <code>sysprep.exe</code>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Cocher « Generalize »</strong><p>Et choisir <em>Shutdown</em> dans les options d'arrêt.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Ne pas rallumer la VM</strong><p>Un seul démarrage suffirait à réattribuer un SID et à ruiner l'image.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Supprimer la VM dans Hyper-V Manager</strong><p>Cela fusionne les fichiers de points de contrôle (<code>.avhdx</code>) dans le disque principal (<code>.vhdx</code>). Le disque virtuel, lui, reste sur le disque de l'hôte.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Isoler le disque</strong><p>Aller dans <code>C:\VM\WS01\Virtual Hard Disks</code>, renommer <code>WS01.vhdx</code> en <code>sysprep.vhdx</code>, puis le copier dans un dossier parent dédié, par exemple <code>C:\PARENT\</code>.</p></div></div>
+                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Nettoyer</strong><p>Supprimer <code>C:\VM\WS01</code>. Il ne reste que l'image, réutilisable indéfiniment.</p></div></div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le fichier <code>C:\PARENT\sysprep.vhdx</code> est désormais un <strong>disque parent</strong> en lecture seule de fait : il ne doit plus jamais être démarré ni modifié directement, sinon toutes les VM qui en dépendent deviennent inutilisables.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="differenciation">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Déployer des VM en série (disque parent)</h2>
+            <p class="chapter__intro">Un <strong>disque de différenciation</strong> ne stocke que les écarts par rapport au disque parent. Créer une nouvelle VM revient alors à créer un fichier quasi vide — quelques secondes au lieu d'une installation complète.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Créer la VM sans disque</strong><p>Même démarche qu'au chapitre 01, mais choisir <em>« Attacher un disque dur virtuel ultérieurement »</em>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Ajouter le disque</strong><p>Clic droit sur la machine → <em>Paramètres</em> → <strong>Contrôleur SCSI</strong> → <em>Disque dur</em> → <em>Ajouter</em> → <em>Nouveau</em>.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Type : Différenciation</strong><p>C'est ce choix qui garantit que le sysprep d'origine ne sera jamais modifié.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Nommer et placer le disque enfant</strong><p>Nom <code>TEST-WS01-DISK1</code>, emplacement <code>C:\VM\TEST-WS01\</code>.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Désigner le parent</strong><p><code>C:\PARENT\sysprep.vhdx</code>, puis <em>Appliquer</em>.</p></div></div>
+                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Corriger l'ordre de démarrage</strong><p>Rubrique <strong>Microprogramme</strong> → booter sur le disque qui vient d'être créé.</p></div></div>
+                <div class="step"><div class="step__num">7</div><div class="step__body"><strong>Répéter pour la deuxième machine</strong><p><code>TEST-WS02</code>, adresse <code>192.168.1.2</code>. Chaque VM finit la personnalisation de Windows à son premier démarrage.</p></div></div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Ce que le TP a montré</p>
+                <p>Les disques de différenciation sont pratiques mais <strong>les performances ne suivent pas</strong> : chaque lecture peut devoir traverser la chaîne parent/enfant. Pour un labo durable, un disque à <strong>taille dynamique</strong> classique est un meilleur compromis — on garde la différenciation pour du jetable qu'on recrée souvent.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="commutateurs">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Choisir son commutateur virtuel</h2>
+            <p class="chapter__intro">Le <strong>Gestionnaire de commutateur virtuel</strong> décide de qui peut parler à qui. Trois types, trois périmètres de plus en plus fermés.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Type</th><th>Qui communique</th><th>Usage</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Externe</strong></td><td>VM ↔ hôte ↔ réseau physique ↔ Internet</td><td>Utilise la carte de l'hôte pour en créer une copie virtuelle. Quand les VM doivent sortir.</td></tr>
+                        <tr><td><strong>Interne</strong></td><td>VM ↔ hôte uniquement</td><td>Carte propre à Hyper-V, permettant à la VM de dialoguer avec la machine hôte, sans accès extérieur.</td></tr>
+                        <tr><td><strong>Privé</strong></td><td>VM ↔ VM uniquement</td><td>Le périmètre le plus fermé. Idéal pour un labo de domaine isolé.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Créer le commutateur</strong><p>Hyper-V Manager → <em>Gestionnaire de commutateur virtuel</em> → type <strong>Privé</strong> → nom <code>LAN1</code> → <em>Appliquer</em>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Le raccorder aux VM</strong><p>Dans les paramètres de chaque machine, sélectionner la nouvelle carte à la place du <em>Default Switch</em>.</p></div></div>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Le réflexe du labo AD</p>
+                <p>Un domaine de test se monte sur un commutateur <strong>privé</strong> : le DHCP et le DNS du labo ne risquent alors pas de répondre sur le réseau de la maison ou de l'école. Si les VM ont besoin d'Internet ponctuellement (mises à jour), on leur ajoute une <em>seconde</em> carte sur un commutateur externe plutôt que de tout basculer.</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>Hyper-V</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a></p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>

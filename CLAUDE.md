@@ -22,7 +22,7 @@ perso/
 ├── assets/
 │   ├── theme.css               Design system partagé (TOUT le style est ici)
 │   ├── app.js                  Barre de progression + sommaire actif (partagé)
-│   ├── search-index.js         Index de recherche full-text (généré, cf. section Recherche)
+│   ├── search-index.js         Index de recherche full-text (GÉNÉRÉ — ne pas éditer à la main)
 │   └── search.js                Logique de la barre de recherche du portail
 └── modules/
     ├── proxmox.html            Proxmox VE : VM/LXC, ZFS, snapshots/backup, réseau, cluster, HA
@@ -36,7 +36,13 @@ perso/
     ├── rds.html                Bureau à distance (RDSH/RDCB/RDWA, RemoteApp)
     ├── linux-debian.html       Debian : terminal, permissions, redirections, grep/sed/awk, réseau, APT, SSH, systemd (22 chapitres)
     ├── sharepoint.html         SharePoint Server SE (théorie + pratique, guide complet)
-    └── _template.html          Gabarit de démarrage pour un nouveau module
+    ├── storage-clustering.html  Stockage Windows (DAS/NAS/SAN, RAID, NTFS, DFS) + SAN iSCSI et cluster de basculement
+    ├── voip.html                Téléphonie IP : SIP/RTP, PoE, QoS, codecs, PBX + TP 3CX
+    ├── hyperv.html              Hyper-V : VM Windows Server, Sysprep, disques de différenciation, commutateurs virtuels
+    ├── sql-server.html          SQL Server : installation de l'instance (module en cours)
+    └── _template.html           Gabarit de démarrage pour un nouveau module
+└── tools/
+    └── generate-search-index.ps1  Régénère assets/search-index.js (cf. section Recherche)
 ```
 
 Le fil rouge des labos Microsoft reste l'environnement **`orion.local`**
@@ -51,7 +57,8 @@ Le fil rouge des labos Microsoft reste l'environnement **`orion.local`**
 2. **Choisir une couleur** via l'attribut `data-domain` sur `<body>` :
    `server` (bleu) · `ps` (violet) · `exch` (cyan) · `rds` (ambre) · `sp` (vert) ·
    `net` (bleu ciel) · `linux` (rouge Debian) · `px` (orange Proxmox) ·
-   `sub` (indigo) · `sec` (rouge sécurité) · `lab` (teal homelab).
+   `sub` (indigo) · `sec` (rouge sécurité) · `lab` (teal homelab) ·
+   `clu` (ardoise, stockage) · `voip` (lime) · `hv` (fuchsia, Hyper-V) · `sql` (bronze).
    Pour une nouvelle couleur, ajoute une ligne `body[data-domain="xxx"] { --accent:…; }` dans `assets/theme.css`.
 3. **Remplir** le héro, le sommaire (`.toc`) et les chapitres (`<section class="chapter">`).
    Chaque chapitre a un `id` qui doit correspondre au lien du sommaire.
@@ -99,7 +106,12 @@ Coloration du code dans `.terminal__code` :
 
 ## Recherche full-text
 
-`assets/search-index.js` est généré à partir des chapitres de tous les modules (titre + texte
-brut de chaque `<section class="chapter" id="...">`). À régénérer après toute modification de
-contenu de module, via le script PowerShell de génération (extraction regex des sections,
-strip HTML, échappement JS) — redemander ce script si besoin plutôt que de le réécrire à la main.
+`assets/search-index.js` est **généré** à partir des chapitres de tous les modules (titre + texte
+brut de chaque `<section class="chapter" id="...">`, tronqué à 500 caractères). Ne jamais l'éditer
+à la main.
+
+À régénérer après toute modification de contenu d'un module — le script vit maintenant dans le dépôt :
+
+```powershell
+pwsh -File tools/generate-search-index.ps1
+```

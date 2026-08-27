@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Server — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body data-domain="sql">
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 15 · Bases de données · <em>en cours</em></p>
+        <h1 class="hero__title">SQL Server<br><em>installation</em></h1>
+        <p class="hero__lead">Installer une instance SQL Server sur une VM Windows : quelle édition choisir, ce que chaque écran de l'assistant décide vraiment, et ce qu'il reste à régler une fois l'installation terminée.</p>
+        <div class="hero__meta">
+            <span class="chip">Édition Developer</span><span class="chip">Instance nommée</span><span class="chip">SSMS</span><span class="chip">Port 1433</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">SQL Server</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#editions"><span>01</span> Choisir son édition &amp; préparer la VM</a></li>
+            <li><a class="toc__link" href="#installation"><span>02</span> Installer l'instance, écran par écran</a></li>
+            <li><a class="toc__link" href="#apres"><span>03</span> Après l'installation : se connecter</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">SQL Server</div>
+                <div class="section-banner__desc">Module en cours de construction — pour l'instant, l'installation de l'instance</div>
+            </div>
+        </div>
+
+        <!-- 01 -->
+        <section class="chapter" id="editions">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Choisir son édition &amp; préparer la VM</h2>
+            <p class="chapter__intro">SQL Server est le SGBDR de Microsoft : un moteur de bases de données relationnelles qui s'installe comme un service Windows. Avant de lancer l'assistant, une décision compte vraiment — l'édition.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Édition</th><th>Ce qu'elle vaut</th><th>Cadre d'usage</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Developer</strong></td><td>Gratuite, avec <strong>toutes</strong> les fonctionnalités de l'édition Enterprise</td><td>Développement, tests, formation. <strong>Interdite en production.</strong></td></tr>
+                        <tr><td>Express</td><td>Gratuite mais bridée (taille de base, RAM, CPU)</td><td>Petites applications, production légère</td></tr>
+                        <tr><td>Standard / Enterprise</td><td>Payantes, sous licence</td><td>Production</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Pourquoi Developer en labo</p>
+                <p>C'est la seule édition gratuite qui expose l'intégralité des fonctionnalités : on apprend sur le même moteur qu'en production, sans licence. La restriction n'est pas technique mais <strong>juridique</strong> — rien n'empêche de la déployer en production, sauf le contrat.</p>
+            </div>
+
+            <h3>La VM</h3>
+            <p>L'instance de ce TP est installée sur une machine virtuelle Windows Server dédiée, préparée via les scripts de création et de configuration du labo. Le montage de la VM elle-même est couvert par le module <a href="hyperv.html">Hyper-V</a>.</p>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="installation">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Installer l'instance, écran par écran</h2>
+            <p class="chapter__intro">L'assistant enchaîne une quinzaine d'écrans, dont la plupart se valident tels quels. Voici les sept qui demandent une vraie décision.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Edition</strong><p>Sélectionner <strong>Developer</strong>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>License Terms</strong><p>Cocher l'acceptation des conditions, puis <em>Next</em>.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Azure Extension for SQL Server</strong><p><strong>Décocher</strong>, puis <em>Next</em>. Cette extension ne sert qu'à rattacher l'instance à Azure Arc — inutile pour un labo local, et elle réclame un abonnement.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Feature Selection</strong><p>Cocher <strong>Database Engine Services</strong> : c'est le moteur de base de données lui-même, le strict nécessaire pour créer et interroger des bases.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Instance Configuration</strong><p>Donner un nom à l'instance. Une <strong>instance nommée</strong> s'atteint ensuite par <code>NOM-SERVEUR\NOM-INSTANCE</code>, alors qu'une instance <em>par défaut</em> répond au seul nom du serveur.</p></div></div>
+                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Server Configuration</strong><p>Passer le service <strong>SQL Server Browser</strong> en démarrage <em>Automatic</em>.</p></div></div>
+                <div class="step"><div class="step__num">7</div><div class="step__body"><strong>Database Engine Configuration</strong><p>Onglet <em>Server Configuration</em> : cliquer sur <strong>Add Current User</strong> pour se donner les droits <code>sysadmin</code> sur l'instance. Onglet <em>Data Directories</em> : vérifier où atterriront les fichiers de données, de journaux et de sauvegarde.</p></div></div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Le piège de l'instance nommée</p>
+                <p>Une instance nommée n'écoute pas sur le port fixe 1433 : elle prend un port dynamique. C'est le service <strong>SQL Server Browser</strong> qui indique aux clients quel port utiliser — s'il est arrêté, la connexion par nom d'instance échoue alors que le moteur tourne parfaitement. D'où le passage en démarrage automatique à l'étape 6.</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Data Directories</p>
+                <p>Séparer les fichiers de données (<code>.mdf</code>), les journaux de transactions (<code>.ldf</code>) et les sauvegardes sur des volumes distincts est la bonne pratique dès qu'on sort du labo : les profils d'écriture sont très différents, et une sauvegarde sur le même disque que la base ne protège de rien.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="apres">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Après l'installation : se connecter</h2>
+            <p class="chapter__intro">L'instance tourne, mais rien ne s'y connecte encore. Quatre points à traiter dans la foulée.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Installer SSMS</strong><p>SQL Server Management Studio se télécharge et s'installe <em>séparément</em> du moteur — c'est la console d'administration graphique.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Vérifier le mode d'authentification</strong><p>Windows seul, ou mixte (Windows + comptes SQL). Le mode mixte est nécessaire dès qu'une application se connecte avec son propre identifiant.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Activer TCP/IP et ouvrir le port</strong><p>Dans <em>SQL Server Configuration Manager</em>, activer le protocole TCP/IP, puis autoriser le port <strong>1433</strong> dans le pare-feu pour les connexions distantes.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Contrôler les services</strong><p>Toujours dans le Configuration Manager : le service du moteur et le SQL Server Browser doivent être démarrés.</p></div></div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Module en construction</p>
+                <p>Ce module couvre pour l'instant l'installation. La suite du parcours — langage SQL (DDL, DML, requêtes <code>SELECT</code> et jointures), modélisation, transactions, sécurité, sauvegarde et restauration — sera ajoutée au fur et à mesure du cours.</p>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<footer>
+    <p><strong>SQL Server</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a></p>
+</footer>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>
