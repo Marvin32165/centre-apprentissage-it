@@ -2,20 +2,34 @@
 <!--
   ════════════════════════════════════════════════════════════════
   GABARIT DE MODULE — copie ce fichier pour créer un nouveau module.
-  3 étapes :
+  5 étapes :
     1. Duplique-le, renomme-le (ex. azure.html).
-    2. Choisis une couleur : data-domain="server|ps|exch|rds|sp"
-       (ou ajoute la tienne dans assets/theme.css).
-    3. Remplis le héro, le sommaire (toc) et les chapitres,
-       puis ajoute une carte <a class="mod"> dans ../index.html.
-  Composants dispo : .terminal .takeaway .tip .steps .cards .table-wrap
+    2. Choisis une couleur : data-domain="server|ps|exch|rds|sp|net|
+       linux|px|sub|sec|lab|clu|voip|hv|sql" (ou ajoute la tienne
+       dans assets/theme.css).
+    3. Remplis la meta description, le héro (dont le bandeau de
+       faits), le sommaire et les chapitres.
+    4. Écris le bloc .brief (objectifs + prérequis) AVANT le premier
+       chapitre, et le chapitre .chapter--quiz (auto-évaluation)
+       APRÈS le dernier : ce sont eux qui rendent le module utilisable
+       seul. Un module sans objectifs ni auto-évaluation est incomplet.
+    5. Ajoute une carte <a class="mod" data-file="..." data-chapters="N">
+       dans ../index.html, dans le bon parcours, puis régénère l'index
+       de recherche (voir centre-apprentissage-it/CLAUDE.md).
+
+  Composants dispo : .brief .quiz/.reveal .exo .gloss .terminal
+                     .takeaway .tip .steps .cards .table-wrap
                      .net/.node .timeline  (voir les autres modules).
+  Le bouton « copier » des blocs .terminal, les cases « chapitre
+  acquis », le compteur du sommaire et le retour en haut sont
+  injectés automatiquement par assets/app.js — rien à écrire.
   ════════════════════════════════════════════════════════════════
 -->
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Une phrase qui décrit le contenu du module, pour la recherche et le partage.">
     <title>Nouveau module — Titre</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,11 +42,18 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module XX · Catégorie</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours XX · Nom du parcours · N / M</p>
         <h1 class="hero__title">Titre du<br><em>module</em></h1>
         <p class="hero__lead">Une phrase qui résume ce que ce module apprend et pourquoi c'est utile.</p>
         <div class="hero__meta">
             <span class="chip">Mot-clé</span><span class="chip">Mot-clé</span><span class="chip">Mot-clé</span>
+        </div>
+        <!-- fact--n1 débutant · fact--n2 intermédiaire · fact--n3 avancé -->
+        <div class="hero__facts">
+            <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
+            <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
+            <span class="fact"><b>Chapitres</b> 2 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> aucun</span>
         </div>
     </div>
 </header>
@@ -44,6 +65,7 @@
         <ul class="toc__list">
             <li><a class="toc__link" href="#chap1"><span>01</span> Premier chapitre</a></li>
             <li><a class="toc__link" href="#chap2"><span>02</span> Deuxième chapitre</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -55,6 +77,17 @@
                 <div class="section-banner__desc">Sous-titre du module</div>
             </div>
         </div>
+
+        <!-- Objectifs : ce que le lecteur saura FAIRE, pas ce qu'il aura lu. -->
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Un verbe d'action + un résultat vérifiable.</li>
+                <li>Trois à six objectifs, pas plus.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> aucun — ou un lien vers le ou les modules à faire avant.</p>
+            <p class="brief__foot">Où ce module mène ensuite, avec un lien vers la suite du parcours.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="chap1">
@@ -75,6 +108,7 @@
 <span class="k">Get-Quelquechose</span> <span class="p">-Param</span> <span class="s">"valeur"</span></pre>
             </div>
 
+            <!-- Chaque chapitre se termine par son point clé. -->
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Le point clé du chapitre, formulé pour être mémorisé.</p>
@@ -90,6 +124,43 @@
             <div class="tip">
                 <p class="tip__label">Astuce</p>
                 <p>Pense à ajouter chaque chapitre au sommaire (toc) ci-dessus avec le même <code>id</code>.</p>
+            </div>
+
+            <!-- Exercice à correction repliée — pour un module qui se pratique. -->
+            <div class="exo">
+                <p class="exo__label">Exercice 1 — un intitulé court</p>
+                <p>L'énoncé, avec des valeurs concrètes.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>Le raisonnement, pas seulement le résultat.</p></div>
+                </details>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le point clé du chapitre.</p>
+            </div>
+        </section>
+
+        <!-- Auto-évaluation — obligatoire : c'est ce qui permet de vérifier l'acquis. -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Une question qui teste la compréhension, pas la mémoire d'une commande.</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>La réponse, avec le <em>pourquoi</em>, et le renvoi au chapitre. <em>Chapitre 01.</em></p></div>
+                    </details>
+                </li>
+            </ol>
+
+            <!-- Optionnel : pour un module dense en acronymes. -->
+            <h3>Les sigles du module</h3>
+            <div class="gloss">
+                <div class="gl"><b>SIGLE</b><span>Développé — et ce que ça fait, en une ligne.</span></div>
             </div>
         </section>
 

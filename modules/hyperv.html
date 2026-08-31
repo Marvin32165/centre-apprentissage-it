@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Hyper-V : activer l'hyperviseur, créer et régler des VM Windows Server, fabriquer une image Sysprep réutilisable, déployer en série avec les disques de différenciation et choisir son commutateur virtuel.">
     <title>Hyper-V — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,11 +16,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 14 · Virtualisation</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 01 · Fondations · 1 / 3</p>
         <h1 class="hero__title">Hyper-V<br><em>monter son labo</em></h1>
         <p class="hero__lead">Créer des VM Windows Server sur son propre poste, en fabriquer une image Sysprep réutilisable, puis déployer des machines en quelques secondes avec les disques de différenciation.</p>
         <div class="hero__meta">
             <span class="chip">Génération 2</span><span class="chip">Sysprep</span><span class="chip">Disque parent</span><span class="chip">Commutateur virtuel</span><span class="chip">Windows Server 2025</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
+            <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
+            <span class="fact"><b>Chapitres</b> 7 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> aucun</span>
         </div>
     </div>
 </header>
@@ -36,6 +43,7 @@
             <li><a class="toc__link" href="#sysprep"><span>05</span> Sysprep : fabriquer une image réutilisable</a></li>
             <li><a class="toc__link" href="#differenciation"><span>06</span> Déployer des VM en série (disque parent)</a></li>
             <li><a class="toc__link" href="#commutateurs"><span>07</span> Choisir son commutateur virtuel</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -47,6 +55,19 @@
                 <div class="section-banner__desc">De la première VM à un labo Windows Server déployable en série</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Activer Hyper-V et créer une VM en posant dès la création les réglages qui comptent : génération, mémoire fixe, vCPU, ordre de démarrage.</li>
+                <li>Installer Windows Server dans une VM, puis dérouler la configuration du premier démarrage <strong>dans le bon ordre</strong>.</li>
+                <li>Fabriquer une image de référence avec Sysprep et l'archiver comme disque parent intouchable.</li>
+                <li>Déployer des VM en quelques secondes avec des disques de différenciation — et savoir dans quel cas ce n'est pas le bon choix.</li>
+                <li>Choisir entre commutateur externe, interne et privé selon ce que le labo doit pouvoir joindre.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> aucun</p>
+            <p class="brief__foot">Ce module fabrique les VM sur lesquelles tournent les modules <a href="windows-server.html">Windows Server</a>, <a href="sql-server.html">SQL Server</a> et <a href="storage-clustering.html">Stockage &amp; clustering</a>.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="activer">
@@ -240,6 +261,65 @@
                 <p class="tip__label">Le réflexe du labo AD</p>
                 <p>Un domaine de test se monte sur un commutateur <strong>privé</strong> : le DHCP et le DNS du labo ne risquent alors pas de répondre sur le réseau de la maison ou de l'école. Si les VM ont besoin d'Internet ponctuellement (mises à jour), on leur ajoute une <em>seconde</em> carte sur un commutateur externe plutôt que de tout basculer.</p>
             </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Parmi les réglages de l'assistant de création, lequel est définitif — et que faire si on s'est trompé ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>La <strong>génération</strong> (1 = BIOS, 2 = UEFI). Elle se fixe à la création et ne peut plus être changée : il faut recréer la VM. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi le renommage de la machine est-il placé en dernier dans la check-list du premier démarrage ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Parce qu'il <strong>redémarre le serveur</strong>. On regroupe donc avant tout ce qui ne nécessite pas de reboot : IP fixe, fuseau horaire, IE ESC, RDP, Windows Update. <em>Chapitre 04.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Que retire exactement Sysprep en mode « Generalize », et quelle erreur ruine l'image ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Il retire le <strong>SID</strong> unique, le nom de la machine et les identifiants matériels. L'erreur fatale : <strong>rallumer la VM</strong> après le sysprep — un seul démarrage réattribue un SID et ruine l'image. <em>Chapitre 05.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Que contient un disque de différenciation, et pourquoi le disque parent ne doit-il plus jamais être modifié ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Il ne stocke que les <strong>écarts</strong> avec le parent. Si le parent bouge, toutes les VM enfants qui en dépendent deviennent inutilisables : <code>C:\PARENT\sysprep.vhdx</code> est en lecture seule de fait. <em>Chapitre 06.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Trois VM d'un labo Active Directory ne doivent joindre ni Internet, ni le réseau de la maison. Quel type de commutateur virtuel ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>Privé</strong> (VM ↔ VM uniquement). « Interne » ajouterait l'hôte, « Externe » ouvrirait sur le réseau physique — et le DHCP du labo risquerait de répondre sur le réseau réel. <em>Chapitre 07.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Le TP conclut que les disques de différenciation ne sont pas le bon choix pour un labo durable. Pourquoi ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Les <strong>performances</strong> : chaque lecture peut devoir traverser la chaîne parent/enfant. On garde la différenciation pour du jetable recréé souvent, et on préfère un disque à taille dynamique classique pour un labo qui dure. <em>Chapitre 06.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi faut-il rallumer le pare-feu avant de lancer un Sysprep ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Parce que l'état du pare-feu est <strong>capturé dans l'image</strong> : toutes les VM clonées naîtraient désarmées. Couper le pare-feu ne se justifie que le temps d'un TP. <em>Chapitre 04.</em></p></div>
+                    </details>
+                </li>
+            </ol>
         </section>
 
     </main>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Cybersécurité & hacking éthique : cadre légal, labo isolé, méthodologie de pentest, reconnaissance et scan Nmap, OWASP Top 10, durcissement des systèmes, défense réseau et hygiène numérique.">
     <title>Cybersécurité &amp; Hacking éthique — Module</title>
     <meta name="description" content="Fondamentaux de cybersécurité offensive et défensive, en labo isolé et usage légal : éthique, méthodologie de pentest, reconnaissance, OWASP, hardening, pare-feu/VPN et hygiène numérique.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,11 +17,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Sécurité · Hacking éthique</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 04 · Virtualisation, homelab &amp; sécurité · 3 / 3</p>
         <h1 class="hero__title">Cybersécurité &amp;<br>Hacking <em>éthique</em></h1>
         <p class="hero__lead">Comprendre l'attaque pour mieux défendre. Ce module pose les fondamentaux offensifs <em>et</em> défensifs : méthodologie d'un test d'intrusion, reconnaissance, vulnérabilités courantes, puis durcissement, pare-feu et hygiène numérique — le tout en labo isolé et dans un cadre strictement légal.</p>
         <div class="hero__meta">
             <span class="chip">Éthique &amp; loi</span><span class="chip">Kali</span><span class="chip">Pentest</span><span class="chip">OWASP</span><span class="chip">Hardening</span><span class="chip">VPN</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
+            <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
+            <span class="fact"><b>Chapitres</b> 8 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a> · <a href="subnetting.html">Subnetting</a></span>
         </div>
     </div>
 </header>
@@ -38,6 +45,7 @@
             <li><a class="toc__link" href="#hardening"><span>06</span> Durcir les systèmes</a></li>
             <li><a class="toc__link" href="#reseau"><span>07</span> Défense réseau</a></li>
             <li><a class="toc__link" href="#hygiene"><span>08</span> Hygiène numérique</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -49,6 +57,20 @@
                 <div class="section-banner__desc">Apprendre l'attaque pour construire la défense — légalement</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Énoncer le cadre légal, et refuser tout test hors d'un périmètre explicitement autorisé.</li>
+                <li>Monter un labo attaquant / cible totalement isolé, avec un snapshot propre.</li>
+                <li>Dérouler les cinq phases d'un test d'intrusion, et dire laquelle produit réellement de la valeur.</li>
+                <li>Lire un résultat Nmap côté attaque, et en tirer une action concrète côté défense.</li>
+                <li>Reconnaître les grandes classes de failles de l'OWASP Top 10 et leur contre-mesure.</li>
+                <li>Durcir un système et un réseau, et appliquer les cinq réflexes d'hygiène numérique.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="linux-debian.html">Linux Debian</a> · <a href="subnetting.html">Subnetting</a></p>
+            <p class="brief__foot">Le labo isolé se monte avec <a href="proxmox.html">Proxmox</a>, le durcissement s'applique aux serveurs des modules <a href="linux-debian.html">Linux Debian</a> et <a href="windows-server.html">Windows Server</a>.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="ethique">
@@ -276,6 +298,58 @@
                 <p class="takeaway__label">Rappel final</p>
                 <p>Tout ce module vise la <strong>défense</strong>. On n'utilise ces connaissances que sur ses propres systèmes ou avec autorisation écrite. Le savoir offensif engage ta responsabilité — reste du bon côté.</p>
             </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Qu'est-ce qui sépare un test d'intrusion d'un délit ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>L'<strong>autorisation</strong>, écrite et avec un périmètre défini. Sans elle, scanner ou attaquer un système est illégal (articles 323-1 et suivants du Code pénal). Pas d'autorisation = pas de test. <em>Chapitre 01.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quelles sont les trois conditions d'un labo de sécurité sain ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Une machine <strong>attaquante</strong> (Kali), une <strong>cible volontairement vulnérable</strong>, et une <strong>isolation totale</strong> : un réseau interne sans aucune route vers Internet ni vers le réseau domestique. Plus un snapshot « propre » pour repartir de zéro. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quelles sont les cinq phases d'un pentest, et laquelle porte la valeur du test ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Reconnaissance → Scanning → Exploitation → Post-exploitation → <strong>Rapport</strong>. C'est le rapport qui compte : un test sans correctifs documentés ne sert à rien. <em>Chapitre 03.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Un scan Nmap révèle six ports ouverts avec leurs versions. Que fais-tu de cette information côté défense ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Chaque port ouvert est <strong>une porte à justifier</strong> : on ferme ou filtre l'inutile, on masque les bannières de version, et on met à jour les services qui restent. L'objectif défensif est l'inverse du scan : <strong>réduire la surface</strong>. <em>Chapitre 04.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Beaucoup d'attaques ne « cassent » rien : elles devinent. Quelle est la vraie contre-mesure ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Un mot de passe <strong>long et unique par service</strong> (généré par un gestionnaire), plus un <strong>second facteur</strong>. Pas un mot de passe « compliqué » réutilisé partout. <em>Chapitres 05 et 08.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quel est le principe de base d'une configuration de pare-feu ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>Tout interdire par défaut</strong> en entrée, n'ouvrir que le strictement nécessaire : <code>ufw default deny incoming</code>, puis <code>ufw allow 22/tcp</code>. La défense en profondeur empile ensuite segmentation, VPN et journalisation. <em>Chapitre 07.</em></p></div>
+                    </details>
+                </li>
+            </ol>
         </section>
 
     </main>

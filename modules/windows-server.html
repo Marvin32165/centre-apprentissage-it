@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Windows Server 2025 : rôles et fonctionnalités, déploiement par image SYSPREP, Active Directory (OU, groupes, utilisateurs), DNS et DHCP, DFS Namespace, durcissement et labo de référence Orion.">
     <title>Windows Server 2025 — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,11 +16,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 01 · Infrastructure</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 02 · Infrastructure Windows · 1 / 7</p>
         <h1 class="hero__title">Windows <em>Server</em> 2025</h1>
         <p class="hero__lead">Le socle de toute l'infrastructure : installer des rôles, déployer des serveurs en série par image, bâtir un annuaire Active Directory, résoudre les noms avec DNS et partager les fichiers avec DFS.</p>
         <div class="hero__meta">
             <span class="chip">AD DS</span><span class="chip">SYSPREP</span><span class="chip">DNS / DHCP</span><span class="chip">DFS</span><span class="chip">Server Core</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 2 h</span>
+            <span class="fact"><b>Chapitres</b> 7 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> <a href="hyperv.html">Hyper-V</a></span>
         </div>
     </div>
 </header>
@@ -36,6 +43,7 @@
             <li><a class="toc__link" href="#dfs"><span>05</span> DFS Namespace</a></li>
             <li><a class="toc__link" href="#securite"><span>06</span> Sécurité du serveur</a></li>
             <li><a class="toc__link" href="#labo"><span>07</span> Labo final</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -47,6 +55,20 @@
                 <div class="section-banner__desc">Du rôle isolé à la forêt Active Directory complète</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Distinguer un rôle d'une fonctionnalité, et choisir entre Desktop Experience et Server Core en connaissance de cause.</li>
+                <li>Préparer une image de référence avec SYSPREP et déployer plusieurs serveurs sans dupliquer de SID.</li>
+                <li>Promouvoir une forêt Active Directory, structurer OU / groupes / utilisateurs, et y joindre une machine.</li>
+                <li>Expliquer pourquoi AD ne fonctionne pas sans DNS, et dérouler les quatre étapes DHCP.</li>
+                <li>Présenter un espace de noms DFS et distinguer Namespace et Replication.</li>
+                <li>Appliquer les réflexes de durcissement d'un serveur : moindre privilège, surface réduite, journalisation, sauvegarde testée.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="hyperv.html">Hyper-V</a></p>
+            <p class="brief__foot">La suite du parcours s'appuie entièrement sur ce domaine : <a href="powershell.html">PowerShell</a> (le scripter), <a href="storage-clustering.html">Stockage &amp; clustering</a>, <a href="rds.html">RDS</a>, <a href="exchange-securite.html">Exchange &amp; PKI</a> et <a href="sharepoint.html">SharePoint</a>.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="roles">
@@ -300,6 +322,75 @@ sconfig.cmd</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Un labo réussi part toujours d'un <strong>plan d'adressage écrit</strong> et d'un <strong>nommage cohérent</strong> (rôle dans le nom : <code>SRV-AD</code>, <code>SRV-FILE</code>). Le second DC n'est pas un luxe : c'est la tolérance de panne de l'authentification.</p>
+            </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi ne peut-on pas simplement copier un disque Windows pour déployer dix serveurs identiques ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Chaque installation porte un <strong>SID</strong> et un nom machine uniques ; les dupliquer est interdit dans un domaine. D'où <code>sysprep /generalize /oobe</code>, qui efface ces éléments avant le clonage. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Sur un contrôleur de domaine, quelle adresse DNS renseigner dans la configuration réseau — et pourquoi ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>Lui-même</strong>. Les clients localisent le domaine via les enregistrements <strong>SRV</strong> : sans DNS fonctionnel, aucune ouverture de session AD n'est possible. <em>Chapitres 03 et 04.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quelles sont les quatre étapes d'une attribution DHCP, et que faut-il de plus dans un domaine AD ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>DORA</strong> : Discover → Offer → Request → Acknowledge. En environnement AD, le serveur DHCP doit en plus être <strong>autorisé dans l'annuaire</strong> avant de pouvoir distribuer. <em>Chapitre 04.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">DFS Namespace et DFS Replication : que fait chacun ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Le <strong>Namespace</strong> présente un chemin logique unique (<code>\\orion.local\Partages\Compta</code>) qui masque l'emplacement physique réel. La <strong>Replication</strong> synchronise le contenu entre serveurs pour la tolérance de panne. Les deux se combinent. <em>Chapitre 05.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">À quel niveau applique-t-on les GPO et délègue-t-on l'administration ? Et par quoi passe-t-on pour autoriser ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Au niveau de l'<strong>unité d'organisation (OU)</strong>. Les autorisations, elles, passent toujours par les <strong>groupes</strong>, jamais par les utilisateurs directement. <em>Chapitre 03.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quelle cmdlet crée le premier contrôleur de domaine, et quelle autre le second ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><code>Install-ADDSForest</code> crée forêt + domaine + DNS intégré. Pour un contrôleur supplémentaire : <code>Install-ADDSDomainController</code>. Le second DC n'est pas un luxe, c'est la tolérance de panne de l'authentification. <em>Chapitres 03 et 07.</em></p></div>
+                    </details>
+                </li>
+            </ol>
+
+            <h3>Les sigles du module</h3>
+            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
+            <div class="gloss">
+                <div class="gl"><b>AD DS</b><span>Active Directory Domain Services — l'annuaire qui authentifie et organise le réseau.</span></div>
+                <div class="gl"><b>Forêt / domaine / OU</b><span>Frontière de sécurité la plus haute / base d'authentification commune / conteneur logique porteur des GPO.</span></div>
+                <div class="gl"><b>GPO</b><span>Group Policy Object — stratégie appliquée au niveau d'une OU, d'un domaine ou d'un site.</span></div>
+                <div class="gl"><b>SID</b><span>Security Identifier — l'identifiant unique d'une installation ou d'un objet ; sa duplication interdit le clonage brut.</span></div>
+                <div class="gl"><b>SYSPREP</b><span>L'outil qui « généralise » une installation Windows : SID, nom et identifiants matériels retirés.</span></div>
+                <div class="gl"><b>OOBE</b><span>Out-Of-Box Experience — l'écran de première configuration par lequel repasse une image généralisée.</span></div>
+                <div class="gl"><b>A / CNAME / MX / SRV</b><span>Enregistrements DNS : hôte / alias / messagerie / localisation de service — ce sont les SRV qui font trouver un contrôleur de domaine.</span></div>
+                <div class="gl"><b>DORA</b><span>Discover, Offer, Request, Acknowledge — les quatre étapes d'une attribution DHCP.</span></div>
+                <div class="gl"><b>DFS-N / DFS-R</b><span>Espaces de noms (un chemin logique unique) / Réplication (copies synchronisées entre serveurs).</span></div>
+                <div class="gl"><b>FQDN / NetBIOS</b><span>Nom pleinement qualifié (<code>orion.local</code>) / nom court historique (<code>ORION</code>).</span></div>
+                <div class="gl"><b>Server Core</b><span>Installation sans interface graphique : moins de composants, donc moins de surface d'attaque.</span></div>
+                <div class="gl"><b>gMSA</b><span>Group Managed Service Account — compte de service dont Active Directory gère le mot de passe (voir le module PowerShell).</span></div>
             </div>
         </section>
 

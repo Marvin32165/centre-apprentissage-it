@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Linux Debian : terminal, arborescence, permissions et ls -l, redirections et pipes, grep/sed/awk/find, variables, réseau et SSH, dépôts APT, processus et services systemd, logs et audit.">
     <title>Linux Debian — Du premier login à la maîtrise du terminal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,11 +45,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 07 · Systèmes Linux</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 01 · Fondations · 2 / 3</p>
         <h1 class="hero__title">Linux <em>Debian</em><br>pour bien démarrer</h1>
         <p class="hero__lead">De la première connexion root jusqu'à la maîtrise du terminal : fichiers, permissions, redirections, filtres texte (grep, sed, awk, find), réseau, APT, SSH, processus et services — tout ce qu'il faut pour administrer un serveur Debian.</p>
         <div class="hero__meta">
             <span class="chip">Debian 11 · 12 · 13</span><span class="chip">Terminal / Bash</span><span class="chip">Permissions</span><span class="chip">APT</span><span class="chip">SSH</span><span class="chip">systemd</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
+            <span class="fact"><b>Durée</b> ≈ 4 h</span>
+            <span class="fact"><b>Chapitres</b> 22 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> aucun</span>
         </div>
     </div>
 </header>
@@ -80,6 +87,7 @@
             <li><a class="toc__link" href="#chap20"><span>20</span> Partitions, GRUB &amp; virtu</a></li>
             <li><a class="toc__link" href="#chap21"><span>21</span> Raccourcis &amp; réflexes</a></li>
             <li><a class="toc__link" href="#chap22"><span>22</span> Commandes : mémo complet</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -91,6 +99,20 @@
                 <div class="section-banner__desc">Du premier login à la maîtrise du terminal — pour débutant complet</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Se repérer dans l'arborescence Debian et retrouver seul un fichier de configuration, un journal ou un binaire.</li>
+                <li>Lire une ligne de <code>ls -l</code> en entier, et poser les droits voulus avec <code>chmod</code>, <code>chown</code>, le <code>umask</code> et les ACL.</li>
+                <li>Enchaîner des commandes avec les redirections, les pipes et les filtres texte : <code>grep</code>, <code>cut</code>, <code>sort</code>, <code>sed</code>, <code>awk</code>, <code>find</code>.</li>
+                <li>Configurer le réseau d'un serveur Debian de façon permanente, et y prendre la main en SSH par clé.</li>
+                <li>Installer et maintenir des logiciels avec APT, et diagnostiquer les erreurs de dépôt les plus courantes.</li>
+                <li>Gérer les processus et les services systemd, et savoir dans quel journal chercher après un incident.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> aucun</p>
+            <p class="brief__foot">Ce module est le socle des modules <a href="proxmox.html">Proxmox</a>, <a href="homelab.html">Homelab</a> et <a href="securite.html">Cybersécurité</a>, qui supposent un terminal Linux acquis.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="chap1">
@@ -773,6 +795,11 @@ EOF</pre>
                 <pre class="terminal__code"><span class="k">cat</span> <span class="s">/etc/passwd</span> | <span class="k">grep</span> nologin | <span class="k">sort</span> | <span class="k">cut</span> <span class="p">-d:</span> <span class="p">-f1</span>
 <span class="c"># filtre les comptes "nologin", trie, ne garde que le login (1er champ)</span></pre>
             </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>sed</code> travaille <strong>ligne par ligne</strong> (<code>s/avant/après/</code>), <code>awk</code> travaille <strong>en colonnes</strong> (<code>$1</code>, <code>$2</code>…). Sans <code>-i</code>, <code>sed</code> se contente d'<em>afficher</em> le résultat : le fichier n'est pas modifié. C'est le filet de sécurité — on teste toujours sans <code>-i</code> avant de l'ajouter.</p>
+            </div>
         </section>
 
         <!-- 11 -->
@@ -903,6 +930,11 @@ ma_commande.sh                      <span class="c"># échoue : "commande introu
                     <tr><td><code>alias ll='ls -lrtha'</code></td><td>créer un raccourci (permanent via <code>~/.bashrc</code>)</td></tr>
                 </tbody>
             </table></div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>type commande</code> répond en un mot : interne au shell, ou binaire externe. Une commande externe n'est trouvée que si son dossier figure dans <code>$PATH</code> — d'où le <code>./script.sh</code> obligatoire pour un script du dossier courant. Et l'aide dépend du type : <code>help</code> pour une interne, <code>--help</code> ou <code>man</code> pour une externe.</p>
+            </div>
         </section>
 
         <!-- 14 -->
@@ -1143,6 +1175,11 @@ iface ens33 inet <span class="k">static</span>
 <span class="k">tar</span> <span class="p">-xzf</span> archive.tar.gz            <span class="c"># extraire</span>
 <span class="k">zip</span> archive.zip fichiers           <span class="c"># créer un zip</span>
 <span class="k">unzip</span> archive.zip                  <span class="c"># extraire un zip</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>df -h</code> répond à « combien reste-t-il ? », <code>du -sh</code> à « qui prend la place ? » : on enchaîne les deux dès qu'une partition sature. Pour <code>tar</code>, les options se lisent comme une phrase : <code>c</code> créer, <code>x</code> extraire, <code>z</code> compresser en gzip, <code>f</code> nom du fichier.</p>
             </div>
         </section>
 
@@ -1509,6 +1546,72 @@ iface ens33 inet <span class="k">static</span>
                     <tr><td><code>Ctrl+D</code></td><td>fermer le terminal / se déconnecter</td></tr>
                 </tbody>
             </table></div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Quelle est la conséquence exacte d'un <code>usermod -G sudo alice</code> écrit sans le <code>-a</code> ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><code>-G</code> <strong>remplace</strong> la liste des groupes secondaires : alice est retirée de tous ses autres groupes. Le <code>-a</code> (<em>append</em>) ajoute sans effacer — d'où le réflexe <code>usermod -aG</code>. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Avec un <code>umask</code> de 0022, quels droits reçoit un fichier qu'on vient de créer ? Et pourquoi jamais le bit d'exécution ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>644</strong> (<code>rw-r--r--</code>) : la base d'un fichier est <strong>666</strong>, jamais 777 — Linux ne rend pas exécutable un fichier créé normalement. On en retire le masque 022. Un dossier, lui, part de 777 et tombe à 755. <em>Chapitre 07.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Lien physique ou lien symbolique : qu'est-ce que <code>ls -li</code> permet de distinguer, et que se passe-t-il si on supprime la cible ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Le lien physique partage le <strong>même inode</strong> (compteur de liens à 2) : supprimer un nom laisse l'autre intact, le contenu n'est libéré que quand tous les noms disparaissent. Le lien symbolique a un <strong>inode différent</strong>, un <code>l</code> en première colonne, et devient orphelin si la cible est supprimée. <em>Chapitre 06.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi <code>sudo echo "x" &gt; /etc/fichier</code> échoue-t-il, et quelle est la forme correcte ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>La redirection <code>&gt;</code> est exécutée par <strong>le shell</strong>, qui n'est pas root, <em>avant</em> que <code>sudo</code> s'applique. La forme correcte : <code>echo "x" | sudo tee /etc/fichier</code>. <em>Chapitre 09.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q"><code>ping 8.8.8.8</code> répond, <code>ping www.google.fr</code> non. Que conclure, et où regarder ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>La connectivité IP est bonne : le problème est la <strong>résolution de noms</strong>. On vérifie <code>/etc/resolv.conf</code> (serveurs DNS), puis <code>/etc/hosts</code> et l'ordre défini dans <code>/etc/nsswitch.conf</code>. <em>Chapitre 14.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q"><code>systemctl start ssh</code> suffit-il pour que SSH soit disponible après un redémarrage ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Non. <code>start</code> agit <strong>maintenant</strong>, <code>enable</code> agit <strong>au prochain démarrage</strong>. Pour un service qui doit toujours tourner, il faut les deux. <em>Chapitre 17.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Une adresse posée avec <code>ip addr add</code> a disparu après le reboot. Pourquoi, et comment la rendre permanente ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>La commande <code>ip</code> ne modifie <strong>rien de persistant</strong> — elle sert à tester. Pour survivre au redémarrage, écrire l'adresse dans <code>/etc/network/interfaces</code> puis <code>sudo systemctl restart networking</code>. <em>Chapitre 14.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi <code>grep -c "" fichier.txt</code> est-il plus fiable que <code>wc -l</code> pour compter des lignes ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Si la dernière ligne n'a pas de retour à la ligne final, <code>wc -l</code> <strong>sous-compte d'une unité</strong>. <code>grep -c ""</code> compte les lignes réelles quel que soit la fin de fichier. <em>Chapitre 09.</em></p></div>
+                    </details>
+                </li>
+            </ol>
         </section>
 
     </main>

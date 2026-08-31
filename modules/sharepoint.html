@@ -3,93 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module SharePoint Server Subscription Edition : théorie (Server vs Online, licences, modèles cloud, couches, architecture physique et logique, prérequis, sauvegarde) et pratique (préparer SQL Server, installer la ferme, premier site, droits, workflows, PowerShell, backup et restore).">
     <title>SharePoint — Théorie &amp; Pratique</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="../assets/theme.css">
     <style>
-        /* ── TOKENS ── */
-        :root {
-            --ink:         #111827;
-            --ink-soft:    #4B5563;
-            --ink-faint:   #9CA3AF;
-            --page:        #F1F3F8;
-            --surface:     #FFFFFF;
-            --border:      #E5E7EB;
-            --border-md:   #D1D5DB;
+        /* ── Composants propres au module SharePoint ──
+           Tout le reste (chapitres, encadrés, terminal, tables, timeline,
+           steps, cards…) vient du design system partagé : assets/theme.css. */
+        :root { --server:#1E40AF; --online:#0D9488; --online-2:#14B8A6; --server-soft:#EFF6FF; --online-soft:#F0FDFA; }
 
-            --server:      #1E40AF;
-            --server-2:    #2563EB;
-            --server-soft: #EFF6FF;
-            --online:      #0D9488;
-            --online-2:    #14B8A6;
-            --online-soft: #F0FDFA;
+        /* Théorie (accent du module) vs pratique (ambre) */
+        .section-banner--pratique .section-banner__accent { background: var(--warn); }
+        .chapter--pratique { border-left-color: var(--warn); }
+        .chapter--pratique .chapter__num { color: var(--warn); }
+        .chapter--pratique .step__num { color: #B45309; background: #FFFBEB; border-color: rgba(217,119,6,.25); }
 
-            --theorie:     #6366F1;
-            --theorie-soft:#EEF2FF;
-            --pratique:    #D97706;
-            --pratique-soft:#FFFBEB;
-
-            --yes:   #059669;
-            --no:    #DC2626;
-            --warn:  #D97706;
-
-            --font-display: 'Syne',        system-ui, sans-serif;
-            --font-body:    'Inter',        system-ui, sans-serif;
-            --font-mono:    'JetBrains Mono','Cascadia Code', Consolas, monospace;
-
-            --r:    6px;
-            --r-sm: 3px;
+        /* Sommaire en deux groupes */
+        .toc__group { margin-bottom: 6px; }
+        .toc__group-label {
+            font-family: var(--font-mono); font-size: .62rem; letter-spacing: .18em;
+            text-transform: uppercase; font-weight: 500; color: var(--accent);
+            padding: 10px 14px 6px; display: flex; align-items: center; gap: 7px;
         }
+        .toc__group-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+        .toc__group-label--pratique { color: var(--warn); }
+        .toc__group:last-child .toc__link.is-active { background: #FEF9EE; border-left-color: var(--warn); }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: auto; }
-        @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-
-        body {
-            font-family: var(--font-body);
-            background: var(--page);
-            color: var(--ink);
-            line-height: 1.72;
-            font-size: 16px;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* ── PROGRESS ── */
-        .progress { position: fixed; inset: 0 0 auto 0; height: 2px; z-index: 100; }
-        .progress__bar {
-            height: 100%; width: 100%;
-            background: linear-gradient(90deg, var(--theorie), var(--pratique));
-            transform: scaleX(0); transform-origin: left;
-        }
-
-        /* ── HERO ── */
-        .hero { background: #0F172A; color: #fff; padding: 80px 32px 64px; }
-        .hero__inner { max-width: 1100px; margin: 0 auto; }
-        .eyebrow {
-            font-family: var(--font-mono);
-            font-size: .68rem; letter-spacing: .2em; text-transform: uppercase;
-            color: #475569; margin-bottom: 22px;
-        }
-        .hero__title {
-            font-family: var(--font-display);
-            font-weight: 800;
-            font-size: clamp(2.4rem, 5.5vw, 4rem);
-            line-height: 1.04; letter-spacing: -.02em;
-            color: #F8FAFC; margin-bottom: 16px;
-        }
-        .hero__lead {
-            font-size: 1rem; color: #94A3B8;
-            max-width: 54ch; margin-bottom: 48px; line-height: 1.65;
-        }
-        .versus { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0; align-items: stretch; max-width: 680px; }
-        .versus__card {
-            padding: 22px;
-            border: 1px solid rgba(255,255,255,.1);
-            background: rgba(255,255,255,.03);
-        }
+        /* Comparatif du héros */
+        .versus { display: grid; grid-template-columns: 1fr auto 1fr; align-items: stretch; max-width: 680px; margin-top: 28px; }
+        .versus__card { padding: 22px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.03); }
         .versus__card--server { border-left: 3px solid #2563EB; }
         .versus__card--online { border-left: 3px solid #0D9488; text-align: right; }
         .versus__tag { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: #64748B; }
@@ -97,214 +44,23 @@
         .versus__card p { font-size: .86rem; color: #94A3B8; }
         .versus__pivot { display: grid; place-items: center; font-family: var(--font-mono); font-size: .88rem; color: #334155; padding: 0 16px; }
 
-        /* ── LAYOUT ── */
-        .layout {
-            max-width: 1180px; margin: 0 auto;
-            padding: 52px 32px 80px;
-            display: grid; grid-template-columns: 264px 1fr; gap: 52px; align-items: start;
-        }
-
-        /* ── TOC ── */
-        .toc { position: sticky; top: 28px; }
-        .toc__group { margin-bottom: 6px; }
-        .toc__group-label {
-            font-family: var(--font-mono);
-            font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
-            font-weight: 500; color: var(--theorie);
-            padding: 10px 14px 6px;
-            display: flex; align-items: center; gap: 7px;
-        }
-        .toc__group-label::before {
-            content: ''; display: inline-block;
-            width: 6px; height: 6px; border-radius: 50%;
-            background: currentColor; flex-shrink: 0;
-        }
-        .toc__group-label--pratique { color: var(--pratique); }
-        .toc__list { list-style: none; }
-        .toc__link {
-            display: flex; gap: 10px; align-items: baseline;
-            text-decoration: none; color: var(--ink-soft);
-            font-family: var(--font-body); font-size: .83rem;
-            padding: 5px 14px; border-left: 2px solid var(--border);
-            transition: color .12s, background .12s; line-height: 1.4;
-        }
-        .toc__link span { font-family: var(--font-mono); font-size: .64rem; opacity: .5; flex-shrink: 0; }
-        .toc__link:hover { color: var(--ink); background: #E8EAF5; }
-        .toc__group:first-child .toc__link.is-active {
-            color: var(--ink); font-weight: 600;
-            background: #EEF0F8; border-left-color: var(--theorie);
-        }
-        .toc__group:last-child .toc__link.is-active {
-            color: var(--ink); font-weight: 600;
-            background: #FEF9EE; border-left-color: var(--pratique);
-        }
-
-        /* ── SECTION BANNERS ── */
-        .section-banner {
-            background: #0F172A; border-radius: var(--r);
-            margin: 16px 0 22px;
-            padding: 26px 32px;
-            display: flex; align-items: center; gap: 18px;
-        }
-        .section-banner__accent { width: 4px; height: 44px; border-radius: 2px; flex-shrink: 0; }
-        .section-banner--theorie .section-banner__accent { background: var(--theorie); }
-        .section-banner--pratique .section-banner__accent { background: var(--pratique); }
-        .section-banner__label {
-            font-family: var(--font-display); font-weight: 800;
-            font-size: 1.55rem; letter-spacing: -.01em; color: #F8FAFC;
-        }
-        .section-banner__desc { font-size: .84rem; color: #64748B; margin-top: 3px; }
-        .section-banner__desc code { background: rgba(255,255,255,.08); color: #FCD34D; border: none; }
-
-        /* ── CHAPTERS ── */
-        .content { min-width: 0; }
-        .chapter {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-left: 3px solid var(--theorie);
-            border-radius: var(--r);
-            padding: 44px 48px; margin-bottom: 18px;
-            scroll-margin-top: 28px;
-        }
-        .chapter--pratique { border-left-color: var(--pratique); }
-
-        .chapter__num {
-            font-family: var(--font-mono); font-size: .67rem;
-            letter-spacing: .14em; color: var(--theorie); margin-bottom: 6px;
-        }
-        .chapter--pratique .chapter__num { color: var(--pratique); }
-        .chapter__title {
-            font-weight: 700; font-size: 1.58rem;
-            letter-spacing: -.02em; line-height: 1.14;
-            color: var(--ink); margin-bottom: 10px;
-        }
-        .chapter__intro {
-            font-size: .97rem; color: var(--ink-soft);
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 22px; margin-bottom: 26px; line-height: 1.65;
-        }
-
-        .content h3 { font-weight: 600; font-size: 1.06rem; color: var(--ink); margin: 28px 0 9px; letter-spacing: -.01em; }
-        .content h4 { font-weight: 600; font-size: .93rem; color: var(--server); margin: 16px 0 5px; }
-        .content p { margin-bottom: 12px; }
-        .content ul, .content ol { margin: 8px 0 13px 4px; padding-left: 22px; }
-        .content li { margin-bottom: 6px; line-height: 1.62; }
-        .content strong { color: var(--ink); font-weight: 600; }
-        .content em { font-style: italic; color: #374151; }
-
-        code, .mono {
-            font-family: var(--font-mono); font-size: .81em;
-            background: #F1F5F9; padding: 1px 6px;
-            border-radius: 3px; color: #1E40AF;
-            border: 1px solid #E2E8F0;
-        }
-
-        /* ── PILLS ── */
-        .pill { font-family: var(--font-mono); font-size: .65rem; letter-spacing: .03em; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+        /* Colonnes Server / Online des tableaux comparatifs */
         .pill--server { background: var(--server-soft); color: var(--server); }
         .pill--online { background: var(--online-soft); color: #0F766E; }
-
-        /* ── TAKEAWAY ── */
-        .takeaway {
-            margin-top: 26px;
-            background: var(--theorie-soft);
-            border: 1px solid rgba(99,102,241,.15);
-            border-left: 3px solid var(--theorie);
-            border-radius: var(--r-sm); padding: 15px 18px;
-        }
-        .takeaway__label {
-            font-family: var(--font-mono); font-size: .62rem;
-            letter-spacing: .16em; text-transform: uppercase;
-            color: #4338CA; font-weight: 500; margin-bottom: 5px;
-        }
-        .takeaway p { margin: 0; font-size: .93rem; color: #3730A3; }
-        .takeaway strong { color: #1E1B4B; }
-
-        .takeaway--warn {
-            background: #FFFBEB;
-            border: 1px solid rgba(217,119,6,.2);
-            border-left: 3px solid var(--warn);
-        }
-        .takeaway--warn .takeaway__label { color: #B45309; }
-        .takeaway--warn p { color: #78350F; }
-        .takeaway--warn strong { color: #451A03; }
-
-        /* ── TIP (pratique) ── */
-        .tip {
-            margin-top: 12px;
-            background: var(--pratique-soft);
-            border: 1px solid rgba(217,119,6,.2);
-            border-left: 3px solid var(--pratique);
-            border-radius: var(--r-sm); padding: 13px 17px;
-        }
-        .tip__label {
-            font-family: var(--font-mono); font-size: .62rem;
-            letter-spacing: .16em; text-transform: uppercase;
-            color: #B45309; font-weight: 500; margin-bottom: 4px;
-        }
-        .tip p { margin: 0; font-size: .91rem; color: #78350F; }
-        .tip strong { color: #451A03; }
-
-        /* ── TERMINAL ── */
-        .terminal { border-radius: var(--r); overflow: hidden; margin: 16px 0; border: 1px solid #1E293B; }
-        .terminal__bar {
-            background: #1E293B; padding: 8px 14px;
-            display: flex; align-items: center; gap: 6px;
-        }
-        .terminal__dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
-        .terminal__title { font-family: var(--font-mono); font-size: .64rem; color: #475569; margin-left: 8px; flex: 1; text-align: center; }
-        .terminal__code {
-            background: #0F172A; color: #CBD5E1;
-            padding: 15px 20px;
-            font-family: var(--font-mono); font-size: .8rem;
-            line-height: 1.78; overflow-x: auto; margin: 0; white-space: pre;
-        }
-
-        /* ── STEPS ── */
-        .steps { list-style: none; padding: 0; margin: 20px 0; }
-        .step { display: grid; grid-template-columns: 42px 1fr; gap: 0 15px; align-items: start; }
-        .step__num {
-            font-family: var(--font-mono); font-size: .67rem; font-weight: 500;
-            color: var(--pratique); background: var(--pratique-soft);
-            border: 1px solid rgba(217,119,6,.25);
-            border-radius: var(--r-sm); padding: 4px 0;
-            text-align: center; letter-spacing: .04em; margin-top: 2px;
-        }
-        .step__body { padding-bottom: 20px; border-bottom: 1px dashed var(--border); margin-bottom: 20px; }
-        .step:last-child .step__body { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
-        .step__body > strong:first-child { display: block; font-size: .97rem; margin-bottom: 5px; color: var(--ink); }
-
-        /* ── TABLES ── */
-        .table-wrap { overflow-x: auto; margin: 14px 0; border-radius: var(--r-sm); border: 1px solid var(--border); }
-        table { border-collapse: collapse; width: 100%; font-family: var(--font-body); font-size: .875rem; }
-        thead th { background: var(--ink); color: #fff; text-align: left; padding: 10px 14px; font-weight: 600; white-space: nowrap; font-size: .81rem; }
-        tbody td { padding: 9px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
-        tbody tr:last-child td { border-bottom: none; }
-        tbody tr:nth-child(even) td { background: #FAFAFA; }
-        tbody td:first-child { font-weight: 600; color: var(--ink); }
-
         .th-server { background: var(--server) !important; }
         .th-online { background: var(--online) !important; }
         .col-server { background: var(--server-soft) !important; }
         .col-online { background: var(--online-soft) !important; }
 
-        .yes     { color: var(--yes); font-weight: 600; }
-        .no      { color: var(--no);  font-weight: 600; }
-        .partial { color: var(--warn); font-weight: 600; }
-        .note    { font-size: .79rem; color: var(--ink-soft); margin-top: 7px; }
-
-        /* ── TIMELINE ── */
-        .timeline { position: relative; margin: 20px 0 8px; padding-left: 4px; }
-        .timeline::before { content: ""; position: absolute; left: 106px; top: 6px; bottom: 6px; width: 2px; background: var(--border); }
-        .tl-item { display: grid; grid-template-columns: 94px 24px 1fr; align-items: start; margin-bottom: 15px; }
-        .tl-year { text-align: right; font-family: var(--font-mono); font-size: .74rem; font-weight: 500; color: var(--server); padding-top: 1px; }
-        .tl-dot { display: grid; place-items: center; }
-        .tl-dot::after { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--server); border: 2px solid #fff; box-shadow: 0 0 0 1.5px var(--server); margin-top: 6px; }
+        /* Frise : colonne « année » élargie pour « Aujourd'hui » */
+        .timeline::before { left: 106px; }
+        .tl-item { grid-template-columns: 94px 24px 1fr; }
+        .tl-year { color: var(--server); }
+        .tl-dot::after { background: var(--server); box-shadow: 0 0 0 1.5px var(--server); }
         .tl-item--now .tl-year { color: var(--online); }
         .tl-item--now .tl-dot::after { background: var(--online); box-shadow: 0 0 0 1.5px var(--online); }
-        .tl-body { font-size: .88rem; }
 
-        /* ── STACK ── */
+        /* Pile des couches d'abstraction */
         .stack { margin: 18px 0; border-radius: var(--r); overflow: hidden; border: 1px solid var(--border); }
         .layer { padding: 13px 20px; color: #fff; display: flex; align-items: baseline; gap: 14px; }
         .layer__n { font-family: var(--font-mono); font-size: .67rem; opacity: .75; }
@@ -316,18 +72,13 @@
         .layer-4 { background: #1D4E8A; }
         .layer-5 { background: var(--server); }
 
-        /* ── CARDS ── */
-        .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; margin: 18px 0; }
-        .card { border-radius: var(--r-sm); padding: 15px 17px; border: 1px solid var(--border); background: #FAFAFA; }
-        .card h4 { margin: 0 0 8px; }
-        .card ul { margin: 0; padding-left: 18px; }
-        .card li { font-size: .86rem; }
-        .card--ms { border-left: 3px solid var(--warn); }
+        /* Responsabilité partagée */
+        .card--ms { border-left-color: var(--warn); }
         .card--ms h4 { color: #92400E; }
-        .card--you { border-left: 3px solid var(--server); }
+        .card--you { border-left-color: var(--server); }
         .card--you h4 { color: var(--server); }
 
-        /* ── ARCH ── */
+        /* Architecture trois tiers */
         .arch { background: #F8FAFC; border: 1px solid var(--border); border-radius: var(--r); padding: 22px; margin: 18px 0; }
         .arch__node { max-width: 440px; margin: 0 auto; color: #fff; border-radius: var(--r-sm); padding: 11px 16px; text-align: center; }
         .arch__node strong { font-weight: 600; }
@@ -338,7 +89,7 @@
         .arch__client { text-align: center; font-family: var(--font-mono); font-size: .72rem; color: var(--ink-soft); margin-bottom: 6px; }
         .arch__arrow { text-align: center; color: var(--ink-faint); font-size: 1rem; line-height: 1.4; }
 
-        /* ── MODEL ── */
+        /* Hiérarchie logique des objets */
         .model { border: 1px solid var(--border); border-radius: var(--r); padding: 18px; margin: 18px 0; background: #F8FAFC; }
         .model__box { border: 1px solid var(--border); border-radius: var(--r-sm); background: #fff; padding: 11px 13px; margin-top: 10px; }
         .model__box:first-child { margin-top: 0; }
@@ -353,7 +104,7 @@
         .svc { font-family: var(--font-mono); font-size: .67rem; padding: 3px 8px; border-radius: 4px; background: var(--server-soft); color: var(--server); }
         .model__nest { margin-left: 14px; }
 
-        /* ── TOPO ── */
+        /* Topologies de ferme */
         .topo { display: grid; grid-template-columns: repeat(2,1fr); gap: 13px; margin: 18px 0; }
         .topo__item { border: 1px solid var(--border); border-radius: var(--r-sm); padding: 15px; background: #FAFAFA; }
         .topo__head { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
@@ -364,7 +115,7 @@
         .srv b { color: var(--server); }
         .topo__item p { font-size: .84rem; margin: 0; color: var(--ink-soft); }
 
-        /* ── RISK GRID ── */
+        /* Matrice d'analyse de risque */
         .riskgrid { display: grid; grid-template-columns: 126px 1fr 1fr; gap: 7px; margin: 16px 0; }
         .rg-cell { padding: 11px 13px; border-radius: var(--r-sm); font-size: .82rem; }
         .rg-head { font-weight: 600; text-align: center; align-self: center; color: var(--ink); }
@@ -372,56 +123,32 @@
         .rg-q { color: #fff; }
         .rg-q strong { display: block; font-weight: 600; color: #fff; margin-bottom: 3px; }
         .rg-q em { color: rgba(255,255,255,.88); font-style: italic; }
-        .rg-green { background: #059669; }
-        .rg-amber { background: #D97706; }
-        .rg-red   { background: #DC2626; }
-        .rg-corner { }
+        .rg-green { background: var(--yes); }
+        .rg-amber { background: var(--warn); }
+        .rg-red   { background: var(--no); }
 
-        /* ── DOT / LEGEND ── */
+        /* Légendes à pastilles */
         .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
         .dot--you   { background: var(--server); }
         .dot--cloud { background: #fff; border: 1.5px solid var(--online); }
         .legend { font-size: .79rem; color: var(--ink-soft); margin-top: 7px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
         .legend span { display: inline-flex; align-items: center; gap: 6px; }
 
-        /* ── FOOTER ── */
-        footer { background: #0F172A; color: #475569; text-align: center; padding: 30px 24px; font-family: var(--font-body); font-size: .81rem; }
-        footer strong { color: #94A3B8; font-weight: 500; }
-
-        a:focus-visible { outline: 2px solid var(--theorie); outline-offset: 2px; border-radius: 2px; }
-
-        /* ── RESPONSIVE ── */
         @media (max-width: 900px) {
-            .layout { grid-template-columns: 1fr; gap: 22px; padding: 26px 18px 56px; }
-            .toc { position: static; }
-            .toc__list { display: flex; flex-wrap: wrap; gap: 5px; }
-            .toc__link { border-left: none; border: 1px solid var(--border); border-radius: 999px; padding: 5px 11px; font-size: .77rem; }
-            .chapter { padding: 26px 20px; }
             .versus { grid-template-columns: 1fr; gap: 10px; max-width: 100%; }
             .versus__pivot { padding: 3px; }
             .versus__card--online { text-align: left; }
-            .cards, .topo { grid-template-columns: 1fr; }
-            .section-banner { padding: 22px 20px; }
-        }
-        @media (max-width: 520px) {
-            body { font-size: 15px; }
-            .hero { padding: 52px 18px 40px; }
-            .chapter__title { font-size: 1.35rem; }
-        }
-        @media print {
-            .toc, .progress { display: none; }
-            .layout { grid-template-columns: 1fr; padding: 0; }
-            .chapter { break-inside: avoid; }
+            .topo { grid-template-columns: 1fr; }
         }
     </style>
 </head>
-<body>
+<body data-domain="sp">
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow">Guide d'apprentissage · Microsoft 365 · SharePoint Server SE</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 02 · Infrastructure Windows · 7 / 7</p>
         <h1 class="hero__title">SharePoint,<br>de la salle serveur au cloud</h1>
         <p class="hero__lead">10 chapitres de théorie et 8 chapitres pratiques pour comprendre, installer et administrer SharePoint Server Subscription Edition sur Windows Server 2025.</p>
         <div class="versus">
@@ -437,12 +164,20 @@
                 <p>Microsoft héberge, vous utilisez — partout.</p>
             </div>
         </div>
+        <div class="hero__facts">
+            <span class="fact fact--n3"><b>Niveau</b> Avancé</span>
+            <span class="fact"><b>Durée</b> ≈ 4 h</span>
+            <span class="fact"><b>Chapitres</b> 10 théorie + 8 pratique + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a> · <a href="sql-server.html">SQL Server</a></span>
+        </div>
     </div>
 </header>
 
 <div class="layout">
 
     <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">SharePoint Server SE</p>
         <div class="toc__group">
             <p class="toc__group-label">Théorie</p>
             <ul class="toc__list">
@@ -469,6 +204,7 @@
                 <li><a class="toc__link" href="#automatisation"><span>P06</span> Automatiser</a></li>
                 <li><a class="toc__link" href="#powershell-admin"><span>P07</span> PowerShell admin</a></li>
                 <li><a class="toc__link" href="#backup-restore"><span>P08</span> Backup &amp; restore</a></li>
+                <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
             </ul>
         </div>
     </aside>
@@ -485,6 +221,21 @@
                 <div class="section-banner__desc">Comprendre SharePoint — concepts, architecture et choix de déploiement</div>
             </div>
         </div>
+
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Argumenter le choix entre <strong>SharePoint Server</strong> et <strong>SharePoint Online</strong> devant un client, critère par critère.</li>
+                <li>Situer SharePoint dans les modèles On-site / IaaS / PaaS / SaaS, et dire qui gère quoi.</li>
+                <li>Décrire l'architecture <strong>physique</strong> (trois tiers, quatre topologies) et <strong>logique</strong> (ferme → application web → base de contenu → collection de sites).</li>
+                <li>Préparer une instance SQL Server conforme aux exigences de SharePoint — collation, comptes de service, disques dédiés.</li>
+                <li>Installer la ferme, créer une application web, une collection de sites et une bibliothèque, puis gérer les droits par groupes.</li>
+                <li>Sauvegarder aux trois niveaux (ferme, bases SQL, collection) et énoncer ce que Microsoft <em>ne</em> garantit <em>pas</em>.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="windows-server.html">Windows Server</a> (domaine, DNS, comptes de service) et <a href="sql-server.html">SQL Server</a> (installation d'une instance).</p>
+            <p class="brief__foot">Les dix premiers chapitres sont théoriques ; les huit suivants, repérés en ambre, montent la ferme pas à pas sur le domaine <code>orion.local</code>.</p>
+        </section>
 
         <!-- ===== 01 ===== -->
         <section class="chapter" id="presentation">
@@ -1499,51 +1250,100 @@ Mount-SPContentDatabase -Name "SP_Content_Intranet" `
             </div>
         </section>
 
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Quelle collation SQL Server SharePoint exige-t-il, et que se passe-t-il si on en choisit une autre ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>Latin1_General_CI_AS_KS_WS</strong> — insensible à la casse, sensible aux accents, au kana et à la largeur ; l'équivalent exact de <code>SQL_Latin1_General_CP1_CI_AS</code>. SharePoint <strong>refuse</strong> toute autre collation : l'erreur se découvre à l'installation de la ferme, quand il est trop tard. <em>Chapitre P01.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quelle est l'unité de sauvegarde et de restauration dans la hiérarchie SharePoint ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>La <strong>base de contenu</strong> (Content DB). Une collection de sites vit <strong>entièrement dans une seule</strong> base de contenu — elle n'est jamais répartie sur plusieurs. On sauvegarde donc au niveau de la Content DB, et on sécurise au niveau de la collection de sites. <em>Chapitre 07.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Que garantit Microsoft sur SharePoint Online, et que ne garantit-il pas ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Il garantit la <strong>disponibilité de la plateforme</strong> : réplication entre datacenters, SLA 99,9 %, corbeille à deux niveaux (93 jours). Il ne garantit <strong>pas la restauration de votre contenu</strong> au-delà de ces délais, ni la protection contre une suppression malveillante. La sauvegarde externalisée vous incombe. <em>Chapitre 10.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi ne jamais installer SharePoint avec un compte Domain Admin ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Par <strong>moindre privilège</strong>. On utilise <code>sp_setup</code>, administrateur local du serveur et titulaire des droits SQL <code>dbcreator</code> / <code>securityadmin</code> — rien de plus. Le compte de ferme (<code>sp_farm</code>), les pools d'applications et la recherche ont chacun leur compte dédié. <em>Chapitres P01 et P02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">À quoi sert la <em>passphrase</em> demandée par l'assistant de configuration de ferme ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>À <strong>ajouter d'autres serveurs à la ferme</strong>. Perdue, l'extension de la ferme devient impossible — d'où le conseil de la conserver dans un gestionnaire de mots de passe dès la création. <em>Chapitre P02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quel moteur de base de données SharePoint Server accepte-t-il ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>Microsoft SQL Server uniquement</strong> — aucune alternative n'est possible. C'est aussi le composant le plus sensible à sauvegarder : toute la persistance y vit (Config DB, Content DB, bases des applications de service). <em>Chapitre 06.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi assigner les permissions à des groupes plutôt qu'à des utilisateurs ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Parce qu'un départ se traite alors en <strong>une seule opération</strong> : on désactive le compte Active Directory et tous les accès tombent d'un coup, sans avoir à parcourir chaque site et chaque bibliothèque. <em>Chapitre P05.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Une instance nommée <code>SRV-SQL01\SHAREPOINT</code> : pourquoi lui fixer un port statique 1433 et ouvrir aussi l'UDP 1434 ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Une instance nommée prend par défaut un <strong>port dynamique</strong> : le port statique rend la connexion et les règles de pare-feu prévisibles. L'<strong>UDP 1434</strong> reste ouvert pour le <strong>SQL Server Browser</strong>, qui aiguille les clients vers l'instance. <em>Chapitre P01.</em></p></div>
+                    </details>
+                </li>
+            </ol>
+
+            <h3>Les sigles du module</h3>
+            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
+            <div class="gloss">
+                <div class="gl"><b>SE</b><span>Subscription Edition — l'édition par abonnement de SharePoint Server, à mises à jour continues.</span></div>
+                <div class="gl"><b>Ferme</b><span>La frontière d'administration : un ensemble de serveurs partageant une seule base de configuration.</span></div>
+                <div class="gl"><b>WFE</b><span>Web Front End — le tier IIS qui reçoit les requêtes, authentifie et rend les pages.</span></div>
+                <div class="gl"><b>Config DB / Content DB</b><span>Base de configuration de la ferme / base de contenu, qui est l'unité de sauvegarde et de restauration.</span></div>
+                <div class="gl"><b>Collection de sites</b><span>La frontière de sécurité et de quota ; elle vit entièrement dans une seule base de contenu.</span></div>
+                <div class="gl"><b>Application web</b><span>Le conteneur IIS : une URL, un pool d'applications et un mode d'authentification propres.</span></div>
+                <div class="gl"><b>PSConfig</b><span>SharePoint Products Configuration Wizard — l'assistant qui crée ou rejoint une ferme.</span></div>
+                <div class="gl"><b>Passphrase</b><span>Le secret de la ferme, exigé pour y ajouter un serveur supplémentaire.</span></div>
+                <div class="gl"><b>Managed Account</b><span>Compte de service enregistré dans SharePoint, dont il gère la rotation de mot de passe.</span></div>
+                <div class="gl"><b>MinRole</b><span>Répartition automatique des services selon le rôle déclaré de chaque serveur de la ferme.</span></div>
+                <div class="gl"><b>SPFx</b><span>SharePoint Framework — le modèle de développement de composants sur mesure.</span></div>
+                <div class="gl"><b>BCS</b><span>Business Connectivity Services — l'application de service qui relie SharePoint à des données externes.</span></div>
+                <div class="gl"><b>PnP PowerShell</b><span>Module moderne et multiplateforme d'administration, plus expressif que le Management Shell pour le contenu.</span></div>
+                <div class="gl"><b>RPO / RTO</b><span>Perte de données acceptable / délai de restauration acceptable — les deux chiffres qui dimensionnent la sauvegarde.</span></div>
+            </div>
+        </section>
+
     </main>
 </div>
 
 <footer>
-    <p><strong>SharePoint — Guide d'apprentissage</strong></p>
-    <p>© 2026 · Théorie &amp; Pratique · Réalisé en HTML &amp; CSS</p>
+    <p><strong>SharePoint Server SE</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · 10 chapitres de théorie + 8 chapitres de pratique</p>
 </footer>
 
-<script>
-    (function () {
-        var bar = document.getElementById('progressBar');
-        var doc = document.documentElement;
-        function onScroll() {
-            var max = doc.scrollHeight - doc.clientHeight;
-            var ratio = max > 0 ? doc.scrollTop / max : 0;
-            bar.style.transform = 'scaleX(' + ratio + ')';
-        }
-        document.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
-
-        var links = Array.prototype.slice.call(document.querySelectorAll('.toc__link'));
-        var map = {};
-        links.forEach(function (l) { map[l.getAttribute('href').slice(1)] = l; });
-
-        if ('IntersectionObserver' in window) {
-            var observer = new IntersectionObserver(function (entries) {
-                entries.forEach(function (e) {
-                    if (e.isIntersecting) {
-                        links.forEach(function (l) {
-                            l.classList.remove('is-active');
-                            l.removeAttribute('aria-current');
-                        });
-                        var link = map[e.target.id];
-                        if (link) {
-                            link.classList.add('is-active');
-                            link.setAttribute('aria-current', 'true');
-                        }
-                    }
-                });
-            }, { rootMargin: '-45% 0px -50% 0px' });
-
-            document.querySelectorAll('.chapter').forEach(function (s) { observer.observe(s); });
-        }
-    })();
-</script>
+<script src="../assets/app.js"></script>
 
 </body>
 </html>

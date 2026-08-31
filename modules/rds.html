@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Bureau à distance (RDS) : services de rôle RDSH, RDCB, RDWA et Gateway, session-based vs VDI, déploiement standard, collections et RemoteApp, certificat du Web Access.">
     <title>Bureau à distance (RDS) — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,11 +16,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 04 · Bureau à distance</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 02 · Infrastructure Windows · 4 / 7</p>
         <h1 class="hero__title">Bureau à<br>distance <em>(RDS)</em></h1>
         <p class="hero__lead">Centraliser les applications et les sessions sur des serveurs : les utilisateurs travaillent à distance sur des bureaux ou des applications publiées (RemoteApp), sans rien installer localement. Déploiement session-based de bout en bout.</p>
         <div class="hero__meta">
             <span class="chip">RDSH</span><span class="chip">RDCB</span><span class="chip">RDWA</span><span class="chip">Collections</span><span class="chip">RemoteApp</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 1 h</span>
+            <span class="fact"><b>Chapitres</b> 5 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a></span>
         </div>
     </div>
 </header>
@@ -34,6 +41,7 @@
             <li><a class="toc__link" href="#deploiement"><span>03</span> Déploiement</a></li>
             <li><a class="toc__link" href="#collections"><span>04</span> Collections &amp; RemoteApp</a></li>
             <li><a class="toc__link" href="#certif"><span>05</span> Certificat</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -45,6 +53,19 @@
                 <div class="section-banner__desc">Un seul point d'accès, des applications centralisées</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Nommer chaque service de rôle RDS et dire précisément ce qu'il fait.</li>
+                <li>Choisir entre un déploiement session-based et du VDI selon le besoin.</li>
+                <li>Dérouler un déploiement standard depuis le Server Manager du contrôleur de domaine.</li>
+                <li>Créer une collection de sessions et y publier des RemoteApp.</li>
+                <li>Expliquer pourquoi un certificat auto-signé déclenche une alerte, et ce qu'on ferait en production.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="windows-server.html">Windows Server</a></p>
+            <p class="brief__foot">La partie certificats se comprend beaucoup mieux après le module <a href="exchange-securite.html">Exchange &amp; PKI</a>, qui détaille la chaîne de confiance.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="concepts">
@@ -104,6 +125,11 @@
                 <div class="node"><b>RDCB</b><span class="ip">192.168.1.13</span><span>Connection Broker</span></div>
                 <div class="node"><b>RDWA</b><span class="ip">192.168.1.14</span><span>Web Access — portail <code>rdwa.orion.local</code></span></div>
                 <div class="node"><b>CLIENT</b><span class="ip">192.168.1.15</span><span>Poste de test</span></div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le plan d'adressage se lit comme l'architecture : un rôle par machine, et <strong>deux Session Hosts</strong> — parce que c'est là que s'exécute le travail des utilisateurs, donc là que la panne se voit. Le Broker, lui, est unique : c'est le point de passage de toutes les connexions, donc la machine à surveiller en premier.</p>
             </div>
         </section>
 
@@ -165,6 +191,72 @@
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Labo vs production</p>
                 <p>Un certificat <strong>auto-signé</strong> déclenche une alerte sur le client (chaîne de confiance non remontée). En production, on déploie un certificat signé par la <strong>CA d'entreprise</strong> et distribué par GPO — la même logique de PKI que pour Exchange.</p>
+            </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Que font respectivement RDSH, RDCB et RDWA ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>RDSH</strong> (Session Host) exécute réellement les sessions et les applications ; <strong>RDCB</strong> (Connection Broker) répartit les connexions, gère les collections et la reconnexion ; <strong>RDWA</strong> (Web Access) publie le portail web où l'utilisateur voit ses bureaux et RemoteApp. <em>Chapitre 01.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quel service de rôle permet d'atteindre le RDS depuis Internet sans VPN ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>La <strong>RD Gateway</strong> : une passerelle qui encapsule le trafic RDP en <strong>HTTPS</strong>. <em>Chapitre 01.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Session-based ou VDI : quelle différence, et lequel pour distribuer une application métier ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>En session-based, plusieurs utilisateurs <strong>partagent un même serveur</strong> — léger et économique : c'est le bon choix pour une appli métier. En VDI, chacun a <strong>sa VM complète</strong> — isolation maximale, mais bien plus gourmand. <em>Chapitre 01.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Que faut-il avoir fait avant de lancer le déploiement RDS depuis le Server Manager ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Tous les serveurs doivent être <strong>membres du domaine</strong> et <strong>ajoutés au pool</strong> (Manage → Add Servers). Le Broker est le point d'orchestration : c'est lui qui « connaît » toute la ferme. <em>Chapitre 03.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Où s'exécute réellement une RemoteApp, et pourquoi l'utilisateur ne s'en rend-il pas compte ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Sur le <strong>RDSH</strong> : seul l'affichage est renvoyé au client, dans une fenêtre qui se comporte comme une application locale. D'où l'intérêt pour publier une seule appli sans exposer tout le bureau. <em>Chapitre 04.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi le portail <code>https://rdwa.orion.local/RDWeb</code> déclenche-t-il une alerte en labo ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Le certificat est <strong>auto-signé</strong> : sa chaîne ne remonte à aucune racine de confiance du client. En production, on le fait signer par la CA d'entreprise et on distribue la racine par GPO. <em>Chapitre 05.</em></p></div>
+                    </details>
+                </li>
+            </ol>
+
+            <h3>Les sigles du module</h3>
+            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
+            <div class="gloss">
+                <div class="gl"><b>RDS</b><span>Remote Desktop Services — le rôle Windows Server qui déporte l'exécution des sessions et des applications sur le serveur.</span></div>
+                <div class="gl"><b>RDSH</b><span>Remote Desktop Session Host — le serveur qui exécute réellement les sessions et les applications.</span></div>
+                <div class="gl"><b>RDCB</b><span>Remote Desktop Connection Broker — répartit les connexions, gère les collections et la reconnexion aux sessions.</span></div>
+                <div class="gl"><b>RDWA</b><span>Remote Desktop Web Access — le portail web où l'utilisateur retrouve ses bureaux et RemoteApp publiés.</span></div>
+                <div class="gl"><b>RD Gateway</b><span>Passerelle qui encapsule le RDP en HTTPS pour un accès depuis Internet, sans VPN.</span></div>
+                <div class="gl"><b>RDS CAL</b><span>Client Access License — la licence d'accès client, gérée par le rôle RD Licensing.</span></div>
+                <div class="gl"><b>VDI</b><span>Virtual Desktop Infrastructure — une VM complète par utilisateur, par opposition au session-based.</span></div>
+                <div class="gl"><b>RemoteApp</b><span>Application publiée seule : elle s'exécute sur le RDSH mais s'affiche comme une fenêtre locale.</span></div>
+                <div class="gl"><b>Collection</b><span>L'unité de publication et de contrôle d'accès : un ou plusieurs Session Hosts + les groupes autorisés.</span></div>
             </div>
         </section>
 

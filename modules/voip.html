@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Téléphonie IP : VoIP et ToIP, PoE et QoS, sécurisation du réseau voix, chaîne voix → paquet, protocoles SIP, RTP et RTCP, codecs, architecture d'un PBX, TP 3CX et checklist de déploiement client.">
     <title>Téléphonie IP (VoIP / ToIP) — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,11 +16,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 13 · Réseau &amp; téléphonie</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 03 · Réseau &amp; téléphonie · 2 / 2</p>
         <h1 class="hero__title">Téléphonie IP<br><em>VoIP &amp; ToIP</em></h1>
         <p class="hero__lead">Comment une voix devient des paquets, quels protocoles la transportent, ce qu'il faut au réseau pour que ça reste audible — et le montage d'un standard 3CX de bout en bout.</p>
         <div class="hero__meta">
             <span class="chip">SIP</span><span class="chip">RTP / RTCP</span><span class="chip">PoE</span><span class="chip">QoS</span><span class="chip">Codecs</span><span class="chip">3CX</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
+            <span class="fact"><b>Durée</b> ≈ 2 h</span>
+            <span class="fact"><b>Chapitres</b> 9 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> <a href="subnetting.html">Réseau &amp; Subnetting</a> (utile)</span>
         </div>
     </div>
 </header>
@@ -38,6 +45,7 @@
             <li><a class="toc__link" href="#avantages"><span>07</span> Ce qu'on y gagne, ce qu'on y perd</a></li>
             <li><a class="toc__link" href="#tp-3cx"><span>08</span> TP — Installer et configurer 3CX</a></li>
             <li><a class="toc__link" href="#deploiement"><span>09</span> Déployer chez un client : la checklist</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -49,6 +57,20 @@
                 <div class="section-banner__desc">Théorie VoIP/ToIP, protocoles SIP/RTP, puis un PBX 3CX monté en labo</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Distinguer la VoIP (transport) de la ToIP (système téléphonique complet).</li>
+                <li>Expliquer le rôle du PoE et pourquoi la QoS n'est pas une option sur un réseau qui porte la voix.</li>
+                <li>Dérouler la chaîne voix → paquet → voix, et le déroulé SIP complet d'un appel.</li>
+                <li>Diagnostiquer le symptôme « ça sonne, on décroche, personne n'entend rien ».</li>
+                <li>Choisir un codec, nommer les quatre briques d'un standard, et installer un PBX 3CX en labo.</li>
+                <li>Planifier un déploiement client autour de la contrainte qui ne se rattrape pas : la date de portabilité.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="subnetting.html">Réseau &amp; Subnetting</a> (utile)</p>
+            <p class="brief__foot">Le VLAN voix et la QoS se configurent avec les commandes du module <a href="ccna-reseau.html">CCNA</a> ; la VM du PBX se monte comme celles du module <a href="hyperv.html">Hyper-V</a>.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="voip-toip">
@@ -264,6 +286,11 @@
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Le fournisseur SIP</strong><p>Le <em>trunk</em> qui relie le standard au réseau téléphonique public (OVH, par exemple).</p></div></div>
                 <div class="step"><div class="step__num">4</div><div class="step__body"><strong>La connexion Internet</strong><p>Le support de tout le reste — et le premier point de défaillance.</p></div></div>
             </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le codec est un <strong>arbitrage</strong> : G.711 privilégie la qualité, G.729 la bande passante. Et une téléphonie IP tient toujours sur les mêmes quatre briques — les postes, le PBX, le trunk SIP de l'opérateur et la connexion Internet. C'est la dernière, la moins visible, qui décide de la qualité perçue.</p>
+            </div>
         </section>
 
         <!-- 07 -->
@@ -417,6 +444,83 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Les étapes 7 et 8 ne sont pas redondantes : la première valide l'installation, la seconde valide la <strong>portabilité</strong>. Le jour J, ce qui casse n'est presque jamais le PBX — c'est l'acheminement des numéros repris.</p>
+            </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">VoIP et ToIP : quelle est la différence, et un appel Discord relève-t-il des deux ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>La <strong>VoIP</strong> est la technique de transport de la voix sur IP ; la <strong>ToIP</strong> est le système téléphonique complet bâti dessus (PBX, renvois, messagerie unifiée). Discord fait de la VoIP <strong>sans</strong> faire de la ToIP : ni numéro, ni renvoi, ni messagerie. <em>Chapitre 01.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi la voix ne tolère-t-elle ni la latence ni la perte de paquets ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Un fichier qui arrive en retard se répare ; une <strong>syllabe</strong> non — elle est simplement perdue. D'où la QoS, qui doit être prise en charge par <strong>tous</strong> les actifs traversés : un seul switch non configuré et la priorité est perdue sur tout le chemin. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">« Ça sonne, on décroche, mais personne n'entend rien. » Où chercher ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>La <strong>signalisation SIP passe</strong>, mais le <strong>flux RTP est bloqué</strong> — pare-feu ou NAT. Les deux protocoles empruntent des chemins différents : deux problèmes distincts, deux endroits à regarder. <em>Chapitre 05.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Que signifie un « 180 » dans SIP, et à quoi correspondent les familles de codes ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>180 Ringing</strong> : le poste du destinataire sonne. Les familles sont calquées sur HTTP — <strong>1xx</strong> information, <strong>2xx</strong> succès, <strong>3xx</strong> redirection, <strong>4xx</strong> erreur client, <strong>5xx</strong> erreur serveur, <strong>6xx</strong> échec global. <em>Chapitre 05.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">G.711 ou G.729 : lequel choisir, et selon quel critère ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>G.711</strong> (a/PCMA en Europe, u/PCMU en Amérique du Nord et au Japon) quand la bande passante est confortable. <strong>G.729</strong> quand elle est comptée : compression forte, au prix de la qualité. <em>Chapitre 06.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Une ligne PSTN de secours répond d'un coup à deux limites de la ToIP. Lesquelles ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>La <strong>localisation de l'appelant</strong> pour les appels d'urgence, et la <strong>continuité du service</strong> quand la connexion Internet tombe. <em>Chapitre 07.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi les tests avant portabilité et ceux du jour J ne font-ils pas double emploi ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Les premiers valident l'<strong>installation</strong> (sur numéros provisoires) ; les seconds valident la <strong>portabilité</strong>. Le jour J, ce qui casse n'est presque jamais le PBX — c'est l'acheminement des numéros repris. <em>Chapitre 09.</em></p></div>
+                    </details>
+                </li>
+            </ol>
+
+            <h3>Les sigles du module</h3>
+            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
+            <div class="gloss">
+                <div class="gl"><b>VoIP</b><span>Voice over IP — la technique de transport de la voix sous forme de paquets.</span></div>
+                <div class="gl"><b>ToIP</b><span>Telephony over IP — le système téléphonique complet bâti sur la VoIP (PBX, renvois, messagerie).</span></div>
+                <div class="gl"><b>PBX</b><span>Private Branch Exchange — la centrale téléphonique de l'entreprise (3CX, Asterisk, FreePBX).</span></div>
+                <div class="gl"><b>PoE</b><span>Power over Ethernet — alimentation électrique par le câble réseau (norme IEEE 802.3af et suivantes).</span></div>
+                <div class="gl"><b>QoS</b><span>Quality of Service — priorisation du trafic ; doit être supportée par tous les actifs traversés.</span></div>
+                <div class="gl"><b>SIP</b><span>Session Initiation Protocol — le standard actuel de signalisation : il monte et démonte l'appel.</span></div>
+                <div class="gl"><b>RTP / RTCP</b><span>Real-time Transport Protocol et son protocole de contrôle — ils transportent la voix et remontent la qualité, en dehors de SIP.</span></div>
+                <div class="gl"><b>H.323</b><span>Protocole de signalisation historique, encore présent en visioconférence.</span></div>
+                <div class="gl"><b>Trunk SIP</b><span>Le lien qui relie le standard au réseau téléphonique public, fourni par un opérateur.</span></div>
+                <div class="gl"><b>CTI</b><span>Computer Telephony Integration — l'intégration au SI : click2call, remontée de fiche CRM, statistiques.</span></div>
+                <div class="gl"><b>LCR</b><span>Least Cost Routing — le système choisit automatiquement le chemin d'appel le plus économique.</span></div>
+                <div class="gl"><b>PSTN</b><span>Le réseau téléphonique commuté classique — utile comme ligne de secours.</span></div>
+                <div class="gl"><b>SBC</b><span>Session Border Controller — chez 3CX, un simple relais installé sur un site distant, à ne pas confondre avec le System.</span></div>
             </div>
         </section>
 

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Proxmox VE : hyperviseur de type 1, VM KVM et conteneurs LXC, installation et dépôts, stockage et ZFS, réseau bridges et VLAN, snapshots et sauvegardes vzdump, cluster, quorum et haute disponibilité.">
     <title>Proxmox &amp; Virtualisation — Module</title>
     <meta name="description" content="Proxmox VE de A à Z : hyperviseur type 1, VM KVM vs conteneurs LXC, stockage ZFS, snapshots et sauvegardes, réseau bridges/VLAN, cluster et haute disponibilité.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,11 +17,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Virtualisation · Proxmox VE</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 04 · Virtualisation, homelab &amp; sécurité · 1 / 3</p>
         <h1 class="hero__title">Proxmox &amp;<br><em>Virtualisation</em></h1>
         <p class="hero__lead">Le cœur du métier d'admin orienté virtualisation. Proxmox VE est un hyperviseur de type 1, gratuit et open source, qui fait tourner des machines virtuelles (KVM) <em>et</em> des conteneurs (LXC) sur le même serveur, avec une interface web complète. On part de l'installation pour arriver au cluster à haute disponibilité.</p>
         <div class="hero__meta">
             <span class="chip">KVM</span><span class="chip">LXC</span><span class="chip">ZFS</span><span class="chip">Cluster</span><span class="chip">HA</span><span class="chip">Backup</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
+            <span class="fact"><b>Chapitres</b> 9 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a> (utile)</span>
         </div>
     </div>
 </header>
@@ -39,6 +46,7 @@
             <li><a class="toc__link" href="#backup"><span>07</span> Sauvegardes &amp; snapshots</a></li>
             <li><a class="toc__link" href="#cluster"><span>08</span> Cluster &amp; haute dispo</a></li>
             <li><a class="toc__link" href="#exploit"><span>09</span> Exploitation au quotidien</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -50,6 +58,20 @@
                 <div class="section-banner__desc">Debian + KVM + LXC + ZFS, piloté depuis une interface web</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Situer Proxmox parmi les hyperviseurs, et choisir entre une VM et un conteneur pour un besoin donné.</li>
+                <li>Installer Proxmox, accéder à l'interface web et corriger les dépôts pour pouvoir mettre à jour sans abonnement.</li>
+                <li>Créer une VM performante (virtio, agent invité) et un conteneur LXC non privilégié.</li>
+                <li>Choisir un type de stockage et monter un pool ZFS en miroir avec compression.</li>
+                <li>Distinguer snapshot et sauvegarde, et planifier des jobs vzdump.</li>
+                <li>Monter un cluster, comprendre le quorum, et énoncer ce qu'exige la haute disponibilité.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="linux-debian.html">Linux Debian</a> (utile)</p>
+            <p class="brief__foot">Le module <a href="homelab.html">Homelab &amp; Self-hosting</a> prolonge celui-ci côté services, et le module <a href="securite.html">Cybersécurité</a> y monte son labo isolé.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="pourquoi">
@@ -399,6 +421,84 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Automatise avec des <strong>API tokens</strong> (jamais root), maintiens à jour, surveille l'espace ZFS et lance des <em>scrubs</em>. Et relis toujours un script communautaire avant de l'exécuter sur l'hyperviseur.</p>
+            </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Type 1 ou type 2 : où se place Proxmox, et qu'est-ce qui les distingue ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>Type 1 (bare-metal)</strong> : Proxmox est une distribution Debian spécialisée installée directement sur le matériel. Un type 2 (VirtualBox, VMware Workstation) s'exécute comme une application au-dessus d'un OS classique. <em>Chapitre 01.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quand préférer un conteneur LXC à une VM — et quelles en sont les limites ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Pour un <strong>service Linux léger</strong> : démarrage quasi instantané, quelques Mo de RAM. Mais il <strong>partage le noyau de l'hôte</strong> : pas de Windows, pas de noyau personnalisé, et pour Docker on préfère une VM. <em>Chapitre 04.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Sur quel port et quel protocole s'ouvre l'interface web de Proxmox ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>HTTPS sur le port 8006</strong> (<code>https://IP:8006</code>), connexion root avec le realm <em>Linux PAM</em>. L'avertissement de certificat auto-signé est normal en labo. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Que faut-il corriger juste après l'installation, quand on n'a pas d'abonnement ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Désactiver le dépôt <strong>enterprise</strong> (payant) et activer <strong>pve-no-subscription</strong>, puis <code>apt update &amp;&amp; apt full-upgrade</code>. Sans ça, aucune mise à jour ne remonte. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Snapshot ou sauvegarde : quelle est la différence, et laquelle protège vraiment ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Le <strong>snapshot</strong> est un point de restauration <em>sur place</em> (utile avant une manip risquée) : si le disque meurt, il meurt avec. La <strong>sauvegarde</strong> (<code>vzdump</code>) est une copie <em>ailleurs</em> — la seule vraie protection. <em>Chapitre 07.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi un nombre impair de nœuds dans un cluster, et que faire quand on n'en a que deux ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Pour garder le <strong>quorum</strong> (majorité des votes, via Corosync). À deux nœuds, la panne de l'un bloque l'autre : on ajoute un <strong>QDevice</strong> comme troisième votant. <em>Chapitre 08.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Que faut-il obligatoirement pour une migration à chaud (live) d'une VM ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Un <strong>stockage partagé</strong> accessible par les deux nœuds (NFS, Ceph…). Sans lui, seule la migration à froid est possible. <em>Chapitre 08.</em></p></div>
+                    </details>
+                </li>
+            </ol>
+
+            <h3>Les sigles du module</h3>
+            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
+            <div class="gloss">
+                <div class="gl"><b>PVE</b><span>Proxmox Virtual Environment — la distribution Debian spécialisée qui porte l'hyperviseur.</span></div>
+                <div class="gl"><b>KVM / QEMU</b><span>La virtualisation matérielle du noyau Linux — c'est elle qui fait tourner les VM.</span></div>
+                <div class="gl"><b>LXC</b><span>Linux Containers — virtualisation système : le conteneur partage le noyau de l'hôte.</span></div>
+                <div class="gl"><b>Unprivileged</b><span>Conteneur dont le root n'est pas le root de l'hôte (mappage d'UID) — le mode par défaut, et le bon.</span></div>
+                <div class="gl"><b>ZFS</b><span>Système de fichiers et gestionnaire de volumes : sommes de contrôle, snapshots quasi gratuits, compression, self-healing.</span></div>
+                <div class="gl"><b>ARC</b><span>Adaptive Replacement Cache — le cache de lecture de ZFS en RAM, d'où l'appétit de ZFS pour la mémoire.</span></div>
+                <div class="gl"><b>RAIDZ</b><span>Le RAID à parité de ZFS ; <code>mirror</code> en est la variante miroir.</span></div>
+                <div class="gl"><b>LVM-Thin</b><span>Le stockage par défaut des disques de VM (<code>local-lvm</code>), à provisionnement fin.</span></div>
+                <div class="gl"><b>vmbr0</b><span>Le pont Linux qui joue le rôle de switch virtuel et porte l'adresse IP de l'hôte.</span></div>
+                <div class="gl"><b>VLAN-aware</b><span>Option du pont qui lui permet de transporter des VLAN 802.1Q ; le port physique côté switch doit être en trunk.</span></div>
+                <div class="gl"><b>vzdump / PBS</b><span>Le moteur de sauvegarde natif / Proxmox Backup Server, qui ajoute déduplication et incrémental.</span></div>
+                <div class="gl"><b>Corosync / quorum</b><span>Le service de communication du cluster / la majorité de votes nécessaire à toute décision.</span></div>
+                <div class="gl"><b>QDevice</b><span>Un votant supplémentaire externe, indispensable pour un cluster à deux nœuds.</span></div>
+                <div class="gl"><b>cloud-init</b><span>Mécanisme de première configuration (hostname, IP, clé SSH) d'une VM clonée depuis un template.</span></div>
             </div>
         </section>
 

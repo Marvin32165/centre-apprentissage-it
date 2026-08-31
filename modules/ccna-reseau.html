@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module CCNA — Réseau Cisco : modèle OSI, configuration et sécurisation de l'IOS, VLAN et trunk 802.1Q, routage inter-VLAN, DHCP Cisco, VLSM, routage statique et dynamique, NAT/PAT, ACL et exercice de synthèse.">
     <title>CCNA — Réseau Cisco — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/theme.css">
-    <style>
-        /* Accent réseau dédié (cyan-indigo) pour ce module */
-        body[data-domain="net"] { --accent:#0EA5E9; --accent-2:#0369A1; --accent-soft:#F0F9FF; --accent-ink:#075985; }
-        .mod__icon, .net .node { }
-    </style>
 </head>
 <body data-domain="net">
 
@@ -20,11 +16,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Réseau · CCNA</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 03 · Réseau &amp; téléphonie · 1 / 2</p>
         <h1 class="hero__title">CCNA —<br>Réseau <em>Cisco</em></h1>
         <p class="hero__lead">Du modèle OSI à l'exercice final : configurer des routeurs et des switches Cisco, segmenter en VLAN, router entre eux, distribuer le DHCP, découper les sous-réseaux en VLSM, puis router dynamiquement, traduire les adresses (NAT) et filtrer (ACL).</p>
         <div class="hero__meta">
             <span class="chip">OSI</span><span class="chip">VLAN</span><span class="chip">Inter-VLAN</span><span class="chip">DHCP</span><span class="chip">OSPF / EIGRP</span><span class="chip">NAT</span><span class="chip">ACL</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
+            <span class="fact"><b>Chapitres</b> 9 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> <a href="subnetting.html">Réseau &amp; Subnetting</a></span>
         </div>
     </div>
 </header>
@@ -43,6 +45,7 @@
             <li><a class="toc__link" href="#routage"><span>07</span> Routage statique &amp; dynamique</a></li>
             <li><a class="toc__link" href="#nat-acl"><span>08</span> NAT &amp; ACL</a></li>
             <li><a class="toc__link" href="#final"><span>09</span> Exercice final</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -54,6 +57,19 @@
                 <div class="section-banner__desc">Packet Tracer · de la commande de base à la topologie d'entreprise</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Utiliser le modèle OSI comme grille de lecture d'un problème réseau.</li>
+                <li>Sécuriser un équipement Cisco : mots de passe chiffrés, bannière, lignes d'accès, SSHv2 sans Telnet.</li>
+                <li>Créer des VLAN, poser des ports access et des trunks 802.1Q entre équipements.</li>
+                <li>Router entre VLAN en <em>router-on-a-stick</em>, et distribuer le DHCP par VLAN sans conflit d'adresses.</li>
+                <li>Poser un plan VLSM, choisir entre routage statique et dynamique, puis traduire (NAT/PAT) et filtrer (ACL) en bordure.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="subnetting.html">Réseau &amp; Subnetting</a></p>
+            <p class="brief__foot">L'exercice final est à refaire de zéro dans Packet Tracer. Le module <a href="voip.html">Téléphonie IP</a> pose ensuite un VLAN voix et de la QoS sur ce réseau.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="osi">
@@ -395,6 +411,83 @@ VLAN 70  Printers     192.168.105.0/27  (30 hôtes)</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Un projet réseau complet s'enchaîne toujours dans cet ordre : <strong>adressage → sécurité → VLAN → routage → services (DHCP/DNS) → bordure (NAT/ACL)</strong>. Maîtriser cette séquence, c'est tenir l'examen pratique CCNA.</p>
+            </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q"><code>enable secret</code> ou <code>enable password</code> : lequel, et pourquoi ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><code>enable secret</code>, parce qu'il est <strong>chiffré</strong> ; <code>enable password</code> ne l'est pas. On complète avec <code>service password-encryption</code> pour chiffrer les mots de passe restants. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Deux PC du même VLAN, branchés sur deux switches différents, ne se voient pas. Que vérifier en premier ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Le <strong>trunk</strong> entre les switches. Sans lien trunk marqué en <strong>802.1Q</strong>, le VLAN ne traverse pas le lien inter-switch. <em>Chapitre 03.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">En router-on-a-stick, qu'est-ce qui sert de passerelle à un VLAN ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>L'<strong>IP de la sous-interface</strong> du routeur (ex. <code>g0/0/0.10</code>), rattachée au VLAN par <code>encapsulation dot1q 10</code>. L'interface physique, elle, reste sans adresse. <em>Chapitre 04.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quel est le piège classique quand on crée un pool DHCP sur un routeur Cisco ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Oublier <code>ip dhcp excluded-address</code> pour la passerelle et les adresses statiques : le routeur risque de les distribuer à un client et de créer un <strong>conflit d'adresses IP</strong>. On exclut <em>avant</em> de définir le pool. <em>Chapitre 05.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Comment une ACL est-elle évaluée, et quel piège se cache à la fin de la liste ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>De <strong>haut en bas</strong> : la première règle qui correspond s'applique et l'évaluation s'arrête. À la fin, un <strong><code>deny any</code> implicite</strong> bloque tout ce qui n'a pas été explicitement autorisé — d'où l'importance de l'ordre. <em>Chapitre 08.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Que fait le PAT (<em>overload</em>) et où le rencontre-t-on tous les jours ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Il cache <strong>toutes les adresses privées derrière une seule adresse publique</strong>, en les distinguant par le numéro de port. C'est le NAT de n'importe quelle box Internet. <em>Chapitre 08.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Dans quel ordre s'enchaîne un projet réseau complet ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>Adressage → sécurité → VLAN → routage → services (DHCP/DNS) → bordure (NAT/ACL).</strong> C'est la séquence de l'exercice final, et celle de l'examen pratique. <em>Chapitre 09.</em></p></div>
+                    </details>
+                </li>
+            </ol>
+
+            <h3>Les sigles du module</h3>
+            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
+            <div class="gloss">
+                <div class="gl"><b>OSI</b><span>Le modèle en sept couches qui sert de grille de lecture à tout problème réseau.</span></div>
+                <div class="gl"><b>VLAN</b><span>Réseau logique isolé au sein d'un même switch physique.</span></div>
+                <div class="gl"><b>802.1Q (dot1q)</b><span>Le marquage qui permet à un lien trunk de transporter plusieurs VLAN.</span></div>
+                <div class="gl"><b>Access / Trunk</b><span>Port rattaché à un seul VLAN (un terminal) / port qui transporte tous les VLAN entre équipements.</span></div>
+                <div class="gl"><b>SVI</b><span>Switch Virtual Interface — l'interface <code>vlan X</code> d'un switch L3, alternative au router-on-a-stick.</span></div>
+                <div class="gl"><b>CIDR / VLSM</b><span>Notation <code>/n</code> découplée des classes / masques de longueur variable, un par besoin.</span></div>
+                <div class="gl"><b>DORA</b><span>Discover, Offer, Request, Acknowledge — les quatre étapes d'une attribution DHCP.</span></div>
+                <div class="gl"><b>RIP / OSPF / EIGRP / BGP</b><span>Vecteur de distance / état de lien / hybride Cisco / vecteur de chemin entre systèmes autonomes.</span></div>
+                <div class="gl"><b>NAT / PAT</b><span>Traduction d'adresses / traduction avec surcharge (overload) : tout le réseau derrière une seule IP publique.</span></div>
+                <div class="gl"><b>ACL</b><span>Access Control List — liste ordonnée de règles permit/deny, avec un <code>deny any</code> implicite à la fin.</span></div>
+                <div class="gl"><b>FHRP / HSRP</b><span>First Hop Redundancy Protocol — une passerelle virtuelle redondante pour les clients.</span></div>
+                <div class="gl"><b>STP / PortFast</b><span>Spanning Tree Protocol, qui évite les boucles / l'option qui dispense un port d'extrémité de son calcul.</span></div>
+                <div class="gl"><b>Port-security</b><span>Verrouillage d'un port d'accès sur un nombre limité d'adresses MAC autorisées.</span></div>
             </div>
         </section>
 

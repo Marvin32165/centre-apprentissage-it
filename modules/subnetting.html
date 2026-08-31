@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Réseau & Subnetting : binaire, masques et CIDR, découpage par block size, calcul mental, VLSM pas à pas et exercices corrigés avec corrections masquées.">
     <title>Réseau &amp; Subnetting — Module</title>
     <meta name="description" content="Le subnetting enfin clair : binaire, masques, CIDR, calcul mental (block size / magic number), VLSM pas à pas et exercices corrigés.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,11 +17,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Réseau · Subnetting</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 01 · Fondations · 3 / 3</p>
         <h1 class="hero__title">Réseau &amp;<br><em>Subnetting</em></h1>
         <p class="hero__lead">Le module qui fait enfin « cliquer » les sous-réseaux. On démonte le binaire, le masque et le CIDR, puis on apprend à découper un réseau <em>de tête</em> avec la méthode du « block size », avant d'attaquer le VLSM et une série d'exercices corrigés.</p>
         <div class="hero__meta">
             <span class="chip">Binaire</span><span class="chip">Masque</span><span class="chip">CIDR</span><span class="chip">Block size</span><span class="chip">VLSM</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
+            <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
+            <span class="fact"><b>Chapitres</b> 7 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> aucun</span>
         </div>
     </div>
 </header>
@@ -37,6 +44,7 @@
             <li><a class="toc__link" href="#mental"><span>05</span> Calcul mental rapide</a></li>
             <li><a class="toc__link" href="#vlsm"><span>06</span> VLSM pas à pas</a></li>
             <li><a class="toc__link" href="#exos"><span>07</span> Exercices corrigés</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -48,6 +56,19 @@
                 <div class="section-banner__desc">Du binaire au VLSM, avec la méthode du calcul mental</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Convertir entre binaire et décimal dans les deux sens, sans poser d'opération.</li>
+                <li>Passer d'un masque décimal à une notation <code>/n</code>, et en déduire le nombre d'hôtes et de sous-réseaux.</li>
+                <li>Découper un réseau en sous-réseaux de taille égale avec la méthode du <strong>block size</strong>.</li>
+                <li>Situer une adresse — réseau, broadcast, plage utilisable — de tête, en moins de 30 secondes.</li>
+                <li>Construire un plan VLSM complet, sans chevauchement ni gaspillage d'adresses.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> aucun</p>
+            <p class="brief__foot">C'est le prérequis direct du module <a href="ccna-reseau.html">CCNA — Réseau Cisco</a>, où ces plans d'adressage se posent sur de vrais équipements.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="pourquoi">
@@ -250,27 +271,51 @@
         <section class="chapter" id="exos">
             <p class="chapter__num">07</p>
             <h2 class="chapter__title">Exercices corrigés</h2>
-            <p class="chapter__intro">Entraîne-toi : cache la correction, réponds, puis vérifie. Refais-les jusqu'à répondre de tête en moins de 30 secondes.</p>
+            <p class="chapter__intro">Cinq exercices, du plus simple au plus complet. Les corrections sont <strong>repliées</strong> : réponds d'abord sur un papier, puis déplie pour vérifier. L'objectif est de répondre de tête en moins de 30 secondes — refais-les jusqu'à ce que ce soit le cas.</p>
 
-            <h3>Exercice 1 — situer une adresse</h3>
-            <p><strong>Question :</strong> pour <code>10.0.0.201/26</code>, donne le réseau, le broadcast et la plage d'hôtes.</p>
-            <div class="tip">
-                <p class="tip__label">Correction</p>
-                <p>/26 → masque .192 → block size 64. Multiples : 0, 64, 128, <strong>192</strong>, 256. 192 ≤ 201 &lt; 256 → réseau <code>10.0.0.192</code>, broadcast <code>10.0.0.255</code>, hôtes <code>.193 → .254</code>.</p>
+            <div class="exo">
+                <p class="exo__label">Exercice 1 — situer une adresse</p>
+                <p>Pour <code>10.0.0.201/26</code>, donne l'adresse réseau, le broadcast et la plage d'hôtes utilisables.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>/26 → masque <code>.192</code> → block size = 256 − 192 = <strong>64</strong>. Multiples : 0, 64, 128, <strong>192</strong>, 256. Comme 192 ≤ 201 &lt; 256 → réseau <code>10.0.0.192</code>, broadcast <code>10.0.0.255</code>, hôtes <code>.193 → .254</code>.</p></div>
+                </details>
             </div>
 
-            <h3>Exercice 2 — combien de sous-réseaux &amp; d'hôtes ?</h3>
-            <p><strong>Question :</strong> on découpe <code>172.16.0.0/16</code> en /24. Combien de sous-réseaux ? Combien d'hôtes chacun ?</p>
-            <div class="tip">
-                <p class="tip__label">Correction</p>
-                <p>Bits empruntés = 24 − 16 = 8 → 2<sup>8</sup> = <strong>256 sous-réseaux</strong>. Bits hôte = 32 − 24 = 8 → 2<sup>8</sup> − 2 = <strong>254 hôtes</strong> par sous-réseau.</p>
+            <div class="exo">
+                <p class="exo__label">Exercice 2 — compter sous-réseaux et hôtes</p>
+                <p>On découpe <code>172.16.0.0/16</code> en /24. Combien de sous-réseaux obtient-on ? Combien d'hôtes chacun ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>Bits empruntés = 24 − 16 = 8 → 2<sup>8</sup> = <strong>256 sous-réseaux</strong>. Bits hôte = 32 − 24 = 8 → 2<sup>8</sup> − 2 = <strong>254 hôtes</strong> par sous-réseau.</p></div>
+                </details>
             </div>
 
-            <h3>Exercice 3 — VLSM express</h3>
-            <p><strong>Question :</strong> sur <code>192.168.50.0/24</code>, alloue un segment de 100 hôtes, un de 50, puis une liaison /30.</p>
-            <div class="tip">
-                <p class="tip__label">Correction</p>
-                <p>100 → /25 (126 hôtes) : <code>.0 → .127</code>. 50 → /26 (62 hôtes) : <code>.128 → .191</code>. Liaison /30 : <code>.192 → .195</code>. Reste <code>.196 → .255</code> disponible.</p>
+            <div class="exo">
+                <p class="exo__label">Exercice 3 — VLSM express</p>
+                <p>Sur <code>192.168.50.0/24</code>, alloue un segment de 100 hôtes, un de 50, puis une liaison point-à-point.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>100 → <strong>/25</strong> (126 hôtes) : <code>.0 → .127</code>. 50 → <strong>/26</strong> (62 hôtes) : <code>.128 → .191</code>. Liaison → <strong>/30</strong> : <code>.192 → .195</code>. Il reste <code>.196 → .255</code> pour la croissance.</p></div>
+                </details>
+            </div>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 4 — deux adresses se parlent-elles ?</p>
+                <p><code>192.168.4.130/25</code> et <code>192.168.4.90/25</code> sont-elles sur le même sous-réseau ? Peuvent-elles communiquer sans routeur ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>Block size d'un /25 = 256 − 128 = <strong>128</strong> → sous-réseaux <code>.0</code> et <code>.128</code>. L'adresse <code>.90</code> tombe dans <code>192.168.4.0/25</code>, l'adresse <code>.130</code> dans <code>192.168.4.128/25</code>. Ce sont <strong>deux sous-réseaux différents</strong> : il leur faut un routeur, même si les adresses « se ressemblent ».</p></div>
+                </details>
+            </div>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 5 — plan complet</p>
+                <p>Depuis <code>172.20.0.0/22</code>, prépare un plan pour quatre VLAN : Postes 400 hôtes, Serveurs 120, Wi-Fi 200, Management 25. Donne le masque et le bloc de chacun.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>On sert du plus gros au plus petit. <strong>Postes 400</strong> → /23 (510 hôtes) : <code>172.20.0.0 → 172.20.1.255</code>. <strong>Wi-Fi 200</strong> → /24 (254) : <code>172.20.2.0 → .2.255</code>. <strong>Serveurs 120</strong> → /25 (126) : <code>172.20.3.0 → .3.127</code>. <strong>Management 25</strong> → /27 (30) : <code>172.20.3.128 → .3.159</code>. Il reste <code>172.20.3.160 → .3.255</code> de libre. En commençant par Management, le /23 des Postes n'aurait plus tenu.</p></div>
+                </details>
             </div>
 
             <div class="tip">
@@ -282,6 +327,58 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Le subnetting se maîtrise par la <strong>répétition</strong> : block size pour situer, 2<sup>h</sup> − 2 pour compter, VLSM du plus grand au plus petit. Fais-en 5 par jour pendant une semaine et ça devient automatique.</p>
             </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Quel est le block size d'un /27, et à quel sous-réseau appartient 172.16.20.170/27 ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Masque <code>255.255.255.224</code> → block size = 256 − 224 = <strong>32</strong>. Multiples : 0, 32, … 160, 192. Comme 160 ≤ 170 &lt; 192 : réseau <strong>172.16.20.160</strong>, broadcast <strong>.191</strong>, hôtes <code>.161 → .190</code>. <em>Chapitre 05.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Combien d'hôtes utilisables dans un /26, et d'où vient le « −2 » ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>2<sup>6</sup> − 2 = <strong>62</strong>. On retire l'<strong>adresse réseau</strong> et l'<strong>adresse de broadcast</strong>, qui ne sont attribuables à aucune machine. <em>Chapitre 03.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">On passe un /24 en /26. Combien de sous-réseaux obtient-on, et pourquoi ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>On a emprunté <strong>2 bits</strong> à la partie hôte (24 → 26) → 2<sup>2</sup> = <strong>4 sous-réseaux</strong>, qui avancent de 64 en 64. <em>Chapitre 04.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Dans quel ordre attribue-t-on les blocs en VLSM, et que se passe-t-il si on fait l'inverse ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Du <strong>plus gros besoin au plus petit</strong>. En commençant par les petits, les grands blocs ne rentrent plus dans les trous laissés — on est obligé de tout recommencer. <em>Chapitre 06.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quel masque pour une liaison point-à-point entre deux routeurs ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>/30</strong> : 2<sup>2</sup> − 2 = 2 adresses utilisables, exactement ce qu'il faut. <em>Chapitre 06.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pour <code>10.0.0.201/26</code>, donne le réseau et le broadcast de tête.</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Block size 64 → multiples 0, 64, 128, <strong>192</strong>, 256. 192 ≤ 201 &lt; 256 → réseau <strong>10.0.0.192</strong>, broadcast <strong>10.0.0.255</strong>, hôtes <code>.193 → .254</code>. <em>Chapitre 07.</em></p></div>
+                    </details>
+                </li>
+            </ol>
         </section>
 
     </main>

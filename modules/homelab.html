@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Homelab & Self-hosting : matériel de départ, Docker et Compose, reverse proxy et HTTPS, DNS local Pi-hole, services à héberger, NAS et partages, sauvegardes 3-2-1 et accès distant par VPN.">
     <title>Homelab &amp; Self-hosting — Module</title>
     <meta name="description" content="Monter son labo maison et héberger ses propres services : Docker & Compose, reverse proxy et HTTPS, DNS local (Pi-hole), services (médias, cloud), stockage/NAS, sauvegardes et accès distant sécurisé.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,11 +17,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Homelab · Self-hosting</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 04 · Virtualisation, homelab &amp; sécurité · 2 / 3</p>
         <h1 class="hero__title">Homelab &amp;<br><em>Self-hosting</em></h1>
         <p class="hero__lead">Le meilleur terrain d'apprentissage, c'est le sien. Un homelab, c'est un serveur à soi pour héberger ses services, casser des choses sans risque et apprendre en vrai. On part de Docker pour arriver à une stack complète : reverse proxy, DNS local, cloud perso, sauvegardes et accès distant sécurisé.</p>
         <div class="hero__meta">
             <span class="chip">Docker</span><span class="chip">Compose</span><span class="chip">Reverse proxy</span><span class="chip">Pi-hole</span><span class="chip">NAS</span><span class="chip">VPN</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
+            <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
+            <span class="fact"><b>Chapitres</b> 8 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a> · <a href="proxmox.html">Proxmox</a> (utile)</span>
         </div>
     </div>
 </header>
@@ -38,6 +45,7 @@
             <li><a class="toc__link" href="#stockage"><span>06</span> Stockage &amp; NAS</a></li>
             <li><a class="toc__link" href="#backup"><span>07</span> Sauvegardes &amp; résilience</a></li>
             <li><a class="toc__link" href="#distant"><span>08</span> Accès distant sécurisé</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -49,6 +57,19 @@
                 <div class="section-banner__desc">Héberger ses propres services, apprendre en cassant sans risque</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Choisir un matériel de départ proportionné à ce qu'on veut vraiment héberger.</li>
+                <li>Décrire une stack Docker Compose propre : image, conteneur, volume, un dossier par service.</li>
+                <li>Mettre les services derrière un reverse proxy et obtenir un HTTPS valide sans ouvrir de port entrant.</li>
+                <li>Installer un DNS local filtrant, et anticiper qu'il devient un point unique de défaillance.</li>
+                <li>Sauvegarder ce qui compte vraiment, et ouvrir un accès distant sans exposer le moindre service.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="linux-debian.html">Linux Debian</a> · <a href="proxmox.html">Proxmox</a> (utile)</p>
+            <p class="brief__foot">L'infrastructure tourne idéalement sur <a href="proxmox.html">Proxmox</a>, le durcissement se travaille avec le module <a href="securite.html">Cybersécurité</a>, et les certificats s'expliquent dans <a href="exchange-securite.html">Exchange &amp; PKI</a>.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="pourquoi">
@@ -318,6 +339,58 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Accès distant = <strong>VPN uniquement</strong> (WireGuard, ou Tailscale pour le zéro-config). Jamais de port forwarding direct vers un service. Un homelab bien fait est invisible depuis Internet.</p>
             </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Image, conteneur, volume : que désigne chacun ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>L'<strong>image</strong> est le modèle figé d'une application ; le <strong>conteneur</strong> une instance qui tourne, créée à partir de l'image ; le <strong>volume</strong> le stockage persistant, qui survit à la suppression du conteneur. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Qu'apporte un reverse proxy par rapport à un accès direct aux ports des services ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Un <strong>point d'entrée unique</strong> qui aiguille selon le nom de domaine et <strong>termine le TLS</strong> : un seul cadenas, des noms lisibles, au lieu d'un port différent et en clair par service. <em>Chapitre 03.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Comment obtenir un certificat Let's Encrypt valide sans ouvrir de port entrant ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Avec un domaine réel et le <strong>challenge DNS</strong> : le certificat est émis en prouvant la maîtrise de la zone DNS, sans qu'aucun port n'ait à être exposé. <em>Chapitre 03.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quel est le principal point de vigilance quand on met un Pi-hole sur son réseau ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Il devient un <strong>point unique de défaillance</strong> : s'il tombe, plus de résolution DNS pour personne. Il lui faut une <strong>IP fixe</strong> et un <strong>DNS de secours</strong> déclaré. <em>Chapitre 04.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Le RAID du NAS suffit-il comme sauvegarde ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Non. Il protège d'une <strong>panne disque</strong>, pas d'une suppression accidentelle, d'un rançongiciel ou d'un incendie. Le NAS reste une source à sauvegarder ailleurs — règle 3-2-1, avec restauration testée. <em>Chapitres 06 et 07.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Quelle est la cause n°1 de compromission d'un homelab, et la parade ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Le <strong>port forwarding direct</strong> vers un service (RDP, une appli web, un NAS). La parade : passer par un tunnel chiffré — <strong>WireGuard</strong>, ou <strong>Tailscale</strong> pour zéro port à ouvrir. <em>Chapitre 08.</em></p></div>
+                    </details>
+                </li>
+            </ol>
         </section>
 
     </main>

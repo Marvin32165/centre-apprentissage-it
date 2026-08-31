@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module SQL Server : choisir son édition, préparer la VM, installer l'instance écran par écran, instance nommée et SQL Server Browser, puis SSMS, authentification, TCP/IP et port 1433.">
     <title>SQL Server — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,11 +16,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 15 · Bases de données · <em>en cours</em></p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 02 · Infrastructure Windows · 6 / 7 · <em>en cours</em></p>
         <h1 class="hero__title">SQL Server<br><em>installation</em></h1>
         <p class="hero__lead">Installer une instance SQL Server sur une VM Windows : quelle édition choisir, ce que chaque écran de l'assistant décide vraiment, et ce qu'il reste à régler une fois l'installation terminée.</p>
         <div class="hero__meta">
             <span class="chip">Édition Developer</span><span class="chip">Instance nommée</span><span class="chip">SSMS</span><span class="chip">Port 1433</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
+            <span class="fact"><b>Durée</b> ≈ 45 min</span>
+            <span class="fact"><b>Chapitres</b> 3 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> <a href="hyperv.html">Hyper-V</a></span>
         </div>
     </div>
 </header>
@@ -32,6 +39,7 @@
             <li><a class="toc__link" href="#editions"><span>01</span> Choisir son édition &amp; préparer la VM</a></li>
             <li><a class="toc__link" href="#installation"><span>02</span> Installer l'instance, écran par écran</a></li>
             <li><a class="toc__link" href="#apres"><span>03</span> Après l'installation : se connecter</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -43,6 +51,18 @@
                 <div class="section-banner__desc">Module en cours de construction — pour l'instant, l'installation de l'instance</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Choisir l'édition adaptée au contexte, et dire ce qui interdit Developer en production.</li>
+                <li>Repérer, parmi la quinzaine d'écrans de l'assistant, les sept qui engagent une vraie décision.</li>
+                <li>Expliquer le lien entre instance nommée, port dynamique et service SQL Server Browser.</li>
+                <li>Terminer l'installation : SSMS, mode d'authentification, protocole TCP/IP et ouverture du pare-feu.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="hyperv.html">Hyper-V</a></p>
+            <p class="brief__foot">Ce module est le prérequis de la partie pratique du module <a href="sharepoint.html">SharePoint Server SE</a>, qui reprend cette installation avec ses contraintes propres (collation, comptes de service, disques dédiés).</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="editions">
@@ -114,6 +134,58 @@
                 <p class="takeaway__label">Module en construction</p>
                 <p>Ce module couvre pour l'instant l'installation. La suite du parcours — langage SQL (DDL, DML, requêtes <code>SELECT</code> et jointures), modélisation, transactions, sécurité, sauvegarde et restauration — sera ajoutée au fur et à mesure du cours.</p>
             </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi l'édition Developer en labo, et qu'est-ce qui l'interdit en production ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>C'est la seule édition <strong>gratuite avec toutes les fonctionnalités Enterprise</strong> : on apprend sur le même moteur qu'en production. La restriction n'est pas technique mais <strong>juridique</strong> — rien n'empêche techniquement de la déployer, sauf le contrat. <em>Chapitre 01.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Une instance nommée écoute-t-elle sur le port 1433 ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Non : elle prend un <strong>port dynamique</strong>. C'est le service <strong>SQL Server Browser</strong> qui indique aux clients quel port utiliser — s'il est arrêté, la connexion par nom d'instance échoue alors que le moteur tourne parfaitement. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Que fait « Add Current User » à l'écran <em>Database Engine Configuration</em> ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Il donne au compte connecté les droits <code>sysadmin</code> sur l'instance. Sans cela, on installe un moteur auquel on ne peut pas s'administrer. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi décocher l'extension Azure pendant l'installation d'un labo local ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Elle ne sert qu'à rattacher l'instance à <strong>Azure Arc</strong> et réclame un abonnement — inutile hors ligne, et bloquante si on la laisse cochée. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Pourquoi séparer fichiers de données, journaux de transactions et sauvegardes sur des volumes distincts ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Leurs <strong>profils d'écriture</strong> sont très différents (I/O). Et surtout : une sauvegarde posée sur le même disque que la base ne protège de rien. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">SSMS s'installe-t-il en même temps que le moteur ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Non — <strong>SQL Server Management Studio se télécharge et s'installe séparément</strong>. C'est la console d'administration graphique, pas un composant du moteur. <em>Chapitre 03.</em></p></div>
+                    </details>
+                </li>
+            </ol>
         </section>
 
     </main>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module PowerShell & Automatisation : shell orienté objet, création de VM Hyper-V en script, configuration réseau et renommage, promotion Active Directory, compte de service managé gMSA et mémo des cmdlets.">
     <title>PowerShell &amp; Automatisation — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,11 +16,17 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Module 02 · Automatisation</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 02 · Infrastructure Windows · 2 / 7</p>
         <h1 class="hero__title">PowerShell &amp;<br><em>Automatisation</em></h1>
         <p class="hero__lead">Monter un environnement entier sans toucher à la souris : créer les VM Hyper-V, configurer le réseau, promouvoir un domaine, joindre les serveurs et provisionner un compte de service managé — le tout en scripts rejouables.</p>
         <div class="hero__meta">
             <span class="chip">Hyper-V</span><span class="chip">New-VM</span><span class="chip">AD DS</span><span class="chip">GMSA</span><span class="chip">Cheat-sheet</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
+            <span class="fact"><b>Chapitres</b> 6 + auto-évaluation</span>
+            <span class="fact"><b>Prérequis</b> <a href="hyperv.html">Hyper-V</a> · <a href="windows-server.html">Windows Server</a></span>
         </div>
     </div>
 </header>
@@ -35,6 +42,7 @@
             <li><a class="toc__link" href="#ad"><span>04</span> Promotion AD</a></li>
             <li><a class="toc__link" href="#gmsa"><span>05</span> Compte managé (GMSA)</a></li>
             <li><a class="toc__link" href="#memo"><span>06</span> Mémo des cmdlets</a></li>
+            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
         </ul>
     </aside>
 
@@ -46,6 +54,19 @@
                 <div class="section-banner__desc">Le script comme documentation vivante de l'infrastructure</div>
             </div>
         </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Découvrir seul une commande inconnue avec <code>Get-Command</code>, <code>Get-Help</code> et <code>Get-Member</code>, puis enchaîner un pipeline.</li>
+                <li>Créer commutateur virtuel, disques différentiels et VM Hyper-V entièrement en script.</li>
+                <li>Configurer réseau et nom d'un serveur dans le bon ordre, avant toute promotion de domaine.</li>
+                <li>Scripter une arborescence Active Directory complète — OU, groupes, utilisateurs — sans jamais écrire un mot de passe en clair.</li>
+                <li>Provisionner un compte de service managé (gMSA) dont AD gère et renouvelle le mot de passe.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="hyperv.html">Hyper-V</a> · <a href="windows-server.html">Windows Server</a></p>
+            <p class="brief__foot">Les scripts de ce module rejouent les labos de <a href="hyperv.html">Hyper-V</a> et de <a href="windows-server.html">Windows Server</a> — un environnement entier reconstructible à l'identique.</p>
+        </section>
 
         <!-- 01 -->
         <section class="chapter" id="bases">
@@ -255,6 +276,58 @@
                 <p class="tip__label">Bonne pratique</p>
                 <p>Scripter toute opération répétitive plutôt que de cliquer : le script devient la <strong>documentation vivante</strong> de l'environnement et permet de tout reconstruire après un incident. Versionner ces scripts sur GitHub (c'est déjà le cas ici 👍).</p>
             </div>
+        </section>
+
+
+        <!-- Auto-évaluation -->
+        <section class="chapter chapter--quiz" id="teste-toi">
+            <p class="chapter__num">Auto-évaluation</p>
+            <h2 class="chapter__title">Teste-toi</h2>
+            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
+            <ol class="quiz">
+                <li class="quiz__item">
+                    <p class="quiz__q">Deux commandes répondent à l'essentiel des questions sur une cmdlet inconnue. Lesquelles ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><code>Get-Help &lt;cmdlet&gt; -Examples</code> pour voir des cas d'usage réels, et <code>&lt;objet&gt; | Get-Member</code> pour découvrir les propriétés et méthodes disponibles. <em>Chapitre 01.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">En quoi PowerShell n'est-il pas un shell « de texte » comme Bash ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Chaque commande renvoie de vrais <strong>objets .NET</strong>, pas des chaînes : on peut donc filtrer, trier et sélectionner sur les <em>propriétés</em> dans le pipeline, sans découper du texte. <em>Chapitre 01.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Dans quel ordre faut-il adresser, renommer et promouvoir un serveur ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>Réseau et nom d'abord, promotion ensuite.</strong> Renommer un contrôleur de domaine après sa promotion est bien plus délicat. <em>Chapitre 03.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Comment saisir un mot de passe dans un script sans jamais l'y écrire ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><code>-AccountPassword (Read-Host -AsSecureString "Mot de passe")</code> : la saisie est masquée et rien n'est stocké dans le fichier. Pour créer des comptes en masse, on boucle sur un <code>Import-Csv</code>. <em>Chapitre 04.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q"><code>Add-KdsRootKey</code> : combien de fois l'exécute-t-on, et pourquoi le décalage de −10 heures ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p><strong>Une seule fois par forêt</strong> : c'est la clé racine qui permet à AD de générer les mots de passe gMSA. Le <code>-10h</code> évite d'attendre le délai de propagation avant de pouvoir créer le premier compte. <em>Chapitre 05.</em></p></div>
+                    </details>
+                </li>
+                <li class="quiz__item">
+                    <p class="quiz__q">Qu'exige une VM Windows 11 qu'une VM Windows Server n'exige pas ?</p>
+                    <details class="reveal">
+                        <summary>Voir la réponse</summary>
+                        <div class="reveal__body"><p>Un <strong>TPM virtuel</strong> et le <strong>démarrage sécurisé</strong> : <code>Set-VMKeyProtector -NewLocalKeyProtector</code> puis <code>Enable-VMTPM</code>. Et elle part d'un disque neuf, pas de l'image SYSPREP. <em>Chapitre 02.</em></p></div>
+                    </details>
+                </li>
+            </ol>
         </section>
 
     </main>
