@@ -8,10 +8,10 @@
     <meta name="description" content="Proxmox VE de A à Z : hyperviseur type 1, VM KVM vs conteneurs LXC, stockage ZFS, snapshots et sauvegardes, réseau bridges/VLAN, cluster et haute disponibilité.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=3">
 </head>
-<body data-domain="px">
+<body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
@@ -26,7 +26,8 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
-            <span class="fact"><b>Chapitres</b> 9 + auto-évaluation</span>
+            <span class="fact"><b>Chapitres</b> 9</span>
+            <span class="fact"><b>Test</b> 8 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a> (utile)</span>
         </div>
     </div>
@@ -46,7 +47,7 @@
             <li><a class="toc__link" href="#backup"><span>07</span> Sauvegardes &amp; snapshots</a></li>
             <li><a class="toc__link" href="#cluster"><span>08</span> Cluster &amp; haute dispo</a></li>
             <li><a class="toc__link" href="#exploit"><span>09</span> Exploitation au quotidien</a></li>
-            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
 
@@ -143,7 +144,7 @@
             <h3>Corriger les dépôts (sans abonnement)</h3>
             <p>Par défaut Proxmox pointe vers le dépôt entreprise (payant). En labo, on bascule sur le dépôt <em>no-subscription</em> pour recevoir les mises à jour :</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Shell — nœud Proxmox (root)</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Shell — nœud Proxmox (root)</span></div>
                 <pre class="terminal__code"><span class="c"># Désactiver le dépôt entreprise</span>
 <span class="k">sed</span> <span class="p">-i</span> <span class="s">'s/^deb/#deb/'</span> /etc/apt/sources.list.d/pve-enterprise.list
 
@@ -184,7 +185,7 @@
 
             <h3>Créer une VM en ligne de commande</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">qm — gestion des VM</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">qm — gestion des VM</span></div>
                 <pre class="terminal__code"><span class="c"># Créer la VM 100 : 2 vCPU, 4 Go RAM, réseau virtio sur vmbr0</span>
 <span class="k">qm</span> create <span class="p">100</span> <span class="p">--name</span> <span class="s">"srv-web"</span> <span class="p">--memory</span> <span class="s">4096</span> <span class="p">--cores</span> <span class="s">2</span> \
   <span class="p">--net0</span> <span class="s">virtio,bridge=vmbr0</span> <span class="p">--scsihw</span> <span class="s">virtio-scsi-single</span>
@@ -220,7 +221,7 @@
             <h3>Créer un conteneur</h3>
             <p>On télécharge d'abord un <strong>template</strong> (Datacenter → stockage <code>local</code> → CT Templates → Templates), puis on crée le CT avec ce template.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">pct — gestion des conteneurs</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">pct — gestion des conteneurs</span></div>
                 <pre class="terminal__code"><span class="c"># Lister &amp; télécharger un template Debian 12</span>
 <span class="k">pveam</span> update
 <span class="k">pveam</span> available <span class="p">--section</span> <span class="s">system</span>
@@ -270,7 +271,7 @@
             <h3>ZFS : le combo résilience + snapshots</h3>
             <p>ZFS est à la fois un système de fichiers et un gestionnaire de volumes RAID logiciel. Ses atouts : sommes de contrôle (détection de corruption silencieuse), snapshots quasi gratuits, compression transparente et <em>self-healing</em> sur un miroir.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">ZFS — pool en miroir</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">ZFS — pool en miroir</span></div>
                 <pre class="terminal__code"><span class="c"># Créer un pool « tank » en miroir sur deux disques</span>
 <span class="k">zpool</span> create <span class="p">tank</span> mirror /dev/sdb /dev/sdc
 
@@ -305,7 +306,7 @@
             <h3>Configuration du pont</h3>
             <p>Tout se règle dans <em>Nœud → System → Network</em> (ou le fichier <code>/etc/network/interfaces</code>). Un pont typique :</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">/etc/network/interfaces</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">/etc/network/interfaces</span></div>
                 <pre class="terminal__code"><span class="k">auto</span> vmbr0
 <span class="k">iface</span> vmbr0 inet static
     <span class="p">address</span>  <span class="s">192.168.1.10/24</span>
@@ -342,7 +343,7 @@
                 <li><strong>Stop</strong> — éteint la VM (backup le plus « propre », mais coupe le service).</li>
             </ul>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">vzdump — sauvegarde manuelle</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">vzdump — sauvegarde manuelle</span></div>
                 <pre class="terminal__code"><span class="c"># Sauvegarder la VM 100, compressée, mode snapshot, vers le stockage backup</span>
 <span class="k">vzdump</span> <span class="p">100</span> <span class="p">--mode</span> <span class="s">snapshot</span> <span class="p">--compress</span> <span class="s">zstd</span> <span class="p">--storage</span> <span class="s">backup-nas</span>
 
@@ -367,7 +368,7 @@
 
             <h3>Créer et rejoindre un cluster</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">pvecm — cluster manager</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">pvecm — cluster manager</span></div>
                 <pre class="terminal__code"><span class="c"># Sur le 1er nœud : créer le cluster</span>
 <span class="k">pvecm</span> create <span class="s">homelab-cluster</span>
 
@@ -424,92 +425,25 @@
             </div>
         </section>
 
-
-        <!-- Auto-évaluation -->
-        <section class="chapter chapter--quiz" id="teste-toi">
-            <p class="chapter__num">Auto-évaluation</p>
-            <h2 class="chapter__title">Teste-toi</h2>
-            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
-            <ol class="quiz">
-                <li class="quiz__item">
-                    <p class="quiz__q">Type 1 ou type 2 : où se place Proxmox, et qu'est-ce qui les distingue ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>Type 1 (bare-metal)</strong> : Proxmox est une distribution Debian spécialisée installée directement sur le matériel. Un type 2 (VirtualBox, VMware Workstation) s'exécute comme une application au-dessus d'un OS classique. <em>Chapitre 01.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Quand préférer un conteneur LXC à une VM — et quelles en sont les limites ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Pour un <strong>service Linux léger</strong> : démarrage quasi instantané, quelques Mo de RAM. Mais il <strong>partage le noyau de l'hôte</strong> : pas de Windows, pas de noyau personnalisé, et pour Docker on préfère une VM. <em>Chapitre 04.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Sur quel port et quel protocole s'ouvre l'interface web de Proxmox ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>HTTPS sur le port 8006</strong> (<code>https://IP:8006</code>), connexion root avec le realm <em>Linux PAM</em>. L'avertissement de certificat auto-signé est normal en labo. <em>Chapitre 02.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Que faut-il corriger juste après l'installation, quand on n'a pas d'abonnement ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Désactiver le dépôt <strong>enterprise</strong> (payant) et activer <strong>pve-no-subscription</strong>, puis <code>apt update &amp;&amp; apt full-upgrade</code>. Sans ça, aucune mise à jour ne remonte. <em>Chapitre 02.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Snapshot ou sauvegarde : quelle est la différence, et laquelle protège vraiment ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Le <strong>snapshot</strong> est un point de restauration <em>sur place</em> (utile avant une manip risquée) : si le disque meurt, il meurt avec. La <strong>sauvegarde</strong> (<code>vzdump</code>) est une copie <em>ailleurs</em> — la seule vraie protection. <em>Chapitre 07.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi un nombre impair de nœuds dans un cluster, et que faire quand on n'en a que deux ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Pour garder le <strong>quorum</strong> (majorité des votes, via Corosync). À deux nœuds, la panne de l'un bloque l'autre : on ajoute un <strong>QDevice</strong> comme troisième votant. <em>Chapitre 08.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Que faut-il obligatoirement pour une migration à chaud (live) d'une VM ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Un <strong>stockage partagé</strong> accessible par les deux nœuds (NFS, Ceph…). Sans lui, seule la migration à froid est possible. <em>Chapitre 08.</em></p></div>
-                    </details>
-                </li>
-            </ol>
-
-            <h3>Les sigles du module</h3>
-            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
-            <div class="gloss">
-                <div class="gl"><b>PVE</b><span>Proxmox Virtual Environment — la distribution Debian spécialisée qui porte l'hyperviseur.</span></div>
-                <div class="gl"><b>KVM / QEMU</b><span>La virtualisation matérielle du noyau Linux — c'est elle qui fait tourner les VM.</span></div>
-                <div class="gl"><b>LXC</b><span>Linux Containers — virtualisation système : le conteneur partage le noyau de l'hôte.</span></div>
-                <div class="gl"><b>Unprivileged</b><span>Conteneur dont le root n'est pas le root de l'hôte (mappage d'UID) — le mode par défaut, et le bon.</span></div>
-                <div class="gl"><b>ZFS</b><span>Système de fichiers et gestionnaire de volumes : sommes de contrôle, snapshots quasi gratuits, compression, self-healing.</span></div>
-                <div class="gl"><b>ARC</b><span>Adaptive Replacement Cache — le cache de lecture de ZFS en RAM, d'où l'appétit de ZFS pour la mémoire.</span></div>
-                <div class="gl"><b>RAIDZ</b><span>Le RAID à parité de ZFS ; <code>mirror</code> en est la variante miroir.</span></div>
-                <div class="gl"><b>LVM-Thin</b><span>Le stockage par défaut des disques de VM (<code>local-lvm</code>), à provisionnement fin.</span></div>
-                <div class="gl"><b>vmbr0</b><span>Le pont Linux qui joue le rôle de switch virtuel et porte l'adresse IP de l'hôte.</span></div>
-                <div class="gl"><b>VLAN-aware</b><span>Option du pont qui lui permet de transporter des VLAN 802.1Q ; le port physique côté switch doit être en trunk.</span></div>
-                <div class="gl"><b>vzdump / PBS</b><span>Le moteur de sauvegarde natif / Proxmox Backup Server, qui ajoute déduplication et incrémental.</span></div>
-                <div class="gl"><b>Corosync / quorum</b><span>Le service de communication du cluster / la majorité de votes nécessaire à toute décision.</span></div>
-                <div class="gl"><b>QDevice</b><span>Un votant supplémentaire externe, indispensable pour un cluster à deux nœuds.</span></div>
-                <div class="gl"><b>cloud-init</b><span>Mécanisme de première configuration (hostname, IP, clé SSH) d'une VM clonée depuis un template.</span></div>
-            </div>
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="proxmox">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab & sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les quinze modules.</p>
+        </section>
     </main>
 </div>
 
 <footer>
     <p><strong>Proxmox &amp; Virtualisation</strong> — Module du centre d'apprentissage IT</p>
-    <p><a href="../index.html">← Retour au portail</a> · Pour approfondir : <a href="https://www.youtube.com/@VirtualizationHowto" target="_blank" rel="noopener">Virtualization HowTo</a> · <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a></p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@VirtualizationHowto" target="_blank" rel="noopener">Virtualization HowTo</a> · <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a></p>
 </footer>
 
-<script src="../assets/app.js?v=2"></script>
+<script src="../assets/app.js?v=3"></script>
+<script src="../assets/quiz-data.js?v=3"></script>
+<script src="../assets/quiz.js?v=3"></script>
 </body>
 </html>

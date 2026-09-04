@@ -7,8 +7,8 @@
     <title>Linux Debian — Du premier login à la maîtrise du terminal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=3">
     <style>
         /* ── Visuels spécifiques au module Linux (permissions), version thème clair ── */
         .lsline { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; background:#F8FAFC; border:1px solid var(--border); border-radius:var(--r); padding:20px 16px; margin:16px 0; }
@@ -39,7 +39,7 @@
         .tcell .cdesc .maybe { color:var(--yes); font-family:var(--font-mono); }
     </style>
 </head>
-<body data-domain="linux">
+<body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
@@ -54,7 +54,8 @@
         <div class="hero__facts">
             <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
             <span class="fact"><b>Durée</b> ≈ 4 h</span>
-            <span class="fact"><b>Chapitres</b> 22 + auto-évaluation</span>
+            <span class="fact"><b>Chapitres</b> 22</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
             <span class="fact"><b>Prérequis</b> aucun</span>
         </div>
     </div>
@@ -87,7 +88,7 @@
             <li><a class="toc__link" href="#chap20"><span>20</span> Partitions, GRUB &amp; virtu</a></li>
             <li><a class="toc__link" href="#chap21"><span>21</span> Raccourcis &amp; réflexes</a></li>
             <li><a class="toc__link" href="#chap22"><span>22</span> Commandes : mémo complet</a></li>
-            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
 
@@ -124,7 +125,7 @@
 
             <h3>Anatomie d'une commande</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">ls</span> <span class="p">-la</span> <span class="s">/home</span>   <span class="c"># commande + options + cible</span></pre>
             </div>
             <ul>
@@ -166,7 +167,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — en root</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — en root</span></div>
                 <pre class="terminal__code"><span class="k">apt</span> install sudo
 <span class="k">adduser</span> apprenant
 <span class="k">usermod</span> <span class="p">-aG</span> sudo apprenant
@@ -184,7 +185,7 @@
             <h3>Vérifications de base</h3>
             <p>Avant de travailler, on prend le pouls de la machine. Chaque commande répond à une question précise :</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">lsblk</span>                    <span class="c"># « ai-je assez de disque, et où ? » → disques et partitions</span>
 <span class="k">ip</span> a                     <span class="c"># « suis-je sur le réseau ? » → adresses IP attribuées</span>
 <span class="k">apt</span> list <span class="p">--upgradable</span>    <span class="c"># « mon système est-il à jour ? » → paquets à mettre à jour</span></pre>
@@ -203,7 +204,7 @@
             <p class="chapter__intro">Sous Debian, tout part de la racine <code>/</code> — l'équivalent du <code>C:\</code> de Windows. Pas de lettres de lecteurs : disques et clés USB sont « montés » dans l'arborescence.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Arborescence du système de fichiers</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Arborescence du système de fichiers</span></div>
                 <pre class="terminal__code"><span class="k">/</span>                        <span class="c">← la racine (= C:\)</span>
 ├── <span class="k">bin/</span>     <span class="c">commandes de base : ls, cp, bash…</span>
 ├── <span class="k">boot/</span>    <span class="c">noyau Linux + GRUB (démarrage)</span>
@@ -305,14 +306,14 @@
                 </tbody>
             </table></div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">cp</span> <span class="s">/bin/sh*</span> repb          <span class="c"># copie tout ce qui commence par "sh"</span>
 <span class="k">rm</span> mon*                   <span class="c"># supprime tout ce qui commence par "mon"</span></pre>
             </div>
 
             <h3>Comparer, monter, éteindre</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">diff</span> fichier1.txt fichier2.txt   <span class="c"># affiche les lignes qui diffèrent</span>
 <span class="k">lsblk</span>                             <span class="c"># repérer la partition (ex : /dev/sdb1)</span>
 <span class="k">sudo mount</span> <span class="s">/dev/sdb1</span> tp           <span class="c"># monte la partition dans le dossier tp</span>
@@ -359,7 +360,7 @@
                 </tbody>
             </table></div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">less</span> <span class="p">-N</span> <span class="s">/etc/passwd</span>            <span class="c"># explorer avec numéros de ligne</span>
 <span class="k">less</span> <span class="p">-S -N</span> <span class="s">/var/log/syslog</span>     <span class="c"># log avec lignes longues, sans retour auto</span>
 <span class="k">dmesg</span> | <span class="k">less</span>                   <span class="c"># parcourir les messages du noyau</span></pre>
@@ -379,7 +380,7 @@
                 </tbody>
             </table></div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">grep</span> <span class="p">-v</span> <span class="s">'^$'</span> fichier.txt              <span class="c"># enlever les lignes vides</span>
 <span class="k">grep</span> <span class="p">-E</span> <span class="s">"root|admin"</span> <span class="s">/etc/passwd</span>      <span class="c"># "root" OU "admin"</span>
 <span class="k">grep</span> <span class="p">-c</span> <span class="s">""</span> fichier.txt                <span class="c"># compter les lignes, fiable même sans retour final</span></pre>
@@ -406,14 +407,14 @@
 
             <p>Chaque fichier est décrit par une structure appelée <strong>inode</strong> : taille, propriétaire, permissions, dates, et les adresses des blocs de données sur le disque. Le nom du fichier, lui, n'est qu'une entrée dans un dossier qui pointe vers un inode — un même inode peut avoir plusieurs noms.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">ls</span> <span class="p">-li</span> fichier      <span class="c"># -i affiche le numéro d'inode en 1re colonne</span></pre>
             </div>
 
             <h3>Liens physiques (hard links)</h3>
             <p>Un lien physique fait pointer un <strong>second nom</strong> vers le <strong>même inode</strong>. Modifier l'un modifie l'autre : c'est littéralement le même fichier.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">ln</span> fichier1 fichier4
 <span class="k">ls</span> <span class="p">-li</span>               <span class="c"># même inode pour fichier1 et fichier4, compteur de liens = 2</span>
 <span class="k">rm</span> fichier1          <span class="c"># fichier4 reste intact : le contenu n'est libéré que si TOUS les liens disparaissent</span></pre>
@@ -426,7 +427,7 @@
             <h3>Liens symboliques (raccourcis)</h3>
             <p>Un lien symbolique (<code>l</code> en 1er caractère dans <code>ls -l</code>) est un <strong>fichier à part</strong> qui contient juste le chemin vers la cible — comme un raccourci Windows.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">ln</span> <span class="p">-s</span> fichier4 fichier5
 <span class="k">ls</span> <span class="p">-li</span>               <span class="c"># inode DIFFÉRENT de fichier4, colonne des droits commence par "l"</span></pre>
             </div>
@@ -490,7 +491,7 @@
 
             <p><code>chmod</code> accepte aussi une notation symbolique, relative aux droits déjà en place :</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — chmod symbolique</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — chmod symbolique</span></div>
                 <pre class="terminal__code"><span class="k">chmod</span> <span class="p">u+rwx</span> fichier   <span class="c"># ajoute lecture+écriture+exécution au propriétaire</span>
 <span class="k">chmod</span> <span class="p">g+w</span> fichier     <span class="c"># ajoute l'écriture au groupe</span>
 <span class="k">chmod</span> <span class="p">o-r</span> fichier     <span class="c"># retire la lecture aux autres</span>
@@ -597,7 +598,7 @@
                 </tbody>
             </table></div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">chmod</span> <span class="p">4754</span> fichier   <span class="c"># pose le SetUID (apparaît comme un "s" à la place du x propriétaire)</span>
 <span class="k">chmod</span> <span class="p">1744</span> fichier   <span class="c"># pose le Sticky Bit (apparaît comme un "t")</span></pre>
             </div>
@@ -618,7 +619,7 @@
             </table></div>
             <p>Le <code>2</code> du milieu et de droite (=<code>w</code>) explique pourquoi, par défaut, ni le groupe ni les autres ne peuvent écrire. Changer le <code>umask</code> change donc les droits par défaut de tout ce que vous créez ensuite.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — umask</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — umask</span></div>
                 <pre class="terminal__code"><span class="k">umask</span>            <span class="c"># affiche la valeur en cours (ex : 0022)</span>
 <span class="k">umask</span> <span class="p">-S</span>         <span class="c"># même chose en clair : u=rwx,g=rx,o=rx</span>
 <span class="k">umask</span> 0027       <span class="c"># plus strict : les "autres" n'ont plus aucun droit sur les nouveaux fichiers</span></pre>
@@ -628,7 +629,7 @@
             <h3>ACL — des droits pour un utilisateur ou groupe précis</h3>
             <p>Le triplet u/g/o ne connaît qu'<em>un</em> propriétaire et <em>un</em> groupe. Pour donner des droits à un utilisateur ou un groupe <strong>supplémentaire</strong> sans toucher au reste, on utilise les <strong>ACL</strong> (Access Control Lists) :</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — ACL</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — ACL</span></div>
                 <pre class="terminal__code"><span class="k">sudo apt</span> install acl
 <span class="k">getfacl</span> dossier                    <span class="c"># afficher les ACL en place</span>
 <span class="k">setfacl</span> <span class="p">-m</span> g:sav:rwx dossier       <span class="c"># donner rwx au groupe "sav" sur ce dossier</span></pre>
@@ -653,7 +654,7 @@
                 </tbody>
             </table></div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — exemples concrets</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — exemples concrets</span></div>
                 <pre class="terminal__code"><span class="k">ls</span> &gt; liste.txt               <span class="c"># écrit le résultat dans liste.txt (écrase)</span>
 <span class="k">echo</span> <span class="s">"log"</span> &gt;&gt; liste.txt      <span class="c"># ajoute une ligne à la fin</span>
 <span class="k">wc</span> <span class="p">-l</span> &lt; liste.txt            <span class="c"># compte les lignes du fichier</span>
@@ -686,7 +687,7 @@
 
             <h3>Here document : écrire un fichier multi-lignes sans éditeur</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">cat</span> &lt;&lt; EOF &gt; fichier.txt
 Ligne 1
 Ligne 2
@@ -712,7 +713,7 @@ EOF</pre>
                 </tbody>
             </table></div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">ls</span> <span class="s">/etc</span> | <span class="k">wc</span> <span class="p">-l</span>                              <span class="c"># nombre de fichiers dans /etc</span>
 <span class="k">ls</span> <span class="p">-l</span> | <span class="k">sort</span> <span class="p">-n -k5</span>                         <span class="c"># trier par taille (5e colonne)</span>
 <span class="k">du</span> <span class="p">-h</span> <span class="s">/home/*</span> | <span class="k">sort</span> <span class="p">-h</span>                     <span class="c"># tailles de dossiers, triées 1K → 1G</span>
@@ -722,7 +723,7 @@ EOF</pre>
             <h3>tee — afficher ET sauvegarder en même temps</h3>
             <p><code>tee</code> lit l'entrée standard et l'écrit à la fois vers un fichier et vers l'écran. Utile pour écrire dans un fichier protégé avec <code>sudo</code> : <code>sudo echo "x" &gt; /etc/fichier</code> échoue car la redirection <code>&gt;</code> est interprétée par le shell AVANT que <code>sudo</code> s'applique.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">echo</span> <span class="s">"config"</span> | <span class="k">sudo tee</span> <span class="s">/etc/fichier</span>            <span class="c"># écrit avec les droits root, affiche aussi</span>
 <span class="k">echo</span> <span class="s">"config"</span> | <span class="k">sudo tee</span> <span class="s">/etc/fichier</span> &gt; /dev/null   <span class="c"># idem, sans afficher</span>
 <span class="k">date</span> | <span class="k">tee</span> <span class="p">-a</span> journal.log                        <span class="c"># -a : ajoute au lieu d'écraser</span></pre>
@@ -775,7 +776,7 @@ EOF</pre>
 
             <h3>sed — Stream EDitor</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">sed</span> <span class="s">'s/Debian/Ubuntu/'</span> <span class="s">/etc/os-release</span>   <span class="c"># remplace la 1re occurrence par ligne, affiche seulement</span>
 <span class="k">sed</span> <span class="p">-i</span> <span class="s">'s/Debian/Ubuntu/'</span> fichier        <span class="c"># -i modifie le fichier directement (in place)</span>
 <span class="k">sed</span> <span class="p">-n</span> 2,6p <span class="s">/etc/passwd</span>                  <span class="c"># affiche uniquement les lignes 2 à 6</span></pre>
@@ -783,7 +784,7 @@ EOF</pre>
 
             <h3>awk — traitement par colonnes</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">awk</span> <span class="s">'{gsub(/.ebian/,"Ubuntu")}1'</span> <span class="s">/etc/os-release</span>   <span class="c"># cherche et remplace</span>
 <span class="k">awk</span> <span class="s">'!/.ebian/'</span> <span class="s">/etc/os-release</span>                    <span class="c"># supprime les lignes qui matchent</span>
 <span class="k">awk</span> <span class="s">'NR==2,NR==4'</span> <span class="s">/etc/os-release</span>                  <span class="c"># affiche seulement les lignes 2 à 4</span></pre>
@@ -791,7 +792,7 @@ EOF</pre>
 
             <h3>Enchaîner grep, sort, cut avec le pipe</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">cat</span> <span class="s">/etc/passwd</span> | <span class="k">grep</span> nologin | <span class="k">sort</span> | <span class="k">cut</span> <span class="p">-d:</span> <span class="p">-f1</span>
 <span class="c"># filtre les comptes "nologin", trie, ne garde que le login (1er champ)</span></pre>
             </div>
@@ -808,7 +809,7 @@ EOF</pre>
             <h2 class="chapter__title">find — rechercher des fichiers avec précision</h2>
             <p class="chapter__intro"><code>find</code> parcourt une arborescence et filtre par nom, type, taille, date ou permissions — et peut agir directement sur les résultats trouvés.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Syntaxe</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Syntaxe</span></div>
                 <pre class="terminal__code"><span class="k">find</span> [chemin] [critères] [action]</pre>
             </div>
 
@@ -834,7 +835,7 @@ EOF</pre>
                 </tbody>
             </table></div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">find</span> <span class="s">/</span> <span class="p">-type f</span> \( <span class="p">-name</span> <span class="s">"*.log"</span> <span class="p">-or</span> <span class="p">-name</span> <span class="s">"*.txt"</span> \)   <span class="c"># OU logique</span>
 <span class="k">find</span> <span class="s">/tmp</span> <span class="p">-name</span> <span class="s">"*.tmp"</span> <span class="p">-exec</span> rm {} \;              <span class="c"># supprimer tous les .tmp</span>
 <span class="k">find</span> ~ <span class="p">-name</span> <span class="s">"*.bak"</span> <span class="p">-delete</span>                       <span class="c"># supprimer tous les .bak</span></pre>
@@ -853,7 +854,7 @@ EOF</pre>
 
             <h3>Créer, exporter, afficher une variable</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code">prenom=<span class="s">"jean-denis"</span>
 <span class="k">echo</span> $prenom                  <span class="c"># affiche la valeur</span>
 <span class="k">export</span> formation=<span class="s">"Linux"</span>     <span class="c"># devient une variable d'environnement</span>
@@ -881,7 +882,7 @@ EOF</pre>
                 </tbody>
             </table></div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code">PS1=<span class="s">'\u@\h:\w\$ '</span>                 <span class="c"># exemple de prompt personnalisé</span>
 <span class="k">echo</span> <span class="s">"PS1='\u@\h:\w\$ '"</span> &gt;&gt; ~/.bashrc   <span class="c"># le rendre permanent</span></pre>
             </div>
@@ -900,7 +901,7 @@ EOF</pre>
             <h3>Commandes internes vs externes</h3>
             <p>Une commande <strong>interne</strong> (builtin) fait partie du shell lui-même (ex : <code>cd</code>, <code>echo</code>). Une commande <strong>externe</strong> est un fichier binaire ou script séparé, cherché dans les dossiers de <code>$PATH</code>.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">type</span> echo     <span class="c"># "echo is a shell builtin" → interne</span>
 <span class="k">type</span> bash     <span class="c"># "bash is /usr/bin/bash" → externe</span>
 <span class="k">which</span> which   <span class="c"># affiche le chemin complet d'une commande externe</span>
@@ -910,7 +911,7 @@ EOF</pre>
             <h3>La variable PATH</h3>
             <p><code>$PATH</code> liste les dossiers où le shell cherche les commandes externes, séparés par <code>:</code>. C'est pourquoi un script dans le dossier courant doit être lancé avec <code>./script.sh</code> (le dossier courant n'est pas dans PATH par défaut).</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">echo</span> $PATH
 <span class="k">chmod</span> <span class="p">+x</span> ma_commande.sh
 ./ma_commande.sh                    <span class="c"># fonctionne : chemin explicite</span>
@@ -950,7 +951,7 @@ ma_commande.sh                      <span class="c"># échoue : "commande introu
                 <p>Selon la machine, votre carte réseau peut s'appeler <code>ens33</code>, <code>enp0s3</code>, <code>eth0</code>… Repérez le vôtre avec <code>ip a</code> et remplacez <code>ens33</code> par ce nom dans tous les exemples de ce chapitre.</p>
             </div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">sudo nano /etc/network/interfaces</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">sudo nano /etc/network/interfaces</span></div>
                 <pre class="terminal__code">auto lo
 iface lo inet loopback
 
@@ -962,7 +963,7 @@ iface ens33 inet <span class="k">static</span>
     <span class="p">dns-nameservers</span> <span class="s">8.8.8.8</span></pre>
             </div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">sudo systemctl</span> restart networking
 <span class="k">ip</span> a               <span class="c"># vérifier l'adresse</span>
 <span class="k">ping</span> 8.8.8.8       <span class="c"># tester internet (Ctrl+C pour arrêter)</span></pre>
@@ -978,7 +979,7 @@ iface ens33 inet <span class="k">static</span>
             <h3>Gérer les interfaces à chaud avec la commande ip</h3>
             <p>Le paquet <code>iproute2</code> (commande <code>ip</code>) remplace l'ancien <code>net-tools</code> (<code>ifconfig</code>, non maintenu depuis 2009). Les changements faits avec <code>ip</code> sont <strong>temporaires</strong> : perdus au redémarrage si non écrits dans <code>/etc/network/interfaces</code>. Ils servent surtout à tester une configuration avant de la rendre permanente.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">ip</span> link show                                   <span class="c"># liste les interfaces (up/down, MAC)</span>
 <span class="k">sudo ip</span> link set ens33 down                     <span class="c"># désactive l'interface</span>
 <span class="k">sudo ip</span> link set ens33 up                       <span class="c"># la réactive</span>
@@ -1017,13 +1018,13 @@ iface ens33 inet <span class="k">static</span>
 
             <h3>SSH : le terminal à distance, chiffré</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — côté serveur Debian</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — côté serveur Debian</span></div>
                 <pre class="terminal__code"><span class="k">sudo apt</span> install ssh
 <span class="k">sudo systemctl</span> enable ssh     <span class="c"># démarrage automatique au boot</span>
 <span class="k">systemctl</span> status ssh          <span class="c"># vérifier que le service tourne</span></pre>
             </div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Depuis une autre machine (Windows, Mac, Linux)</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Depuis une autre machine (Windows, Mac, Linux)</span></div>
                 <pre class="terminal__code"><span class="k">ssh</span> apprenant@192.168.1.10                <span class="c"># ouvrir une session distante</span>
 <span class="k">scp</span> fichier apprenant@192.168.1.10:/home  <span class="c"># copier un fichier via SSH</span></pre>
             </div>
@@ -1031,7 +1032,7 @@ iface ens33 inet <span class="k">static</span>
             <h3>Se connecter sans mot de passe (authentification par clé)</h3>
             <p>SSH combine deux types de cryptographie : <strong>asymétrique</strong> (clé publique/privée) pour établir la connexion de façon sûre, puis <strong>symétrique</strong> (plus rapide) pour le reste de la session. On génère une paire de clés côté client et on diffuse la clé publique sur le serveur :</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — côté client</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — côté client</span></div>
                 <pre class="terminal__code"><span class="k">ssh-keygen</span> <span class="p">-t</span> rsa <span class="p">-b</span> 4096 <span class="p">-f</span> ~/.ssh/id_rsa   <span class="c"># génère la paire (privée + .pub)</span>
 <span class="k">ssh-copy-id</span> <span class="p">-i</span> ~/.ssh/id_rsa.pub user@serveur <span class="c"># diffuse la clé publique</span></pre>
             </div>
@@ -1054,7 +1055,7 @@ iface ens33 inet <span class="k">static</span>
             <h3>sources.list — d'où viennent les paquets</h3>
             <p>Les dépôts sont listés dans <code>/etc/apt/sources.list</code>. Exemple pour Debian 13 avec un miroir français :</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">sudo nano /etc/apt/sources.list</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">sudo nano /etc/apt/sources.list</span></div>
                 <pre class="terminal__code"><span class="k">deb</span> <span class="s">http://ftp.fr.debian.org/debian</span> trixie <span class="p">main contrib non-free non-free-firmware</span>
 <span class="k">deb</span> <span class="s">http://ftp.fr.debian.org/debian</span> trixie-updates <span class="p">main contrib non-free non-free-firmware</span>
 <span class="k">deb</span> <span class="s">http://security.debian.org/debian-security</span> trixie-security <span class="p">main contrib non-free non-free-firmware</span></pre>
@@ -1123,7 +1124,7 @@ iface ens33 inet <span class="k">static</span>
                 <p>Au démarrage, Linux lance un premier processus d'ID 1 (<code>init</code> ou <code>systemd</code>). Tous les autres en sont les fils, petits-fils, etc. — visible avec <code>ps -ef</code> (colonne PPID = parent).</p>
             </div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">ps</span> <span class="p">-ef</span> | <span class="k">grep</span> nom                   <span class="c"># filtrer par nom/utilisateur</span>
 <span class="k">ps</span> <span class="p">-edf</span> <span class="p">--sort=+pmem</span> | <span class="k">tail</span> <span class="p">-5</span>      <span class="c"># les 5 processus qui consomment le plus de RAM</span>
 <span class="k">ps</span> <span class="p">-edf</span> <span class="p">--sort=+pcpu</span> | <span class="k">tail</span> <span class="p">-5</span>      <span class="c"># les 5 qui consomment le plus de CPU</span></pre>
@@ -1170,7 +1171,7 @@ iface ens33 inet <span class="k">static</span>
 
             <h3>Archives</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">tar</span> <span class="p">-czf</span> archive.tar.gz dossier/   <span class="c"># compresser un dossier</span>
 <span class="k">tar</span> <span class="p">-xzf</span> archive.tar.gz            <span class="c"># extraire</span>
 <span class="k">zip</span> archive.zip fichiers           <span class="c"># créer un zip</span>
@@ -1201,7 +1202,7 @@ iface ens33 inet <span class="k">static</span>
                 </tbody>
             </table></div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash — qui a fait quoi ?</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — qui a fait quoi ?</span></div>
                 <pre class="terminal__code"><span class="k">last</span>                     <span class="c"># historique des connexions (lit /var/log/wtmp)</span>
 <span class="k">last</span> | <span class="k">grep</span> reboot       <span class="c"># uniquement les redémarrages du système</span>
 <span class="k">who</span>                      <span class="c"># qui est connecté en ce moment</span>
@@ -1236,7 +1237,7 @@ iface ens33 inet <span class="k">static</span>
             <h3>GRUB : le démarrage du système</h3>
             <p>GRUB (GRand Unified Bootloader) est le premier programme lancé après le BIOS/UEFI : il charge le noyau Linux. Équivalent du Windows Boot Manager (<code>bootmgr</code>). Il permet de choisir quel OS ou quelle version du noyau démarrer, et sa config est générée dans <code>/boot/grub/grub.cfg</code> (ne pas éditer directement) à partir de <code>/etc/default/grub</code>.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Bash</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">sudo update-grub</span>              <span class="c"># régénère grub.cfg après modif de /etc/default/grub</span>
 <span class="k">sudo grub-install</span> <span class="s">/dev/sda</span>    <span class="c"># réinstalle GRUB (problème de boot)</span></pre>
             </div>
@@ -1548,80 +1549,25 @@ iface ens33 inet <span class="k">static</span>
             </table></div>
         </section>
 
-
-        <!-- Auto-évaluation -->
-        <section class="chapter chapter--quiz" id="teste-toi">
-            <p class="chapter__num">Auto-évaluation</p>
-            <h2 class="chapter__title">Teste-toi</h2>
-            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
-            <ol class="quiz">
-                <li class="quiz__item">
-                    <p class="quiz__q">Quelle est la conséquence exacte d'un <code>usermod -G sudo alice</code> écrit sans le <code>-a</code> ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><code>-G</code> <strong>remplace</strong> la liste des groupes secondaires : alice est retirée de tous ses autres groupes. Le <code>-a</code> (<em>append</em>) ajoute sans effacer — d'où le réflexe <code>usermod -aG</code>. <em>Chapitre 02.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Avec un <code>umask</code> de 0022, quels droits reçoit un fichier qu'on vient de créer ? Et pourquoi jamais le bit d'exécution ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>644</strong> (<code>rw-r--r--</code>) : la base d'un fichier est <strong>666</strong>, jamais 777 — Linux ne rend pas exécutable un fichier créé normalement. On en retire le masque 022. Un dossier, lui, part de 777 et tombe à 755. <em>Chapitre 07.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Lien physique ou lien symbolique : qu'est-ce que <code>ls -li</code> permet de distinguer, et que se passe-t-il si on supprime la cible ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Le lien physique partage le <strong>même inode</strong> (compteur de liens à 2) : supprimer un nom laisse l'autre intact, le contenu n'est libéré que quand tous les noms disparaissent. Le lien symbolique a un <strong>inode différent</strong>, un <code>l</code> en première colonne, et devient orphelin si la cible est supprimée. <em>Chapitre 06.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi <code>sudo echo "x" &gt; /etc/fichier</code> échoue-t-il, et quelle est la forme correcte ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>La redirection <code>&gt;</code> est exécutée par <strong>le shell</strong>, qui n'est pas root, <em>avant</em> que <code>sudo</code> s'applique. La forme correcte : <code>echo "x" | sudo tee /etc/fichier</code>. <em>Chapitre 09.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q"><code>ping 8.8.8.8</code> répond, <code>ping www.google.fr</code> non. Que conclure, et où regarder ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>La connectivité IP est bonne : le problème est la <strong>résolution de noms</strong>. On vérifie <code>/etc/resolv.conf</code> (serveurs DNS), puis <code>/etc/hosts</code> et l'ordre défini dans <code>/etc/nsswitch.conf</code>. <em>Chapitre 14.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q"><code>systemctl start ssh</code> suffit-il pour que SSH soit disponible après un redémarrage ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Non. <code>start</code> agit <strong>maintenant</strong>, <code>enable</code> agit <strong>au prochain démarrage</strong>. Pour un service qui doit toujours tourner, il faut les deux. <em>Chapitre 17.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Une adresse posée avec <code>ip addr add</code> a disparu après le reboot. Pourquoi, et comment la rendre permanente ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>La commande <code>ip</code> ne modifie <strong>rien de persistant</strong> — elle sert à tester. Pour survivre au redémarrage, écrire l'adresse dans <code>/etc/network/interfaces</code> puis <code>sudo systemctl restart networking</code>. <em>Chapitre 14.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi <code>grep -c "" fichier.txt</code> est-il plus fiable que <code>wc -l</code> pour compter des lignes ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Si la dernière ligne n'a pas de retour à la ligne final, <code>wc -l</code> <strong>sous-compte d'une unité</strong>. <code>grep -c ""</code> compte les lignes réelles quel que soit la fin de fichier. <em>Chapitre 09.</em></p></div>
-                    </details>
-                </li>
-            </ol>
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="linux-debian">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les quinze modules.</p>
+        </section>
     </main>
 </div>
 
 <footer>
     <p><strong>Linux Debian</strong> — Module du centre d'apprentissage IT · Terminal, fichiers, permissions, filtres texte, réseau, APT, SSH et administration de base</p>
-    <p><a href="../index.html">← Retour au portail</a></p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/app.js?v=2"></script>
+<script src="../assets/app.js?v=3"></script>
+<script src="../assets/quiz-data.js?v=3"></script>
+<script src="../assets/quiz.js?v=3"></script>
 </body>
 </html>

@@ -7,10 +7,10 @@
     <title>Bureau à distance (RDS) — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=3">
 </head>
-<body data-domain="rds">
+<body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
@@ -25,7 +25,8 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 1 h</span>
-            <span class="fact"><b>Chapitres</b> 5 + auto-évaluation</span>
+            <span class="fact"><b>Chapitres</b> 5</span>
+            <span class="fact"><b>Test</b> 6 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a></span>
         </div>
     </div>
@@ -41,7 +42,7 @@
             <li><a class="toc__link" href="#deploiement"><span>03</span> Déploiement</a></li>
             <li><a class="toc__link" href="#collections"><span>04</span> Collections &amp; RemoteApp</a></li>
             <li><a class="toc__link" href="#certif"><span>05</span> Certificat</a></li>
-            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
 
@@ -177,7 +178,7 @@
             <p class="chapter__intro">Le portail RD Web Access est servi en HTTPS : il lui faut un certificat. En labo, on en génère un <strong>auto-signé</strong> pour le nom <code>rdwa.orion.local</code> (en production, on le ferait signer par la CA d'entreprise — voir le module <a href="exchange-securite.html">Sécurité / PKI</a>).</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — sur RDWA</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur RDWA</span></div>
                 <pre class="terminal__code"><span class="c"># Certificat auto-signé pour le portail Web Access</span>
 <span class="k">New-SelfSignedCertificate</span> <span class="p">-DnsName</span> <span class="s">"rdwa.orion.local"</span> `
     <span class="p">-CertStoreLocation</span> <span class="s">"cert:\LocalMachine\My"</span> `
@@ -194,80 +195,25 @@
             </div>
         </section>
 
-
-        <!-- Auto-évaluation -->
-        <section class="chapter chapter--quiz" id="teste-toi">
-            <p class="chapter__num">Auto-évaluation</p>
-            <h2 class="chapter__title">Teste-toi</h2>
-            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
-            <ol class="quiz">
-                <li class="quiz__item">
-                    <p class="quiz__q">Que font respectivement RDSH, RDCB et RDWA ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>RDSH</strong> (Session Host) exécute réellement les sessions et les applications ; <strong>RDCB</strong> (Connection Broker) répartit les connexions, gère les collections et la reconnexion ; <strong>RDWA</strong> (Web Access) publie le portail web où l'utilisateur voit ses bureaux et RemoteApp. <em>Chapitre 01.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Quel service de rôle permet d'atteindre le RDS depuis Internet sans VPN ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>La <strong>RD Gateway</strong> : une passerelle qui encapsule le trafic RDP en <strong>HTTPS</strong>. <em>Chapitre 01.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Session-based ou VDI : quelle différence, et lequel pour distribuer une application métier ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>En session-based, plusieurs utilisateurs <strong>partagent un même serveur</strong> — léger et économique : c'est le bon choix pour une appli métier. En VDI, chacun a <strong>sa VM complète</strong> — isolation maximale, mais bien plus gourmand. <em>Chapitre 01.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Que faut-il avoir fait avant de lancer le déploiement RDS depuis le Server Manager ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Tous les serveurs doivent être <strong>membres du domaine</strong> et <strong>ajoutés au pool</strong> (Manage → Add Servers). Le Broker est le point d'orchestration : c'est lui qui « connaît » toute la ferme. <em>Chapitre 03.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Où s'exécute réellement une RemoteApp, et pourquoi l'utilisateur ne s'en rend-il pas compte ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Sur le <strong>RDSH</strong> : seul l'affichage est renvoyé au client, dans une fenêtre qui se comporte comme une application locale. D'où l'intérêt pour publier une seule appli sans exposer tout le bureau. <em>Chapitre 04.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi le portail <code>https://rdwa.orion.local/RDWeb</code> déclenche-t-il une alerte en labo ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Le certificat est <strong>auto-signé</strong> : sa chaîne ne remonte à aucune racine de confiance du client. En production, on le fait signer par la CA d'entreprise et on distribue la racine par GPO. <em>Chapitre 05.</em></p></div>
-                    </details>
-                </li>
-            </ol>
-
-            <h3>Les sigles du module</h3>
-            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
-            <div class="gloss">
-                <div class="gl"><b>RDS</b><span>Remote Desktop Services — le rôle Windows Server qui déporte l'exécution des sessions et des applications sur le serveur.</span></div>
-                <div class="gl"><b>RDSH</b><span>Remote Desktop Session Host — le serveur qui exécute réellement les sessions et les applications.</span></div>
-                <div class="gl"><b>RDCB</b><span>Remote Desktop Connection Broker — répartit les connexions, gère les collections et la reconnexion aux sessions.</span></div>
-                <div class="gl"><b>RDWA</b><span>Remote Desktop Web Access — le portail web où l'utilisateur retrouve ses bureaux et RemoteApp publiés.</span></div>
-                <div class="gl"><b>RD Gateway</b><span>Passerelle qui encapsule le RDP en HTTPS pour un accès depuis Internet, sans VPN.</span></div>
-                <div class="gl"><b>RDS CAL</b><span>Client Access License — la licence d'accès client, gérée par le rôle RD Licensing.</span></div>
-                <div class="gl"><b>VDI</b><span>Virtual Desktop Infrastructure — une VM complète par utilisateur, par opposition au session-based.</span></div>
-                <div class="gl"><b>RemoteApp</b><span>Application publiée seule : elle s'exécute sur le RDSH mais s'affiche comme une fenêtre locale.</span></div>
-                <div class="gl"><b>Collection</b><span>L'unité de publication et de contrôle d'accès : un ou plusieurs Session Hosts + les groupes autorisés.</span></div>
-            </div>
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="rds">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les quinze modules.</p>
+        </section>
     </main>
 </div>
 
 <footer>
     <p><strong>Bureau à distance (RDS)</strong> — Module du centre d'apprentissage IT</p>
-    <p><a href="../index.html">← Retour au portail</a> · Synthèse du labo RDS</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du labo RDS</p>
 </footer>
 
-<script src="../assets/app.js?v=2"></script>
+<script src="../assets/app.js?v=3"></script>
+<script src="../assets/quiz-data.js?v=3"></script>
+<script src="../assets/quiz.js?v=3"></script>
 </body>
 </html>

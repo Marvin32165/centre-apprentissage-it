@@ -8,13 +8,17 @@
    4. Case « chapitre acquis » (mémorisée dans le navigateur)
    5. Bouton « copier » sur les blocs de commandes
    6. Retour en haut de page
-   7. Côté portail : avancement par module + bandeau de reprise
+   7. Côté portail : avancement par module, score du test, bandeau de reprise
+
+   Les scores des tests sont écrits par assets/quiz.js sous la clé
+   cai.scores ; ici on ne fait que les relire pour les afficher.
 */
 (function () {
     'use strict';
 
     var KEY_PROGRESS = 'cai.progress';
     var KEY_LAST = 'cai.last';
+    var KEY_SCORES = 'cai.scores';
 
     /* ── Stockage tolérant aux pannes (navigation privée, cookies bloqués) ── */
     function read(key, fallback) {
@@ -213,11 +217,24 @@
     var cards = Array.prototype.slice.call(document.querySelectorAll('.mod[data-file]'));
     if (cards.length && !chapters.length) {
         var started = 0;
+        var scores = read(KEY_SCORES, {}) || {};
 
         cards.forEach(function (card) {
             var file = card.getAttribute('data-file');
             var total = parseInt(card.getAttribute('data-chapters'), 10) || 0;
             var done = doneList(file).length;
+            var meta = card.querySelector('.mod__meta');
+
+            /* Score du test de fin de module. La clé du fonds de
+               questions est le nom de fichier sans son extension. */
+            var rec = scores['test:' + file.replace(/\.html$/, '')];
+            if (rec && meta) {
+                var badge = document.createElement('span');
+                badge.innerHTML = 'Test <b>' + rec.best + ' %</b>';
+                badge.title = rec.passed ? 'Test validé' : 'Test non validé';
+                meta.appendChild(badge);
+            }
+
             if (!total || !done) return;
             started++;
             var pct = Math.min(100, Math.round((done / total) * 100));
@@ -226,7 +243,6 @@
             wrap.title = done + ' / ' + total + ' chapitres acquis';
             wrap.innerHTML = '<i style="width:' + pct + '%"></i>';
             card.appendChild(wrap);
-            var meta = card.querySelector('.mod__meta');
             if (meta) {
                 var span = document.createElement('span');
                 span.innerHTML = '<b>' + pct + ' %</b> acquis';
@@ -235,13 +251,16 @@
         });
 
         var last = read(KEY_LAST, null);
+        var tests = Object.keys(scores).length;
         var host = document.querySelector('.resume');
-        if (host && (last || started)) {
+        if (host && (last || started || tests)) {
             var inner = document.createElement('div');
             inner.className = 'resume__inner';
-            var txt = last
-                ? 'Dernier module ouvert : <b>' + last.name + '</b>' + (started ? ' · ' + started + ' module' + (started > 1 ? 's' : '') + ' commencé' + (started > 1 ? 's' : '') : '')
-                : started + ' module' + (started > 1 ? 's' : '') + ' commencé' + (started > 1 ? 's' : '');
+            var bits = [];
+            if (started) bits.push(started + ' module' + (started > 1 ? 's' : '') + ' commencé' + (started > 1 ? 's' : ''));
+            if (tests) bits.push(tests + ' évaluation' + (tests > 1 ? 's' : '') + ' passée' + (tests > 1 ? 's' : ''));
+            var txt = (last ? 'Dernier module ouvert : <b>' + last.name + '</b>' : 'Reprise de la progression') +
+                      (bits.length ? ' · ' + bits.join(' · ') : '');
             inner.innerHTML =
                 '<span class="resume__label">Reprendre</span>' +
                 '<span class="resume__text">' + txt + '</span>' +
@@ -249,10 +268,11 @@
                 '<button type="button" class="resume__reset">effacer ma progression</button>';
             host.appendChild(inner);
             inner.querySelector('.resume__reset').addEventListener('click', function () {
-                if (!window.confirm('Effacer la progression enregistrée dans ce navigateur ?')) return;
+                if (!window.confirm('Effacer la progression et les résultats de tests enregistrés dans ce navigateur ?')) return;
                 try {
                     window.localStorage.removeItem(KEY_PROGRESS);
                     window.localStorage.removeItem(KEY_LAST);
+                    window.localStorage.removeItem(KEY_SCORES);
                 } catch (e) { /* ignoré */ }
                 location.reload();
             });

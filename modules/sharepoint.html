@@ -8,9 +8,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="../assets/theme.css?v=2">
+    <link rel="stylesheet" href="../assets/theme.css?v=3">
     <style>
         /* ── Composants propres au module SharePoint ──
            Tout le reste (chapitres, encadrés, terminal, tables, timeline,
@@ -142,7 +142,7 @@
         }
     </style>
 </head>
-<body data-domain="sp">
+<body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
@@ -167,7 +167,8 @@
         <div class="hero__facts">
             <span class="fact fact--n3"><b>Niveau</b> Avancé</span>
             <span class="fact"><b>Durée</b> ≈ 4 h</span>
-            <span class="fact"><b>Chapitres</b> 10 théorie + 8 pratique + auto-évaluation</span>
+            <span class="fact"><b>Chapitres</b> 10 théorie + 8 pratique</span>
+            <span class="fact"><b>Test</b> 8 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a> · <a href="sql-server.html">SQL Server</a></span>
         </div>
     </div>
@@ -204,7 +205,7 @@
                 <li><a class="toc__link" href="#automatisation"><span>P06</span> Automatiser</a></li>
                 <li><a class="toc__link" href="#powershell-admin"><span>P07</span> PowerShell admin</a></li>
                 <li><a class="toc__link" href="#backup-restore"><span>P08</span> Backup &amp; restore</a></li>
-                <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
+                <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
             </ul>
         </div>
     </aside>
@@ -791,7 +792,7 @@
                         <strong>Ouvrir le pare-feu Windows</strong>
                         <p>Autoriser le port statique <strong>TCP 1433</strong> (moteur SQL) et <strong>UDP 1434</strong> (SQL Server Browser, qui aiguille les clients vers l'instance nommée) pour que SRV-Sharepooint01 puisse se connecter.</p>
                         <div class="terminal">
-                            <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — SRV-SQL01</span></div>
+                            <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-SQL01</span></div>
                             <pre class="terminal__code">New-NetFirewallRule -DisplayName "SQL Server (TCP 1433)" `
     -Direction Inbound -Protocol TCP `
     -LocalPort 1433 -Action Allow
@@ -874,7 +875,7 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                         <strong>Accéder à l'Administration centrale</strong>
                         <p>Ouvrir un navigateur sur SRV-Sharepooint01 (ou depuis le poste hôte via 172.16.0.2) :</p>
                         <div class="terminal">
-                            <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Navigateur</span></div>
+                            <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Navigateur</span></div>
                             <pre class="terminal__code">http://SRV-Sharepooint01:2016</pre>
                         </div>
                         <p>Se connecter avec <code>orion\sp_setup</code>. La page d'accueil de l'Administration centrale confirme que l'installation est réussie.</p>
@@ -933,7 +934,7 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                         <strong>Créer l'enregistrement DNS pour l'intranet</strong>
                         <p>Sur <strong>SRV-AD01</strong>, ouvrir <em>DNS Manager</em> → zone de recherche directe <code>orion.local</code> → Nouveau Hôte (A) :</p>
                         <div class="terminal">
-                            <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
+                            <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
                             <pre class="terminal__code">Add-DnsServerResourceRecordA -ZoneName "orion.local" `
     -Name "intranet" -IPv4Address "172.16.0.2"</pre>
                         </div>
@@ -1117,7 +1118,7 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
             <p>À lancer sur <strong>SRV-Sharepooint01</strong> via le menu Démarrer → Microsoft SharePoint Products → <strong>SharePoint Management Shell</strong> (en administrateur). Doit être exécuté avec un compte administrateur de ferme.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">SharePoint Management Shell</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">SharePoint Management Shell</span></div>
                 <pre class="terminal__code"># Informations sur la ferme
 Get-SPFarm | Select BuildVersion, Status
 
@@ -1147,7 +1148,7 @@ Backup-SPFarm -Directory "\\SRV-SQL01\Backup\SP" `
             <p>Module moderne installable sur n'importe quelle machine avec PowerShell 7+. Plus expressif que le Management Shell pour les opérations sur le contenu.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell 7 — n'importe quelle machine</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell 7 — n'importe quelle machine</span></div>
                 <pre class="terminal__code"># Installation du module
 Install-Module PnP.PowerShell -Scope CurrentUser
 
@@ -1189,7 +1190,7 @@ New-PnPWeb -Title "Projets" -Url "projets" `
             <h3>Niveau 1 — Backup de la ferme complète</h3>
             <p>Couvre la configuration, les applications de service et toutes les bases de contenu. Utile pour reconstruire un environnement entier.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">SharePoint Management Shell</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">SharePoint Management Shell</span></div>
                 <pre class="terminal__code"># Backup complet de la ferme
 Backup-SPFarm -Directory "E:\Backups\SP\$(Get-Date -f yyyyMMdd)" `
     -BackupMethod Full -Verbose
@@ -1202,7 +1203,7 @@ Backup-SPFarm -Directory "E:\Backups\SP\$(Get-Date -f yyyyMMdd)" `
             <h3>Niveau 2 — Backup SQL des bases de contenu</h3>
             <p>La méthode la plus rapide et la plus fiable. Se fait directement via SQL Server Management Studio ou PowerShell sur SRV-SQL01.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — SRV-SQL01</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-SQL01</span></div>
                 <pre class="terminal__code"># Importer le module SQL Server
 Import-Module SqlServer
 
@@ -1220,7 +1221,7 @@ Backup-SqlDatabase -ServerInstance "SRV-SQL01\SHAREPOINT" `
             <h3>Niveau 3 — Export d'une collection de sites</h3>
             <p>Granularité maximale : exporter une seule collection, ses sous-sites, sa sécurité et les versions de documents.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">SharePoint Management Shell</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">SharePoint Management Shell</span></div>
                 <pre class="terminal__code"># Export d'une collection de sites
 Export-SPWeb -Identity "http://intranet" `
     -Path "E:\Backups\Sites\intranet_$(Get-Date -f yyyyMMdd).cmp" `
@@ -1250,100 +1251,26 @@ Mount-SPContentDatabase -Name "SP_Content_Intranet" `
             </div>
         </section>
 
-
-        <!-- Auto-évaluation -->
-        <section class="chapter chapter--quiz" id="teste-toi">
-            <p class="chapter__num">Auto-évaluation</p>
-            <h2 class="chapter__title">Teste-toi</h2>
-            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
-            <ol class="quiz">
-                <li class="quiz__item">
-                    <p class="quiz__q">Quelle collation SQL Server SharePoint exige-t-il, et que se passe-t-il si on en choisit une autre ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>Latin1_General_CI_AS_KS_WS</strong> — insensible à la casse, sensible aux accents, au kana et à la largeur ; l'équivalent exact de <code>SQL_Latin1_General_CP1_CI_AS</code>. SharePoint <strong>refuse</strong> toute autre collation : l'erreur se découvre à l'installation de la ferme, quand il est trop tard. <em>Chapitre P01.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Quelle est l'unité de sauvegarde et de restauration dans la hiérarchie SharePoint ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>La <strong>base de contenu</strong> (Content DB). Une collection de sites vit <strong>entièrement dans une seule</strong> base de contenu — elle n'est jamais répartie sur plusieurs. On sauvegarde donc au niveau de la Content DB, et on sécurise au niveau de la collection de sites. <em>Chapitre 07.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Que garantit Microsoft sur SharePoint Online, et que ne garantit-il pas ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Il garantit la <strong>disponibilité de la plateforme</strong> : réplication entre datacenters, SLA 99,9 %, corbeille à deux niveaux (93 jours). Il ne garantit <strong>pas la restauration de votre contenu</strong> au-delà de ces délais, ni la protection contre une suppression malveillante. La sauvegarde externalisée vous incombe. <em>Chapitre 10.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi ne jamais installer SharePoint avec un compte Domain Admin ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Par <strong>moindre privilège</strong>. On utilise <code>sp_setup</code>, administrateur local du serveur et titulaire des droits SQL <code>dbcreator</code> / <code>securityadmin</code> — rien de plus. Le compte de ferme (<code>sp_farm</code>), les pools d'applications et la recherche ont chacun leur compte dédié. <em>Chapitres P01 et P02.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">À quoi sert la <em>passphrase</em> demandée par l'assistant de configuration de ferme ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>À <strong>ajouter d'autres serveurs à la ferme</strong>. Perdue, l'extension de la ferme devient impossible — d'où le conseil de la conserver dans un gestionnaire de mots de passe dès la création. <em>Chapitre P02.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Quel moteur de base de données SharePoint Server accepte-t-il ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>Microsoft SQL Server uniquement</strong> — aucune alternative n'est possible. C'est aussi le composant le plus sensible à sauvegarder : toute la persistance y vit (Config DB, Content DB, bases des applications de service). <em>Chapitre 06.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi assigner les permissions à des groupes plutôt qu'à des utilisateurs ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Parce qu'un départ se traite alors en <strong>une seule opération</strong> : on désactive le compte Active Directory et tous les accès tombent d'un coup, sans avoir à parcourir chaque site et chaque bibliothèque. <em>Chapitre P05.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Une instance nommée <code>SRV-SQL01\SHAREPOINT</code> : pourquoi lui fixer un port statique 1433 et ouvrir aussi l'UDP 1434 ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Une instance nommée prend par défaut un <strong>port dynamique</strong> : le port statique rend la connexion et les règles de pare-feu prévisibles. L'<strong>UDP 1434</strong> reste ouvert pour le <strong>SQL Server Browser</strong>, qui aiguille les clients vers l'instance. <em>Chapitre P01.</em></p></div>
-                    </details>
-                </li>
-            </ol>
-
-            <h3>Les sigles du module</h3>
-            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
-            <div class="gloss">
-                <div class="gl"><b>SE</b><span>Subscription Edition — l'édition par abonnement de SharePoint Server, à mises à jour continues.</span></div>
-                <div class="gl"><b>Ferme</b><span>La frontière d'administration : un ensemble de serveurs partageant une seule base de configuration.</span></div>
-                <div class="gl"><b>WFE</b><span>Web Front End — le tier IIS qui reçoit les requêtes, authentifie et rend les pages.</span></div>
-                <div class="gl"><b>Config DB / Content DB</b><span>Base de configuration de la ferme / base de contenu, qui est l'unité de sauvegarde et de restauration.</span></div>
-                <div class="gl"><b>Collection de sites</b><span>La frontière de sécurité et de quota ; elle vit entièrement dans une seule base de contenu.</span></div>
-                <div class="gl"><b>Application web</b><span>Le conteneur IIS : une URL, un pool d'applications et un mode d'authentification propres.</span></div>
-                <div class="gl"><b>PSConfig</b><span>SharePoint Products Configuration Wizard — l'assistant qui crée ou rejoint une ferme.</span></div>
-                <div class="gl"><b>Passphrase</b><span>Le secret de la ferme, exigé pour y ajouter un serveur supplémentaire.</span></div>
-                <div class="gl"><b>Managed Account</b><span>Compte de service enregistré dans SharePoint, dont il gère la rotation de mot de passe.</span></div>
-                <div class="gl"><b>MinRole</b><span>Répartition automatique des services selon le rôle déclaré de chaque serveur de la ferme.</span></div>
-                <div class="gl"><b>SPFx</b><span>SharePoint Framework — le modèle de développement de composants sur mesure.</span></div>
-                <div class="gl"><b>BCS</b><span>Business Connectivity Services — l'application de service qui relie SharePoint à des données externes.</span></div>
-                <div class="gl"><b>PnP PowerShell</b><span>Module moderne et multiplateforme d'administration, plus expressif que le Management Shell pour le contenu.</span></div>
-                <div class="gl"><b>RPO / RTO</b><span>Perte de données acceptable / délai de restauration acceptable — les deux chiffres qui dimensionnent la sauvegarde.</span></div>
-            </div>
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="sharepoint">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les quinze modules.</p>
+        </section>
     </main>
 </div>
 
 <footer>
     <p><strong>SharePoint Server SE</strong> — Module du centre d'apprentissage IT</p>
-    <p><a href="../index.html">← Retour au portail</a> · 10 chapitres de théorie + 8 chapitres de pratique</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · 10 chapitres de théorie + 8 chapitres de pratique</p>
 </footer>
 
-<script src="../assets/app.js?v=2"></script>
+<script src="../assets/app.js?v=3"></script>
+<script src="../assets/quiz-data.js?v=3"></script>
+<script src="../assets/quiz.js?v=3"></script>
 
 </body>
 </html>

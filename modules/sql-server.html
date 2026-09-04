@@ -7,10 +7,10 @@
     <title>SQL Server — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=3">
 </head>
-<body data-domain="sql">
+<body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
@@ -25,7 +25,8 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 4 h</span>
-            <span class="fact"><b>Chapitres</b> 14 + auto-évaluation</span>
+            <span class="fact"><b>Chapitres</b> 14</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a> · <a href="storage-clustering.html">Stockage &amp; clustering</a></span>
         </div>
     </div>
@@ -50,7 +51,7 @@
             <li><a class="toc__link" href="#diagnostic"><span>12</span> Diagnostiquer un incident</a></li>
             <li><a class="toc__link" href="#supervision"><span>13</span> Supervision au quotidien</a></li>
             <li><a class="toc__link" href="#haute-dispo"><span>14</span> Haute disponibilité</a></li>
-            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
 
@@ -135,7 +136,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">La requête à connaître par cœur</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">La requête à connaître par cœur</span></div>
                 <pre class="terminal__code"><span class="c">-- les bases, leur etat et leur modele de recuperation</span>
 <span class="k">SELECT</span> name, database_id, state_desc, recovery_model_desc
 <span class="k">FROM</span> sys.databases;</pre>
@@ -156,7 +157,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Les fichiers d'une base, en Mo</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Les fichiers d'une base, en Mo</span></div>
                 <pre class="terminal__code"><span class="k">USE</span> GESTION;
 <span class="k">SELECT</span> name, type_desc, physical_name, size <span class="p">*</span> <span class="s">8.0</span> <span class="p">/</span> <span class="s">1024</span> <span class="k">AS</span> SizeMB
 <span class="k">FROM</span> sys.database_files;</pre>
@@ -236,7 +237,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Préparer les dossiers</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Préparer les dossiers</span></div>
                 <pre class="terminal__code"><span class="k">New-Item</span> <span class="p">-ItemType</span> Directory <span class="p">-Path</span> <span class="s">D:\INSPIRATION\data</span> <span class="p">-Force</span>
 <span class="k">New-Item</span> <span class="p">-ItemType</span> Directory <span class="p">-Path</span> <span class="s">D:\INSPIRATION\backup</span> <span class="p">-Force</span>
 <span class="k">New-Item</span> <span class="p">-ItemType</span> Directory <span class="p">-Path</span> <span class="s">G:\INSPIRATION\data</span> <span class="p">-Force</span></pre>
@@ -274,7 +275,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Sur le contrôleur de domaine</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Sur le contrôleur de domaine</span></div>
                 <pre class="terminal__code"><span class="c"># Cle racine KDS - une seule fois par foret</span>
 <span class="c"># le -10h contourne le delai de replication de 10 h, acceptable en labo</span>
 <span class="k">Add-KdsRootKey</span> <span class="p">-EffectiveTime</span> ((<span class="k">Get-Date</span>).AddHours(<span class="s">-10</span>))
@@ -285,7 +286,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Sur le serveur SQL</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Sur le serveur SQL</span></div>
                 <pre class="terminal__code"><span class="c"># Rafraichir le ticket Kerberos de la machine, sinon elle ignore</span>
 <span class="c"># qu'elle vient d'entrer dans le groupe (sinon : redemarrer)</span>
 <span class="k">klist</span> purge <span class="p">-li</span> <span class="s">0x3e7</span>
@@ -321,7 +322,7 @@
             <p>Services · comptes de service · réseau serveur · ports et IP · alias client. Le raccourci est souvent introuvable dans le menu Démarrer : l'outil se lance par son fichier MMC, dont le numéro suit la version du moteur.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Ouvrir l'outil</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Ouvrir l'outil</span></div>
                 <pre class="terminal__code"><span class="c"># SQL Server 2022 -> 16 | 2019 -> 15 | 2017 -> 14 | 2025 -> 17</span>
 <span class="s">C:\Windows\SysWOW64\SQLServerManager16.msc</span></pre>
             </div>
@@ -397,7 +398,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Ouvrir le pare-feu</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Ouvrir le pare-feu</span></div>
                 <pre class="terminal__code"><span class="c"># UDP 1434 : c'est le Browser qui repond "l'instance ecoute sur tel port"</span>
 <span class="k">New-NetFirewallRule</span> <span class="p">-DisplayName</span> <span class="s">"SQL Browser (UDP 1434)"</span> <span class="p">`</span>
     <span class="p">-Direction</span> Inbound <span class="p">-Protocol</span> UDP <span class="p">-LocalPort</span> <span class="s">1434</span> <span class="p">-Action</span> Allow
@@ -417,7 +418,7 @@
 
             <h3>Tester, couche par couche</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Dans cet ordre, jamais un autre</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Dans cet ordre, jamais un autre</span></div>
                 <pre class="terminal__code"><span class="c"># 0. le nom se resout-il, et vers la bonne IP ?</span>
 <span class="k">Resolve-DnsName</span> SQL
 
@@ -459,7 +460,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Plafonner la mémoire</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Plafonner la mémoire</span></div>
                 <pre class="terminal__code"><span class="k">EXEC</span> sp_configure <span class="s">'show advanced options'</span>, <span class="s">1</span>;
 <span class="k">RECONFIGURE</span>;
 
@@ -480,7 +481,7 @@
             <p>Recréée à chaque démarrage du service, elle repart à la taille <strong>configurée</strong>, pas à celle qu'elle avait atteinte : un dimensionnement trop petit se paie à chaque redémarrage. Plusieurs fichiers de données répartissent la contention, et un volume dédié lui évite de concurrencer les données et le journal.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Les fichiers de tempdb</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Les fichiers de tempdb</span></div>
                 <pre class="terminal__code"><span class="k">SELECT</span> physical_name, size <span class="p">*</span> <span class="s">8.0</span> <span class="p">/</span> <span class="s">1024</span> <span class="k">AS</span> SizeMB
 <span class="k">FROM</span> tempdb.sys.database_files;</pre>
             </div>
@@ -499,7 +500,7 @@
 
             <h3>Deux façons de créer</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">CREATE DATABASE</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">CREATE DATABASE</span></div>
                 <pre class="terminal__code"><span class="c">-- le minimum : tout au defaut, herite de la base model</span>
 <span class="k">CREATE DATABASE</span> GESTION;
 
@@ -568,7 +569,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Mesurer avant de décider</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Mesurer avant de décider</span></div>
                 <pre class="terminal__code"><span class="k">SELECT</span> name,
        size <span class="p">*</span> <span class="s">8.0</span> <span class="p">/</span> <span class="s">1024</span> <span class="k">AS</span> SizeMB,
        growth,
@@ -612,7 +613,7 @@
 
             <h3>Les opérations courantes</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Mettre une base hors ligne, et la remettre</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Mettre une base hors ligne, et la remettre</span></div>
                 <pre class="terminal__code"><span class="k">SELECT</span> name, state_desc <span class="k">FROM</span> sys.databases;
 
 <span class="k">ALTER DATABASE</span> GESTION <span class="k">SET OFFLINE</span>;
@@ -689,7 +690,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Les trois sauvegardes</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Les trois sauvegardes</span></div>
                 <pre class="terminal__code"><span class="k">BACKUP DATABASE</span> GESTION <span class="k">TO DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>
     <span class="k">WITH</span> INIT, COMPRESSION, CHECKSUM;
 
@@ -711,7 +712,7 @@
 
             <h3>Vérifier une sauvegarde</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Sans rien restaurer</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Sans rien restaurer</span></div>
                 <pre class="terminal__code"><span class="k">RESTORE VERIFYONLY</span>   <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>;
 <span class="k">RESTORE HEADERONLY</span>   <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>;
 <span class="k">RESTORE FILELISTONLY</span> <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>;</pre>
@@ -732,7 +733,7 @@
             <p>Le réflexe qui évite les catastrophes : ne pas restaurer <em>sur</em> la base en incident, mais <strong>à côté</strong>, sous un autre nom. On récupère les données utiles, on vérifie, et seulement ensuite on décide.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Restauration parallèle</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Restauration parallèle</span></div>
                 <pre class="terminal__code"><span class="k">RESTORE DATABASE</span> GESTION_Recovery
 <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>
 <span class="k">WITH MOVE</span> <span class="s">'GESTION'</span>     <span class="k">TO</span> <span class="s">'D:\data\GESTION_Recovery.mdf'</span>,
@@ -757,7 +758,7 @@
 
             <h3>Revenir juste avant l'erreur</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Point-in-time : le DELETE accidentel de 10 h 30</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Point-in-time : le DELETE accidentel de 10 h 30</span></div>
                 <pre class="terminal__code"><span class="c">-- 10:00 FULL | 10:20 LOG | 10:29 donnees OK | 10:30 DELETE</span>
 <span class="k">RESTORE LOG</span> GESTION_Recovery
 <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_LOG.trn'</span>
@@ -797,7 +798,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">La chaîne complète, en commandes</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">La chaîne complète, en commandes</span></div>
                 <pre class="terminal__code"><span class="c">-- 1. un login au niveau de l'instance</span>
 <span class="k">CREATE LOGIN</span> [ORION\svc] <span class="k">FROM WINDOWS</span>;
 
@@ -887,7 +888,7 @@
 
             <h3>Trois dégradations, trois réponses</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Intégrité, index, statistiques</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Intégrité, index, statistiques</span></div>
                 <pre class="terminal__code"><span class="c">-- 1. corruption des pages sur le disque</span>
 <span class="k">DBCC CHECKDB</span>(<span class="s">'GESTION'</span>) <span class="k">WITH</span> NO_INFOMSGS;
 
@@ -979,7 +980,7 @@
 
             <h3>Identifier qui fait quoi</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Du réflexe rapide aux DMV</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Du réflexe rapide aux DMV</span></div>
                 <pre class="terminal__code"><span class="k">EXEC</span> sp_who2;   <span class="c">-- colonne BlkBy = le SPID de la session BLOQUANTE</span>
 
 <span class="c">-- ce qui tourne maintenant, avec le texte de la requete</span>
@@ -1031,7 +1032,7 @@
             <p>Erreur <code>9002</code>. Le réflexe interdit est d'agrandir le fichier ou de basculer en <code>SIMPLE</code> « pour que ça reparte » : <strong>chercher la cause avant d'agrandir</strong>.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Trois mesures complémentaires</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Trois mesures complémentaires</span></div>
                 <pre class="terminal__code"><span class="k">SELECT</span> name, recovery_model_desc, log_reuse_wait_desc
 <span class="k">FROM</span> sys.databases;
 
@@ -1114,7 +1115,7 @@
             </div>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Health check rapide — le script à garder sous la main</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Health check rapide — le script à garder sous la main</span></div>
                 <pre class="terminal__code"><span class="k">SELECT</span> <span class="p">@@SERVERNAME</span>;   <span class="c">-- sur quelle instance suis-je vraiment ?</span>
 <span class="k">SELECT</span> <span class="p">@@VERSION</span>;      <span class="c">-- edition, version, build, OS</span>
 
@@ -1182,7 +1183,7 @@
             <p>Le <em>Windows Server Failover Cluster</em> est la <strong>fondation Windows</strong> sur laquelle s'appuient les solutions de HA de SQL Server. Il ne sait rien de SQL : il surveille des nœuds, tient un quorum, et bascule des ressources.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Sur les deux nœuds</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Sur les deux nœuds</span></div>
                 <pre class="terminal__code"><span class="k">Install-WindowsFeature</span> failover-clustering <span class="p">`</span>
     <span class="p">-IncludeAllSubFeature</span> <span class="p">-IncludeManagementTools</span></pre>
             </div>
@@ -1236,94 +1237,25 @@
             </div>
         </section>
 
-        <!-- Auto-évaluation -->
-        <section class="chapter chapter--quiz" id="teste-toi">
-            <p class="chapter__num">Auto-évaluation</p>
-            <h2 class="chapter__title">Teste-toi</h2>
-            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
-            <ol class="quiz">
-                <li class="quiz__item">
-                    <p class="quiz__q">Une instance nommée écoute-t-elle sur le port 1433 ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Non : elle prend un <strong>port dynamique</strong>, qui change à chaque redémarrage du service. C'est le <strong>SQL Server Browser</strong>, sur UDP 1434, qui indique aux clients quel port utiliser — s'il est arrêté, la connexion par nom d'instance échoue alors que le moteur tourne parfaitement. D'où la bonne pratique : fixer le port et le documenter. <em>Chapitres 01 et 05.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Quel avantage un gMSA a-t-il sur un compte utilisateur classique, et pourquoi faut-il le désigner pendant l'installation plutôt qu'après ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Active Directory <strong>gère son mot de passe</strong> : long, renouvelé automatiquement, jamais connu ni saisi par personne. Le désigner dans l'assistant fait poser par celui-ci les bonnes <strong>ACL NTFS</strong> sur les dossiers de données ; créé après coup, il faut repasser par le Configuration Manager — et jamais par <code>services.msc</code>, qui ne pose aucun de ces droits. <em>Chapitres 03 et 04.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi une base en recovery model FULL sans sauvegarde de journal est-elle pire qu'une base en SIMPLE ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Parce qu'on cumule les inconvénients sans obtenir la garantie. En <code>FULL</code>, le journal conserve toutes les transactions jusqu'à ce qu'une sauvegarde de journal les libère : sans elle, le <code>.ldf</code> grossit jusqu'à <strong>saturer le disque</strong> (erreur 9002). Et comme la chaîne n'existe pas, on n'a même pas la restauration à un instant précis que <code>FULL</code> est censé apporter. <em>Chapitre 07.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Quelle est la différence entre un LOGIN et un USER ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Le <strong>login</strong> vit dans <code>master</code> et répond à « puis-je me connecter au serveur ? ». Le <strong>user</strong> vit dans la base et répond à « puis-je lire ou écrire ici ? ». Un login sans user se connecte et ne voit rien. L'onglet <em>User Mapping</em> de SSMS crée les deux d'un coup, ce qui fait oublier la distinction — jusqu'à ce qu'une restauration sur une autre instance produise des <strong>utilisateurs orphelins</strong>. <em>Chapitre 10.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Tu retires un droit avec REVOKE et l'utilisateur accède toujours à la table. Pourquoi ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Parce que <code>REVOKE</code> n'est pas <code>DENY</code> : il remet le droit à <strong>neutre</strong>. Si l'utilisateur obtient aussi ce droit par un <strong>rôle</strong> dont il est membre, il le conserve. Priorité : <code>DENY</code> &gt; <code>GRANT</code> &gt; rien — et <code>sysadmin</code> passe outre même un <code>DENY</code>. <em>Chapitre 10.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Le fichier .bak est là et RESTORE VERIFYONLY ne renvoie aucune erreur. La sauvegarde est-elle fiable pour autant ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Non. <code>VERIFYONLY</code> vérifie que le <strong>média est lisible</strong>, rien de plus : il ne dit rien de la chaîne de journaux, des droits, ni de la place disponible sur la cible. <strong>Une sauvegarde non restaurée est une hypothèse, pas une garantie</strong> — et la restauration doit être chronométrée, puisque c'est elle qui donne le RTO réel. <em>Chapitres 09 et 14.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Erreur 9002, journal plein. Quelle est la première chose à faire — et les deux à ne jamais faire ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>D'abord <strong>mesurer</strong> : <code>log_reuse_wait_desc</code> nomme exactement ce qui bloque la réutilisation (<code>LOG_BACKUP</code> dans la majorité des cas — il suffit de sauvegarder le journal). À ne jamais faire : agrandir le fichier ou basculer en <code>SIMPLE</code> pour « que ça reparte », et surtout <strong>supprimer le <code>.ldf</code> à la main</strong>, ce qui rend la base irrécupérable. Noter aussi que la taille physique du fichier ne diminue pas après troncature : c'est normal. <em>Chapitre 12.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Un cluster Always On dispense-t-il de sauvegardes ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Non, et c'est le contresens le plus coûteux. Il traite la panne de <strong>serveur</strong> : RTO en secondes, RPO nul en mode synchrone. Mais une table supprimée, une corruption logique ou un rançongiciel se <strong>répliquent fidèlement</strong> sur le secondaire. HA et DR répondent à deux questions différentes ; seule une sauvegarde permet de remonter le temps. <em>Chapitre 14.</em></p></div>
-                    </details>
-                </li>
-            </ol>
-
-            <div class="gloss">
-                <div class="gl"><b>Instance</b><span>Une copie active du moteur, tournant comme un service Windows, avec sa propre configuration, ses bases, sa sécurité et ses jobs.</span></div>
-                <div class="gl"><b>MDF / NDF / LDF</b><span>Fichier de données principal / secondaire / journal des transactions.</span></div>
-                <div class="gl"><b>gMSA</b><span><em>group Managed Service Account</em> — compte de service dont Active Directory gère le mot de passe.</span></div>
-                <div class="gl"><b>SSMS</b><span>SQL Server Management Studio, la console d'administration graphique. S'installe séparément du moteur.</span></div>
-                <div class="gl"><b>Collation</b><span>Règles de tri et de comparaison des chaînes. <code>CI</code> = insensible à la casse, <code>AS</code> = sensible aux accents.</span></div>
-                <div class="gl"><b>Recovery model</b><span><code>SIMPLE</code>, <code>FULL</code> ou <code>BULK_LOGGED</code> — ce qui détermine si une restauration à un instant précis est possible.</span></div>
-                <div class="gl"><b>DMV</b><span><em>Dynamic Management View</em> — vue système qui expose l'état interne du moteur (<code>sys.dm_exec_requests</code>…).</span></div>
-                <div class="gl"><b>SPID</b><span><em>Server Process ID</em> — l'identifiant d'une session sur l'instance.</span></div>
-                <div class="gl"><b>RPO / RTO</b><span>Combien de données on accepte de perdre / combien de temps on accepte d'être indisponible.</span></div>
-                <div class="gl"><b>WSFC</b><span><em>Windows Server Failover Cluster</em> — la fondation Windows sous les solutions de haute disponibilité SQL Server.</span></div>
-                <div class="gl"><b>Quorum</b><span>Le mécanisme qui départage les nœuds d'un cluster pour éviter le <em>split-brain</em>.</span></div>
-                <div class="gl"><b>Listener</b><span>Le nom réseau unique d'un groupe de disponibilité, qui suit le réplica primaire lors d'une bascule.</span></div>
-            </div>
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="sql-server">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les quinze modules.</p>
+        </section>
     </main>
 </div>
 
 <footer>
     <p><strong>SQL Server</strong> — Module du centre d'apprentissage IT</p>
-    <p><a href="../index.html">← Retour au portail</a></p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/app.js?v=2"></script>
+<script src="../assets/app.js?v=3"></script>
+<script src="../assets/quiz-data.js?v=3"></script>
+<script src="../assets/quiz.js?v=3"></script>
 </body>
 </html>

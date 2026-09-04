@@ -7,10 +7,10 @@
     <title>Windows Server 2025 — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=3">
 </head>
-<body data-domain="server">
+<body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
@@ -25,7 +25,8 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 2 h</span>
-            <span class="fact"><b>Chapitres</b> 7 + auto-évaluation</span>
+            <span class="fact"><b>Chapitres</b> 7</span>
+            <span class="fact"><b>Test</b> 8 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="hyperv.html">Hyper-V</a></span>
         </div>
     </div>
@@ -43,7 +44,7 @@
             <li><a class="toc__link" href="#dfs"><span>05</span> DFS Namespace</a></li>
             <li><a class="toc__link" href="#securite"><span>06</span> Sécurité du serveur</a></li>
             <li><a class="toc__link" href="#labo"><span>07</span> Labo final</a></li>
-            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
 
@@ -99,7 +100,7 @@
             <h3>Ajouter un rôle — deux voies</h3>
             <p>Via le <strong>Server Manager</strong> : <em>Manage → Add Roles and Features</em>, puis on choisit le type d'installation (basé rôle/fonctionnalité ou services Bureau à distance), le serveur cible, et on coche le rôle voulu.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — équivalent en script</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — équivalent en script</span></div>
                 <pre class="terminal__code"><span class="c"># Lister les rôles/fonctionnalités disponibles</span>
 <span class="k">Get-WindowsFeature</span>
 
@@ -135,7 +136,7 @@ sconfig.cmd</pre>
             </ol>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — clonage par disque différentiel</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — clonage par disque différentiel</span></div>
                 <pre class="terminal__code"><span class="c"># Un disque enfant qui ne stocke QUE les différences avec le parent</span>
 <span class="k">New-VHD</span> <span class="p">-Path</span> <span class="s">.\LAB-WS01-DIFF.vhdx</span> `
     <span class="p">-ParentPath</span> <span class="s">"C:\PARENT\TEST-SYSPREP.vhdx"</span> <span class="p">-Differencing</span>
@@ -166,7 +167,7 @@ sconfig.cmd</pre>
 
             <h3>Promouvoir le premier contrôleur de domaine</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
                 <pre class="terminal__code"><span class="c"># Rôle AD DS + DNS</span>
 <span class="k">Install-WindowsFeature</span> AD-Domain-Services, DNS <span class="p">-IncludeManagementTools</span>
 
@@ -178,7 +179,7 @@ sconfig.cmd</pre>
             <h3>Structurer : OU, groupes, utilisateurs</h3>
             <p>Modèle du labo Orion : une OU racine <code>ORION-DPT</code>, trois départements (<em>Management</em>, <em>Development</em>, <em>Accounting</em>), un groupe de sécurité par département et des utilisateurs rattachés.</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — arborescence AD</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — arborescence AD</span></div>
                 <pre class="terminal__code"><span class="c"># OU racine + une OU par département</span>
 <span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"ORION-DPT"</span> <span class="p">-Path</span> <span class="s">"DC=orion,DC=local"</span>
 <span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"Development"</span> <span class="p">-Path</span> <span class="s">"OU=ORION-DPT,DC=orion,DC=local"</span>
@@ -198,7 +199,7 @@ sconfig.cmd</pre>
 
             <h3>Joindre une machine au domaine</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — membre du domaine</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — membre du domaine</span></div>
                 <pre class="terminal__code"><span class="k">Add-Computer</span> <span class="p">-DomainName</span> <span class="s">"orion.local"</span> <span class="p">-Restart</span>
 <span class="c"># Alternative en cmd :</span>
 <span class="c"># netdom join SRV-FILE01 /domain:orion.local /userd:ORION\Administrator /passwordd:*</span></pre>
@@ -226,7 +227,7 @@ sconfig.cmd</pre>
 
             <h3>Configuration réseau d'un serveur</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — IP fixe + DNS</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — IP fixe + DNS</span></div>
                 <pre class="terminal__code"><span class="k">Get-NetAdapter</span>
 <span class="k">New-NetIPAddress</span> <span class="p">-InterfaceAlias</span> <span class="s">"Ethernet"</span> <span class="p">-IPAddress</span> 172.16.50.10 `
     <span class="p">-PrefixLength</span> 24 <span class="p">-DefaultGateway</span> 172.16.50.1
@@ -325,83 +326,25 @@ sconfig.cmd</pre>
             </div>
         </section>
 
-
-        <!-- Auto-évaluation -->
-        <section class="chapter chapter--quiz" id="teste-toi">
-            <p class="chapter__num">Auto-évaluation</p>
-            <h2 class="chapter__title">Teste-toi</h2>
-            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
-            <ol class="quiz">
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi ne peut-on pas simplement copier un disque Windows pour déployer dix serveurs identiques ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Chaque installation porte un <strong>SID</strong> et un nom machine uniques ; les dupliquer est interdit dans un domaine. D'où <code>sysprep /generalize /oobe</code>, qui efface ces éléments avant le clonage. <em>Chapitre 02.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Sur un contrôleur de domaine, quelle adresse DNS renseigner dans la configuration réseau — et pourquoi ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>Lui-même</strong>. Les clients localisent le domaine via les enregistrements <strong>SRV</strong> : sans DNS fonctionnel, aucune ouverture de session AD n'est possible. <em>Chapitres 03 et 04.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Quelles sont les quatre étapes d'une attribution DHCP, et que faut-il de plus dans un domaine AD ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>DORA</strong> : Discover → Offer → Request → Acknowledge. En environnement AD, le serveur DHCP doit en plus être <strong>autorisé dans l'annuaire</strong> avant de pouvoir distribuer. <em>Chapitre 04.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">DFS Namespace et DFS Replication : que fait chacun ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Le <strong>Namespace</strong> présente un chemin logique unique (<code>\\orion.local\Partages\Compta</code>) qui masque l'emplacement physique réel. La <strong>Replication</strong> synchronise le contenu entre serveurs pour la tolérance de panne. Les deux se combinent. <em>Chapitre 05.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">À quel niveau applique-t-on les GPO et délègue-t-on l'administration ? Et par quoi passe-t-on pour autoriser ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Au niveau de l'<strong>unité d'organisation (OU)</strong>. Les autorisations, elles, passent toujours par les <strong>groupes</strong>, jamais par les utilisateurs directement. <em>Chapitre 03.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Quelle cmdlet crée le premier contrôleur de domaine, et quelle autre le second ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><code>Install-ADDSForest</code> crée forêt + domaine + DNS intégré. Pour un contrôleur supplémentaire : <code>Install-ADDSDomainController</code>. Le second DC n'est pas un luxe, c'est la tolérance de panne de l'authentification. <em>Chapitres 03 et 07.</em></p></div>
-                    </details>
-                </li>
-            </ol>
-
-            <h3>Les sigles du module</h3>
-            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
-            <div class="gloss">
-                <div class="gl"><b>AD DS</b><span>Active Directory Domain Services — l'annuaire qui authentifie et organise le réseau.</span></div>
-                <div class="gl"><b>Forêt / domaine / OU</b><span>Frontière de sécurité la plus haute / base d'authentification commune / conteneur logique porteur des GPO.</span></div>
-                <div class="gl"><b>GPO</b><span>Group Policy Object — stratégie appliquée au niveau d'une OU, d'un domaine ou d'un site.</span></div>
-                <div class="gl"><b>SID</b><span>Security Identifier — l'identifiant unique d'une installation ou d'un objet ; sa duplication interdit le clonage brut.</span></div>
-                <div class="gl"><b>SYSPREP</b><span>L'outil qui « généralise » une installation Windows : SID, nom et identifiants matériels retirés.</span></div>
-                <div class="gl"><b>OOBE</b><span>Out-Of-Box Experience — l'écran de première configuration par lequel repasse une image généralisée.</span></div>
-                <div class="gl"><b>A / CNAME / MX / SRV</b><span>Enregistrements DNS : hôte / alias / messagerie / localisation de service — ce sont les SRV qui font trouver un contrôleur de domaine.</span></div>
-                <div class="gl"><b>DORA</b><span>Discover, Offer, Request, Acknowledge — les quatre étapes d'une attribution DHCP.</span></div>
-                <div class="gl"><b>DFS-N / DFS-R</b><span>Espaces de noms (un chemin logique unique) / Réplication (copies synchronisées entre serveurs).</span></div>
-                <div class="gl"><b>FQDN / NetBIOS</b><span>Nom pleinement qualifié (<code>orion.local</code>) / nom court historique (<code>ORION</code>).</span></div>
-                <div class="gl"><b>Server Core</b><span>Installation sans interface graphique : moins de composants, donc moins de surface d'attaque.</span></div>
-                <div class="gl"><b>gMSA</b><span>Group Managed Service Account — compte de service dont Active Directory gère le mot de passe (voir le module PowerShell).</span></div>
-            </div>
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="windows-server">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les quinze modules.</p>
+        </section>
     </main>
 </div>
 
 <footer>
     <p><strong>Windows Server 2025</strong> — Module du centre d'apprentissage IT</p>
-    <p><a href="../index.html">← Retour au portail</a> · Synthèse des notes de labo</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse des notes de labo</p>
 </footer>
 
-<script src="../assets/app.js?v=2"></script>
+<script src="../assets/app.js?v=3"></script>
+<script src="../assets/quiz-data.js?v=3"></script>
+<script src="../assets/quiz.js?v=3"></script>
 </body>
 </html>

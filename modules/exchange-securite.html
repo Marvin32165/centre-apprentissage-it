@@ -7,10 +7,10 @@
     <title>Exchange &amp; Sécurité (PKI) — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=3">
 </head>
-<body data-domain="exch">
+<body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
@@ -25,7 +25,8 @@
         <div class="hero__facts">
             <span class="fact fact--n3"><b>Niveau</b> Avancé</span>
             <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
-            <span class="fact"><b>Chapitres</b> 6 + auto-évaluation</span>
+            <span class="fact"><b>Chapitres</b> 6</span>
+            <span class="fact"><b>Test</b> 7 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a></span>
         </div>
     </div>
@@ -42,7 +43,7 @@
             <li><a class="toc__link" href="#pki"><span>04</span> PKI &amp; chaîne de confiance</a></li>
             <li><a class="toc__link" href="#adcs"><span>05</span> CA interne (AD CS)</a></li>
             <li><a class="toc__link" href="#certs-exch"><span>06</span> Certificats Exchange</a></li>
-            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
 
@@ -102,7 +103,7 @@
 
             <h3>Créer un compte + sa boîte (<code>New-Mailbox</code>)</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Exchange Management Shell</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Exchange Management Shell</span></div>
                 <pre class="terminal__code"><span class="k">New-Mailbox</span> <span class="p">-Name</span> <span class="s">'Jean Dupont'</span> <span class="p">-Alias</span> <span class="s">'jean.dupont'</span> `
     <span class="p">-FirstName</span> <span class="s">'Jean'</span> <span class="p">-LastName</span> <span class="s">'Dupont'</span> <span class="p">-DisplayName</span> <span class="s">'Jean Dupont'</span> `
     <span class="p">-UserPrincipalName</span> <span class="s">'jean.dupont@m.zepp.lan'</span> `
@@ -114,7 +115,7 @@
 
             <h3>Activer une boîte sur un compte AD existant (<code>Enable-Mailbox</code>)</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Exchange Management Shell</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Exchange Management Shell</span></div>
                 <pre class="terminal__code"><span class="c"># Le compte 'marie.martin' existe déjà dans AD…</span>
 <span class="k">Enable-Mailbox</span> <span class="p">-Identity</span> <span class="s">'marie.martin'</span> <span class="p">-Database</span> <span class="s">'Mailbox Database 0112725915'</span>
 
@@ -204,7 +205,7 @@
 
             <h4>Exemple réel — le certificat de <code>*.google.com</code></h4>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Visionneuse de certificats — lecture de bas en haut</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Visionneuse de certificats — lecture de bas en haut</span></div>
                 <pre class="terminal__code">GTS Root R1          <span class="c">← CA RACINE — préinstallée dans Windows</span>
   └─ WR2             <span class="c">← CA INTERMÉDIAIRE — signée par la racine</span>
        └─ *.google.com   <span class="c">← CERTIFICAT SERVEUR (feuille, wildcard)</span></pre>
@@ -246,7 +247,7 @@
             <p class="chapter__intro">Concrètement, la CA d'entreprise s'installe sur le contrôleur de domaine via le rôle <strong>AD CS</strong> (Active Directory Certificate Services). Une fois en place, elle peut signer les certificats du domaine — dont celui d'Exchange.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — sur l'AD</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur l'AD</span></div>
                 <pre class="terminal__code"><span class="c"># Rôle CA + inscription web</span>
 <span class="k">Install-WindowsFeature</span> AD-Certificate <span class="p">-IncludeManagementTools</span>
 <span class="k">Install-WindowsFeature</span> ADCS-Web-Enrollment
@@ -306,81 +307,25 @@
             </div>
         </section>
 
-
-        <!-- Auto-évaluation -->
-        <section class="chapter chapter--quiz" id="teste-toi">
-            <p class="chapter__num">Auto-évaluation</p>
-            <h2 class="chapter__title">Teste-toi</h2>
-            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
-            <ol class="quiz">
-                <li class="quiz__item">
-                    <p class="quiz__q">Quelle commande retire la boîte aux lettres sans supprimer le compte Active Directory ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><code>Disable-Mailbox</code>. Attention : <code>Remove-Mailbox</code> supprime <strong>aussi le compte AD</strong>, pas seulement la messagerie. <em>Chapitre 02.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">On chiffre avec la clé publique du destinataire : quel service obtient-on ? Et avec sa propre clé privée ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Clé publique du destinataire → <strong>confidentialité</strong> (lui seul peut déchiffrer). Sa propre clé privée → <strong>signature</strong> : authenticité et intégrité. <em>Chapitre 03.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi une signature numérique ne cache-t-elle rien du message ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Parce que ce qui « déchiffre » est la <strong>clé publique</strong>, que tout le monde possède. Le but n'est pas le secret mais la <strong>preuve d'origine</strong> : si ça se vérifie avec la clé publique de Marvin, seul Marvin a pu le produire. <em>Chapitre 03.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Que signe-t-on réellement, et pourquoi pas le message entier ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>On signe le <strong>hash</strong> du message (SHA-256) — signer tout le message serait trop lent. Le destinataire recalcule le hash, déchiffre la signature avec la clé publique, et compare : identiques → bon émetteur et message intact. <em>Chapitre 03.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Qu'est-ce qui rend un certificat impossible à falsifier : le nom inscrit dessus ou autre chose ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>La <strong>signature cryptographique de la CA</strong>, apposée avec sa clé privée. Sans voler cette clé privée, personne ne peut fabriquer un faux certificat que le magasin de confiance validerait. <em>Chapitre 04.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Quel est l'avantage décisif d'une <em>Enterprise Root CA</em> sur une CA autonome ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Sa racine est <strong>publiée automatiquement dans Active Directory</strong> : tous les postes du domaine lui font confiance sans le moindre import manuel. C'est ce qui permet à Outlook et OWA de joindre Exchange sans alerte. <em>Chapitres 05 et 06.</em></p></div>
-                    </details>
-                </li>
-            </ol>
-
-            <h3>Les sigles du module</h3>
-            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
-            <div class="gloss">
-                <div class="gl"><b>PKI</b><span>Public Key Infrastructure — l'ensemble qui transforme une clé publique en identité vérifiable.</span></div>
-                <div class="gl"><b>CA</b><span>Certificate Authority — l'autorité qui signe les certificats avec sa clé privée.</span></div>
-                <div class="gl"><b>AD CS</b><span>Active Directory Certificate Services — le rôle Windows qui héberge la CA d'entreprise.</span></div>
-                <div class="gl"><b>CSR</b><span>Certificate Signing Request — la demande envoyée à la CA pour obtenir un certificat.</span></div>
-                <div class="gl"><b>CRL / OCSP</b><span>Liste de révocation / protocole de vérification en ligne : deux façons d'invalider un certificat avant son expiration.</span></div>
-                <div class="gl"><b>Racine / intermédiaire / feuille</b><span>Les trois niveaux d'une chaîne : la racine de confiance, l'intermédiaire qui la protège au quotidien, et le certificat du serveur.</span></div>
-                <div class="gl"><b>Hash</b><span>Empreinte courte et unique d'un message (SHA-256) — c'est elle qu'on signe, pas le message entier.</span></div>
-                <div class="gl"><b>EMS</b><span>Exchange Management Shell — la console PowerShell d'administration d'Exchange.</span></div>
-                <div class="gl"><b>OWA</b><span>Outlook Web App — l'accès web aux boîtes aux lettres, publié en HTTPS.</span></div>
-                <div class="gl"><b>MX</b><span>L'enregistrement DNS qui indique quel serveur reçoit le courrier d'un domaine.</span></div>
-            </div>
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="exchange-securite">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les quinze modules.</p>
+        </section>
     </main>
 </div>
 
 <footer>
     <p><strong>Exchange &amp; Sécurité (PKI)</strong> — Module du centre d'apprentissage IT</p>
-    <p><a href="../index.html">← Retour au portail</a> · Synthèse des fiches PKI &amp; du TP Exchange 2019</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse des fiches PKI &amp; du TP Exchange 2019</p>
 </footer>
 
-<script src="../assets/app.js?v=2"></script>
+<script src="../assets/app.js?v=3"></script>
+<script src="../assets/quiz-data.js?v=3"></script>
+<script src="../assets/quiz.js?v=3"></script>
 </body>
 </html>

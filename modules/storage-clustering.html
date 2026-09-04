@@ -7,10 +7,10 @@
     <title>Stockage &amp; Clustering — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=3">
 </head>
-<body data-domain="clu">
+<body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
@@ -25,7 +25,8 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 3 h</span>
-            <span class="fact"><b>Chapitres</b> 11 + auto-évaluation</span>
+            <span class="fact"><b>Chapitres</b> 11</span>
+            <span class="fact"><b>Test</b> 8 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a></span>
         </div>
     </div>
@@ -47,7 +48,7 @@
             <li><a class="toc__link" href="#tp-cluster"><span>09</span> TP — Créer le cluster de basculement</a></li>
             <li><a class="toc__link" href="#tp-fileserver"><span>10</span> TP — Quorum &amp; rôle Serveur de fichiers</a></li>
             <li><a class="toc__link" href="#tests-panne"><span>11</span> Tester le basculement et les pannes</a></li>
-            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
 
@@ -197,7 +198,7 @@
             <p class="chapter__intro">Un partage rend un dossier accessible à distance via un chemin UNC. Attention : il ajoute une <em>deuxième</em> couche de permissions, indépendante de NTFS.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Chemin UNC &amp; inventaire des partages</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Chemin UNC &amp; inventaire des partages</span></div>
                 <pre class="terminal__code"><span class="c"># Forme d'un chemin UNC</span>
 \\NomDuServeur\NomDuPartage
 
@@ -363,7 +364,7 @@
 
             <h3>Installer la fonctionnalité (sur les deux nœuds)</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — sur CLUSTER1 et CLUSTER2</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur CLUSTER1 et CLUSTER2</span></div>
                 <pre class="terminal__code"><span class="k">Install-WindowsFeature</span> <span class="s">Failover-Clustering</span> <span class="p">-IncludeManagementTools</span></pre>
             </div>
             <p>Puis ouvrir <strong>Tools → Failover Cluster Manager</strong>.</p>
@@ -389,7 +390,7 @@
 
             <h3>Vérifier que le cluster existe vraiment</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — vérifications</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — vérifications</span></div>
                 <pre class="terminal__code"><span class="c"># Le nom du cluster doit se résoudre en DNS</span>
 <span class="k">Resolve-DnsName</span> <span class="s">CLUSTER.orion.local</span>
 
@@ -432,7 +433,7 @@
 
             <h3>Installer et configurer le rôle</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">PowerShell — sur les deux nœuds</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur les deux nœuds</span></div>
                 <pre class="terminal__code"><span class="k">Install-WindowsFeature</span> <span class="s">FS-FileServer</span></pre>
             </div>
             <div class="steps">
@@ -478,94 +479,25 @@
             </div>
         </section>
 
-
-        <!-- Auto-évaluation -->
-        <section class="chapter chapter--quiz" id="teste-toi">
-            <p class="chapter__num">Auto-évaluation</p>
-            <h2 class="chapter__title">Teste-toi</h2>
-            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
-            <ol class="quiz">
-                <li class="quiz__item">
-                    <p class="quiz__q">Quelle est la différence de nature entre un NAS et un SAN — et pourquoi est-ce elle qui rend le clustering possible ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Le NAS <strong>partage des fichiers</strong> ; le SAN <strong>livre des blocs</strong>. Le serveur voit donc un LUN SAN comme un disque local qu'il partitionne et formate lui-même — c'est exactement ce dont un cluster a besoin pour un stockage partagé. <em>Chapitre 01.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Un utilisateur a « Contrôle total » en NTFS mais « Lecture » sur le partage. Que peut-il faire depuis le réseau ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>Lire, uniquement.</strong> À travers le réseau, le droit effectif est le <strong>plus restrictif</strong> des deux jeux de permissions. C'est la cause n°1 des « pourtant je lui ai donné le contrôle total ». <em>Chapitre 04.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Après avoir initialisé les LUN depuis CLUSTER1, pourquoi les remettre <em>offline</em> avant de continuer ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Le même LUN est visible <strong>simultanément</strong> par les deux nœuds. Si les deux écrivent dessus hors du contrôle du cluster, le système de fichiers est corrompu. Tant que le cluster n'a pas pris la main, les disques restent offline. <em>Chapitre 08.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">À quoi sert le disque témoin dans un cluster à deux nœuds ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>À fournir la <strong>voix impaire</strong> qui départage. Sans lui, une coupure réseau donnerait une voix à chacun : égalité, et risque de <strong>split-brain</strong> — les deux nœuds se croient actifs et écrivent sur le même LUN. <em>Chapitre 10.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">À quel nom les clients se connectent-ils une fois le rôle Serveur de fichiers créé ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Au nom du rôle : <code>\\SRV-FS01\Partage</code>. Jamais à CLUSTER1 ni CLUSTER2 — c'est ce nom-là qui bascule d'un nœud à l'autre, et c'est tout l'intérêt de l'opération. <em>Chapitre 10.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Que démontre le test « perte du réseau iSCSI » ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Que le <strong>SAN reste un point de défaillance unique</strong> tant qu'il n'est pas redondé (multipathing) : sans stockage, aucun nœud ne peut servir le rôle. C'est le test le plus sévère des cinq. <em>Chapitre 11.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">RAID, réplication DFS, cluster : contre quoi aucun des trois ne protège ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Contre la <strong>suppression</strong>, la <strong>corruption</strong> et le <strong>rançongiciel</strong> — qui se répliquent fidèlement et instantanément. Seule la sauvegarde (règle 3-2-1, restauration testée) protège de ceux-là. <em>Chapitres 02, 05, 06 et 11.</em></p></div>
-                    </details>
-                </li>
-            </ol>
-
-            <h3>Les sigles du module</h3>
-            <p>Le vocabulaire à savoir traduire sans hésiter — si l'un d'eux ne te dit rien, le chapitre correspondant mérite une relecture.</p>
-            <div class="gloss">
-                <div class="gl"><b>DAS / NAS / SAN</b><span>Disques attachés à un serveur / partage de fichiers en réseau / réseau dédié qui livre des blocs.</span></div>
-                <div class="gl"><b>LUN</b><span>Logical Unit Number — le volume logique présenté par la baie à un serveur.</span></div>
-                <div class="gl"><b>Target / Initiator</b><span>La cible exposée par la baie / le composant du serveur qui s'y connecte.</span></div>
-                <div class="gl"><b>iSCSI</b><span>Transport SCSI sur IP — permet un SAN sans Fibre Channel, sur le réseau Ethernet.</span></div>
-                <div class="gl"><b>CHAP</b><span>Challenge-Handshake Authentication Protocol — authentifie l'initiateur auprès de la cible sans transmettre le secret.</span></div>
-                <div class="gl"><b>Multipathing</b><span>Plusieurs chemins réseau vers le même volume, pour supprimer un point de panne unique.</span></div>
-                <div class="gl"><b>GPT / MBR</b><span>Partitionnement moderne (UEFI, gros disques) / ancien, plafonné vers 2 To.</span></div>
-                <div class="gl"><b>ACL / ACE</b><span>Access Control List et ses entrées — la liste de qui peut faire quoi sur un objet NTFS.</span></div>
-                <div class="gl"><b>UNC</b><span>Universal Naming Convention — la forme <code>\\Serveur\Partage</code> d'un chemin réseau.</span></div>
-                <div class="gl"><b>FSRM</b><span>File Server Resource Manager — quotas de dossier, modèles, filtres de fichiers et rapports.</span></div>
-                <div class="gl"><b>EFS</b><span>Encrypting File System — chiffrement de fichiers NTFS individuels (≠ BitLocker, qui chiffre le volume).</span></div>
-                <div class="gl"><b>DFS-N / DFS-R</b><span>Espaces de noms DFS (chemin logique unique) / Réplication DFS (copies synchronisées).</span></div>
-                <div class="gl"><b>CSV</b><span>Cluster Shared Volume — un disque du cluster monté simultanément sur tous les nœuds sous <code>C:\ClusterStorage</code>.</span></div>
-                <div class="gl"><b>Quorum</b><span>Le mécanisme de vote qui décide quel groupe de nœuds reste maître ; le disque témoin apporte la voix impaire.</span></div>
-                <div class="gl"><b>Split-brain</b><span>La situation à éviter : deux nœuds se croient actifs et écrivent sur le même LUN.</span></div>
-                <div class="gl"><b>CNO</b><span>Cluster Name Object — l'objet ordinateur du cluster dans Active Directory.</span></div>
-            </div>
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="storage-clustering">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les quinze modules.</p>
+        </section>
     </main>
 </div>
 
 <footer>
     <p><strong>Stockage &amp; clustering</strong> — Module du centre d'apprentissage IT</p>
-    <p><a href="../index.html">← Retour au portail</a></p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/app.js?v=2"></script>
+<script src="../assets/app.js?v=3"></script>
+<script src="../assets/quiz-data.js?v=3"></script>
+<script src="../assets/quiz.js?v=3"></script>
 </body>
 </html>

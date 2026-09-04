@@ -7,10 +7,10 @@
     <title>Hyper-V — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=3">
 </head>
-<body data-domain="hv">
+<body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
@@ -25,7 +25,8 @@
         <div class="hero__facts">
             <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
             <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
-            <span class="fact"><b>Chapitres</b> 7 + auto-évaluation</span>
+            <span class="fact"><b>Chapitres</b> 7</span>
+            <span class="fact"><b>Test</b> 8 questions</span>
             <span class="fact"><b>Prérequis</b> aucun</span>
         </div>
     </div>
@@ -43,7 +44,7 @@
             <li><a class="toc__link" href="#sysprep"><span>05</span> Sysprep : fabriquer une image réutilisable</a></li>
             <li><a class="toc__link" href="#differenciation"><span>06</span> Déployer des VM en série (disque parent)</a></li>
             <li><a class="toc__link" href="#commutateurs"><span>07</span> Choisir son commutateur virtuel</a></li>
-            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
 
@@ -151,7 +152,7 @@
 
             <h3>Deux commandes de confort</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Invite de commandes (admin)</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Invite de commandes (admin)</span></div>
                 <pre class="terminal__code"><span class="c"># Réarmer la période d'évaluation (180 jours)</span>
 <span class="k">slmgr</span> <span class="p">/rearm</span></pre>
             </div>
@@ -176,7 +177,7 @@
 
             <h3>Le pare-feu en labo</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Invite de commandes (admin)</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Invite de commandes (admin)</span></div>
                 <pre class="terminal__code"><span class="c"># Désactiver le pare-feu sur tous les profils</span>
 <span class="k">netsh</span> advfirewall set allprofiles state <span class="s">off</span>
 
@@ -263,73 +264,25 @@
             </div>
         </section>
 
-
-        <!-- Auto-évaluation -->
-        <section class="chapter chapter--quiz" id="teste-toi">
-            <p class="chapter__num">Auto-évaluation</p>
-            <h2 class="chapter__title">Teste-toi</h2>
-            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
-            <ol class="quiz">
-                <li class="quiz__item">
-                    <p class="quiz__q">Parmi les réglages de l'assistant de création, lequel est définitif — et que faire si on s'est trompé ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>La <strong>génération</strong> (1 = BIOS, 2 = UEFI). Elle se fixe à la création et ne peut plus être changée : il faut recréer la VM. <em>Chapitre 02.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi le renommage de la machine est-il placé en dernier dans la check-list du premier démarrage ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Parce qu'il <strong>redémarre le serveur</strong>. On regroupe donc avant tout ce qui ne nécessite pas de reboot : IP fixe, fuseau horaire, IE ESC, RDP, Windows Update. <em>Chapitre 04.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Que retire exactement Sysprep en mode « Generalize », et quelle erreur ruine l'image ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Il retire le <strong>SID</strong> unique, le nom de la machine et les identifiants matériels. L'erreur fatale : <strong>rallumer la VM</strong> après le sysprep — un seul démarrage réattribue un SID et ruine l'image. <em>Chapitre 05.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Que contient un disque de différenciation, et pourquoi le disque parent ne doit-il plus jamais être modifié ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Il ne stocke que les <strong>écarts</strong> avec le parent. Si le parent bouge, toutes les VM enfants qui en dépendent deviennent inutilisables : <code>C:\PARENT\sysprep.vhdx</code> est en lecture seule de fait. <em>Chapitre 06.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Trois VM d'un labo Active Directory ne doivent joindre ni Internet, ni le réseau de la maison. Quel type de commutateur virtuel ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>Privé</strong> (VM ↔ VM uniquement). « Interne » ajouterait l'hôte, « Externe » ouvrirait sur le réseau physique — et le DHCP du labo risquerait de répondre sur le réseau réel. <em>Chapitre 07.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Le TP conclut que les disques de différenciation ne sont pas le bon choix pour un labo durable. Pourquoi ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Les <strong>performances</strong> : chaque lecture peut devoir traverser la chaîne parent/enfant. On garde la différenciation pour du jetable recréé souvent, et on préfère un disque à taille dynamique classique pour un labo qui dure. <em>Chapitre 06.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pourquoi faut-il rallumer le pare-feu avant de lancer un Sysprep ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Parce que l'état du pare-feu est <strong>capturé dans l'image</strong> : toutes les VM clonées naîtraient désarmées. Couper le pare-feu ne se justifie que le temps d'un TP. <em>Chapitre 04.</em></p></div>
-                    </details>
-                </li>
-            </ol>
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="hyperv">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les quinze modules.</p>
+        </section>
     </main>
 </div>
 
 <footer>
     <p><strong>Hyper-V</strong> — Module du centre d'apprentissage IT</p>
-    <p><a href="../index.html">← Retour au portail</a></p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/app.js?v=2"></script>
+<script src="../assets/app.js?v=3"></script>
+<script src="../assets/quiz-data.js?v=3"></script>
+<script src="../assets/quiz.js?v=3"></script>
 </body>
 </html>

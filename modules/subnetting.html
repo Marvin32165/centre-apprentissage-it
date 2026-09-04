@@ -8,10 +8,10 @@
     <meta name="description" content="Le subnetting enfin clair : binaire, masques, CIDR, calcul mental (block size / magic number), VLSM pas à pas et exercices corrigés.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=3">
 </head>
-<body data-domain="sub">
+<body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
@@ -26,7 +26,8 @@
         <div class="hero__facts">
             <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
             <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
-            <span class="fact"><b>Chapitres</b> 7 + auto-évaluation</span>
+            <span class="fact"><b>Chapitres</b> 7</span>
+            <span class="fact"><b>Test</b> 8 questions</span>
             <span class="fact"><b>Prérequis</b> aucun</span>
         </div>
     </div>
@@ -44,7 +45,7 @@
             <li><a class="toc__link" href="#mental"><span>05</span> Calcul mental rapide</a></li>
             <li><a class="toc__link" href="#vlsm"><span>06</span> VLSM pas à pas</a></li>
             <li><a class="toc__link" href="#exos"><span>07</span> Exercices corrigés</a></li>
-            <li><a class="toc__link" href="#teste-toi"><span>✓</span> Teste-toi</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
 
@@ -120,7 +121,7 @@
             </div>
             <p>Un octet = la somme des valeurs dont le bit vaut 1. Chaque bit à 1 « allume » sa valeur :</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot" style="background:#FF5F57"></span><span class="terminal__dot" style="background:#FEBC2E"></span><span class="terminal__dot" style="background:#28C840"></span><span class="terminal__title">Conversion binaire → décimal</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Conversion binaire → décimal</span></div>
                 <pre class="terminal__code"><span class="c"># 11000000  →  128 + 64                    = 192</span>
 <span class="c"># 10101000  →  128 +      32 +      8       = 168</span>
 <span class="c"># 11111111  →  128+64+32+16+8+4+2+1         = 255</span>
@@ -329,66 +330,25 @@
             </div>
         </section>
 
-
-        <!-- Auto-évaluation -->
-        <section class="chapter chapter--quiz" id="teste-toi">
-            <p class="chapter__num">Auto-évaluation</p>
-            <h2 class="chapter__title">Teste-toi</h2>
-            <p class="chapter__intro">Réponds de tête — à voix haute si possible — <em>avant</em> de déplier la correction. Une question qui bloque désigne le chapitre à relire : son numéro est rappelé avec la réponse.</p>
-            <ol class="quiz">
-                <li class="quiz__item">
-                    <p class="quiz__q">Quel est le block size d'un /27, et à quel sous-réseau appartient 172.16.20.170/27 ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Masque <code>255.255.255.224</code> → block size = 256 − 224 = <strong>32</strong>. Multiples : 0, 32, … 160, 192. Comme 160 ≤ 170 &lt; 192 : réseau <strong>172.16.20.160</strong>, broadcast <strong>.191</strong>, hôtes <code>.161 → .190</code>. <em>Chapitre 05.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Combien d'hôtes utilisables dans un /26, et d'où vient le « −2 » ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>2<sup>6</sup> − 2 = <strong>62</strong>. On retire l'<strong>adresse réseau</strong> et l'<strong>adresse de broadcast</strong>, qui ne sont attribuables à aucune machine. <em>Chapitre 03.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">On passe un /24 en /26. Combien de sous-réseaux obtient-on, et pourquoi ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>On a emprunté <strong>2 bits</strong> à la partie hôte (24 → 26) → 2<sup>2</sup> = <strong>4 sous-réseaux</strong>, qui avancent de 64 en 64. <em>Chapitre 04.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Dans quel ordre attribue-t-on les blocs en VLSM, et que se passe-t-il si on fait l'inverse ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Du <strong>plus gros besoin au plus petit</strong>. En commençant par les petits, les grands blocs ne rentrent plus dans les trous laissés — on est obligé de tout recommencer. <em>Chapitre 06.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Quel masque pour une liaison point-à-point entre deux routeurs ?</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p><strong>/30</strong> : 2<sup>2</sup> − 2 = 2 adresses utilisables, exactement ce qu'il faut. <em>Chapitre 06.</em></p></div>
-                    </details>
-                </li>
-                <li class="quiz__item">
-                    <p class="quiz__q">Pour <code>10.0.0.201/26</code>, donne le réseau et le broadcast de tête.</p>
-                    <details class="reveal">
-                        <summary>Voir la réponse</summary>
-                        <div class="reveal__body"><p>Block size 64 → multiples 0, 64, 128, <strong>192</strong>, 256. 192 ≤ 201 &lt; 256 → réseau <strong>10.0.0.192</strong>, broadcast <strong>10.0.0.255</strong>, hôtes <code>.193 → .254</code>. <em>Chapitre 07.</em></p></div>
-                    </details>
-                </li>
-            </ol>
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="subnetting">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les quinze modules.</p>
+        </section>
     </main>
 </div>
 
 <footer>
     <p><strong>Réseau &amp; Subnetting</strong> — Module du centre d'apprentissage IT</p>
-    <p><a href="../index.html">← Retour au portail</a> · Pour approfondir : <a href="https://www.youtube.com/watch?v=5WfiTHiU4x8&list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF" target="_blank" rel="noopener">Subnetting — NetworkChuck</a></p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/watch?v=5WfiTHiU4x8&list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF" target="_blank" rel="noopener">Subnetting — NetworkChuck</a></p>
 </footer>
 
-<script src="../assets/app.js?v=2"></script>
+<script src="../assets/app.js?v=3"></script>
+<script src="../assets/quiz-data.js?v=3"></script>
+<script src="../assets/quiz.js?v=3"></script>
 </body>
 </html>
