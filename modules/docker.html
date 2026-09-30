@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Docker : conteneur ou VM, images et registre, installer docker-ce proprement, piloter des conteneurs, écrire un Dockerfile, volumes persistants, réseau des conteneurs et Docker Compose.">
+    <title>Docker &amp; conteneurs — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=7">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 04 · Virtualisation, homelab &amp; sécurité · 2 / 4</p>
+        <h1 class="hero__title">Docker<br><em>empaqueter une application</em></h1>
+        <p class="hero__lead">Comprendre ce qu'est vraiment un conteneur, installer Docker comme en production, puis construire ses images, garder ses données, ouvrir le réseau et décrire une application entière dans un seul fichier Compose.</p>
+        <div class="hero__meta">
+            <span class="chip">docker-ce</span><span class="chip">Dockerfile</span><span class="chip">Volumes</span><span class="chip">Bridge &amp; NAT</span><span class="chip">Docker Compose</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 3 h</span>
+            <span class="fact"><b>Chapitres</b> 8</span>
+            <span class="fact"><b>Test</b> 8 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a></span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Docker &amp; conteneurs</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#conteneur"><span>01</span> Conteneur ou VM ?</a></li>
+            <li><a class="toc__link" href="#images"><span>02</span> Images, couches &amp; registre</a></li>
+            <li><a class="toc__link" href="#installer"><span>03</span> Installer Docker proprement</a></li>
+            <li><a class="toc__link" href="#piloter"><span>04</span> Lancer et piloter des conteneurs</a></li>
+            <li><a class="toc__link" href="#dockerfile"><span>05</span> Écrire un Dockerfile</a></li>
+            <li><a class="toc__link" href="#volumes"><span>06</span> Volumes &amp; données persistantes</a></li>
+            <li><a class="toc__link" href="#reseau"><span>07</span> Le réseau des conteneurs</a></li>
+            <li><a class="toc__link" href="#compose"><span>08</span> Docker Compose</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Docker &amp; conteneurs</div>
+                <div class="section-banner__desc">Du premier <code>hello-world</code> à une application multi-conteneurs décrite dans un fichier</div>
+            </div>
+        </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Expliquer en quoi un conteneur n'est <strong>pas</strong> une VM, et ce que font les namespaces et les cgroups.</li>
+                <li>Installer <code>docker-ce</code> depuis le dépôt officiel, en figeant la version, sans script tout-en-un.</li>
+                <li>Lancer, entrer, quitter, surveiller et supprimer des conteneurs sans les arrêter par erreur.</li>
+                <li>Écrire un Dockerfile, construire l'image et publier son port.</li>
+                <li>Garder des données au-delà de la vie d'un conteneur, et relier des conteneurs par un réseau créé.</li>
+                <li>Décrire une application web + base de données dans un <code>compose.yaml</code> et la piloter.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="linux-debian.html">Linux Debian</a> — terminal, APT, droits et services. Avoir vu <a href="proxmox.html">Proxmox</a> aide à situer conteneurs LXC et conteneurs Docker.</p>
+            <p class="brief__foot">Ce module prépare <a href="homelab.html">Homelab &amp; Self-hosting</a>, où chaque service auto-hébergé tourne en conteneur.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="chapter" id="conteneur">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Conteneur ou VM ?</h2>
+            <p class="chapter__intro">Docker est un système de <strong>packaging</strong> : il livre une application avec son environnement. Pour cela il isole des processus — il ne virtualise pas une machine.</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>Machine virtuelle</h4>
+                    <ul>
+                        <li>Un hyperviseur (type 1 ou type 2) émule du matériel.</li>
+                        <li>Chaque VM embarque un <strong>système complet</strong>, noyau compris.</li>
+                        <li>Lourde à démarrer, mais isolation forte.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Conteneur</h4>
+                    <ul>
+                        <li>Des <strong>processus isolés</strong> sur le noyau de l'hôte.</li>
+                        <li>Ni hyperviseur, ni OS virtualisé : démarrage en une seconde.</li>
+                        <li>Même architecture que l'hôte (x86_64 ≠ ARM).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Les deux piliers du noyau</h3>
+            <ul>
+                <li><strong>namespaces</strong> — le processus ne <em>voit</em> pas les autres (processus, réseau, montages, utilisateurs).</li>
+                <li><strong>cgroups</strong> — le processus ne <em>consomme</em> que ce qu'on lui accorde (CPU, mémoire).</li>
+            </ul>
+
+            <h3>Ce qu'on appelle « Docker Engine »</h3>
+            <p>La commande <code>docker</code> n'est qu'un client. La chaîne complète : <strong>CLI → démon <code>dockerd</code> → containerd → runc → namespaces / cgroups</strong>. Le client parle au démon par la socket <code>/var/run/docker.sock</code>.</p>
+            <p>Docker dérive de <strong>LXC</strong> : LXC fournit des conteneurs « système » (un OS bas niveau, comme les CT de Proxmox), Docker des conteneurs d'<strong>application</strong>, avec l'outillage pour les construire et les distribuer.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un conteneur est un <strong>processus isolé</strong>, pas une petite VM : namespaces pour ne pas voir, cgroups pour ne pas déborder, et le noyau de l'hôte pour tout le monde.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="images">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Images, couches &amp; registre</h2>
+            <p class="chapter__intro">Une image est le modèle, le conteneur son exécution. Tout le vocabulaire de Docker découle de la façon dont les images sont stockées.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Notion</th><th scope="col">Ce qu'il faut en retenir</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Image &amp; UFS</strong></td><td>Des couches empilées par un système de fichiers en union (<code>overlay2</code>), partagées entre tous les conteneurs qui les utilisent.</td></tr>
+                        <tr><td><strong>Lecture seule &amp; COW</strong></td><td>Les couches de l'image ne changent jamais : un conteneur écrit dans sa propre couche, et seule la différence est stockée (<em>copy-on-write</em>).</td></tr>
+                        <tr><td><strong>Registre</strong></td><td><strong>Docker Hub</strong>, public : <code>docker pull</code> pour télécharger, <code>docker push</code> pour publier. Un registre interne est possible.</td></tr>
+                        <tr><td><strong>Volume</strong></td><td>Un répertoire de l'hôte monté dans le conteneur : la seule façon de garder des données (chapitre 06).</td></tr>
+                        <tr><td><strong>Composition / orchestration</strong></td><td><strong>Compose</strong> décrit une application de plusieurs conteneurs ; <strong>Swarm</strong> ou <strong>Kubernetes</strong> gèrent un cluster.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">docker</span> search <span class="s">nginx</span>        <span class="c"># chercher sur le Docker Hub</span>
+<span class="k">docker</span> pull <span class="s">ubuntu:latest</span>  <span class="c"># télécharger une image (nom:tag)</span>
+<span class="k">docker</span> images              <span class="c"># les images présentes</span>
+<span class="k">docker</span> rmi <span class="s">ubuntu:latest</span>   <span class="c"># supprimer une image (rm = conteneur)</span></pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Officiel ou communautaire</p>
+                <p>Sur le Docker Hub, préférer les images <strong>officielles vérifiées</strong> : une image communautaire exécute le code de quelqu'un d'autre sur ta machine.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>L'image est <strong>immuable</strong> et partagée ; ce qu'un conteneur modifie reste dans sa couche d'écriture et disparaît avec lui.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="installer">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Installer Docker proprement</h2>
+            <p class="chapter__intro">Deux paquets possibles, <code>docker.io</code> (maintenu par la distribution) ou <code>docker-ce</code> (Docker Inc.) — l'un <strong>ou</strong> l'autre, jamais les deux. Le cours installe <code>docker-ce</code> depuis le dépôt officiel.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Préparer APT</strong><p><code>ca-certificates</code>, <code>curl</code> et <code>gnupg</code>, puis le dossier des clés <code>/etc/apt/keyrings</code>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Importer la clé du dépôt</strong><p>APT refuse un paquet dont il ne peut vérifier la signature : la clé prouve que les paquets viennent de Docker.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Déclarer le dépôt</strong><p>Une ligne <code>deb [arch=… signed-by=…]</code> dans <code>/etc/apt/sources.list.d/docker.list</code>.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Installer</strong><p>Le moteur, le client, containerd et les plugins Buildx et Compose.</p></div></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — Debian / Ubuntu</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> apt update
+<span class="k">sudo</span> apt install ca-certificates curl gnupg
+<span class="k">sudo</span> install <span class="p">-m</span> 0755 <span class="p">-d</span> /etc/apt/keyrings
+<span class="k">curl</span> <span class="p">-fsSL</span> https://download.docker.com/linux/$(. /etc/os-release &amp;&amp; echo $ID)/gpg \
+  | <span class="k">sudo</span> gpg <span class="p">--dearmor -o</span> /etc/apt/keyrings/docker.gpg
+<span class="k">sudo</span> chmod a+r /etc/apt/keyrings/docker.gpg
+
+<span class="c"># étape 3 : la ligne du dépôt, écrite par tee (sudo echo &gt; échouerait)</span>
+<span class="k">echo</span> <span class="s">"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/$(. /etc/os-release &amp;&amp; echo $ID) \
+$(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
+  | <span class="k">sudo</span> tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
+
+<span class="k">sudo</span> apt update
+<span class="k">sudo</span> apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+<span class="k">sudo</span> docker run hello-world</pre>
+            </div>
+
+            <h3>Ce qu'on ne fait pas en production</h3>
+            <ul>
+                <li><strong>Le script <code>get-docker.sh</code></strong> : code téléchargé exécuté en root, dernière version imposée (y compris majeure), pas prévu pour les mises à jour. Outil de labo seulement.</li>
+                <li><strong>Laisser la version flotter</strong> : on choisit la version (<code>apt-cache madison docker-ce</code>) puis on la bloque avec <code>apt-mark hold</code>.</li>
+                <li><strong>Ajouter n'importe qui au groupe <code>docker</code></strong> : ce groupe équivaut à root, puisqu'un membre peut monter tout le disque de l'hôte dans un conteneur.</li>
+            </ul>
+
+            <div class="tip">
+                <p class="tip__label">Pièges rencontrés en cours</p>
+                <p>Un guillemet typographique <code>»</code> copié depuis une diapo laisse le shell en attente (<code>&gt;</code>) ; un espace après un <code>\</code> de fin de ligne coupe la commande ; un « permission denied » sur la socket juste après l'installation signifie seulement qu'il manque <code>sudo</code>.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>En production : <strong>dépôt officiel, version figée, pas de script tout-en-un</strong>. Les mises à jour passent ensuite par le gestionnaire de paquets, comme le reste du système.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="piloter">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Lancer et piloter des conteneurs</h2>
+            <p class="chapter__intro"><code>docker run</code> crée <em>et</em> lance un conteneur. Ses options vont <strong>avant</strong> le nom de l'image : tout ce qui suit l'image est la commande exécutée dedans.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Option</th><th scope="col">Rôle</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>-i</code> / <code>-t</code></td><td>interactif / ouvrir un terminal — ensemble : <code>-it</code></td></tr>
+                        <tr><td><code>-d</code></td><td>en arrière-plan (démon)</td></tr>
+                        <tr><td><code>--name</code></td><td>nommer le conteneur plutôt que de subir un nom aléatoire</td></tr>
+                        <tr><td><code>--rm</code></td><td>supprimer le conteneur dès qu'il s'arrête</td></tr>
+                        <tr><td><code>-v</code> / <code>-p</code></td><td>monter un volume / publier un port (chapitres 06 et 07)</td></tr>
+                        <tr><td><code>--privileged</code></td><td>droits root sur l'hôte — à éviter</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Entrer et sortir sans tout arrêter</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Geste</th><th scope="col">Effet</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Ctrl+D</strong> ou <code>exit</code></td><td>quitte le shell ; si c'est le processus principal, le conteneur <strong>s'arrête</strong> (il n'est pas supprimé)</td></tr>
+                        <tr><td><strong>Ctrl+P</strong> puis <strong>Ctrl+Q</strong></td><td>se détacher sans arrêter le conteneur</td></tr>
+                        <tr><td><code>docker exec -it NOM bash</code></td><td>ouvrir un <strong>nouveau</strong> shell : le quitter n'arrête rien</td></tr>
+                        <tr><td><code>docker attach NOM</code></td><td>se rattacher au processus principal — un Ctrl+D y arrête le conteneur</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">docker</span> run <span class="p">-it</span> ubuntu:latest /bin/bash  <span class="c"># options AVANT l'image</span>
+<span class="k">docker</span> ps <span class="p">--all</span>                         <span class="c"># tous les conteneurs, arrêtés compris</span>
+<span class="k">docker</span> stop NOM                         <span class="c"># arrêt propre : SIGTERM, puis SIGKILL après 10 s</span>
+<span class="k">docker</span> start NOM                        <span class="c"># relancer un conteneur arrêté</span>
+<span class="k">docker</span> logs <span class="p">--follow --tail</span> 10 NOM      <span class="c"># journaux en continu</span>
+<span class="k">docker</span> stats <span class="p">--no-stream</span>                <span class="c"># ressources à un instant T</span>
+<span class="k">docker</span> rm NOM                           <span class="c"># supprimer un conteneur arrêté</span>
+<span class="k">docker</span> system prune                     <span class="c"># ménage des objets orphelins</span></pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">PID 1</p>
+                <p>Dans un conteneur, le processus n° 1 est l'<strong>application</strong>, pas systemd : <code>systemctl</code> n'y fonctionne pas. Et ce qu'on installe à la main dans un conteneur disparaît quand il est recréé depuis son image.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Pour intervenir dans un conteneur qui tourne : <strong><code>docker exec -it</code></strong>, et Ctrl+P Ctrl+Q pour en sortir. <code>attach</code> et Ctrl+D arrêtent le service.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="dockerfile">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Écrire un Dockerfile</h2>
+            <p class="chapter__intro">Un Dockerfile est un fichier texte, une instruction par ligne, lu par <code>docker build</code>. Il produit une <strong>image</strong> ; le conteneur viendra ensuite avec <code>docker run</code>.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Dockerfile — l'exemple Python du cours</span></div>
+                <pre class="terminal__code"><span class="k">FROM</span> python:3.8
+<span class="k">WORKDIR</span> /app
+<span class="k">COPY</span> requirements.txt .
+<span class="k">RUN</span> pip install --no-cache-dir -r requirements.txt
+<span class="k">COPY</span> . .
+<span class="k">EXPOSE</span> 5000
+<span class="k">CMD</span> [<span class="s">"python"</span>, <span class="s">"app.py"</span>]</pre>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Instruction</th><th scope="col">Quand</th><th scope="col">Rôle</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>FROM</code></td><td>build</td><td>image de base, toujours en premier (<code>FROM scratch</code> si aucune)</td></tr>
+                        <tr><td><code>ARG</code> / <code>ENV</code></td><td>build / build et exécution</td><td>paramètres de construction / variables d'environnement</td></tr>
+                        <tr><td><code>WORKDIR</code></td><td>build</td><td>répertoire de travail des instructions suivantes</td></tr>
+                        <tr><td><code>COPY</code> / <code>ADD</code></td><td>build</td><td>copier depuis le contexte ; <code>ADD</code> en fait plus, de façon implicite : préférer <code>COPY</code></td></tr>
+                        <tr><td><code>RUN</code></td><td>build</td><td>exécuter une commande ; chaque <code>RUN</code> crée une couche</td></tr>
+                        <tr><td><code>EXPOSE</code></td><td>—</td><td>documente un port : ne publie <strong>rien</strong></td></tr>
+                        <tr><td><code>CMD</code></td><td>lancement</td><td>commande par défaut, remplaçable en ligne de commande</td></tr>
+                        <tr><td><code>ENTRYPOINT</code></td><td>lancement</td><td>commande fixe ; <code>CMD</code> lui fournit alors ses arguments</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">docker</span> build <span class="p">-t</span> mon-app .               <span class="c"># le point = le CONTEXTE de build</span>
+<span class="k">docker</span> build <span class="p">-t</span> mon-app <span class="p">-f</span> AUTRE_NOM .  <span class="c"># fichier qui ne s'appelle pas Dockerfile</span>
+<span class="k">docker</span> run <span class="p">-p</span> 8000:5000 mon-app         <span class="c"># hôte:conteneur</span></pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Forme tableau</p>
+                <p><code>CMD ["python", "app.py"]</code> lance le programme en PID 1. La forme chaîne <code>CMD python app.py</code> passe par <code>/bin/sh -c</code> : le shell ne transmet pas SIGTERM, et <code>docker stop</code> finit par tuer le conteneur au bout de 10 secondes.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>RUN</strong> construit, <strong>CMD</strong> propose, <strong>ENTRYPOINT</strong> impose. Et <code>docker build</code> prend un <strong>dossier</strong> (le contexte), pas un fichier : sans le point final, rien ne se construit.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="volumes">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Volumes &amp; données persistantes</h2>
+            <p class="chapter__intro">Les données écrites dans un conteneur disparaissent avec lui. Un <strong>volume</strong> est un stockage géré en dehors du cycle de vie du conteneur, et réutilisable par plusieurs.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">docker</span> volume create mes_donnees
+<span class="k">docker</span> run <span class="p">-d --name</span> web1 <span class="p">-v</span> mes_donnees:/usr/share/nginx/html nginx
+<span class="k">docker</span> run <span class="p">-d --name</span> web2 <span class="p">-v</span> mes_donnees:/usr/share/nginx/html:ro nginx  <span class="c"># lecteur seul</span>
+<span class="k">docker</span> volume ls
+<span class="k">docker</span> volume inspect mes_donnees                                        <span class="c"># → Mountpoint : /var/lib/docker/volumes/mes_donnees/_data</span>
+<span class="k">docker</span> volume rm mes_donnees                                             <span class="c"># refusé tant qu'un conteneur l'utilise</span></pre>
+            </div>
+
+            <ul>
+                <li><strong><code>docker volume prune</code></strong> ne supprime que les volumes <em>anonymes</em> inutilisés ; avec <code>-a</code>, les volumes nommés y passent aussi — donc des données.</li>
+                <li><strong>Drivers</strong> : <code>local</code> par défaut ; NFS et CIFS passent par <code>local</code> avec des <code>--opt</code> ; d'autres drivers existent (GlusterFS, Azure File…).</li>
+                <li><strong>Emplacement par défaut</strong> : <code>data-root</code> dans <code>/etc/docker/daemon.json</code>, à fixer <em>avant</em> de créer des données.</li>
+                <li><strong>Partager</strong> un volume entre conteneurs : un seul écrivain, les autres en <code>:ro</code>.</li>
+            </ul>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Tout ce qui doit survivre au conteneur — base de données, fichiers d'un site — va dans un <strong>volume monté au chemin attendu par l'application</strong>. Le conteneur, lui, reste jetable.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="reseau">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Le réseau des conteneurs</h2>
+            <p class="chapter__intro">Par défaut, les conteneurs vivent derrière un pont <code>docker0</code> (<code>172.17.0.1/16</code>) et un NAT : ils sortent librement, mais personne ne peut les joindre directement de l'extérieur.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">docker</span> run <span class="p">-d -p</span> 8080:80 nginx  <span class="c"># publier : port 80 du conteneur sur 8080 de l'hôte</span>
+<span class="k">docker</span> network ls               <span class="c"># bridge, host, none installés d'office</span>
+<span class="k">docker</span> network create <span class="p">--driver</span> bridge labnet
+<span class="k">docker</span> run <span class="p">-d --name</span> db <span class="p">--network</span> labnet postgres:16
+<span class="k">docker</span> network inspect labnet   <span class="c"># conteneurs attachés, MAC, IPv4</span>
+<span class="k">docker</span> network disconnect labnet db</pre>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Driver</th><th scope="col">Comportement</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>bridge</code></td><td>switch virtuel + NAT ; sur un bridge <strong>créé</strong>, les conteneurs se joignent <strong>par leur nom</strong></td></tr>
+                        <tr><td><code>host</code></td><td>le conteneur prend l'interface et l'IP de l'hôte : plus de NAT, plus de ports partageables</td></tr>
+                        <tr><td><code>macvlan</code></td><td>une sous-interface dédiée par conteneur, directement sur le réseau physique</td></tr>
+                        <tr><td><code>none</code></td><td>isolation totale : loopback seulement</td></tr>
+                        <tr><td><code>overlay</code></td><td>un seul réseau réparti sur plusieurs hôtes (Swarm)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Lecture de -p</p>
+                <p>Toujours <strong>hôte:conteneur</strong>. Et un port publié reste soumis au pare-feu de l'hôte : <code>EXPOSE</code> dans le Dockerfile n'ouvre rien du tout.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Entrant : il faut un <strong>mappage de port</strong>. Entre conteneurs : un <strong>réseau créé</strong>, sur lequel le nom du conteneur sert de nom DNS.</p>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="compose">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Docker Compose</h2>
+            <p class="chapter__intro">Les options de <code>docker run</code> sont nombreuses, à retaper à chaque fois, et une application a souvent plusieurs conteneurs. Compose les écrit une fois pour toutes dans un fichier YAML.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">compose.yaml — application + base, comme au TP</span></div>
+                <pre class="terminal__code"><span class="k">services:</span>
+  <span class="k">app:</span>
+    <span class="p">build:</span> .                         <span class="c"># image construite depuis le Dockerfile du dossier</span>
+    <span class="p">ports:</span>
+      - <span class="s">"8080:5000"</span>
+    <span class="p">environment:</span>
+      <span class="p">DB_HOST:</span> db                    <span class="c"># le DNS interne résout le nom du service</span>
+    <span class="p">depends_on:</span>
+      - db
+    <span class="p">restart:</span> unless-stopped
+  <span class="k">db:</span>
+    <span class="p">image:</span> postgres:16
+    <span class="p">environment:</span>
+      <span class="p">POSTGRES_PASSWORD:</span> change-moi  <span class="c"># obligatoire pour l'image postgres</span>
+    <span class="p">volumes:</span>
+      - db_data:/var/lib/postgresql/data
+
+<span class="k">volumes:</span>
+  <span class="p">db_data:</span></pre>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">docker</span> compose up <span class="p">-d</span>          <span class="c"># lancer, en arrière-plan</span>
+<span class="k">docker</span> compose up <span class="p">-d --build</span>  <span class="c"># après une modification du code</span>
+<span class="k">docker</span> compose ps
+<span class="k">docker</span> compose logs app
+<span class="k">docker</span> compose exec app bash
+<span class="k">docker</span> compose down           <span class="c"># conteneurs + réseau supprimés, volumes GARDÉS</span>
+<span class="k">docker</span> compose down <span class="p">-v</span>        <span class="c"># … et les volumes : la base repart de zéro</span></pre>
+            </div>
+
+            <h3>Ce que le TP a montré</h3>
+            <ul>
+                <li>Seul le service qui a une clé <code>ports:</code> est joignable de l'extérieur.</li>
+                <li><code>depends_on</code> fixe l'<strong>ordre</strong> de lancement, pas l'attente que la base soit prête.</li>
+                <li>Le code est copié <strong>dans l'image</strong> : sans <code>--build</code>, une modification d'<code>app.py</code> ne change rien.</li>
+                <li>Compose crée tout seul un réseau <code>&lt;projet&gt;_default</code> et un DNS interne ; le projet porte le nom du dossier.</li>
+                <li><code>restart:</code> vaut <code>no</code> par défaut ; <code>always</code>, <code>on-failure[:3]</code> et <code>unless-stopped</code> sont les autres choix.</li>
+            </ul>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un <code>compose.yaml</code> est la <strong>mémoire</strong> d'une application : services, ports, volumes et redémarrage écrits une fois. <code>down</code> garde les données, <code>down -v</code> les efface.</p>
+            </div>
+        </section>
+
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="docker">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
+        </section>
+
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab &amp; sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt et un modules.</p>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p><strong>Docker &amp; conteneurs</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
+</footer>
+
+<script src="../assets/catalogue.js?v=7"></script>
+<script src="../assets/app.js?v=7"></script>
+<script src="../assets/quiz-data.js?v=7"></script>
+<script src="../assets/quiz.js?v=7"></script>
+</body>
+</html>

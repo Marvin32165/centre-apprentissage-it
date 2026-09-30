@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Agile &amp; Scrum : triangle d'or et méthode Waterfall, Manifeste Agile, sprint et trois piliers, les quatre cérémonies, les trois rôles, Product Backlog et user stories, Sprint Backlog, incrément et Definition of Done, Kanban et limites de WIP.">
+    <title>Agile &amp; Scrum — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=7">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 05 · Cloud, supervision &amp; méthode · 3 / 3</p>
+        <h1 class="hero__title">Agile &amp;<br><em>Scrum</em></h1>
+        <p class="hero__lead">Le seul module qui ne parle pas de machines mais de la façon de travailler autour d'elles. Pourquoi l'Agile existe, comment Scrum organise le travail dans le temps, qui décide quoi, et sur quoi on travaille concrètement — avec un fil rouge unique du début à la fin.</p>
+        <div class="hero__meta">
+            <span class="chip">Manifeste Agile</span><span class="chip">Sprint</span><span class="chip">Cérémonies</span><span class="chip">Backlog</span><span class="chip">User story</span><span class="chip">Kanban</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
+            <span class="fact"><b>Durée</b> ≈ 3 h</span>
+            <span class="fact"><b>Chapitres</b> 9</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
+            <span class="fact"><b>Prérequis</b> aucun</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Agile &amp; Scrum</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#agile"><span>01</span> Pourquoi l'Agile</a></li>
+            <li><a class="toc__link" href="#scrum"><span>02</span> Scrum et le sprint</a></li>
+            <li><a class="toc__link" href="#ceremonies"><span>03</span> Les quatre cérémonies</a></li>
+            <li><a class="toc__link" href="#equipe"><span>04</span> L'équipe Scrum</a></li>
+            <li><a class="toc__link" href="#besoin"><span>05</span> Comprendre le besoin</a></li>
+            <li><a class="toc__link" href="#backlog"><span>06</span> Le Product Backlog</a></li>
+            <li><a class="toc__link" href="#sprint-backlog"><span>07</span> Sprint Backlog &amp; incrément</a></li>
+            <li><a class="toc__link" href="#kanban"><span>08</span> Kanban</a></li>
+            <li><a class="toc__link" href="#bout-en-bout"><span>09</span> Un sprint de bout en bout</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Agile &amp; Scrum</div>
+                <div class="section-banner__desc">Organiser le travail quand le besoin n'est pas connu d'avance</div>
+            </div>
+        </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Expliquer le triangle d'or et dire ce que chaque méthode accepte de faire varier.</li>
+                <li>Nommer les quatre valeurs du Manifeste Agile sans tomber dans le contresens « plus de documentation ».</li>
+                <li>Distinguer itératif et incrémental, et relier les trois piliers aux cérémonies qui les rendent réels.</li>
+                <li>Dire qui décide <em>quoi</em>, qui décide <em>comment</em>, et qui ne décide ni l'un ni l'autre.</li>
+                <li>Écrire une user story avec ses critères d'acceptation, et la juger avec INVEST.</li>
+                <li>Séparer Product Backlog et Sprint Backlog, critères d'acceptation et Definition of Done.</li>
+                <li>Choisir entre Scrum et Kanban selon la façon dont le travail arrive.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> aucun. Ce module ne suppose aucune expérience de gestion de projet.</p>
+            <p class="brief__foot"><strong>Le fil rouge</strong> : une entreprise de 200 personnes veut un <strong>portail informatique interne</strong> — un site où les employés se débrouillent seuls pour réinitialiser leur mot de passe, demander un accès logiciel ou commander un poste. Aujourd'hui tout passe par des appels au support, qui croule. On y revient à chaque chapitre.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="chapter" id="agile">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Pourquoi on a inventé l'Agile</h2>
+            <p class="chapter__intro">Construire quelque chose pour quelqu'un d'autre est difficile pour une raison simple : il y a toujours un écart entre ce que la personne <strong>demande</strong>, ce qu'elle <strong>voulait dire</strong>, et ce dont elle a <strong>réellement besoin</strong>. Toute la méthodologie consiste à organiser le travail malgré cette incertitude.</p>
+
+            <h3>Le triangle d'or</h3>
+            <p>Tout projet poursuit trois objectifs — livrer <strong>vite</strong>, pour <strong>pas cher</strong>, avec une <strong>bonne qualité</strong> — et on ne peut en obtenir que <strong>deux à la fois</strong> :</p>
+            <ul>
+                <li><strong>Rapide et pas cher</strong> ? La qualité en pâtira : on bâcle, on ne teste pas.</li>
+                <li><strong>Rapide et de bonne qualité</strong> ? Plus de monde, plus d'expertise — donc plus cher.</li>
+                <li><strong>Pas cher et de bonne qualité</strong> ? Ce sera lent : basse priorité, traité quand l'équipe aura du temps.</li>
+            </ul>
+
+            <div class="takeaway">
+                <p class="takeaway__label">La clé de tout le reste</p>
+                <p><strong>Choisir une méthode de travail, c'est choisir lequel des trois on accepte de faire varier.</strong> L'approche classique fige le contenu à livrer et laisse déraper délais et coûts — le projet « prévu pour juin, livré en décembre, et qui a coûté le double ». L'Agile fait l'inverse : il fige le <strong>temps</strong> et les <strong>moyens</strong> (une équipe stable, des cycles de durée fixe) et fait varier la <strong>quantité de fonctionnalités</strong> livrées.</p>
+            </div>
+
+            <h3>Waterfall : comment on faisait avant</h3>
+            <p><strong>Waterfall</strong> (« en cascade ») découpe le projet en phases strictement séquentielles, chacune ne commençant qu'une fois la précédente terminée, <strong>sans retour en arrière prévu</strong>. D'abord la définition (analyse des besoins, conception, spécifications, développement), puis l'intégration (tests, recette du client, exploitation et maintenance). Pour construire une maison, cela fonctionne très bien.</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>Problème 1 — l'effet tunnel</h4>
+                    <ul>
+                        <li>Le client signe en janvier, ne voit rien avant septembre.</li>
+                        <li>Huit mois de travail sur la foi d'un document.</li>
+                        <li>Notre portail : trois mois passés sur un module de commande de matériel, alors que <strong>80 % des appels</strong> concernaient les mots de passe. Conforme aux spécifications, et pourtant raté.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Problème 2 — le coût du changement</h4>
+                    <ul>
+                        <li>Rien n'est prévu pour revenir en arrière.</li>
+                        <li>Tout changement de besoin oblige à rouvrir les spécifications, renégocier, refaire.</li>
+                        <li>Le changement devient l'ennemi du projet — alors que les besoins évoluent toujours.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Le Manifeste Agile</h3>
+            <p>En 2001, dix-sept praticiens rédigent un texte très court : quatre valeurs et douze principes. Chaque valeur oppose deux choses et dit laquelle prime. On privilégie :</p>
+            <ol>
+                <li><strong>Les individus et leurs interactions</strong> plutôt que les processus et les outils.</li>
+                <li><strong>Des logiciels opérationnels</strong> plutôt qu'une documentation exhaustive.</li>
+                <li><strong>La collaboration avec les clients</strong> plutôt que la négociation contractuelle.</li>
+                <li><strong>L'adaptation au changement</strong> plutôt que le suivi d'un plan.</li>
+            </ol>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Contresens fréquent</p>
+                <p>Les éléments de droite ne sont <strong>pas inutiles</strong> : le manifeste dit explicitement qu'ils gardent de la valeur, mais que ceux de gauche priment. Être Agile ne veut dire ni « ne plus rien documenter », ni « travailler sans plan ».</p>
+            </div>
+
+            <p>Les douze principes se regroupent en quatre familles : la <strong>livraison</strong> (livrer tôt, souvent, et mesurer l'avancement à ce qui fonctionne), le <strong>changement</strong> (l'accueillir même tard, il devient un avantage compétitif), les <strong>personnes</strong> (utilisateurs et développeurs au quotidien, confiance, face à face, rythme soutenable, équipes auto-organisées) et la <strong>qualité</strong> (excellence technique, simplicité, ajustement régulier de la façon de travailler).</p>
+
+            <p>L'Agile a aussi un prix : il exige que le <strong>client s'implique fortement et en continu</strong>, il est plus difficile à appréhender qu'un planning classique, il demande des outils de suivi — et surtout il rend <strong>impossible de s'engager d'avance simultanément sur le budget, les délais et le contenu exact</strong>. On retrouve le triangle d'or : ce que l'Agile refuse de promettre, c'est précisément le troisième côté.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>L'Agile répond à deux problèmes précis du Waterfall : on découvre son erreur au bout de <strong>deux semaines</strong> plutôt que de huit mois, et le changement cesse d'être une catastrophe contractuelle. Ce n'est pas une méthode « plus moderne » — c'est un autre arbitrage du triangle.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="scrum">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Scrum et le sprint</h2>
+            <p class="chapter__intro">Point souvent confondu : <strong>l'Agile est un état d'esprit</strong>, un ensemble de valeurs et de principes. Il ne dit ni qui fait quoi ni quand se réunir. <strong>Scrum est un framework</strong> qui applique ces principes — et c'est le plus répandu.</p>
+
+            <p>Un <strong>framework</strong> est un ensemble de règles, de rôles et de rendez-vous qui structurent le travail, mais qui laisse à l'équipe le soin de décider <em>comment</em> elle travaille à l'intérieur de ce cadre. <strong>Le framework pose les murs, pas les meubles.</strong> Son nom vient de la mêlée au rugby : toute l'équipe pousse ensemble, en se réorganisant selon ce qui se passe sur le terrain.</p>
+
+            <h3>Itératif et incrémental</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Itératif</h4>
+                    <ul>
+                        <li>On repasse plusieurs fois sur le même travail pour l'améliorer.</li>
+                        <li>Le peintre esquisse tout le tableau, puis repasse dessus en précisant les traits.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Incrémental</h4>
+                    <ul>
+                        <li>On ajoute des morceaux complets les uns après les autres.</li>
+                        <li>Le même peintre finit entièrement le coin supérieur gauche, puis le suivant.</li>
+                    </ul>
+                </div>
+            </div>
+            <p>Scrum fait <strong>les deux</strong> : le premier sprint livre la réinitialisation de mot de passe, complète et utilisable ; le deuxième ajoute la demande d'accès logiciel ; le troisième revient améliorer la réinitialisation parce que le mail met trop longtemps à arriver. Objectif double : <strong>maximiser la valeur livrée</strong> et <strong>contrôler les risques</strong> — on ne peut jamais se tromper que de la durée d'un sprint.</p>
+
+            <h3>Les trois piliers</h3>
+            <p>Scrum ne repose pas sur un plan établi d'avance mais sur l'observation, et les trois piliers forment une boucle :</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Pilier</th><th>Ce que c'est</th><th>En pratique</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Transparence</strong></td><td>Le travail et son avancement sont visibles par tous</td><td>La liste du travail est affichée, « terminé » veut dire la même chose pour tous, et <strong>on dit quand on ne comprend pas</strong></td></tr>
+                        <tr><td><strong>Inspection</strong></td><td>On examine régulièrement produit et avancement</td><td>Chaque jour au point quotidien, et en fin de sprint aux deux réunions de bilan</td></tr>
+                        <tr><td><strong>Adaptation</strong></td><td>Dès qu'un écart est détecté, on ajuste</td><td>On réordonne la liste, l'équipe réorganise sa journée, les décisions s'appliquent dès le sprint suivant</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>L'image la plus juste est la conduite de nuit : la transparence, ce sont les phares ; l'inspection, c'est regarder la route au lieu du GPS ; l'adaptation, c'est tourner le volant quand le virage arrive.</p>
+
+            <h3>Le sprint</h3>
+            <ul>
+                <li>Sa <strong>durée est fixe</strong> — un mois maximum, le plus souvent deux semaines — et elle ne change pas en cours de route.</li>
+                <li>Un nouveau sprint <strong>démarre dès que le précédent se termine</strong>, sans pause.</li>
+                <li>À la fin, l'équipe doit avoir produit un morceau de produit <strong>utilisable et réellement terminé</strong>.</li>
+                <li>Toutes les réunions de Scrum ont lieu <strong>à l'intérieur</strong> du sprint.</li>
+            </ul>
+
+            <p>Enfin, cinq <strong>valeurs</strong> guident les comportements : l'<strong>engagement</strong>, le <strong>focus</strong>, l'<strong>ouverture</strong>, le <strong>respect</strong> et le <strong>courage</strong>. Elles ne sont pas décoratives : la transparence n'existe que si quelqu'un a le <em>courage</em> de dire que ça ne va pas, et l'<em>ouverture</em> de le dire tôt.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Les trois piliers sont <strong>indissociables</strong> : sans transparence, l'inspection n'a rien à examiner ; et une inspection qui ne débouche sur aucune adaptation ne sert à rien — c'est une réunion pour la réunion. Une équipe peut cocher toutes les cases de Scrum et travailler très mal : ce sont les valeurs qui rendent les piliers réels.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="ceremonies">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Les quatre cérémonies</h2>
+            <p class="chapter__intro">Une <strong>cérémonie</strong> (officiellement un « événement ») n'est pas une réunion improvisée : c'est un rendez-vous prévu à l'avance, qui revient à chaque sprint, avec un objectif précis, des participants définis et une <strong>durée maximale fixe</strong> — la <em>timebox</em> — qu'on ne dépasse jamais.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Cérémonie</th><th>Timebox (1 mois · 2 semaines)</th><th>Objet</th><th>Qui</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Sprint Planning</strong></td><td>8 h · 4 h</td><td>Choisir le travail et fixer l'objectif du sprint</td><td>Toute l'équipe Scrum</td></tr>
+                        <tr><td><strong>Daily Scrum</strong></td><td>15 min, chaque jour</td><td>Se synchroniser, repérer les blocages</td><td>L'équipe technique</td></tr>
+                        <tr><td><strong>Sprint Review</strong></td><td>4 h · 2 h</td><td>Montrer le <strong>produit</strong> qui fonctionne</td><td>L'équipe <strong>et</strong> les parties prenantes</td></tr>
+                        <tr><td><strong>Rétrospective</strong></td><td>3 h · 1 h 30</td><td>Améliorer la <strong>façon de travailler</strong></td><td>L'équipe Scrum seule</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Le <strong>Sprint Planning</strong> répond à trois questions, dans cet ordre : <em>pourquoi ce sprint a-t-il de la valeur ? qu'est-il possible d'accomplir ? comment le travail va-t-il être accompli ?</em> Pour notre portail, l'objectif du premier sprint serait : « <em>permettre à un employé de réinitialiser seul son mot de passe</em> ».</p>
+
+            <p>Le <strong>Daily Scrum</strong> n'est pas un compte rendu à un chef : c'est un point sur l'avancement vers l'objectif du sprint, souvent debout pour que ça reste court. Chacun répond classiquement à : <em>qu'ai-je fait hier ? que vais-je faire aujourd'hui ? qu'est-ce qui me bloque ?</em></p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Piège classique n° 1 — Review ou Rétrospective ?</p>
+                <p>Les deux ont lieu en fin de sprint, à quelques minutes d'intervalle. La distinction tient en un mot : la <strong>Review</strong> porte sur le <strong>produit</strong> — le <em>quoi</em>, avec le client : « voilà l'écran de réinitialisation, il envoie le mail en 10 secondes ». La <strong>Rétrospective</strong> porte sur la <strong>façon de travailler</strong> — le <em>comment</em>, sans le client : « on a perdu trois jours à attendre les accès au serveur de test ; la prochaine fois, on les demande avant le début du sprint ». <strong>La Review, c'est ce qu'on a fait ; la Rétro, c'est comment on l'a fait.</strong></p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>La timebox paraît brutale, elle est protectrice : elle garantit que les réunions ne mangent pas le temps de travail et force à se préparer. Et surtout, <strong>chaque cérémonie est un moment d'inspection et d'adaptation</strong> — c'est là que les trois piliers deviennent concrets.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="equipe">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">L'équipe Scrum : trois rôles, aucun chef</h2>
+            <p class="chapter__intro">La chose la plus déstabilisante quand on vient d'une organisation classique : <strong>aucun des trois rôles n'est le chef des deux autres</strong>. Il n'y a pas de chef de projet dans Scrum.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Rôle</th><th>Responsabilité en un mot</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Product Owner</strong></td><td>Décide <strong>quoi</strong> faire, et dans quel ordre</td></tr>
+                        <tr><td><strong>Équipe technique</strong></td><td>Décide <strong>comment</strong> le faire</td></tr>
+                        <tr><td><strong>Scrum Master</strong></td><td>Veille à ce que la méthode fonctionne et lève les obstacles</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Le Product Owner</h3>
+            <p>Le <strong>PO</strong> représente les intérêts du client et des parties prenantes, et sa mission est de <strong>maximiser la valeur</strong> produite. Il gère le Product Backlog, l'ordonne par priorité et s'assure que tout le monde le comprend. Une règle est absolue : <strong>un seul PO, pour un seul produit, avec une seule liste</strong> — dès qu'il y a deux personnes pour dire quoi faire en premier, l'équipe reçoit des ordres contradictoires.</p>
+            <p>Point de vigilance : le PO représente des parties prenantes aux intérêts divergents — le support veut moins d'appels, la direction veut des économies, la sécurité veut des contrôles. Il peut donc se faire influencer, et cela se répercute directement sur l'ordre des priorités. <strong>C'est un poste de décision, pas de secrétariat.</strong></p>
+
+            <h3>L'équipe technique</h3>
+            <p>Développeurs, administrateurs système, techniciens — ceux qui réalisent la solution. Quatre caractéristiques : elle est <strong>pluridisciplinaire</strong> (si elle doit attendre trois semaines qu'un service extérieur configure un serveur, ce n'est pas une équipe Scrum complète), <strong>auto-organisée</strong> (personne ne lui distribue les tâches), <strong>sans hiérarchie interne</strong> (les expertises diffèrent, l'autorité non) et <strong>collectivement responsable</strong>.</p>
+
+            <h3>Le Scrum Master</h3>
+            <p>Le rôle le plus mal compris, parce qu'on l'assimile à un chef d'équipe — c'est exactement l'inverse. C'est un <strong>facilitateur</strong>, un <strong>leader serviteur</strong> : au service de l'équipe, pas au-dessus d'elle. Il travaille vis-à-vis de trois publics :</p>
+            <ul>
+                <li><strong>L'équipe technique</strong> : l'aider à appliquer Scrum et surtout <strong>éliminer les blocages</strong> — un accès manquant, un fournisseur qui ne répond pas, une réunion parasite.</li>
+                <li><strong>Le Product Owner</strong> : l'aider à clarifier l'objectif du produit et à bien gérer sa liste.</li>
+                <li><strong>L'organisation</strong> : accompagner l'adoption de Scrum là où l'entreprise résiste ou n'a pas compris.</li>
+            </ul>
+            <p>C'est également lui qui anime les quatre cérémonies.</p>
+
+            <p>Prise globalement, l'équipe Scrum est de <strong>dix personnes ou moins</strong> (la règle antérieure disait de trois à neuf). La raison est mathématique : plus il y a de monde, plus les canaux de communication se multiplient, et plus le temps de coordination mange le temps de production.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>Le PO dit ce qui est prioritaire ; l'équipe dit comment et ce que ça coûte ; le Scrum Master ne décide ni l'un ni l'autre.</strong> Et une règle de comportement qui paraît anodine mais qui est centrale : <strong>il faut toujours dire quand on ne comprend pas</strong> — un malentendu tu pendant trois jours coûte trois jours.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="besoin">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Avant les sprints : comprendre le besoin</h2>
+            <p class="chapter__intro">Avant de lancer la machine, encore faut-il savoir ce qu'on construit et pourquoi. Ce travail d'analyse alimente la liste des travaux à faire, et se répartit naturellement : le PO analyse les processus et le marché, l'équipe technique identifie les pertes de temps qu'elle voit de l'intérieur.</p>
+
+            <h3>QQOQCCP — cerner le besoin</h3>
+            <p>Sept questions à poser systématiquement : <strong>Qui</strong> est concerné ? De <strong>quoi</strong> s'agit-il ? <strong>Où</strong> le problème se situe-t-il ? <strong>Quand</strong> apparaît-il ? <strong>Comment</strong> fait-on aujourd'hui ? <strong>Combien</strong> (d'utilisateurs, de budget, de volume) ? Et <strong>pourquoi</strong> — quel bénéfice attend-on ?</p>
+            <p>Sur notre portail : <em>Qui ?</em> les techniciens du support et les 200 employés. <em>Quoi ?</em> trop d'appels pour des mots de passe oubliés. <em>Combien ?</em> une trentaine d'appels par semaine. <em>Pourquoi ?</em> une perte de temps considérable des deux côtés. On tient un besoin précis, prêt à être formulé.</p>
+
+            <h3>Les 5 C — comprendre le marché</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>C</th><th>Ce qu'on regarde</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Company</strong></td><td>Nos forces, nos faiblesses, nos ressources</td></tr>
+                        <tr><td><strong>Customers</strong></td><td>Qui sont les clients, ce qu'ils veulent vraiment</td></tr>
+                        <tr><td><strong>Competitors</strong></td><td>Ce qui existe déjà, ce que font les autres</td></tr>
+                        <tr><td><strong>Collaborators</strong></td><td>Fournisseurs, prestataires, partenaires</td></tr>
+                        <tr><td><strong>Context</strong></td><td>Environnement économique, légal, technologique</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>La différence est simple et tombe souvent : <strong>QQOQCCP sert à comprendre le besoin, les 5 C servent à comprendre le marché.</strong> Ni l'un ni l'autre n'appartiennent à Scrum — ce sont des méthodes d'analyse générales, très utilisées à ce stade.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="backlog">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Le Product Backlog</h2>
+            <p class="chapter__intro">Un <strong>artefact</strong> est un objet concret qui rend le travail <strong>visible</strong> — la mise en pratique du pilier de transparence. Il y en a exactement trois, et chacun porte un <strong>engagement</strong> : sans lui, un artefact n'est qu'une liste morte.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Artefact</th><th>Ce que c'est</th><th>Géré par</th><th>Engagement</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Product Backlog</strong></td><td>Tout ce qu'il reste à faire sur le produit</td><td>Le PO</td><td>Objectif du produit (<em>Product Goal</em>)</td></tr>
+                        <tr><td><strong>Sprint Backlog</strong></td><td>Le plan de travail d'un seul sprint</td><td>L'équipe technique</td><td>Objectif du sprint (<em>Sprint Goal</em>)</td></tr>
+                        <tr><td><strong>Incrément</strong></td><td>Le résultat utilisable du sprint</td><td>L'équipe technique</td><td>Definition of Done</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Le <strong>Product Backlog</strong> est <strong>unique</strong> (un produit, une liste), <strong>trié par priorité</strong> (en haut les éléments détaillés et prêts, en bas les idées encore floues) et <strong>jamais figé</strong> — il évolue selon les retours de la Review et les changements de besoins. Il porte l'objectif du produit : « <em>réduire de moitié les appels au support d'ici la fin de l'année</em> ».</p>
+
+            <h3>Du plus gros au plus petit</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Niveau</th><th>Ce que c'est</th><th>Notre exemple</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Initiative</strong></td><td>Le grand objectif stratégique</td><td>Moderniser le support informatique</td></tr>
+                        <tr><td><strong>Epic</strong></td><td>Une grande partie du produit, trop grosse pour un sprint</td><td>Le module de gestion des comptes</td></tr>
+                        <tr><td><strong>User story</strong></td><td>Un besoin précis, réalisable en un sprint</td><td>Réinitialiser son mot de passe soi-même</td></tr>
+                        <tr><td><strong>Tâche</strong></td><td>Le travail technique, découpé par l'équipe au Planning</td><td>Écrire le script d'envoi du mail</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>L'analogie donnée en cours : l'epic est la <strong>saga littéraire</strong>, chaque user story en est un tome.</p>
+
+            <h3>Les user stories</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Le modèle, et un exemple</span></div>
+                <pre class="terminal__code">En tant que &lt;utilisateur&gt;, je veux &lt;besoin&gt;, afin de &lt;bénéfice&gt;.
+
+<span class="c">« En tant qu'employé, je veux réinitialiser mon mot de passe moi-même,</span>
+<span class="c">  afin de ne plus appeler le support. »</span></pre>
+            </div>
+            <p>Le modèle force à nommer <strong>qui</strong> a le besoin et <strong>pourquoi</strong> — précisément ce qu'on oublie en écrivant « développer un module de réinitialisation ». Trois règles d'écriture, simples et strictes :</p>
+            <ul>
+                <li><strong>Pas de « et »</strong> : si la phrase en contient un, ce sont deux user stories à séparer.</li>
+                <li><strong>Pas de « ou »</strong> : c'est une ambiguïté — il faut retourner voir le PO ou le client.</li>
+                <li><strong>Une story = un besoin, un utilisateur, un bénéfice.</strong></li>
+            </ul>
+            <p>On y attache des <strong>critères d'acceptation</strong> : des conditions vérifiables — « le lien de réinitialisation expire au bout d'une heure », « l'utilisateur reçoit le mail en moins de 30 secondes ». Et une bonne story respecte <strong>INVEST</strong> : <strong>I</strong>ndépendante, <strong>N</strong>égociable, apporte de la <strong>V</strong>aleur, <strong>E</strong>stimable, <strong>S</strong>mall, <strong>T</strong>estable.</p>
+
+            <h3>Prioriser et préparer</h3>
+            <p><strong>MoSCoW</strong> classe chaque élément en <strong>Must have</strong> (indispensable), <strong>Should have</strong> (important, mais on peut livrer sans dans un premier temps), <strong>Could have</strong> (bonus) et <strong>Won't have</strong> (pas pour cette fois — écarté ou reporté, mais pas oublié).</p>
+            <p>Le <strong>raffinage</strong> (<em>backlog refinement</em>) est une activité <strong>continue</strong>, pas une cérémonie : le PO et l'équipe découpent les gros éléments, précisent ce qui est attendu, le PO ordonne, l'équipe estime.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Qui estime, et en quoi</p>
+                <p>L'<strong>estimation de l'effort</strong> est une mesure <strong>relative</strong> de complexité — souvent en <em>story points</em>, via le <em>planning poker</em>. Ce n'est <strong>pas une durée en heures</strong>, et elle ne peut être faite <strong>que par l'équipe technique</strong>, pour une raison de bon sens : c'est elle qui fera le travail. Ni le PO ni le Scrum Master ne décident qu'une tâche « prendra deux jours ».</p>
+            </div>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 1 — corriger une user story</p>
+                <p>« En tant qu'administrateur, je veux pouvoir réinitialiser les mots de passe et consulter l'historique des demandes, ou bien exporter un rapport mensuel. » Que reproches-tu à cette story, et comment la réécris-tu ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body">
+                        <p>Deux défauts, tous les deux dans les règles d'écriture :</p>
+                        <ul>
+                            <li>Le <strong>« et »</strong> : ce sont deux besoins distincts — réinitialiser, et consulter l'historique. Deux stories.</li>
+                            <li>Le <strong>« ou »</strong> : on ne sait pas ce qui est réellement demandé. Ce n'est pas à l'équipe de trancher : on retourne voir le PO.</li>
+                        </ul>
+                        <p>Il manque aussi le <strong>bénéfice</strong> : « je veux X » sans « afin de Y » ne dit pas quelle valeur la story apporte — c'est-à-dire ce qui permettra de la prioriser. Réécriture de la première :</p>
+                        <p><em>« En tant qu'administrateur du support, je veux réinitialiser le mot de passe d'un employé depuis le portail, afin de traiter la demande sans ouvrir la console d'annuaire. »</em> — critère d'acceptation : « l'opération est tracée avec l'auteur et l'horodatage ».</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un élément affiné doit pouvoir être <strong>réalisé en un seul sprint</strong>. S'il ne rentre pas, c'est qu'il faut encore le découper — c'est tout le sens de la descente initiative → epic → user story → tâche.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="sprint-backlog">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Sprint Backlog et incrément</h2>
+            <p class="chapter__intro">Le <strong>Sprint Backlog</strong> est le plan de travail d'un seul sprint, construit par l'équipe technique pendant le Planning. Il contient exactement trois choses, qui répondent aux trois questions de cette réunion.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Contenu</th><th>Répond à</th></tr></thead>
+                    <tbody>
+                        <tr><td>L'objectif du sprint, en une phrase</td><td><strong>Pourquoi</strong> ce sprint ?</td></tr>
+                        <tr><td>Les éléments du Product Backlog sélectionnés</td><td><strong>Quoi</strong> ?</td></tr>
+                        <tr><td>Le plan pour les réaliser, découpé en tâches</td><td><strong>Comment</strong> ?</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Il <strong>appartient à l'équipe technique</strong> — elle seule le modifie, y compris le PO qui n'y touche pas. Il est mis à jour en continu, notamment au Daily, et visible par tous, souvent sur un tableau <em>À faire → En cours → Terminé</em>.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Piège classique n° 2 — Product ou Sprint Backlog ?</p>
+                <p>Le <strong>Product Backlog</strong> contient <strong>tout</strong> ce qu'il reste à faire, il est géré par le <strong>PO</strong>, il vit <strong>tant que le produit existe</strong>, et son engagement est l'objectif du <strong>produit</strong>. Le <strong>Sprint Backlog</strong> est <strong>la sélection</strong> d'un seul sprint avec son plan, construit et modifié par l'<strong>équipe technique</strong>, il vit <strong>le temps d'un sprint</strong>, et son engagement est l'objectif du <strong>sprint</strong>. L'image la plus simple : le Product Backlog est la <strong>carte du restaurant</strong>, le Sprint Backlog est <strong>ce que tu as commandé ce midi</strong>.</p>
+            </div>
+
+            <p>Et surtout : <strong>l'objectif du sprint ne change pas en cours de sprint</strong>. Si un imprévu survient, on renégocie le <em>contenu</em> avec le PO — on retire une story, on en simplifie une autre — mais pas l'objectif. C'est ce qui protège l'équipe des changements de direction permanents.</p>
+
+            <h3>L'incrément et la Definition of Done</h3>
+            <p>L'<strong>incrément</strong> est le résultat tangible du sprint : un morceau de produit <strong>utilisable</strong> qui s'ajoute aux précédents. Il peut être livré avant la fin du sprint, et un même sprint peut en produire plusieurs. Mais il n'existe que si le travail respecte la <strong>Definition of Done</strong> — sinon l'élément retourne dans le Product Backlog.</p>
+
+            <p>La <strong>DoD</strong> est la liste de critères, <strong>partagée par toute l'équipe</strong>, qu'un élément doit remplir pour être considéré comme fini. Elle existe pour tuer une phrase précise, que tout le monde a déjà entendue : <em>« c'est fini, il reste juste à tester »</em>. Non : ce n'est pas fini. Une bonne DoD est claire et concise, <strong>testable et mesurable</strong>, réaliste, elle précise des critères de qualité définis à l'avance, exige que la documentation soit complétée, et elle est <strong>validée par toute l'équipe</strong>.</p>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 2 — peut-on la présenter en Review ?</p>
+                <p>Une fonctionnalité fait exactement ce que demandaient ses critères d'acceptation : le lien expire bien après une heure, le mail part en 10 secondes. Elle n'est ni relue par un pair, ni documentée. Peut-on la montrer à la Sprint Review et la compter comme faite ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body">
+                        <p><strong>Non.</strong> Les deux notions ne sont pas à la même échelle :</p>
+                        <ul>
+                            <li>Les <strong>critères d'acceptation</strong> sont propres à <strong>une seule</strong> user story et portent sur le <strong>besoin métier</strong>. Ils changent d'une story à l'autre.</li>
+                            <li>La <strong>Definition of Done</strong> s'applique à <strong>tous</strong> les éléments sans exception et porte sur la <strong>qualité du travail</strong> : relu, testé, documenté, déployé. Elle est la même pour tout le sprint.</li>
+                        </ul>
+                        <p>Une story peut donc remplir ses critères d'acceptation et <strong>ne pas être « done »</strong>. Dans ce cas elle ne compte pas : elle n'est pas un incrément et retourne dans le Product Backlog.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>Critères d'acceptation = le besoin, story par story. Definition of Done = la qualité, pour tout.</strong> Tant qu'un seul critère de la DoD manque, l'élément n'est pas terminé — et rien de non terminé n'est présenté en Review.</p>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="kanban">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Kanban, l'autre façon de faire</h2>
+            <p class="chapter__intro">Le tableau à trois colonnes du chapitre précédent porte un nom — le <em>Scrum board</em> — et il est en réalité emprunté à une méthode plus ancienne et plus large : <strong>Kanban</strong>. Beaucoup d'équipes mélangent les deux sans le savoir.</p>
+
+            <p>Le mot vient du japonais (<em>kanban</em> = « étiquette ») et des usines Toyota, où des cartes circulaient pour signaler qu'un poste avait besoin d'être réapprovisionné. <strong>Différence fondamentale avec Scrum</strong> : Kanban n'est pas un framework avec des rôles et des cérémonies. C'est une <strong>méthode de gestion du flux de travail</strong>, qui s'applique par-dessus une organisation existante — sans rien changer aux postes ni aux titres.</p>
+
+            <h3>Les cinq pratiques</h3>
+            <ul>
+                <li><strong>Visualiser le flux</strong> — des colonnes qui reflètent les <em>vraies</em> étapes du travail, pas trois colonnes génériques. Ce qui n'est pas visible ne peut pas être amélioré.</li>
+                <li><strong>Limiter le travail en cours</strong> (<em>WIP limit</em>) — plafonner le nombre de cartes autorisées dans une colonne. Quand elle est pleine, il faut d'abord en finir une.</li>
+                <li><strong>Gérer le flux</strong> — l'objectif n'est pas de remplir les colonnes mais que les tâches <strong>traversent</strong> le tableau sans à-coups. Si « en revue » est constamment pleine, le problème est là, pas chez les développeurs.</li>
+                <li><strong>Rendre les règles explicites</strong> — tout le monde sait ce que veut dire « prêt à passer à l'étape suivante ». Même esprit que la DoD.</li>
+                <li><strong>S'améliorer en continu</strong>, à partir de ce qu'on observe sur le tableau.</li>
+            </ul>
+
+            <div class="tip">
+                <p class="tip__label">Pourquoi limiter le travail en cours ?</p>
+                <p>La règle paraît contre-intuitive — brider des gens qui veulent travailler ? En réalité elle attaque le vrai problème : <strong>commencer beaucoup de choses ne fait pas avancer plus vite</strong>. L'embouteillage est l'image exacte : plus il y a de voitures sur l'autoroute, moins il en arrive à destination par heure. Une équipe qui mène dix chantiers de front n'en termine aucun.</p>
+            </div>
+
+            <p>Dernier concept : le <strong>système tiré</strong>. Classiquement le travail est <strong>poussé</strong> — un responsable assigne une tâche, disponible ou non. En Kanban il est <strong>tiré</strong> : la personne <em>prend</em> une tâche quand elle a de la place. Le distributeur automatique est une bonne image : personne ne te jette des canettes à la figure.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th>Kanban</th><th>Scrum</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Rythme</strong></td><td>Flux continu, pas de sprints</td><td>Sprints à durée fixe</td></tr>
+                        <tr><td><strong>Rôles</strong></td><td>Aucun rôle imposé</td><td>PO, Scrum Master, équipe technique</td></tr>
+                        <tr><td><strong>Changements</strong></td><td>On repriorise à tout moment</td><td>Déconseillés en cours de sprint</td></tr>
+                        <tr><td><strong>Mesure principale</strong></td><td><em>Cycle time</em> / <em>lead time</em></td><td>Vélocité</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le choix se fait selon <strong>la façon dont le travail arrive</strong>. Une équipe projet, qui construit un produit par étapes planifiables, tire profit du rythme de Scrum. Une équipe dont le travail arrive de façon <strong>imprévisible</strong> — un support informatique, une équipe d'exploitation qui reçoit des incidents — s'accommode mal de sprints figés : on ne peut pas dire à une panne d'attendre le sprint suivant. Mélanger sérieusement les deux s'appelle du <strong>Scrumban</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 09 -->
+        <section class="chapter" id="bout-en-bout">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">Un sprint de bout en bout</h2>
+            <p class="chapter__intro">Tout le vocabulaire est posé. Ce chapitre le fait tourner ensemble, sur deux semaines de la vie de notre portail. Si tu suis ce déroulé sans revenir en arrière, tu as compris Scrum.</p>
+
+            <p><strong>Le contexte.</strong> L'objectif du produit est de réduire de moitié les appels au support d'ici la fin de l'année. Le Product Backlog contient une trentaine d'éléments ordonnés par le PO ; les premiers sont détaillés et estimés, les derniers sont encore des idées vagues. L'équipe compte sept personnes.</p>
+
+            <ol class="steps">
+                <li class="step"><div class="step__num">00</div><div class="step__body"><strong>Avant le sprint — le raffinage</strong>Au fil du sprint précédent, l'epic « gestion des comptes » a été découpée en user stories, celle du mot de passe a reçu ses critères d'acceptation, et l'équipe a estimé l'effort. Ces éléments sont <strong>prêts</strong>.</div></li>
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Jour 1, matin — le Sprint Planning</strong> (4 h max)<em>Pourquoi ?</em> Les mots de passe représentent 80 % des appels : l'objectif sera « un employé peut réinitialiser seul son mot de passe ». <em>Quoi ?</em> L'équipe choisit les stories tenables et <strong>refuse les deux dernières</strong> — c'est elle qui décide de la quantité, pas le PO. <em>Comment ?</em> Découpage en tâches. Résultat : le Sprint Backlog, affiché sur le tableau.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Jours 1 à 10 — le travail quotidien</strong>Quinze minutes de Daily chaque matin. Jour 3 : quelqu'un attend un accès au serveur de test depuis deux jours — c'est un obstacle, le <strong>Scrum Master</strong> s'en charge dans la journée. Jour 8 : une story se révèle plus complexe que prévu, l'équipe va voir le PO et <strong>renégocie le contenu</strong> ; une story secondaire retourne au Product Backlog. <strong>L'objectif du sprint, lui, ne bouge pas.</strong></div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Jour 10, matin — la Sprint Review</strong> (2 h max)L'équipe, le PO, le responsable du support et deux employés testeurs. On <strong>montre le produit qui fonctionne</strong>, et uniquement ce qui respecte la DoD — une story « pas tout à fait testée » n'est pas présentée. Le responsable du support réagit : « les intérimaires n'ont pas d'adresse mail personnelle ». Personne n'y avait pensé ; ça devient un nouvel élément du backlog.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Jour 10, après-midi — la Rétrospective</strong> (1 h 30 max)Entre soi. Ce qui a marché : le découpage en petites tâches. Ce qui a coûté cher : les deux jours d'attente des accès. <strong>Action décidée</strong> : demander les accès techniques une semaine avant le début du sprint, dès le prochain sprint.</div></li>
+                <li class="step"><div class="step__num">05</div><div class="step__body"><strong>Jour 11</strong>Le sprint suivant démarre immédiatement, avec un nouveau Planning et un nouvel objectif — probablement la demande d'accès logiciel, à moins que le problème des intérimaires soit devenu prioritaire. C'est au PO de trancher.</div></li>
+            </ol>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Le retour du jour 10 est un succès, pas un échec</p>
+                <p>Découvrir que les intérimaires n'ont pas d'adresse mail est exactement ce que Scrum cherche à provoquer : on l'a appris <strong>en deux semaines et pour presque rien</strong>, là où le mode Waterfall l'aurait découvert six mois plus tard, après avoir tout construit dessus. Et la boucle recommence — <strong>transparence</strong> (tout est sur le tableau et démontrable), <strong>inspection</strong> (chaque jour, et deux fois en fin de sprint), <strong>adaptation</strong> (le backlog et la méthode changent d'après ce qu'on a vu).</p>
+            </div>
+        </section>
+
+        <div class="gloss">
+            <div class="gl"><b>Agile</b><span>État d'esprit défini par le Manifeste de 2001 — des valeurs et des principes, pas une méthode.</span></div>
+            <div class="gl"><b>Framework</b><span>Cadre de règles, rôles et rendez-vous qui structure le travail sans dicter comment le faire.</span></div>
+            <div class="gl"><b>Sprint</b><span>Cycle de travail de durée fixe (1 mois max) qui produit un incrément utilisable.</span></div>
+            <div class="gl"><b>Timebox</b><span>Durée maximale d'une cérémonie, qu'on ne dépasse jamais.</span></div>
+            <div class="gl"><b>Artefact</b><span>Objet qui rend le travail visible : Product Backlog, Sprint Backlog, incrément.</span></div>
+            <div class="gl"><b>Epic</b><span>Grande portion du produit, trop grosse pour un sprint ; se découpe en user stories.</span></div>
+            <div class="gl"><b>INVEST</b><span>Indépendante, Négociable, Valeur, Estimable, Small, Testable — les critères d'une bonne story.</span></div>
+            <div class="gl"><b>MoSCoW</b><span>Must / Should / Could / Won't have — méthode de priorisation du backlog.</span></div>
+            <div class="gl"><b>DoD</b><span>Definition of Done — critères de qualité valables pour tous les éléments.</span></div>
+            <div class="gl"><b>Story point</b><span>Unité d'effort relative, estimée par l'équipe technique seule — jamais des heures.</span></div>
+            <div class="gl"><b>WIP limit</b><span>Plafond de travaux simultanés dans une colonne d'un tableau Kanban.</span></div>
+            <div class="gl"><b>Scrumban</b><span>Combinaison assumée de Scrum et de Kanban.</span></div>
+        </div>
+
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="scrum">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
+        </section>
+
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, puis par l'<a href="../examens.html#final">examen final</a>.</p>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p><strong>Agile &amp; Scrum</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du cours Agile / Scrum</p>
+</footer>
+
+<script src="../assets/catalogue.js?v=7"></script>
+<script src="../assets/app.js?v=7"></script>
+<script src="../assets/quiz-data.js?v=7"></script>
+<script src="../assets/quiz.js?v=7"></script>
+</body>
+</html>

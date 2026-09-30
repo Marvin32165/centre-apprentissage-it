@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Stockage & Clustering Windows : DAS/NAS/SAN, GPT, RAID et pools de stockage, NTFS et droits effectifs, partages, quotas FSRM, EFS, DFS, sauvegarde — puis un SAN iSCSI et un cluster de basculement à deux nœuds.">
+    <title>Stockage &amp; Clustering — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=7">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 02 · Infrastructure Windows · 3 / 8</p>
+        <h1 class="hero__title">Stockage &amp;<br><em>clustering</em></h1>
+        <p class="hero__lead">Du disque physique au service qui survit à la panne d'un serveur : RAID et pools, NTFS et partages, sauvegardes, puis un SAN iSCSI et un cluster de basculement montés de bout en bout.</p>
+        <div class="hero__meta">
+            <span class="chip">SAN / iSCSI</span><span class="chip">RAID</span><span class="chip">NTFS</span><span class="chip">DFS</span><span class="chip">Failover Cluster</span><span class="chip">Quorum</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 3 h</span>
+            <span class="fact"><b>Chapitres</b> 11</span>
+            <span class="fact"><b>Test</b> 8 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a></span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Stockage &amp; clustering</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#das-nas-san"><span>01</span> Choisir entre DAS, NAS et SAN</a></li>
+            <li><a class="toc__link" href="#disques-raid"><span>02</span> Partitionner, protéger : GPT, RAID, pools</a></li>
+            <li><a class="toc__link" href="#systemes-fichiers"><span>03</span> Systèmes de fichiers &amp; permissions NTFS</a></li>
+            <li><a class="toc__link" href="#partages"><span>04</span> Partager un dossier &amp; calculer les droits</a></li>
+            <li><a class="toc__link" href="#quotas-dfs"><span>05</span> Quotas FSRM, EFS et espaces de noms DFS</a></li>
+            <li><a class="toc__link" href="#sauvegardes"><span>06</span> Sauvegarder et restaurer un serveur</a></li>
+            <li><a class="toc__link" href="#tp-san"><span>07</span> TP — Monter un SAN iSCSI</a></li>
+            <li><a class="toc__link" href="#tp-initiateurs"><span>08</span> TP — Connecter les initiateurs iSCSI</a></li>
+            <li><a class="toc__link" href="#tp-cluster"><span>09</span> TP — Créer le cluster de basculement</a></li>
+            <li><a class="toc__link" href="#tp-fileserver"><span>10</span> TP — Quorum &amp; rôle Serveur de fichiers</a></li>
+            <li><a class="toc__link" href="#tests-panne"><span>11</span> Tester le basculement et les pannes</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Stockage &amp; clustering</div>
+                <div class="section-banner__desc">Théorie du stockage Windows, puis un SAN iSCSI et un cluster à deux nœuds</div>
+            </div>
+        </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Choisir entre DAS, NAS et SAN à partir d'une question simple : combien de serveurs doivent voir ces données ?</li>
+                <li>Poser un partitionnement et un niveau de RAID ou de pool adaptés — et énoncer ce que le RAID ne protège pas.</li>
+                <li>Calculer un droit effectif en combinant permissions NTFS et permissions de partage.</li>
+                <li>Monter une cible iSCSI et y connecter deux initiateurs sans corrompre le volume partagé.</li>
+                <li>Créer un cluster de basculement à deux nœuds, le doter d'un quorum et y publier un rôle Serveur de fichiers.</li>
+                <li>Tester un basculement dans cinq scénarios, et dire ce qu'un cluster ne protège pas.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="windows-server.html">Windows Server</a></p>
+            <p class="brief__foot">Ce module suppose l'annuaire du module <a href="windows-server.html">Windows Server</a> déjà en place ; les VM sont celles du module <a href="hyperv.html">Hyper-V</a>.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="chapter" id="das-nas-san">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Choisir entre DAS, NAS et SAN</h2>
+            <p class="chapter__intro">Le stockage, c'est la conservation des données sur des supports persistants. Trois familles répondent à trois besoins différents — et le choix se fait presque toujours sur la question « combien de serveurs doivent voir ces données ? ».</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Type</th><th>Principe</th><th>Points forts</th><th>Limites</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>DAS</strong><br>Direct Attached Storage</td><td>Disques directement reliés à un serveur</td><td>Simple, rapide, peu coûteux</td><td>Limité à une seule machine</td></tr>
+                        <tr><td><strong>NAS</strong><br>Network Attached Storage</td><td>Équipement qui partage des <em>fichiers</em> sur le réseau (SMB pour Windows, NFS pour Linux)</td><td>Simple à gérer, accès multi-postes immédiat</td><td>Dépend des ressources du NAS</td></tr>
+                        <tr><td><strong>SAN</strong><br>Storage Area Network</td><td>Réseau dédié au stockage : une baie fournit des volumes en mode <em>bloc</em> (Fibre Channel ou iSCSI)</td><td>Performant, centralisé, le serveur voit un disque local</td><td>Coûteux, plus complexe à déployer</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Le vocabulaire SAN</h3>
+            <ul>
+                <li><strong>Baie</strong> — l'équipement qui contient les disques.</li>
+                <li><strong>LUN</strong> — le volume logique présenté à un serveur.</li>
+                <li><strong>Target</strong> (cible) — le service exposé par la baie.</li>
+                <li><strong>Initiator</strong> (initiateur) — la carte ou le logiciel du serveur qui s'y connecte.</li>
+                <li><strong>Multipathing</strong> — plusieurs chemins réseau vers le même volume, pour éviter un point de panne unique.</li>
+            </ul>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>NAS = partage de <strong>fichiers</strong> ; SAN = livraison de <strong>blocs</strong>. C'est pour ça qu'un serveur voit un LUN SAN comme un disque local qu'il peut partitionner et formater lui-même — et c'est exactement ce qui rend le clustering possible.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="disques-raid">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Partitionner, protéger : GPT, RAID, pools de stockage</h2>
+            <p class="chapter__intro">Avant de partager quoi que ce soit, il faut décider comment le disque est découpé et comment on encaisse la panne d'un disque.</p>
+
+            <h3>GPT ou MBR</h3>
+            <p><strong>GPT</strong> est le partitionnement moderne, adapté aux gros disques et à l'UEFI. <strong>MBR</strong> est plus ancien et plafonne autour de 2 To. Pour un nouveau volume Windows, GPT est le choix par défaut.</p>
+
+            <h3>Les niveaux de RAID</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Niveau</th><th>Principe</th><th>Tolérance</th></tr></thead>
+                    <tbody>
+                        <tr><td>RAID 0</td><td>Répartition (striping) — performances maximales</td><td>Aucune</td></tr>
+                        <tr><td>RAID 1</td><td>Miroir : copie identique sur deux disques</td><td>1 disque, mais capacité utile divisée par deux</td></tr>
+                        <tr><td>RAID 5</td><td>Parité répartie</td><td>1 disque</td></tr>
+                        <tr><td>RAID 6</td><td>Double parité</td><td>2 disques</td></tr>
+                        <tr><td>RAID 10</td><td>Miroir + répartition</td><td>Performant, mais coûteux en capacité</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Le piège classique</p>
+                <p>Le RAID améliore la <strong>disponibilité</strong> face à une panne matérielle. Il ne protège pas contre l'effacement, la corruption, le vol ou un sinistre. Un RAID n'est pas une sauvegarde — la suppression d'un fichier est répliquée instantanément sur tous les disques.</p>
+            </div>
+
+            <h3>Les pools de stockage (Storage Spaces)</h3>
+            <p>Un <strong>pool</strong> regroupe des disques physiques pour en tirer des <strong>disques virtuels</strong>. Trois dispositions, trois compromis :</p>
+            <div class="cards">
+                <div class="card">
+                    <h4>Simple</h4>
+                    <p>Toute la capacité, performances maximales, aucune résilience. C'est le choix du labo — ou d'un volume dont on se moque de la perte.</p>
+                </div>
+                <div class="card">
+                    <h4>Miroir / Parité</h4>
+                    <p>Le miroir duplique, la parité calcule. Le miroir coûte de la capacité, la parité coûte des écritures. Les deux survivent à une panne de disque.</p>
+                </div>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Provisionnement fin (thin)</p>
+                <p>Un disque virtuel <em>thin</em> ne consomme sur le pool que ce qui est réellement écrit. Pratique pour surprovisionner — à condition de surveiller le pool, car un pool plein met tous les volumes en défaut d'un coup.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="systemes-fichiers">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Systèmes de fichiers &amp; permissions NTFS</h2>
+            <p class="chapter__intro">Le système de fichiers décide de ce que le volume sait faire. Sur Windows Server, la réponse est presque toujours NTFS — et NTFS, c'est surtout des ACL.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Format</th><th>Usage</th><th>Limite à connaître</th></tr></thead>
+                    <tbody>
+                        <tr><td>FAT32</td><td>Très compatible, clés USB anciennes</td><td>Fichier limité à 4 Go</td></tr>
+                        <tr><td>exFAT</td><td>Supports amovibles, gros fichiers</td><td>Pas d'ACL, pas de journalisation</td></tr>
+                        <tr><td>HFS+</td><td>Ancien format Apple</td><td>Peu compatible nativement avec Windows</td></tr>
+                        <tr><td><strong>NTFS</strong></td><td>Référence Windows Server</td><td>MFT, ACL, compression, quotas, EFS, gros volumes</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>ACL et ACE</h3>
+            <p>Une <strong>ACL</strong> (Access Control List) indique qui peut faire quoi. Elle contient des <strong>ACE</strong> (Access Control Entries), une par règle. Les droits vont de la lecture à l'appropriation, en passant par l'écriture, la modification, l'exécution, la suppression et la modification des autorisations.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Les 6 règles qui décident vraiment</p>
+                <p>1. Les permissions <strong>explicites</strong> priment sur les permissions <strong>héritées</strong>.<br>
+                2. Un <strong>refus explicite</strong> prime sur une autorisation.<br>
+                3. L'héritage vient normalement du dossier parent.<br>
+                4. Une <strong>copie</strong> hérite des permissions du dossier de <em>destination</em>.<br>
+                5. Un <strong>déplacement sur le même volume</strong> conserve les permissions d'origine.<br>
+                6. Un <strong>déplacement vers un autre volume</strong> se comporte comme une copie.</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Bonne pratique</p>
+                <p>Attribuer les droits à des <strong>groupes</strong>, jamais à des utilisateurs directement. Le jour où quelqu'un change de service, on modifie une appartenance de groupe au lieu de repasser sur des dizaines d'ACL.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="partages">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Partager un dossier &amp; calculer les droits effectifs</h2>
+            <p class="chapter__intro">Un partage rend un dossier accessible à distance via un chemin UNC. Attention : il ajoute une <em>deuxième</em> couche de permissions, indépendante de NTFS.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Chemin UNC &amp; inventaire des partages</span></div>
+                <pre class="terminal__code"><span class="c"># Forme d'un chemin UNC</span>
+\\NomDuServeur\NomDuPartage
+
+<span class="c"># Lister les partages d'une machine</span>
+<span class="k">net share</span></pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">La règle du plus restrictif</p>
+                <p>Les permissions de <strong>partage</strong> (Lecture, Modification, Contrôle total) sont distinctes des permissions <strong>NTFS</strong>. À travers le réseau, le droit effectif est <strong>le plus restrictif des deux</strong>. C'est la cause n°1 des « pourtant je lui ai donné le contrôle total » : le NTFS était bon, le partage était en Lecture.</p>
+            </div>
+
+            <h3>Partages administratifs</h3>
+            <p><code>C$</code>, <code>D$</code>, <code>Admin$</code> — le <code>$</code> final les masque de la liste des partages. Ce n'est <strong>pas</strong> une mesure de sécurité : ils restent accessibles à qui connaît le nom et possède les droits.</p>
+
+            <h3>Les protocoles</h3>
+            <ul>
+                <li><strong>SMB</strong> — le protocole de partage Windows.</li>
+                <li><strong>NFS</strong> — le standard côté Unix/Linux.</li>
+                <li><strong>AFP</strong> — ancien protocole Apple, aujourd'hui remplacé par SMB.</li>
+            </ul>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="quotas-dfs">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Quotas FSRM, EFS et espaces de noms DFS</h2>
+            <p class="chapter__intro">Trois outils qui s'ajoutent au serveur de fichiers : limiter l'espace, chiffrer les fichiers, et masquer la topologie réelle derrière une arborescence unique.</p>
+
+            <h3>Quotas</h3>
+            <p>Les <strong>quotas de volume</strong> se configurent par partition. <strong>FSRM</strong> (File Server Resource Manager) va beaucoup plus loin : quotas de <em>dossier</em>, modèles réutilisables, seuils d'alerte, filtres de fichiers (interdire les <code>.mp3</code> sur un partage de service, par exemple) et rapports.</p>
+
+            <h3>EFS</h3>
+            <p><strong>EFS</strong> chiffre des <em>fichiers</em> NTFS individuellement. Il faut impérativement sauvegarder le certificat et la clé privée : sans eux, les fichiers sont définitivement illisibles.</p>
+            <div class="tip">
+                <p class="tip__label">EFS ≠ BitLocker</p>
+                <p>EFS chiffre des fichiers, à l'intérieur d'un volume. BitLocker chiffre le <strong>volume entier</strong>, contre le vol du disque. Ils répondent à deux menaces différentes et se cumulent très bien.</p>
+            </div>
+
+            <h3>DFS</h3>
+            <p><strong>DFS</strong> (Distributed File System) fournit une arborescence logique unique pour des partages situés sur plusieurs serveurs — les utilisateurs voient un seul chemin, peu importe où vivent les données.</p>
+            <ul>
+                <li><strong>Racine autonome</strong> — dépend d'un seul serveur.</li>
+                <li><strong>Racine de domaine</strong> — s'appuie sur Active Directory et DNS, et peut utiliser plusieurs serveurs pour la tolérance aux pannes.</li>
+                <li><strong>Liaison DFS</strong> — associe un dossier logique à un ou plusieurs dossiers cibles.</li>
+                <li><strong>Réplication DFS</strong> — synchronise plusieurs dossiers avec un moteur multi-maître.</li>
+            </ul>
+            <p>Les rôles <em>Espaces de noms DFS</em> et <em>Réplication DFS</em> s'installent depuis Server Manager.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">À retenir</p>
+                <p>La réplication DFS ne remplace pas une sauvegarde : une suppression ou une corruption se réplique elle aussi, fidèlement et rapidement.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="sauvegardes">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Sauvegarder et restaurer un serveur</h2>
+            <p class="chapter__intro">La fonctionnalité <em>Sauvegarde de Windows Server</em> s'installe depuis Server Manager. Elle couvre le planifié, le ponctuel, et surtout la restauration.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Sauvegarde planifiée</strong><p>la routine : fréquence, destination, éléments à inclure.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Sauvegarde unique</strong><p>avant une opération risquée (mise à jour, migration).</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Récupération</strong><p>de fichiers, d'applications ou de volumes entiers.</p></div></div>
+            </div>
+
+            <h3>Restaurer, concrètement</h3>
+            <p>Choisir l'emplacement puis la date de sauvegarde, le type de récupération, les éléments, la destination et les options de conflit — puis <strong>contrôler le statut</strong> en fin d'opération plutôt que de supposer que tout s'est bien passé.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">La règle 3-2-1</p>
+                <p><strong>3</strong> copies des données, sur <strong>2</strong> supports différents, dont <strong>1</strong> hors site. Une sauvegarde en ligne ajoute la protection contre le sinistre local : elle doit être chiffrée, soumise à une stratégie de rétention, et <strong>testée</strong>. Une sauvegarde jamais restaurée n'est pas une sauvegarde, c'est une hypothèse.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="tp-san">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">TP — Monter un SAN iSCSI</h2>
+            <p class="chapter__intro">On passe à la pratique. L'objectif des cinq chapitres qui suivent : un serveur de fichiers qui continue de servir ses partages quand le serveur qui l'héberge s'arrête.</p>
+
+            <h3>L'infrastructure</h3>
+            <div class="net">
+                <div class="node"><b>SRV-AD</b><span class="ip">192.168.10.2</span><span>Contrôleur de domaine + DNS — orion.local</span></div>
+                <div class="node"><b>CLUSTER1</b><span class="ip">192.168.10.3</span><span>Nœud 1 du cluster</span></div>
+                <div class="node"><b>CLUSTER2</b><span class="ip">192.168.10.4</span><span>Nœud 2 du cluster</span></div>
+                <div class="node"><b>SRV-SAN</b><span class="ip">192.168.10.5</span><span>Cible iSCSI — fournit les LUN</span></div>
+                <div class="node"><b>CLUSTER</b><span class="ip">192.168.10.10</span><span>Nom et IP du cluster lui-même</span></div>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">En production : trois réseaux, pas un</p>
+                <p>Le labo tient sur un seul segment, mais la bonne pratique sépare les flux : un réseau <strong>LAN</strong> (clients), un réseau <strong>Cluster</strong> (heartbeat entre nœuds) et un réseau <strong>iSCSI</strong> (stockage) — par exemple <code>192.168.10.0/24</code>, <code>192.168.20.0/24</code> et <code>192.168.30.0/24</code>. Le stockage ne doit pas se battre avec les utilisateurs pour la bande passante.</p>
+            </div>
+
+            <h3>Étape 1 — Préparer le disque sur SRV-SAN</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><p>Ouvrir <strong>File and Storage Services</strong>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Clic droit sur le disque neuf → <strong>Initialiser</strong>. <em>Ne pas créer de volume à cette étape.</em></p></div></div>
+            </div>
+
+            <h3>Étape 2 — Créer le pool et le disque virtuel</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Storage Pools</strong><p>→ nouveau pool nommé <code>SP-SAN1</code>, sélectionner le disque, créer.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Créer un <strong>disque virtuel</strong> sur ce pool : nom <code>LUN</code>, layout <em>Simple</em>, provisionnement <em>Thin</em>, taille 60 Go.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><p>Créer le <strong>volume</strong> sur ce disque virtuel : 40 Go seulement — on garde de la marge pour agrandir plus tard.</p></div></div>
+            </div>
+
+            <h3>Étape 3 — Le rôle iSCSI Target Server</h3>
+            <p>N'importe quel serveur peut jouer le rôle d'<em>initiator</em>. Le rôle à installer sur SRV-SAN, lui, est <strong>iSCSI Target Server</strong>.</p>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><p>Installer le rôle, puis ouvrir <strong>File and Storage Services → iSCSI</strong>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Créer un <strong>disque virtuel iSCSI</strong> : lecteur <code>E:</code> (le volume créé plus haut), nom <code>FILESERVER</code>, taille 40 Go.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><p>Créer une <strong>cible iSCSI</strong> nommée <code>LUN-TARGET</code>.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><p>Dans <strong>Access servers</strong> → <em>Add</em> → <em>Query initiator computer for ID</em> → <em>Browse</em> → sélectionner CLUSTER1. Répéter pour CLUSTER2.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><p><em>Next</em>, puis <em>Create</em>.</p></div></div>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Et CHAP ?</p>
+                <p>On laisse CHAP et reverse CHAP désactivés en labo. <strong>CHAP</strong> (Challenge-Handshake Authentication Protocol) authentifie l'initiateur auprès de la cible : les deux prouvent qu'ils connaissent un secret partagé <em>sans jamais le transmettre</em>. Le <strong>reverse CHAP</strong> fait l'inverse — la cible s'authentifie auprès de l'initiateur. En production sur un réseau iSCSI non isolé, ils sont indispensables.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Deuxième LUN : le quorum</p>
+                <p>Un cluster a besoin d'un petit disque témoin en plus du disque de données. Créer un second disque virtuel iSCSI (nom <code>ClusterQuorum</code>, 2 Go, dynamique) et le rattacher à la <strong>cible existante</strong> <code>LUN-TARGET</code> plutôt qu'à une nouvelle cible.</p>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="tp-initiateurs">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">TP — Connecter les initiateurs iSCSI</h2>
+            <p class="chapter__intro">Côté nœuds, il s'agit maintenant d'aller chercher les LUN pour qu'ils apparaissent comme des disques locaux.</p>
+
+            <h3>Sur CLUSTER1 et CLUSTER2</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><p>Ouvrir <strong>iSCSI Initiator</strong> (le service démarre au premier lancement, accepter).</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Onglet <strong>Targets</strong> → saisir <code>srv-san.orion.local</code> (ou l'IP du réseau iSCSI).</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Quick Connect</strong><p>, sélectionner <code>LUN-TARGET</code>, puis <strong>Connect</strong>.</p></div></div>
+            </div>
+
+            <h3>Initialiser les disques — depuis un seul nœud</h3>
+            <p>Les deux nouveaux disques apparaissent alors dans <strong>Disk Management</strong> sur les deux nœuds. On ne les prépare que <strong>depuis CLUSTER1</strong> :</p>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><p>Clic droit sur le disque de données → <strong>Online</strong> → <strong>Initialize</strong> en <strong>GPT</strong>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Même chose pour le petit disque de quorum.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><p>Remettre les deux disques <strong>Offline</strong> avant de passer à la suite.</p></div></div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Pourquoi remettre offline</p>
+                <p>Le même LUN est visible par les deux nœuds simultanément. Si les deux l'écrivent en même temps hors du contrôle du cluster, le système de fichiers est corrompu. Tant que le cluster n'a pas pris la main sur ces disques, ils doivent rester offline.</p>
+            </div>
+        </section>
+
+        <!-- 09 -->
+        <section class="chapter" id="tp-cluster">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">TP — Créer le cluster de basculement</h2>
+            <p class="chapter__intro">Un cluster regroupe plusieurs nœuds autour d'un stockage partagé. Le <em>failover</em> permet à un nœud de prendre le relais quand l'autre tombe ; le <em>quorum</em> évite que les deux se croient seuls maîtres à bord.</p>
+
+            <h3>Installer la fonctionnalité (sur les deux nœuds)</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur CLUSTER1 et CLUSTER2</span></div>
+                <pre class="terminal__code"><span class="k">Install-WindowsFeature</span> <span class="s">Failover-Clustering</span> <span class="p">-IncludeManagementTools</span></pre>
+            </div>
+            <p>Puis ouvrir <strong>Tools → Failover Cluster Manager</strong>.</p>
+
+            <h3>Valider avant de créer</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Validate Configuration</strong><p>→ sélectionner les deux nœuds → <strong>Run all tests</strong>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Lire le rapport. Les avertissements réseau sont normaux en labo mono-segment ; les erreurs de stockage ne le sont pas.</p></div></div>
+            </div>
+
+            <h3>Créer le cluster</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Create Cluster</strong><p>→ ajouter CLUSTER1.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Nom du cluster : <code>CLUSTER</code> — adresse IP : <code>192.168.10.10</code>.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><p><em>Next</em>, puis <em>Finish</em>. Inutile de relancer les tests s'ils viennent d'être passés.</p></div></div>
+            </div>
+
+            <h3>Ajouter le deuxième nœud</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><p>Dans Failover Cluster Manager, ouvrir <strong>Nodes</strong> → <strong>Add Node</strong>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Ajouter CLUSTER2, puis dérouler l'assistant jusqu'à <em>Finish</em>.</p></div></div>
+            </div>
+
+            <h3>Vérifier que le cluster existe vraiment</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — vérifications</span></div>
+                <pre class="terminal__code"><span class="c"># Le nom du cluster doit se résoudre en DNS</span>
+<span class="k">Resolve-DnsName</span> <span class="s">CLUSTER.orion.local</span>
+
+<span class="c"># Rôle de chaque réseau vu par le cluster</span>
+<span class="k">Get-ClusterNetwork</span> | <span class="k">Select-Object</span> <span class="s">Name, Role, Address, AddressMask</span></pre>
+            </div>
+            <p>Côté contrôleur de domaine, l'objet ordinateur du cluster doit apparaître dans <strong>Active Directory Users and Computers → Computers</strong>. C'est le <em>Cluster Name Object</em> : s'il manque, c'est un problème de droits AD, pas de réseau.</p>
+
+            <h3>Ajouter le stockage partagé</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><p>Dans <strong>Disk Management</strong> : remettre le disque de données Online, créer le volume (<code>DATA</code>), puis Offline.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Dans <strong>Failover Cluster Manager → Disks</strong> : ajouter le disque au cluster.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><p>Le promouvoir en <strong>Cluster Shared Volume</strong> : il apparaît alors sous <code>C:\ClusterStorage\Volume1</code> sur <em>tous</em> les nœuds.</p></div></div>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Test rapide</p>
+                <p>Créer un fichier dans <code>C:\ClusterStorage\Volume1</code>, puis déplacer le disque vers l'autre nœud (<em>Move</em>). Le fichier doit toujours être là — c'est la preuve que le stockage suit le rôle.</p>
+            </div>
+        </section>
+
+        <!-- 10 -->
+        <section class="chapter" id="tp-fileserver">
+            <p class="chapter__num">10</p>
+            <h2 class="chapter__title">TP — Quorum &amp; rôle Serveur de fichiers</h2>
+            <p class="chapter__intro">Reste à donner au cluster un arbitre (le quorum) et un service à rendre hautement disponible (le partage de fichiers).</p>
+
+            <h3>Configurer le quorum</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Failover Cluster Manager</strong><p>→ clic sur le cluster → <strong>More Actions → Configure Cluster Quorum Settings</strong>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Choisir <strong>Select the quorum witness</strong>.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Configure a disk witness</strong><p>→ sélectionner le petit disque de 2 Go.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><p><em>Next</em>, <em>Finish</em>.</p></div></div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Pourquoi un témoin</p>
+                <p>Avec deux nœuds, un incident réseau donnerait à chacun une voix — égalité parfaite, et le risque que les deux se déclarent actifs (<em>split-brain</em>) en écrivant sur le même LUN. Le disque témoin apporte la voix impaire qui départage.</p>
+            </div>
+
+            <h3>Installer et configurer le rôle</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur les deux nœuds</span></div>
+                <pre class="terminal__code"><span class="k">Install-WindowsFeature</span> <span class="s">FS-FileServer</span></pre>
+            </div>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><p>Retirer le disque de données des <strong>Cluster Shared Volumes</strong> (le rôle File Server « general use » veut un disque classique).</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Configure Role</strong><p>→ <strong>File Server</strong> → type <em>File Server for general use</em>.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><p>Nom du serveur de fichiers : <code>SRV-FS01</code>, adresse IP dédiée (ex. <code>192.168.10.60</code>).</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><p>Sélectionner le disque partagé, puis terminer l'assistant.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><p>Créer un partage sur ce disque et y accéder depuis un client via <code>\\SRV-FS01\NomDuPartage</code>.</p></div></div>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Le nom qui compte</p>
+                <p>Les clients ne se connectent <strong>jamais</strong> à CLUSTER1 ou CLUSTER2 : ils utilisent <code>\\SRV-FS01\…</code>. C'est ce nom-là qui bascule d'un nœud à l'autre, et c'est tout l'intérêt de l'opération.</p>
+            </div>
+        </section>
+
+        <!-- 11 -->
+        <section class="chapter" id="tests-panne">
+            <p class="chapter__num">11</p>
+            <h2 class="chapter__title">Tester le basculement et les pannes</h2>
+            <p class="chapter__intro">Un cluster non testé est un cluster dont on ignore le comportement. Cinq scénarios, du plus doux au plus brutal — avec ce qu'on doit observer.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Test 1 — Déplacement manuel.</strong><p>Déplacer les ressources de CLUSTER1 vers CLUSTER2, puis revenir. Vérifier l'état après chaque opération.<br>
+                    <em>Observé :</em> le rôle passe <strong>offline</strong> quelques instants, puis revient <strong>online</strong> sur l'autre nœud.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Test 2 — Arrêt d'un nœud.</strong><p>Placer le rôle File Server sur CLUSTER1, ouvrir un partage depuis un client, puis arrêter CLUSTER1.<br>
+                    <em>Observé :</em> le rôle passe en <strong>pending</strong>, puis après quelques secondes l'autre nœud l'héberge et le partage redevient accessible.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Test 3 — Perte du réseau Cluster.</strong><p>Désactiver temporairement la carte dédiée au heartbeat sur un nœud.<br>
+                    <em>Observé :</em> rien ne change côté service — le cluster bascule son trafic interne sur un autre réseau disponible. C'est exactement ce que la redondance réseau est censée produire.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Test 4 — Perte du réseau iSCSI.</strong><p>Couper la connectivité vers le SAN, observer les événements, l'état des disques et du rôle, puis rétablir.<br>
+                    <em>Attendu :</em> c'est le test le plus sévère — sans stockage, aucun nœud ne peut servir le rôle. Il montre que le SAN reste un point de défaillance unique tant qu'il n'est pas redondé (multipathing).</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Test 5 — Basculement pendant une copie.</strong><p>Lancer une copie de fichier vers le partage, puis déplacer le rôle vers l'autre nœud et observer côté client.</p></div></div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Ce que le cluster ne fait pas</p>
+                <p>Le stockage partagé améliore la <strong>disponibilité</strong> — il ne remplace pas les sauvegardes. Le cluster protège de la panne d'un <em>nœud</em>. Il ne protège ni de la panne du SAN, ni d'un fichier supprimé, ni d'un ransomware : ces trois-là frappent le stockage partagé, que le service soit clusterisé ou non.</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Sécurité du labo</p>
+                <p>Les mots de passe d'administration du TP ne sont volontairement pas reproduits ici. Ils restent dans les notes locales, hors dépôt public — un identifiant de labo qui traîne dans un dépôt Git y reste pour toujours, même après suppression.</p>
+            </div>
+        </section>
+
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="storage-clustering">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
+        </section>
+
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt et un modules.</p>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p><strong>Stockage &amp; clustering</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
+</footer>
+
+<script src="../assets/catalogue.js?v=7"></script>
+<script src="../assets/app.js?v=7"></script>
+<script src="../assets/quiz-data.js?v=7"></script>
+<script src="../assets/quiz.js?v=7"></script>
+</body>
+</html>

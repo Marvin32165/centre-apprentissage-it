@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Téléphonie IP : VoIP et ToIP, PoE et QoS, sécurisation du réseau voix, chaîne voix → paquet, protocoles SIP, RTP et RTCP, codecs, architecture d'un PBX, TP 3CX et checklist de déploiement client.">
+    <title>Téléphonie IP (VoIP / ToIP) — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=7">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 03 · Réseau &amp; téléphonie · 3 / 3</p>
+        <h1 class="hero__title">Téléphonie IP<br><em>VoIP &amp; ToIP</em></h1>
+        <p class="hero__lead">Comment une voix devient des paquets, quels protocoles la transportent, ce qu'il faut au réseau pour que ça reste audible — et le montage d'un standard 3CX de bout en bout.</p>
+        <div class="hero__meta">
+            <span class="chip">SIP</span><span class="chip">RTP / RTCP</span><span class="chip">PoE</span><span class="chip">QoS</span><span class="chip">Codecs</span><span class="chip">3CX</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
+            <span class="fact"><b>Durée</b> ≈ 2 h</span>
+            <span class="fact"><b>Chapitres</b> 9</span>
+            <span class="fact"><b>Test</b> 8 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="subnetting.html">Réseau &amp; Subnetting</a> (utile)</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Téléphonie IP</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#voip-toip"><span>01</span> Distinguer VoIP et ToIP</a></li>
+            <li><a class="toc__link" href="#reseau"><span>02</span> Alimenter et prioriser : PoE &amp; QoS</a></li>
+            <li><a class="toc__link" href="#securite"><span>03</span> Sécuriser le réseau qui porte la voix</a></li>
+            <li><a class="toc__link" href="#voix-vers-ip"><span>04</span> De la voix au paquet : les 8 étapes</a></li>
+            <li><a class="toc__link" href="#protocoles"><span>05</span> SIP, RTP &amp; RTCP : monter un appel</a></li>
+            <li><a class="toc__link" href="#codecs-archi"><span>06</span> Codecs &amp; architecture d'un standard</a></li>
+            <li><a class="toc__link" href="#avantages"><span>07</span> Ce qu'on y gagne, ce qu'on y perd</a></li>
+            <li><a class="toc__link" href="#tp-3cx"><span>08</span> TP — Installer et configurer 3CX</a></li>
+            <li><a class="toc__link" href="#deploiement"><span>09</span> Déployer chez un client : la checklist</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Téléphonie IP</div>
+                <div class="section-banner__desc">Théorie VoIP/ToIP, protocoles SIP/RTP, puis un PBX 3CX monté en labo</div>
+            </div>
+        </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Distinguer la VoIP (transport) de la ToIP (système téléphonique complet).</li>
+                <li>Expliquer le rôle du PoE et pourquoi la QoS n'est pas une option sur un réseau qui porte la voix.</li>
+                <li>Dérouler la chaîne voix → paquet → voix, et le déroulé SIP complet d'un appel.</li>
+                <li>Diagnostiquer le symptôme « ça sonne, on décroche, personne n'entend rien ».</li>
+                <li>Choisir un codec, nommer les quatre briques d'un standard, et installer un PBX 3CX en labo.</li>
+                <li>Planifier un déploiement client autour de la contrainte qui ne se rattrape pas : la date de portabilité.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="subnetting.html">Réseau &amp; Subnetting</a> (utile)</p>
+            <p class="brief__foot">Le VLAN voix et la QoS se configurent avec les commandes des modules <a href="ccna-reseau.html">CCNA</a> et <a href="cisco-securite.html">Cisco IOS — sécurité</a> ; la VM du PBX se monte comme celles du module <a href="hyperv.html">Hyper-V</a>.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="chapter" id="voip-toip">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Distinguer VoIP et ToIP</h2>
+            <p class="chapter__intro">Les deux sigles sont employés l'un pour l'autre, à tort : le premier est une technique de transport, le second un système téléphonique complet qui s'appuie dessus.</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>VoIP — Voice over Internet Protocol</h4>
+                    <ul>
+                        <li>Technologie de <strong>transport</strong> de la voix via IP.</li>
+                        <li>Convertit la voix en paquets de données.</li>
+                        <li>Utilisée par une foule d'applications : Discord, Teams, WhatsApp…</li>
+                        <li>Exige une connexion stable et rapide.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>ToIP — Telephony over Internet Protocol</h4>
+                    <ul>
+                        <li><strong>Système téléphonique complet</strong> basé sur la VoIP.</li>
+                        <li>Comprend le PBX, la gestion des appels, la messagerie vocale…</li>
+                        <li>Hébergé en local (<em>on-premise</em>) ou dans le cloud.</li>
+                        <li>Exemples : 3CX, FreePBX, Asterisk.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>La VoIP transporte la voix ; la ToIP est la <strong>centrale téléphonique moderne</strong> construite par-dessus. Un appel Discord fait de la VoIP sans faire de la ToIP — il n'y a ni numéro, ni renvoi, ni messagerie unifiée derrière.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="reseau">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Alimenter et prioriser : PoE &amp; QoS</h2>
+            <p class="chapter__intro">Un téléphone IP est un ordinateur au bout d'un câble Ethernet. Il faut donc l'alimenter, et garantir que sa voix passe avant le téléchargement du voisin.</p>
+
+            <h3>PoE — Power over Ethernet</h3>
+            <p>Le PoE alimente les équipements du LAN par le câble réseau lui-même : caméras, téléphones IP, bornes Wi-Fi.</p>
+            <ul>
+                <li>Régi par la norme <strong>IEEE 802.3af</strong> (et ses successeurs).</li>
+                <li>N'entrave pas la capacité de transmission et ne limite pas la portée.</li>
+                <li>Convient à tous les types de téléphones IP.</li>
+                <li>Déclinaisons selon la puissance : <strong>PoE</strong>, <strong>PoE+</strong>, <strong>PoE++</strong>, <em>High-Power PoE</em>.</li>
+            </ul>
+
+            <div class="tip">
+                <p class="tip__label">Un câble, pas deux</p>
+                <p>Sans PoE, chaque poste réclame une prise électrique à côté de la prise réseau. C'est l'une des économies les plus concrètes de la ToIP : on mutualise le câblage existant au lieu de tirer une alimentation par bureau.</p>
+            </div>
+
+            <h3>QoS — Quality of Service</h3>
+            <p>Ensemble de technologies destinées à garantir un niveau de qualité donné à un flux.</p>
+            <div class="cards">
+                <div class="card">
+                    <h4>Ce que ça apporte</h4>
+                    <ul>
+                        <li>La capacité à définir la <strong>priorité</strong> du trafic.</li>
+                        <li>Une fiabilité accrue sur le réseau.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>La condition</h4>
+                    <ul>
+                        <li><strong>Tous</strong> les actifs traversés doivent prendre en charge la QoS.</li>
+                        <li>Un seul switch non configuré, et la priorité est perdue sur tout le chemin.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">À retenir</p>
+                <p>La voix ne tolère ni la latence ni la perte de paquets : un fichier qui arrive en retard se répare, une syllabe non — elle est simplement perdue. C'est pour ça que la QoS n'est pas une option en téléphonie IP.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="securite">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Sécuriser le réseau qui porte la voix</h2>
+            <p class="chapter__intro">Sécuriser un système, c'est protéger chaque machine. La démarche se décompose en trois temps.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Authentification</strong><p>Vérifier l'identité d'un utilisateur ou d'un appareil.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Autorisation</strong><p>Déterminer les ressources et les actions auxquelles cet utilisateur ou cet appareil a droit.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Confidentialité</strong><p>Protéger les données contre les accès non autorisés.</p></div></div>
+            </div>
+
+            <h3>Chiffrer : VPN ou SSL/TLS</h3>
+            <p>Les deux méthodes principales chiffrent le trafic, mais pas au même niveau :</p>
+            <ul>
+                <li>Le <strong>tunnel VPN</strong> encapsule <em>tout</em> le trafic entre deux points.</li>
+                <li><strong>SSL/TLS</strong> (HTTPS) encapsule les <em>données</em> d'une application donnée.</li>
+            </ul>
+
+            <h3>Côté sans-fil</h3>
+            <p>La succession des protocoles de chiffrement Wi-Fi, du plus ancien au plus récent : <strong>WEP</strong> → <strong>WPA</strong> → <strong>WPA2</strong> → <strong>WPA3</strong>. WEP est cassé depuis longtemps ; WPA2 est le minimum acceptable.</p>
+
+            <div class="tip">
+                <p class="tip__label">Le risque spécifique à la ToIP</p>
+                <p>L'<strong>usurpation d'identité</strong> sur un compte SIP permet à un attaquant de passer des appels facturés à l'entreprise, souvent la nuit et vers des numéros surtaxés. Mots de passe forts sur les extensions, et 2FA sur les comptes d'administration.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="voix-vers-ip">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">De la voix au paquet : les 8 étapes</h2>
+            <p class="chapter__intro">Entre le moment où on parle et celui où l'autre entend, la voix subit une chaîne de transformations complète — puis exactement la même en sens inverse.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Acquisition</strong><p>Le microphone capte la voix et la convertit en signal électrique.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Numérisation</strong><p>Le signal électrique devient un signal numérique.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Compression</strong><p>On réduit la taille des données pour économiser la bande passante — c'est le rôle du codec.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Habillage des en-têtes</strong><p>Le flux audio compressé est découpé en paquets.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Émission et transport</strong><p>Les paquets partent sur le réseau.</p></div></div>
+                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Réception</strong><p>Les paquets sont reçus et remis dans le bon ordre.</p></div></div>
+                <div class="step"><div class="step__num">7</div><div class="step__body"><strong>Conversion numérique → analogique</strong><p>Les données redeviennent un signal analogique.</p></div></div>
+                <div class="step"><div class="step__num">8</div><div class="step__body"><strong>Restitution</strong><p>Le haut-parleur reproduit la voix.</p></div></div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Pourquoi ça compte</p>
+                <p>Chaque étape ajoute du délai. C'est la somme de ces délais — plus le temps de traversée du réseau — qui décide si la conversation reste naturelle ou devient une suite de « vas-y, parle ».</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="protocoles">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">SIP, RTP &amp; RTCP : monter un appel</h2>
+            <p class="chapter__intro">Deux familles de protocoles cohabitent : celle qui <em>négocie</em> l'appel et celle qui <em>transporte</em> la voix. Elles sont séparées, et c'est fondamental.</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>Transport de l'audio/vidéo</h4>
+                    <ul>
+                        <li><strong>RTP</strong> (Real-time Transport Protocol) — transporte les flux audio/vidéo en temps réel.</li>
+                        <li><strong>RTCP</strong> (Real-time Control Protocol) — contrôle du flux et remontée de la qualité de service.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Signalisation</h4>
+                    <ul>
+                        <li><strong>H.323</strong> — protocole historique, encore présent en visioconférence.</li>
+                        <li><strong>SIP</strong> (Session Initiation Protocol) — le standard actuel : voix, vidéo, messagerie instantanée.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>SIP en trois couches</h3>
+            <p>SIP est un <strong>standard ouvert</strong> de gestion de sessions. Il s'appuie sur la pile classique : couche <strong>application</strong> (SIP) → couche <strong>transport</strong> (TCP/UDP) → couche <strong>réseau</strong> (IP).</p>
+
+            <h3>Les codes de réponse SIP</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Famille</th><th>Signification</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>1xx</code></td><td>Information — la demande est en cours de traitement</td></tr>
+                        <tr><td><code>2xx</code></td><td>Succès</td></tr>
+                        <tr><td><code>3xx</code></td><td>Redirection</td></tr>
+                        <tr><td><code>4xx</code></td><td>Erreur du client</td></tr>
+                        <tr><td><code>5xx</code></td><td>Erreur du serveur</td></tr>
+                        <tr><td><code>6xx</code></td><td>Échec global (<em>global failure</em>)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Ces familles sont calquées sur HTTP — un <code>404</code> SIP se lit exactement comme un <code>404</code> web.</p>
+
+            <h3>Le déroulé d'un appel</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>INVITE</strong><p>A demande l'établissement de la session avec B.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>100 Trying</strong><p>La demande est prise en charge.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>180 Ringing</strong><p>Le poste de B sonne.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>200 OK</strong><p>B décroche : la session est acceptée.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>ACK</strong><p>A confirme l'établissement. La signalisation a fait son travail.</p></div></div>
+                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>RTP / RTCP</strong><p>La conversation elle-même circule, en dehors de SIP.</p></div></div>
+                <div class="step"><div class="step__num">7</div><div class="step__body"><strong>BYE</strong><p>L'un des deux raccroche.</p></div></div>
+                <div class="step"><div class="step__num">8</div><div class="step__body"><strong>200 OK</strong><p>Terminaison confirmée.</p></div></div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Le piège du dépannage</p>
+                <p>SIP monte l'appel, RTP porte la voix — <strong>par des chemins différents</strong>. D'où le symptôme classique « ça sonne, on décroche, mais personne n'entend rien » : la signalisation passe, le flux RTP est bloqué (pare-feu, NAT). Deux problèmes distincts, deux endroits à regarder.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="codecs-archi">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Codecs &amp; architecture d'un standard</h2>
+            <p class="chapter__intro">Le codec (COdeur/DÉCodeur) arbitre entre qualité audio et bande passante consommée. L'architecture, elle, tient en quatre briques.</p>
+
+            <h3>Les codecs courants</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Codec</th><th>Aussi appelé</th><th>Zone d'usage</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>G.711a</strong></td><td>PCMA</td><td>Europe et une grande partie du monde</td></tr>
+                        <tr><td><strong>G.711u</strong></td><td>PCMU</td><td>Amérique du Nord, Japon</td></tr>
+                        <tr><td><strong>G.729</strong></td><td>—</td><td>Partout où la bande passante est comptée (compression forte)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Les quatre briques d'une téléphonie IP</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Les téléphones IP</strong><p>Physiques, ou applications. Une application simule un téléphone IP sur un ordinateur ou un smartphone : le poste est joignable partout dans le monde, tant qu'il y a une connexion Internet.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Le PBX</strong><p>Private Branch Exchange — la centrale téléphonique. En CLI ou en interface graphique, en version gratuite (Asterisk, FreePBX) ou payante (3CX…).</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Le fournisseur SIP</strong><p>Le <em>trunk</em> qui relie le standard au réseau téléphonique public (OVH, par exemple).</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>La connexion Internet</strong><p>Le support de tout le reste — et le premier point de défaillance.</p></div></div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le codec est un <strong>arbitrage</strong> : G.711 privilégie la qualité, G.729 la bande passante. Et une téléphonie IP tient toujours sur les mêmes quatre briques — les postes, le PBX, le trunk SIP de l'opérateur et la connexion Internet. C'est la dernière, la moins visible, qui décide de la qualité perçue.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="avantages">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Ce qu'on y gagne, ce qu'on y perd</h2>
+            <p class="chapter__intro">L'argument de vente est financier, mais le vrai gain se joue souvent sur la souplesse et l'intégration au système d'information.</p>
+
+            <h3>Les gains</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Coûts opérationnels</h4>
+                    <ul>
+                        <li>Mutualisation du câblage LAN.</li>
+                        <li>Un téléphone se branche n'importe où sur le réseau.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Coûts de communication</h4>
+                    <ul>
+                        <li>Opérateurs VoIP nettement moins chers que les opérateurs « terrestres ».</li>
+                        <li>Liens internes gratuits entre sites d'une même société.</li>
+                        <li><strong>Least Cost Routing</strong> : le système choisit le chemin le plus économique.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Coûts d'abonnement</h4>
+                    <ul>
+                        <li>Meilleure utilisation de la connexion Internet existante (avec une bonne QoS).</li>
+                        <li>Suppression des lignes fixes devenues inutiles.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Flexibilité</h4>
+                    <ul>
+                        <li>Les collaborateurs restent joignables en déplacement ou à domicile.</li>
+                        <li>Messagerie unifiée : le message vocal arrive par mail ou sur le mobile.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>L'intégration au SI (CTI)</h3>
+            <p><strong>CTI</strong> — Computer Telephony Integration. C'est là que la ToIP dépasse le simple téléphone :</p>
+            <ul>
+                <li><strong>Click2Call</strong> — cliquer sur un numéro dans un logiciel lance l'appel.</li>
+                <li><strong>Statistiques et rapports</strong> sur l'usage des services.</li>
+                <li><strong>Audit et facturation</strong> interne par service.</li>
+                <li><strong>Enregistrement des appels</strong> pour la formation ou la qualité — <em>l'information du client est obligatoire</em>.</li>
+                <li><strong>Intégration CRM</strong> : la fiche client s'ouvre à la sonnerie.</li>
+                <li><strong>Intégration Teams / M365</strong>.</li>
+                <li><strong>Administration à distance</strong> : ajout/suppression de postes, droits, firmware — sans équipement spécifique ni déplacement. Un répondeur de jour férié oublié se corrige depuis n'importe où.</li>
+                <li><strong>Systèmes ouverts</strong> : la grande majorité des centraux reposent sur SIP, donc sur du matériel interchangeable. L'entreprise n'est liée à aucun prestataire.</li>
+            </ul>
+
+            <h3>Les limites</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Techniques</h4>
+                    <ul>
+                        <li><strong>Latence</strong>, due au nombre d'équipements réseau traversés.</li>
+                        <li><strong>Perte de paquets</strong>.</li>
+                        <li>Qualité du réseau LAN/WAN déterminante.</li>
+                        <li>Les téléphones exigent une alimentation (PoE ou externe).</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Vis-à-vis de l'opérateur</h4>
+                    <ul>
+                        <li>Écoute possible en cas de flux non chiffré.</li>
+                        <li>Pas de <strong>localisation</strong> de l'appelant — problème pour les appels d'urgence.</li>
+                        <li>Connexion Internet HS = plus aucune communication.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Le filet de sécurité</p>
+                <p>Une ligne <strong>PSTN</strong> de secours (ou un renvoi automatique vers des mobiles) répond d'un coup à deux limites : la localisation pour les urgences, et la continuité du service quand la fibre tombe.</p>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="tp-3cx">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">TP — Installer et configurer 3CX</h2>
+            <p class="chapter__intro">Objectif : un standard 3CX fonctionnel, quelques extensions créées, et un appel testé entre deux postes.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Cloud ou local ?</p>
+                <p>L'installation cloud (essai gratuit, offre <em>3CX SMB partagé</em>) est la voie la plus rapide — mais elle suppose que le réseau de la salle laisse passer les flux nécessaires. Quand ce n'est pas le cas, on bascule sur une <strong>installation locale</strong> dans une VM, à partir de l'image <code>debian-amd64-netinst-3cx.iso</code> fournie par l'éditeur.</p>
+            </div>
+
+            <h3>System ou SBC : ne pas se tromper de produit</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>3CX System</h4>
+                    <p>La centrale complète. C'est ce qu'on installe ici.</p>
+                </div>
+                <div class="card">
+                    <h4>3CX SBC</h4>
+                    <p>Un simple relais, à installer sur le réseau d'un <em>autre</em> site pour le raccorder à un System hébergé ailleurs.</p>
+                </div>
+            </div>
+
+            <h3>Installation</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Créer la VM</strong><p>Démarrer sur l'ISO Debian fournie par 3CX et dérouler l'installation.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Choisir le mode de configuration</strong><p>L'outil propose <em>Web Browser</em> ou <em>Command Line</em>. Le navigateur est plus lisible pour un premier montage.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Créer la configuration depuis le portail</strong><p>Se connecter au portail 3CX, cliquer sur l'instance pour générer la configuration.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Choisir le type d'instance</strong><p>Ici : 3CX <em>dédié</em>, formule <em>basique</em>.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Créer les extensions</strong><p>Une extension = un poste. Créer-en quelques-unes, puis tester un appel interne entre deux d'entre elles.</p></div></div>
+            </div>
+
+            <h3>Réglages à connaître</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Réglage</th><th>Valeur du TP</th><th>Ce que ça fait</th></tr></thead>
+                    <tbody>
+                        <tr><td>Délai de non-réponse</td><td><code>10</code> s</td><td>Durée de sonnerie avant déclenchement du renvoi</td></tr>
+                        <tr><td>Transfert des appels externes</td><td>Extension d'un collègue, ou mobile</td><td>Où part l'appel si personne ne décroche</td></tr>
+                        <tr><td>État « occupé / non enregistré »</td><td>—</td><td>Comportement quand le poste est déjà en appel ou déconnecté</td></tr>
+                        <tr><td>Comptes propriétaires / admin</td><td><strong>2FA activée</strong></td><td>Protège le compte qui peut ouvrir des lignes sortantes</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Trunk SIP OVH</p>
+                <p>Dans la configuration du trunk, choisir le pays <strong>France</strong> puis le fournisseur <strong>OVH</strong>. Pour une ligne belge, le modèle reste le même : il suffit de remplacer le suffixe du champ <em>serveur</em> par <code>.be</code>.</p>
+            </div>
+        </section>
+
+        <!-- 09 -->
+        <section class="chapter" id="deploiement">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">Déployer chez un client : la checklist</h2>
+            <p class="chapter__intro">Un déploiement ToIP se joue autant sur le calendrier que sur la technique — la portabilité des numéros est une date qu'on ne rattrape pas.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Étude du besoin</strong><p>Nombre de postes, sites, usages (accueil, file d'attente, mobilité).</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Définir la date de portabilité</strong><p>Prévoir la demande de transfert des numéros bien en amont : c'est le délai le plus long du projet.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Choisir l'hébergement et le matériel</strong><p>Cloud ou on-premise, modèles de postes, switches PoE.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Installer et configurer le PBX</strong><p>Extensions, groupes d'appel, messagerie, horaires.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Configurer le réseau et les règles</strong><p>VLAN voix, QoS, ouverture des flux SIP et RTP.</p></div></div>
+                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Installer les téléphones et applications</strong><p>Provisionner les postes, déployer les softphones.</p></div></div>
+                <div class="step"><div class="step__num">7</div><div class="step__body"><strong>Tests fonctionnels avant la portabilité</strong><p>Tout doit fonctionner sur les nouveaux numéros provisoires.</p></div></div>
+                <div class="step"><div class="step__num">8</div><div class="step__body"><strong>Tests finaux le jour de la portabilité</strong><p>Vérifier entrant, sortant, renvois et messagerie dès la bascule.</p></div></div>
+                <div class="step"><div class="step__num">9</div><div class="step__body"><strong>Peaufinage</strong><p>Ajuster la configuration avec les retours des utilisateurs les premiers jours.</p></div></div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Les étapes 7 et 8 ne sont pas redondantes : la première valide l'installation, la seconde valide la <strong>portabilité</strong>. Le jour J, ce qui casse n'est presque jamais le PBX — c'est l'acheminement des numéros repris.</p>
+            </div>
+        </section>
+
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="voip">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
+        </section>
+
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#reseau">examen du Parcours 03 · Réseau & téléphonie</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt et un modules.</p>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p><strong>Téléphonie IP (VoIP / ToIP)</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
+</footer>
+
+<script src="../assets/catalogue.js?v=7"></script>
+<script src="../assets/app.js?v=7"></script>
+<script src="../assets/quiz-data.js?v=7"></script>
+<script src="../assets/quiz.js?v=7"></script>
+</body>
+</html>

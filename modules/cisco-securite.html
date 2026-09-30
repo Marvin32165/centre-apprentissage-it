@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Cisco IOS — sécurité : mémoires et modes d'IOS, sécurisation de base d'un commutateur, SSH et port-security, VLAN et trunk, routage inter-VLAN, spanning tree avec PortFast et BPDU Guard, filtrage par ACL standard et étendues.">
+    <title>Cisco IOS — Sécurité, VLAN, STP &amp; ACL — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=7">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 03 · Réseau &amp; téléphonie · 2 / 3</p>
+        <h1 class="hero__title">Cisco IOS<br><em>sécuriser le réseau local</em></h1>
+        <p class="hero__lead">Verrouiller l'accès à un commutateur, le découper en VLAN, survivre à la redondance grâce au spanning tree, puis filtrer le trafic avec des ACL — les gestes de base d'un réseau Cisco qu'on peut laisser tourner sans le surveiller à chaque instant.</p>
+        <div class="hero__meta">
+            <span class="chip">enable secret</span><span class="chip">SSH</span><span class="chip">port-security</span><span class="chip">VLAN &amp; 802.1Q</span><span class="chip">STP</span><span class="chip">ACL</span><span class="chip">Packet Tracer</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 3 h</span>
+            <span class="fact"><b>Chapitres</b> 7</span>
+            <span class="fact"><b>Test</b> 8 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="subnetting.html">Subnetting</a> · <a href="ccna-reseau.html">CCNA</a> (utile)</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Cisco IOS — sécurité</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#ios"><span>01</span> Cisco IOS en bref</a></li>
+            <li><a class="toc__link" href="#securisation"><span>02</span> Sécurisation de base</a></li>
+            <li><a class="toc__link" href="#ssh-ports"><span>03</span> SSH &amp; protection des ports</a></li>
+            <li><a class="toc__link" href="#vlan"><span>04</span> VLAN &amp; trunk</a></li>
+            <li><a class="toc__link" href="#inter-vlan"><span>05</span> Routage inter-VLAN</a></li>
+            <li><a class="toc__link" href="#stp"><span>06</span> Spanning tree, PortFast &amp; BPDU Guard</a></li>
+            <li><a class="toc__link" href="#acl"><span>07</span> Filtrer avec les ACL</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Cisco IOS — sécurité</div>
+                <div class="section-banner__desc">Du premier mot de passe au filtrage par ACL, sur commutateurs et routeurs Cisco</div>
+            </div>
+        </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Naviguer entre les modes d'IOS et <strong>sauvegarder</strong> une configuration pour qu'elle survive au redémarrage.</li>
+                <li>Appliquer la sécurisation de base d'un commutateur : mots de passe, VLAN 1 neutralisé, SSH seul, déconnexion après inactivité.</li>
+                <li>Lier un port à une adresse MAC avec <code>port-security</code> et relever un port en <code>err-disabled</code>.</li>
+                <li>Créer des VLAN, monter un trunk 802.1Q verrouillé et faire router les VLAN entre eux.</li>
+                <li>Expliquer l'élection du spanning tree et poser PortFast et BPDU Guard aux bons endroits.</li>
+                <li>Écrire, placer et dépanner une ACL standard ou étendue en lisant ses compteurs.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="subnetting.html">Réseau &amp; Subnetting</a> (masques, CIDR). Le module <a href="ccna-reseau.html">CCNA</a> pose la configuration de base d'un équipement Cisco : utile avant, pas obligatoire.</p>
+            <p class="brief__foot">Suite du parcours : <a href="voip.html">Téléphonie IP</a>, qui s'appuie sur les VLAN et la qualité de service du réseau local.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="chapter" id="ios">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Cisco IOS en bref</h2>
+            <p class="chapter__intro">IOS est le système propriétaire des équipements Cisco. Quatre mémoires, quatre niveaux de commande, et une distinction qui fait perdre des heures quand on l'oublie : <em>running</em> contre <em>startup</em>.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Mémoire</th><th scope="col">Contenu</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>ROM</strong></td><td>le bootstrap, qui amorce l'appareil</td></tr>
+                        <tr><td><strong>Flash</strong></td><td>l'image IOS (<code>.bin</code>)</td></tr>
+                        <tr><td><strong>RAM</strong></td><td>le système en cours d'exécution et la <em>running-config</em></td></tr>
+                        <tr><td><strong>NVRAM</strong></td><td>la configuration de démarrage, en texte clair par défaut</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Invite</th><th scope="col">Niveau</th><th scope="col">On y arrive par</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>Switch1&gt;</code></td><td>user exec</td><td>la connexion</td></tr>
+                        <tr><td><code>Switch1#</code></td><td>privileged exec</td><td><code>enable</code></td></tr>
+                        <tr><td><code>Switch1(config)#</code></td><td>configuration globale</td><td><code>configure terminal</code></td></tr>
+                        <tr><td><code>Switch1(config-if)#</code></td><td>configuration d'interface</td><td><code>interface …</code> (ou <code>line</code>, <code>router</code>)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS</span></div>
+                <pre class="terminal__code"><span class="k">show running-config</span>                 <span class="c">! la configuration active, en RAM</span>
+<span class="k">copy running-config startup-config</span>  <span class="c">! l'enregistrer en NVRAM (« de » vers « vers »)</span>
+<span class="k">show startup-config</span>                 <span class="c">! la configuration de démarrage</span>
+<span class="k">reload</span>                              <span class="c">! redémarrer</span></pre>
+            </div>
+
+            <p><code>exit</code> redescend d'un niveau, <code>end</code> (ou Ctrl+Z) remonte directement au mode privilégié, et <code>?</code> liste partout les commandes possibles. Les exercices se font dans <strong>Packet Tracer</strong>, qui n'émule pas tout : aucune commande <code>debug</code>, et certaines <code>show</code> complexes n'y répondent pas.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Tant que <code>copy running-config startup-config</code> n'est pas fait, <strong>tout le travail disparaît au redémarrage</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="securisation">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Sécurisation de base</h2>
+            <p class="chapter__intro">La sécurité commence hors de la ligne de commande : local technique fermé et accès journalisés, car la console ne dépend d'aucune configuration. Ensuite seulement viennent les commandes.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — configuration globale</span></div>
+                <pre class="terminal__code"><span class="k">line console 0</span>
+ <span class="p">password</span> <span class="s">MOT_DE_PASSE</span>
+ <span class="p">login</span>                       <span class="c">! sans login, le mot de passe n'est jamais demandé</span>
+ <span class="p">exec-timeout</span> 10             <span class="c">! déconnexion après 10 minutes d'inactivité</span>
+ <span class="k">exit</span>
+<span class="k">enable secret</span> <span class="s">MOT_DE_PASSE</span>   <span class="c">! haché — enable password ne s'utilise plus</span>
+<span class="k">service password-encryption</span>  <span class="c">! masque les autres mots de passe (type 7)</span></pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Type 7 n'est pas du chiffrement</p>
+                <p><code>service password-encryption</code> produit un encodage faible, réversible en une seconde. Il protège d'un regard par-dessus l'épaule, pas d'un fichier volé. Seuls les mots de passe posés avec <code>secret</code> sont réellement protégés.</p>
+            </div>
+
+            <h3>Neutraliser le VLAN 1</h3>
+            <p>Tous les ports sont dans le VLAN 1 à la sortie d'usine, et ce VLAN ne se supprime pas. On déplace les ports dans un autre VLAN, puis on éteint l'interface du VLAN 1 :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS</span></div>
+                <pre class="terminal__code"><span class="k">vlan</span> 45
+ <span class="k">exit</span>
+<span class="k">interface range</span> fa0/1 - 24
+ <span class="p">switchport mode access</span>
+ <span class="p">switchport access vlan</span> 45
+<span class="c">! … adresse d'administration déplacée sur l'interface vlan 45, puis :</span>
+<span class="k">interface vlan</span> 1
+ <span class="p">shutdown</span></pre>
+            </div>
+            <p>L'ordre compte : basculer tous les ports <em>avant</em> d'avoir déplacé l'adresse d'administration coupe la session à distance, constaté en TP.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>password</code> <strong>et</strong> <code>login</code> sur la console, <code>enable secret</code> pour le mode privilégié, <code>exec-timeout</code> pour les sessions oubliées, et un VLAN 1 vidé puis éteint.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="ssh-ports">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">SSH &amp; protection des ports</h2>
+            <p class="chapter__intro">Telnet transporte mots de passe et commandes en clair : on administre en SSH, inactif par défaut. Et on empêche qu'un appareil inconnu se branche à la place d'un poste.</p>
+
+            <h3>SSH, dans l'ordre des dépendances</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — configuration globale</span></div>
+                <pre class="terminal__code"><span class="k">hostname</span> SW1      <span class="c">! nom d'hôte + domaine = nom de la paire de clés</span>
+<span class="k">ip domain-name</span> <span class="s">cisco.com</span>
+<span class="k">username</span> <span class="s">NOM</span> <span class="p">secret</span> <span class="s">MOT_DE_PASSE</span>
+<span class="k">crypto key generate rsa</span>
+<span class="k">line vty</span> 0 15
+ <span class="p">login local</span>
+ <span class="p">transport input ssh</span>
+ <span class="k">exit</span>
+<span class="k">ip ssh version</span> 2  <span class="c">! par défaut IOS accepte encore SSHv1</span></pre>
+            </div>
+
+            <h3>port-security : un port, une adresse MAC</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — configuration d'interface</span></div>
+                <pre class="terminal__code"><span class="k">interface</span> fa0/2
+ <span class="p">switchport mode access</span>  <span class="c">! prérequis : refusé sur un port non « access »</span>
+ <span class="p">switchport port-security maximum</span> 1
+ <span class="p">switchport port-security mac-address sticky</span>
+ <span class="p">switchport port-security violation shutdown</span></pre>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Violation</th><th scope="col">Effet</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>shutdown</code> (défaut)</td><td>le port s'éteint et passe en <code>err-disabled</code></td></tr>
+                        <tr><td><code>restrict</code></td><td>le port reste actif, rejette, compte et journalise</td></tr>
+                        <tr><td><code>protect</code></td><td>le port reste actif et rejette, sans compteur ni alerte</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Un port en <code>err-disabled</code> ne revient pas tout seul : une fois la cause levée, <code>shutdown</code> puis <code>no shutdown</code>.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>SSH : nom d'hôte, domaine, compte local, clés RSA, <code>transport input ssh</code>, <code>login local</code>, <code>ip ssh version 2</code>. port-security ne rend pas l'usurpation de MAC impossible : il la rend <strong>bruyante</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="vlan">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">VLAN &amp; trunk</h2>
+            <p class="chapter__intro">Un VLAN découpe un commutateur en réseaux locaux étanches. Les postes n'en savent rien : c'est le commutateur qui marque la trame à l'entrée du port et la démarque à la sortie.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS</span></div>
+                <pre class="terminal__code"><span class="c">! créer et nommer</span>
+<span class="k">vlan</span> 2
+ <span class="p">name</span> <span class="s">NOM_A_DONNER</span>
+<span class="c">! assigner un port d'accès</span>
+<span class="k">interface</span> FastEthernet 0/2
+ <span class="p">switchport mode access</span>
+ <span class="p">switchport access vlan</span> 2
+<span class="c">! le lien entre commutateurs : un trunk</span>
+<span class="k">interface</span> FastEthernet 0/11
+ <span class="p">switchport mode trunk</span>
+ <span class="p">switchport trunk native vlan</span> 99
+ <span class="p">switchport trunk allowed vlan</span> 1,10,20
+ <span class="p">switchport nonegotiate</span>  <span class="c">! coupe DTP : trunk figé</span></pre>
+            </div>
+
+            <ul>
+                <li>Le trunk <strong>n'appartient à aucun VLAN</strong> : il en transporte plusieurs, marqués selon la norme ouverte <strong>IEEE 802.1Q</strong> (<code>dot1q</code>).</li>
+                <li>Par défaut il laisse passer <strong>tous</strong> les VLAN : on restreint la liste.</li>
+                <li><strong>DTP</strong> négocie un trunk tout seul — donc en offre un à qui se fait passer pour un commutateur.</li>
+                <li>Un port assigné à un VLAN <strong>non déclaré</strong> devient inactif ; des listes discordantes aux deux bouts d'un trunk font fuiter du trafic (CDP signale un <em>VLAN mismatch</em>).</li>
+            </ul>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Question</th><th scope="col">Commande</th></tr></thead>
+                    <tbody>
+                        <tr><td>quels VLAN existent</td><td><code>show vlan brief</code></td></tr>
+                        <tr><td>ce port est-il en accès, dans quel VLAN</td><td><code>show interface INTERFACE switchport</code></td></tr>
+                        <tr><td>quels trunks, quels VLAN autorisés</td><td><code>show interface trunk</code></td></tr>
+                        <tr><td>quelles MAC derrière ce port</td><td><code>show mac address-table interface FastEthernet 0/1</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Accès : <code>switchport mode access</code> + <code>switchport access vlan</code>. Trunk : <code>switchport mode trunk</code>, VLAN natif, liste <strong>restreinte</strong> et <code>nonegotiate</code>.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="inter-vlan">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Routage inter-VLAN</h2>
+            <p class="chapter__intro">Deux VLAN sont deux réseaux logiques : pour qu'ils se parlent, il faut un routeur. Le trunk les transporte, il ne les route pas.</p>
+
+            <h3>« Router on a stick » : une sous-interface par VLAN</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — routeur</span></div>
+                <pre class="terminal__code"><span class="k">interface</span> GigabitEthernet 0/0
+ <span class="p">shutdown</span>
+ <span class="p">no ip address</span>
+<span class="k">interface</span> GigabitEthernet 0/0.1
+ <span class="p">encapsulation dot1q</span> 1 <span class="p">native</span>  <span class="c">! native : seulement pour le VLAN natif</span>
+ <span class="p">ip address</span> <span class="s">ADRESSE_DE_PASSERELLE MASQUE</span>
+<span class="k">interface</span> GigabitEthernet 0/0
+ <span class="p">no shutdown</span>                   <span class="c">! sinon toutes les sous-interfaces restent éteintes</span></pre>
+            </div>
+            <p>Chaque sous-interface sert de passerelle à son VLAN, et le port du commutateur en face est un <strong>trunk</strong>. Le numéro après le point n'est qu'un identifiant : le faire coïncider avec le VLAN est une convention de lisibilité.</p>
+
+            <div class="tip">
+                <p class="tip__label">L'alternative réaliste</p>
+                <p>Un <strong>commutateur de niveau 3</strong> : les VLAN y reçoivent chacun une interface et une adresse IP, puis <code>ip routing</code> active le routage. Plus de routeur externe, plus de goulet sur une seule interface physique.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Router entre VLAN : <strong>sous-interfaces + <code>encapsulation dot1q</code></strong> sur un routeur relié par un trunk, ou commutateur de niveau 3 avec <code>ip routing</code>.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="stp">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Spanning tree, PortFast &amp; BPDU Guard</h2>
+            <p class="chapter__intro">Doubler les liens protège d'une panne mais crée des boucles, et Ethernet n'a pas de TTL pour détruire une trame qui tourne : tempête de diffusion, trames dupliquées, table d'adresses MAC qui vacille.</p>
+
+            <p>Le <strong>spanning tree</strong> garde la redondance sans la boucle : tant que tout va bien, le lien redondant est <strong>coupé logiquement</strong> ; si le principal tombe, il est réactivé. Les commutateurs s'accordent en échangeant des <strong>BPDU</strong>, toutes les deux secondes.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Élire le pont racine</strong><p>Le BID le plus faible gagne (priorité + identifiant de VLAN + MAC) ; à priorité égale, la MAC la plus basse. Une priorité fixée à la main est un multiple de 4096.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Élire les ports</strong><p>Chaque autre commutateur choisit son port racine, au moindre coût vers la racine. Les ports non désignés passent en blocage.</p></div></div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Version</th><th scope="col">Norme</th><th scope="col">Apport</th></tr></thead>
+                    <tbody>
+                        <tr><td>STP</td><td>802.1D</td><td>l'original, lent à reconverger (≈ 30 s avant qu'un port transmette)</td></tr>
+                        <tr><td>RSTP</td><td>802.1w</td><td>même algorithme, bien plus réactif</td></tr>
+                        <tr><td>PVST+</td><td>Cisco</td><td>une instance par VLAN — <strong>actif par défaut</strong> : on peut répartir les racines</td></tr>
+                        <tr><td>MST</td><td>802.1s</td><td>une instance pour plusieurs VLAN</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS</span></div>
+                <pre class="terminal__code"><span class="k">spanning-tree vlan</span> 1 <span class="p">root primary</span>  <span class="c">! devenir racine du VLAN 1</span>
+<span class="k">interface</span> fastEthernet 0/1         <span class="c">! un port relié à un POSTE</span>
+ <span class="p">spanning-tree portfast</span>            <span class="c">! transmet tout de suite</span>
+ <span class="p">spanning-tree bpduguard enable</span>    <span class="c">! un BPDU reçu → err-disabled</span>
+<span class="k">show spanning-tree</span>                 <span class="c">! racine, BID local, état et coût des ports</span></pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Jamais sur un trunk</p>
+                <p>PortFast supprime la seule protection contre la boucle : il ne va que sur un port relié à un périphérique terminal. BPDU Guard l'accompagne, parce qu'un port de poste qui reçoit un BPDU signifie qu'un commutateur a pris la place du poste.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>STP coupe logiquement la boucle et rouvre le lien de secours en cas de panne. Aux ports d'accès, le couple <strong>PortFast + BPDU Guard</strong> : réactivité sans ouvrir la porte à un commutateur pirate.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="acl">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Filtrer avec les ACL</h2>
+            <p class="chapter__intro">Une ACL est une liste de règles lues de haut en bas : la <strong>première</strong> qui correspond décide, les suivantes ne sont même pas testées. Et toute ACL se termine par un <code>deny any</code> implicite.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Type</th><th scope="col">Numéros</th><th scope="col">Lit</th><th scope="col">Se place</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Standard</strong></td><td>1-99, 1300-1999</td><td>l'adresse <strong>source</strong> seulement</td><td>près de la <strong>destination</strong></td></tr>
+                        <tr><td><strong>Étendue</strong></td><td>100-199, 2000-2699</td><td>source, destination, protocole, port</td><td>près de la <strong>source</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Le <strong>masque générique</strong> se lit à l'inverse d'un masque de sous-réseau — 0 : le bit doit correspondre, 1 : libre. Il se calcule en retirant chaque octet du masque à 255 : <code>255.255.255.0</code> → <code>0.0.0.255</code>. <code>host A.B.C.D</code> vaut <code>A.B.C.D 0.0.0.0</code>, et <code>any</code> n'importe quelle adresse.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — routeur</span></div>
+                <pre class="terminal__code"><span class="c">! standard nommée : seul le réseau d'admin peut ouvrir une session</span>
+<span class="k">ip access-list standard</span> ADMIN-MGT
+ <span class="p">permit</span> 192.168.0.0 0.0.0.255
+<span class="k">line vty</span> 0 15
+ <span class="p">access-class</span> ADMIN-MGT <span class="p">in</span>         <span class="c">! sur une ligne : access-class</span>
+
+<span class="c">! étendue numérotée : pas de SSH d'un réseau vers l'autre</span>
+<span class="k">access-list</span> 100 <span class="p">deny</span> tcp 192.168.1.0 0.0.0.255 192.168.2.0 0.0.0.255 <span class="p">eq</span> 22
+<span class="k">access-list</span> 100 <span class="p">permit</span> ip any any  <span class="c">! sans ce permit final, tout est bloqué</span>
+<span class="k">interface</span> gigabitEthernet 0/0
+ <span class="p">ip access-group</span> 100 <span class="p">in</span>            <span class="c">! sur une interface : ip access-group</span></pre>
+            </div>
+
+            <ul>
+                <li>Une règle nouvelle s'ajoute <strong>à la fin</strong> : les règles précises d'abord, les générales ensuite.</li>
+                <li>Une ACL <strong>numérotée</strong> ne se corrige pas règle par règle : <code>no access-list N</code> la supprime entière. Une ACL <strong>nommée</strong> accepte <code>no permit …</code> / <code>no deny …</code>.</li>
+                <li>L'opérande <code>eq</code>, <code>gt</code>, <code>lt</code>, <code>neq</code> qualifie le port écrit <strong>juste avant lui</strong> : après la destination, c'est le port de destination.</li>
+            </ul>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th scope="col">Symptôme</th><th scope="col">Compteurs (<code>show access-lists</code>)</th><th scope="col">Cause probable</th></tr></thead>
+                    <tbody>
+                        <tr><td>ça passe alors que ça ne devrait pas</td><td>tous à zéro</td><td>ACL absente ou dans le mauvais sens (<code>show ip interface</code>)</td></tr>
+                        <tr><td>ça passe alors que ça ne devrait pas</td><td>le <code>permit</code> compte, le <code>deny</code> non</td><td>règles dans le mauvais ordre</td></tr>
+                        <tr><td>plus rien ne passe</td><td>rien ne compte, sauf le refus final</td><td><code>permit</code> final oublié</td></tr>
+                        <tr><td>ça ne passe pas, l'ACL ne compte rien</td><td>tous à zéro</td><td>le blocage vient d'ailleurs : routage, adressage</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Ordre séquentiel, première correspondance, <strong><code>deny any</code> implicite</strong>. <code>show access-lists</code> donne le contenu et les compteurs, <code>show ip interface</code> dit où l'ACL est appliquée et dans quel sens.</p>
+            </div>
+        </section>
+
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="cisco-securite">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
+        </section>
+
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#reseau">examen du Parcours 03 · Réseau &amp; téléphonie</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt et un modules.</p>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p><strong>Cisco IOS — sécurité</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
+</footer>
+
+<script src="../assets/catalogue.js?v=7"></script>
+<script src="../assets/app.js?v=7"></script>
+<script src="../assets/quiz-data.js?v=7"></script>
+<script src="../assets/quiz.js?v=7"></script>
+</body>
+</html>

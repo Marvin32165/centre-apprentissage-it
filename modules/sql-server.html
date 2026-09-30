@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module SQL Server : instance et bases système, installation, compte de service géré (gMSA), Configuration Manager, TCP/IP et pare-feu, mémoire et tempdb, création et dimensionnement des bases, sauvegarde et restauration, sécurité, maintenance, SQL Server Agent, diagnostic des blocages, supervision et haute disponibilité (cluster, Always On).">
+    <title>SQL Server — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=7">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 02 · Infrastructure Windows · 7 / 8</p>
+        <h1 class="hero__title">SQL Server<br><em>administration</em></h1>
+        <p class="hero__lead">Administrer une instance SQL Server du point de vue de l'administrateur système : l'installer et la configurer, gérer ses bases et ses accès, la sauvegarder, la surveiller, diagnostiquer ses incidents — et la rendre hautement disponible sur un second nœud.</p>
+        <div class="hero__meta">
+            <span class="chip">Instance</span><span class="chip">gMSA</span><span class="chip">Sauvegarde</span><span class="chip">Diagnostic</span><span class="chip">Always On</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 4 h</span>
+            <span class="fact"><b>Chapitres</b> 14</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a> · <a href="storage-clustering.html">Stockage &amp; clustering</a></span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">SQL Server</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#moteur"><span>01</span> Le moteur, l'instance et ses fichiers</a></li>
+            <li><a class="toc__link" href="#installation"><span>02</span> Installer l'instance, écran par écran</a></li>
+            <li><a class="toc__link" href="#gmsa"><span>03</span> Le compte de service géré (gMSA)</a></li>
+            <li><a class="toc__link" href="#services"><span>04</span> Configuration Manager : services</a></li>
+            <li><a class="toc__link" href="#reseau"><span>05</span> Réseau : TCP/IP, port, pare-feu</a></li>
+            <li><a class="toc__link" href="#memoire"><span>06</span> Mémoire, parallélisme et tempdb</a></li>
+            <li><a class="toc__link" href="#bases"><span>07</span> Créer et dimensionner une base</a></li>
+            <li><a class="toc__link" href="#gerer"><span>08</span> Gérer une base existante</a></li>
+            <li><a class="toc__link" href="#sauvegarde"><span>09</span> Sauvegarder et restaurer</a></li>
+            <li><a class="toc__link" href="#securite"><span>10</span> Logins, users, rôles, permissions</a></li>
+            <li><a class="toc__link" href="#maintenance"><span>11</span> Maintenance et SQL Server Agent</a></li>
+            <li><a class="toc__link" href="#diagnostic"><span>12</span> Diagnostiquer un incident</a></li>
+            <li><a class="toc__link" href="#supervision"><span>13</span> Supervision au quotidien</a></li>
+            <li><a class="toc__link" href="#haute-dispo"><span>14</span> Haute disponibilité</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">SQL Server</div>
+                <div class="section-banner__desc">Exploitation et diagnostic — le moteur vu depuis Windows, le réseau et le stockage</div>
+            </div>
+        </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Installer une instance nommée et la faire tourner sous un <strong>compte de service géré</strong>, sans mot de passe à gérer.</li>
+                <li>Rendre l'instance joignable à distance : protocole, port fixe, pare-feu — et savoir tester chaque couche séparément.</li>
+                <li>Créer une base correctement <strong>dimensionnée</strong>, et expliquer pourquoi la croissance automatique n'est pas une stratégie.</li>
+                <li>Mettre en place une stratégie de sauvegarde, <strong>vérifier</strong> une sauvegarde et restaurer à un instant précis.</li>
+                <li>Donner des droits au <strong>moindre privilège</strong> : login, user, rôle, permission — et démêler les quatre.</li>
+                <li>Diagnostiquer un blocage, un interblocage, un journal plein ou une instance qui refuse de démarrer, <strong>sans redémarrer à l'aveugle</strong>.</li>
+                <li>Traduire un besoin métier en <strong>RPO / RTO</strong>, et monter un groupe de disponibilité Always On sur deux nœuds.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="windows-server.html">Windows Server</a> (domaine Active Directory, services), <a href="storage-clustering.html">Stockage &amp; clustering</a> pour le dernier chapitre.</p>
+            <p class="brief__foot">Ce module est le prérequis de la partie pratique du module <a href="sharepoint.html">SharePoint Server SE</a>, qui reprend cette installation avec ses contraintes propres (collation, comptes de service, disques dédiés).</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="chapter" id="moteur">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Le moteur, l'instance et ses fichiers</h2>
+            <p class="chapter__intro">Le vocabulaire d'abord. <em>Instance</em>, <em>base système</em>, <em>fichier de données</em> : tout le module s'appuie dessus, et la moitié des messages d'erreur aussi.</p>
+
+            <h3>Un SGBD entre l'application et les fichiers</h3>
+            <p>SQL Server est un <strong>SGBD</strong> — système de gestion de base de données. Il s'interpose entre celui qui veut les données et les fichiers qui les contiennent :</p>
+
+            <div class="net">
+                <div class="node"><b>Application</b><span>ERP, CRM, site web</span></div>
+                <div class="node"><b>Réseau</b><span>TCP/IP, DNS, pare-feu</span></div>
+                <div class="node"><b>SQL Server</b><span>le moteur, un service Windows</span></div>
+                <div class="node"><b>Fichiers</b><span>.mdf (données) · .ldf (journal)</span></div>
+            </div>
+
+            <p>Quatre rôles : <strong>stocker</strong> proprement, <strong>manipuler</strong> (ajouter, chercher, modifier), <strong>sécuriser</strong> les accès, <strong>protéger</strong> contre la perte. L'administrateur système intervient sur toute la chaîne <em>sauf</em> la manipulation, qui est du développement.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">La posture de tout le module</p>
+                <p>Un incident « SQL Server » est très souvent un incident <strong>Windows, réseau ou stockage</strong> qui se présente sous un nom SQL. C'est pour ça que ce module ressemble plus à de l'administration système qu'à du développement.</p>
+            </div>
+
+            <h3>L'instance : l'unité d'administration</h3>
+            <p>Une <strong>instance</strong> est une copie active du moteur, qui tourne comme un service Windows. Une même machine peut en porter plusieurs, totalement indépendantes : chacune a <em>sa</em> configuration, <em>ses</em> bases, <em>sa</em> sécurité et <em>ses</em> jobs. Un login créé sur l'une n'existe pas sur l'autre.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th>Instance par défaut</th><th>Instance nommée</th></tr></thead>
+                    <tbody>
+                        <tr><td>Nom</td><td><code>MSSQLSERVER</code></td><td>celui qu'on choisit</td></tr>
+                        <tr><td>On s'y connecte par</td><td><code>SERVEUR</code></td><td><code>SERVEUR\INSTANCE</code></td></tr>
+                        <tr><td>Service Windows</td><td><code>MSSQLSERVER</code></td><td><code>MSSQL$INSTANCE</code></td></tr>
+                        <tr><td>Port</td><td><code>1433</code> par défaut</td><td>port <strong>dynamique</strong> par défaut</td></tr>
+                        <tr><td>Nombre par machine</td><td>une seule</td><td>autant qu'on veut</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Cette dernière ligne du tableau explique la moitié du chapitre 05 : c'est l'instance nommée, avec son port dynamique, qui impose le service <em>SQL Server Browser</em> ou un port fixe.</p>
+
+            <h3>Les quatre bases système</h3>
+            <p>Créées par l'installation, elles portent le fonctionnement de l'instance elle-même. On ne les touche pas, mais en incident elles sont souvent la réponse.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Base</th><th>Contenu</th><th>Ce que ça implique</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>master</code></td><td>l'état du serveur : bases existantes, <strong>logins</strong>, configuration</td><td>sans elle, l'instance ne démarre pas</td></tr>
+                        <tr><td><code>model</code></td><td>le modèle recopié à chaque création de base</td><td>ce qu'on y règle devient le défaut des futures bases</td></tr>
+                        <tr><td><code>msdb</code></td><td>les <strong>jobs</strong> de l'Agent, l'historique des sauvegardes, les alertes</td><td>la perdre, c'est perdre toute la planification</td></tr>
+                        <tr><td><code>tempdb</code></td><td>le travail intermédiaire : tris, tables temporaires, versions de lignes</td><td><strong>recréée à chaque démarrage</strong> du service — jamais sauvegardée, mais à dimensionner</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">La requête à connaître par cœur</span></div>
+                <pre class="terminal__code"><span class="c">-- les bases, leur etat et leur modele de recuperation</span>
+<span class="k">SELECT</span> name, database_id, state_desc, recovery_model_desc
+<span class="k">FROM</span> sys.databases;</pre>
+            </div>
+
+            <h3>Les fichiers d'une base</h3>
+            <p>Une base, ce sont <strong>toujours</strong> au moins deux fichiers, qui ne jouent pas du tout le même rôle.</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>DATA — <code>.mdf</code> / <code>.ndf</code></h4>
+                    <p>Les tables, les index, les données. Un fichier principal <code>.mdf</code>, plus autant de <code>.ndf</code> secondaires qu'on veut pour répartir sur plusieurs disques. Ce qu'on surveille : la croissance et l'espace libre.</p>
+                </div>
+                <div class="card">
+                    <h4>LOG — <code>.ldf</code></h4>
+                    <p>Le <strong>journal des transactions</strong> : la trace de chaque modification. C'est lui qui permet d'annuler une transaction et de rejouer ce qui n'avait pas été écrit après une coupure. Ce qu'on surveille : la croissance <em>et</em> la chaîne de sauvegardes.</p>
+                </div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Les fichiers d'une base, en Mo</span></div>
+                <pre class="terminal__code"><span class="k">USE</span> GESTION;
+<span class="k">SELECT</span> name, type_desc, physical_name, size <span class="p">*</span> <span class="s">8.0</span> <span class="p">/</span> <span class="s">1024</span> <span class="k">AS</span> SizeMB
+<span class="k">FROM</span> sys.database_files;</pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Le <code>* 8.0 / 1024</code> qui revient partout</p>
+                <p>SQL Server stocke les tailles en <strong>pages de 8 Ko</strong>. La conversion en mégaoctets revient dans toutes les requêtes de dimensionnement : autant la reconnaître tout de suite.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le <code>.ldf</code> n'est <strong>pas</strong> un fichier de log au sens Windows : ce n'est pas un historique lisible qu'on peut effacer quand il gêne. C'est ce qui permet au moteur d'annuler et de rejouer — le supprimer à la main rend la base irrécupérable.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="installation">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Installer l'instance, écran par écran</h2>
+            <p class="chapter__intro">L'assistant enchaîne une quinzaine d'écrans. La plupart se valident tels quels — mais certains choix ne se rattrapent plus après.</p>
+
+            <h3>Choisir l'édition</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Édition</th><th>Ce qu'elle vaut</th><th>Cadre d'usage</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Developer</strong></td><td>Gratuite, avec <strong>toutes</strong> les fonctionnalités de l'Enterprise</td><td>Développement, tests, formation. <strong>Interdite en production.</strong></td></tr>
+                        <tr><td>Express</td><td>Gratuite mais bridée (taille de base, RAM, CPU)</td><td>Petites applications, production légère</td></tr>
+                        <tr><td>Standard / Enterprise</td><td>Payantes, sous licence</td><td>Production</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Pourquoi Developer en labo</p>
+                <p>C'est la seule édition gratuite qui expose l'intégralité des fonctionnalités : on apprend sur le même moteur qu'en production, sans licence. La restriction n'est pas technique mais <strong>juridique</strong> — rien n'empêche de la déployer en production, sauf le contrat.</p>
+            </div>
+
+            <h3>Ce qui ne se rattrape pas</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Décision</th><th>Rattrapable après coup ?</th></tr></thead>
+                    <tbody>
+                        <tr><td>Nom de l'instance</td><td><strong>Non</strong> — il faut réinstaller</td></tr>
+                        <tr><td>Collation de l'instance</td><td><strong>Non</strong> sans réinstaller ou reconstruire les bases système</td></tr>
+                        <tr><td>Composants installés</td><td>Oui, en relançant le setup</td></tr>
+                        <tr><td>Comptes de service</td><td>Oui, via le Configuration Manager</td></tr>
+                        <tr><td>Mode d'authentification</td><td>Oui, avec un redémarrage du service</td></tr>
+                        <tr><td>Répertoires des fichiers</td><td>Oui, mais il faut déplacer des fichiers à chaud</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Le déroulé</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Edition</strong><p>Sélectionner <strong>Developer</strong>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>License Terms</strong><p>Accepter, puis <em>Next</em>.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Microsoft Update</strong><p>Recherche des mises à jour via Windows Update. Pratique en labo — mais en production, les correctifs d'un moteur de base de données se <strong>planifient</strong>, ils ne s'appliquent pas au fil de l'eau.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Install Rules</strong><p>L'assistant vérifie les prérequis et signale ce qui cloche. <strong>Lire les avertissements</strong> plutôt que cliquer <em>Next</em> : celui sur le pare-feu Windows annonce exactement le problème du chapitre 05.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Azure Extension for SQL Server</strong><p><strong>Décocher</strong>. Cette extension ne sert qu'à rattacher l'instance à Azure Arc et réclame un abonnement — inutile pour un labo local.</p></div></div>
+                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Feature Selection</strong><p><strong>Database Engine Services</strong> : le moteur lui-même. N'installer que ce qui sert — chaque fonctionnalité est une surface à maintenir, et une chose de plus à reproduire à l'identique sur le second nœud d'un cluster.</p></div></div>
+                <div class="step"><div class="step__num">7</div><div class="step__body"><strong>Instance Configuration</strong><p>Instance par défaut ou <strong>nommée</strong>. Une instance nommée s'atteint par <code>NOM-SERVEUR\NOM-INSTANCE</code>.</p></div></div>
+                <div class="step"><div class="step__num">8</div><div class="step__body"><strong>Server Configuration</strong><p>Onglet <em>Service Accounts</em> : désigner le <strong>compte de service</strong> (chapitre 03) pour le moteur <em>et</em> pour l'Agent, et passer <strong>SQL Server Browser</strong> en démarrage <em>Automatic</em>. Onglet <em>Collation</em> : les règles de tri et de comparaison des chaînes.</p></div></div>
+                <div class="step"><div class="step__num">9</div><div class="step__body"><strong>Database Engine Configuration</strong><p>Six onglets : mode d'authentification et administrateurs (<em>Add Current User</em>), <em>Data Directories</em>, <em>TempDB</em>, <em>MaxDOP</em>, <em>Memory</em> et <em>FILESTREAM</em>.</p></div></div>
+                <div class="step"><div class="step__num">10</div><div class="step__body"><strong>Ready to Install</strong><p>Le récapitulatif. Le relire — c'est le dernier écran où un nom d'instance se corrige — et <strong>noter le chemin du <code>ConfigurationFile.ini</code></strong> affiché en bas.</p></div></div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">La collation ne se change pas</p>
+                <p>La collation d'instance devient le défaut de toutes les bases créées ensuite <em>et</em> celle de <code>tempdb</code>. En changer après coup impose de réinstaller ou de reconstruire les bases système. Une collation mal choisie se paie en comparaisons qui échouent entre une base et une table temporaire — à harmoniser avec l'application, dès le départ.</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Créer l'arborescence AVANT de lancer le setup</p>
+                <p>L'assistant accepte des chemins qui n'existent pas et les crée lui-même — on perd alors la maîtrise de l'organisation, et il faut ensuite déplacer des fichiers à chaud. La convention qui tient : sur chaque volume dédié, un dossier au <strong>nom de l'instance</strong>, contenant un <code>data</code> et un <code>backup</code>. Le nom d'instance dans le chemin est ce qui permet à une seconde instance de cohabiter sans mélanger ses fichiers.</p>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Préparer les dossiers</span></div>
+                <pre class="terminal__code"><span class="k">New-Item</span> <span class="p">-ItemType</span> Directory <span class="p">-Path</span> <span class="s">D:\INSPIRATION\data</span> <span class="p">-Force</span>
+<span class="k">New-Item</span> <span class="p">-ItemType</span> Directory <span class="p">-Path</span> <span class="s">D:\INSPIRATION\backup</span> <span class="p">-Force</span>
+<span class="k">New-Item</span> <span class="p">-ItemType</span> Directory <span class="p">-Path</span> <span class="s">G:\INSPIRATION\data</span> <span class="p">-Force</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Le fichier qui rejoue l'installation</p>
+                <p>Le <code>ConfigurationFile.ini</code> écrit par l'assistant contient <strong>l'intégralité des choix faits</strong>. Il permet de rejouer exactement la même installation sur une autre machine — c'est ce qui rend possible la symétrie exigée par un cluster (chapitre 14).</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="gmsa">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Le compte de service géré (gMSA)</h2>
+            <p class="chapter__intro">Sous quelle identité tourne le moteur ? La réponse par défaut est un compte système local, qui ne sait rien faire sur le réseau. La bonne réponse, en domaine, est un <em>group Managed Service Account</em>.</p>
+
+            <h3>Le problème que ça résout</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Compte utilisateur classique</h4>
+                    <p>Un mot de passe, qu'il faut choisir, stocker, faire tourner — et changer dans le service à chaque rotation. En pratique : il n'expire jamais, il est connu de trois personnes, et il finit dans un fichier texte.</p>
+                </div>
+                <div class="card">
+                    <h4>gMSA</h4>
+                    <p>Un compte de domaine dont <strong>Active Directory gère le mot de passe</strong> : 240 caractères, renouvelé automatiquement, jamais connu de personne. On ne le saisit nulle part — le champ mot de passe reste vide.</p>
+                </div>
+            </div>
+
+            <h3>Le montage, en trois temps</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Sur le contrôleur de domaine</strong><p>Créer la clé racine KDS (une seule fois pour la forêt), un groupe qui contiendra les machines autorisées, puis le compte de service lui-même.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Sur le serveur SQL</strong><p>Installer le compte sur la machine, puis <strong>vérifier</strong> qu'elle sait bien récupérer son mot de passe.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Dans le Configuration Manager</strong><p>Affecter le compte au service du moteur <em>et</em> à celui de l'Agent, mot de passe laissé <strong>vide</strong>.</p></div></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Sur le contrôleur de domaine</span></div>
+                <pre class="terminal__code"><span class="c"># Cle racine KDS - une seule fois par foret</span>
+<span class="c"># le -10h contourne le delai de replication de 10 h, acceptable en labo</span>
+<span class="k">Add-KdsRootKey</span> <span class="p">-EffectiveTime</span> ((<span class="k">Get-Date</span>).AddHours(<span class="s">-10</span>))
+
+<span class="c"># Le compte, autorise pour les machines du groupe GM_GMSA_SQL</span>
+<span class="k">New-ADServiceAccount</span> GMSA_SQL <span class="p">-DNSHostName</span> <span class="s">gmsa_sql.orion.local</span> <span class="p">`</span>
+    <span class="p">-PrincipalsAllowedToRetrieveManagedPassword</span> GM_GMSA_SQL</pre>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Sur le serveur SQL</span></div>
+                <pre class="terminal__code"><span class="c"># Rafraichir le ticket Kerberos de la machine, sinon elle ignore</span>
+<span class="c"># qu'elle vient d'entrer dans le groupe (sinon : redemarrer)</span>
+<span class="k">klist</span> purge <span class="p">-li</span> <span class="s">0x3e7</span>
+<span class="k">gpupdate</span> <span class="p">/force</span> <span class="p">/target:computer</span>
+
+<span class="k">Install-ADServiceAccount</span> GMSA_SQL
+<span class="k">Test-ADServiceAccount</span> GMSA_SQL   <span class="c"># doit renvoyer True</span></pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Le désigner pendant l'installation, pas après</p>
+                <p>Si le gMSA est désigné dans l'assistant d'installation, celui-ci pose lui-même les bonnes <strong>ACL NTFS</strong> sur les dossiers de données. Créé après coup, il faut repasser à la main par le Configuration Manager — et surtout <strong>jamais par <code>services.msc</code></strong>, qui change le compte sans poser les droits sur les fichiers, le registre et les groupes locaux.</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Deux détails qui font perdre une heure</p>
+                <p>Le compte apparaît partout avec un <strong><code>$</code> final</strong> (<code>ORION\GMSA_SQL$</code>) : c'est un compte d'ordinateur, pas d'utilisateur. Et dans le sélecteur Active Directory, il faut cocher <strong>« Ordinateurs »</strong> pour voir le compte machine du serveur SQL — sans quoi la recherche ne renvoie rien.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Vérifier, toujours</p>
+                <p><code>Test-ADServiceAccount</code> doit renvoyer <strong>True</strong>, et la colonne <em>Log On As</em> du Configuration Manager doit afficher le compte sur le moteur <strong>et</strong> sur l'Agent. Le SQL Server Browser, lui, reste sous <code>NT AUTHORITY\LOCALSERVICE</code> : normal, il n'annonce qu'un port.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="services">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Configuration Manager : services et protocoles</h2>
+            <p class="chapter__intro">La console MMC qui gère tout ce qui fait <em>fonctionner</em> et <em>communiquer</em> SQL Server sur Windows. C'est par elle qu'on passe, pas par les services Windows.</p>
+
+            <h3>Cinq volets</h3>
+            <p>Services · comptes de service · réseau serveur · ports et IP · alias client. Le raccourci est souvent introuvable dans le menu Démarrer : l'outil se lance par son fichier MMC, dont le numéro suit la version du moteur.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Ouvrir l'outil</span></div>
+                <pre class="terminal__code"><span class="c"># SQL Server 2022 -> 16 | 2019 -> 15 | 2017 -> 14 | 2025 -> 17</span>
+<span class="s">C:\Windows\SysWOW64\SQLServerManager16.msc</span></pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Jamais <code>services.msc</code> pour modifier</p>
+                <p>Pour <em>regarder</em> si un service tourne, <code>services.msc</code> fait l'affaire. Pour <strong>modifier</strong> quoi que ce soit — et surtout changer un compte de service — seul le Configuration Manager pose les ACL NTFS, les droits registre et les appartenances aux groupes locaux qui vont avec.</p>
+            </div>
+
+            <h3>Les quatre services, et leurs noms exacts</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Service</th><th>Nom (instance nommée)</th><th>Rôle</th></tr></thead>
+                    <tbody>
+                        <tr><td>SQL Server</td><td><code>MSSQL$INSPIRATION</code></td><td>Le <strong>moteur</strong> : requêtes, transactions, mémoire, I/O. Arrêté, les bases sont indisponibles.</td></tr>
+                        <tr><td>SQL Server Agent</td><td><code>SQLAgent$INSPIRATION</code></td><td>Jobs, planifications, alertes, maintenance.</td></tr>
+                        <tr><td>SQL Server Browser</td><td><code>SQLBrowser</code></td><td>Un seul par machine. Annonce le port des instances nommées sur <strong>UDP 1434</strong>.</td></tr>
+                        <tr><td>SQL Server VSS Writer</td><td><code>SQLWriter</code></td><td>Un seul par machine. Support des sauvegardes VSS. Absent de SSMS.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Deux pièges de lecture</p>
+                <p>Dans l'arbre du Configuration Manager, les entrées marquées <strong><code>(32bit)</code></strong> sont des vestiges : les ignorer. Et l'<strong>Agent reste souvent en démarrage <code>Manual</code></strong> après une installation — à passer en <code>Automatic</code>, sinon aucune sauvegarde planifiée ne repart après un redémarrage.</p>
+            </div>
+
+            <h3>Activer TCP/IP</h3>
+            <p><em>SQL Server Network Configuration</em> → <em>Protocols for INSPIRATION</em> → <strong>TCP/IP</strong> → <em>Enable</em>, puis <strong>redémarrer le service</strong> du moteur. Sans le redémarrage, le changement n'est pas pris en compte — et on cherche le problème ailleurs pendant vingt minutes.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le Configuration Manager est l'outil qu'on rouvre le plus souvent : services, comptes, protocoles, ports, alias. Il mérite d'être épinglé à la barre des tâches — et c'est le premier endroit à regarder quand « SQL ne répond plus ».</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="reseau">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Réseau : TCP/IP, port et pare-feu</h2>
+            <p class="chapter__intro">Le moteur tourne, le local fonctionne, et rien ne se connecte depuis l'extérieur. Trois couches à traiter dans l'ordre — et surtout à tester séparément.</p>
+
+            <h3>Les trois protocoles</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Protocole</th><th>Portée</th><th>À en faire</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Shared Memory</strong></td><td>uniquement depuis la machine elle-même</td><td>Toujours activé, le plus rapide en local. C'est la <strong>porte de secours</strong> : si le local passe et que le distant échoue, le problème est réseau, pas SQL.</td></tr>
+                        <tr><td><strong>TCP/IP</strong></td><td>le réseau</td><td><strong>Celui à activer</strong> dès qu'un client distant doit se connecter. Désactivé par défaut sur une installation Developer.</td></tr>
+                        <tr><td>Named Pipes</td><td>réseau, via SMB</td><td>Héritage. À laisser désactivé : il dépend du partage de fichiers et traverse mal les pare-feu.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Port fixe ou port dynamique</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th>Port fixe</th><th>Port dynamique</th></tr></thead>
+                    <tbody>
+                        <tr><td>Attribution</td><td>choisi une fois</td><td>au démarrage du service — <strong>change à chaque redémarrage</strong></td></tr>
+                        <tr><td>Par défaut sur</td><td>l'instance par défaut (1433)</td><td>les <strong>instances nommées</strong></td></tr>
+                        <tr><td>Pare-feu</td><td>une règle, écrite une fois</td><td>impossible à filtrer proprement</td></tr>
+                        <tr><td>Browser</td><td>facultatif si le client vise <code>SERVEUR,PORT</code></td><td><strong>indispensable</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p><strong>Bonne pratique : fixer le port</strong>, le documenter, l'ouvrir dans le pare-feu, puis tester depuis un poste client. Concrètement, dans les propriétés TCP/IP, onglet <em>IP Addresses</em> : relever le port dynamique attribué, le reporter dans <em>TCP Port</em> de la section <code>IPAll</code>, et <strong>vider</strong> <em>TCP Dynamic Ports</em>.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Vider, pas mettre zéro</p>
+                <p>Le champ <em>TCP Dynamic Ports</em> doit être laissé <strong>vide</strong>. Un <code>0</code> n'est pas « aucun port dynamique » : c'est la valeur qui <strong>réactive</strong> l'attribution dynamique. Le port redevient alors variable au prochain redémarrage, et la règle de pare-feu ne protège plus rien.</p>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Ouvrir le pare-feu</span></div>
+                <pre class="terminal__code"><span class="c"># UDP 1434 : c'est le Browser qui repond "l'instance ecoute sur tel port"</span>
+<span class="k">New-NetFirewallRule</span> <span class="p">-DisplayName</span> <span class="s">"SQL Browser (UDP 1434)"</span> <span class="p">`</span>
+    <span class="p">-Direction</span> Inbound <span class="p">-Protocol</span> UDP <span class="p">-LocalPort</span> <span class="s">1434</span> <span class="p">-Action</span> Allow
+
+<span class="c"># Le port fixe du moteur</span>
+<span class="k">New-NetFirewallRule</span> <span class="p">-DisplayName</span> <span class="s">"SQL Server (TCP 1433)"</span> <span class="p">`</span>
+    <span class="p">-Direction</span> Inbound <span class="p">-Protocol</span> TCP <span class="p">-LocalPort</span> <span class="s">1433</span> <span class="p">-Action</span> Allow
+
+<span class="k">Set-Service</span> SQLBrowser <span class="p">-StartupType</span> Automatic
+<span class="k">Start-Service</span> SQLBrowser</pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">La portée de la règle</p>
+                <p>Ouvrir un port « pour tout le monde » n'est acceptable qu'en labo. En production, restreindre aux machines ou sous-réseaux qui en ont besoin (<code>-RemoteAddress</code>) et à un profil précis (<code>-Profile Domain</code>) : c'est le moindre privilège appliqué au réseau.</p>
+            </div>
+
+            <h3>Tester, couche par couche</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Dans cet ordre, jamais un autre</span></div>
+                <pre class="terminal__code"><span class="c"># 0. le nom se resout-il, et vers la bonne IP ?</span>
+<span class="k">Resolve-DnsName</span> SQL
+
+<span class="c"># 1. le port repond-il ? (reseau + pare-feu, sans SQL)</span>
+<span class="k">Test-NetConnection</span> SQL <span class="p">-Port</span> <span class="s">1433</span>
+
+<span class="c"># 2. la connexion SQL passe-t-elle ?  -E = authentification Windows</span>
+<span class="k">sqlcmd</span> <span class="p">-S</span> <span class="s">SQL,1433</span> <span class="p">-E</span> <span class="p">-Q</span> <span class="s">"SELECT @@VERSION"</span>
+<span class="k">sqlcmd</span> <span class="p">-S</span> <span class="s">SQL\INSPIRATION</span> <span class="p">-E</span> <span class="p">-Q</span> <span class="s">"SELECT @@SERVERNAME"</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Ce que la dernière ligne isole</p>
+                <p>La forme <code>SERVEUR\INSTANCE</code> est celle qui passe par le <strong>Browser</strong>. Si elle échoue alors que <code>SERVEUR,PORT</code> fonctionne, c'est le Browser ou l'UDP 1434 qu'il faut regarder — <strong>pas le moteur</strong>. Ces deux commandes séparent en dix secondes un problème de service d'un problème de résolution de port.</p>
+            </div>
+
+            <h3>Les alias</h3>
+            <p>Un alias associe un nom court à un couple serveur/port/protocole. Le principe ressemble à du DNS, mais la portée est strictement <strong>locale</strong> : l'alias n'existe que sur la machine où il est défini. L'intérêt est que l'application utilise un nom stable, même si le serveur ou le port changent.</p>
+
+            <div class="tip">
+                <p class="tip__label">Le piège 32 / 64 bits</p>
+                <p>Les alias 32 bits et 64 bits sont deux <strong>listes distinctes</strong>. Une application 32 bits ne voit pas les alias 64 bits, et inversement : un alias « qui ne marche pas » a très souvent été créé du mauvais côté. Et comme un alias masque la vraie cible, il se documente au même titre que le port.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="memoire">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Mémoire, parallélisme et tempdb</h2>
+            <p class="chapter__intro">Trois réglages qui ne se voient pas tant que tout va bien, et qui expliquent une bonne part des lenteurs quand ça va mal.</p>
+
+            <h3><code>max server memory</code></h3>
+            <p>SQL Server aime la RAM, Windows aussi. Par défaut, le moteur est autorisé à prendre presque toute la mémoire de la machine : il met les données en cache et ne les rend pas spontanément. Le système d'exploitation finit par manquer de mémoire, se met à <em>pager</em> sur disque, et <strong>la machine entière ralentit</strong> — SQL Server compris.</p>
+
+            <div class="net">
+                <div class="node"><b>RAM totale</b><span class="ip">16 Go</span><span>ce que la machine possède</span></div>
+                <div class="node"><b>Windows + agents</b><span class="ip">4 Go</span><span>réservé : OS, antivirus, supervision</span></div>
+                <div class="node"><b>max server memory</b><span class="ip">12 Go</span><span>ce qu'on configure</span></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Plafonner la mémoire</span></div>
+                <pre class="terminal__code"><span class="k">EXEC</span> sp_configure <span class="s">'show advanced options'</span>, <span class="s">1</span>;
+<span class="k">RECONFIGURE</span>;
+
+<span class="k">EXEC</span> sp_configure <span class="s">'max server memory'</span>;          <span class="c">-- lire</span>
+<span class="k">EXEC</span> sp_configure <span class="s">'max server memory'</span>, <span class="s">12288</span>;   <span class="c">-- 12 Go, en Mo</span>
+<span class="k">RECONFIGURE</span>;</pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Deux oublis classiques</p>
+                <p><code>max server memory</code> est une option <strong>avancée</strong> : il faut activer <code>show advanced options</code> ne serait-ce que pour la lire. Et <strong>rien n'est appliqué avant <code>RECONFIGURE</code></strong> — <code>sp_configure</code> ne fait qu'enregistrer la valeur souhaitée.</p>
+            </div>
+
+            <h3>MaxDOP</h3>
+            <p><em>Maximum Degree Of Parallelism</em> : le nombre maximal de processeurs qu'une <strong>seule</strong> requête peut mobiliser. À <code>0</code>, il n'y a pas de limite — une grosse requête peut occuper tous les cœurs et faire attendre tout le monde. À <code>1</code>, le parallélisme est désactivé. L'assistant d'installation propose désormais une valeur calculée d'après la machine : la laisser est raisonnable tant qu'on n'a pas de raison mesurée d'en changer.</p>
+
+            <h3><code>tempdb</code></h3>
+            <p>Recréée à chaque démarrage du service, elle repart à la taille <strong>configurée</strong>, pas à celle qu'elle avait atteinte : un dimensionnement trop petit se paie à chaque redémarrage. Plusieurs fichiers de données répartissent la contention, et un volume dédié lui évite de concurrencer les données et le journal.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Les fichiers de tempdb</span></div>
+                <pre class="terminal__code"><span class="k">SELECT</span> physical_name, size <span class="p">*</span> <span class="s">8.0</span> <span class="p">/</span> <span class="s">1024</span> <span class="k">AS</span> SizeMB
+<span class="k">FROM</span> tempdb.sys.database_files;</pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Ces trois paramètres se <strong>décident</strong>, se <strong>documentent</strong>, et ne se changent pas en production sans mesure préalable. Une valeur par défaut n'est pas un choix, c'est une absence de choix — et elle se remarque le jour où la charge arrive.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="bases">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Créer et dimensionner une base</h2>
+            <p class="chapter__intro">Une base mal créée fonctionne parfaitement le premier jour. Les problèmes arrivent en exploitation — et la plupart des options ne se corrigent plus aussi facilement.</p>
+
+            <h3>Deux façons de créer</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">CREATE DATABASE</span></div>
+                <pre class="terminal__code"><span class="c">-- le minimum : tout au defaut, herite de la base model</span>
+<span class="k">CREATE DATABASE</span> GESTION;
+
+<span class="c">-- la version qui decide, et c'est celle qu'on veut</span>
+<span class="k">CREATE DATABASE</span> GESTION
+<span class="k">ON PRIMARY</span>
+( NAME <span class="p">=</span> GESTION_Data,
+  FILENAME <span class="p">=</span> <span class="s">'D:\INSPIRATION\data\GESTION.mdf'</span>,
+  SIZE <span class="p">=</span> <span class="s">512MB</span>, FILEGROWTH <span class="p">=</span> <span class="s">128MB</span> )
+<span class="k">LOG ON</span>
+( NAME <span class="p">=</span> GESTION_Log,
+  FILENAME <span class="p">=</span> <span class="s">'G:\INSPIRATION\data\GESTION_log.ldf'</span>,
+  SIZE <span class="p">=</span> <span class="s">256MB</span>, FILEGROWTH <span class="p">=</span> <span class="s">128MB</span> );</pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Pourquoi la première forme est un piège</p>
+                <p><code>CREATE DATABASE GESTION;</code> <strong>fonctionne</strong>, et c'est bien le problème : la base hérite des tailles et de la croissance de <code>model</code>, c'est-à-dire de valeurs qui ne correspondent à rien du besoin réel. C'est le point de départ de tous les problèmes de dimensionnement.</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Le bouton <em>Script</em> de SSMS</p>
+                <p>Quand la base est créée via l'interface, cliquer <strong>Script</strong> avant de valider : on obtient exactement la commande ci-dessus, avec les vrais chemins et les vraies tailles. Une trace rejouable — et la seule façon de recréer la même base à l'identique ailleurs.</p>
+            </div>
+
+            <h3>Le recovery model</h3>
+            <p>L'option la plus structurante. Elle se choisit selon le <strong>RPO</strong> — combien de données l'organisation accepte de perdre (chapitre 14) — et pas selon une préférence technique.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Modèle</th><th>Comportement</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>SIMPLE</code></td><td>Le journal est tronqué automatiquement ; pas de restauration à un instant précis. Suffisant en labo ou pour une base reconstructible.</td></tr>
+                        <tr><td><code>FULL</code></td><td>Toutes les transactions sont conservées jusqu'à la sauvegarde du journal ; restauration à la seconde près possible.</td></tr>
+                        <tr><td><code>BULK_LOGGED</code></td><td>Variante de <code>FULL</code>, journalisation allégée pour les opérations en masse. Le temps d'un import, puis on en sort.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Passer en FULL ne suffit pas</p>
+                <p>Le modèle n'est qu'une moitié de la décision. Sans <strong>sauvegardes de journal effectivement planifiées</strong>, une base en <code>FULL</code> conserve toutes ses transactions et son <code>.ldf</code> grossit jusqu'à saturer le disque. <code>FULL</code> sans sauvegarde de journal est <em>pire</em> que <code>SIMPLE</code> : on a les inconvénients des deux et les garanties d'aucun.</p>
+            </div>
+
+            <h3>Les autres options</h3>
+            <ul>
+                <li><strong>Collation</strong> — se fixe à la création. <code>CI</code> = insensible à la casse, <code>AS</code> = sensible aux accents. C'est ce couple qui fait qu'en SQL Server, <code>WHERE nom = 'dupont'</code> ramène aussi <code>DUPONT</code>.</li>
+                <li><strong>Owner</strong> — mettre <code>sa</code> ou un compte dédié, sinon la base devient orpheline le jour où le compte créateur est supprimé.</li>
+                <li><strong>Auto Close</strong> et <strong>Auto Shrink</strong> — à laisser <code>OFF</code>.</li>
+                <li><strong>Auto Create / Update Statistics</strong> — à laisser <code>ON</code>.</li>
+                <li><strong>Page Verify</strong> — <code>CHECKSUM</code> : ce qui permet de détecter une corruption venue du stockage.</li>
+            </ul>
+
+            <h3>Dimensionnement et croissance automatique</h3>
+            <p>L'auto-growth est une <strong>sécurité, pas une stratégie</strong>. Pendant une croissance, le moteur demande de la place au système de fichiers, et l'écriture est suspendue le temps de l'allocation.</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>À éviter</h4>
+                    <p>Taille initiale trop petite · croissance <strong>en pourcentage</strong> (chaque palier est plus gros que le précédent) · autogrowth de 1 Mo sur une grosse base · aucune surveillance du disque.</p>
+                </div>
+                <div class="card">
+                    <h4>À privilégier</h4>
+                    <p>Taille initiale proche du besoin réel · croissance <strong>fixe en Mo</strong> · un <code>MAXSIZE</code> défini · des volumes supervisés, avec alerte avant saturation.</p>
+                </div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Mesurer avant de décider</span></div>
+                <pre class="terminal__code"><span class="k">SELECT</span> name,
+       size <span class="p">*</span> <span class="s">8.0</span> <span class="p">/</span> <span class="s">1024</span> <span class="k">AS</span> SizeMB,
+       growth,
+       is_percent_growth
+<span class="k">FROM</span> sys.database_files;</pre>
+            </div>
+
+            <p><code>is_percent_growth</code> à <code>1</code> signale une croissance en pourcentage — le cas à corriger. À <code>0</code>, <code>growth</code> est exprimé en pages de 8 Ko, à convertir comme la taille.</p>
+
+            <div class="exo">
+                <p class="exo__label">Exercice — lire un dimensionnement</p>
+                <p>Une base de 40 Go a été créée avec <code>SIZE = 8MB</code> et <code>FILEGROWTH = 10%</code>. Combien pèse la croissance suivante quand le fichier atteint 40 Go, et pourquoi est-ce un problème ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body">
+                        <p>10 % de 40 Go = <strong>4 Go d'un coup</strong>. Deux conséquences : l'allocation de 4 Go suspend les écritures le temps de se faire (et sans <em>Instant File Initialization</em>, Windows remplit d'abord la zone de zéros), et le disque doit avoir 4 Go libres à cet instant précis, sinon la transaction échoue.</p>
+                        <p>Le vrai problème est que l'incrément <strong>grandit avec le fichier</strong> : plus la base est grosse, plus la pause est longue, exactement au moment où elle est le moins tolérable. D'où la règle : croissance <strong>fixe en Mo</strong>, jamais en pourcentage.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Le shrink n'est pas de la maintenance</p>
+                <p>Réduire un fichier dépanne pour récupérer de la place ponctuellement. Mais un shrink provoque des pauses I/O et <strong>fragmente massivement les index</strong> : il impose donc une reconstruction d'index derrière. Un fichier qui regrossit après un shrink signale un <strong>mauvais dimensionnement</strong>, pas un besoin de shrink périodique. À ne jamais automatiser.</p>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="gerer">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Gérer une base existante</h2>
+            <p class="chapter__intro">Les propriétés d'une base disent en une page si elle est saine. Encore faut-il savoir quoi y lire — et reconnaître les valeurs par défaut qui se font passer pour des choix.</p>
+
+            <h3>Ce que dit la page General</h3>
+            <p>Dernière sauvegarde de la base, dernière sauvegarde du journal, statut, propriétaire, taille, espace disponible, collation. <code>Last Database Backup: None</code> sur une base en mode <code>FULL</code>, c'est le point de départ du journal qui gonfle.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">« Unlimited » n'est pas un plafond réfléchi</p>
+                <p>Dans l'onglet <em>Files</em>, <code>Unlimited</code> pour les données et <code>Limited to 2 097 152 Mo</code> pour le journal sont les valeurs <strong>par défaut</strong>. Elles ressemblent à des décisions, elles n'en sont pas : personne n'a évalué la volumétrie attendue.</p>
+            </div>
+
+            <h3>Les opérations courantes</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Mettre une base hors ligne, et la remettre</span></div>
+                <pre class="terminal__code"><span class="k">SELECT</span> name, state_desc <span class="k">FROM</span> sys.databases;
+
+<span class="k">ALTER DATABASE</span> GESTION <span class="k">SET OFFLINE</span>;
+<span class="k">ALTER DATABASE</span> GESTION <span class="k">SET ONLINE</span>;
+
+<span class="c">-- pour reprendre la main tout de suite : ANNULE les transactions</span>
+<span class="c">-- en cours des autres utilisateurs. Se decide, ne s'improvise pas.</span>
+<span class="k">ALTER DATABASE</span> GESTION <span class="k">SET SINGLE_USER WITH ROLLBACK IMMEDIATE</span>;</pre>
+            </div>
+
+            <h3>L'état d'une base</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>État</th><th>Ce qu'il signifie</th><th>Ce qu'on fait</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>ONLINE</code></td><td>disponible</td><td>rien</td></tr>
+                        <tr><td><code>OFFLINE</code></td><td>sortie <strong>volontairement</strong></td><td>la remettre en ligne — et chercher qui l'a sortie, et pourquoi</td></tr>
+                        <tr><td><code>RESTORING</code></td><td>restauration en cours, ou arrêtée à <code>NORECOVERY</code></td><td>terminer la chaîne, ou finir par <code>WITH RECOVERY</code></td></tr>
+                        <tr><td><code>RECOVERY_PENDING</code></td><td>la <em>recovery</em> n'a pas pu se terminer — souvent un fichier ou un volume inaccessible</td><td><strong>ne rien forcer</strong> : lire le journal du moteur, rendre le fichier accessible, relancer</td></tr>
+                        <tr><td><code>SUSPECT</code></td><td>la <em>recovery</em> a échoué : corruption probable</td><td>diagnostic, puis <strong>restauration</strong> depuis une sauvegarde saine</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>RECOVERY_PENDING</code> et <code>SUSPECT</code> sont les deux états où l'envie d'agir vite fait le plus de dégâts. Ce sont des symptômes de problèmes <strong>sous</strong> SQL Server — un disque, un volume démonté, un fichier supprimé — et la réponse commence toujours par lire le journal du moteur, pas par relancer le service.</p>
+            </div>
+        </section>
+
+        <!-- 09 -->
+        <section class="chapter" id="sauvegarde">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">Sauvegarder et restaurer</h2>
+            <p class="chapter__intro">Le cœur du métier. Trois types de sauvegarde, une chaîne à respecter, et une vérité désagréable : un fichier <code>.bak</code> ne prouve rien tant qu'on ne l'a pas restauré.</p>
+
+            <h3>Les trois types</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Type</th><th>Contenu</th><th>Fréquence typique</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Full</strong></td><td>toute la base</td><td>une fois par semaine</td></tr>
+                        <tr><td><strong>Differential</strong></td><td>tout ce qui a changé <strong>depuis la dernière full</strong></td><td>une fois par jour</td></tr>
+                        <tr><td><strong>Transaction Log</strong></td><td>les transactions depuis la dernière sauvegarde de journal</td><td>plusieurs fois par jour</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Différentiel ≠ incrémental</h3>
+            <p>Une base à laquelle on ajoute des données par blocs : <code>ABCD</code> lundi, <code>EF</code> mardi, <code>GH</code> mercredi. Ce que contient réellement le fichier écrit chaque jour :</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Jour</th><th>Full</th><th>Différentiel</th><th>Incrémental (= journal)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Lundi</td><td><code>ABCD</code></td><td><code>ABCD</code></td><td><code>ABCD</code></td></tr>
+                        <tr><td>Mardi</td><td><code>ABCDEF</code></td><td><code>EF</code></td><td><code>EF</code></td></tr>
+                        <tr><td>Mercredi</td><td><code>ABCDEFGH</code></td><td><code>EFGH</code></td><td><code>GH</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Le différentiel de mercredi contient <code>EFGH</code> — tout ce qui a changé depuis la full de <em>lundi</em>, y compris ce que mardi avait déjà sauvegardé. D'où la différence au moment qui compte, la restauration :</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th>Fichiers à restaurer</th><th>Le risque</th></tr></thead>
+                    <tbody>
+                        <tr><td>Full</td><td>un seul</td><td>aucun, mais le plus gros et le plus long à écrire</td></tr>
+                        <tr><td>Différentiel</td><td>full + <strong>dernier</strong> diff</td><td>les diff intermédiaires ne servent à rien</td></tr>
+                        <tr><td>Incrémental</td><td>full + toute la chaîne, dans l'ordre</td><td><strong>un maillon manquant casse tout</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Les trois sauvegardes</span></div>
+                <pre class="terminal__code"><span class="k">BACKUP DATABASE</span> GESTION <span class="k">TO DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>
+    <span class="k">WITH</span> INIT, COMPRESSION, CHECKSUM;
+
+<span class="k">BACKUP DATABASE</span> GESTION <span class="k">TO DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_DIFF.bak'</span>
+    <span class="k">WITH</span> DIFFERENTIAL;
+
+<span class="k">BACKUP LOG</span> GESTION <span class="k">TO DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_LOG.trn'</span>;</pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Append est le défaut, et c'est un piège</p>
+                <p>Par défaut, SQL Server <strong>ajoute</strong> la sauvegarde au fichier <code>.bak</code> existant : une sauvegarde quotidienne écrite au même endroit pendant six mois donne un fichier énorme dont il faut extraire le bon jeu. <code>WITH INIT</code> écrase — soit un fichier par sauvegarde avec un nom horodaté, soit l'écrasement assumé.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Copy-only backup</p>
+                <p>Une copie ponctuelle « hors chaîne » : elle ne devient pas le nouveau point de référence des différentiels et ne tronque pas le journal. C'est l'option à cocher pour rafraîchir un environnement de test <strong>sans casser la stratégie en place</strong>. L'oublier est une erreur classique : le différentiel du lendemain se référera à cette sauvegarde ad hoc, qui n'est peut-être plus là.</p>
+            </div>
+
+            <h3>Vérifier une sauvegarde</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Sans rien restaurer</span></div>
+                <pre class="terminal__code"><span class="k">RESTORE VERIFYONLY</span>   <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>;
+<span class="k">RESTORE HEADERONLY</span>   <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>;
+<span class="k">RESTORE FILELISTONLY</span> <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>;</pre>
+            </div>
+
+            <ul>
+                <li><code>VERIFYONLY</code> — le média est-il <strong>lisible et complet</strong> ?</li>
+                <li><code>HEADERONLY</code> — <strong>que contient</strong> ce fichier : quelle base, quel type, quand.</li>
+                <li><code>FILELISTONLY</code> — les <strong>noms logiques</strong> des fichiers, indispensables pour écrire un <code>MOVE</code>.</li>
+            </ul>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Une sauvegarde non restaurée est une hypothèse</p>
+                <p><code>VERIFYONLY</code> vérifie le média, pas la restaurabilité de bout en bout : il ne dit rien de la chaîne de journaux, ni des droits, ni de la place disponible sur la cible. La seule preuve est une <strong>restauration réellement effectuée — et chronométrée</strong>, puisque c'est elle qui donne le RTO réel.</p>
+            </div>
+
+            <h3>Restaurer sans écraser la production</h3>
+            <p>Le réflexe qui évite les catastrophes : ne pas restaurer <em>sur</em> la base en incident, mais <strong>à côté</strong>, sous un autre nom. On récupère les données utiles, on vérifie, et seulement ensuite on décide.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Restauration parallèle</span></div>
+                <pre class="terminal__code"><span class="k">RESTORE DATABASE</span> GESTION_Recovery
+<span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>
+<span class="k">WITH MOVE</span> <span class="s">'GESTION'</span>     <span class="k">TO</span> <span class="s">'D:\data\GESTION_Recovery.mdf'</span>,
+     <span class="k">MOVE</span> <span class="s">'GESTION_log'</span> <span class="k">TO</span> <span class="s">'G:\data\GESTION_Recovery_log.ldf'</span>,
+     <span class="k">NORECOVERY</span>;
+
+<span class="k">RESTORE LOG</span> GESTION_Recovery
+<span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_LOG.trn'</span>
+<span class="k">WITH RECOVERY</span>;</pre>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Mot-clé</th><th>Effet</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>MOVE</code></td><td>Redirige chaque fichier vers un nouveau chemin — <strong>obligatoire</strong> quand la base d'origine existe encore, sinon on écrase ses fichiers.</td></tr>
+                        <tr><td><code>NORECOVERY</code></td><td>Laisse la base en attente d'autres restaurations (état <code>RESTORING</code>). À mettre sur toutes les étapes <strong>sauf la dernière</strong>.</td></tr>
+                        <tr><td><code>RECOVERY</code></td><td><strong>Termine</strong> la restauration et rend la base utilisable. Une fois passé, plus aucun journal ne peut être appliqué : c'est irréversible.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Revenir juste avant l'erreur</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Point-in-time : le DELETE accidentel de 10 h 30</span></div>
+                <pre class="terminal__code"><span class="c">-- 10:00 FULL | 10:20 LOG | 10:29 donnees OK | 10:30 DELETE</span>
+<span class="k">RESTORE LOG</span> GESTION_Recovery
+<span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_LOG.trn'</span>
+<span class="k">WITH STOPAT</span> <span class="p">=</span> <span class="s">'2026-09-02T10:29:50'</span>, <span class="k">RECOVERY</span>;</pre>
+            </div>
+
+            <p><code>STOPAT</code> dit au moteur : rejoue les transactions du journal, mais arrête-toi à cette seconde. Trois conditions : la base doit être en <code>FULL</code>, la <strong>chaîne de journaux doit être intacte</strong>, et l'heure exacte se détermine prudemment — trop tard on rejoue la suppression, trop tôt on perd du travail légitime.</p>
+
+            <div class="tip">
+                <p class="tip__label">L'historique vit dans <code>msdb</code></p>
+                <p>La table <code>msdb.dbo.backupset</code> enregistre ce qui a réellement été sauvegardé (type <code>D</code> = full, <code>I</code> = différentiel, <code>L</code> = journal). Attention : cet historique n'est <strong>pas</strong> dans les fichiers <code>.bak</code>. Si <code>msdb</code> est purgée, l'historique disparaît alors que les sauvegardes sont là — et une ligne dans <code>msdb</code> ne prouve pas que le fichier existe encore sur le disque.</p>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Restaurer ailleurs laisse des orphelins</p>
+                <p>Restaurer sur une <strong>autre instance</strong> laisse des utilisateurs orphelins : la base arrive avec ses <em>users</em>, mais leurs <em>logins</em> étaient dans <code>master</code> et n'ont pas suivi. Le recollage se fait par <code>ALTER USER [nom] WITH LOGIN = [nom]</code> — voir le chapitre suivant.</p>
+            </div>
+        </section>
+
+        <!-- 10 -->
+        <section class="chapter" id="securite">
+            <p class="chapter__num">10</p>
+            <h2 class="chapter__title">Logins, users, rôles, permissions</h2>
+            <p class="chapter__intro">Quatre notions distinctes, qu'une commodité de l'interface fait constamment confondre. Les démêler, c'est la moitié du dépannage d'une connexion.</p>
+
+            <h3>La chaîne</h3>
+            <div class="net">
+                <div class="node"><b>LOGIN</b><span>instance</span><span>« puis-je me connecter au serveur ? »</span></div>
+                <div class="node"><b>USER</b><span>base</span><span>« puis-je lire ou écrire ici ? »</span></div>
+                <div class="node"><b>RÔLE</b><span>serveur / base</span><span>un paquet de permissions</span></div>
+                <div class="node"><b>PERMISSION</b><span>objet</span><span>SELECT sur telle table</span></div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Login ≠ User</p>
+                <p>Le <strong>login</strong> vit dans <code>master</code>, le <strong>user</strong> vit dans la base. Un login sans user se connecte à l'instance… et ne voit aucune donnée. C'est l'onglet <em>User Mapping</em> de SSMS qui entretient la confusion : il crée le user et lui donne ses rôles d'un seul geste, si bien qu'on oublie qu'il s'agit de deux objets différents — jusqu'au jour où on restaure une base ailleurs et qu'on récupère des <strong>utilisateurs orphelins</strong>.</p>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">La chaîne complète, en commandes</span></div>
+                <pre class="terminal__code"><span class="c">-- 1. un login au niveau de l'instance</span>
+<span class="k">CREATE LOGIN</span> [ORION\svc] <span class="k">FROM WINDOWS</span>;
+
+<span class="c">-- 2. un user dans la base, rattache a ce login</span>
+<span class="k">USE</span> GESTION;
+<span class="k">CREATE USER</span> svc <span class="k">FOR LOGIN</span> [ORION\svc];
+
+<span class="c">-- 3. un role, plutot que des permissions une par une</span>
+<span class="k">ALTER ROLE</span> db_datareader <span class="k">ADD MEMBER</span> svc;
+
+<span class="c">-- 4. ou une permission precise sur un objet</span>
+<span class="k">GRANT SELECT</span> <span class="k">ON</span> dbo.Clients <span class="k">TO</span> svc;</pre>
+            </div>
+
+            <h3>Les rôles à connaître</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Rôles serveur (sur un login)</h4>
+                    <p><code>sysadmin</code> — tout, et ignore même les <code>DENY</code> : DBA uniquement.<br>
+                    <code>securityadmin</code> — gère les logins, donc <strong>aussi dangereux</strong> que sysadmin.<br>
+                    <code>dbcreator</code>, <code>serveradmin</code>, <code>processadmin</code>, <code>bulkadmin</code>…<br>
+                    <code>public</code> — tout login en est membre : ne rien lui donner.</p>
+                </div>
+                <div class="card">
+                    <h4>Rôles base (sur un user)</h4>
+                    <p><code>db_owner</code> — tout sur la base, y compris la supprimer.<br>
+                    <code>db_datareader</code> / <code>db_datawriter</code> — lire / modifier toutes les tables.<br>
+                    <code>db_ddladmin</code>, <code>db_backupoperator</code>, <code>db_accessadmin</code>…<br>
+                    <code>db_denydatareader</code> — interdit, et <strong>l'emporte</strong>.</p>
+                </div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">La combinaison type d'un compte applicatif</p>
+                <p><code>db_datareader</code> + <code>db_datawriter</code> <strong>sur sa base</strong>, et rien d'autre. Pas <code>db_owner</code> « pour que ça marche », et surtout pas <code>sysadmin</code>. L'erreur la plus fréquente en entreprise est d'ajouter <code>sysadmin</code> pour résoudre un simple problème de permission.</p>
+            </div>
+
+            <h3>GRANT, DENY, REVOKE</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Commande</th><th>Effet</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>GRANT</code></td><td>Accorde un droit.</td></tr>
+                        <tr><td><code>DENY</code></td><td>Interdit <strong>explicitement</strong>. L'emporte sur tout <code>GRANT</code>, y compris hérité d'un rôle.</td></tr>
+                        <tr><td><code>REVOKE</code></td><td>Annule un <code>GRANT</code> <em>ou</em> un <code>DENY</code> — il remet à <strong>neutre</strong>.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">REVOKE n'est pas DENY</p>
+                <p>Priorité : <code>DENY</code> &gt; <code>GRANT</code> &gt; rien. <code>REVOKE</code> remet simplement à neutre — si le droit vient <em>aussi</em> d'un rôle dont l'utilisateur est membre, <strong>il le garde</strong>. C'est la source classique du « j'ai retiré le droit et il accède toujours ». Et <code>sysadmin</code> passe outre tout, même un <code>DENY</code>.</p>
+            </div>
+
+            <h3>Dépanner une connexion qui ne passe plus</h3>
+            <p>Un cas particulier de la méthode du chapitre 12 : remonter les couches de bas en haut, sans jamais sauter le test local.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Le moteur tourne-t-il ?</strong><p><code>Get-Service 'MSSQL$INSPIRATION'</code></p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Le local passe-t-il ?</strong><p><code>sqlcmd -S .\INSPIRATION -E</code>. Si oui, le problème est réseau — pas SQL.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Réseau</strong><p>TCP/IP activé ? service redémarré depuis ? quel port, est-il resté dynamique ? pare-feu : TCP du port, UDP 1434, et la <strong>portée</strong> de la règle. Le Browser tourne-t-il ?</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Identité</strong><p>Le login existe-t-il ? Mode mixte activé s'il s'agit d'un login SQL ? Compte désactivé ? A-t-il un <strong>user</strong> dans la base, et la base par défaut est-elle en ligne ?</p></div></div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Erreur</th><th>Ce qu'elle dit vraiment</th></tr></thead>
+                    <tbody>
+                        <tr><td><em>network-related…</em></td><td><strong>Rien n'a répondu</strong> : on est encore sur la couche réseau, SQL n'a jamais été atteint.</td></tr>
+                        <tr><td><code>18456</code></td><td>SQL a répondu et a <strong>refusé</strong>. Le détail (le <em>State</em>) n'est que dans le journal serveur, jamais chez le client.</td></tr>
+                        <tr><td><code>4060</code></td><td>Base par défaut inaccessible, ou utilisateur orphelin.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Le moindre privilège, concrètement</p>
+                <p>Un gMSA plutôt qu'un compte administrateur du domaine · une application en <code>datareader</code>/<code>datawriter</code> sur <strong>sa</strong> base · des ACL NTFS limitées au compte de service · des règles de pare-feu avec une portée. Le compte <code>sa</code>, lui, a un nom connu de tous : mot de passe complexe, jamais donné à une application, désactivé si le mode mixte ne sert pas.</p>
+            </div>
+        </section>
+
+        <!-- 11 -->
+        <section class="chapter" id="maintenance">
+            <p class="chapter__num">11</p>
+            <h2 class="chapter__title">Maintenance et SQL Server Agent</h2>
+            <p class="chapter__intro">Sauvegarder ne suffit pas. Une base qui vit se dégrade de trois façons indépendantes — et c'est l'Agent qui automatise la réponse.</p>
+
+            <h3>Trois dégradations, trois réponses</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Intégrité, index, statistiques</span></div>
+                <pre class="terminal__code"><span class="c">-- 1. corruption des pages sur le disque</span>
+<span class="k">DBCC CHECKDB</span>(<span class="s">'GESTION'</span>) <span class="k">WITH</span> NO_INFOMSGS;
+
+<span class="c">-- 2. fragmentation des index</span>
+<span class="k">ALTER INDEX</span> IX_Exemple <span class="k">ON</span> dbo.Clients <span class="k">REBUILD</span>;
+
+<span class="c">-- 3. statistiques perimees</span>
+<span class="k">UPDATE STATISTICS</span> dbo.Clients;</pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Ne jamais ignorer une erreur de CHECKDB</p>
+                <p>Une corruption non traitée <strong>continue d'être sauvegardée</strong> : au bout de quelques semaines, toutes les sauvegardes de la chaîne portent le problème, et il n'y a plus de point de retour sain. Et les options de réparation — <code>REPAIR_ALLOW_DATA_LOSS</code> en tête — sont un <strong>dernier recours</strong>, pas la réponse normale : leur nom dit exactement ce qu'elles font. Devant une corruption, le premier réflexe est de <strong>restaurer</strong>.</p>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th><code>REORGANIZE</code></th><th><code>REBUILD</code></th></tr></thead>
+                    <tbody>
+                        <tr><td>Effet</td><td>réordonne les pages sur place</td><td>reconstruit l'index entièrement</td></tr>
+                        <tr><td>Coût</td><td>léger, toujours en ligne, interruptible</td><td>lourd, verrouille la table (sauf <code>ONLINE = ON</code>, Enterprise)</td></tr>
+                        <tr><td>Journal</td><td>écrit peu</td><td>écrit beaucoup — le journal gonfle d'autant</td></tr>
+                        <tr><td>Statistiques</td><td>inchangées</td><td>mises à jour au passage</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Repères d'usage : moins de 5 % de fragmentation → ne rien faire ; entre 5 et 30 % → <code>REORGANIZE</code> ; au-delà → <code>REBUILD</code>. L'ordre naturel est celui des trois commandes : <strong>intégrité, puis index, puis statistiques</strong> — inutile de reconstruire les index d'une base dont on n'a pas vérifié qu'elle est saine.</p>
+
+            <div class="tip">
+                <p class="tip__label">Pourquoi des statistiques périmées font mal</p>
+                <p>Elles décrivent la <strong>distribution des valeurs</strong> d'une colonne : c'est sur elles que l'optimiseur estime le nombre de lignes qu'une requête va ramener, donc choisit son plan. Périmées, elles produisent un mauvais plan — et la requête devient lente <strong>sans que le code ni les données aient changé</strong>. Un symptôme classique à connaître avant de chercher ailleurs.</p>
+            </div>
+
+            <h3>Le SQL Server Agent</h3>
+            <p>Le planificateur de l'instance : il exécute des <em>jobs</em> — sauvegardes, <code>CHECKDB</code>, reconstruction d'index, scripts métier — à heure dite, et sait prévenir quand ça échoue. C'est un <strong>service à part</strong> du moteur, qui tourne sous le même compte gMSA.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Page d'un job</th><th>Ce qu'il faut savoir</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>General</strong></td><td>Le <strong>propriétaire décide des droits d'exécution</strong> : un job appartenant à un compte trop faible échoue sur une permission. La description n'est pas décorative — c'est elle qu'on lit à 3 h du matin.</td></tr>
+                        <tr><td><strong>Steps</strong></td><td>Chaque étape a un type, une base de contexte, et surtout un <strong>flux</strong> succès/échec. C'est là qu'on évite qu'un <code>REBUILD</code> se lance alors que le <code>CHECKDB</code> a échoué.</td></tr>
+                        <tr><td><strong>Schedules</strong></td><td>Zéro, une ou plusieurs planifications ; elles peuvent être partagées entre jobs.</td></tr>
+                        <tr><td><strong>Alerts</strong></td><td>Déclenche le job sur une erreur, une gravité ou un compteur — l'inverse du planning : c'est l'incident qui appelle le job.</td></tr>
+                        <tr><td><strong>Notifications</strong></td><td><strong>À configurer sur <em>When the job fails</em>.</strong> Un job planifié dont personne ne regarde le résultat n'est pas une sauvegarde, c'est une impression de sauvegarde.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Agent arrêté = silence total</p>
+                <p>Si le service est arrêté, SSMS affiche <code>Agent XPs disabled</code> et <strong>rien de planifié ne s'exécute</strong> — sans autre avertissement qu'un dossier <em>Jobs</em> silencieux. Et s'il est en démarrage <code>Manual</code>, tout repart… jusqu'au prochain redémarrage du serveur. Le passer en <code>Automatic</code> est ce qui rend la planification fiable.</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Avant de relancer un job en échec, lire son historique</p>
+                <p>Clic droit → <em>View History</em> donne le détail par étape, avec le message d'erreur exact. Relancer d'abord et regarder ensuite fait perdre l'information : si la seconde exécution réussit, on ne saura jamais pourquoi la première a échoué — et elle recommencera.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Sauvegarder <code>msdb</code></p>
+                <p>Les jobs et leur historique vivent dans <code>msdb</code>. Cette base système doit être sauvegardée comme les autres, sinon toute la planification disparaît avec le serveur.</p>
+            </div>
+        </section>
+
+        <!-- 12 -->
+        <section class="chapter" id="diagnostic">
+            <p class="chapter__num">12</p>
+            <h2 class="chapter__title">Diagnostiquer un incident</h2>
+            <p class="chapter__intro">Une méthode, puis les trois incidents qu'on rencontre vraiment : le blocage, l'interblocage, le journal plein.</p>
+
+            <h3>Ne pas réparer avant de comprendre</h3>
+            <div class="net">
+                <div class="node"><b>Observer</b><span>constater les faits, sans interpréter</span></div>
+                <div class="node"><b>Mesurer</b><span>depuis quand, combien, quelle ressource</span></div>
+                <div class="node"><b>Identifier</b><span>nommer la cause, pas le symptôme</span></div>
+                <div class="node"><b>Corriger</b><span>l'action la moins risquée</span></div>
+                <div class="node"><b>Vérifier</b><span>le symptôme a disparu, rien d'autre n'a cassé</span></div>
+                <div class="node"><b>Documenter</b><span>pour la prochaine fois, et pour les autres</span></div>
+            </div>
+
+            <p>Les six questions qui structurent l'observation : quel est le <strong>symptôme</strong> réellement observé ? <strong>depuis quand</strong> ? <strong>qui</strong> est impacté — un poste, un service, tout le monde ? quelle <strong>ressource</strong> est saturée ? quel <strong>changement</strong> est récent ? quelle <strong>action</strong> est la moins risquée ?</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Le mauvais réflexe</p>
+                <p>Redémarrer SQL Server sans diagnostic <strong>efface les informations</strong> qui auraient permis de comprendre — sessions en cours, compteurs, cache — et allonge l'interruption au lieu de la réduire. Le symptôme disparaît parfois ; la cause revient. Ce n'est pas interdit pour autant : c'est une action de <strong>dernier recours</strong>, à prendre après avoir relevé ce qui peut l'être, et suivie d'une analyse à froid.</p>
+            </div>
+
+            <h3>Identifier qui fait quoi</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Du réflexe rapide aux DMV</span></div>
+                <pre class="terminal__code"><span class="k">EXEC</span> sp_who2;   <span class="c">-- colonne BlkBy = le SPID de la session BLOQUANTE</span>
+
+<span class="c">-- ce qui tourne maintenant, avec le texte de la requete</span>
+<span class="k">SELECT</span> r.session_id, r.status, r.cpu_time, r.total_elapsed_time,
+       r.blocking_session_id, t.text
+<span class="k">FROM</span> sys.dm_exec_requests <span class="k">AS</span> r
+<span class="k">CROSS APPLY</span> sys.dm_exec_sql_text(r.sql_handle) <span class="k">AS</span> t
+<span class="k">WHERE</span> r.session_id <span class="p">&lt;&gt;</span> <span class="p">@@SPID</span>;</pre>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Les deux colonnes qu'on oublie de lire</p>
+                <p><code>host_name</code> et <code>program_name</code> de <code>sys.dm_exec_sessions</code> : c'est souvent là qu'on découvre que « la base est lente » veut dire « un export Excel tourne depuis 40 minutes depuis le poste du service compta ».</p>
+            </div>
+
+            <h3>Blocage</h3>
+            <p>Une session attend une ressource détenue par une autre. Session A fait <code>BEGIN TRAN</code> puis <code>UPDATE</code> : elle prend un verrou et le <strong>garde</strong> tant qu'il n'y a ni <code>COMMIT</code> ni <code>ROLLBACK</code>. Session B tente le même <code>UPDATE</code> : elle attend, indéfiniment.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Ce n'est pas une anomalie</p>
+                <p>Le blocage est le mécanisme <strong>normal</strong> d'isolation qui protège les données. Il devient un incident quand il <em>dure</em> — et la cause est presque toujours la même : une <strong>transaction ouverte et jamais validée</strong>. Une fenêtre SSMS laissée en plan après un <code>BEGIN TRAN</code>, ou une application qui ne fait pas son <code>COMMIT</code>.</p>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">KILL est une décision, pas un diagnostic</p>
+                <p><code>KILL 55</code> s'utilise <strong>après</strong> avoir identifié qui bloque et pourquoi, jamais pour faire taire un symptôme. Il déclenche le <em>rollback</em> de la transaction : cela prend du temps — souvent autant que le travail à annuler — et <strong>les verrous restent tenus pendant ce temps</strong>. Tuer une grosse transaction ne libère donc pas la base tout de suite, et peut allonger l'attente. <code>KILL 55 WITH STATUSONLY</code> donne l'avancement du rollback.</p>
+            </div>
+
+            <h3>Interblocage</h3>
+            <p>Un <strong>cycle</strong> : A tient R1 et attend R2, B tient R2 et attend R1. Aucune ne peut avancer. SQL Server détecte le cycle, choisit une <strong>victime</strong>, annule sa transaction (erreur <code>1205</code>) et libère l'autre.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th>Blocage</th><th>Interblocage</th></tr></thead>
+                    <tbody>
+                        <tr><td>Nature</td><td>une <strong>attente</strong></td><td>un <strong>cycle</strong></td></tr>
+                        <tr><td>Issue</td><td>se résout dès que le verrou est relâché</td><td>insoluble sans victime</td></tr>
+                        <tr><td>Qui agit</td><td>personne, ou l'administrateur si ça dure</td><td>SQL Server, automatiquement</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Les deadlocks se regardent après coup</p>
+                <p>On n'assiste jamais à un interblocage en direct : il est tranché en quelques secondes. Les cas passés se retrouvent dans la session Extended Events <code>system_health</code>, active par défaut sur toute instance. Un interblocage récurrent est un <strong>problème applicatif</strong> — deux traitements qui prennent leurs verrous dans un ordre différent : le rôle de l'administrateur est de le documenter et de le remonter, pas de le corriger côté serveur.</p>
+            </div>
+
+            <h3>Journal de transactions plein</h3>
+            <p>Erreur <code>9002</code>. Le réflexe interdit est d'agrandir le fichier ou de basculer en <code>SIMPLE</code> « pour que ça reparte » : <strong>chercher la cause avant d'agrandir</strong>.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Trois mesures complémentaires</span></div>
+                <pre class="terminal__code"><span class="k">SELECT</span> name, recovery_model_desc, log_reuse_wait_desc
+<span class="k">FROM</span> sys.databases;
+
+<span class="k">DBCC SQLPERF</span>(LOGSPACE);      <span class="c">-- taille et % d'occupation</span>
+<span class="k">DBCC OPENTRAN</span>(<span class="s">'GESTION'</span>);   <span class="c">-- la plus ancienne transaction ouverte</span></pre>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th><code>log_reuse_wait_desc</code></th><th>Ce qu'on fait</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>LOG_BACKUP</code></td><td>Une sauvegarde de journal est attendue — la lancer. Le cas le plus fréquent.</td></tr>
+                        <tr><td><code>ACTIVE_TRANSACTION</code></td><td>Une transaction est ouverte — l'identifier avec <code>DBCC OPENTRAN</code>.</td></tr>
+                        <tr><td><code>AVAILABILITY_REPLICA</code></td><td>Un réplica du groupe de disponibilité est en retard.</td></tr>
+                        <tr><td><code>NOTHING</code></td><td>Rien ne bloque : le journal est simplement trop petit.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Deux erreurs à ne jamais commettre</p>
+                <p>La <strong>taille physique du <code>.ldf</code> ne diminue pas</strong> quand le journal est tronqué : l'espace redevient réutilisable <em>à l'intérieur</em> du fichier, c'est tout. Voir un <code>.ldf</code> toujours aussi gros après une sauvegarde de journal est donc normal.<br>
+                Et <strong>supprimer un <code>.ldf</code> à la main</strong> rend la base irrécupérable : il contient les transactions pas encore écrites dans le <code>.mdf</code>. C'est l'une des rares manipulations vraiment sans retour.</p>
+            </div>
+        </section>
+
+        <!-- 13 -->
+        <section class="chapter" id="supervision">
+            <p class="chapter__num">13</p>
+            <h2 class="chapter__title">Supervision au quotidien</h2>
+            <p class="chapter__intro">Le chapitre précédent traite l'incident. Reste ce qui se passe <em>avant</em> : regarder les bonnes choses, régulièrement, pour le voir venir.</p>
+
+            <h3>Les quatre ressources</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Ressource</th><th>Ce qu'on regarde</th><th>Le piège</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>CPU</strong></td><td>requêtes coûteuses, parallélisme, autres processus Windows</td><td>Un CPU à 100 % est rarement « le serveur est trop petit » : c'est presque toujours une requête ou un index manquant.</td></tr>
+                        <tr><td><strong>Mémoire</strong></td><td><code>max server memory</code>, pression de l'OS, agents tiers</td><td>Le plafond non posé (chapitre 06).</td></tr>
+                        <tr><td><strong>Disque</strong></td><td>espace libre, <strong>latence</strong>, séparation Data / Log / Backup</td><td>L'espace est le symptôme visible ; la <strong>latence</strong> est le vrai indicateur.</td></tr>
+                        <tr><td><strong><code>tempdb</code></strong></td><td>nombre de fichiers, croissance, requêtes temporaires</td><td>Voir ci-dessous.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Une <code>tempdb</code> qui gonfle n'est pas un problème d'admin</p>
+                <p>Elle signale le plus souvent des données laissées dans des tables temporaires par le <strong>code applicatif</strong>. Ça se remonte aux développeurs ; le régler soi-même en agrandissant le fichier, c'est traiter le symptôme et repousser l'incident.</p>
+            </div>
+
+            <h3>Le SQL Error Log</h3>
+            <p>Le journal du moteur : ce que SQL Server raconte de lui-même. Dans SSMS, <em>Management → SQL Server Logs</em>, ou <code>EXEC xp_readerrorlog;</code>. On y trouve le démarrage et la <em>recovery</em> de chaque base, les erreurs d'I/O, les erreurs réseau et d'authentification (dont le <em>State</em> de l'erreur 18456 que le client ne voit jamais), les messages de sauvegarde et les problèmes de configuration.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Source</th><th>Quand l'ouvrir</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>SQL Server</strong></td><td>par défaut, dans tous les cas</td></tr>
+                        <tr><td><strong>SQL Server Agent</strong></td><td>un job qui ne part pas, ou qui échoue sans message clair</td></tr>
+                        <tr><td><strong>Database Mail</strong></td><td>les alertes qui n'arrivent pas</td></tr>
+                        <tr><td><strong>Windows NT</strong></td><td>corréler SQL avec l'OS : arrêt brutal, disque, compte de service</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Les archives sont une information</p>
+                <p>Un nouveau fichier de journal est créé <strong>à chaque redémarrage du service</strong>. Un incident d'hier ne se lit donc pas dans <code>Current</code> mais dans l'archive correspondante — et des archives qui défilent signalent en elles-mêmes un service qui redémarre en boucle. Dans un incident : <strong>lire le journal avant de régler quoi que ce soit</strong>, c'est la seule information que le redémarrage détruit.</p>
+            </div>
+
+            <h3>La checklist quotidienne</h3>
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Services démarrés</strong><p>Moteur, Agent, Browser.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Bases attendues <code>ONLINE</code></strong></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Jobs de l'Agent en succès</strong><p><em>Job Activity Monitor</em>.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Dernières sauvegardes présentes <em>et</em> valides</strong></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Espace disque</strong><p>Data / Log / Backup / <code>tempdb</code>.</p></div></div>
+                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>SQL Error Log sans nouvelle erreur critique</strong></div></div>
+                <div class="step"><div class="step__num">7</div><div class="step__body"><strong>Pas de blocage ni de charge inhabituelle</strong></div></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Health check rapide — le script à garder sous la main</span></div>
+                <pre class="terminal__code"><span class="k">SELECT</span> <span class="p">@@SERVERNAME</span>;   <span class="c">-- sur quelle instance suis-je vraiment ?</span>
+<span class="k">SELECT</span> <span class="p">@@VERSION</span>;      <span class="c">-- edition, version, build, OS</span>
+
+<span class="k">SELECT</span> name, state_desc, recovery_model_desc, log_reuse_wait_desc
+<span class="k">FROM</span> sys.databases;
+
+<span class="k">EXEC</span> sp_who2;             <span class="c">-- qui bloque qui</span>
+<span class="k">DBCC SQLPERF</span>(LOGSPACE);   <span class="c">-- occupation des journaux</span>
+<span class="k">EXEC</span> xp_readerrorlog;     <span class="c">-- le journal du moteur</span></pre>
+            </div>
+
+            <p>L'ordre n'est pas décoratif : <strong>où suis-je</strong> → état des <strong>bases</strong> → <strong>activité</strong> → <strong>ressources</strong> → <strong>journal</strong>. Les deux premières lignes évitent de diagnostiquer la mauvaise instance, l'erreur classique quand on jongle entre deux nœuds.</p>
+
+            <h3>Quand SQL Server ne démarre pas</h3>
+            <p>Le cas où la tentation de réinstaller est la plus forte, et où elle est la plus mauvaise. Dans l'ordre : <strong>service → message → error log → event viewer → compte → disques → paramètres</strong>.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Ne pas réinstaller sans diagnostic</p>
+                <p>La réinstallation n'est presque jamais la solution, et elle <strong>détruit les indices</strong>. Un démarrage échoué laisse des traces précises dans les journaux. Les causes réelles sont presque toujours dans la liste : un compte de service dont la machine est sortie du groupe, une ACL perdue sur les dossiers, un disque plein, un volume non monté, ou <code>master</code> devenue inaccessible.</p>
+            </div>
+        </section>
+
+        <!-- 14 -->
+        <section class="chapter" id="haute-dispo">
+            <p class="chapter__num">14</p>
+            <h2 class="chapter__title">Haute disponibilité</h2>
+            <p class="chapter__intro">Cluster de basculement et groupes de disponibilité Always On : avant tout montage technique, deux chiffres décident de l'architecture — pas l'inverse.</p>
+
+            <h3>RPO et RTO</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>RPO — <em>Recovery Point Objective</em></h4>
+                    <p>Combien de <strong>données</strong> peut-on se permettre de perdre ? Cela dimensionne la <strong>fréquence des sauvegardes</strong>, en particulier celles du journal. Un RPO de 15 minutes impose un backup de journal toutes les 15 minutes.</p>
+                </div>
+                <div class="card">
+                    <h4>RTO — <em>Recovery Time Objective</em></h4>
+                    <p>Combien de <strong>temps</strong> peut-on rester indisponible ? Cela dimensionne la <strong>technologie</strong> : une restauration se compte en heures, une bascule de cluster en secondes.</p>
+                </div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">Ces chiffres viennent du métier</p>
+                <p>Ils se négocient et s'écrivent — ce ne sont pas des choix techniques. Un RPO de zéro et un RTO de zéro n'existent pas : ils se paient, en matériel et en complexité.</p>
+            </div>
+
+            <h3>Haute disponibilité ≠ reprise d'activité</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th>Haute disponibilité (HA)</th><th>Reprise d'activité (DR)</th></tr></thead>
+                    <tbody>
+                        <tr><td>Objectif</td><td><strong>réduire l'interruption</strong></td><td><strong>récupérer après un sinistre</strong></td></tr>
+                        <tr><td>Panne visée</td><td>ciblée : un serveur, un disque</td><td>globale : la salle, le site</td></tr>
+                        <tr><td>Moyens</td><td>cluster de basculement, groupes de disponibilité</td><td>plan de reprise, sauvegardes externalisées, log shipping</td></tr>
+                        <tr><td>Sans l'autre</td><td>un incendie emporte les deux nœuds</td><td>un redémarrage coupe le service une heure</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Un cluster ne remplace pas des sauvegardes</p>
+                <p>Une base corrompue, une table supprimée par erreur ou un chiffrement par rançongiciel se <strong>répliquent fidèlement</strong> sur le second nœud. Seule une sauvegarde permet de revenir en arrière. Les deux approches sont complémentaires, jamais alternatives.</p>
+            </div>
+
+            <h3>Le cluster de basculement Windows</h3>
+            <p>Le <em>Windows Server Failover Cluster</em> est la <strong>fondation Windows</strong> sur laquelle s'appuient les solutions de HA de SQL Server. Il ne sait rien de SQL : il surveille des nœuds, tient un quorum, et bascule des ressources.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Sur les deux nœuds</span></div>
+                <pre class="terminal__code"><span class="k">Install-WindowsFeature</span> failover-clustering <span class="p">`</span>
+    <span class="p">-IncludeAllSubFeature</span> <span class="p">-IncludeManagementTools</span></pre>
+            </div>
+
+            <p>Puis, dans le <em>Failover Cluster Manager</em> : <em>Create Cluster</em> (nom + IP du cluster), puis <em>Add Node</em> pour le second serveur. Le nom du cluster est un <strong>objet ordinateur créé dans l'AD</strong> — d'où l'obligation que les deux nœuds soient membres du même domaine.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">La symétrie est tout le sujet</p>
+                <p>Le second nœud doit recevoir une installation <strong>rigoureusement identique</strong> : même édition, même build exact, mêmes fonctionnalités, même nom d'instance, <strong>mêmes chemins de fichiers</strong>, même compte de service, même port. Une base ne peut être montée sur le second nœud que si ses dossiers existent, au même endroit. D'où l'intérêt d'installer <strong>depuis le <code>ConfigurationFile.ini</code></strong> de la première installation (chapitre 02).</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Le quorum n'est pas optionnel</p>
+                <p>Avec deux nœuds, chacun voyant l'autre disparaître se croirait légitime : les deux monteraient les mêmes ressources et les données divergeraient — c'est le <strong>split-brain</strong>. Le quorum ajoute une voix départageante (disque, partage de fichiers ou témoin cloud). Sans lui, une simple coupure réseau entre les deux machines suffit à casser le cluster.</p>
+            </div>
+
+            <h3>Always On : les groupes de disponibilité</h3>
+            <p>Le cluster sait basculer des ressources ; les <em>availability groups</em> répliquent les <strong>bases</strong> elles-mêmes, en continu, entre deux instances — chacune gardant ses propres disques. À activer dans le Configuration Manager sur chaque serveur, avec redémarrage du service, puis à monter avec l'assistant de SSMS.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Onglet de l'assistant</th><th>Ce qui s'y joue</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Replicas</strong></td><td>Les instances participantes, le mode de bascule, la lisibilité du secondaire. <em>Automatic Failover</em> se coche <strong>des deux côtés</strong> — la bascule doit marcher dans les deux sens.</td></tr>
+                        <tr><td><strong>Endpoints</strong></td><td>Le port de communication entre réplicas (5022 par défaut). <strong>À ouvrir dans le pare-feu des deux nœuds</strong>, faute de quoi le groupe ne se synchronise jamais.</td></tr>
+                        <tr><td><strong>Backup Preferences</strong></td><td><em>Prefer Secondary</em> : les sauvegardes tournent sur le secondaire et n'entament plus les ressources de production.</td></tr>
+                        <tr><td><strong>Listener</strong></td><td>Le <strong>nom unique</strong> auquel les clients se connectent, porté par le cluster : il suit le réplica primaire lors d'une bascule. C'est ce qui rend le basculement transparent — sans listener, il faut reconfigurer chaque client.</td></tr>
+                        <tr><td><strong>Read-Only Routing</strong></td><td>Redirige vers le secondaire lisible les clients qui annoncent <code>ApplicationIntent=ReadOnly</code> : les rapports et exports cessent de peser sur le primaire.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Availability mode</th><th>Effet</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Synchronous commit</strong></td><td>Le primaire attend l'accusé du secondaire avant de valider : <strong>aucune perte de données</strong> (RPO = 0), au prix d'un peu de latence. Seul mode qui autorise la bascule automatique.</td></tr>
+                        <tr><td><strong>Asynchronous commit</strong></td><td>Aucune latence, mais <strong>perte possible</strong> des dernières transactions et bascule manuelle. Le mode d'un réplica distant, pour du DR.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Une base n'est pas toujours éligible</p>
+                <p>L'assistant refuse une base qui n'est pas en recovery model <code>FULL</code> et qui n'a pas eu <strong>au moins une sauvegarde complète</strong>. Ce n'est pas une contrainte arbitraire : sans chaîne de journaux, il n'y a rien à répliquer en continu.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un groupe de disponibilité tient le RTO (bascule en secondes) et le RPO (nul en mode synchrone) face à une panne de <strong>serveur</strong>. Il ne protège de rien d'autre. Les sauvegardes restent la seule machine à remonter le temps.</p>
+            </div>
+        </section>
+
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="sql-server">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
+        </section>
+
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt et un modules.</p>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p><strong>SQL Server</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
+</footer>
+
+<script src="../assets/catalogue.js?v=7"></script>
+<script src="../assets/app.js?v=7"></script>
+<script src="../assets/quiz-data.js?v=7"></script>
+<script src="../assets/quiz.js?v=7"></script>
+</body>
+</html>

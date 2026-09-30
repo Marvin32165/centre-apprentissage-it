@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Azure AZ-900 (Azure Fundamentals) : concepts cloud, CapEx/OpEx, IaaS/PaaS/SaaS et responsabilité partagée, régions et zones, hiérarchie ARM, compute, réseau, stockage, Entra ID et RBAC, gouvernance, coûts et SLA, Azure Monitor, et méthode d'examen.">
+    <title>Azure — AZ-900 — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=7">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 05 · Cloud, supervision &amp; méthode · 2 / 3</p>
+        <h1 class="hero__title">Azure —<br>les <em>fondamentaux</em></h1>
+        <p class="hero__lead">Le cloud Microsoft tel que l'examen <strong>AZ-900</strong> le demande : comprendre ce qu'est le cloud, savoir replacer chaque service Azure dans sa famille, et surtout relier chaque notion à un scénario concret — parce que c'est ainsi que les questions sont posées.</p>
+        <div class="hero__meta">
+            <span class="chip">AZ-900</span><span class="chip">IaaS / PaaS / SaaS</span><span class="chip">Régions</span><span class="chip">RBAC</span><span class="chip">Policy</span><span class="chip">Coûts &amp; SLA</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 4 h</span>
+            <span class="fact"><b>Chapitres</b> 11</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="subnetting.html">Subnetting</a> · <a href="windows-server.html">Windows Server</a> (utile)</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Azure AZ-900</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#concepts"><span>01</span> Concepts cloud</a></li>
+            <li><a class="toc__link" href="#modeles"><span>02</span> Modèles &amp; responsabilité</a></li>
+            <li><a class="toc__link" href="#architecture"><span>03</span> Architecture Azure</a></li>
+            <li><a class="toc__link" href="#compute"><span>04</span> Le compute</a></li>
+            <li><a class="toc__link" href="#reseau"><span>05</span> Les réseaux</a></li>
+            <li><a class="toc__link" href="#stockage"><span>06</span> Stockage &amp; données</a></li>
+            <li><a class="toc__link" href="#identite"><span>07</span> Identité &amp; sécurité</a></li>
+            <li><a class="toc__link" href="#gouvernance"><span>08</span> Gouvernance</a></li>
+            <li><a class="toc__link" href="#couts"><span>09</span> Coûts, SLA &amp; support</a></li>
+            <li><a class="toc__link" href="#monitoring"><span>10</span> Gestion &amp; monitoring</a></li>
+            <li><a class="toc__link" href="#examen"><span>11</span> Passer l'AZ-900</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Azure</div>
+                <div class="section-banner__desc">AZ-900 · Azure Fundamentals</div>
+            </div>
+        </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Expliquer ce qu'apporte le cloud et opposer CapEx et OpEx sur un cas réel.</li>
+                <li>Classer un service en IaaS, PaaS ou SaaS et en déduire qui est responsable de quoi.</li>
+                <li>Replacer une ressource dans la hiérarchie management group → subscription → resource group.</li>
+                <li>Choisir le bon service compute, réseau ou stockage à partir d'un besoin énoncé.</li>
+                <li>Distinguer les couples qui piègent : RBAC / Policy, Load Balancer / Application Gateway, scalabilité / élasticité, région / zone.</li>
+                <li>Estimer et suivre un coût avec les bons outils, et lire un SLA en minutes d'indisponibilité.</li>
+                <li>Aborder l'examen avec une méthode de lecture des questions.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> aucun au sens strict. Le <a href="subnetting.html">subnetting</a> rend le chapitre réseau évident, et <a href="windows-server.html">Windows Server</a> donne les repères d'identité et de droits qu'on retrouve dans Entra ID.</p>
+            <p class="brief__foot">Ce module ferme la partie technique du parcours ; la suite est <a href="scrum.html">Agile &amp; Scrum</a>, qui porte sur la façon d'organiser le travail autour de ces plateformes.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="chapter" id="concepts">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Concepts cloud</h2>
+            <p class="chapter__intro">Azure est la plateforme cloud de Microsoft : un catalogue de services — calcul, stockage, réseau, bases de données. À peu près tout produit Microsoft a désormais sa version cloud. Avant les services, il faut le vocabulaire.</p>
+
+            <h3>Datacenter traditionnel vs cloud public</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th>Datacenter traditionnel</th><th>Cloud public</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Acquisition</strong></td><td>Achat de serveurs à l'avance</td><td>Provisionnement via portail, CLI, API ou <strong>IaC</strong></td></tr>
+                        <tr><td><strong>Délai</strong></td><td>Cycle de livraison long</td><td>Quelques minutes</td></tr>
+                        <tr><td><strong>Capacité</strong></td><td>Souvent surdimensionnée</td><td>Ajustable selon la charge</td></tr>
+                        <tr><td><strong>Exploitation</strong></td><td>Matériel, salles, énergie, réseau à gérer</td><td>Services managés</td></tr>
+                        <tr><td><strong>Coût</strong></td><td>Investissement initial</td><td>Facturation selon consommation</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>La différence tient en une phrase : on passe de l'<strong>investissement fixe</strong> à la <strong>consommation flexible</strong>.</p>
+
+            <h3>Les six bénéfices</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Bénéfice</th><th>Définition</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Haute disponibilité</strong></td><td>Rester accessible malgré les incidents</td></tr>
+                        <tr><td><strong>Scalabilité</strong></td><td>Ajouter ou retirer des ressources selon la demande</td></tr>
+                        <tr><td><strong>Élasticité</strong></td><td>Adapter <strong>automatiquement</strong> la capacité quand la charge change</td></tr>
+                        <tr><td><strong>Fiabilité</strong></td><td>Reprendre après panne : redondance, sauvegarde, reprise</td></tr>
+                        <tr><td><strong>Prévisibilité</strong></td><td>Anticiper performances et coûts avec des métriques</td></tr>
+                        <tr><td><strong>Sécurité et gouvernance</strong></td><td>Contrôler accès, conformité, politiques et journalisation</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Le piège du vocabulaire</p>
+                <p><strong>Scalabilité</strong> = <em>je</em> décide d'ajuster. <strong>Élasticité</strong> = <em>ça</em> s'ajuste tout seul. Une boutique en ligne pendant le Black Friday illustre l'élasticité : la capacité monte pendant le pic, puis redescend — on ne paie pas toute l'année pour la charge maximale.</p>
+            </div>
+
+            <h3>CapEx vs OpEx</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>CapEx — investissement</h4>
+                    <ul>
+                        <li>Acheter un actif <strong>avant</strong> de l'utiliser.</li>
+                        <li>Matériel amorti sur plusieurs années.</li>
+                        <li>Risque de sur- ou de sous-capacité.</li>
+                        <li>Décisions difficiles à corriger.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>OpEx — exploitation</h4>
+                    <ul>
+                        <li>Payer une dépense régulière, liée à l'usage.</li>
+                        <li>Plus facile de démarrer petit.</li>
+                        <li>Ajustement rapide des ressources.</li>
+                        <li>Factures à surveiller pour éviter les surprises.</li>
+                    </ul>
+                </div>
+            </div>
+            <p>Un datacenter oblige à acheter assez de serveurs <strong>pour le pic futur</strong>. Dans Azure, on commence petit, on grandit, puis on réduit ou on arrête. <strong>À nuancer</strong> : sur plusieurs années, l'<em>on-premise</em> peut rester plus intéressant — cela dépend vraiment de la situation.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le cloud ne supprime pas le coût, il le <strong>transforme</strong> : d'un investissement initial lourd à une dépense variable et pilotable. Ce que l'examen vérifie, ce n'est pas un calcul financier, c'est que tu as compris ce <strong>changement de modèle</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="modeles">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Modèles de service et responsabilité partagée</h2>
+            <p class="chapter__intro">Deux classements à ne pas mélanger : <strong>où</strong> tourne la plateforme (public, privé, hybride) et <strong>jusqu'où</strong> le fournisseur gère la pile (IaaS, PaaS, SaaS).</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Déploiement</th><th>Caractéristiques</th><th>Quand l'utiliser</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Public</strong></td><td>Infrastructure du fournisseur ; ressources partagées mais <strong>isolées logiquement</strong></td><td>Rapidité, élasticité, couverture mondiale</td></tr>
+                        <tr><td><strong>Privé</strong></td><td>Dédié à une seule organisation, plus de contrôle</td><td>Exigences de contrôle fortes</td></tr>
+                        <tr><td><strong>Hybride</strong></td><td>Combine local et cloud public</td><td>Contraintes réglementaires, latence, migration progressive</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>IaaS, PaaS, SaaS</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Modèle</th><th>Vous gérez</th><th>Azure gère</th><th>Exemple</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>IaaS</strong></td><td>OS, runtime, application, données</td><td>Matériel, hyperviseur, réseau physique</td><td>Machine virtuelle Azure</td></tr>
+                        <tr><td><strong>PaaS</strong></td><td>Application et données</td><td>OS et runtime</td><td>Azure App Service</td></tr>
+                        <tr><td><strong>SaaS</strong></td><td>Données et utilisateurs</td><td>L'application complète</td><td>Microsoft 365</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">L'analogie du restaurant</p>
+                <p><strong>IaaS</strong> = louer une cuisine vide : beaucoup de contrôle, beaucoup à gérer. <strong>PaaS</strong> = une cuisine équipée : vous cuisinez, l'infrastructure est prête. <strong>SaaS</strong> = commander un plat. Plus on va vers SaaS, moins on gère ; plus on va vers IaaS, plus on contrôle — et plus on est responsable.</p>
+            </div>
+
+            <h3>La responsabilité partagée</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Couche</th><th>On-premise</th><th>IaaS</th><th>PaaS</th><th>SaaS</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Données</strong></td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
+                        <tr><td><strong>Appareils / identités</strong></td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
+                        <tr><td><strong>Applications</strong></td><td>Vous</td><td>Vous</td><td>Vous</td><td>Microsoft</td></tr>
+                        <tr><td><strong>Système d'exploitation</strong></td><td>Vous</td><td>Vous</td><td>Microsoft</td><td>Microsoft</td></tr>
+                        <tr><td><strong>Réseau et contrôle d'accès</strong></td><td>Vous</td><td>Vous</td><td>Microsoft</td><td>Microsoft</td></tr>
+                        <tr><td><strong>Infrastructure physique</strong></td><td>Vous</td><td>Microsoft</td><td>Microsoft</td><td>Microsoft</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Trois choses restent <strong>toujours</strong> à votre charge, quel que soit le modèle : les <strong>données</strong>, les <strong>identités</strong> et les <strong>décisions de configuration</strong>. Une mauvaise permission RBAC est votre responsabilité sur une VM comme sur un service entièrement managé — le cloud ne déplace jamais cette ligne-là.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="architecture">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Architecture et hiérarchie Azure</h2>
+            <p class="chapter__intro">Une <strong>région</strong> est une zone géographique contenant un ou plusieurs datacenters. Une <strong>zone de disponibilité</strong> est un datacenter indépendant <em>à l'intérieur</em> d'une région. Confondre les deux est l'erreur la plus fréquente de l'examen.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">L'échelle géographique</span></div>
+                <pre class="terminal__code">Paire de régions   → résilience entre 2 régions (réplication, reprise)
+   └── Région      → emplacement géographique (ex. France Central)
+         └── Zone  → isolation physique À L'INTÉRIEUR de la région (souvent 3)</pre>
+            </div>
+
+            <p>On choisit une région selon quatre critères : la <strong>latence</strong> (rapprocher les ressources des utilisateurs), la <strong>résidence des données</strong> (où elles ont le droit d'être stockées), la <strong>disponibilité du service</strong> — <em>tous les services n'existent pas partout</em> — et le <strong>prix</strong>, qui varie d'une région à l'autre. Les zones, elles, protègent contre une panne <strong>locale</strong> d'alimentation, de réseau ou de refroidissement.</p>
+
+            <h3>La hiérarchie, et la notion de scope</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Quatre niveaux</span></div>
+                <pre class="terminal__code">Management group        regroupe des subscriptions → gouvernance à grande échelle
+    └── Subscription    facturation, limites (quotas), gestion des accès
+          └── Resource group   conteneur logique, cycle de vie commun
+                └── Resource   VM, storage account, VNet, base…</pre>
+            </div>
+
+            <p>Un <strong>scope</strong> est le niveau auquel on applique une règle ou un droit. Plus on applique haut, plus l'effet couvre d'éléments : le rôle <em>Reader</em> donné sur une subscription permet de lire beaucoup de ressources ; le même rôle sur un seul resource group limite l'accès à ce groupe. Le réflexe à garder : <strong>qui</strong> reçoit le droit, <strong>quel rôle</strong>, et <strong>à quel niveau</strong> ?</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Danger</p>
+                <p><strong>Supprimer un resource group supprime toutes les ressources qu'il contient.</strong> Un resource group n'est donc pas un dossier de rangement esthétique : il regroupe ce qui <strong>vit et meurt ensemble</strong>. Ses métadonnées appartiennent à une seule région, mais les ressources qu'il contient peuvent, elles, être réparties dans plusieurs.</p>
+            </div>
+
+            <h3>Azure Resource Manager</h3>
+            <p><strong>ARM</strong> est la couche de gestion qui reçoit toutes les demandes de création et de modification. Portail, Azure CLI, PowerShell, SDK et templates passent <strong>tous</strong> par lui — d'où une gestion cohérente des tags, du RBAC, des <em>locks</em> et des policies, quel que soit l'outil.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>ARM est le <strong>point de passage unique</strong> : peu importe l'outil, les opérations empruntent le même moteur. Attention toutefois — ARM gère <strong>les ressources</strong>, pas votre application : il crée la VM, il ne sait rien de ce qui tourne dedans.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="compute">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Le compute</h2>
+            <p class="chapter__intro">Le <strong>compute</strong>, c'est la capacité de calcul qui exécute une charge de travail. Tous les services compute exécutent du code ; la différence est <strong>ce que vous voulez gérer vous-même</strong>.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Service</th><th>Ce que c'est</th><th>Positionnement</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Virtual Machines</strong></td><td>Machines virtuelles</td><td>Contrôle élevé, <strong>responsabilité élevée</strong></td></tr>
+                        <tr><td><strong>App Service</strong></td><td>Hébergement web / API managé</td><td>Idéal pour les applications web</td></tr>
+                        <tr><td><strong>Containers (ACI / AKS)</strong></td><td>Packaging portable</td><td>Portabilité</td></tr>
+                        <tr><td><strong>Functions</strong></td><td><em>Serverless</em> événementiel</td><td>Exécuter du code à la demande</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Arbre de décision</span></div>
+                <pre class="terminal__code">Besoin d'accès OS complet ?                        → oui → Virtual Machine
+Application web / API standard ?                   → oui → App Service
+Exécution courte, déclenchée par un événement ?    → oui → Functions
+Besoin de conteneurs ?
+      ├── simple, isolé, peu d'orchestration       → ACI
+      └── microservices / cluster orchestré        → AKS</pre>
+            </div>
+
+            <h3>Ce que l'examen attend sur chacun</h3>
+            <ul>
+                <li><strong>VM</strong> : la <em>taille</em> détermine CPU, RAM, disque temporaire et réseau ; les <em>images</em> sont le point de départ ; les <em>availability sets / zones</em> réduisent le risque de panne simultanée ; les <em>scale sets</em> gèrent un groupe de VM identiques avec mise à l'échelle.</li>
+                <li><strong>Functions</strong> : un <em>trigger</em> (HTTP, timer, file d'attente, événement), une facturation liée au nombre d'exécutions et à leur durée. Une fonction peut en déclencher une autre. Mauvais choix pour un processus long nécessitant le contrôle du serveur.</li>
+                <li><strong>ACI vs AKS</strong> : ACI lance rapidement un conteneur avec peu d'orchestration ; AKS est du Kubernetes managé pour les microservices — plus puissant, mais il faut connaître Kubernetes.</li>
+                <li><strong>Azure Virtual Desktop</strong> : l'équivalent Azure des services <a href="rds.html">RDS</a> — bureaux et applications distants, pour le télétravail et les prestataires. En pratique : cher et pas simple à mettre en place.</li>
+            </ul>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>La règle de l'examen : associer le scénario au <strong>service le plus simple qui répond au besoin</strong>. Une vieille application Windows difficile à modifier ira sur une <strong>VM</strong> ; une API web moderne sur <strong>App Service</strong> ; un traitement déclenché par l'upload d'un fichier sur <strong>Functions</strong>. Choisir plus complexe que nécessaire est compté faux.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="reseau">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Les réseaux Azure</h2>
+            <p class="chapter__intro">Le <strong>VNet</strong> est le réseau privé logique dans Azure : un espace d'adresses, des <strong>subnets</strong> pour découper par rôle ou par zone de sécurité, du routage, et des connexions vers l'extérieur par <em>peering</em>, VPN Gateway ou ExpressRoute.</p>
+
+            <p>C'est un réseau d'entreprise, mais défini dans Azure : des VM dans un subnet « web », une base de données dans un subnet plus protégé, et des <strong>NSG</strong> qui filtrent les flux autorisés. Tout ce que tu sais du <a href="subnetting.html">subnetting</a> s'applique tel quel.</p>
+
+            <h3>Relier Azure au réseau d'entreprise</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>VPN Gateway</h4>
+                    <ul>
+                        <li>Connexion <strong>chiffrée via Internet</strong>.</li>
+                        <li>Plus rapide à mettre en place.</li>
+                        <li>Dépend de la qualité de la connexion Internet.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>ExpressRoute</h4>
+                    <ul>
+                        <li>Connexion <strong>privée</strong> via un opérateur.</li>
+                        <li>Performance et latence <strong>prévisibles</strong>.</li>
+                        <li>Pour les besoins entreprise critiques.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Contrôler le trafic entrant</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Service</th><th>Rôle</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Network Security Group (NSG)</strong></td><td>Filtrage par règles source / destination / port, au niveau subnet ou interface</td></tr>
+                        <tr><td><strong>Azure Firewall</strong></td><td>Pare-feu managé centralisé, plus riche qu'un NSG</td></tr>
+                        <tr><td><strong>DDoS Protection</strong></td><td>Protection contre les attaques volumétriques</td></tr>
+                        <tr><td><strong>Application Gateway / WAF</strong></td><td>Répartition applicative HTTP(S) avec protection web</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Load Balancer ou Application Gateway ?</p>
+                <p><strong>Load Balancer</strong> = couche 4, TCP/UDP, scénarios simples. <strong>Application Gateway</strong> = couche 7, HTTP/HTTPS, routage par URL ou nom d'hôte, et peut intégrer un <strong>WAF</strong>. Dès que la question parle d'URL, d'en-tête ou de protection web, c'est l'Application Gateway.</p>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Chemin d'une application web Azure</span></div>
+                <pre class="terminal__code">Utilisateur
+    ▼
+Front Door / DNS              le DNS oriente vers l'entrée de l'application
+    ▼
+Application Gateway / WAF     le WAF protège le trafic HTTP(S)
+    ▼
+App Service / VM              le service applicatif traite la requête
+    ▼
+Base de données</pre>
+            </div>
+
+            <p>Côté livraison globale : <strong>Azure DNS</strong> héberge les zones, <strong>Front Door</strong> sert d'entrée mondiale accélérée et sécurisée, <strong>Traffic Manager</strong> route au niveau DNS selon la performance, la priorité ou la géographie, et le <strong>CDN</strong> met en cache le contenu statique près des utilisateurs.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>VNet = isolation et connectivité · subnet = découpage · NSG = filtrage.</strong> Et la ligne de partage à mémoriser pour l'examen : couche 4 pour le Load Balancer, couche 7 pour l'Application Gateway.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="stockage">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Stockage et données</h2>
+            <p class="chapter__intro">Un <strong>storage account</strong> expose quatre familles de services. La question d'examen cache presque toujours la réponse dans le <strong>type de donnée</strong> : objet, fichier partagé, message ou table clé-valeur.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Famille</th><th>Contenu</th><th>Besoin typique</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Blob</strong></td><td>Objets non structurés : images, logs, sauvegardes, documents</td><td>Stocker des factures PDF, des images</td></tr>
+                        <tr><td><strong>Files</strong></td><td>Partages <strong>SMB / NFS</strong> managés</td><td>Remplacer un partage réseau</td></tr>
+                        <tr><td><strong>Queues</strong></td><td>Messages simples entre composants</td><td>Découpler deux composants applicatifs</td></tr>
+                        <tr><td><strong>Tables</strong></td><td>NoSQL clé/valeur simple</td><td>Données clé-valeur sans schéma</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Tiers et redondance</h3>
+            <p>Les <strong>tiers Blob</strong> optimisent le coût selon la fréquence d'accès : <strong>Hot</strong> (consulté souvent : stockage cher, accès bon marché), <strong>Cool</strong> (l'inverse), <strong>Archive</strong> (le moins cher, mais restauration lente). Utiles pour les logs, les sauvegardes et la conformité.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Sigle</th><th>Signification</th><th>Protection</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>LRS</strong></td><td>Locally Redundant Storage</td><td>Copies dans un seul datacenter</td></tr>
+                        <tr><td><strong>ZRS</strong></td><td>Zone-Redundant Storage</td><td>Copies synchrones entre plusieurs zones d'une région</td></tr>
+                        <tr><td><strong>GRS</strong></td><td>Geo-Redundant Storage</td><td>Réplication vers une région secondaire</td></tr>
+                        <tr><td><strong>GZRS</strong></td><td>Geo-Zone-Redundant Storage</td><td>Zones + région secondaire</td></tr>
+                        <tr><td><strong>RA-GRS</strong></td><td>Read-Access GRS</td><td>GRS + lecture possible depuis la région secondaire</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>De LRS à RA-GRS, <strong>protection et coût croissent ensemble</strong>. Côté disques : les <strong>disques managés</strong> (Standard HDD/SSD, Premium SSD, Ultra) servent les VM, et les <strong>snapshots</strong> capturent un état ponctuel.</p>
+
+            <h3>Bases de données et transfert</h3>
+            <ul>
+                <li><strong>Azure SQL Database</strong> : relationnel managé compatible SQL Server. <strong>SQL Managed Instance</strong> : compatibilité plus large. <strong>Azure Database for MySQL / PostgreSQL</strong> : moteurs open source managés.</li>
+                <li><strong>Cosmos DB</strong> : NoSQL mondial, faible latence, plusieurs API — pour des documents JSON distribués, pas « parce que c'est moderne ».</li>
+                <li>Transfert : <strong>AzCopy</strong> (ligne de commande), <strong>Storage Explorer</strong> (graphique), <strong>Azure File Sync</strong> (serveur Windows ↔ Azure Files), <strong>Data Box</strong> (transfert physique de gros volumes).</li>
+            </ul>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le choix se fait sur le <strong>modèle de données</strong>, pas sur la mode : tables, lignes et transactions fortes → relationnel (<strong>Azure SQL</strong>) ; documents, schéma souple et distribution mondiale → <strong>Cosmos DB</strong>. Et pour le stockage brut : objet → Blob, partage → Files, message → Queue.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="identite">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Identité, accès et sécurité</h2>
+            <p class="chapter__intro">Dans Azure, <strong>l'identité est le nouveau périmètre de sécurité</strong>. Deux questions distinctes, deux mécanismes : <em>qui se connecte ?</em> relève de <strong>Entra ID</strong>, <em>que peut faire cette identité ?</em> relève du <strong>RBAC</strong>.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Authentification</th><th>Autorisation</th></tr></thead>
+                    <tbody>
+                        <tr><td>Prouver <strong>qui vous êtes</strong></td><td>Déterminer <strong>ce que vous pouvez faire</strong></td></tr>
+                        <tr><td>Mot de passe, MFA, certificat, sans mot de passe</td><td>Rôles, permissions, scopes</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p><strong>Microsoft Entra ID</strong> (anciennement Azure AD) est l'annuaire cloud : utilisateurs, groupes, applications, appareils — avec le <strong>SSO</strong> (une identité pour plusieurs applications), le <strong>MFA</strong> (un facteur de plus, qui réduit fortement le risque d'un mot de passe volé) et les <strong>identités externes</strong> pour inviter partenaires et clients.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">La formule RBAC</span></div>
+                <pre class="terminal__code">Identité  +  Rôle  +  Scope  =  autorisation effective
+
+Identité : utilisateur, groupe, service principal, managed identity
+Rôle     : Reader, Contributor, Owner…
+Scope    : management group, subscription, resource group, ressource</pre>
+            </div>
+
+            <h3>Les services à reconnaître</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Service</th><th>Ce qu'il fait</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Managed identity</strong></td><td>Identité attribuée à une ressource Azure ; Azure gère les identifiants — plus de secret dans le code</td></tr>
+                        <tr><td><strong>Key Vault</strong></td><td>Centralise <strong>secrets</strong>, <strong>clés</strong> et <strong>certificats</strong></td></tr>
+                        <tr><td><strong>Defender for Cloud</strong></td><td>Posture de sécurité : <em>Secure Score</em>, recommandations, protection des workloads</td></tr>
+                        <tr><td><strong>NSG / Firewall / WAF</strong></td><td>Filtrage réseau simple / contrôle centralisé managé / protection des applications web</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Réflexe examen</p>
+                <p>Dès que la question parle de <strong>secrets, clés ou certificats</strong> → <strong>Key Vault</strong>. Et jamais de secret en clair dans le code : une Azure Function utilise une <strong>Managed Identity</strong> pour lire un secret dans Key Vault, et le mot de passe de la base n'apparaît nulle part.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>Least privilege</strong> : accorder le minimum nécessaire, au bon <strong>scope</strong>, et de préférence à un <strong>groupe</strong> plutôt qu'à une personne isolée. C'est exactement le principe des droits par groupe de <a href="windows-server.html">Windows Server</a> — le vocabulaire change, le réflexe est le même.</p>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="gouvernance">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Gouvernance et conformité</h2>
+            <p class="chapter__intro">La gouvernance répond à une seule question : <strong>qui peut faire quoi, où, comment et à quel coût ?</strong> Il s'agit de poser des garde-fous <em>avant</em> que l'environnement devienne incontrôlable.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Outil</th><th>Question à laquelle il répond</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>RBAC</strong></td><td>Qui peut agir ?</td></tr>
+                        <tr><td><strong>Azure Policy</strong></td><td>Qu'est-ce qui est autorisé ?</td></tr>
+                        <tr><td><strong>Locks</strong></td><td>Qu'est-ce qu'on protège ?</td></tr>
+                        <tr><td><strong>Tags</strong></td><td>Comment classer et suivre ?</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p><strong>Azure Policy</strong> vérifie et impose des règles sur les ressources : interdire une région, exiger un tag, limiter les tailles de VM. En mode <em>Audit</em> elle observe, en mode <em>Deny</em> elle bloque ; plusieurs policies se regroupent en <strong>initiatives</strong>.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">La confusion classique de l'examen</p>
+                <p><strong>RBAC contrôle les actions des identités ; Policy contrôle les propriétés des ressources.</strong> Un utilisateur <em>Contributor</em> a bien le <strong>droit</strong> de créer une VM — et une policy peut néanmoins <strong>bloquer</strong> la création si la région choisie n'est pas approuvée. Les deux ne se remplacent pas, ils se superposent.</p>
+            </div>
+
+            <p>Les <strong>locks</strong> empêchent l'accident : <em>CanNotDelete</em> (lecture et modification possibles, suppression bloquée) et <em>ReadOnly</em> (modification bloquée). Les <strong>tags</strong> portent les métadonnées : coût, propriétaire, environnement, criticité — ce sont eux qui permettent ensuite de lire une facture par projet.</p>
+
+            <p>Côté conformité : <strong>Microsoft Purview</strong> (gouvernance et protection des données), le <strong>Service Trust Portal</strong> (documentation et rapports de conformité) et <strong>Compliance Manager</strong> (évaluer et améliorer sa posture). La conformité reste une <strong>responsabilité partagée</strong>.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>L'ordre de mise en place est toujours le même : une <strong>structure</strong> (management groups, subscriptions, resource groups), puis des <strong>rôles</strong>, puis des <strong>règles</strong>, puis une <strong>protection contre les erreurs</strong>, puis des <strong>tags</strong> pour piloter. Chaque étage suppose le précédent.</p>
+            </div>
+        </section>
+
+        <!-- 09 -->
+        <section class="chapter" id="couts">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">Coûts, SLA et support</h2>
+            <p class="chapter__intro">Le prix dépend rarement d'un seul paramètre : le <strong>type de ressource</strong>, la <strong>région</strong>, la <strong>consommation</strong> (temps d'exécution, capacité, opérations, transfert) et les <strong>options</strong> (redondance, performance, support, licences, réservations).</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Outil</th><th>Rôle</th><th>Quand</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Pricing Calculator</strong></td><td>Estimer un coût</td><td><strong>Avant</strong> déploiement</td></tr>
+                        <tr><td><strong>TCO Calculator</strong></td><td>Comparer local <em>vs</em> Azure</td><td>Avant décision de migration</td></tr>
+                        <tr><td><strong>Cost Management</strong></td><td>Suivre les dépenses réelles, budgets, alertes</td><td><strong>Après</strong> déploiement</td></tr>
+                        <tr><td><strong>Azure Advisor</strong></td><td>Recommandations coût, performance, fiabilité, sécurité</td><td>En continu</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Pour réduire la facture, <strong>avant</strong> : la bonne taille, la bonne région, le bon SKU, la calculatrice, et des tags prévus pour la refacturation interne. <strong>Après</strong> : arrêter les ressources inutilisées, redimensionner les sous-utilisées, poser budgets et alertes, et regarder les <strong>réservations</strong> et l'<strong>Azure Hybrid Benefit</strong> si on y est éligible.</p>
+
+            <h3>Lire un SLA</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>SLA</th><th>Indisponibilité maximale par mois</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>99 %</strong></td><td>≈ 7 h 18 min</td></tr>
+                        <tr><td><strong>99,9 %</strong></td><td>≈ 43 min</td></tr>
+                        <tr><td><strong>99,95 %</strong></td><td>≈ 22 min</td></tr>
+                        <tr><td><strong>99,99 %</strong></td><td>≈ 4 min</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 1 — le SLA qui baisse tout seul</p>
+                <p>Une application enchaîne trois services, chacun annoncé à 99,9 %. Le responsable en conclut que l'ensemble tient 99,9 %. Que lui réponds-tu ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body">
+                        <p>Non : des services en <strong>série</strong> multiplient leurs disponibilités. Trois composants à 99,9 % donnent 0,999³ ≈ <strong>99,7 %</strong>, soit près de <strong>2 h</strong> d'indisponibilité par mois au lieu de 43 minutes. Chaque dépendance ajoutée <em>abaisse</em> le SLA composite.</p>
+                        <p>C'est la raison pour laquelle on ne se contente pas de lire un SLA : pour améliorer la disponibilité <strong>réelle</strong>, on conçoit avec de la <strong>redondance</strong>, des <strong>zones</strong> ou plusieurs composants en parallèle. Un SLA est un engagement contractuel, pas une propriété magique de l'architecture.</p>
+                    </div>
+                </details>
+            </div>
+
+            <p>Enfin, tous les services n'ont pas la même maturité : une fonctionnalité en <strong>Preview</strong> n'est pas toujours couverte comme en <strong>GA</strong> (<em>General Availability</em>). Les <strong>plans de support</strong> se choisissent selon les besoins, et la <strong>status page</strong> renseigne sur l'état des services en cas d'incident.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>Avant de déployer : estimer. Après : surveiller.</strong> Deux ressources portant le même nom peuvent coûter très différemment selon leur <strong>SKU</strong> — c'est le niveau, l'édition et la taille qui font le prix, pas le nom du service.</p>
+            </div>
+        </section>
+
+        <!-- 10 -->
+        <section class="chapter" id="monitoring">
+            <p class="chapter__num">10</p>
+            <h2 class="chapter__title">Gestion, déploiement et monitoring</h2>
+            <p class="chapter__intro">Quatre interfaces pour la même plateforme de gestion — elles passent toutes par ARM : le <strong>portail</strong> (graphique), l'<strong>Azure CLI</strong> (multiplateforme, idéal pour les scripts), <strong>Azure PowerShell</strong> (cmdlets pour administrateurs Microsoft) et <strong>Cloud Shell</strong> (shell dans le navigateur, outils préinstallés).</p>
+
+            <h3>Infrastructure as Code</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>ARM template</h4>
+                    <ul>
+                        <li><strong>JSON</strong> déclaratif.</li>
+                        <li>Format historique natif d'ARM.</li>
+                        <li>Verbeux, mais très standard.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Bicep</h4>
+                    <ul>
+                        <li>Langage <strong>plus lisible</strong>.</li>
+                        <li><strong>Compile vers</strong> un ARM template.</li>
+                        <li>Recommandé pour simplifier les déploiements.</li>
+                    </ul>
+                </div>
+            </div>
+            <p><strong>Azure Arc</strong> étend cette gestion <em>hors</em> d'Azure : serveurs on-premises ou multi-cloud, clusters Kubernetes, certains services de données. L'idée clé : Azure devient un <strong>plan de contrôle</strong>, pas seulement un hébergeur.</p>
+
+            <h3>Azure Monitor</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Élément</th><th>Détail</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Metrics</strong></td><td>Valeurs numériques dans le temps : CPU, requêtes, latence</td></tr>
+                        <tr><td><strong>Logs</strong></td><td>Données détaillées interrogeables, via <strong>Log Analytics</strong> et le langage <strong>KQL</strong></td></tr>
+                        <tr><td><strong>Alerts</strong></td><td>Notifier ou déclencher une action quand une condition est vraie</td></tr>
+                        <tr><td><strong>Dashboards / Workbooks</strong></td><td>Visualiser l'état des services</td></tr>
+                        <tr><td><strong>Application Insights</strong></td><td>Observabilité applicative : requêtes, exceptions, dépendances, performance</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Une application est lente : les <strong>métriques</strong> montrent la hausse de latence, les <strong>logs</strong> montrent les erreurs et les dépendances, l'<strong>alerte</strong> prévient l'équipe quand le seuil est dépassé — et le destinataire de cette alerte est un <strong>Action Group</strong>. À côté, <strong>Azure Advisor</strong> recommande, <strong>Service Health</strong> signale les incidents Azure qui affectent <em>vos</em> ressources, et <strong>Resource Health</strong> donne l'état d'<em>une</em> ressource.</p>
+
+            <div class="tip">
+                <p class="tip__label">Déjà vu</p>
+                <p>Métriques, logs, alertes, groupes de destinataires, actions déclenchées : c'est exactement le modèle du module <a href="monitoring-zabbix.html">Zabbix</a> — items, historique, triggers, actions. Les produits changent, la mécanique de la supervision ne change pas.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>Métriques = mesures · logs = détails · alertes = notification ou action.</strong> Et une distinction que l'examen aime poser : le monitoring technique (Azure Monitor, App Insights) n'est <strong>pas</strong> la gouvernance des coûts (Cost Management, Advisor).</p>
+            </div>
+        </section>
+
+        <!-- 11 -->
+        <section class="chapter" id="examen">
+            <p class="chapter__num">11</p>
+            <h2 class="chapter__title">Passer l'AZ-900</h2>
+            <p class="chapter__intro">L'examen couvre trois domaines pondérés : <strong>concepts cloud</strong> (25–30 %), <strong>architecture et services Azure</strong> (35–40 %), <strong>gestion et gouvernance</strong> (30–35 %). La difficulté est presque toujours le <strong>vocabulaire</strong>, jamais le calcul.</p>
+
+            <h3>Méthode de lecture d'une question</h3>
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Identifier le domaine</strong>Cloud, architecture, sécurité, gouvernance, coût ou monitoring.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Chercher le mot-clé</strong>« secrets » → Key Vault · « policy » → conformité des ressources · « URL » → Application Gateway.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Éliminer</strong>Retirer les services hors sujet, et ceux qui sont trop complexes pour le besoin énoncé.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Justifier</strong>La bonne réponse doit satisfaire la <strong>contrainte exacte</strong> de l'énoncé, pas simplement être plausible.</div></li>
+            </ol>
+
+            <h3>Les six confusions à trancher d'avance</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Confusion</th><th>Comment trancher</th></tr></thead>
+                    <tbody>
+                        <tr><td>RBAC <em>vs</em> Policy</td><td>Qui a le droit ? <em>vs</em> qu'est-ce qui est autorisé ?</td></tr>
+                        <tr><td>Load Balancer <em>vs</em> Application Gateway</td><td>Couche 4 <em>vs</em> HTTP/HTTPS couche 7</td></tr>
+                        <tr><td>IaaS <em>vs</em> PaaS</td><td>Contrôle de l'OS <em>vs</em> plateforme managée</td></tr>
+                        <tr><td>Pricing Calculator <em>vs</em> TCO</td><td>Estimer Azure <em>vs</em> comparer local / cloud</td></tr>
+                        <tr><td>Scalabilité <em>vs</em> élasticité</td><td>Je décide <em>vs</em> ça s'ajuste tout seul</td></tr>
+                        <tr><td>Région <em>vs</em> zone</td><td>Géographie <em>vs</em> isolement dans la région</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 2 — l'architecture à défendre en trois minutes</p>
+                <p>Application métier web pour des utilisateurs européens. Propose une architecture complète et justifie chaque choix avec le vocabulaire AZ-900 : compute, données, réseau, identité, gouvernance, monitoring.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body">
+                        <ul>
+                            <li><strong>Hébergement</strong> : <strong>App Service</strong> pour l'application — c'est une application web standard, une VM serait du contrôle inutile et du patching en plus. <strong>Azure SQL</strong> pour des données relationnelles.</li>
+                            <li><strong>Réseau</strong> : <strong>Application Gateway avec WAF</strong> si l'application est exposée et a besoin d'une protection web ; le Load Balancer ne saurait pas router par URL.</li>
+                            <li><strong>Sécurité</strong> : <strong>Entra ID</strong> pour l'authentification, <strong>RBAC</strong> au bon scope pour les droits, <strong>Managed Identity</strong> + <strong>Key Vault</strong> pour que la chaîne de connexion à la base n'apparaisse nulle part.</li>
+                            <li><strong>Gouvernance</strong> : <strong>tags</strong> (projet, propriétaire, environnement), <strong>Policy</strong> imposant les régions Europe pour la résidence des données, <strong>budget</strong> et alerte de coût.</li>
+                            <li><strong>Monitoring</strong> : <strong>Azure Monitor</strong> pour métriques et alertes, <strong>Application Insights</strong> pour comprendre les lenteurs, <strong>Advisor</strong> pour les recommandations.</li>
+                        </ul>
+                        <p>L'objectif n'est pas l'architecture « parfaite », mais une architecture <strong>cohérente, sécurisée et gouvernée</strong> — et surtout un choix que tu sais justifier.</p>
+                    </div>
+                </details>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Chaque <strong>bénéfice</strong> doit être relié à un <strong>scénario</strong> : disponibilité → continuité de service · scalabilité → croissance · élasticité → pic ponctuel · agilité → rapidité de mise en œuvre. C'est cette association, et pas la définition récitée, que l'examen teste.</p>
+            </div>
+        </section>
+
+        <div class="gloss">
+            <div class="gl"><b>Tenant</b><span>Instance Entra ID représentant une organisation.</span></div>
+            <div class="gl"><b>Subscription</b><span>Unité de facturation, de quotas et de gestion des accès.</span></div>
+            <div class="gl"><b>Resource group</b><span>Conteneur logique pour des ressources à cycle de vie commun.</span></div>
+            <div class="gl"><b>SKU</b><span>Niveau, édition ou taille d'un service — avec ses capacités et son prix.</span></div>
+            <div class="gl"><b>SLA</b><span>Engagement de disponibilité, exprimé en pourcentage mensuel.</span></div>
+            <div class="gl"><b>IaC</b><span>Infrastructure as Code : décrire l'infrastructure dans du code pour la redéployer à l'identique.</span></div>
+            <div class="gl"><b>RBAC</b><span>Attribution d'un rôle à une identité sur un scope donné.</span></div>
+            <div class="gl"><b>KQL</b><span>Kusto Query Language — le langage de requête des logs dans Log Analytics.</span></div>
+            <div class="gl"><b>Scope</b><span>Niveau auquel s'applique un droit ou une règle ; il se propage vers le bas.</span></div>
+            <div class="gl"><b>WAF</b><span>Web Application Firewall — protège les applications web, associé à l'Application Gateway.</span></div>
+        </div>
+
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="azure">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
+        </section>
+
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, puis par l'<a href="../examens.html#final">examen final</a>.</p>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p><strong>Azure — AZ-900</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du cours Azure Fundamentals</p>
+</footer>
+
+<script src="../assets/catalogue.js?v=7"></script>
+<script src="../assets/app.js?v=7"></script>
+<script src="../assets/quiz-data.js?v=7"></script>
+<script src="../assets/quiz.js?v=7"></script>
+</body>
+</html>
