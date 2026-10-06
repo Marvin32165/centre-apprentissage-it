@@ -19,7 +19,7 @@ window.CATALOGUE = {
       "num": "02",
       "title": "Infrastructure Windows",
       "exam": "windows",
-      "desc": "De l'annuaire Active Directory aux services qui s'appuient dessus : fichiers, sessions, web, messagerie, bases et intranet.",
+      "desc": "De l'annuaire Active Directory aux services qui s'appuient dessus : fichiers, sessions, web, messagerie, bases et intranet — et leur sauvegarde.",
       "modules": [
         "windows-server",
         "powershell",
@@ -28,10 +28,8 @@ window.CATALOGUE = {
         "iis",
         "exchange-securite",
         "sql-server",
-        "sharepoint"
-      ],
-      "soon": [
-        "system-center"
+        "sharepoint",
+        "dpm"
       ]
     },
     {
@@ -64,11 +62,14 @@ window.CATALOGUE = {
       "num": "05",
       "title": "Cloud, supervision & méthode",
       "exam": "cloud",
-      "desc": "Ce qui vient après l'infrastructure : la surveiller, la porter dans le cloud, et organiser le travail autour d'elle.",
+      "desc": "Ce qui vient après l'infrastructure : la surveiller, la porter dans le cloud, organiser le travail autour d'elle — et décrocher le poste qui va avec.",
       "modules": [
         "monitoring-zabbix",
+        "zabbix-windows",
         "azure",
-        "scrum"
+        "scrum",
+        "redmine",
+        "entretien-recrutement"
       ]
     }
   ],
@@ -239,16 +240,25 @@ window.CATALOGUE = {
         "iis"
       ]
     },
-    "system-center": {
-      "title": "System Center (DPM)",
-      "short": "System Center",
-      "icon": "SC",
-      "soon": true,
+    "dpm": {
+      "title": "System Center DPM",
+      "short": "DPM",
+      "icon": "DPM",
+      "level": 3,
+      "duree": "2 h 30",
+      "chapters": 8,
       "prereq": [
         "windows-server",
         "sql-server"
       ],
-      "related": []
+      "utile": [
+        "powershell"
+      ],
+      "related": [
+        "zabbix-windows",
+        "redmine",
+        "exchange-securite"
+      ]
     },
     "ccna-reseau": {
       "title": "CCNA — Réseau Cisco",
@@ -379,6 +389,25 @@ window.CATALOGUE = {
         "azure"
       ]
     },
+    "zabbix-windows": {
+      "title": "Zabbix & serveurs Windows",
+      "short": "Zabbix & Windows",
+      "icon": "ZBW",
+      "level": 2,
+      "duree": "2 h 30",
+      "chapters": 7,
+      "prereq": [
+        "monitoring-zabbix",
+        "docker"
+      ],
+      "utile": [
+        "windows-server"
+      ],
+      "related": [
+        "dpm",
+        "redmine"
+      ]
+    },
     "azure": {
       "title": "Azure — AZ-900",
       "short": "Azure",
@@ -405,6 +434,39 @@ window.CATALOGUE = {
       "chapters": 9,
       "prereq": [],
       "related": []
+    },
+    "redmine": {
+      "title": "Redmine — helpdesk",
+      "short": "Redmine",
+      "icon": "RDM",
+      "level": 2,
+      "duree": "2 h 30",
+      "chapters": 7,
+      "prereq": [
+        "docker"
+      ],
+      "utile": [
+        "linux-debian",
+        "windows-server"
+      ],
+      "related": [
+        "zabbix-windows",
+        "dpm",
+        "scrum",
+        "homelab"
+      ]
+    },
+    "entretien-recrutement": {
+      "title": "Entretien de recrutement",
+      "short": "Entretien",
+      "icon": "JOB",
+      "level": 1,
+      "duree": "1 h 30",
+      "chapters": 9,
+      "prereq": [],
+      "related": [
+        "scrum"
+      ]
     }
   },
   "public": true

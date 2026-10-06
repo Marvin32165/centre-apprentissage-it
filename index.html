@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centre d'apprentissage IT — Portail</title>
-    <meta name="description" content="Portail personnel d'auto-apprentissage IT : virtualisation (Proxmox, Hyper-V), Windows Server, PowerShell, IIS, réseau/CCNA, subnetting, cybersécurité, Linux, supervision Zabbix, Azure AZ-900, Agile &amp; Scrum. Docker, Cisco IOS et sécurité réseau. 21 modules organisés en 5 parcours reliés entre eux, avec objectifs, labos pas à pas, test de fin de module, examens transversaux et carte interactive des modules.">
+    <meta name="description" content="Portail personnel d'auto-apprentissage IT : virtualisation (Proxmox, Hyper-V), Windows Server, PowerShell, IIS, réseau/CCNA, subnetting, cybersécurité, Linux, supervision Zabbix, System Center (DPM, Zabbix à la place de SCOM, Redmine à la place de SCSM), Azure AZ-900, Agile &amp; Scrum, entretien de recrutement. Docker, Cisco IOS et sécurité réseau. 25 modules organisés en 5 parcours reliés entre eux, avec objectifs, labos pas à pas, test de fin de module, examens transversaux et carte interactive des modules.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/theme.css?v=7">
+    <link rel="stylesheet" href="assets/theme.css?v=10">
 </head>
 <body>
 
@@ -21,11 +21,11 @@
         <h1 class="hero__title">Mon centre d'apprentissage <em>IT</em>.</h1>
         <p class="hero__lead">Un portail unique qui réunit tous mes cours. Chaque domaine est un module : objectifs annoncés, théorie synthétisée, labo reproductible chez soi, puis un <strong>test noté</strong> qui dit si c'est acquis. Les modules se relient entre eux — prérequis, suites, voir aussi.</p>
         <div class="hero__facts">
-            <span class="fact"><b>Modules</b> 21</span>
-            <span class="fact"><b>Chapitres</b> 198</span>
+            <span class="fact"><b>Modules</b> 25</span>
+            <span class="fact"><b>Chapitres</b> 229</span>
             <span class="fact"><b>Parcours</b> 5</span>
-            <span class="fact"><b>Évaluations</b> 21 tests · 6 examens</span>
-            <span class="fact"><b>Questions</b> 207 au total</span>
+            <span class="fact"><b>Évaluations</b> 25 tests · 6 examens</span>
+            <span class="fact"><b>Questions</b> 251 au total</span>
         </div>
         <div class="search">
             <input type="search" id="site-search" class="search__input" placeholder="Chercher une commande, une procédure… (ex. « créer utilisateur »)" autocomplete="off">
@@ -61,7 +61,7 @@
         <div class="path" id="parcours-windows">
             <p class="path__num">Parcours 02</p>
             <p class="path__title">Infrastructure Windows</p>
-            <p class="path__desc">De l'annuaire Active Directory aux services qui s'appuient dessus : fichiers, sessions, messagerie, bases et intranet.</p>
+            <p class="path__desc">De l'annuaire Active Directory aux services qui s'appuient dessus : fichiers, sessions, web, messagerie, bases et intranet — et leur sauvegarde.</p>
             <ol class="path__steps">
                 <li><a href="modules/windows-server.html">Windows Server 2025 <em>2 h</em></a></li>
                 <li><a href="modules/powershell.html">PowerShell <em>1 h 30</em></a></li>
@@ -71,6 +71,7 @@
                 <li><a href="modules/exchange-securite.html">Exchange &amp; PKI <em>1 h 30</em></a></li>
                 <li><a href="modules/sql-server.html">SQL Server <em>4 h</em></a></li>
                 <li><a href="modules/sharepoint.html">SharePoint Server SE <em>4 h</em></a></li>
+                <li><a href="modules/dpm.html">System Center DPM <em>2 h 30</em></a></li>
                 <li><a href="examens.html#windows">Examen du parcours <em>30 q.</em></a></li>
             </ol>
         </div>
@@ -103,11 +104,14 @@
         <div class="path" id="parcours-cloud">
             <p class="path__num">Parcours 05</p>
             <p class="path__title">Cloud, supervision &amp; méthode</p>
-            <p class="path__desc">Ce qui vient après l'infrastructure : la surveiller, la porter dans le cloud, et organiser le travail autour d'elle.</p>
+            <p class="path__desc">Ce qui vient après l'infrastructure : la surveiller, la porter dans le cloud, organiser le travail autour d'elle — et décrocher le poste qui va avec.</p>
             <ol class="path__steps">
                 <li><a href="modules/monitoring-zabbix.html">Supervision — Zabbix <em>3 h</em></a></li>
+                <li><a href="modules/zabbix-windows.html">Zabbix &amp; serveurs Windows <em>2 h 30</em></a></li>
                 <li><a href="modules/azure.html">Azure — AZ-900 <em>4 h</em></a></li>
                 <li><a href="modules/scrum.html">Agile &amp; Scrum <em>3 h</em></a></li>
+                <li><a href="modules/redmine.html">Redmine — helpdesk <em>2 h 30</em></a></li>
+                <li><a href="modules/entretien-recrutement.html">Entretien de recrutement <em>1 h 30</em></a></li>
                 <li><a href="examens.html#cloud">Examen du parcours <em>20 q.</em></a></li>
             </ol>
         </div>
@@ -279,16 +283,17 @@
             <div class="mod__go">Ouvrir le guide →</div>
         </a>
 
-        <div class="mod mod--soon" aria-disabled="true">
+        <a class="mod" data-file="dpm.html" data-chapters="8" href="modules/dpm.html">
             <div class="mod__top">
-                <div class="mod__icon">SC</div>
-                <span class="mod__status mod__status--soon">en préparation</span>
+                <div class="mod__icon">DPM</div>
+                <span class="mod__status">8 chapitres · test 10 q.</span>
             </div>
-            <div class="mod__title">System Center (DPM)</div>
-            <p class="mod__desc">Sauvegarde d'une infrastructure Windows avec System Center Data Protection Manager. Le cours vient de commencer : la page du module viendra une fois les notes complètes.</p>
-            <div class="mod__tags"><span class="tg">SCDPM</span><span class="tg">Sauvegarde</span></div>
-            
-        </div>
+            <div class="mod__title">System Center DPM</div>
+            <p class="mod__desc">La sauvegarde de la suite System Center : base sur un SQL Server distant sous gMSA, pool de stockage, agents, groupe de protection — synchronisation ou point de récupération —, restauration, et le diagnostic de l'erreur 811 jusqu'au certificat refusé.</p>
+            <div class="mod__tags"><span class="tg">DPM 2025</span><span class="tg">gMSA</span><span class="tg">Groupe de protection</span><span class="tg">Restauration</span><span class="tg">Erreur 811</span></div>
+            <div class="mod__meta"><span class="lvl lvl--3"><b>Avancé</b></span><span>≈ 2 h 30</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
 
     </div>
 
@@ -404,6 +409,18 @@
             <div class="mod__go">Ouvrir le module →</div>
         </a>
 
+        <a class="mod" data-file="zabbix-windows.html" data-chapters="7" href="modules/zabbix-windows.html">
+            <div class="mod__top">
+                <div class="mod__icon">ZBW</div>
+                <span class="mod__status">7 chapitres · test 10 q.</span>
+            </div>
+            <div class="mod__title">Zabbix &amp; serveurs Windows</div>
+            <p class="mod__desc">Zabbix à la place de SCOM : la pile en Docker Compose, des agents Windows en vérifications actives chiffrées par PSK, l'agent du serveur en conteneur, puis des modèles maison pour l'heure du domaine et l'expiration des certificats.</p>
+            <div class="mod__tags"><span class="tg">Docker Compose</span><span class="tg">Agent 2</span><span class="tg">PSK</span><span class="tg">UserParameter</span><span class="tg">LLD</span></div>
+            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 2 h 30</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
         <a class="mod" data-file="azure.html" data-chapters="11" href="modules/azure.html">
             <div class="mod__top">
                 <div class="mod__icon">AZ</div>
@@ -428,6 +445,30 @@
             <div class="mod__go">Ouvrir le module →</div>
         </a>
 
+        <a class="mod" data-file="redmine.html" data-chapters="7" href="modules/redmine.html">
+            <div class="mod__top">
+                <div class="mod__icon">RDM</div>
+                <span class="mod__status">7 chapitres · test 10 q.</span>
+            </div>
+            <div class="mod__title">Redmine — helpdesk</div>
+            <p class="mod__desc">Redmine à la place de SCSM : un outil de tickets en Docker Compose, branché sur l'Active Directory en LDAP (et le piège de Windows Server 2025), puis rendu exploitable — secrets dans un .env, sauvegarde par cron, HTTPS derrière nginx.</p>
+            <div class="mod__tags"><span class="tg">Ticketing</span><span class="tg">LDAP / AD</span><span class="tg">.env</span><span class="tg">cron</span><span class="tg">nginx HTTPS</span></div>
+            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 2 h 30</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
+        <a class="mod" data-file="entretien-recrutement.html" data-chapters="9" href="modules/entretien-recrutement.html">
+            <div class="mod__top">
+                <div class="mod__icon">JOB</div>
+                <span class="mod__status">9 chapitres · test 10 q.</span>
+            </div>
+            <div class="mod__title">Entretien de recrutement</div>
+            <p class="mod__desc">Le module du jour J : se préparer, raconter son expérience avec la méthode STARR, reconnaître le type de question, tenir sa posture, conclure — et faire de son stress un allié, respiration à l'appui.</p>
+            <div class="mod__tags"><span class="tg">STARR</span><span class="tg">Questions</span><span class="tg">Posture</span><span class="tg">Stress</span><span class="tg">Simulation</span></div>
+            <div class="mod__meta"><span class="lvl lvl--1"><b>Débutant</b></span><span>≈ 1 h 30</span></div>
+            <div class="mod__go">Ouvrir le module →</div>
+        </a>
+
         
 
     </div>
@@ -449,7 +490,7 @@
         <a class="exam-card" href="examens.html#windows">
             <p class="exam-card__num">Examen 02</p>
             <p class="exam-card__title">Infrastructure Windows</p>
-            <p class="exam-card__desc">Huit modules. Ce qui circule de l'un à l'autre : le gMSA, la chaîne de confiance, la superposition des droits, la limite des mécanismes de haute disponibilité.</p>
+            <p class="exam-card__desc">Neuf modules, sauvegarde comprise. Ce qui circule de l'un à l'autre : le gMSA, la chaîne de confiance, la superposition des droits, la limite des mécanismes de haute disponibilité.</p>
             <div class="exam-card__foot"><span>30 questions · seuil 70 %</span></div>
         </a>
         <a class="exam-card" href="examens.html#reseau">
@@ -467,12 +508,12 @@
         <a class="exam-card" href="examens.html#cloud">
             <p class="exam-card__num">Examen 05</p>
             <p class="exam-card__title">Cloud, supervision &amp; méthode</p>
-            <p class="exam-card__desc">Ce qui relie la supervision d'un parc, une plateforme cloud et la façon d'organiser le travail : la même chaîne mesurer / alerter / agir, et le même moindre privilège.</p>
+            <p class="exam-card__desc">Ce qui relie la supervision d'un parc, une plateforme cloud et la façon d'organiser le travail : la même chaîne mesurer / alerter / agir, le même moindre privilège — et le recul qu'on en tire en entretien.</p>
             <div class="exam-card__foot"><span>20 questions · seuil 70 %</span></div>
         </a>
         <a class="exam-card" href="examens.html#final">
             <p class="exam-card__num">Examen final</p>
-            <p class="exam-card__title">Les vingt et un modules</p>
+            <p class="exam-card__title">Les vingt-cinq modules</p>
             <p class="exam-card__desc">Le grand test de synthèse : quarante-cinq questions tirées dans tout le centre, plus les principes qui traversent les cinq parcours.</p>
             <div class="exam-card__foot"><span>45 questions · seuil 75 %</span></div>
         </a>
@@ -590,11 +631,11 @@
     <p><a href="#carte">Carte des modules</a> · <a href="examens.html">Examens transversaux</a> · Progression et résultats enregistrés dans ce navigateur uniquement</p>
 </footer>
 
-<script src="assets/catalogue.js?v=7"></script>
-<script src="assets/app.js?v=7"></script>
-<script src="assets/quiz-data.js?v=7"></script>
-<script src="assets/quiz.js?v=7"></script>
-<script src="assets/search-index.js?v=7"></script>
-<script src="assets/search.js?v=7"></script>
+<script src="assets/catalogue.js?v=10"></script>
+<script src="assets/app.js?v=10"></script>
+<script src="assets/quiz-data.js?v=10"></script>
+<script src="assets/quiz.js?v=10"></script>
+<script src="assets/search-index.js?v=10"></script>
+<script src="assets/search.js?v=10"></script>
 </body>
 </html>

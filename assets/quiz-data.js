@@ -684,6 +684,85 @@ window.QUIZ_BANK = {
     }]
 },
 
+"dpm": {
+    name: "System Center DPM",
+    file: "dpm.html",
+    title: "Test — System Center DPM",
+    intro: "Huit chapitres, dix questions. Elles portent sur ce qui fait échouer une installation DPM et sur la distinction qui décide de ce qu'on pourra restaurer : synchronisation ou point de récupération.",
+    pass: 70,
+    questions: [
+    {
+        q: "Dans le TP, où vit la base de DPM, et quel choix le traduit dans l'assistant d'installation ?",
+        c: ["Sur un SQL Server distant : <em>Use stand-alone SQL Server</em>", "Sur le serveur DPM, dans une instance SQL Express installée par le setup", "Sur le contrôleur de domaine, avec l'annuaire", "Dans un fichier local du pool de stockage"],
+        a: 0,
+        why: "La base <code>DPMDB_…</code> est créée sur un serveur SQL séparé. C'est ce qui rend la préparation de SQL — collation, gMSA, SSRS, DPM Support Files, certificat — si importante.",
+        ref: "Chapitre 01 · ch. 04"
+    },
+    {
+        q: "Pendant le setup, quel compte crée réellement la base de DPM sur SQL ?",
+        c: ["Le compte de la session ouverte sur le serveur DPM, car le script est lancé avec <code>sqlcmd -E</code>", "Le compte saisi dans les champs User Name / Password de l'assistant", "Le compte ordinateur du serveur DPM", "Le gMSA du service SQL"],
+        a: 0,
+        why: "<code>-E</code> = authentification Windows de la session en cours. Il faut donc être connecté sur DPM avec un compte du domaine <strong>sysadmin</strong> sur SQL, quel que soit le compte saisi dans l'assistant.",
+        ref: "Chapitre 04"
+    },
+    {
+        q: "Quelle collation DPM exige-t-il pour l'instance SQL qui porte sa base ?",
+        c: ["<code>SQL_Latin1_General_CP1_CI_AS</code>", "<code>French_CI_AS</code>", "<code>Latin1_General_100_CI_AS_SC_UTF8</code>", "N'importe laquelle, tant qu'elle est insensible à la casse"],
+        a: 0,
+        why: "DPM n'en accepte pas d'autre. Et c'est le seul point de la préparation qui ne se rattrape pas sans réinstaller l'instance : il se choisit à l'installation de SQL.",
+        ref: "Chapitre 03"
+    },
+    {
+        q: "Que se passe-t-il quand on ajoute un volume au pool de stockage de DPM ?",
+        c: ["DPM le formate (en ReFS) et se le réserve : tout ce qui était dessus est perdu", "DPM y crée un dossier de sauvegarde à côté des fichiers existants", "Le volume est partagé en lecture seule sur le réseau", "Rien tant qu'aucun groupe de protection n'y écrit"],
+        a: 0,
+        why: "Le message en haut de la fenêtre le dit : les volumes ajoutés sont formatés. Ensuite le volume appartient à DPM — son nom devient un GUID, on n'y dépose rien à la main.",
+        ref: "Chapitre 05"
+    },
+    {
+        q: "Les agents sont installés avec succès sur deux serveurs, qui apparaissent dans <em>Unprotected computers with protection agent</em>. Pourquoi « non protégés » ?",
+        c: ["Ils ne font encore partie d'aucun groupe de protection", "L'installation de l'agent a échoué en silence", "Il manque un redémarrage des serveurs", "Le pool de stockage est plein"],
+        a: 0,
+        why: "Un agent permet à DPM de voir le serveur ; c'est le groupe de protection qui décide quoi sauvegarder, où, et à quelle fréquence.",
+        ref: "Chapitre 05 · ch. 06"
+    },
+    {
+        q: "Un groupe synchronise toutes les 15 minutes et crée un point de récupération chaque vendredi à 19 h. Que peut-on restaurer un mercredi ?",
+        c: ["L'état du vendredi précédent à 19 h : on ne restaure que des points de récupération", "L'état d'il y a au plus 15 minutes, grâce à la synchronisation", "L'état de la veille, la synchronisation créant un point par jour", "Rien avant le vendredi suivant"],
+        a: 0,
+        why: "La synchronisation tient le réplica à jour, mais ne crée rien de restaurable. Seuls les points de récupération figent une version qu'on peut rendre.",
+        ref: "Chapitre 06"
+    },
+    {
+        q: "On restaure un fichier qui existe encore à son emplacement d'origine, sans vouloir rien détruire. Quelle option choisir ?",
+        c: ["<em>Create copy</em>", "<em>Overwrite</em>", "<em>Skip</em>", "<em>Recover to an alternate location</em> est obligatoire dans ce cas"],
+        a: 0,
+        why: "<em>Create copy</em> restaure à côté du fichier existant. <em>Overwrite</em> le remplace, <em>Skip</em> ne restaure rien pour les fichiers déjà présents.",
+        ref: "Chapitre 07"
+    },
+    {
+        q: "Erreur 811 « The DPM database was not created ». Quelle est la cause trouvée dans le TP ?",
+        c: ["Le <code>sqlcmd</code> ODBC 18 du setup refuse le certificat auto-généré de SQL, faute d'autorité de confiance", "La collation de l'instance SQL est incorrecte", "Le compte ordinateur de DPM n'a pas de login sur SQL", "La catégorie de jobs manquante dans <code>msdb</code>"],
+        a: 0,
+        why: "Depuis la version 18, le pilote ODBC chiffre toujours et exige un certificat de confiance. Remède : un certificat dédié sur SQL, importé dans les autorités racines de confiance du serveur DPM.",
+        ref: "Chapitre 08"
+    },
+    {
+        q: "Dans <code>DpmSetup.log</code>, après l'échec du script, apparaissent les erreurs 14262 et 15151. Comment les traiter ?",
+        c: ["Comme des conséquences : c'est le setup qui défait ce qu'il a commencé, la cause est l'erreur d'avant", "Comme la cause : créer la catégorie manquante dans <code>msdb</code>", "Comme un problème de droits à corriger sur le rôle", "En réinstallant SQL Server"],
+        a: 0,
+        why: "Dans un journal, la cause est la première erreur, pas la plus bavarde. On reproduit l'appel <code>sqlcmd</code> à la main pour faire apparaître le vrai message.",
+        ref: "Chapitre 08"
+    },
+    {
+        q: "Avant de créer le gMSA qui fera tourner SQL, quel prérequis doit exister sur le domaine ?",
+        c: ["Une clé racine KDS (<code>Add-KdsRootKey</code>)", "Une autorité de certification d'entreprise", "Un second contrôleur de domaine", "Un compte utilisateur portant le même nom"],
+        a: 0,
+        why: "Sans clé racine KDS, pas de gMSA. En lab, on l'antidate de 10 heures pour l'utiliser tout de suite ; normalement, on attend sa réplication sur tous les DC.",
+        ref: "Chapitre 02"
+    }]
+},
+
 "iis": {
     name: "IIS — Serveur web Windows",
     file: "iis.html",
@@ -1282,6 +1361,85 @@ window.QUIZ_BANK = {
     }]
 },
 
+"zabbix-windows": {
+    name: "Zabbix & serveurs Windows",
+    file: "zabbix-windows.html",
+    title: "Test — Zabbix & serveurs Windows",
+    intro: "Sept chapitres, dix questions. Elles portent sur ce qui casse quand on change de sens ou de réseau : vérifications actives, PSK, noms de services Docker, et les modèles maison.",
+    pass: 70,
+    questions: [
+    {
+        q: "En vérifications <strong>actives</strong>, qui ouvre la connexion, et vers quel port ?",
+        c: ["L'agent, vers le port 10051 du serveur", "Le serveur, vers le port 10050 de l'agent", "L'agent, vers le port 10050 du serveur", "Le serveur, vers le port 10051 de l'agent"],
+        a: 0,
+        why: "En actif, l'agent appelle le serveur sur 10051 et lui envoie ses données. Le port 10050 sert aux vérifications passives, où c'est le serveur qui interroge l'agent.",
+        ref: "Chapitre 01"
+    },
+    {
+        q: "Un hôte en modèle <em>Windows by Zabbix agent active</em> affiche <em>Active checks : Available</em> et son interface <code>…:10050</code> en <em>Unknown</em>. Que faire ?",
+        c: ["Rien : ce modèle ne fait aucune vérification passive, le serveur n'appelle jamais le port 10050", "Ouvrir le port 10050 dans le pare-feu Windows", "Passer l'interface en <em>Connect to : DNS</em>", "Réinstaller l'agent avec le bon port"],
+        a: 0,
+        why: "Unknown veut dire « jamais interrogé », pas « en panne ». Les données arrivent par les vérifications actives, qui sont bien disponibles.",
+        ref: "Chapitre 03"
+    },
+    {
+        q: "Pourquoi le conteneur PostgreSQL n'est-il branché que sur un réseau déclaré <code>internal: true</code> ?",
+        c: ["Pour que la base soit injoignable depuis le réseau : seuls les conteneurs du même réseau la voient", "Pour accélérer les échanges entre le serveur et la base", "Parce que PostgreSQL ne sait pas écouter sur deux réseaux", "Pour publier son port 5432 sur la VM"],
+        a: 0,
+        why: "Un réseau interne n'a aucun accès vers l'extérieur. Le serveur et l'interface sont sur les deux réseaux : le backend pour joindre la base, le frontend pour publier leurs ports.",
+        ref: "Chapitre 02"
+    },
+    {
+        q: "<code>docker logs zabbix-server</code> affiche <code>cannot find requested PSK identity \"LAB-APP01-PSK\"</code>. Quelle est la cause la plus probable ?",
+        c: ["L'onglet <em>Encryption</em> de l'hôte n'est pas rempli, ou pas avec la même identité", "Le port 10051 n'est pas publié sur la VM", "L'agent n'est pas de la même version que le serveur", "Le conteneur serveur ne résout pas le nom de l'agent"],
+        a: 0,
+        why: "Le serveur reçoit bien l'agent — la connexion arrive — mais ne connaît pas cette identité. Identité et valeur PSK doivent être identiques des deux côtés.",
+        ref: "Chapitre 03"
+    },
+    {
+        q: "Entre un agent Windows et son hôte dans Zabbix, qu'est-ce qui doit correspondre exactement ?",
+        c: ["Le nom d'hôte (<code>Hostname=</code> de l'agent)", "L'identité PSK", "La valeur PSK", "L'adresse IP du serveur Windows"],
+        a: [0, 1, 2],
+        why: "En actif, l'agent s'annonce par son <code>Hostname</code> : le nom dans Zabbix doit être le même. Et le PSK n'est accepté que si identité et valeur concordent. L'IP, elle, n'intervient pas dans l'identification.",
+        ref: "Chapitre 03"
+    },
+    {
+        q: "L'agent du serveur Zabbix tourne dans un conteneur <code>zabbix-agent</code> sur le même réseau Compose. Quelle interface donner à l'hôte <code>Zabbix server</code> ?",
+        c: ["DNS name <code>zabbix-agent</code>, <em>Connect to : DNS</em>, port 10050", "IP <code>127.0.0.1</code>, port 10050", "L'IP de la VM Ubuntu, port 10050", "L'IP actuelle du conteneur agent, relevée avec <code>docker inspect</code>"],
+        a: 0,
+        why: "C'est le conteneur serveur qui interroge : son 127.0.0.1, c'est lui-même. Le port de l'agent n'est pas publié sur la VM, et l'IP d'un conteneur change à sa recréation. Le nom de service, lui, reste.",
+        ref: "Chapitre 04"
+    },
+    {
+        q: "Un <code>.conf</code> avec un nouveau <code>UserParameter</code> est déposé ; <code>zabbix_agent2.exe -t</code> renvoie bien une valeur, mais l'item reste en <em>Unknown metric</em>. Pourquoi ?",
+        c: ["Le service en cours n'a pas relu sa configuration : il faut redémarrer l'agent", "Le timeout de l'item est trop court", "Le modèle n'est pas lié à l'hôte", "Le script doit être dans <code>zabbix_agent2.d\\</code> et non dans <code>scripts\\</code>"],
+        a: 0,
+        why: "<code>-t</code> relit la configuration à neuf, le service déjà lancé non. Sans redémarrage de l'agent, la nouvelle clé lui est inconnue.",
+        ref: "Chapitre 05"
+    },
+    {
+        q: "Sur un item <strong>actif</strong>, le bouton <em>Execute now</em> ne fait rien. Comment forcer une collecte ?",
+        c: ["Redémarrer l'agent", "Passer l'item en passif le temps du test", "Augmenter le timeout à 10 s", "Relancer le conteneur <code>zabbix-server</code>"],
+        a: 0,
+        why: "Un item actif, c'est l'agent qui l'envoie : le serveur ne peut pas le déclencher. Au redémarrage, l'agent récupère sa liste d'items et collecte aussitôt.",
+        ref: "Chapitre 05"
+    },
+    {
+        q: "Le modèle Windows Time signale <em>« VM IC Time Synchronization Provider is being used »</em> sur tous les serveurs du domaine. Quelle correction ?",
+        c: ["Désactiver le fournisseur VMIC ; le DC sur une source externe en <code>/reliable:yes</code>, les membres en <code>domhier</code>", "Synchroniser chaque serveur directement sur <code>pool.ntp.org</code>", "Laisser l'hôte Hyper-V fournir l'heure à tous, DC compris", "Désactiver le service <code>w32time</code> sur les membres"],
+        a: 0,
+        why: "Dans un domaine, la référence est le DC, synchronisé sur une source externe ; les membres suivent la hiérarchie du domaine. L'heure de l'hôte Hyper-V court-circuitait cette hiérarchie.",
+        ref: "Chapitre 06"
+    },
+    {
+        q: "Un certificat n'est pas découvert par le modèle Windows Certificates. Quelles causes sont possibles ?",
+        c: ["Il est dans un magasin de l'utilisateur, pas dans <code>My</code> ou <code>WebHosting</code> de la machine", "Son FriendlyName ne contient pas <code>@</code>", "Il expire dans plus de 15 jours", "Il est auto-signé"],
+        a: [0, 1],
+        why: "Le script ne lit que les magasins de l'ordinateur local (<code>certlm.msc</code>, pas <code>certmgr.msc</code>) et filtre sur un <code>@</code> dans le FriendlyName. La durée ou l'émetteur n'empêchent pas la découverte : les certificats de test du TP étaient auto-signés.",
+        ref: "Chapitre 07"
+    }]
+},
+
 "azure": {
     name: "Azure — AZ-900",
     file: "azure.html",
@@ -1440,6 +1598,164 @@ window.QUIZ_BANK = {
     }]
 },
 
+"redmine": {
+    name: "Redmine — helpdesk",
+    file: "redmine.html",
+    title: "Test — Redmine",
+    intro: "Sept chapitres, dix questions. Elles portent sur le modèle de Redmine, sur le piège LDAP de Windows Server 2025, et sur ce qui rend une application en conteneurs exploitable : secrets, sauvegarde, HTTPS.",
+    pass: 70,
+    questions: [
+    {
+        q: "Dans Redmine, que définit le <strong>workflow</strong> ?",
+        c: ["Les passages de statut permis, par rôle et par tracker", "L'ordre de traitement des demandes", "La liste des modules activés dans un projet", "Les notifications envoyées à chaque changement"],
+        a: 0,
+        why: "C'est lui qui permet, par exemple, de réserver le passage en <em>Résolu</em> au rôle support. Les droits ne sont pas portés par l'utilisateur mais par son rôle dans le projet.",
+        ref: "Chapitre 01"
+    },
+    {
+        q: "Qu'est-ce qui manque nativement à Redmine face à un outil de helpdesk dédié comme GLPI ?",
+        c: ["Un portail simplifié pour l'utilisateur", "La gestion de SLA", "L'inventaire du parc", "Le suivi de demandes par statut"],
+        a: [0, 1, 2],
+        why: "Redmine vient de la gestion de projets de développement. Configuré, il fait un honnête outil de support, mais portail simplifié, SLA et inventaire demandent des plugins.",
+        ref: "Chapitre 01"
+    },
+    {
+        q: "Le test du mode LDAP échoue avec <em>« Invalid LDAP Account/Password »</em> contre un DC Windows Server 2025, alors que le compte est bon. Quelle est la cause ?",
+        c: ["Le DC exige la signature LDAP, que le LDAP simple de Redmine ne fournit pas", "Le Base DN est mal écrit", "Le compte de service n'est pas administrateur du domaine", "Le port 389 est réservé à LDAPS"],
+        a: 0,
+        why: "Le message de Redmine vaut pour tout refus ; la vraie réponse du DC était <code>Stronger Auth Needed</code>. Le nouveau paramètre <em>…signing requirements Enforcement</em>, non défini, impose la signature.",
+        ref: "Chapitre 03"
+    },
+    {
+        q: "Que fait l'option <em>On-the-fly user creation</em> d'un mode LDAP ?",
+        c: ["Elle crée le compte Redmine à la première connexion de l'utilisateur du domaine", "Elle importe tous les comptes de l'AD d'un coup", "Elle crée le compte dans l'AD s'il n'existe pas", "Elle synchronise les mots de passe dans la base de Redmine"],
+        a: 0,
+        why: "Le mot de passe reste vérifié par le DC à chaque connexion ; Redmine ne crée que le profil, rempli avec les attributs <code>givenName</code>, <code>sN</code> et <code>mail</code>.",
+        ref: "Chapitre 03"
+    },
+    {
+        q: "Pour passer cette connexion AD en production, que faut-il changer ?",
+        c: ["Passer en LDAPS (port 636, certificat sur le DC)", "Utiliser un compte de service dédié, simple utilisateur du domaine", "Garder le compte Administrateur, plus fiable", "Désactiver la signature LDAP sur tous les DC"],
+        a: [0, 1],
+        why: "En LDAP simple, les mots de passe du domaine passent en clair : la désactivation de l'<em>Enforcement</em> est une solution de lab. Et lire l'annuaire ne demande aucun droit d'administration.",
+        ref: "Chapitre 03"
+    },
+    {
+        q: "Dans le Compose, <code>${MSQL_USER}</code> est écrit au lieu de <code>${MYSQL_USER}</code>. Que se passe-t-il ?",
+        c: ["Compose remplace la variable par une chaîne vide, avec un simple avertissement — <code>docker compose config</code> le montre", "Compose refuse de démarrer et signale une erreur de syntaxe", "Compose garde le texte <code>${MSQL_USER}</code> tel quel", "Docker demande la valeur au démarrage"],
+        a: 0,
+        why: "Aucune erreur bloquante : Redmine tente alors de se connecter sans nom d'utilisateur. <code>docker compose config</code> affiche le résultat du remplacement avant de relancer.",
+        ref: "Chapitre 05"
+    },
+    {
+        q: "La base MariaDB existe déjà. On change <code>MYSQL_PASSWORD</code> dans le <code>.env</code> et on relance. Résultat ?",
+        c: ["Redmine ne peut plus se connecter : MariaDB ne lit <code>MARIADB_*</code> qu'à la création de la base", "Le mot de passe de la base est mis à jour au redémarrage", "MariaDB recrée la base avec le nouveau mot de passe", "Rien ne change, Redmine garde l'ancien mot de passe en cache"],
+        a: 0,
+        why: "Sur une base existante, on garde les mêmes valeurs. Changer un mot de passe de base se fait dans la base elle-même, puis dans le <code>.env</code>.",
+        ref: "Chapitre 05"
+    },
+    {
+        q: "Pourquoi le script de sauvegarde appelle-t-il <code>mariadb-dump</code> avec <code>--single-transaction</code> ?",
+        c: ["Pour obtenir une photo cohérente de la base sans bloquer Redmine", "Pour compresser le dump", "Pour ne sauvegarder qu'une table à la fois", "Pour inclure les pièces jointes dans le dump"],
+        a: 0,
+        why: "Le dump lit la base dans une seule transaction : cohérent, et l'application continue de tourner. Les pièces jointes, elles, sont dans un volume et s'archivent à part.",
+        ref: "Chapitre 06"
+    },
+    {
+        q: "Que signifie la ligne de crontab <code>0 16 * * * …/backup-redmine.sh &gt;&gt; …/backup.log 2&gt;&amp;1</code> ?",
+        c: ["Tous les jours à 16 h 00, avec la sortie et les erreurs ajoutées au journal", "Toutes les 16 minutes, sortie écrasée à chaque passage", "Le 16 de chaque mois à minuit", "Tous les jours à 16 h, erreurs ignorées"],
+        a: 0,
+        why: "Minute 0, heure 16, tous les jours de tous les mois. <code>&gt;&gt;</code> ajoute au fichier, <code>2&gt;&amp;1</code> y envoie aussi les erreurs.",
+        ref: "Chapitre 06"
+    },
+    {
+        q: "Derrière nginx, les liens des e-mails de Redmine pointent vers <code>http://localhost:3000/…</code>. Que corriger ?",
+        c: ["<em>Host name and path</em> et <em>Protocol</em> dans <strong>Administration &gt; Settings &gt; General</strong>", "Publier à nouveau le port 3000 de Redmine", "Ajouter un second <code>server_name</code> dans nginx", "Supprimer l'en-tête <code>X-Forwarded-Proto</code>"],
+        a: 0,
+        why: "Redmine ne voit que nginx et ignore son adresse publique. Pour les liens absolus envoyés hors du navigateur — e-mails, webhooks, API — on lui donne le nom public et le protocole HTTPS.",
+        ref: "Chapitre 07"
+    }]
+},
+
+"entretien-recrutement": {
+    name: "Entretien de recrutement",
+    file: "entretien-recrutement.html",
+    title: "Test — Entretien de recrutement",
+    intro: "Neuf chapitres, dix questions. Elles portent sur ce qui se décide en une seconde le jour J : à quel niveau répondre, comment formuler un défaut, quoi faire avant de partir, et comment reprendre la main sur son stress.",
+    pass: 70,
+    questions: [
+    {
+        q: "Que désignent les cinq lettres de la méthode <strong>STARR</strong> ?",
+        c: ["Situation, Tâche(s), Actions, Résultats, Réflexion", "Situation, Talents, Ambitions, Résultats, Rémunération", "Sujet, Tâche(s), Analyse, Réponse, Relance", "Situation, Tâche(s), Actions, Résultats, Remerciements"],
+        a: 0,
+        why: "Contexte, ce qui était demandé, ce que <em>tu</em> as fait, ce que ça a donné, et le recul : ferais-tu pareil, ou différemment ? Le second R, la Réflexion, est ce qui distingue STARR de la version courte STAR.",
+        ref: "Chapitre 02"
+    },
+    {
+        q: "« Qu'avez-vous fait lorsque vous travailliez dans l'entreprise X ? » Comment répondre ?",
+        c: ["Uniquement au niveau des Tâches, concret et précis", "En déroulant les cinq étapes du STARR, dans l'ordre", "En commençant par la Situation pour poser le contexte", "Par les Résultats, ce qui intéresse le recruteur"],
+        a: 0,
+        why: "Une question précise appelle une réponse précise : on cherche à quel niveau du STARR elle se trouve — ici les Tâches, le rôle tenu — et on répond à ce niveau seulement. Les cinq étapes, c'est pour la question large.",
+        ref: "Chapitre 02"
+    },
+    {
+        q: "« Dans six mois, qu'aurez-vous mis en place chez nous ? » Quelle construction le cours recommande-t-il ?",
+        c: ["L'humilité d'abord (découvrir l'équipe et l'existant), puis des hypothèses annoncées comme telles, avec les actions qui en découlent", "Un plan de transformation détaillé, pour montrer son ambition", "Botter en touche : impossible de répondre sans connaître l'entreprise", "Lister ses réalisations passées, en STARR"],
+        a: 0,
+        why: "Pas question de tout changer tout de suite : on ne connaît encore ni l'équipe ni le projet. Une fois cette humilité posée, on s'autorise des hypothèses à partir de ce qu'on sait déjà — « j'imagine que vos défis sont là… du coup, je ferais… ».",
+        ref: "Chapitre 03"
+    },
+    {
+        q: "Une étude de cas vous est soumise en entretien. Autour de quoi construire la réponse ?",
+        c: ["La boucle du management : analyse, objectif, plan d'action, mise en œuvre, contrôle, correction", "La méthode STARR, comme pour toute question", "Les trois réponses au stress : fuir, combattre, se figer", "La check-list avant entretien"],
+        a: 0,
+        why: "Une étude de cas demande de montrer une démarche, pas une anecdote : on comprend avant d'agir, on fixe un objectif, on planifie, on fait, on vérifie et on corrige — puis la boucle repart.",
+        ref: "Chapitre 03"
+    },
+    {
+        q: "« Quel est votre principal défaut ? » Quelle réponse est orientée solution ?",
+        c: ["« Actuellement, je travaille sur ma gestion du temps et j'en retire… »", "« J'ai du mal à m'organiser. »", "« Je n'ai pas vraiment de défaut. »", "« Mon ancien chef ne me laissait pas m'organiser. »"],
+        a: 0,
+        why: "Le défaut est nommé, avec une action en cours et un progrès. « J'ai du mal à m'organiser » fige le problème ; nier tout défaut ne répond pas à la question ; et rejeter la faute sur un ancien employeur cumule deux erreurs.",
+        ref: "Chapitre 05"
+    },
+    {
+        q: "Une question vous laisse sans réponse immédiate. Quels réflexes le cours recommande-t-il ?",
+        c: ["Reformuler la question pour vérifier qu'on l'a comprise et se donner le temps de réfléchir", "Accepter un moment de silence avant de répondre", "Répondre tout de suite, pour ne pas laisser de blanc", "Glisser vers un sujet qu'on maîtrise mieux"],
+        a: [0, 1],
+        why: "Reformuler sert deux fois : vérifier la compréhension et gagner du temps. Le silence montre qu'on cherche à répondre au plus juste. Dévier de la question, en revanche, est exactement ce qu'il ne faut jamais faire.",
+        ref: "Chapitre 05"
+    },
+    {
+        q: "Que retenir du schéma 7 % mots / 38 % voix / 55 % corps ?",
+        c: ["Que la voix et le corps doivent porter le même message que les mots, sinon la réponse ne convainc pas", "Que le contenu des réponses ne compte presque pas en entretien", "Qu'il vaut mieux parler peu et miser sur la gestuelle", "Que ces pourcentages valent pour toute communication"],
+        a: 0,
+        why: "Ces chiffres viennent d'expériences de Mehrabian sur la perception d'un sentiment quand mots, ton et visage se contredisent. Ils ne disent pas que le fond est accessoire — ils disent que le non-verbal décide si le fond sera cru.",
+        ref: "Chapitre 04"
+    },
+    {
+        q: "Quelles sont les trois choses à faire pour clôturer un entretien ?",
+        c: ["Confirmer son intérêt et sa motivation (ou non)", "Clarifier la suite de la procédure", "Remercier", "Annoncer ses prétentions salariales"],
+        a: [0, 1, 2],
+        why: "Intérêt confirmé, suite connue, merci. Le salaire se prépare (check-list du chapitre 01), mais ce n'est pas au moment de partir qu'on l'annonce de soi-même.",
+        ref: "Chapitre 06"
+    },
+    {
+        q: "Pourquoi le stress a-t-il tendance à <strong>monter</strong> pendant un entretien ?",
+        c: ["Parce que les trois réponses instinctives — fuir, combattre, se figer — y sont impossibles", "Parce que le recruteur cherche à déstabiliser le candidat", "Parce qu'une émotion dure tout l'entretien", "Parce que le stress n'apparaît que chez les candidats mal préparés"],
+        a: 0,
+        why: "Le stress est un instinct de survie face au danger : <em>flee, fight, freeze</em>. En entretien, aucune de ces sorties n'est possible, donc il s'accumule. D'où l'intérêt d'agir dessus autrement : pensées, émotions, comportements.",
+        ref: "Chapitre 07"
+    },
+    {
+        q: "Où peut-on agir pour casser le cercle vicieux du stress ?",
+        c: ["Sur n'importe laquelle des trois parts : pensées, émotions ou comportements", "Uniquement sur les pensées, d'où viennent les émotions", "Uniquement sur le corps, par la respiration", "Nulle part : il faut attendre que ça passe"],
+        a: 0,
+        why: "Les trois parts s'entretiennent : on peut positiver ses pensées (le stress aide à se concentrer), laisser passer l'émotion (environ 90 secondes) ou choisir son attitude (sourire, respiration lente). Agir sur une seule ralentit toute la boucle.",
+        ref: "Chapitre 07 · ch. 08"
+    }]
+},
+
 
 };
 
@@ -1503,8 +1819,8 @@ window.EXAM_BANK = {
     short: "Examen 02 · Infrastructure Windows",
     title: "Examen — Parcours 02 · Infrastructure Windows",
     label: "Examen de parcours",
-    intro: "Le plus large des examens : annuaire, automatisation, stockage, sessions, web, messagerie, base de données et intranet. Trente questions puisées dans huit modules.",
-    parts: ["windows-server", "powershell", "storage-clustering", "rds", "iis", "exchange-securite", "sql-server", "sharepoint"],
+    intro: "Le plus large des examens : annuaire, automatisation, stockage, sessions, web, messagerie, base de données, intranet et sauvegarde. Trente questions puisées dans neuf modules.",
+    parts: ["windows-server", "powershell", "storage-clustering", "rds", "iis", "exchange-securite", "sql-server", "sharepoint", "dpm"],
     draw: 30,
     pass: 70,
     questions: [
@@ -1549,6 +1865,13 @@ window.EXAM_BANK = {
         a: 0,
         why: "L'erreur la plus fréquente en entreprise est d'ajouter <code>sysadmin</code> pour résoudre un simple problème de permission. Même logique côté AD : on autorise via les groupes, on délègue au niveau de l'OU.",
         ref: "SQL Server ch. 10 · Windows Server ch. 03 · ch. 06"
+    },
+    {
+        q: "Le setup DPM échoue en erreur 811 : le client SQL (ODBC 18) refuse le certificat auto-généré du serveur SQL. Quel mécanisme déjà rencontré dans le parcours est en jeu ?",
+        c: ["La chaîne de confiance : un client n'accepte qu'un certificat rattaché à une autorité qu'il connaît", "Le moindre privilège : le compte du setup n'est pas sysadmin", "Le quorum : le serveur SQL n'a pas de témoin", "La délégation Kerberos du gMSA"],
+        a: 0,
+        why: "Même cause qu'une alerte de certificat sur RDS Web Access ou Exchange : un auto-signé dit « c'est moi qui le dis ». On fait approuver le certificat par le client — ici, importé dans les autorités racines de confiance du serveur DPM.",
+        ref: "DPM ch. 08 · Exchange ch. 04"
     }]
 },
 
@@ -1648,8 +1971,8 @@ window.EXAM_BANK = {
     short: "Examen 05 · Cloud, supervision & méthode",
     title: "Examen — Parcours 05 · Cloud, supervision & méthode",
     label: "Examen de parcours",
-    intro: "Superviser un parc, porter une infrastructure dans le cloud, et organiser le travail autour des deux. Vingt questions tirées dans les trois modules, plus des questions de synthèse qui les font se rencontrer.",
-    parts: ["monitoring-zabbix", "azure", "scrum"],
+    intro: "Superviser un parc, porter une infrastructure dans le cloud, organiser le travail et le support autour des deux — et savoir le raconter en entretien. Vingt questions tirées dans les six modules, plus des questions de synthèse qui les font se rencontrer.",
+    parts: ["monitoring-zabbix", "zabbix-windows", "azure", "scrum", "redmine", "entretien-recrutement"],
     draw: 20,
     pass: 70,
     questions: [
@@ -1687,15 +2010,36 @@ window.EXAM_BANK = {
         a: 0,
         why: "Tout ce qui reste à faire sur le produit entre dans le Product Backlog, ordonné par le PO. Ajouter du contenu au sprint en cours contourne l'objectif du sprint — si l'urgence est réelle, on renégocie le contenu avec le PO, on ne se sert pas soi-même.",
         ref: "Scrum ch. 06 · ch. 07"
+    },
+    {
+        q: "En entretien, vous racontez un projet mené en équipe Scrum avec la méthode STARR. Quelle étape du STARR fait le même travail que la Rétrospective ?",
+        c: ["La Réflexion : ce qu'on referait pareil, ce qu'on ferait différemment la prochaine fois", "La Situation : le contexte du projet", "Les Résultats : ce que le sprint a livré", "Les Actions : ce que chacun a fait pendant le sprint"],
+        a: 0,
+        why: "La Rétrospective inspecte la façon de travailler et décide d'un changement pour le sprint suivant ; la Réflexion du STARR fait le même travail sur votre propre expérience. Ce qui a été livré relève plutôt des Résultats — l'équivalent de la Sprint Review.",
+        ref: "Entretien ch. 02 · Scrum ch. 03"
+    },
+    {
+        q: "On veut qu'un problème détecté par Zabbix devienne un ticket du helpdesk sans saisie manuelle. Quelle fonctionnalité de Redmine, ouverte dans le TP, le rend possible ?",
+        c: ["L'API REST (<em>Enable REST web service</em>), avec une clé API dans l'en-tête <code>X-Redmine-API-Key</code>", "La connexion LDAP à l'Active Directory", "Le module Gantt", "La création de comptes à la volée"],
+        a: 0,
+        why: "L'API permet à un script ou à un autre outil de lire et de créer des tickets. C'est la suite logique de la chaîne mesurer / alerter / agir : l'alerte devient une demande suivie jusqu'à sa résolution.",
+        ref: "Redmine ch. 02 · Zabbix &amp; Windows ch. 01"
+    },
+    {
+        q: "Les Compose de Zabbix et de Redmine appliquent la même règle aux mots de passe. Laquelle ?",
+        c: ["Ils sortent du Compose dans un <code>.env</code> en 600, que Compose lit tout seul et qui ne va jamais dans Git", "Ils sont écrits en dur dans le Compose, protégé en 600", "Ils sont passés en argument à <code>docker compose up</code>", "Ils sont stockés dans le volume de la base"],
+        a: 0,
+        why: "Le Compose peut alors être copié, montré ou versionné sans livrer les secrets. <code>docker compose config</code> vérifie le remplacement des <code>${VARIABLE}</code> avant de relancer.",
+        ref: "Zabbix &amp; Windows ch. 02 · Redmine ch. 05"
     }]
 },
 
 "final": {
     short: "Examen final",
-    title: "Examen final — les vingt et un modules",
+    title: "Examen final — les vingt-cinq modules",
     label: "Examen de synthèse",
     intro: "Quarante-cinq questions tirées dans l'ensemble du centre d'apprentissage, plus les principes qui traversent tous les parcours. C'est le test à repasser une fois les cinq examens de parcours validés.",
-    parts: ["hyperv", "linux-debian", "subnetting", "windows-server", "powershell", "storage-clustering", "rds", "iis", "exchange-securite", "sql-server", "sharepoint", "ccna-reseau", "cisco-securite", "voip", "proxmox", "docker", "homelab", "securite", "monitoring-zabbix", "azure", "scrum"],
+    parts: ["hyperv", "linux-debian", "subnetting", "windows-server", "powershell", "storage-clustering", "rds", "iis", "exchange-securite", "sql-server", "sharepoint", "dpm", "ccna-reseau", "cisco-securite", "voip", "proxmox", "docker", "homelab", "securite", "monitoring-zabbix", "zabbix-windows", "azure", "scrum", "redmine", "entretien-recrutement"],
     draw: 45,
     pass: 75,
     questions: [

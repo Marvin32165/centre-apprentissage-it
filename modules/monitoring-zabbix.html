@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=7">
+    <link rel="stylesheet" href="../assets/theme.css?v=10">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 05 · Cloud, supervision &amp; méthode · 1 / 3</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 05 · Cloud, supervision &amp; méthode · 1 / 6</p>
         <h1 class="hero__title">Supervision<br>avec <em>Zabbix</em></h1>
         <p class="hero__lead">Arrêter de découvrir les pannes par l'utilisateur qui appelle. Monter un serveur Zabbix de zéro sur Ubuntu, y raccorder un serveur Windows par agent, lire ce qui remonte — puis laisser Zabbix corriger tout seul ce qu'il détecte.</p>
         <div class="hero__meta">
@@ -349,6 +349,29 @@
                 </div>
             </div>
 
+            <h3>Agent 1 ou agent 2</h3>
+            <p>Zabbix propose <strong>deux agents</strong>. Un seul suffit par machine, et le serveur ne fait pas la différence : même protocole, même port <code>10050</code>, mêmes modes passif et actif, mêmes <code>UserParameter</code>. Ce labo installe l'<strong>agent 1</strong> partout.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th>Agent 1 — <code>zabbix_agentd</code></th><th>Agent 2 — <code>zabbix_agent2</code></th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Langage</strong></td><td>C</td><td>Go (reprend une partie du code C)</td></tr>
+                        <tr><td><strong>Plateformes</strong></td><td>Linux, Windows et les Unix (AIX, BSD, Solaris, macOS…)</td><td><strong>Linux et Windows</strong> seulement</td></tr>
+                        <tr><td><strong>Extension</strong></td><td><code>UserParameter</code>, modules chargeables en C</td><td><code>UserParameter</code>, <strong>plugins Go</strong> — pas de modules C</td></tr>
+                        <tr><td><strong>Supervision intégrée</strong></td><td>Le système : CPU, mémoire, disques, réseau, journaux, services Windows</td><td>Idem <strong>+</strong> systemd, Docker, PostgreSQL, MySQL, Redis, certificats TLS, S.M.A.R.T.…</td></tr>
+                        <tr><td><strong>Exécution</strong></td><td>Plusieurs processus, vérifications actives <strong>en série</strong></td><td>Un seul processus, vérifications <strong>en parallèle</strong></td></tr>
+                        <tr><td><strong>Tampon des valeurs</strong></td><td>En mémoire, perdu à l'arrêt</td><td>En mémoire, ou <strong>persistant sur disque</strong></td></tr>
+                        <tr><td><strong>Paquet Linux / service Windows</strong></td><td><code>zabbix-agent</code> / <em>Zabbix Agent</em></td><td><code>zabbix-agent2</code> / <em>Zabbix Agent 2</em></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Lequel choisir</p>
+                <p><strong>Agent 2</strong> par défaut sur un Linux ou un Windows récent : il sait tout ce que fait l'agent 1 et supervise en plus les applications sans script maison. <strong>Agent 1</strong> sur une plateforme que l'agent 2 ne couvre pas, ou quand on dépend d'un module en C. Les templates propres à l'agent 2 portent « agent 2 » dans leur nom : attachés à un hôte en agent 1, leurs items passent en <em>Not supported</em>.</p>
+            </div>
+
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>La distinction n'est pas théorique, elle décide du <strong>sens des flux à ouvrir</strong>. En passif, le pare-feu de la machine supervisée doit accepter le <strong>10050 entrant</strong> ; en actif, c'est l'agent qui sort, et c'est le <code>Hostname=</code> qui l'identifie auprès du serveur.</p>
@@ -532,9 +555,9 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du labo monitoring</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=7"></script>
-<script src="../assets/app.js?v=7"></script>
-<script src="../assets/quiz-data.js?v=7"></script>
-<script src="../assets/quiz.js?v=7"></script>
+<script src="../assets/catalogue.js?v=10"></script>
+<script src="../assets/app.js?v=10"></script>
+<script src="../assets/quiz-data.js?v=10"></script>
+<script src="../assets/quiz.js?v=10"></script>
 </body>
 </html>

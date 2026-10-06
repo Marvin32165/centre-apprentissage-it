@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module System Center DPM 2025 : architecture avec un SQL Server distant, compte de service gMSA, préparation de SQL (collation, SSRS, DPM Support Files), installation, console, pool de stockage, agents de protection, groupe de protection (rétention, synchronisation, points de récupération, réplica, cohérence), jobs, restauration et dépannage de l'erreur 811.">
+    <title>System Center DPM — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=10">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 02 · Infrastructure Windows · 9 / 9</p>
+        <h1 class="hero__title">System Center<br><em>DPM</em></h1>
+        <p class="hero__lead">La sauvegarde d'une infrastructure Windows avec l'outil de la suite System Center : un serveur DPM, sa base sur un SQL Server distant, des agents sur les serveurs à protéger — et la restauration, la seule preuve qu'une sauvegarde existe vraiment.</p>
+        <div class="hero__meta">
+            <span class="chip">DPM 2025</span><span class="chip">gMSA</span><span class="chip">Agent de protection</span><span class="chip">Groupe de protection</span><span class="chip">Point de récupération</span><span class="chip">Erreur 811</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n3"><b>Niveau</b> Avancé</span>
+            <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
+            <span class="fact"><b>Chapitres</b> 8</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a> · <a href="sql-server.html">SQL Server</a></span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">System Center DPM</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#architecture"><span>01</span> DPM et son architecture</a></li>
+            <li><a class="toc__link" href="#gmsa"><span>02</span> Le gMSA de SQL</a></li>
+            <li><a class="toc__link" href="#preparer-sql"><span>03</span> Préparer SQL</a></li>
+            <li><a class="toc__link" href="#installer"><span>04</span> Installer DPM</a></li>
+            <li><a class="toc__link" href="#stockage-agents"><span>05</span> Stockage &amp; agents</a></li>
+            <li><a class="toc__link" href="#groupe"><span>06</span> Le groupe de protection</a></li>
+            <li><a class="toc__link" href="#restaurer"><span>07</span> Jobs &amp; restauration</a></li>
+            <li><a class="toc__link" href="#depanner"><span>08</span> Dépanner l'erreur 811</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">System Center DPM</div>
+                <div class="section-banner__desc">Sauvegarder et restaurer une infrastructure Windows</div>
+            </div>
+        </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Préparer un SQL Server distant pour DPM : service sous gMSA, bonne collation, SSRS, fichiers de support et certificat de confiance.</li>
+                <li>Installer DPM 2025 avec une base distante, et dire quel compte le setup utilise réellement pour créer la base.</li>
+                <li>Ajouter un volume au pool de stockage et déployer les agents de protection sur les serveurs à sauvegarder.</li>
+                <li>Créer un groupe de protection et régler rétention, synchronisation et points de récupération sans les confondre.</li>
+                <li>Restaurer un fichier à son emplacement d'origine ou ailleurs, en choisissant quoi faire s'il existe encore.</li>
+                <li>Diagnostiquer l'erreur 811 depuis le journal du setup jusqu'à sa cause : un certificat que le client SQL refuse.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="windows-server.html">Windows Server</a> (domaine, DNS) et <a href="sql-server.html">SQL Server</a> (installation, Configuration Manager, gMSA). Ce module clôt le parcours Infrastructure Windows : après lui, l'<a href="../examens.html#windows">examen du parcours</a>.</p>
+            <p class="brief__foot"><strong>Le labo</strong> : trois serveurs Windows Server 2025 dans le domaine <code>orion.local</code> — un contrôleur de domaine, un SQL Server 2022 et le serveur DPM. C'est le premier des trois TP « System Center » : la supervision passe ensuite par <a href="zabbix-windows.html">Zabbix</a> à la place de SCOM, et le support par <a href="redmine.html">Redmine</a> à la place de SCSM.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="chapter" id="architecture">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">DPM et son architecture</h2>
+            <p class="chapter__intro"><strong>DPM</strong> (<em>System Center Data Protection Manager</em>) est l'outil de sauvegarde de la suite System Center. Il sauvegarde des serveurs Windows — volumes, dossiers, état du système, bases SQL ou Exchange — sur son propre stockage, et les restaure depuis une console unique.</p>
+
+            <div class="net">
+                <div class="node"><b>SRV-AD01</b><span class="ip">172.16.50.10</span><span>Contrôleur de domaine + DNS — porte le compte de service gMSA</span></div>
+                <div class="node"><b>SRV-SQL01</b><span class="ip">172.16.50.30</span><span>SQL Server 2022 + Reporting Services — héberge la base de DPM</span></div>
+                <div class="node"><b>SRV-DPM01</b><span class="ip">172.16.50.31</span><span>Serveur DPM 2025 — console, et un volume réservé au pool de stockage</span></div>
+            </div>
+
+            <p>La base de DPM n'est pas sur le serveur DPM : elle vit sur un <strong>SQL Server distant</strong> (<em>stand-alone</em> dans l'assistant). C'est ce choix qui rend la préparation de SQL si importante — et qui est à l'origine de la principale panne du TP (chapitre 08).</p>
+
+            <h3>Le vocabulaire</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Terme</th><th>Ce que c'est</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Agent de protection</strong></td><td>Service installé sur chaque serveur à sauvegarder. Sans agent, DPM ne voit pas le serveur.</td></tr>
+                        <tr><td><strong>Pool de stockage</strong></td><td>Les volumes du serveur DPM qui reçoivent les sauvegardes. DPM les <strong>formate</strong> et se les réserve.</td></tr>
+                        <tr><td><strong>Groupe de protection</strong></td><td>Des données à sauvegarder + <strong>une seule politique</strong> : où, à quelle fréquence, combien de temps.</td></tr>
+                        <tr><td><strong>Réplica</strong></td><td>La première copie complète des données sur DPM.</td></tr>
+                        <tr><td><strong>Synchronisation</strong></td><td>Recopie des modifications vers le réplica, pour le tenir à jour.</td></tr>
+                        <tr><td><strong>Point de récupération</strong></td><td>Une version figée et <strong>restaurable</strong> des données.</td></tr>
+                        <tr><td><strong>Vérification de cohérence</strong></td><td>Compare le réplica à la source et corrige les écarts.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Trois rôles, trois machines : <strong>l'annuaire</strong> (comptes, gMSA), <strong>la base</strong> (SQL distant) et <strong>DPM</strong> (console et stockage). Sur les serveurs protégés, un <strong>agent</strong> ; côté politique, des <strong>groupes de protection</strong>. Et une distinction qui revient partout : on synchronise souvent, mais on ne restaure qu'un <strong>point de récupération</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="gmsa">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Le compte de service gMSA pour SQL</h2>
+            <p class="chapter__intro">SQL Server tourne sous un <strong>gMSA</strong> (<em>group Managed Service Account</em>) : un compte de service géré par l'AD, dont le mot de passe change tout seul et que personne ne connaît. Le principe est détaillé dans le module <a href="sql-server.html">SQL Server</a> ; voici la séquence du TP.</p>
+
+            <h3>Sur le contrôleur de domaine</h3>
+            <p>D'abord la <strong>clé racine KDS</strong>, obligatoire avant tout gMSA :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
+                <pre class="terminal__code"><span class="c"># -10 h : clé utilisable tout de suite (lab seulement)</span>
+<span class="k">Add-KdsRootKey</span> <span class="p">-EffectiveTime</span> ((<span class="k">Get-Date</span>).AddHours(-10))
+<span class="k">Get-KdsRootKey</span>                <span class="c"># voir la clé en place</span></pre>
+            </div>
+            <p>Puis une OU, un <strong>groupe</strong> qui contient le compte ordinateur du serveur SQL, et le compte lui-même, autorisé pour ce groupe :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
+                <pre class="terminal__code"><span class="k">New-ADServiceAccount</span> gMSA-SQL <span class="p">-DNSHostName</span> gmsa-sql.orion.local <span class="p">-PrincipalsAllowedToRetrieveManagedPassword</span> GG-gMSA-SQL</pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Le −10 h, réservé au lab</p>
+                <p>Une clé KDS n'est normalement utilisable qu'après <strong>10 heures</strong>, le temps d'être répliquée sur tous les contrôleurs de domaine. L'antidater la rend utilisable tout de suite : pratique en TP, à ne pas faire sur un domaine qui a plusieurs DC.</p>
+            </div>
+
+            <h3>Sur le serveur SQL</h3>
+            <p>SQL doit voir sa nouvelle appartenance au groupe : redémarrer le serveur, ou purger les tickets Kerberos du compte ordinateur. Puis tester le compte :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-SQL01</span></div>
+                <pre class="terminal__code"><span class="k">klist</span> purge <span class="p">-li</span> 0x3e7
+<span class="k">gpupdate</span> /target:computer
+<span class="k">Install-WindowsFeature</span> RSAT-AD-PowerShell
+<span class="k">Test-ADServiceAccount</span> gMSA-SQL      <span class="c"># doit répondre True</span></pre>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Clé KDS sur le DC, gMSA autorisé pour un <strong>groupe</strong> qui contient le serveur SQL, tickets rafraîchis côté SQL — et <code>Test-ADServiceAccount</code> doit répondre <code>True</code> avant d'aller plus loin.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="preparer-sql">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Préparer SQL pour DPM</h2>
+            <p class="chapter__intro">DPM est exigeant sur le serveur SQL qui porte sa base. Chaque point ci-dessous, oublié, se paie au moment du setup.</p>
+
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>SQL Server 2022</strong>Collation <code>SQL_Latin1_General_CP1_CI_AS</code> — DPM n'en accepte pas d'autre. Service SQL Server sous <code>ORION\gMSA-SQL$</code>, mot de passe <strong>vide</strong> (c'est l'AD qui le gère). Fichiers des bases sur un volume de données, pas sur <code>C:</code>.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>TCP/IP activé</strong>SQL Server Configuration Manager &gt; <em>Protocols for MSSQLSERVER</em> &gt; TCP/IP, puis redémarrage du service.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Reporting Services</strong>Installé et configuré (bases <code>ReportServer</code> et <code>ReportServerTempDB</code>) : DPM s'en sert pour ses rapports.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>DPM Support Files</strong>Depuis le média DPM, l'option <em>SQL Prep</em>, installée <strong>sur le serveur SQL</strong>.</div></li>
+                <li class="step"><div class="step__num">05</div><div class="step__body"><strong>Un certificat de confiance</strong>Sans quoi le setup DPM échoue en erreur 811 : c'est tout le chapitre 08.</div></li>
+            </ol>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>La check-list de SQL : <strong>collation</strong> <code>SQL_Latin1_General_CP1_CI_AS</code>, service sous le <strong>gMSA</strong>, <strong>TCP/IP</strong> activé, <strong>SSRS</strong> configuré, <strong>DPM Support Files</strong> installés, <strong>certificat</strong> approuvé par le serveur DPM. La collation est la seule qui ne se rattrape pas sans réinstaller l'instance.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="installer">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Installer DPM et prendre la console en main</h2>
+            <p class="chapter__intro">Sur le futur serveur DPM : installer SSMS et <code>sqlcmd</code>, lancer le setup de DPM 2025, <strong>Install &gt; Data Protection Manager</strong>, accepter la licence.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Écran / champ</th><th>Valeur</th></tr></thead>
+                    <tbody>
+                        <tr><td>Prerequisites check</td><td><strong>Use stand-alone SQL Server</strong></td></tr>
+                        <tr><td>Instance of SQL Server</td><td>le nom du serveur SQL : <code>SRV-SQL01</code></td></tr>
+                        <tr><td>User Name / Password</td><td>un compte administrateur (en production : un compte dédié)</td></tr>
+                        <tr><td>Domain</td><td><code>ORION</code> — le nom <strong>NetBIOS</strong>, pas <code>orion.local</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">Le compte qui compte vraiment</p>
+                <p>Le setup crée la base en lançant un script avec <code>sqlcmd -E</code> : en <strong>authentification Windows de la session ouverte</strong>, pas avec le compte saisi dans l'assistant. Il faut donc être connecté sur le serveur DPM avec un compte du domaine qui est <strong>sysadmin</strong> sur SQL. Le setup crée ensuite sur SQL la base <code>DPMDB_&lt;nom du serveur&gt;</code> et un login pour le compte ordinateur de DPM (<code>ORION\SRV-DPM01$</code>).</p>
+            </div>
+
+            <h3>La console : cinq espaces</h3>
+            <p>En bas à gauche ; le ruban du haut change selon l'espace choisi. Le setup pose aussi un raccourci <strong>DPM Management Shell</strong>, le PowerShell avec le module DPM.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Espace</th><th>Sert à</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Monitoring</strong></td><td>Les alertes (critiques, avertissements, infos) et les <strong>jobs</strong></td></tr>
+                        <tr><td><strong>Protection</strong></td><td>Créer et suivre les <strong>groupes de protection</strong></td></tr>
+                        <tr><td><strong>Recovery</strong></td><td>Parcourir les <strong>points de récupération</strong> et restaurer</td></tr>
+                        <tr><td><strong>Reporting</strong></td><td>Six rapports : utilisation disque, récupérations, état des points…</td></tr>
+                        <tr><td><strong>Management</strong></td><td>Les <strong>agents</strong> (<em>Production Servers</em>), le <strong>stockage</strong> (<em>Disk Storage</em>), Azure, bandes</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Tant qu'aucun groupe n'existe, l'espace <em>Protection</em> rappelle lui-même l'ordre à suivre : du stockage dans le pool, puis un agent sur chaque serveur à protéger. C'est l'ordre du chapitre suivant.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>SQL <strong>distant</strong>, domaine en <strong>NetBIOS</strong>, et une session ouverte avec un compte <strong>sysadmin</strong> sur SQL : c'est elle, et non le compte de l'assistant, qui crée la base.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="stockage-agents">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Le stockage, puis les agents</h2>
+            <p class="chapter__intro">Avant de protéger quoi que ce soit, DPM a besoin de deux choses : un endroit où écrire, et un agent sur chaque serveur à lire.</p>
+
+            <h3>Le pool de stockage</h3>
+            <p><strong>Management &gt; Disk Storage &gt; Add</strong> : choisir le volume dans <em>Available volumes</em>, <strong>Add &gt;</strong>, lui donner un <em>Friendly Name</em>, <strong>OK</strong>. Il apparaît ensuite dans le pool, état <em>Healthy</em>.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">DPM formate le volume</p>
+                <p>Tout ce qui est dessus est perdu, et il est reformaté en <strong>ReFS</strong>. Dans l'explorateur, son nom devient un identifiant (GUID) : il appartient à DPM, on n'y dépose rien à la main.</p>
+            </div>
+
+            <h3>Les agents de protection</h3>
+            <p><strong>Management &gt; Production Servers &gt; Add</strong> :</p>
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Type de serveur</strong><em>Windows Servers</em> (l'autre choix sert aux VM VMware).</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Méthode</strong><em>Install agents</em> : DPM pousse l'agent lui-même. <em>Attach agents</em> sert à un serveur derrière un pare-feu, ou dont l'agent est déjà installé : DPM se contente de l'enregistrer.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Ordinateurs</strong>Les ordinateurs du domaine sont listés : ici le DC et le serveur SQL, <strong>Add &gt;</strong>. Un ordinateur d'un autre domaine se saisit par son nom complet.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Identifiants</strong>Un compte <strong>administrateur des ordinateurs cibles</strong> ; DPM ne s'en sert que pour installer l'agent.</div></li>
+                <li class="step"><div class="step__num">05</div><div class="step__body"><strong>Redémarrage</strong><em>Yes</em> : DPM redémarre les serveurs si l'installation l'exige. Puis <strong>Install</strong> — <em>Success</em> pour chaque serveur.</div></li>
+            </ol>
+            <p>Les serveurs apparaissent alors dans <em>Unprotected computers with protection agent</em> : ils ont un agent, mais restent <strong>non protégés</strong> tant qu'ils ne sont dans aucun groupe de protection.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>L'ordre est imposé : <strong>stockage</strong> d'abord (un volume que DPM formate et se réserve), <strong>agents</strong> ensuite. Un agent installé ne protège rien à lui seul — c'est le groupe de protection qui décide quoi sauvegarder.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="groupe">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Le groupe de protection</h2>
+            <p class="chapter__intro">Un <strong>groupe de protection</strong> réunit des données et leur applique une politique unique. <strong>Protection &gt; New</strong>, puis <strong>Next</strong> sur l'écran d'accueil.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Écran</th><th>Choix du TP</th></tr></thead>
+                    <tbody>
+                        <tr><td>Select protection group type</td><td><strong>Servers</strong> (<em>Clients</em> sert aux postes de travail)</td></tr>
+                        <tr><td>Select group members</td><td>Le volume de données du DC et celui du serveur SQL. Par serveur : <em>All Shares</em>, <em>All Volumes</em> (dépliables jusqu'aux dossiers), <em>System Protection</em> (état du système ou <em>Bare Metal Recovery</em>), et les bases sur un SQL ou un Exchange</td></tr>
+                        <tr><td>Select data protection method</td><td>Nom <code>Directory_Weekly</code>, <strong>short-term protection using: Disk</strong> (Azure et bandes grisés : rien de configuré)</td></tr>
+                        <tr><td>Specify short-term goals</td><td>Rétention <strong>5 jours</strong>, synchronisation <strong>toutes les 15 min</strong>, un point de récupération le <strong>vendredi à 19 h</strong> (via <em>Modify…</em>)</td></tr>
+                        <tr><td>Review disk storage</td><td>DPM calcule la place à réserver dans le pool pour chaque membre</td></tr>
+                        <tr><td>Choose replica creation method</td><td><strong>Automatically over the network</strong>, <strong>Now</strong> (<em>Manually</em> passe par un support amovible, pour de gros volumes)</td></tr>
+                        <tr><td>Choose consistency check options</td><td>Seulement <strong>si un réplica devient incohérent</strong></td></tr>
+                        <tr><td>Summary</td><td>Relire, puis <strong>Create Group</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>Le volume du pool sur le serveur DPM n'est <strong>pas proposé</strong> comme membre : il reçoit les sauvegardes, DPM ne le protège pas lui-même. Une fois le groupe créé, ses membres passent par <em>Replica creation in progress</em>, puis <strong>OK</strong> avec un premier point de récupération.</p>
+
+            <h3>Trois réglages à ne pas confondre</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Synchronisation</h4>
+                    <ul>
+                        <li>Recopie les <strong>modifications</strong> vers le réplica.</li>
+                        <li>Ici toutes les 15 min — ou juste avant chaque point de récupération.</li>
+                        <li>Tient le réplica à jour, mais <strong>ne crée rien de restaurable</strong>.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Point de récupération</h4>
+                    <ul>
+                        <li>Une version <strong>figée et restaurable</strong>.</li>
+                        <li>Par défaut 8 h, 12 h et 18 h ; ici le vendredi à 19 h.</li>
+                        <li>La <strong>rétention</strong> dit combien de jours on les garde.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 1 — que peut-on restaurer ?</p>
+                <p>Avec le groupe du TP (synchronisation toutes les 15 min, un point de récupération le vendredi à 19 h, rétention 5 jours), un fichier est effacé par erreur le mercredi à 10 h. Une collègue propose de « restaurer l'état de 9 h 45, puisque DPM synchronise toutes les 15 minutes ». Est-ce possible ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p><strong>Non.</strong> La synchronisation tient le réplica à jour, mais on ne restaure qu'un <strong>point de récupération</strong>. Ici le dernier date du vendredi précédent à 19 h (encore dans les 5 jours de rétention) : on récupère le fichier tel qu'il était ce vendredi-là, et tout ce qui a été modifié depuis lundi est perdu. Pour des fichiers qui changent tous les jours, il faut des points de récupération quotidiens — les trois points par jour proposés par défaut existent pour ça — et une rétention qui couvre largement l'intervalle entre deux points.</p></div>
+                </details>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un groupe = des <strong>membres</strong> + une <strong>politique</strong> : rétention, fréquence de synchronisation, points de récupération, création du réplica, vérification de cohérence. Et la question à se poser toujours : <strong>quel point de récupération pourrai-je restaurer</strong>, à n'importe quel moment de la semaine ?</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="restaurer">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Suivre les jobs, restaurer</h2>
+            <p class="chapter__intro">Chaque opération de DPM est un <strong>job</strong>. Et une sauvegarde n'a de valeur que le jour où on la restaure : le TP s'arrête donc sur une restauration réelle.</p>
+
+            <h3>Les jobs</h3>
+            <p><strong>Monitoring &gt; Jobs &gt; All jobs</strong>, regroupés avec <strong>Group by</strong> (statut, groupe, ordinateur, type). Les filtres à gauche (<em>All jobs in progress</em>, <em>Failed jobs for yesterday and today</em>…) aident à trouver ce qui a échoué.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Type de job</th><th>Rôle</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Replica creation</strong></td><td>La première copie complète</td></tr>
+                        <tr><td><strong>Recovery point</strong></td><td>Une version restaurable — quelques secondes une fois le réplica en place</td></tr>
+                        <tr><td><strong>Library rescan</strong></td><td>L'inventaire des bandes, lancé à l'installation</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Restaurer un fichier</h3>
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Choisir le point</strong>Espace <strong>Recovery</strong> : déplier le domaine, l'ordinateur, <em>All Protected Volumes</em>, le volume. Les dates <strong>en gras</strong> du calendrier ont des points de récupération ; choisir la date, puis l'heure dans <em>Recovery time</em>.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Sélectionner</strong>Les fichiers, puis <strong>Recover</strong> : le <em>Recovery Wizard</em> s'ouvre sur un résumé de la sélection.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Où restaurer</strong><em>Recover to the original location</em>, ou <em>alternate location</em> pour un autre dossier.</div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Si le fichier existe encore</strong><strong>Create copy</strong> restaure à côté, <em>Skip</em> ne touche à rien, <em>Overwrite</em> remplace. <em>Restore security</em> : garder les droits de la destination ou ceux du point de récupération.</div></li>
+                <li class="step"><div class="step__num">05</div><div class="step__body"><strong>Recover</strong>Pendant la restauration, les synchronisations du serveur concerné sont annulées. Le TP : <em>Successful</em> en 5 secondes.</div></li>
+            </ol>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><strong>Une sauvegarde jamais restaurée n'est pas une sauvegarde, c'est une hypothèse.</strong> La restauration se teste dès le premier point de récupération, et <em>Create copy</em> est le choix prudent : il ne détruit rien de ce qui existe encore.</p>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="depanner">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Dépanner l'erreur 811</h2>
+            <p class="chapter__intro">Premier setup du TP : <em>« The DPM database was not created »</em>, erreur <strong>811</strong>. Le message ne dit rien de la cause. Le journal, si.</p>
+
+            <h3>Lire le journal</h3>
+            <p><code>C:\Program Files\Microsoft System Center 2025\DPM\DPMLogs\DpmSetup.log</code> montre la base créée, puis l'exécution d'un script :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">DpmSetup.log (extrait)</span></div>
+                <pre class="terminal__code">CREATE DATABASE ... DPMDB_...           <span class="c">→ la base est créée</span>
+Execute the SQL script
+  FileName  = ...\ODBC\180\Tools\Binn\SQLCMD.EXE
+  Arguments = -b -E -d DPMDB_... -i master.sql -r -S SRV-SQL01
+  Error code = 1                         <span class="c">→ échec dans la même seconde</span></pre>
+            </div>
+            <p>Les erreurs <code>14262</code> et <code>15151</code> qui suivent sont des <strong>conséquences</strong> : c'est le setup qui défait ce qu'il vient de commencer. Ce ne sont pas des causes.</p>
+
+            <h3>Reproduire à la main</h3>
+            <p>On relance, depuis le serveur DPM, la connexion du setup :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-DPM01</span></div>
+                <pre class="terminal__code"><span class="k">&amp;</span> <span class="s">'C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\180\Tools\Binn\SQLCMD.EXE'</span> <span class="p">-b -E -S</span> SRV-SQL01 <span class="p">-Q</span> <span class="s">"SELECT SUSER_SNAME(), @@VERSION"</span>
+<span class="c"># Sqlcmd: Error: Microsoft ODBC Driver 18 for SQL Server : SSL Provider:</span>
+<span class="c"># The certificate chain was issued by an authority that is not trusted.</span></pre>
+            </div>
+
+            <h3>La cause, et la correction</h3>
+            <p>Depuis sa version 18, le pilote ODBC <strong>chiffre toujours</strong> la connexion et exige un certificat <strong>de confiance</strong>. Or SQL Server présente par défaut un certificat auto-généré. Changer de version de pilote ne sert à rien : le setup appelle ce <code>sqlcmd</code> par un chemin écrit en dur. La correction se fait en deux temps :</p>
+            <div class="cards">
+                <div class="card">
+                    <h4>Sur le serveur SQL</h4>
+                    <ul>
+                        <li>Créer un certificat pour le nom court et le nom complet du serveur.</li>
+                        <li>Donner au compte du service SQL (le gMSA) la lecture de sa clé privée.</li>
+                        <li>Le choisir pour l'instance (onglet <em>Certificate</em> du Configuration Manager), redémarrer SQL, l'Agent et SSRS, exporter le certificat.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Sur le serveur DPM</h4>
+                    <ul>
+                        <li>Importer ce certificat dans les <strong>autorités de certification racines de confiance</strong>.</li>
+                        <li>Refaire le test <code>sqlcmd</code> : il doit répondre.</li>
+                        <li>Désinstaller la tentative ratée, vérifier qu'il ne reste pas de base <code>DPMDB_*</code>, relancer le setup.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Deux pièges autour de la réinstallation</p>
+                <p>La liste « n'a pas pu supprimer » affichée à la désinstallation est <strong>générique</strong> : vérifier l'état réel avant de nettoyer quoi que ce soit. Et l'invitation à « effacer ou formater le stockage » ne vise <strong>jamais le disque système entier</strong> quand le pool n'est qu'une partition de ce disque.</p>
+            </div>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 2 — la bonne erreur</p>
+                <p>Un journal de setup contient, dans l'ordre : la création de la base, l'exécution de <code>master.sql</code> avec <code>Error code = 1</code>, puis « <code>14262 @category_name ... does not exist</code> » et « <code>15151 Cannot drop the role</code> ». Un forum conseille de créer la catégorie manquante dans <code>msdb</code>. Que fais-tu ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>On ne crée rien dans <code>msdb</code> : 14262 et 15151 arrivent <strong>après</strong> l'échec, pendant le retour arrière du setup. La première erreur est le script lancé par <code>sqlcmd</code> : on <strong>reproduit</strong> cet appel à la main avec les mêmes arguments, et le vrai message apparaît — ici le certificat refusé. Règle générale : dans un journal, la cause est la <strong>première</strong> erreur, pas la plus bavarde.</p></div>
+                </details>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Erreur 811 = le <code>sqlcmd</code> ODBC 18 du setup refuse le certificat auto-généré de SQL. Remède : un <strong>certificat dédié sur SQL</strong>, <strong>approuvé sur DPM</strong>. C'est la chaîne de confiance déjà vue avec <a href="exchange-securite.html">Exchange &amp; PKI</a> : un client ne fait confiance qu'à un certificat qu'il peut rattacher à une autorité qu'il connaît.</p>
+            </div>
+        </section>
+
+        <div class="gloss">
+            <div class="gl"><b>DPM</b><span>System Center Data Protection Manager — l'outil de sauvegarde de la suite System Center.</span></div>
+            <div class="gl"><b>gMSA</b><span>group Managed Service Account — compte de service dont l'AD gère le mot de passe.</span></div>
+            <div class="gl"><b>KDS</b><span>Key Distribution Service — sa clé racine est le prérequis de tout gMSA.</span></div>
+            <div class="gl"><b>SSRS</b><span>SQL Server Reporting Services — moteur de rapports utilisé par DPM.</span></div>
+            <div class="gl"><b>Réplica</b><span>Première copie complète des données protégées, tenue à jour par synchronisation.</span></div>
+            <div class="gl"><b>Point de récupération</b><span>Version figée et restaurable des données — la seule chose qu'on restaure.</span></div>
+            <div class="gl"><b>ReFS</b><span>Resilient File System — le système de fichiers dans lequel DPM formate son pool.</span></div>
+            <div class="gl"><b>BMR</b><span>Bare Metal Recovery — restauration complète d'un serveur, système compris.</span></div>
+            <div class="gl"><b>ODBC 18</b><span>Pilote client SQL qui chiffre toujours la connexion et exige un certificat de confiance.</span></div>
+        </div>
+
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="dpm">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
+        </section>
+
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p><strong>System Center DPM</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center DPM 2025</p>
+</footer>
+
+<script src="../assets/catalogue.js?v=10"></script>
+<script src="../assets/app.js?v=10"></script>
+<script src="../assets/quiz-data.js?v=10"></script>
+<script src="../assets/quiz.js?v=10"></script>
+</body>
+</html>

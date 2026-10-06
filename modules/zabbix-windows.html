@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Zabbix et serveurs Windows, en remplacement de SCOM : Zabbix 7.4 en Docker Compose (PostgreSQL, serveur, interface, réseaux interne et externe, .env), Zabbix Agent 2 sur Windows en vérifications actives chiffrées par PSK, agent du serveur en conteneur, modèles maison (script et UserParameter), source de temps Windows et surveillance des certificats par découverte.">
+    <title>Zabbix &amp; serveurs Windows — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=10">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 05 · Cloud, supervision &amp; méthode · 2 / 6</p>
+        <h1 class="hero__title">Superviser Windows<br>avec <em>Zabbix</em></h1>
+        <p class="hero__lead">Le TP System Center remplace SCOM par Zabbix : une pile en conteneurs sur un serveur Ubuntu, des agents chiffrés sur les serveurs d'un domaine Windows, puis des modèles écrits pour ce qu'un modèle générique ne voit pas — l'heure du domaine et l'expiration des certificats.</p>
+        <div class="hero__meta">
+            <span class="chip">Zabbix 7.4</span><span class="chip">Docker Compose</span><span class="chip">Agent 2</span><span class="chip">PSK</span><span class="chip">UserParameter</span><span class="chip">LLD</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
+            <span class="fact"><b>Chapitres</b> 7</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="monitoring-zabbix.html">Supervision — Zabbix</a> · <a href="docker.html">Docker</a></span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Zabbix &amp; Windows</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#scom"><span>01</span> Zabbix à la place de SCOM</a></li>
+            <li><a class="toc__link" href="#compose"><span>02</span> La pile en Docker Compose</a></li>
+            <li><a class="toc__link" href="#agents"><span>03</span> Agents Windows en PSK</a></li>
+            <li><a class="toc__link" href="#agent-conteneur"><span>04</span> Superviser le serveur lui-même</a></li>
+            <li><a class="toc__link" href="#modeles"><span>05</span> Un modèle maison</a></li>
+            <li><a class="toc__link" href="#heure"><span>06</span> L'heure du domaine</a></li>
+            <li><a class="toc__link" href="#certificats"><span>07</span> Les certificats</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Zabbix &amp; serveurs Windows</div>
+                <div class="section-banner__desc">Une supervision libre pour un domaine Active Directory</div>
+            </div>
+        </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Déployer Zabbix en Docker Compose avec une base injoignable du réseau et des mots de passe hors du fichier Compose.</li>
+                <li>Raccorder un serveur Windows par Zabbix Agent 2 en vérifications actives, chiffrées par PSK, et diagnostiquer un refus d'identité PSK.</li>
+                <li>Superviser le serveur Zabbix lui-même par un agent en conteneur, en visant le bon nom sur le réseau Docker.</li>
+                <li>Ajouter une métrique maison (script + <code>UserParameter</code>) et expliquer pourquoi elle reste « Unknown metric » sans redémarrage.</li>
+                <li>Corriger la source de temps d'un domaine virtualisé sous Hyper-V, et surveiller l'expiration de certificats par découverte.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="monitoring-zabbix.html">Supervision — Zabbix</a> (items, déclencheurs, modèles, agent) et <a href="docker.html">Docker</a> (Compose, réseaux, volumes). <a href="windows-server.html">Windows Server</a> aide pour la partie domaine.</p>
+            <p class="brief__foot"><strong>Le labo</strong> : un serveur Ubuntu qui porte Zabbix en conteneurs, et trois serveurs Windows Server 2025 du domaine <code>orion.local</code> — un contrôleur de domaine, un serveur IIS, un serveur de fichiers. Les sauvegardes du même domaine sont dans <a href="dpm.html">System Center DPM</a>, le support dans <a href="redmine.html">Redmine</a>.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="chapter" id="scom">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Zabbix à la place de SCOM</h2>
+            <p class="chapter__intro">Dans la suite System Center, la supervision revient à <strong>SCOM</strong> (<em>System Center Operations Manager</em>). Le TP la confie à <strong>Zabbix</strong>, libre et gratuit : même rôle — collecter, évaluer, alerter — sur les mêmes serveurs Windows.</p>
+
+            <div class="net">
+                <div class="node"><b>SRV-ZBX01</b><span class="ip">172.16.50.40</span><span>Ubuntu + Docker : base PostgreSQL, serveur et interface Zabbix 7.4, agent du serveur</span></div>
+                <div class="node"><b>SRV-AD01</b><span class="ip">172.16.50.10</span><span>Contrôleur de domaine + DNS — agent 2</span></div>
+                <div class="node"><b>SRV-WEB01</b><span class="ip">172.16.50.25</span><span>IIS et certificats de test — agent 2</span></div>
+                <div class="node"><b>SRV-FILE01</b><span class="ip">172.16.50.20</span><span>Serveur de fichiers — agent 2</span></div>
+            </div>
+
+            <h3>Actif ou passif</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Vérifications passives</h4>
+                    <ul>
+                        <li>Le <strong>serveur</strong> interroge l'agent, sur le port <strong>10050</strong> de l'agent.</li>
+                        <li>Il faut que ce port soit joignable depuis le serveur.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>Vérifications actives</h4>
+                    <ul>
+                        <li>C'est l'<strong>agent</strong> qui contacte le serveur, sur le port <strong>10051</strong>, et lui envoie ses données.</li>
+                        <li>Le choix du TP : modèle <em>Windows by Zabbix agent active</em>.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Changer d'outil ne change pas la chaîne : <strong>mesurer, évaluer, alerter</strong>. Ce qui change, c'est le sens de la connexion : en <strong>actif</strong>, l'agent appelle le serveur sur 10051 — et ce choix a des conséquences tout au long du module.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="compose">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">La pile en Docker Compose</h2>
+            <p class="chapter__intro">Plutôt qu'une installation paquet par paquet comme dans le module <a href="monitoring-zabbix.html">Supervision — Zabbix</a>, le TP déploie Zabbix en conteneurs, dans un dossier projet <code>/opt/zabbix-lab</code> qui contient deux fichiers : <code>docker-compose.yml</code> et <code>.env</code>.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Conteneur</th><th>Image</th><th>Rôle</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>zabbix-postgres</code></td><td><code>postgres:16-alpine</code></td><td>La base : configuration et historique, dans un volume nommé</td></tr>
+                        <tr><td><code>zabbix-server</code></td><td><code>zabbix-server-pgsql:alpine-7.4-latest</code></td><td>Le moteur — port <strong>10051</strong> publié pour les agents actifs</td></tr>
+                        <tr><td><code>zabbix-web</code></td><td><code>zabbix-web-nginx-pgsql:alpine-7.4-latest</code></td><td>L'interface — port <strong>80</strong> de la VM vers 8080 du conteneur</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Deux réseaux, un seul exposé</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">docker-compose.yml (extrait)</span></div>
+                <pre class="terminal__code">  <span class="k">postgres</span>:
+    <span class="p">environment</span>:
+      <span class="p">POSTGRES_PASSWORD</span>: ${POSTGRES_PASSWORD}   <span class="c"># valeur lue dans .env</span>
+    <span class="p">volumes</span>:
+      - pgdata:/var/lib/postgresql/data       <span class="c"># les données survivent au conteneur</span>
+    <span class="p">networks</span>:
+      - zabbix-backend                        <span class="c"># réseau interne seulement</span>
+
+<span class="k">networks</span>:
+  <span class="p">zabbix-backend</span>:
+    <span class="p">internal</span>: true                            <span class="c"># aucun accès vers l'extérieur</span>
+  <span class="p">zabbix-frontend</span>:                            <span class="c"># réseau normal : permet de publier des ports</span></pre>
+            </div>
+            <p>La base n'est que sur <code>zabbix-backend</code> : elle est <strong>injoignable depuis le réseau</strong>. Le serveur et l'interface sont sur les deux réseaux — le backend pour joindre la base, le frontend pour publier leur port. Ils trouvent la base par son <strong>nom de service</strong> (<code>DB_SERVER_HOST: postgres</code>), grâce au DNS interne de Docker. L'interface reçoit aussi <code>PHP_TZ</code> : le serveur Ubuntu est en UTC, l'affichage en heure de Bruxelles.</p>
+
+            <h3>Les mots de passe dans un <code>.env</code></h3>
+            <p>Compose lit tout seul le fichier <code>.env</code> posé à côté et remplace chaque <code>${POSTGRES_...}</code> par sa valeur. Le Compose peut être copié ou montré sans livrer les mots de passe, et le <code>.env</code> est réservé à son propriétaire :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — SRV-ZBX01</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> mkdir <span class="p">-p</span> /opt/zabbix-lab
+<span class="k">cd</span> /opt/zabbix-lab
+<span class="k">sudo</span> chmod 600 .env            <span class="c"># lisible par root seul</span>
+<span class="k">sudo</span> docker compose up <span class="p">-d</span>
+<span class="k">docker</span> ps                       <span class="c"># 3 conteneurs "Up"</span>
+<span class="k">docker</span> logs zabbix-server</pre>
+            </div>
+            <p>L'interface répond ensuite par son nom, grâce à un enregistrement A dans la zone DNS du domaine.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Trois conteneurs, deux réseaux : la <strong>base sur un réseau interne</strong>, le serveur et l'interface à cheval sur les deux. Les secrets dans un <strong><code>.env</code> en 600</strong>, les données dans un <strong>volume nommé</strong>. Et chaque service joint l'autre <strong>par son nom</strong>, jamais par une IP de conteneur.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="agents">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Les agents Windows, chiffrés par PSK</h2>
+            <p class="chapter__intro">Sur chaque serveur Windows : <strong>Zabbix Agent 2</strong> en MSI, <strong>de la même version que le serveur</strong> (7.4). Puis une clé partagée pour chiffrer les échanges, et l'hôte à déclarer dans Zabbix.</p>
+
+            <h3>L'installation</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Écran / champ</th><th>Valeur</th></tr></thead>
+                    <tbody>
+                        <tr><td>Host name</td><td><code>SRV-AD01</code> — <strong>exactement</strong> le nom de l'hôte qu'on créera dans Zabbix</td></tr>
+                        <tr><td>Zabbix server IP/DNS</td><td><code>srv-zbx01.orion.local</code></td></tr>
+                        <tr><td>Agent listen port</td><td><code>10050</code></td></tr>
+                        <tr><td>Server or proxy for active checks</td><td><code>srv-zbx01.orion.local</code></td></tr>
+                        <tr><td>Add agent location to the PATH</td><td>coché</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Le PSK</h3>
+            <p>Un <strong>PSK</strong> (<em>Pre-Shared Key</em>) est une clé partagée par l'agent et le serveur pour chiffrer leurs échanges. Le TP la pose avec un script fourni, qui génère une clé aléatoire de 64 caractères hexadécimaux dans <code>psk\agent.psk</code>, règle <code>Hostname</code>, <code>ServerActive</code> et les lignes <code>TLS…</code> de <code>zabbix_agent2.conf</code>, puis redémarre le service. Il demande PowerShell 7 :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell 7 — SRV-AD01</span></div>
+                <pre class="terminal__code"><span class="k">winget</span> install <span class="p">--id</span> Microsoft.PowerShell <span class="p">--source</span> winget
+<span class="k">&amp;</span> <span class="s">".\Configure-ZabbixAgent2-PSK.ps1"</span> <span class="p">-ZabbixServer</span> srv-zbx01.orion.local <span class="p">-HostName</span> SRV-AD01 <span class="p">-PskIdentity</span> LAB-AD01-PSK
+<span class="c"># PSK identity : LAB-AD01-PSK</span>
+<span class="c"># PSK value    : (64 caractères hexadécimaux, à reporter dans Zabbix)</span></pre>
+            </div>
+
+            <h3>L'hôte dans Zabbix</h3>
+            <p><strong>Data collection &gt; Hosts &gt; Create host</strong>. Onglet <strong>Host</strong> : le nom <code>SRV-AD01</code>, le modèle <strong>Windows by Zabbix agent active</strong>, les groupes <em>Windows servers</em> et <em>Virtual machines</em>. Onglet <strong>Encryption</strong> : PSK dans les deux sens, l'identité et la valeur affichées par le script.</p>
+            <p>Même chose pour le serveur IIS et le serveur de fichiers, chacun avec sa propre identité PSK. Résultat : <strong>Monitoring &gt; Latest data</strong> se remplit. Dans l'infobulle de disponibilité, <em>Active checks : Available</em>, et l'interface <code>…:10050</code> en <em>Unknown</em> — normal : un modèle <em>agent active</em> ne fait aucune vérification passive, le serveur n'appelle jamais le port 10050.</p>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 1 — l'agent refusé</p>
+                <p>Un quatrième serveur ne remonte rien. Dans <code>docker logs zabbix-server</code> : <code>cannot find requested PSK identity "LAB-APP01-PSK"</code>. Où chercher ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>Le serveur reçoit bien l'agent, mais ne connaît pas cette identité : l'onglet <strong>Encryption</strong> de l'hôte n'est pas rempli, ou pas avec la même identité. L'identité <strong>et</strong> la valeur doivent être identiques des deux côtés. Deuxième vérification : le nom de l'hôte dans Zabbix doit être exactement le <code>Hostname=</code> de l'agent — en vérifications actives, c'est ce nom que l'agent annonce.</p></div>
+                </details>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Trois choses doivent correspondre exactement entre l'agent et Zabbix : le <strong>nom d'hôte</strong>, l'<strong>identité PSK</strong> et la <strong>valeur PSK</strong>. Et en mode actif, une interface 10050 « Unknown » n'est pas une panne.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="agent-conteneur">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Superviser le serveur Zabbix lui-même</h2>
+            <p class="chapter__intro">L'hôte <code>Zabbix server</code>, créé par défaut, visait un agent sur <code>127.0.0.1:10050</code>. Aucun agent n'était installé : l'hôte restait indisponible. Le TP ajoute un quatrième service au Compose.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">docker-compose.yml — le 4ᵉ service</span></div>
+                <pre class="terminal__code">  <span class="k">zabbix-agent</span>:
+    <span class="p">image</span>: zabbix/zabbix-agent2:alpine-7.4-latest  <span class="c"># même version que le serveur</span>
+    <span class="p">container_name</span>: zabbix-agent
+    <span class="p">hostname</span>: zabbix-agent
+    <span class="p">restart</span>: unless-stopped
+    <span class="p">init</span>: true                                     <span class="c"># signaux d'arrêt, pas de zombies</span>
+    <span class="p">privileged</span>: true                               <span class="c"># accès étendu au système de la VM</span>
+    <span class="p">pid</span>: host                                      <span class="c"># voit les processus de la VM</span>
+    <span class="p">environment</span>:
+      <span class="p">ZBX_HOSTNAME</span>: Zabbix server                  <span class="c"># = nom exact de l'hôte dans Zabbix</span>
+      <span class="p">ZBX_SERVER_HOST</span>: zabbix-server
+    <span class="p">networks</span>:
+      - zabbix-backend</pre>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — SRV-ZBX01</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> docker compose up <span class="p">-d</span> zabbix-agent   <span class="c"># seul le nouveau conteneur démarre</span>
+<span class="k">docker</span> exec zabbix-server zabbix_get <span class="p">-s</span> zabbix-agent <span class="p">-k</span> agent.version
+<span class="c"># 7.4.15</span></pre>
+            </div>
+
+            <p>Puis, sur l'hôte <code>Zabbix server</code>, l'interface <strong>Agent</strong> : IP vide, <em>DNS name</em> <code>zabbix-agent</code>, <strong>Connect to : DNS</strong>, port 10050.</p>
+
+            <div class="tip">
+                <p class="tip__label">Pourquoi un nom, et pas une adresse ?</p>
+                <p>C'est le <strong>conteneur serveur</strong> qui interroge l'agent. Dans un conteneur, <code>127.0.0.1</code> désigne le conteneur lui-même : l'ancienne interface visait donc <code>zabbix-server</code>, où il n'y a pas d'agent. L'IP d'un conteneur change quand il est recréé, son nom de service non. Et l'IP de la VM ne marcherait pas : le port 10050 de l'agent n'est <strong>pas publié</strong>, il n'existe que sur le réseau Docker. Enfin, <em>Connect to : DNS</em>, sinon Zabbix utilise le champ IP et ignore le nom.</p>
+            </div>
+
+            <p><strong>Limite</strong> : l'agent voit le CPU, la mémoire et les processus de la VM (<code>pid: host</code>), mais les disques de <strong>son conteneur</strong>. Pour superviser les disques du serveur, il faudrait un agent installé directement sur la VM.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Entre conteneurs, <code>127.0.0.1</code> ne désigne jamais « la machine » : on vise le <strong>nom du service</strong> sur un réseau commun, et on choisit <strong>Connect to : DNS</strong>. Un agent en conteneur voit les processus de l'hôte, pas ses disques.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="modeles">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Un modèle maison : script + UserParameter</h2>
+            <p class="chapter__intro">Le modèle Windows générique ne sait pas tout. Le TP lui ajoute deux modèles fournis — l'heure et les certificats — qui reposent sur le même mécanisme : une <strong>nouvelle clé</strong> apprise à l'agent.</p>
+
+            <p>Chaque modèle apporte un <strong>script PowerShell</strong> et un fichier <strong><code>.conf</code></strong> qui déclare la clé : <code>UserParameter=clé,commande</code>. Sur chaque serveur concerné :</p>
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Le script</strong>Dans <code>C:\Program Files\Zabbix Agent 2\scripts\</code> (à créer s'il n'existe pas).</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Le .conf</strong>Dans <code>zabbix_agent2.d\</code>, déjà inclus par la ligne <code>Include=</code> de <code>zabbix_agent2.conf</code>.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Redémarrer l'agent</strong><code>Restart-Service "Zabbix Agent 2"</code></div></li>
+                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Tester la clé en local</strong>Avec l'option <code>-t</code> de l'agent (ci-dessous).</div></li>
+                <li class="step"><div class="step__num">05</div><div class="step__body"><strong>Côté Zabbix</strong><strong>Data collection &gt; Templates &gt; Import</strong> du <code>.yaml</code>, puis lier le modèle aux hôtes.</div></li>
+            </ol>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — serveur Windows</span></div>
+                <pre class="terminal__code"><span class="k">&amp;</span> <span class="s">"C:\Program Files\Zabbix Agent 2\zabbix_agent2.exe"</span> <span class="p">-c</span> <span class="s">"C:\Program Files\Zabbix Agent 2\zabbix_agent2.conf"</span> <span class="p">-t</span> windows.time.source</pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">« Unknown metric » alors que le test réussit</p>
+                <p><code>-t</code> relit la configuration <strong>à neuf</strong> et réussit ; mais le service déjà lancé ne connaît pas encore la nouvelle clé. Sans <strong>redémarrage de l'agent</strong>, l'item reste en <em>Unknown metric</em> — vu sur le serveur de fichiers du TP.</p>
+            </div>
+
+            <p>Deux réglages communs aux deux modèles : leurs items sont en <strong>Zabbix agent (active)</strong>, comme le reste du labo, avec un <strong>timeout de 10 s</strong> — un script PowerShell dépasse souvent les 3 s par défaut. Et un item actif, c'est l'agent qui l'envoie : le bouton <strong>Execute now</strong> ne fait rien. Pour forcer une collecte, on redémarre l'agent.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un modèle maison = un <strong>script</strong> dans <code>scripts\</code>, un <strong><code>UserParameter</code></strong> dans <code>zabbix_agent2.d\</code>, un <strong>redémarrage de l'agent</strong>, puis l'import et la liaison du <code>.yaml</code>. Items actifs : timeout relevé, et pas d'<em>Execute now</em>.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="heure">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">L'heure du domaine</h2>
+            <p class="chapter__intro">Le modèle <em>Windows Time Monitoring</em> surveille le décalage d'horloge par rapport à un serveur NTP, la source de temps et la dernière synchronisation. Lié aux trois serveurs, il a tout de suite trouvé un vrai problème.</p>
+
+            <h3>Le réglage</h3>
+            <p>La macro du modèle <code>{$TIME.NTP.SERVER}</code> vaut le contrôleur de domaine : les membres se comparent à lui. Le DC ne pouvant se comparer à lui-même, une <strong>macro d'hôte</strong> sur le DC (<strong>Hosts &gt; hôte &gt; Macros</strong>) la remplace par un serveur public, <code>be.pool.ntp.org</code>.</p>
+
+            <h3>Le problème découvert</h3>
+            <p>Sur les trois serveurs, un avertissement : <em>« VM IC Time Synchronization Provider is being used »</em>. Les VM prenaient l'heure de l'<strong>hôte Hyper-V</strong> (fournisseur <code>VMICTimeProvider</code>), contrôleur de domaine compris, au lieu de suivre la hiérarchie du domaine. Or dans un domaine, la référence est le DC (émulateur PDC), lui-même synchronisé sur une source externe ; les membres se synchronisent sur lui.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur le DC d'abord</span></div>
+                <pre class="terminal__code"><span class="c"># ne plus prendre l'heure de Hyper-V</span>
+<span class="k">Set-ItemProperty</span> <span class="s">'HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\VMICTimeProvider'</span> <span class="p">-Name</span> Enabled <span class="p">-Value</span> 0
+<span class="c"># source externe, et DC annoncé comme serveur de temps fiable</span>
+<span class="k">w32tm</span> /config /manualpeerlist:<span class="s">"be.pool.ntp.org,0x8"</span> /syncfromflags:manual /reliable:yes /update
+<span class="k">Restart-Service</span> w32time
+<span class="k">w32tm</span> /resync /rediscover
+<span class="k">w32tm</span> /query /source            <span class="c"># be.pool.ntp.org,0x8</span></pre>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — puis sur chaque membre</span></div>
+                <pre class="terminal__code"><span class="k">Set-ItemProperty</span> <span class="s">'HKLM:\SYSTEM\CurrentControlSet\Services\W32Time\TimeProviders\VMICTimeProvider'</span> <span class="p">-Name</span> Enabled <span class="p">-Value</span> 0
+<span class="k">w32tm</span> /config /syncfromflags:domhier /update     <span class="c"># hiérarchie du domaine → le DC</span>
+<span class="k">Restart-Service</span> w32time
+<span class="k">w32tm</span> /resync /rediscover
+<span class="k">w32tm</span> /query /source            <span class="c"># SRV-AD01.orion.local</span></pre>
+            </div>
+            <p>Un redémarrage de l'agent sur chacun, pour que Zabbix voie le changement tout de suite. Résultat : le DC en stratum 2, les membres en stratum 3, les trois problèmes se ferment. (Autre choix possible, si on tient à l'heure Hyper-V : la macro <code>{$TIME.ALLOW.VMIC}=1</code>.)</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Dans un domaine virtualisé : <strong>le DC sur une source externe</strong> (<code>/reliable:yes</code>), <strong>les membres en <code>domhier</code></strong>, et le fournisseur Hyper-V désactivé. L'heure compte plus qu'il n'y paraît : Kerberos refuse l'authentification au-delà de quelques minutes d'écart. C'est un bon exemple de ce qu'une supervision apporte — un défaut silencieux rendu visible.</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="certificats">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Surveiller les certificats</h2>
+            <p class="chapter__intro">Le modèle <em>Windows Certificates</em>, lié au serveur IIS, prévient avant qu'un certificat n'expire. Il repose sur une <strong>découverte</strong> : Zabbix crée lui-même les items de chaque certificat trouvé.</p>
+
+            <p>Le script liste les certificats des magasins <code>Cert:\LocalMachine\My</code> et <code>Cert:\LocalMachine\WebHosting</code> dont le <strong>nom convivial (FriendlyName) contient <code>@</code></strong>, et renvoie un JSON. Zabbix en fait une <strong>LLD</strong> (<em>Low-Level Discovery</em>) : pour chaque certificat, 9 items (jours restants, expiration, sujet, émetteur, noms DNS, clé privée…) et des déclencheurs d'expiration.</p>
+
+            <h3>Deux adaptations du modèle d'origine</h3>
+            <ul>
+                <li>L'item maître passé en <strong>Zabbix agent (active)</strong>, avec un timeout de 10 s.</li>
+                <li>Une sortie JSON <strong>toujours en tableau</strong> : en PowerShell 5.1, <code>@($x) | ConvertTo-Json</code> ne renvoie <strong>rien</strong> pour une liste vide et un <strong>objet seul</strong> pour un seul certificat, ce qui casse la découverte. D'où <code>ConvertTo-Json -InputObject @($result)</code>.</li>
+            </ul>
+
+            <h3>Le test</h3>
+            <p>Quatre certificats auto-signés de test sur le serveur IIS : deux dans <code>My</code>, deux dans <code>WebHosting</code> ; dans chaque magasin, l'un valable deux ans, l'autre quinze jours. Résultat : les quatre sont découverts, et les deux certificats à quinze jours lèvent un problème <strong>Average</strong> <em>« expires in less than 15 days »</em>.</p>
+            <ul>
+                <li><code>New-SelfSignedCertificate</code> ne crée que dans <code>My</code> : pour <code>WebHosting</code>, créer dans <code>My</code> puis déplacer avec <code>Move-Item</code>.</li>
+                <li>Le <code>@</code> doit être dans le <strong>FriendlyName</strong>, pas seulement dans le sujet.</li>
+                <li>Pour les voir : <strong>certlm.msc</strong> (ordinateur local) — <code>certmgr.msc</code> montre les magasins de l'<em>utilisateur</em>.</li>
+                <li>Relancer la création sans supprimer les anciens crée des <strong>doublons</strong> (nouvelle empreinte). Côté Zabbix, les items d'un certificat disparu passent en <em>Certificate not found in master JSON</em> ; la découverte les désactive après 1 jour et les supprime après 7.</li>
+            </ul>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 2 — le certificat invisible</p>
+                <p>Un certificat de site web, bien présent dans <code>certmgr.msc</code> avec le sujet <code>CN=intranet@orion</code>, n'est pas découvert par Zabbix. Donne deux raisons possibles.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>1) <code>certmgr.msc</code> montre les magasins de l'<strong>utilisateur</strong> : le script ne lit que ceux de l'<strong>ordinateur local</strong> (<code>My</code> et <code>WebHosting</code>), visibles dans <code>certlm.msc</code>. 2) Le <code>@</code> est dans le <strong>sujet</strong>, alors que le script filtre sur le <strong>FriendlyName</strong>. Troisième piste si les deux sont bonnes : la découverte n'a pas encore tourné — c'est un item actif, on redémarre l'agent plutôt que de cliquer sur <em>Execute now</em>.</p></div>
+                </details>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Une découverte (LLD) transforme une liste JSON en items et déclencheurs, un jeu par objet trouvé. Pour ce modèle : <strong><code>@</code> dans le FriendlyName</strong>, magasins <strong><code>My</code> et <code>WebHosting</code> de la machine</strong>, alerte Average à moins de 15 jours — et un JSON qui doit rester un tableau, même vide.</p>
+            </div>
+        </section>
+
+        <div class="gloss">
+            <div class="gl"><b>SCOM</b><span>System Center Operations Manager — la supervision de la suite System Center, remplacée ici par Zabbix.</span></div>
+            <div class="gl"><b>Agent 2</b><span>Zabbix Agent 2 — l'agent actuel de Zabbix, écrit en Go.</span></div>
+            <div class="gl"><b>Active check</b><span>Vérification où l'agent envoie lui-même ses données au serveur (port 10051).</span></div>
+            <div class="gl"><b>PSK</b><span>Pre-Shared Key — clé partagée qui chiffre les échanges agent / serveur.</span></div>
+            <div class="gl"><b>UserParameter</b><span>Ligne de configuration qui associe une nouvelle clé d'agent à une commande.</span></div>
+            <div class="gl"><b>LLD</b><span>Low-Level Discovery — création automatique d'items pour chaque objet découvert.</span></div>
+            <div class="gl"><b>VMICTimeProvider</b><span>Fournisseur de temps qui prend l'heure de l'hôte Hyper-V.</span></div>
+            <div class="gl"><b>domhier</b><span>Synchronisation de l'heure sur la hiérarchie du domaine (les membres sur le DC).</span></div>
+        </div>
+
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="zabbix-windows">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
+        </section>
+
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p><strong>Zabbix &amp; serveurs Windows</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Zabbix en remplacement de SCOM »</p>
+</footer>
+
+<script src="../assets/catalogue.js?v=10"></script>
+<script src="../assets/app.js?v=10"></script>
+<script src="../assets/quiz-data.js?v=10"></script>
+<script src="../assets/quiz.js?v=10"></script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Module Redmine, helpdesk en remplacement de SCSM : demandes, trackers, statuts et workflow, installation en Docker Compose avec MariaDB, API REST, authentification LDAP sur l'Active Directory (signature LDAP de Windows Server 2025), projet et tickets, secrets dans un .env, sauvegarde par script et cron, publication en HTTPS derrière un reverse proxy nginx.">
+    <title>Redmine — Module</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/theme.css?v=10">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 05 · Cloud, supervision &amp; méthode · 5 / 6</p>
+        <h1 class="hero__title">Un helpdesk avec<br><em>Redmine</em></h1>
+        <p class="hero__lead">Le dernier TP System Center remplace SCSM par Redmine : un outil de tickets libre, installé en conteneurs, branché sur l'Active Directory pour que chacun s'y connecte avec son compte du domaine — puis rendu exploitable : secrets à part, sauvegarde quotidienne, HTTPS.</p>
+        <div class="hero__meta">
+            <span class="chip">Ticketing</span><span class="chip">Docker Compose</span><span class="chip">LDAP / AD</span><span class="chip">.env</span><span class="chip">cron</span><span class="chip">nginx HTTPS</span>
+        </div>
+        <div class="hero__facts">
+            <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
+            <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
+            <span class="fact"><b>Chapitres</b> 7</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="docker.html">Docker</a></span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="../index.html">← Tous les modules</a>
+        <p class="toc__label">Redmine</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#redmine"><span>01</span> Ce qu'est Redmine</a></li>
+            <li><a class="toc__link" href="#installer"><span>02</span> Installer en Compose</a></li>
+            <li><a class="toc__link" href="#ldap"><span>03</span> Brancher l'Active Directory</a></li>
+            <li><a class="toc__link" href="#projet"><span>04</span> Projet &amp; tickets</a></li>
+            <li><a class="toc__link" href="#env"><span>05</span> Les secrets dans un .env</a></li>
+            <li><a class="toc__link" href="#sauvegarde"><span>06</span> Sauvegarder</a></li>
+            <li><a class="toc__link" href="#https"><span>07</span> HTTPS derrière nginx</a></li>
+            <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <div class="section-banner">
+            <div class="section-banner__accent"></div>
+            <div>
+                <div class="section-banner__label">Redmine</div>
+                <div class="section-banner__desc">Un outil de tickets pour le support, branché sur le domaine</div>
+            </div>
+        </div>
+
+        <section class="brief">
+            <p class="brief__label">Ce que tu sauras faire à la fin</p>
+            <ul class="brief__list">
+                <li>Expliquer le modèle de Redmine : projet, tracker, statut, rôle, workflow — et ce qui lui manque face à un outil de helpdesk dédié.</li>
+                <li>Installer Redmine et MariaDB en Docker Compose, et ouvrir son API REST.</li>
+                <li>Brancher l'authentification sur l'Active Directory en LDAP, et diagnostiquer le refus d'un DC Windows Server 2025.</li>
+                <li>Sortir les mots de passe du Compose dans un <code>.env</code> sans casser une base existante.</li>
+                <li>Sauvegarder base, pièces jointes et configuration par un script planifié avec cron.</li>
+                <li>Publier Redmine en HTTPS derrière un reverse proxy nginx, avec redirection et en-têtes transmis.</li>
+            </ul>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="docker.html">Docker</a> (Compose, volumes, réseaux). <a href="linux-debian.html">Linux</a> et <a href="windows-server.html">Windows Server</a> aident pour la ligne de commande et l'annuaire. Ce module prolonge le module <a href="scrum.html">Agile &amp; Scrum</a> côté support : un flux de demandes imprévisibles, plutôt que des sprints.</p>
+            <p class="brief__foot"><strong>Le labo</strong> : un serveur Ubuntu Server qui porte Redmine, publié sous <code>helpdesk.orion.local</code> (un alias DNS vers le serveur), dans le domaine <code>orion.local</code> déjà supervisé par <a href="zabbix-windows.html">Zabbix</a>.</p>
+        </section>
+
+        <!-- 01 -->
+        <section class="chapter" id="redmine">
+            <p class="chapter__num">01</p>
+            <h2 class="chapter__title">Ce qu'est Redmine</h2>
+            <p class="chapter__intro"><strong>Redmine</strong> est une application web libre et gratuite (licence GPL v2) de <strong>gestion de projets et de suivi de demandes</strong> (<em>issue tracking</em>), écrite en Ruby on Rails, avec une base PostgreSQL, MySQL/MariaDB, SQL Server ou SQLite. Dans le TP, elle remplace <strong>SCSM</strong> (<em>System Center Service Manager</em>) comme outil de tickets — comme Zabbix remplace SCOM.</p>
+
+            <h3>L'objet central : la demande</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Notion</th><th>Sens</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Projet</strong></td><td>Conteneur des demandes, avec ses membres et ses modules ; sous-projets possibles</td></tr>
+                        <tr><td><strong>Tracker</strong></td><td>Le type de demande (anomalie, évolution, assistance…), chacun avec ses champs</td></tr>
+                        <tr><td><strong>Statut</strong></td><td>Où en est la demande : nouveau, en cours, résolu, fermé…</td></tr>
+                        <tr><td><strong>Priorité</strong></td><td>De <em>bas</em> à <em>immédiat</em></td></tr>
+                        <tr><td><strong>Assigné à</strong></td><td>La personne ou le groupe qui traite la demande</td></tr>
+                        <tr><td><strong>Workflow</strong></td><td>Les passages de statut permis, <strong>par rôle et par tracker</strong> (ex. seul le support passe en <em>Résolu</em>)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Un <strong>utilisateur</strong> devient <strong>membre</strong> d'un projet avec un <strong>rôle</strong> (<em>Manager</em>, <em>Developer</em>, <em>Reporter</em>…) qui porte les permissions ; il peut avoir des rôles différents d'un projet à l'autre. Les autres modules s'activent projet par projet : suivi du temps, Gantt et calendrier, wiki, forums, documents, dépôt Git. S'y ajoutent les champs personnalisés, les notifications et la création de demandes par e-mail, une API REST et des plugins.</p>
+
+            <div class="tip">
+                <p class="tip__label">Redmine n'est pas né helpdesk</p>
+                <p>Il vient de la gestion de projets de développement. Configuré (un projet « Support », un tracker d'assistance, un workflow adapté, la connexion à l'AD), il fait un honnête outil de support — mais il lui manque nativement ce qu'ont les outils dédiés comme <strong>GLPI</strong> : un portail simplifié pour l'utilisateur, des SLA, l'inventaire du parc. Des plugins, souvent payants, comblent ces manques.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Tout tourne autour de la <strong>demande</strong>, rangée dans un <strong>projet</strong>, typée par un <strong>tracker</strong>, et qui avance de <strong>statut</strong> en statut selon un <strong>workflow</strong> qui dépend du rôle. Les droits ne sont pas portés par l'utilisateur mais par son <strong>rôle dans le projet</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 02 -->
+        <section class="chapter" id="installer">
+            <p class="chapter__num">02</p>
+            <h2 class="chapter__title">Installer Redmine en Docker Compose</h2>
+            <p class="chapter__intro">Deux conteneurs : Redmine et sa base <strong>MariaDB</strong>, dans un dossier <code>~/redmine</code> sur le serveur.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Service</th><th>Image</th><th>Conteneur</th><th>Rôle</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>db</code></td><td><code>mariadb:11</code></td><td><code>redmine-db</code></td><td>La base <code>redmine</code> ; port 3306 <strong>non publié</strong></td></tr>
+                        <tr><td><code>redmine</code></td><td><code>redmine:7.0.2</code></td><td><code>redmine-app</code></td><td>L'application, publiée sur le port 80 de la VM (→ 3000)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <ul>
+                <li><code>REDMINE_DB_MYSQL: db</code> : Redmine joint la base par le <strong>nom du service</strong>, sur un réseau privé.</li>
+                <li>Deux volumes nommés : la base et les <strong>pièces jointes</strong> — les données survivent aux conteneurs.</li>
+                <li><code>restart: unless-stopped</code> pour redémarrer avec la VM ; <code>SECRET_KEY_BASE</code> signe les cookies de session.</li>
+            </ul>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — serveur Redmine</span></div>
+                <pre class="terminal__code"><span class="k">cd</span> ~/redmine
+<span class="k">sudo</span> docker compose up <span class="p">-d</span>
+<span class="k">sudo</span> docker ps                <span class="c"># redmine-app et redmine-db : Up</span></pre>
+            </div>
+            <p>Au premier démarrage, Redmine crée lui-même ses tables.</p>
+
+            <h3>Premier accès</h3>
+            <ol class="steps">
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Sign in</strong>Avec le compte par défaut de Redmine, <code>admin</code> / <code>admin</code> : Redmine oblige à changer le mot de passe tout de suite.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Load the default configuration</strong>Un bandeau d'<strong>Administration</strong> signale que rôles, trackers, statuts et workflow ne sont pas configurés. Le bouton charge les trackers <em>Bug</em>, <em>Feature</em>, <em>Support</em>, les rôles <em>Manager</em>, <em>Developer</em>, <em>Reporter</em> et 6 statuts.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Ouvrir l'API</strong><strong>Administration &gt; Settings</strong>, onglet <strong>Integration</strong> : <em>Enable REST web service</em> (un script ou un autre outil peut lire et créer des tickets), <em>Enable JSONP support</em>, <em>Enable webhooks</em> (Redmine prévient une autre application quand un ticket change).</div></li>
+            </ol>
+            <p>La clé API d'un compte se lit dans <strong>My account</strong> &gt; <em>API access key</em> ; elle voyage dans l'en-tête <code>X-Redmine-API-Key</code> d'une requête.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Une base non exposée, jointe par son nom de service ; des volumes pour la base <strong>et</strong> les pièces jointes ; puis trois gestes au premier accès — changer le mot de passe <code>admin</code>, charger la configuration par défaut, ouvrir l'API si un autre outil doit créer des tickets.</p>
+            </div>
+        </section>
+
+        <!-- 03 -->
+        <section class="chapter" id="ldap">
+            <p class="chapter__num">03</p>
+            <h2 class="chapter__title">Brancher l'Active Directory</h2>
+            <p class="chapter__intro">But : que chacun se connecte avec son <strong>compte du domaine</strong>, sans recréer les utilisateurs ni leurs mots de passe. Redmine vérifie le mot de passe auprès du contrôleur de domaine par <strong>LDAP</strong> (port <strong>389</strong> ; <strong>LDAPS</strong>, chiffré, sur le port <strong>636</strong>).</p>
+
+            <p><strong>Administration &gt; LDAP authentication &gt; New authentication mode</strong> :</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Champ</th><th>Valeur</th><th>Explication</th></tr></thead>
+                    <tbody>
+                        <tr><td>Host / Port</td><td><code>SRV-AD01.orion.local</code> · <code>389</code></td><td>Le DC à interroger, en LDAP non chiffré</td></tr>
+                        <tr><td>Account</td><td>un compte de service du domaine</td><td>Sert à <strong>chercher</strong> l'utilisateur dans l'annuaire</td></tr>
+                        <tr><td>Base DN</td><td><code>DC=orion,DC=local</code></td><td>Point de départ de la recherche ; une OU (<code>OU=Support,DC=orion,DC=local</code>) limiterait aux comptes qu'elle contient</td></tr>
+                        <tr><td>On-the-fly user creation</td><td>coché</td><td>Le compte Redmine est créé à la <strong>première connexion</strong></td></tr>
+                        <tr><td>Login attribute</td><td><code>sAMAccountName</code></td><td>Le login Windows, sans le domaine</td></tr>
+                        <tr><td>Firstname / Lastname / Email</td><td><code>givenName</code> · <code>sN</code> · <code>mail</code></td><td>Les attributs AD recopiés dans le profil</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Test</strong>, sur la ligne du mode, vérifie seulement la connexion au DC avec le compte de service : il ne crée aucun utilisateur.</p>
+
+            <h3>Le refus du DC</h3>
+            <p>Premier test : <em>« Unable to connect (Invalid LDAP Account/Password) »</em>. Le compte et le mot de passe étaient pourtant bons : Redmine affiche ce message pour <strong>tout</strong> refus. La vraie réponse du DC était <code>Stronger Auth Needed</code>.</p>
+            <ul>
+                <li>Redmine fait du <strong>LDAP simple</strong> : compte et mot de passe en clair, sans <strong>signature</strong> (qui garantit que l'échange n'a pas été modifié en route).</li>
+                <li>Un DC <strong>Windows Server 2025</strong> exige cette signature par défaut. Le paramètre <em>Domain controller: LDAP server signing requirements</em> était à <em>None</em>, mais le nouveau <em>…requirements <strong>Enforcement</strong></em>, <em>Not Defined</em>, l'impose quand même : c'est lui qui passe par-dessus.</li>
+                <li>LDAPS n'était pas une issue : le DC n'avait pas de certificat pour chiffrer.</li>
+            </ul>
+            <p>Correction de lab, dans la <strong>Default Domain Controllers Policy</strong> (<code>gpmc.msc</code>) : <em>Computer Configuration &gt; Policies &gt; Windows Settings &gt; Security Settings &gt; Local Policies &gt; Security Options</em>, <em>Domain controller: LDAP server signing requirements Enforcement</em> → <strong>Disabled</strong>, puis <code>gpupdate /force</code> sur le DC. Le <strong>Test</strong> passe, et un login du domaine crée son compte Redmine à la première connexion.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Lab seulement</p>
+                <p>En LDAP simple, les mots de passe du domaine passent <strong>en clair</strong> sur le réseau. En production : <strong>LDAPS</strong> (certificat sur le DC, port 636). Et jamais le compte Administrateur comme compte de service : un compte dédié, simple utilisateur du domaine — lire l'annuaire suffit.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un mode LDAP vers le DC + la création à la volée = les comptes AD se connectent avec leur login Windows. Face à « Invalid LDAP Account/Password », ne pas s'acharner sur le mot de passe : sur un DC 2025, la cause est d'abord la <strong>signature LDAP</strong> exigée.</p>
+            </div>
+        </section>
+
+        <!-- 04 -->
+        <section class="chapter" id="projet">
+            <p class="chapter__num">04</p>
+            <h2 class="chapter__title">Comptes, projet et premier ticket</h2>
+            <p class="chapter__intro">Les comptes viennent de deux sources : créés à la main (<strong>Administration &gt; Users &gt; New user</strong>), ou à la première connexion depuis l'AD. Si la fiche AD d'un compte n'a ni prénom, ni nom, ni e-mail, on les saisit côté Redmine.</p>
+
+            <h3>Le projet ITSM</h3>
+            <p><strong>Administration &gt; Projects &gt; New project</strong> → <strong>ITSM</strong> (<em>IT Service Management</em>, la gestion des services informatiques : le rôle que tenait SCSM). Identifiant <code>itsm</code>, projet <strong>public</strong>, trackers et modules par défaut. Puis, dans le projet : <strong>Issues &gt; New issue</strong> → tracker, sujet, description, priorité, <em>Assignee</em> → <strong>Create</strong>.</p>
+            <p>Le premier ticket du TP a été créé par un utilisateur qui n'était <strong>membre d'aucun projet</strong> : il a pu le faire parce que le projet est public, ce qui lui donne le rôle <em>Non member</em>.</p>
+
+            <div class="exo">
+                <p class="exo__label">Exercice 1 — faire de ITSM un vrai helpdesk</p>
+                <p>C'est la suite prévue du TP. Les utilisateurs du domaine doivent pouvoir déclarer des incidents et suivre les leurs ; seule l'équipe support doit pouvoir les résoudre. Que configures-tu, et où ?</p>
+                <details class="reveal">
+                    <summary>Afficher une proposition</summary>
+                    <div class="reveal__body"><p><em>Une configuration possible, à partir des notions du chapitre 01.</em> <strong>Membres et rôles</strong> du projet : l'équipe support avec un rôle qui peut modifier et assigner les demandes, les utilisateurs avec un rôle de type <em>Reporter</em> (créer, commenter). <strong>Tracker</strong> : <em>Support</em> pour les incidents. <strong>Workflow</strong> (<em>Administration &gt; Workflow</em>, par rôle et par tracker) : le passage en <em>Resolved</em> réservé au rôle support. Enfin, se demander si le projet doit rester <strong>public</strong> : en l'état, n'importe quel compte connecté voit les tickets des autres.</p></div>
+                </details>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un projet <strong>public</strong> ouvre ses demandes au rôle <em>Non member</em> : pratique pour un premier test, à décider consciemment pour un vrai helpdesk. La configuration du support se fait par <strong>membres et rôles</strong>, <strong>trackers</strong> et <strong>workflow</strong>.</p>
+            </div>
+        </section>
+
+        <!-- 05 -->
+        <section class="chapter" id="env">
+            <p class="chapter__num">05</p>
+            <h2 class="chapter__title">Les secrets dans un <code>.env</code></h2>
+            <p class="chapter__intro">Comme pour Zabbix : les mots de passe quittent <code>docker-compose.yml</code> pour un fichier <code>.env</code> posé à côté. Compose le lit tout seul et remplace chaque <code>${VARIABLE}</code> par sa valeur.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">~/redmine/.env (valeurs d'exemple)</span></div>
+                <pre class="terminal__code"><span class="c"># MariaDB</span>
+<span class="p">MYSQL_DATABASE</span>=redmine
+<span class="p">MYSQL_USER</span>=redmine
+<span class="p">MYSQL_PASSWORD</span>=<span class="s">changez-moi</span>
+<span class="p">MYSQL_ROOT_PASSWORD</span>=<span class="s">changez-moi-aussi</span>
+<span class="c"># Redmine</span>
+<span class="p">REDMINE_SECRET_KEY_BASE</span>=<span class="s">une-longue-chaine-aleatoire</span></pre>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">docker-compose.yml (extrait)</span></div>
+                <pre class="terminal__code">  <span class="k">db</span>:
+    <span class="p">environment</span>:
+      <span class="p">MARIADB_DATABASE</span>: ${MYSQL_DATABASE}
+      <span class="p">MARIADB_PASSWORD</span>: ${MYSQL_PASSWORD}
+  <span class="k">redmine</span>:
+    <span class="p">environment</span>:
+      <span class="p">REDMINE_DB_MYSQL</span>: db
+      <span class="p">REDMINE_DB_PASSWORD</span>: ${MYSQL_PASSWORD}
+      <span class="p">SECRET_KEY_BASE</span>: ${REDMINE_SECRET_KEY_BASE}</pre>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — serveur Redmine</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> chmod 600 .env                              <span class="c"># -rw------- : propriétaire seul</span>
+<span class="k">sudo</span> docker compose config | grep <span class="p">-i</span> password   <span class="c"># les valeurs du .env doivent apparaître</span>
+<span class="k">sudo</span> docker compose up <span class="p">-d</span>                       <span class="c"># recrée les conteneurs ; volumes conservés</span></pre>
+            </div>
+            <ul>
+                <li>Syntaxe d'un <code>.env</code> : <code>NOM=valeur</code>, sans espace autour du <code>=</code> — pas <code>NOM: valeur</code> comme dans le Compose. Et il ne va <strong>jamais</strong> dans un dépôt Git (<code>.gitignore</code>).</li>
+                <li>Au démarrage, un <code>Can't connect to server on 'db'</code> dans les logs est normal : <code>depends_on</code> attend que MariaDB <strong>démarre</strong>, pas qu'elle soit <strong>prête</strong>. Redmine réessaie et se connecte.</li>
+            </ul>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Deux pièges silencieux</p>
+                <p>Un nom de variable mal tapé (<code>${MSQL_USER}</code>) ne provoque <strong>aucune erreur</strong> : Compose le remplace par une chaîne vide, avec un simple avertissement — <code>docker compose config</code> le montre. Et sur une base <strong>existante</strong>, on garde les <strong>mêmes valeurs</strong> : MariaDB ne lit <code>MARIADB_*</code> qu'à la création de la base ; un mot de passe changé dans le <code>.env</code> ne changerait pas celui de la base, et Redmine ne pourrait plus s'y connecter.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Secrets dans un <strong><code>.env</code> en 600</strong>, hors de Git ; <code>${VARIABLE}</code> dans le Compose ; <strong><code>docker compose config</code></strong> pour vérifier le remplacement avant de relancer.</p>
+            </div>
+        </section>
+
+        <!-- 06 -->
+        <section class="chapter" id="sauvegarde">
+            <p class="chapter__num">06</p>
+            <h2 class="chapter__title">Sauvegarder Redmine</h2>
+            <p class="chapter__intro">Les données de Redmine sont à deux endroits : la <strong>base MariaDB</strong> (projets, tickets, comptes) et le volume des <strong>pièces jointes</strong>. Une sauvegarde complète prend les deux, plus la configuration (<code>docker-compose.yml</code> et <code>.env</code>) pour pouvoir tout reconstruire.</p>
+
+            <p>Le script du TP, <code>backup-redmine.sh</code>, range chaque sauvegarde dans un dossier daté :</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Étape</th><th>Commande utilisée</th><th>Résultat</th></tr></thead>
+                    <tbody>
+                        <tr><td>Lire le <code>.env</code></td><td><code>set -a; source .env; set +a</code></td><td>Les mots de passe de la base en variables</td></tr>
+                        <tr><td>Vérifier</td><td><code>docker inspect redmine-db</code> / <code>redmine-app</code></td><td>Arrêt si un conteneur manque</td></tr>
+                        <tr><td>Base</td><td><code>docker exec redmine-db mariadb-dump --single-transaction … | gzip</code></td><td><code>redmine-db.sql.gz</code></td></tr>
+                        <tr><td>Pièces jointes</td><td><code>docker run --rm --volumes-from redmine-app alpine tar czf …</code></td><td><code>redmine-files.tar.gz</code></td></tr>
+                        <tr><td>Configuration</td><td><code>cp docker-compose.yml .env</code></td><td>Copie du Compose et du <code>.env</code> (600)</td></tr>
+                        <tr><td>Rotation</td><td><code>find … -mindepth 1 -maxdepth 1 -type d -mtime +7 -exec rm -rf {} \;</code></td><td>Supprime les sauvegardes de plus de <strong>7 jours</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <ul>
+                <li><code>--single-transaction</code> : le dump se fait <strong>sans bloquer</strong> Redmine, sur une photo cohérente de la base.</li>
+                <li><code>--volumes-from redmine-app</code> : un conteneur <code>alpine</code> jetable monte les mêmes volumes que Redmine et archive les pièces jointes.</li>
+                <li>Un fichier vide arrête le script et supprime le dossier incomplet.</li>
+            </ul>
+
+            <h3>Tous les jours à 16 h</h3>
+            <p><strong>cron</strong> est le planificateur de tâches de Linux. <code>sudo crontab -e</code> ouvre la table de <strong>root</strong> (le script a besoin de ses droits) :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">crontab de root</span></div>
+                <pre class="terminal__code"><span class="c"># min heure jour mois jour-semaine  commande</span>
+0 16 * * * /home/admin/redmine/backup/backup-redmine.sh &gt;&gt; /home/admin/redmine/backups/backup.log 2&gt;&amp;1</pre>
+            </div>
+            <p><code>&gt;&gt; backup.log 2&gt;&amp;1</code> ajoute la sortie <strong>et</strong> les erreurs du script au journal. Vérifier avec <code>sudo crontab -l</code>, puis lire le journal après le premier passage.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Ce que cette sauvegarde ne couvre pas</p>
+                <p>Elle reste <strong>sur la VM elle-même</strong> : elle protège d'une erreur de manipulation, pas de la perte de la VM — en production, on la copie ailleurs. Elle n'emporte pas la configuration nginx du chapitre suivant. Le <code>.env</code> copié contient les mots de passe en clair. Et tant qu'aucune <strong>restauration</strong> n'a été testée, elle reste une hypothèse.</p>
+            </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Une sauvegarde applicative complète = <strong>base</strong> (dump cohérent) + <strong>fichiers</strong> (le volume) + <strong>configuration</strong>, avec une <strong>rotation</strong> et une planification. Puis la question de la <a href="homelab.html#backup">règle 3-2-1</a> : où est la copie qui survit à la perte du serveur ?</p>
+            </div>
+        </section>
+
+        <!-- 07 -->
+        <section class="chapter" id="https">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Publier Redmine en HTTPS derrière nginx</h2>
+            <p class="chapter__intro">En HTTP, les mots de passe — y compris ceux du domaine, via LDAP — passent en clair. On place devant Redmine un <strong>reverse proxy nginx</strong> : nginx reçoit les connexions en HTTPS, les déchiffre et les transmet à Redmine sur le réseau Docker interne.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Le chemin d'une requête</span></div>
+                <pre class="terminal__code">navigateur ──HTTPS 443──▶ redmine-nginx ──HTTP 3000──▶ redmine-app ──▶ redmine-db
+           ──HTTP 80 ───▶ (redirection 301 vers https://)</pre>
+            </div>
+
+            <h3>Le Compose</h3>
+            <p><code>redmine</code> ne publie plus aucun port : il n'est joignable que par nginx. Nouveau service <code>nginx</code> (<code>nginx:alpine</code>) qui publie <strong>80</strong> et <strong>443</strong>, avec ses dossiers <code>./nginx/conf.d</code> et <code>./nginx/certs</code> montés en lecture seule (<code>:ro</code>).</p>
+
+            <h3>Le certificat auto-signé</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — ~/redmine</span></div>
+                <pre class="terminal__code"><span class="k">openssl</span> genrsa <span class="p">-out</span> nginx/certs/redmine.key 4096
+<span class="k">openssl</span> req <span class="p">-x509 -new -nodes -key</span> nginx/certs/redmine.key <span class="p">-sha256 -days</span> 365 \
+  <span class="p">-out</span> nginx/certs/redmine.crt \
+  <span class="p">-subj</span> <span class="s">"/C=BE/O=LAB/OU=IT/CN=helpdesk.orion.local"</span> \
+  <span class="p">-addext</span> <span class="s">"subjectAltName=DNS:helpdesk.orion.local"</span></pre>
+            </div>
+            <p><code>-x509</code> produit directement un certificat ; <code>-nodes</code> laisse la clé non chiffrée, pour que nginx la lise sans phrase secrète ; le <strong>subjectAltName</strong> est indispensable — le CN seul ne suffit plus aux navigateurs. Auto-signé : le chiffrement fonctionne, mais le navigateur avertit, faute d'autorité qu'il connaisse.</p>
+
+            <h3>La configuration de nginx</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">nginx/conf.d/redmine.conf</span></div>
+                <pre class="terminal__code"><span class="k">server</span> {
+    <span class="p">listen</span> 80;
+    <span class="p">server_name</span> helpdesk.orion.local;
+    <span class="k">return</span> 301 https://$host$request_uri;          <span class="c"># HTTP → HTTPS</span>
+}
+<span class="k">server</span> {
+    <span class="p">listen</span> 443 ssl;
+    <span class="p">server_name</span> helpdesk.orion.local;
+    <span class="p">ssl_certificate</span>     /etc/nginx/certs/redmine.crt;
+    <span class="p">ssl_certificate_key</span> /etc/nginx/certs/redmine.key;
+    <span class="p">ssl_protocols</span> TLSv1.2 TLSv1.3;
+    <span class="p">client_max_body_size</span> 100M;                      <span class="c"># pièces jointes jusqu'à 100 Mo</span>
+    <span class="k">location</span> / {
+        <span class="p">proxy_pass</span> http://redmine:3000;             <span class="c"># le service redmine du Compose</span>
+        <span class="p">proxy_set_header</span> Host $host;
+        <span class="p">proxy_set_header</span> X-Real-IP $remote_addr;
+        <span class="p">proxy_set_header</span> X-Forwarded-For $proxy_add_x_forwarded_for;
+        <span class="p">proxy_set_header</span> X-Forwarded-Proto https;   <span class="c"># le client est en HTTPS</span>
+    }
+}</pre>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — vérifier</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> docker compose up <span class="p">-d</span>
+<span class="k">curl</span> <span class="p">-s -o</span> /dev/null <span class="p">-w</span> <span class="s">'%{http_code} %{redirect_url}\n'</span> http://helpdesk.orion.local/
+<span class="c"># 301 https://helpdesk.orion.local/</span>
+<span class="k">curl</span> <span class="p">-sk -o</span> /dev/null <span class="p">-w</span> <span class="s">'%{http_code}\n'</span> https://helpdesk.orion.local/   <span class="c"># -k : certificat auto-signé</span>
+<span class="c"># 200</span></pre>
+            </div>
+
+            <h3>Dire à Redmine son adresse</h3>
+            <p>Redmine ne voit que nginx : il ne connaît pas l'adresse publique du site. Or il en a besoin pour les <strong>liens absolus</strong> qu'il envoie hors du navigateur — notifications par e-mail, webhooks, API — sinon ils pointent vers <code>http://localhost:3000/…</code>. <strong>Administration &gt; Settings &gt; General</strong> : <em>Host name and path</em> = <code>helpdesk.orion.local</code>, <em>Protocol</em> = <strong>HTTPS</strong>.</p>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un reverse proxy : <strong>seul nginx publie des ports</strong>, il redirige 80 vers 443, termine le TLS et joint l'application <strong>par son nom de service</strong>. Les en-têtes <code>X-Forwarded-*</code> et le réglage <em>Host name / Protocol</em> rendent à l'application ce que le proxy lui cache : l'IP du client, le protocole et l'adresse publique.</p>
+            </div>
+        </section>
+
+        <div class="gloss">
+            <div class="gl"><b>SCSM</b><span>System Center Service Manager — la gestion des services de la suite System Center, remplacée ici par Redmine.</span></div>
+            <div class="gl"><b>ITSM</b><span>IT Service Management — la gestion des services informatiques : incidents, demandes.</span></div>
+            <div class="gl"><b>Tracker</b><span>Type de demande dans Redmine (anomalie, évolution, assistance…).</span></div>
+            <div class="gl"><b>Workflow</b><span>Passages de statut autorisés, par rôle et par tracker.</span></div>
+            <div class="gl"><b>LDAP / LDAPS</b><span>Protocole d'accès à l'annuaire, port 389 ; LDAPS, sa version chiffrée, port 636.</span></div>
+            <div class="gl"><b>sAMAccountName</b><span>L'attribut AD qui porte le login Windows, sans le domaine.</span></div>
+            <div class="gl"><b>.env</b><span>Fichier de variables lu par Compose pour remplacer les ${VARIABLE}.</span></div>
+            <div class="gl"><b>cron</b><span>Le planificateur de tâches de Linux ; une ligne = minute, heure, jour, mois, jour de semaine, commande.</span></div>
+            <div class="gl"><b>Reverse proxy</b><span>Serveur placé devant une application, qui reçoit les connexions et les lui transmet.</span></div>
+            <div class="gl"><b>SAN</b><span>subjectAltName — les noms qu'un certificat couvre, seuls pris en compte par les navigateurs.</span></div>
+        </div>
+
+        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <section class="test" id="test" data-test="redmine">
+            <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
+        </section>
+
+        <section class="brief">
+            <p class="brief__label">Une fois le test validé</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+        </section>
+    </main>
+</div>
+
+<footer>
+    <p><strong>Redmine</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Redmine en remplacement de SCSM »</p>
+</footer>
+
+<script src="../assets/catalogue.js?v=10"></script>
+<script src="../assets/app.js?v=10"></script>
+<script src="../assets/quiz-data.js?v=10"></script>
+<script src="../assets/quiz.js?v=10"></script>
+</body>
+</html>
