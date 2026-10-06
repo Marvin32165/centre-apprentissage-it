@@ -13,6 +13,7 @@
       navigation, fil d'Ariane, précédent / suivant, prérequis et suites,
       supports du cours ; au portail, carte interactive, suggestion du
       prochain module, boîte à outils et dossiers des cours
+   9. Thème clair / sombre et palette de recherche (Ctrl+K ou « / »)
 
    Les scores des tests sont écrits par assets/quiz.js sous la clé
    cai.scores ; ici on ne fait que les relire pour les afficher.
@@ -256,8 +257,11 @@
 
         var last = read(KEY_LAST, null);
         var tests = Object.keys(scores).length;
+        var srs = read('cai.srs', {}) || {};
+        var srsKeys = Object.keys(srs);
+        var srsDue = srsKeys.filter(function (k) { return srs[k] && srs[k].d <= Date.now(); }).length;
         var host = document.querySelector('.resume');
-        if (host && (last || started || tests)) {
+        if (host && (last || started || tests || srsKeys.length)) {
             var inner = document.createElement('div');
             inner.className = 'resume__inner';
             var bits = [];
@@ -269,8 +273,48 @@
                 '<span class="resume__label">Reprendre</span>' +
                 '<span class="resume__text">' + txt + '</span>' +
                 (last ? '<a class="resume__go" href="modules/' + last.file + '">Rouvrir le module →</a>' : '') +
-                '<button type="button" class="resume__reset">effacer ma progression</button>';
+                '<a class="resume__go resume__srs" href="revision.html">' + (srsDue ? srsDue + ' carte' + (srsDue > 1 ? 's' : '') + ' à réviser →' : 'Révision du jour →') + '</a>' +
+                '<span class="resume__tools">' +
+                    '<button type="button" class="resume__export">exporter ma progression</button>' +
+                    '<label class="resume__import">importer<input type="file" accept="application/json,.json" hidden></label>' +
+                    '<button type="button" class="resume__reset">effacer ma progression</button>' +
+                '</span>';
             host.appendChild(inner);
+
+            /* Export / import : un fichier JSON qui contient toutes les clés cai.*,
+               pour passer d'un poste à l'autre. Rien ne quitte le navigateur
+               sans action de l'utilisateur. */
+            inner.querySelector('.resume__export').addEventListener('click', function () {
+                var data = { format: 'cai-progression', version: 1, exporte: new Date().toISOString(), cles: {} };
+                try {
+                    for (var i = 0; i < window.localStorage.length; i++) {
+                        var k = window.localStorage.key(i);
+                        if (k && k.indexOf('cai.') === 0) data.cles[k] = window.localStorage.getItem(k);
+                    }
+                } catch (e) { /* ignoré */ }
+                var blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'progression-centre-it-' + new Date().toISOString().slice(0, 10) + '.json';
+                document.body.appendChild(a); a.click(); a.remove();
+                setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+            });
+            inner.querySelector('.resume__import input').addEventListener('change', function () {
+                var f = this.files && this.files[0];
+                if (!f) return;
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var data;
+                    try { data = JSON.parse(reader.result); } catch (e) { data = null; }
+                    if (!data || data.format !== 'cai-progression' || !data.cles) { window.alert('Ce fichier n\'est pas un export de progression du centre.'); return; }
+                    if (!window.confirm('Remplacer la progression de ce navigateur par celle du fichier (' + Object.keys(data.cles).length + ' éléments) ?')) return;
+                    try {
+                        Object.keys(data.cles).forEach(function (k) { if (k.indexOf('cai.') === 0) window.localStorage.setItem(k, data.cles[k]); });
+                    } catch (e) { /* ignoré */ }
+                    location.reload();
+                };
+                reader.readAsText(f);
+            });
             inner.querySelector('.resume__reset').addEventListener('click', function () {
                 if (!window.confirm('Effacer la progression et les résultats de tests enregistrés dans ce navigateur ?')) return;
                 try {
@@ -381,6 +425,194 @@
         return seq;
     }
 
+    var ICONS = {
+        search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+        moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>',
+        sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
+    };
+
+    /* ── Thème clair / sombre ──
+       Par défaut, celui du système. Un clic fixe l'autre et le mémorise
+       (cai.theme) ; un script en tête de chaque page l'applique avant
+       l'affichage, pour éviter un flash de la mauvaise couleur. */
+    function themeButton(btn) {
+        var root = document.documentElement;
+        var media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+        function current() { return root.dataset.theme || (media && media.matches ? 'dark' : 'light'); }
+        function paint() {
+            var dark = current() === 'dark';
+            btn.innerHTML = dark ? ICONS.sun : ICONS.moon;
+            btn.setAttribute('aria-label', dark ? 'Passer au thème clair' : 'Passer au thème sombre');
+            btn.title = btn.getAttribute('aria-label');
+        }
+        btn.addEventListener('click', function () {
+            var next = current() === 'dark' ? 'light' : 'dark';
+            root.dataset.theme = next;
+            try { window.localStorage.setItem('cai.theme', next); } catch (e) { /* ignoré */ }
+            paint();
+        });
+        if (media && media.addEventListener) media.addEventListener('change', paint);
+        paint();
+    }
+
+    /* ── Palette de recherche (Ctrl+K ou « / ») ──
+       Pages, modules du catalogue et chapitres de l'index de recherche,
+       chargé à la première ouverture s'il n'est pas déjà dans la page. */
+    var palette = (function () {
+        var el, input, list, items = [], active = 0, lastFocus = null, indexState = 'none';
+        function norm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+
+        function pages() {
+            var p = [
+                ['index.html', 'Portail', 'Parcours, carte des modules, reprise', '⌂'],
+                ['index.html#carte', 'Carte des modules', 'Prérequis et suites de chaque module', '◇'],
+                ['labo.html', 'Lab Orion', 'Plan d’adressage et ordre de construction', 'LAB'],
+                ['revision.html', 'Révision du jour', 'Cartes à revoir aujourd’hui', 'REV'],
+                ['examens.html', 'Examens', 'Examens de parcours et examen final', 'EX']
+            ];
+            return p.map(function (x) { return { href: SITE + x[0], title: x[1], sub: x[2], icon: x[3], group: 'Pages', hay: norm(x[1] + ' ' + x[2]) }; });
+        }
+        function modules() {
+            return ORDER.map(function (id) {
+                var m = mod(id), w = PARCOURS_OF[id];
+                return {
+                    href: MODS + id + '.html', title: m.title, icon: m.icon || '·', group: 'Modules',
+                    sub: (w ? 'Parcours ' + w.p.num + ' · ' + w.p.title + ' · ' : '') + stateText(id),
+                    hay: norm(m.title + ' ' + (m.short || '') + ' ' + id)
+                };
+            });
+        }
+        function chapters() {
+            return (window.SEARCH_INDEX || []).map(function (e) {
+                return {
+                    href: MODS + e.file + '#' + e.anchor, title: e.title, icon: '§', group: 'Chapitres',
+                    sub: e.module.replace(/ — Module$/, ''), hay: norm(e.title), body: norm(e.module + ' ' + e.snippet)
+                };
+            });
+        }
+        function loadIndex() {
+            if (window.SEARCH_INDEX || indexState !== 'none') return;
+            indexState = 'loading';
+            var sc = document.createElement('script');
+            sc.src = SITE + 'assets/search-index.js';
+            sc.onload = function () { indexState = 'done'; if (el && !el.hidden) render(); };
+            sc.onerror = function () { indexState = 'failed'; };
+            document.head.appendChild(sc);
+        }
+
+        function search(q) {
+            var all = pages().concat(modules());
+            if (!q) return all;
+            var words = norm(q).split(/\s+/).filter(Boolean);
+            function score(it) {
+                var s = 0;
+                for (var i = 0; i < words.length; i++) {
+                    var w = words[i];
+                    if (it.hay.indexOf(w) === 0) s += 6;
+                    else if (it.hay.indexOf(' ' + w) > -1) s += 4;
+                    else if (it.hay.indexOf(w) > -1) s += 3;
+                    else if (it.body && it.body.indexOf(w) > -1) s += 1;
+                    else return 0;
+                }
+                return s;
+            }
+            var found = all.concat(chapters()).map(function (it) { return { it: it, s: score(it) }; })
+                .filter(function (x) { return x.s > 0; })
+                .sort(function (a, b) { return b.s - a.s; });
+            var out = [], perGroup = { Pages: 0, Modules: 0, Chapitres: 0 };
+            found.forEach(function (x) {
+                var cap = x.it.group === 'Chapitres' ? 14 : 8;
+                if (perGroup[x.it.group]++ < cap) out.push(x.it);
+            });
+            var order = { Pages: 0, Modules: 1, Chapitres: 2 };
+            return out.sort(function (a, b) { return order[a.group] - order[b.group]; });
+        }
+
+        function render() {
+            var q = input.value.trim();
+            items = search(q);
+            active = Math.min(active, Math.max(items.length - 1, 0));
+            if (!items.length) {
+                list.innerHTML = '<p class="palette__empty">' + (indexState === 'loading' ? 'Chargement de l’index…' : 'Rien ne correspond à « ' + esc(q) + ' ».') + '</p>';
+                return;
+            }
+            var html = '', group = '';
+            items.forEach(function (it, i) {
+                if (it.group !== group) { group = it.group; html += '<p class="palette__group">' + group + '</p>'; }
+                html += '<a class="palette__item' + (i === active ? ' is-active' : '') + '" href="' + it.href + '" data-i="' + i + '" role="option"' + (i === active ? ' aria-selected="true"' : '') + '>' +
+                    '<span class="palette__icon">' + esc(it.icon) + '</span>' +
+                    '<span class="palette__title">' + esc(it.title) + '</span>' +
+                    '<span class="palette__sub">' + esc(it.sub) + '</span></a>';
+            });
+            list.innerHTML = html;
+        }
+        function move(d) {
+            if (!items.length) return;
+            active = (active + d + items.length) % items.length;
+            var nodes = list.querySelectorAll('.palette__item');
+            nodes.forEach(function (n, i) {
+                n.classList.toggle('is-active', i === active);
+                if (i === active) { n.setAttribute('aria-selected', 'true'); n.scrollIntoView({ block: 'nearest' }); }
+                else n.removeAttribute('aria-selected');
+            });
+        }
+        function build() {
+            el = document.createElement('div');
+            el.className = 'palette';
+            el.hidden = true;
+            el.innerHTML = '<div class="palette__box" role="dialog" aria-modal="true" aria-label="Rechercher dans le centre">' +
+                '<input class="palette__input" type="text" placeholder="Un module, un chapitre, une notion…" aria-label="Rechercher" autocomplete="off" spellcheck="false">' +
+                '<div class="palette__list" role="listbox"></div>' +
+                '<div class="palette__foot"><span><kbd>↑</kbd> <kbd>↓</kbd> naviguer</span><span><kbd>Entrée</kbd> ouvrir</span><span><kbd>Échap</kbd> fermer</span></div></div>';
+            document.body.appendChild(el);
+            input = el.querySelector('.palette__input');
+            list = el.querySelector('.palette__list');
+            input.addEventListener('input', function () { active = 0; render(); });
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowDown') { e.preventDefault(); move(1); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
+                else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (items[active]) { close(); location.href = items[active].href; }
+                }
+            });
+            list.addEventListener('mousemove', function (e) {
+                var a = e.target.closest('.palette__item');
+                if (a && +a.dataset.i !== active) { move(+a.dataset.i - active); }
+            });
+            list.addEventListener('click', function () { close(); });
+            el.addEventListener('mousedown', function (e) { if (e.target === el) close(); });
+        }
+        function open() {
+            if (!el) build();
+            loadIndex();
+            lastFocus = document.activeElement;
+            el.hidden = false;
+            document.documentElement.style.overflow = 'hidden';
+            input.value = '';
+            active = 0;
+            render();
+            input.focus();
+        }
+        function close() {
+            if (!el || el.hidden) return;
+            el.hidden = true;
+            document.documentElement.style.overflow = '';
+            if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
+        document.addEventListener('keydown', function (e) {
+            var k = e.key && e.key.toLowerCase();
+            if ((e.ctrlKey || e.metaKey) && k === 'k') { e.preventDefault(); if (el && !el.hidden) close(); else open(); return; }
+            if (e.key === 'Escape' && el && !el.hidden) { e.preventDefault(); close(); return; }
+            if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                var t = e.target, tag = t && t.tagName;
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+                e.preventDefault(); open();
+            }
+        });
+        return { open: open, close: close };
+    })();
+
     /* ── Barre de navigation du site, sur toutes les pages ── */
     (function siteNav() {
         var here = pageFile;
@@ -391,6 +623,8 @@
             ['index.html#parcours', 'Parcours'],
             ['index.html#carte', 'Carte des modules'],
             ['index.html#outils', 'Outils & supports'],
+            ['labo.html', 'Lab Orion'],
+            ['revision.html', 'Révision'],
             ['examens.html', 'Examens']
         ].filter(function (l) {
             // Version publiée : ni supports ni outils (ils vivent dans le dépôt privé).
@@ -399,11 +633,18 @@
         nav.innerHTML = '<div class="sitenav__inner">' +
             '<a class="sitenav__home" href="' + SITE + 'index.html">Centre d’apprentissage IT</a>' +
             '<span class="sitenav__links">' + links.map(function (l) {
-                var cur = (l[0] === 'examens.html' && here === 'examens.html');
+                var cur = (l[0].indexOf('#') < 0 && l[0] === here);
                 return '<a href="' + SITE + l[0] + '"' + (cur ? ' aria-current="page"' : '') + '>' + l[1] + '</a>';
-            }).join('') + '</span></div>';
+            }).join('') + '</span>' +
+            '<span class="sitenav__tools">' +
+                '<button type="button" class="sitenav__btn sitenav__find" aria-label="Rechercher (Ctrl+K)">' + ICONS.search +
+                    '<span class="sitenav__btn-label">Rechercher</span><kbd>Ctrl K</kbd></button>' +
+                '<button type="button" class="sitenav__btn sitenav__theme" aria-label="Changer de thème">' + ICONS.moon + '</button>' +
+            '</span></div>';
         var progressEl = document.querySelector('.progress');
         document.body.insertBefore(nav, progressEl ? progressEl.nextSibling : document.body.firstChild);
+        nav.querySelector('.sitenav__find').addEventListener('click', function () { palette.open(); });
+        themeButton(nav.querySelector('.sitenav__theme'));
     })();
 
     /* ══ PAGE DE MODULE ══ */
@@ -601,8 +842,9 @@
             s.className = 'resume__go resume__go--next';
             s.href = MODS + sug + '.html';
             s.textContent = 'Suggestion : ' + mod(sug).short + ' →';
-            var reset = resumeInner.querySelector('.resume__reset');
-            resumeInner.insertBefore(s, reset);
+            // avant la révision et les outils (export, import, effacer)
+            var anchor = resumeInner.querySelector('.resume__srs') || resumeInner.querySelector('.resume__tools');
+            resumeInner.insertBefore(s, anchor);
         }
     }
 

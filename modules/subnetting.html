@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,10 +26,10 @@
         </div>
         <div class="hero__facts">
             <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
-            <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
-            <span class="fact"><b>Chapitres</b> 7</span>
-            <span class="fact"><b>Test</b> 8 questions</span>
-            <span class="fact"><b>Prérequis</b> aucun</span>
+            <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
+            <span class="fact"><b>Chapitres</b> 10</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="reseau-bases.html">Réseau : les bases</a></span>
         </div>
     </div>
 </header>
@@ -45,6 +46,9 @@
             <li><a class="toc__link" href="#mental"><span>05</span> Calcul mental rapide</a></li>
             <li><a class="toc__link" href="#vlsm"><span>06</span> VLSM pas à pas</a></li>
             <li><a class="toc__link" href="#exos"><span>07</span> Exercices corrigés</a></li>
+            <li><a class="toc__link" href="#wildcard"><span>08</span> Masques génériques</a></li>
+            <li><a class="toc__link" href="#ipv6-decoupe"><span>09</span> Découpage IPv6</a></li>
+            <li><a class="toc__link" href="#entrainement"><span>10</span> Entraînement illimité</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -66,8 +70,9 @@
                 <li>Découper un réseau en sous-réseaux de taille égale avec la méthode du <strong>block size</strong>.</li>
                 <li>Situer une adresse — réseau, broadcast, plage utilisable — de tête, en moins de 30 secondes.</li>
                 <li>Construire un plan VLSM complet, sans chevauchement ni gaspillage d'adresses.</li>
+                <li>Calculer un masque générique pour OSPF ou une ACL, et découper un préfixe IPv6 en réseaux /64.</li>
             </ul>
-            <p class="brief__foot"><strong>Prérequis :</strong> aucun</p>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="reseau-bases.html">Réseau : les bases</a> — au moins les chapitres sur IPv4 et le routage.</p>
             <p class="brief__foot">C'est le prérequis direct des modules <a href="ccna-reseau.html">CCNA — Réseau Cisco</a> et <a href="cisco-securite.html">Cisco IOS — sécurité</a>, où ces plans d'adressage se posent sur de vrais équipements — et les masques génériques des ACL s'en déduisent.</p>
         </section>
 
@@ -315,7 +320,7 @@
                 <p>Depuis <code>172.20.0.0/22</code>, prépare un plan pour quatre VLAN : Postes 400 hôtes, Serveurs 120, Wi-Fi 200, Management 25. Donne le masque et le bloc de chacun.</p>
                 <details class="reveal">
                     <summary>Afficher la correction</summary>
-                    <div class="reveal__body"><p>On sert du plus gros au plus petit. <strong>Postes 400</strong> → /23 (510 hôtes) : <code>172.20.0.0 → 172.20.1.255</code>. <strong>Wi-Fi 200</strong> → /24 (254) : <code>172.20.2.0 → .2.255</code>. <strong>Serveurs 120</strong> → /25 (126) : <code>172.20.3.0 → .3.127</code>. <strong>Management 25</strong> → /27 (30) : <code>172.20.3.128 → .3.159</code>. Il reste <code>172.20.3.160 → .3.255</code> de libre. En commençant par Management, le /23 des Postes n'aurait plus tenu.</p></div>
+                    <div class="reveal__body"><p>On sert du plus gros au plus petit. <strong>Postes 400</strong> → /23 (510 hôtes) : <code>172.20.0.0 → 172.20.1.255</code>. <strong>Wi-Fi 200</strong> → /24 (254) : <code>172.20.2.0 → .2.255</code>. <strong>Serveurs 120</strong> → /25 (126) : <code>172.20.3.0 → .3.127</code>. <strong>Management 25</strong> → /27 (30) : <code>172.20.3.128 → .3.159</code>. Il reste <code>172.20.3.160 → .3.255</code> de libre. Pourquoi du plus gros au plus petit ? Un bloc doit <strong>commencer sur un multiple de sa taille</strong> (un /23 démarre sur .0.0, .2.0, .4.0…). En servant les gros d'abord, chaque bloc suivant tombe naturellement aligné, sans trou. En commençant par Management (<code>172.20.0.0/27</code>), le /23 des Postes ne pourrait plus démarrer qu'en <code>172.20.2.0</code> : ça tient encore ici en recasant les autres dans les trous, mais le plan devient fragmenté et il ne reste plus de bloc contigu pour grandir.</p></div>
                 </details>
             </div>
 
@@ -331,13 +336,140 @@
         </section>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 08 -->
+        <section class="chapter" id="wildcard">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Les masques génériques (wildcard)</h2>
+            <p class="chapter__intro">OSPF et les ACL Cisco n'utilisent pas le masque, mais son <strong>inverse</strong> : le masque générique. Un bit à 0 veut dire « ce bit doit correspondre », un bit à 1 « peu importe ».</p>
+
+            <h3>Le calcul : 255 moins chaque octet</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Préfixe</th><th>Masque</th><th>Masque générique</th><th>Usage typique</th></tr></thead>
+                    <tbody>
+                        <tr><td>/32</td><td>255.255.255.255</td><td><code>0.0.0.0</code></td><td>Une seule adresse (<code>host 10.0.0.5</code>)</td></tr>
+                        <tr><td>/30</td><td>255.255.255.252</td><td><code>0.0.0.3</code></td><td>Un lien point à point</td></tr>
+                        <tr><td>/24</td><td>255.255.255.0</td><td><code>0.0.0.255</code></td><td>Un réseau de postes</td></tr>
+                        <tr><td>/21</td><td>255.255.248.0</td><td><code>0.0.7.255</code></td><td>Le VLAN Management du labo CCNA</td></tr>
+                        <tr><td>/16</td><td>255.255.0.0</td><td><code>0.0.255.255</code></td><td>Tout un plan d'adressage</td></tr>
+                        <tr><td>/0</td><td>0.0.0.0</td><td><code>255.255.255.255</code></td><td>N'importe quelle adresse (<code>any</code>)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — les mêmes masques génériques, deux usages</span></div>
+                <pre class="terminal__code"><span class="k">router</span> ospf 1
+ <span class="k">network</span> 10.2.104.0 0.0.7.255 area 0<span class="c">                 ! le /21 du VLAN 99</span>
+<span class="k">ip</span> access-list extended ACL-EXEMPLE
+ <span class="k">permit</span> tcp 10.2.104.0 0.0.7.255 any eq 22<span class="c">           ! SSH depuis ce même /21</span></pre>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Le piège</p>
+                <p>Un masque générique se calcule depuis le <strong>masque</strong>, pas depuis le préfixe tapé « au jugé » : <code>/21</code> → <code>255.255.248.0</code> → <code>0.0.7.255</code>. Écrire <code>0.0.0.255</code> pour un /21 ne couvrirait qu'un huitième du réseau, sans aucun message d'erreur.</p>
+            </div>
+            <div class="subgen" data-mode="wildcard">
+                <p class="subgen__label">Entraînement — masques génériques</p>
+                <p>Un préfixe au hasard : donne son masque générique. Autant de questions que tu veux.</p>
+                <noscript><p>Ce générateur a besoin de JavaScript.</p></noscript>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Masque générique = 255 − chaque octet du masque. <code>0</code> = doit correspondre, <code>255</code> = peu importe. <code>0.0.0.0</code> vise une adresse (<code>host</code>), <code>255.255.255.255</code> toutes (<code>any</code>).</p>
+            </div>
+        </section>
+
+        <!-- 09 -->
+        <section class="chapter" id="ipv6-decoupe">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">Découper en IPv6</h2>
+            <p class="chapter__intro">En IPv6, on ne compte plus les hôtes : un réseau local fait <strong>toujours /64</strong>, ce qui laisse 2<sup>64</sup> adresses. Le découpage porte sur le nombre de <strong>réseaux</strong>, et se fait en hexadécimal, de préférence par tranches de 4 bits.</p>
+
+            <h3>Ce qu'on reçoit, ce qu'on distribue</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Préfixe</th><th>Typiquement attribué à</th><th>Nombre de /64 dedans</th></tr></thead>
+                    <tbody>
+                        <tr><td>/32</td><td>Un fournisseur d'accès</td><td>4 294 967 296</td></tr>
+                        <tr><td>/48</td><td>Un site d'entreprise</td><td>65 536</td></tr>
+                        <tr><td>/56</td><td>Un abonné particulier ou une petite agence</td><td>256</td></tr>
+                        <tr><td>/64</td><td>Un réseau local (un VLAN)</td><td>1</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>La méthode : compter les bits entre le préfixe reçu et /64</h3>
+            <p>Avec <code>2001:db8:abcd::/48</code>, il reste 64 − 48 = <strong>16 bits</strong> pour numéroter les réseaux : le 4<sup>e</sup> groupe tout entier. Les réseaux s'écrivent donc <code>2001:db8:abcd:0000::/64</code>, <code>2001:db8:abcd:0001::/64</code>… jusqu'à <code>2001:db8:abcd:ffff::/64</code>.</p>
+            <p>Astuce lisible : <strong>reprendre le numéro de VLAN</strong> dans ce groupe. VLAN 10 → <code>2001:db8:abcd:10::/64</code>, VLAN 30 → <code>2001:db8:abcd:30::/64</code> (le labo CCNA fait exactement ça avec <code>2001:db8:cafe:30::/64</code>). Ces nombres s'écrivent en hexadécimal mais se lisent comme des numéros : c'est voulu.</p>
+            <p>Découper en restant sur des frontières de <strong>4 bits</strong> (un chiffre hexadécimal : /48, /52, /56, /60, /64) garde les adresses lisibles. Un /52 par bâtiment dans un /48 : 16 bâtiments (<code>…:0000::/52</code>, <code>…:1000::/52</code>, <code>…:2000::/52</code>…), chacun avec 4 096 réseaux /64.</p>
+            <div class="exo">
+                <p class="exo__label">Exercice — un plan IPv6</p>
+                <p>Ton site a reçu <code>2001:db8:42::/48</code>. Donne le /64 des VLAN 20 et 99 avec la convention « numéro de VLAN », puis l'adresse de la passerelle en <code>::1</code>. Combien de /56 tient ce /48 ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>VLAN 20 : <code>2001:db8:42:20::/64</code>, passerelle <code>2001:db8:42:20::1</code>. VLAN 99 : <code>2001:db8:42:99::/64</code>, passerelle <code>2001:db8:42:99::1</code>. Un /48 contient 2<sup>56−48</sup> = <strong>256</strong> /56.</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="2001:db8:cafe:70::/64;;2001:0db8:cafe:0070::/64;;2001:db8:cafe:70:0:0:0:0/64">
+                <p class="cmdex__label">À toi d'écrire</p>
+                <p>Écris le /64 du VLAN 70 dans le préfixe <code>2001:db8:cafe::/48</code>, avec la convention du labo.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>2001:db8:cafe:70::/64</code> — le numéro de VLAN dans le 4<sup>e</sup> groupe, le reste à zéro abrégé en <code>::</code>.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>En IPv6 : chaque réseau local en <strong>/64</strong>, un site en /48 (65 536 réseaux), et on découpe par tranches de 4 bits pour rester lisible. Mettre le numéro de VLAN dans le 4<sup>e</sup> groupe rend le plan évident.</p>
+            </div>
+        </section>
+
+        <!-- 10 -->
+        <section class="chapter" id="entrainement">
+            <p class="chapter__num">10</p>
+            <h2 class="chapter__title">Entraînement illimité</h2>
+            <p class="chapter__intro">Le subnetting est un réflexe, et un réflexe se travaille. Ces générateurs tirent une nouvelle question à chaque fois et corrigent en expliquant le raisonnement. Objectif : cinq bonnes réponses d'affilée, en moins de 30 secondes chacune.</p>
+
+            <div class="subgen" data-mode="situer">
+                <p class="subgen__label">Situer une adresse</p>
+                <p>Donne le réseau, le broadcast, la plage utilisable et le nombre d'hôtes. Utilise la méthode du block size (chapitre 05).</p>
+                <noscript><p>Ce générateur a besoin de JavaScript.</p></noscript>
+            </div>
+            <div class="subgen" data-mode="taille">
+                <p class="subgen__label">Dimensionner un réseau</p>
+                <p>Combien d'hôtes faut-il ? Trouve le plus petit préfixe qui convient.</p>
+                <noscript><p>Ce générateur a besoin de JavaScript.</p></noscript>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Contrôler un calcul sur une machine Linux.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">ipcalc</span> 192.168.1.130/26<span class="c">            # paquet ipcalc</span></pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">Address:   192.168.1.130        11000000.10101000.00000001.10 000010
+Netmask:   255.255.255.192 = 26 11111111.11111111.11111111.11 000000
+Wildcard:  0.0.0.63             00000000.00000000.00000000.00 111111
+=&gt;
+Network:   192.168.1.128/26     11000000.10101000.00000001.10 000000
+HostMin:   192.168.1.129
+HostMax:   192.168.1.190
+Broadcast: 192.168.1.191
+Hosts/Net: 62                    Class C, Private Internet</pre>
+                <p class="verify__fail"><code>ipcalc</code> n'est pas installé par défaut : <code>sudo apt install ipcalc</code>. Sous Windows, aucun équivalent intégré : la calculette du cours Cisco est dans le dépôt (outil <em>Subnetting — calculateur</em> du portail).</p>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Cinq bonnes réponses d'affilée, en moins de 30 secondes chacune, sur les deux générateurs : c'est le niveau attendu pour la suite (CCNA, labs Windows, examens).</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="subnetting">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -347,9 +479,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/watch?v=5WfiTHiU4x8&list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF" target="_blank" rel="noopener">Subnetting — NetworkChuck</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

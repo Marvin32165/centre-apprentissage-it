@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 3 h</span>
-            <span class="fact"><b>Chapitres</b> 11</span>
+            <span class="fact"><b>Chapitres</b> 12</span>
             <span class="fact"><b>Test</b> 8 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a></span>
         </div>
@@ -48,6 +49,7 @@
             <li><a class="toc__link" href="#tp-cluster"><span>09</span> TP — Créer le cluster de basculement</a></li>
             <li><a class="toc__link" href="#tp-fileserver"><span>10</span> TP — Quorum &amp; rôle Serveur de fichiers</a></li>
             <li><a class="toc__link" href="#tests-panne"><span>11</span> Tester le basculement et les pannes</a></li>
+            <li><a class="toc__link" href="#pratique"><span>12</span> S'entraîner</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -283,19 +285,19 @@
 
             <h3>L'infrastructure</h3>
             <div class="net">
-                <div class="node"><b>SRV-AD</b><span class="ip">192.168.10.2</span><span>Contrôleur de domaine + DNS — orion.local</span></div>
-                <div class="node"><b>CLUSTER1</b><span class="ip">192.168.10.3</span><span>Nœud 1 du cluster</span></div>
-                <div class="node"><b>CLUSTER2</b><span class="ip">192.168.10.4</span><span>Nœud 2 du cluster</span></div>
-                <div class="node"><b>SRV-SAN</b><span class="ip">192.168.10.5</span><span>Cible iSCSI — fournit les LUN</span></div>
-                <div class="node"><b>CLUSTER</b><span class="ip">192.168.10.10</span><span>Nom et IP du cluster lui-même</span></div>
+                <div class="node"><b>SRV-AD01</b><span class="ip">172.16.50.10</span><span>Contrôleur de domaine + DNS — orion.local</span></div>
+                <div class="node"><b>SRV-NODE1</b><span class="ip">172.16.50.71</span><span>Nœud 1 du cluster</span></div>
+                <div class="node"><b>SRV-NODE2</b><span class="ip">172.16.50.72</span><span>Nœud 2 du cluster</span></div>
+                <div class="node"><b>SRV-SAN01</b><span class="ip">172.16.50.70</span><span>Cible iSCSI — fournit les LUN</span></div>
+                <div class="node"><b>CLUSTER</b><span class="ip">172.16.50.75</span><span>Nom et IP du cluster lui-même</span></div>
             </div>
 
             <div class="tip">
                 <p class="tip__label">En production : trois réseaux, pas un</p>
-                <p>Le labo tient sur un seul segment, mais la bonne pratique sépare les flux : un réseau <strong>LAN</strong> (clients), un réseau <strong>Cluster</strong> (heartbeat entre nœuds) et un réseau <strong>iSCSI</strong> (stockage) — par exemple <code>192.168.10.0/24</code>, <code>192.168.20.0/24</code> et <code>192.168.30.0/24</code>. Le stockage ne doit pas se battre avec les utilisateurs pour la bande passante.</p>
+                <p>Le labo tient sur un seul segment, mais la bonne pratique sépare les flux : un réseau <strong>LAN</strong> (clients), un réseau <strong>Cluster</strong> (heartbeat entre nœuds) et un réseau <strong>iSCSI</strong> (stockage) — par exemple <code>172.16.50.0/24</code>, <code>172.16.51.0/24</code> et <code>172.16.52.0/24</code>. Le stockage ne doit pas se battre avec les utilisateurs pour la bande passante.</p>
             </div>
 
-            <h3>Étape 1 — Préparer le disque sur SRV-SAN</h3>
+            <h3>Étape 1 — Préparer le disque sur SRV-SAN01</h3>
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><p>Ouvrir <strong>File and Storage Services</strong>.</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><p>Clic droit sur le disque neuf → <strong>Initialiser</strong>. <em>Ne pas créer de volume à cette étape.</em></p></div></div>
@@ -309,12 +311,12 @@
             </div>
 
             <h3>Étape 3 — Le rôle iSCSI Target Server</h3>
-            <p>N'importe quel serveur peut jouer le rôle d'<em>initiator</em>. Le rôle à installer sur SRV-SAN, lui, est <strong>iSCSI Target Server</strong>.</p>
+            <p>N'importe quel serveur peut jouer le rôle d'<em>initiator</em>. Le rôle à installer sur SRV-SAN01, lui, est <strong>iSCSI Target Server</strong>.</p>
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><p>Installer le rôle, puis ouvrir <strong>File and Storage Services → iSCSI</strong>.</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><p>Créer un <strong>disque virtuel iSCSI</strong> : lecteur <code>E:</code> (le volume créé plus haut), nom <code>FILESERVER</code>, taille 40 Go.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><p>Créer une <strong>cible iSCSI</strong> nommée <code>LUN-TARGET</code>.</p></div></div>
-                <div class="step"><div class="step__num">4</div><div class="step__body"><p>Dans <strong>Access servers</strong> → <em>Add</em> → <em>Query initiator computer for ID</em> → <em>Browse</em> → sélectionner CLUSTER1. Répéter pour CLUSTER2.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><p>Dans <strong>Access servers</strong> → <em>Add</em> → <em>Query initiator computer for ID</em> → <em>Browse</em> → sélectionner SRV-NODE1. Répéter pour SRV-NODE2.</p></div></div>
                 <div class="step"><div class="step__num">5</div><div class="step__body"><p><em>Next</em>, puis <em>Create</em>.</p></div></div>
             </div>
 
@@ -335,15 +337,15 @@
             <h2 class="chapter__title">TP — Connecter les initiateurs iSCSI</h2>
             <p class="chapter__intro">Côté nœuds, il s'agit maintenant d'aller chercher les LUN pour qu'ils apparaissent comme des disques locaux.</p>
 
-            <h3>Sur CLUSTER1 et CLUSTER2</h3>
+            <h3>Sur SRV-NODE1 et SRV-NODE2</h3>
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><p>Ouvrir <strong>iSCSI Initiator</strong> (le service démarre au premier lancement, accepter).</p></div></div>
-                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Onglet <strong>Targets</strong> → saisir <code>srv-san.orion.local</code> (ou l'IP du réseau iSCSI).</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Onglet <strong>Targets</strong> → saisir <code>srv-san01.orion.local</code> (ou l'IP du réseau iSCSI).</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Quick Connect</strong><p>, sélectionner <code>LUN-TARGET</code>, puis <strong>Connect</strong>.</p></div></div>
             </div>
 
             <h3>Initialiser les disques — depuis un seul nœud</h3>
-            <p>Les deux nouveaux disques apparaissent alors dans <strong>Disk Management</strong> sur les deux nœuds. On ne les prépare que <strong>depuis CLUSTER1</strong> :</p>
+            <p>Les deux nouveaux disques apparaissent alors dans <strong>Disk Management</strong> sur les deux nœuds. On ne les prépare que <strong>depuis SRV-NODE1</strong> :</p>
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><p>Clic droit sur le disque de données → <strong>Online</strong> → <strong>Initialize</strong> en <strong>GPT</strong>.</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><p>Même chose pour le petit disque de quorum.</p></div></div>
@@ -364,7 +366,7 @@
 
             <h3>Installer la fonctionnalité (sur les deux nœuds)</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur CLUSTER1 et CLUSTER2</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur SRV-NODE1 et SRV-NODE2</span></div>
                 <pre class="terminal__code"><span class="k">Install-WindowsFeature</span> <span class="s">Failover-Clustering</span> <span class="p">-IncludeManagementTools</span></pre>
             </div>
             <p>Puis ouvrir <strong>Tools → Failover Cluster Manager</strong>.</p>
@@ -377,15 +379,15 @@
 
             <h3>Créer le cluster</h3>
             <div class="steps">
-                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Create Cluster</strong><p>→ ajouter CLUSTER1.</p></div></div>
-                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Nom du cluster : <code>CLUSTER</code> — adresse IP : <code>192.168.10.10</code>.</p></div></div>
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Create Cluster</strong><p>→ ajouter SRV-NODE1.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Nom du cluster : <code>CLUSTER</code> — adresse IP : <code>172.16.50.75</code>.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><p><em>Next</em>, puis <em>Finish</em>. Inutile de relancer les tests s'ils viennent d'être passés.</p></div></div>
             </div>
 
             <h3>Ajouter le deuxième nœud</h3>
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><p>Dans Failover Cluster Manager, ouvrir <strong>Nodes</strong> → <strong>Add Node</strong>.</p></div></div>
-                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Ajouter CLUSTER2, puis dérouler l'assistant jusqu'à <em>Finish</em>.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><p>Ajouter SRV-NODE2, puis dérouler l'assistant jusqu'à <em>Finish</em>.</p></div></div>
             </div>
 
             <h3>Vérifier que le cluster existe vraiment</h3>
@@ -439,14 +441,14 @@
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><p>Retirer le disque de données des <strong>Cluster Shared Volumes</strong> (le rôle File Server « general use » veut un disque classique).</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Configure Role</strong><p>→ <strong>File Server</strong> → type <em>File Server for general use</em>.</p></div></div>
-                <div class="step"><div class="step__num">3</div><div class="step__body"><p>Nom du serveur de fichiers : <code>SRV-FS01</code>, adresse IP dédiée (ex. <code>192.168.10.60</code>).</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><p>Nom du serveur de fichiers : <code>SRV-FS01</code>, adresse IP dédiée (ex. <code>172.16.50.76</code>).</p></div></div>
                 <div class="step"><div class="step__num">4</div><div class="step__body"><p>Sélectionner le disque partagé, puis terminer l'assistant.</p></div></div>
                 <div class="step"><div class="step__num">5</div><div class="step__body"><p>Créer un partage sur ce disque et y accéder depuis un client via <code>\\SRV-FS01\NomDuPartage</code>.</p></div></div>
             </div>
 
             <div class="tip">
                 <p class="tip__label">Le nom qui compte</p>
-                <p>Les clients ne se connectent <strong>jamais</strong> à CLUSTER1 ou CLUSTER2 : ils utilisent <code>\\SRV-FS01\…</code>. C'est ce nom-là qui bascule d'un nœud à l'autre, et c'est tout l'intérêt de l'opération.</p>
+                <p>Les clients ne se connectent <strong>jamais</strong> à SRV-NODE1 ou SRV-NODE2 : ils utilisent <code>\\SRV-FS01\…</code>. C'est ce nom-là qui bascule d'un nœud à l'autre, et c'est tout l'intérêt de l'opération.</p>
             </div>
         </section>
 
@@ -457,9 +459,9 @@
             <p class="chapter__intro">Un cluster non testé est un cluster dont on ignore le comportement. Cinq scénarios, du plus doux au plus brutal — avec ce qu'on doit observer.</p>
 
             <div class="steps">
-                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Test 1 — Déplacement manuel.</strong><p>Déplacer les ressources de CLUSTER1 vers CLUSTER2, puis revenir. Vérifier l'état après chaque opération.<br>
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Test 1 — Déplacement manuel.</strong><p>Déplacer les ressources de SRV-NODE1 vers SRV-NODE2, puis revenir. Vérifier l'état après chaque opération.<br>
                     <em>Observé :</em> le rôle passe <strong>offline</strong> quelques instants, puis revient <strong>online</strong> sur l'autre nœud.</p></div></div>
-                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Test 2 — Arrêt d'un nœud.</strong><p>Placer le rôle File Server sur CLUSTER1, ouvrir un partage depuis un client, puis arrêter CLUSTER1.<br>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Test 2 — Arrêt d'un nœud.</strong><p>Placer le rôle File Server sur SRV-NODE1, ouvrir un partage depuis un client, puis arrêter SRV-NODE1.<br>
                     <em>Observé :</em> le rôle passe en <strong>pending</strong>, puis après quelques secondes l'autre nœud l'héberge et le partage redevient accessible.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Test 3 — Perte du réseau Cluster.</strong><p>Désactiver temporairement la carte dédiée au heartbeat sur un nœud.<br>
                     <em>Observé :</em> rien ne change côté service — le cluster bascule son trafic interne sur un autre réseau disponible. C'est exactement ce que la redondance réseau est censée produire.</p></div></div>
@@ -480,13 +482,75 @@
         </section>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 12 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">12</p>
+            <h2 class="chapter__title">S'entraîner : vérifier le stockage et le cluster</h2>
+            <p class="chapter__intro">Les commandes qui prouvent que le SAN, les initiateurs et le cluster sont dans l'état voulu, et le calcul de droits qui tombe à chaque examen.</p>
+
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Les nœuds voient-ils la cible iSCSI ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-NODE1</span></div>
+                <pre class="terminal__code"><span class="k">Get-IscsiSession</span> | <span class="k">Select-Object</span> TargetNodeAddress, IsConnected, IsPersistent
+<span class="k">Get-Disk</span> | <span class="k">Where-Object</span> BusType <span class="p">-eq</span> iSCSI</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">TargetNodeAddress                                   IsConnected IsPersistent
+-----------------                                   ----------- ------------
+iqn.1991-05.com.microsoft:srv-san01-cible-target    True        True</pre>
+                <p class="verify__fail"><code>IsPersistent : False</code> : la session ne reviendra pas après un redémarrage (cocher « Add this connection to the list of Favorite Targets »). Pas de session : l'IQN de l'initiateur n'est pas autorisé sur la cible, ou le port 3260 est filtré.</p>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le cluster est-il sain, et qui porte le rôle ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — un nœud</span></div>
+                <pre class="terminal__code"><span class="k">Get-ClusterNode</span>
+<span class="k">Get-ClusterGroup</span>
+<span class="k">Get-ClusterQuorum</span></pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">Name       State Type
+----       ----- ----
+SRV-NODE1  Up    Node
+SRV-NODE2  Up    Node
+
+Name       OwnerNode  State
+----       ---------  -----
+SRV-FS01   SRV-NODE1  Online</pre>
+                <p class="verify__fail">Un nœud <code>Down</code> ou <code>Paused</code> : vérifier le réseau de battement de cœur et le service de cluster. Avant tout changement, <code>Test-Cluster</code> produit un rapport complet.</p>
+            </div>
+            <div class="cmdex" data-accept="Move-ClusterGroup (-Name )?&quot;?SRV-FS01&quot;? -Node &quot;?SRV-NODE2&quot;?">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Déplace le rôle <code>SRV-FS01</code> sur le nœud <code>SRV-NODE2</code>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>Move-ClusterGroup -Name SRV-FS01 -Node SRV-NODE2</code> — c'est le test 1 du chapitre basculement, en une ligne. Les clients de <code>\\SRV-FS01</code> ne doivent voir qu'une courte coupure.</p></div>
+                </details>
+            </div>
+            <div class="exo">
+                <p class="exo__label">Exercice — le droit effectif</p>
+                <p>Le dossier <code>Compta</code> est partagé avec <em>Everyone : Read</em>. En NTFS, <code>ACC-GRP</code> a <em>Modify</em> et <code>Users</em> a <em>Read &amp; Execute</em>. Quel est le droit de Benjamin (membre d'ACC-GRP) par le réseau ? Et s'il ouvre une session sur le serveur ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>Par le réseau : NTFS donne Modify (le cumul de ses groupes), le partage donne Read → le plus restrictif : <strong>Read</strong>. En local, le partage ne compte pas : <strong>Modify</strong>. Correction habituelle : partage en <em>Change</em> (ou <em>Full</em>) pour les utilisateurs authentifiés, et tout le réglage fin en NTFS.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>Get-IscsiSession</code> pour le SAN, <code>Get-ClusterNode</code> / <code>Get-ClusterGroup</code> pour le cluster, <code>Move-ClusterGroup</code> pour tester une bascule. Droit effectif réseau = le plus restrictif entre partage et NTFS.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="storage-clustering">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -496,9 +560,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

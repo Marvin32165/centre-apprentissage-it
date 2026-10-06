@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -24,9 +25,9 @@
         </div>
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
-            <span class="fact"><b>Durée</b> ≈ 3 h</span>
-            <span class="fact"><b>Chapitres</b> 7</span>
-            <span class="fact"><b>Test</b> 8 questions</span>
+            <span class="fact"><b>Durée</b> ≈ 5 h 30</span>
+            <span class="fact"><b>Chapitres</b> 11</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="subnetting.html">Subnetting</a> · <a href="ccna-reseau.html">CCNA</a> (utile)</span>
         </div>
     </div>
@@ -44,6 +45,10 @@
             <li><a class="toc__link" href="#inter-vlan"><span>05</span> Routage inter-VLAN</a></li>
             <li><a class="toc__link" href="#stp"><span>06</span> Spanning tree, PortFast &amp; BPDU Guard</a></li>
             <li><a class="toc__link" href="#acl"><span>07</span> Filtrer avec les ACL</a></li>
+            <li><a class="toc__link" href="#acl-depannage"><span>08</span> Dépanner une ACL</a></li>
+            <li><a class="toc__link" href="#snooping"><span>09</span> DHCP snooping & DAI</a></li>
+            <li><a class="toc__link" href="#labs"><span>10</span> Les TP du cours</a></li>
+            <li><a class="toc__link" href="#reflexes"><span>11</span> Commandes par cœur</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -390,13 +395,243 @@
         </section>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 08 -->
+        <section class="chapter" id="acl-depannage">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Dépanner une ACL : ping, traceroute et compteurs</h2>
+            <p class="chapter__intro">Le TP 6.5 du cours n'apprend pas à écrire une ACL : il apprend à trouver celle qui bloque. La méthode tient en trois outils — ce que répond <code>ping</code>, ce que montre <code>traceroute</code>, et les compteurs de l'ACL.</p>
+
+            <h3>Lire la réponse, caractère par caractère</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Ping IOS</th><th>Sens</th><th>Traceroute IOS</th><th>Sens</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>!</code></td><td>Réponse reçue</td><td><code>*</code></td><td>Sonde sans réponse</td></tr>
+                        <tr><td><code>.</code></td><td>Aucune réponse (silence)</td><td><code>A</code></td><td><strong>Refusé par une règle administrative : la signature d'une ACL</strong></td></tr>
+                        <tr><td><code>U</code></td><td>Destination injoignable signalée par un routeur</td><td><code>H</code> / <code>N</code> / <code>P</code></td><td>Hôte / réseau / protocole injoignable</td></tr>
+                        <tr><td><code>Q</code>, <code>M</code>, <code>&amp;</code></td><td>Saturation, paquet non fragmentable, TTL dépassé</td><td><code>U</code> / <code>T</code></td><td>Port injoignable / délai dépassé</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Le <code>ping</code> dit que ça ne passe pas ; le <code>traceroute</code> dit <strong>où</strong>. Et un symptôme <strong>sélectif</strong> (le ping passe, Telnet ou le web non) désigne presque toujours un filtre : ce n'est pas une coupure, c'est une décision.</p>
+            <h3>Deux vérifications, toujours</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — le contenu de l'ACL, puis où et dans quel sens elle s'applique</span></div>
+                <pre class="terminal__code">R1# <span class="k">show</span> access-lists
+R1# <span class="k">show</span> ip interface g0/0 | include access list</pre>
+            </div>
+            <p>Mauvais sens d'application et règles dans le mauvais ordre donnent le même symptôme vu du poste ; les <strong>compteurs</strong> les distinguent : tous à zéro dans le premier cas (l'ACL ne voit pas le trafic), seul le mauvais <code>permit</code> ou <code>deny</code> qui monte dans le second. Pour mesurer proprement : <code>clear access-list counters</code>, refaire le test, relire.</p>
+            <div class="scenario">
+                <p class="scenario__label">Scénario de panne</p>
+                <p class="scenario__title">Le serveur répond au ping, pas à Telnet ni au web</p>
+                <p>Après le passage d'un collègue, les postes du LAN joignent le serveur en ping mais ni en Telnet ni en HTTP. Le routage n'a pas changé.</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Ce symptôme sélectif oriente vers…</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Un filtrage : une ACL laisse passer ICMP mais pas TCP 23 et 80</button>
+                        <button class="scenario__opt" data-why="Une route manquante couperait aussi le ping.">Une route manquante</button>
+                        <button class="scenario__opt" data-why="Le ping passe : le chemin physique fonctionne.">Un câble défectueux</button>
+                    </div>
+                    <div class="scenario__why"><p>Un <code>traceroute</code> depuis un poste se termine par <code>A</code> au niveau de R2 : une ACL refuse quelque chose.</p></div>
+                </div>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur R2, que lis-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>show access-lists</code> puis <code>show ip interface</code> pour le sens</button>
+                        <button class="scenario__opt" data-why="Les VLAN ne filtrent pas des ports TCP."><code>show vlan brief</code></button>
+                        <button class="scenario__opt" data-why="Le routage fonctionne, le ping le prouve."><code>show ip ospf neighbor</code></button>
+                    </div>
+                    <div class="scenario__why"><pre class="verify__out">Extended IP access list Outbound-ACL
+10 permit icmp any any (24 matches)
+20 permit tcp any any eq ftp</pre>
+            </div>
+                </div>
+                <div class="scenario__step">
+                    <p class="scenario__q">Telnet et HTTP n'apparaissent nulle part. Pourquoi sont-ils bloqués ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Par le refus implicite : aucune règle ne les autorise</button>
+                        <button class="scenario__opt" data-why="La règle 10 autorise ICMP ; elle ne refuse rien.">Par la règle 10</button>
+                        <button class="scenario__opt" data-why="Les postes n&#x27;ont pas d&#x27;ACL ; le &lt;code&gt;A&lt;/code&gt; du traceroute vient de R2.">Par une ACL sur le poste</button>
+                    </div>
+                    <div class="scenario__why"><p>Ce n'est pas une règle qui interdit : c'est <strong>l'absence</strong> d'une règle qui autorise. Sur une ACL, on cherche ce qui manque autant que ce qui est écrit.</p></div>
+                </div>
+                <div class="scenario__end"><strong>Correction :</strong> ajouter <code>permit tcp any any eq telnet</code> et <code>permit tcp any any eq www</code> à <code>Outbound-ACL</code> (et <code>permit udp any any</code> si l'on veut que <code>traceroute</code>, qui sonde en UDP chez Cisco, fonctionne). Vérifier : les compteurs des nouvelles lignes montent quand on teste.</div>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le <code>A</code> d'un traceroute signe une ACL. On vérifie <strong>deux choses</strong> : le contenu (<code>show access-lists</code>) et l'application (<code>show ip interface</code>). Les compteurs départagent mauvais sens et mauvais ordre. Et le refus implicite bloque tout ce qu'on a oublié d'autoriser.</p>
+            </div>
+        </section>
+
+        <!-- 09 -->
+        <section class="chapter" id="snooping">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">Complément : DHCP snooping et Dynamic ARP Inspection</h2>
+            <p class="chapter__intro">Deux protections de couche 2 que le cours ne pratique pas, mais que l'exercice final CCNA vérifie et que tout réseau d'entreprise devrait avoir. Elles répondent à deux attaques simples : un faux serveur DHCP, et l'usurpation de la passerelle par ARP.</p>
+
+            <p class="theory"><b>Complément hors TP</b> — rédigé d'après la documentation Cisco, pas pratiqué en séance. À tester dans Packet Tracer avant de s'y fier.</p>
+            <div class="cards">
+                <div class="card">
+                    <h4>DHCP snooping</h4>
+                    <p>Le switch classe ses ports en <strong>trusted</strong> (vers le vrai serveur DHCP ou le routeur) et <strong>untrusted</strong> (les postes). Une réponse DHCP qui arrive sur un port non fiable est jetée : un PC ou une box branchée par erreur ne peut plus distribuer de fausses adresses. Au passage, le switch construit une table <em>IP ↔ MAC ↔ port</em>.</p>
+                </div>
+                <div class="card">
+                    <h4>Dynamic ARP Inspection</h4>
+                    <p>S'appuie sur cette table : une réponse ARP qui ne correspond pas à un bail connu est jetée. Un attaquant ne peut plus se faire passer pour la passerelle (<em>ARP spoofing</em>, chapitre ARP de <a href="reseau-bases.html#arp">Réseau : les bases</a>).</p>
+                </div>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — SW1, VLAN 10</span></div>
+                <pre class="terminal__code"><span class="k">ip</span> dhcp snooping
+<span class="k">ip</span> dhcp snooping vlan 10
+<span class="k">no</span> ip dhcp snooping information option<span class="c">     ! souvent nécessaire avec un serveur DHCP sur routeur Cisco</span>
+<span class="k">interface</span> gi0/1
+ <span class="k">ip</span> dhcp snooping trust<span class="c">                     ! le lien montant, vers le serveur DHCP</span>
+ <span class="k">ip</span> arp inspection trust
+<span class="k">ip</span> arp inspection vlan 10</pre>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>La table se remplit-elle, et l'inspection est-elle active ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS</span></div>
+                <pre class="terminal__code">SW1# <span class="k">show</span> ip dhcp snooping binding
+SW1# <span class="k">show</span> ip arp inspection vlan 10</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">MacAddress          IpAddress     Lease(sec)  Type           VLAN  Interface
+00:50:A1:2B:3C:4D   10.2.112.51   604780      dhcp-snooping  10    FastEthernet0/1</pre>
+                <p class="verify__fail">Plus aucun poste n'obtient d'adresse après l'activation : le port vers le serveur DHCP n'est pas en <code>trust</code>. Les postes en adresse fixe perdent le réseau avec DAI : il faut les déclarer (ACL ARP) ou ne pas activer DAI sur leur VLAN.</p>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>DHCP snooping : ports <strong>trust</strong> vers le vrai DHCP, tout le reste non fiable ; DAI vérifie les ARP contre la table ainsi construite. Toujours activer avec la console sous la main : un oubli de <code>trust</code> coupe le DHCP de tout un VLAN.</p>
+            </div>
+        </section>
+
+        <!-- 10 -->
+        <section class="chapter" id="labs">
+            <p class="chapter__num">10</p>
+            <h2 class="chapter__title">Les TP du cours, et ce qu'ils ont établi</h2>
+            <p class="chapter__intro">Les exercices du cours se rejouent dans Packet Tracer à partir des dossiers <code>cisco-securite/exercices/</code>. Voici, pour chacun, ce qu'il faut avoir constaté soi-même — c'est plus utile qu'une configuration recopiée.</p>
+
+            <div class="lab" data-lab="ciscosec-td32">
+                <p class="lab__label">Lab guidé</p>
+                <p class="lab__title">TD 3.2 — sécuriser un switch, et provoquer une violation</p>
+                <div class="lab__meta"><span><b>Objectif :</b> voir de ses yeux ce que fait port-security, et pourquoi err-disabled ne se lève pas tout seul</span><span><b>Point de départ :</b> R1 et S1 reliés par Fa0/5, un PC sur Fa0/6, réseau de gestion en VLAN 99 (dossier <code>03. Cisco IOS - bases de la sécurité/3.2</code>)</span><span><b>Durée :</b> 45 min</span></div>
+                <ol class="lab__steps">
+                <li><p>Créer la SVI du VLAN 99 et lui donner son adresse. Constater qu'elle reste <code>down/down</code> tant qu'aucun port actif n'est dans le VLAN 99 — puis passer Fa0/5 et Fa0/6 en VLAN 99.</p></li>
+                <li><p>Mots de passe, bannière, SSH. <code>show ip ssh</code> répond <code>version 1.99</code> : le serveur accepte encore SSHv1 ; <code>ip ssh version 2</code> le corrige.</p></li>
+                <li><p>Port-security sur Fa0/5 (une MAC, violation <code>shutdown</code>), puis usurper une MAC sur R1 :</p><div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS</span></div>
+                <pre class="terminal__code">R1(config-if)# <span class="k">mac-address</span> aaaa.bbbb.cccc
+S1# <span class="k">show</span> port-security interface fa0/5</pre>
+            </div>
+            </li>
+                <li><p>Constater : compteur de violation à 1, <code>Secure-shutdown</code>, port en <code>err-disabled</code>. Rendre sa MAC au routeur (<code>no mac-address</code>) : le port reste éteint. Le relever par <code>shutdown</code> puis <code>no shutdown</code>.</p></li>
+                </ol>
+            </div>
+            <div class="lab" data-lab="ciscosec-tp42">
+                <p class="lab__label">Lab guidé</p>
+                <p class="lab__title">TP 4.2 — mettre en place les VLAN, et comprendre les échecs voulus</p>
+                <div class="lab__meta"><span><b>Objectif :</b> segmenter, relier par un trunk, puis router — et savoir lire chaque ping qui échoue</span><span><b>Point de départ :</b> deux switchs, un routeur, deux postes (dossier <code>04. Cisco IOS - les VLAN/4.2</code>)</span><span><b>Durée :</b> 45 min</span></div>
+                <ol class="lab__steps">
+                <li><p>Ping entre les deux postes avant tout découpage : il passe.</p></li>
+                <li><p>Placer les postes dans deux VLAN : le ping échoue — normal, ils sont isolés, et changer de VLAN impose de changer de réseau IP.</p></li>
+                <li><p>Monter le trunk sans routeur : le ping échoue encore — relier n'est pas router.</p></li>
+                <li><p>Créer les sous-interfaces sur le routeur (<code>encapsulation dot1q</code> <strong>avant</strong> <code>ip address</code>, et <code>no shutdown</code> sur l'interface physique). Le ping passe enfin.</p></li>
+                <li><p>Retirer volontairement un VLAN d'un seul des deux switchs et observer : les listes du trunk discordent et les ports de ce VLAN deviennent inactifs.</p></li>
+                </ol>
+            </div>
+            <div class="lab" data-lab="ciscosec-tp52">
+                <p class="lab__label">Lab guidé</p>
+                <p class="lab__title">TP 5.2 — reprendre la main sur le spanning tree</p>
+                <div class="lab__meta"><span><b>Objectif :</b> choisir la racine par VLAN, mesurer le gain de PortFast, et le protéger par BPDU Guard</span><span><b>Point de départ :</b> la maquette du TP 4.2 avec un second câble entre les switchs (dossier <code>05. Cisco IOS - STP…/5.2</code>)</span><span><b>Durée :</b> 45 min</span></div>
+                <ol class="lab__steps">
+                <li><code>show spanning-tree</code> : noter la racine, le port bloqué, et la priorité lue (32 768 + numéro de VLAN).</li>
+                <li><p>SW1 racine des VLAN 1 et 10, SW2 du VLAN 20 : les deux câbles travaillent.</p><div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS</span></div>
+                <pre class="terminal__code">SW1(config)# <span class="k">spanning-tree</span> vlan 1,10 root primary
+SW2(config)# <span class="k">spanning-tree</span> vlan 20 root primary</pre>
+            </div>
+            </li>
+                <li><p>Débrancher puis rebrancher un PC : ~30 s avant de transmettre (listening puis learning). Avec <code>spanning-tree portfast</code> : moins d'une seconde.</p></li>
+                <li><p>Ajouter <code>spanning-tree bpduguard enable</code>, brancher un switch sur ce port : il passe en <code>err-disabled</code>. Retirer le switch ne suffit pas : <code>shutdown</code> / <code>no shutdown</code>.</p></li>
+                </ol>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Les leçons qui reviennent dans chaque TP : une SVI a besoin d'un port actif dans son VLAN ; un port <code>err-disabled</code> ne se relève qu'à la main ; <code>allowed vlan</code> remplace la liste ; la racine se choisit ; et chaque ping qui échoue se lit avant de corriger.</p>
+            </div>
+        </section>
+
+        <!-- 11 -->
+        <section class="chapter" id="reflexes">
+            <p class="chapter__num">11</p>
+            <h2 class="chapter__title">Les commandes à taper sans regarder</h2>
+            <p class="chapter__intro">Une série d'exercices courts : la consigne, tu tapes la commande, la page corrige. Recommence jusqu'à tout faire sans hésiter — c'est ce qu'on attend en examen pratique.</p>
+
+            <div class="cmdex" data-accept="sw(itchport)? port-sec(urity)?">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Sur l'interface <code>fa0/6</code>, active port-security (première commande, avant tout réglage).</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>switchport port-security</code> — sans elle, les autres lignes <code>switchport port-security …</code> sont acceptées mais n'agissent pas. Le port doit être en mode access.</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="sw(itchport)? port-sec(urity)? max(imum)? 2">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Limite ce port à <strong>2</strong> adresses MAC.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>switchport port-security maximum 2</code> — un PC et un téléphone IP derrière, par exemple.</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="sw(itchport)? port-sec(urity)? mac(-address)? sticky">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Fais apprendre automatiquement les adresses MAC autorisées et garde-les dans la configuration.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>switchport port-security mac-address sticky</code> : les adresses apprises s'écrivent dans la running-config (à sauvegarder ensuite avec <code>write</code>).</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="sh(ow?)? int(erfaces?)? st(atus)? err(-disabled)?" data-hint="show interfaces status …">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Affiche les ports éteints par une violation ou par BPDU Guard.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>show interfaces status err-disabled</code> — la colonne <em>Reason</em> dit qui a coupé le port (<code>psecure-violation</code>, <code>bpduguard</code>…).</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="access-class ADMIN-MGT in" data-hint="sur une ligne, ce n&#x27;est pas ip access-group.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Applique l'ACL standard nommée <code>ADMIN-MGT</code> aux lignes d'administration (tu es dans <code>line vty 0 15</code>).</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>access-class ADMIN-MGT in</code> — sur des lignes, c'est <code>access-class</code> ; <code>ip access-group</code> est réservé aux interfaces. Et sur un switch, il y a 16 lignes (<code>0 15</code>) : filtrer <code>0 4</code> en laisserait onze ouvertes.</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="(\d+ )?deny tcp host 10\.1\.1\.101 host 172\.16\.1\.100 eq (23|telnet);;(\d+ )?deny tcp 10\.1\.1\.101 0\.0\.0\.0 172\.16\.1\.100 0\.0\.0\.0 eq (23|telnet)">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Écris la règle d'ACL étendue qui refuse Telnet de l'hôte <code>10.1.1.101</code> vers l'hôte <code>172.16.1.100</code>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>deny tcp host 10.1.1.101 host 172.16.1.100 eq 23</code> — refuser / TCP / de cet hôte / vers cet hôte / port de destination 23. Sans <code>permit ip any any</code> ensuite, tout le reste serait bloqué aussi.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Port-security en quatre lignes (activer, maximum, sticky, violation), <code>show interfaces status err-disabled</code> pour les ports coupés, <code>access-class</code> sur les lignes et <code>ip access-group</code> sur les interfaces.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="cisco-securite">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#reseau">examen du Parcours 03 · Réseau &amp; téléphonie</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#reseau">examen du Parcours 03 · Réseau &amp; téléphonie</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -406,9 +641,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

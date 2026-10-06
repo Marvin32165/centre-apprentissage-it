@@ -7,11 +7,13 @@ window.CATALOGUE = {
       "num": "01",
       "title": "Fondations",
       "exam": "fondations",
-      "desc": "Un labo à soi, un terminal maîtrisé, un plan d'adressage qui tient debout. Le socle de tout le reste.",
+      "desc": "Le réseau d'abord — des trames aux pages web —, un plan d'adressage qui tient debout, un labo à soi, un terminal maîtrisé et une méthode de dépannage. Le socle de tout le reste.",
       "modules": [
+        "reseau-bases",
+        "subnetting",
         "hyperv",
         "linux-debian",
-        "subnetting"
+        "depannage-reseau"
       ]
     },
     {
@@ -74,13 +76,27 @@ window.CATALOGUE = {
     }
   ],
   "modules": {
+    "reseau-bases": {
+      "title": "Réseau : les bases",
+      "short": "Réseau",
+      "icon": "IP",
+      "level": 1,
+      "duree": "5 h",
+      "chapters": 12,
+      "prereq": [],
+      "related": [
+        "subnetting",
+        "depannage-reseau",
+        "ccna-reseau"
+      ]
+    },
     "hyperv": {
       "title": "Hyper-V & labo virtuel",
       "short": "Hyper-V",
       "icon": "HV",
       "level": 1,
-      "duree": "1 h 30",
-      "chapters": 7,
+      "duree": "2 h",
+      "chapters": 8,
       "prereq": [],
       "related": [
         "proxmox",
@@ -92,8 +108,8 @@ window.CATALOGUE = {
       "short": "Linux Debian",
       "icon": "LX",
       "level": 1,
-      "duree": "4 h",
-      "chapters": 22,
+      "duree": "6 h",
+      "chapters": 25,
       "prereq": [],
       "related": [
         "docker",
@@ -107,13 +123,36 @@ window.CATALOGUE = {
       "short": "Subnetting",
       "icon": "/24",
       "level": 1,
-      "duree": "1 h 30",
-      "chapters": 7,
-      "prereq": [],
+      "duree": "2 h 30",
+      "chapters": 10,
+      "prereq": [
+        "reseau-bases"
+      ],
       "related": [
         "ccna-reseau",
         "cisco-securite",
         "azure"
+      ]
+    },
+    "depannage-reseau": {
+      "title": "Dépannage réseau",
+      "short": "Dépannage",
+      "icon": "?!",
+      "level": 2,
+      "duree": "3 h",
+      "chapters": 8,
+      "prereq": [
+        "reseau-bases",
+        "subnetting"
+      ],
+      "utile": [
+        "linux-debian"
+      ],
+      "related": [
+        "ccna-reseau",
+        "cisco-securite",
+        "monitoring-zabbix",
+        "redmine"
       ]
     },
     "windows-server": {
@@ -121,10 +160,13 @@ window.CATALOGUE = {
       "short": "Windows Server",
       "icon": "WS",
       "level": 2,
-      "duree": "2 h",
-      "chapters": 7,
+      "duree": "6 h",
+      "chapters": 13,
       "prereq": [
         "hyperv"
+      ],
+      "utile": [
+        "reseau-bases"
       ],
       "related": [
         "powershell",
@@ -136,8 +178,8 @@ window.CATALOGUE = {
       "short": "PowerShell",
       "icon": "PS",
       "level": 2,
-      "duree": "1 h 30",
-      "chapters": 6,
+      "duree": "5 h",
+      "chapters": 10,
       "prereq": [
         "hyperv",
         "windows-server"
@@ -153,7 +195,7 @@ window.CATALOGUE = {
       "icon": "SAN",
       "level": 2,
       "duree": "3 h",
-      "chapters": 11,
+      "chapters": 12,
       "prereq": [
         "windows-server"
       ],
@@ -167,8 +209,8 @@ window.CATALOGUE = {
       "short": "RDS",
       "icon": "RDS",
       "level": 2,
-      "duree": "1 h",
-      "chapters": 5,
+      "duree": "2 h 30",
+      "chapters": 7,
       "prereq": [
         "windows-server"
       ],
@@ -183,7 +225,7 @@ window.CATALOGUE = {
       "icon": "IIS",
       "level": 2,
       "duree": "2 h",
-      "chapters": 8,
+      "chapters": 9,
       "prereq": [
         "windows-server",
         "powershell"
@@ -200,7 +242,7 @@ window.CATALOGUE = {
       "icon": "EX",
       "level": 3,
       "duree": "1 h 30",
-      "chapters": 6,
+      "chapters": 7,
       "prereq": [
         "windows-server"
       ],
@@ -215,7 +257,7 @@ window.CATALOGUE = {
       "icon": "SQL",
       "level": 2,
       "duree": "4 h",
-      "chapters": 14,
+      "chapters": 15,
       "prereq": [
         "windows-server",
         "storage-clustering"
@@ -231,7 +273,7 @@ window.CATALOGUE = {
       "icon": "SP",
       "level": 3,
       "duree": "4 h",
-      "chapters": 18,
+      "chapters": 19,
       "prereq": [
         "windows-server",
         "sql-server"
@@ -246,7 +288,7 @@ window.CATALOGUE = {
       "icon": "DPM",
       "level": 3,
       "duree": "2 h 30",
-      "chapters": 8,
+      "chapters": 9,
       "prereq": [
         "windows-server",
         "sql-server"
@@ -265,10 +307,14 @@ window.CATALOGUE = {
       "short": "CCNA",
       "icon": "NET",
       "level": 2,
-      "duree": "2 h 30",
-      "chapters": 9,
+      "duree": "8 h",
+      "chapters": 15,
       "prereq": [
+        "reseau-bases",
         "subnetting"
+      ],
+      "utile": [
+        "depannage-reseau"
       ],
       "related": [
         "cisco-securite",
@@ -280,8 +326,8 @@ window.CATALOGUE = {
       "short": "Cisco sécurité",
       "icon": "ACL",
       "level": 2,
-      "duree": "3 h",
-      "chapters": 7,
+      "duree": "5 h 30",
+      "chapters": 11,
       "prereq": [
         "subnetting"
       ],
@@ -298,11 +344,13 @@ window.CATALOGUE = {
       "short": "VoIP",
       "icon": "SIP",
       "level": 1,
-      "duree": "2 h",
-      "chapters": 9,
-      "prereq": [],
+      "duree": "3 h",
+      "chapters": 11,
+      "prereq": [
+        "reseau-bases"
+      ],
       "utile": [
-        "subnetting"
+        "ccna-reseau"
       ],
       "related": [
         "cisco-securite"
@@ -314,7 +362,7 @@ window.CATALOGUE = {
       "icon": "PVE",
       "level": 2,
       "duree": "2 h 30",
-      "chapters": 9,
+      "chapters": 10,
       "prereq": [],
       "utile": [
         "linux-debian"
@@ -330,7 +378,7 @@ window.CATALOGUE = {
       "icon": "DK",
       "level": 2,
       "duree": "3 h",
-      "chapters": 8,
+      "chapters": 9,
       "prereq": [
         "linux-debian"
       ],
@@ -345,7 +393,7 @@ window.CATALOGUE = {
       "icon": "LAB",
       "level": 1,
       "duree": "1 h 30",
-      "chapters": 8,
+      "chapters": 9,
       "prereq": [
         "linux-debian"
       ],
@@ -379,7 +427,7 @@ window.CATALOGUE = {
       "icon": "ZBX",
       "level": 2,
       "duree": "3 h",
-      "chapters": 9,
+      "chapters": 10,
       "prereq": [
         "linux-debian",
         "hyperv",
@@ -395,7 +443,7 @@ window.CATALOGUE = {
       "icon": "ZBW",
       "level": 2,
       "duree": "2 h 30",
-      "chapters": 7,
+      "chapters": 8,
       "prereq": [
         "monitoring-zabbix",
         "docker"
@@ -414,7 +462,7 @@ window.CATALOGUE = {
       "icon": "AZ",
       "level": 2,
       "duree": "4 h",
-      "chapters": 11,
+      "chapters": 12,
       "prereq": [
         "subnetting"
       ],
@@ -431,7 +479,7 @@ window.CATALOGUE = {
       "icon": "AGL",
       "level": 1,
       "duree": "3 h",
-      "chapters": 9,
+      "chapters": 10,
       "prereq": [],
       "related": []
     },
@@ -441,7 +489,7 @@ window.CATALOGUE = {
       "icon": "RDM",
       "level": 2,
       "duree": "2 h 30",
-      "chapters": 7,
+      "chapters": 8,
       "prereq": [
         "docker"
       ],

@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
         <div class="hero__facts">
             <span class="fact fact--n3"><b>Niveau</b> Avancé</span>
             <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
-            <span class="fact"><b>Chapitres</b> 6</span>
+            <span class="fact"><b>Chapitres</b> 7</span>
             <span class="fact"><b>Test</b> 7 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a></span>
         </div>
@@ -43,6 +44,7 @@
             <li><a class="toc__link" href="#pki"><span>04</span> PKI &amp; chaîne de confiance</a></li>
             <li><a class="toc__link" href="#adcs"><span>05</span> CA interne (AD CS)</a></li>
             <li><a class="toc__link" href="#certs-exch"><span>06</span> Certificats Exchange</a></li>
+            <li><a class="toc__link" href="#pratique"><span>07</span> S'entraîner</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -73,19 +75,19 @@
         <section class="chapter" id="archi">
             <p class="chapter__num">01</p>
             <h2 class="chapter__title">Architecture du labo Exchange</h2>
-            <p class="chapter__intro">Exchange ne vit jamais seul : il s'appuie sur Active Directory (pour les comptes) et sur le DNS (pour le routage du courrier). Le labo type réunit trois machines dans le domaine <code>m.zepp.lan</code> (NetBIOS <code>MZEPP</code>).</p>
+            <p class="chapter__intro">Exchange ne vit jamais seul : il s'appuie sur Active Directory (pour les comptes) et sur le DNS (pour le routage du courrier). Le labo type réunit trois machines dans le domaine <code>orion.local</code> (NetBIOS <code>ORION</code>) — le <a href="../labo.html">lab de référence Orion</a> ; le TP du cours utilisait son propre domaine.</p>
 
             <div class="net">
-                <div class="node"><b>AD</b><span class="ip">10.10.28.121</span><span>Contrôleur de domaine + DNS — <code>m.zepp.lan</code></span></div>
-                <div class="node"><b>EXCHANGE</b><span class="ip">10.10.28.122</span><span>Serveur de messagerie Exchange 2019 (<code>EXCHANGE-MZEPP</code>)</span></div>
-                <div class="node"><b>CLIENT</b><span class="ip">10.10.28.123</span><span>Poste de test — Outlook / OWA</span></div>
-                <div class="node"><b>Passerelle</b><span class="ip">10.10.28.254</span><span>Default gateway</span></div>
+                <div class="node"><b>SRV-AD01</b><span class="ip">172.16.50.10</span><span>Contrôleur de domaine + DNS — <code>orion.local</code></span></div>
+                <div class="node"><b>SRV-EXCH01</b><span class="ip">172.16.50.60</span><span>Serveur de messagerie Exchange 2019</span></div>
+                <div class="node"><b>CLIENT-WIN11</b><span class="ip">DHCP</span><span>Poste de test — Outlook / OWA</span></div>
+                <div class="node"><b>Passerelle</b><span class="ip">172.16.50.1</span><span>Default gateway (l'hôte Hyper-V)</span></div>
             </div>
 
             <h3>Mise en place initiale</h3>
             <ul>
                 <li>Créer un utilisateur <strong>technicien</strong> disposant de tous les droits d'administration.</li>
-                <li>Joindre les machines au domaine <code>m.zepp.lan</code>.</li>
+                <li>Joindre les machines au domaine <code>orion.local</code>.</li>
                 <li>Exchange étend le schéma AD : il faut les droits <em>Schema Admins / Enterprise Admins</em> à la préparation.</li>
             </ul>
 
@@ -106,8 +108,8 @@
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Exchange Management Shell</span></div>
                 <pre class="terminal__code"><span class="k">New-Mailbox</span> <span class="p">-Name</span> <span class="s">'Jean Dupont'</span> <span class="p">-Alias</span> <span class="s">'jean.dupont'</span> `
     <span class="p">-FirstName</span> <span class="s">'Jean'</span> <span class="p">-LastName</span> <span class="s">'Dupont'</span> <span class="p">-DisplayName</span> <span class="s">'Jean Dupont'</span> `
-    <span class="p">-UserPrincipalName</span> <span class="s">'jean.dupont@m.zepp.lan'</span> `
-    <span class="p">-OrganizationalUnit</span> <span class="s">'m.zepp.lan/Admin'</span> `
+    <span class="p">-UserPrincipalName</span> <span class="s">'jean.dupont@orion.local'</span> `
+    <span class="p">-OrganizationalUnit</span> <span class="s">'orion.local/Admin'</span> `
     <span class="p">-Database</span> <span class="s">'Mailbox Database 0112725915'</span> `
     <span class="p">-Password</span> (<span class="k">ConvertTo-SecureString</span> <span class="s">'P@ssw0rd!'</span> <span class="p">-AsPlainText</span> <span class="p">-Force</span>) `
     <span class="p">-ResetPasswordOnNextLogon</span> $true</pre>
@@ -198,7 +200,7 @@
                     </tbody>
                 </table>
             </div>
-            <p>Je crée une autorité, ex. <code>CA_MARVIN</code>. Avec elle je <strong>délivre et signe</strong> les certificats de tout le monde (<code>stagiaire1</code>, <code>serveur web</code>, <code>mail.m.zepp.lan</code>…). Ce n'est plus le sujet qui s'auto-atteste : c'est un <strong>tiers</strong> qui atteste.</p>
+            <p>Je crée une autorité, ex. <code>CA_MARVIN</code>. Avec elle je <strong>délivre et signe</strong> les certificats de tout le monde (<code>stagiaire1</code>, <code>serveur web</code>, <code>mail.orion.local</code>…). Ce n'est plus le sujet qui s'auto-atteste : c'est un <strong>tiers</strong> qui atteste.</p>
 
             <h3>Établir puis vérifier la confiance</h3>
             <p>J'importe le <strong>certificat racine</strong> de <code>CA_MARVIN</code> dans le magasin « Autorités racines de confiance » de tous les PC (via <strong>GPO</strong> en AD). Dès lors, chaque machine fait confiance à <strong>tout ce que <code>CA_MARVIN</code> a signé</strong>. À réception d'un certificat, le PC regarde <em>qui l'a émis</em> et <strong>remonte la chaîne</strong> jusqu'à une racine connue.</p>
@@ -273,7 +275,7 @@
         <section class="chapter" id="certs-exch">
             <p class="chapter__num">06</p>
             <h2 class="chapter__title">Certificats Exchange</h2>
-            <p class="chapter__intro">Le serveur <code>EXCHANGE-MZEPP</code> présente un certificat pour <code>mail.m.zepp.lan</code>. Selon qui l'a signé, le client se connecte sans bruit… ou affiche une alerte.</p>
+            <p class="chapter__intro">Le serveur <code>SRV-EXCH01</code> présente un certificat pour <code>mail.orion.local</code>. Selon qui l'a signé, le client se connecte sans bruit… ou affiche une alerte.</p>
 
             <div class="cards">
                 <div class="card">
@@ -296,25 +298,70 @@
 
             <h3>Le cycle d'un certificat serveur</h3>
             <ol class="steps">
-                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Générer la demande (CSR)</strong>Côté Exchange : <code>New-ExchangeCertificate -GenerateRequest</code> produit un CSR pour <code>mail.m.zepp.lan</code>.</div></li>
+                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Générer la demande (CSR)</strong>Côté Exchange : <code>New-ExchangeCertificate -GenerateRequest</code> produit un CSR pour <code>mail.orion.local</code>.</div></li>
                 <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Faire signer par la CA</strong>On soumet le CSR à <code>CATECHNOCITE</code> (inscription web AD CS) qui renvoie le certificat signé.</div></li>
                 <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Importer &amp; assigner</strong>On importe le certificat dans Exchange et on l'affecte aux services (IIS pour OWA, SMTP, IMAP…).</div></li>
             </ol>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Boucle complète : <strong>CSR sur Exchange → signature par la CA interne → assignation aux services</strong>. Comme la racine de la CA est dans le magasin de confiance via AD, le client valide <code>mail.m.zepp.lan</code> sans alerte. C'est la PKI du chapitre 4 appliquée à un cas réel.</p>
+                <p>Boucle complète : <strong>CSR sur Exchange → signature par la CA interne → assignation aux services</strong>. Comme la racine de la CA est dans le magasin de confiance via AD, le client valide <code>mail.orion.local</code> sans alerte. C'est la PKI du chapitre 4 appliquée à un cas réel.</p>
             </div>
         </section>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 07 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">S'entraîner : boîtes, certificats et confiance</h2>
+            <p class="chapter__intro">Les cmdlets d'Exchange et d'AD CS à retrouver sans regarder, et la vérification qui dit si la chaîne de confiance tient.</p>
+
+            <div class="cmdex" data-accept="Enable-Mailbox (-Identity )?&quot;?sso&quot;?" data-hint="le compte existe déjà : on « active » sa boîte.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Crée une boîte aux lettres pour l'utilisateur AD <strong>existant</strong> <code>sso</code>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>Enable-Mailbox -Identity sso</code>. <code>New-Mailbox</code> créerait <em>aussi</em> un nouveau compte AD ; et <code>Remove-Mailbox</code> supprime le compte avec la boîte — pour ne retirer que la boîte : <code>Disable-Mailbox</code>.</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="Get-ExchangeCertificate( \| (Format-List|fl|Select-Object|select) .*)?">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Affiche les certificats d'Exchange avec leurs services, leur sujet et leur date d'expiration.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>Get-ExchangeCertificate | Format-List Thumbprint, Services, Subject, NotAfter</code> — la colonne <em>Services</em> (IIS, SMTP…) dit à quoi chaque certificat est affecté.</p></div>
+                </details>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le certificat présenté est-il signé par la CA d'entreprise, et le poste lui fait-il confiance ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell</span></div>
+                <pre class="terminal__code"><span class="k">Get-ChildItem</span> Cert:\LocalMachine\Root | <span class="k">Where-Object</span> Subject <span class="p">-like</span> <span class="s">"*CA*"</span><span class="c">      # sur le client</span>
+<span class="k">certutil</span> <span class="p">-ping</span><span class="c">                                                                  # la CA répond</span></pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">Subject
+-------
+CN=ORION-CA, DC=orion, DC=local
+
+Connecting to SRV-AD01.orion.local\ORION-CA …
+Server "ORION-CA" ICertRequest2 interface is alive</pre>
+                <p class="verify__fail">La racine de la CA n'est pas dans le magasin du client : il n'est pas membre du domaine, ou la stratégie n'a pas été appliquée (<code>gpupdate /force</code>). Le navigateur signale un nom invalide : le certificat ne contient pas le nom tapé (<code>mail.orion.local</code>) dans ses noms alternatifs (SAN).</p>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>Enable-Mailbox</code> sur un compte existant, <code>Disable-Mailbox</code> pour retirer une boîte sans tuer le compte ; <code>Get-ExchangeCertificate</code> pour voir qui sert quoi. La confiance tient si la racine est sur le poste et si le nom tapé est dans le certificat.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="exchange-securite">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -324,9 +371,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse des fiches PKI &amp; du TP Exchange 2019</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

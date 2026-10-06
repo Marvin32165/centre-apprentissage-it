@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 3 h</span>
-            <span class="fact"><b>Chapitres</b> 8</span>
+            <span class="fact"><b>Chapitres</b> 9</span>
             <span class="fact"><b>Test</b> 8 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a></span>
         </div>
@@ -45,6 +46,7 @@
             <li><a class="toc__link" href="#volumes"><span>06</span> Volumes &amp; données persistantes</a></li>
             <li><a class="toc__link" href="#reseau"><span>07</span> Le réseau des conteneurs</a></li>
             <li><a class="toc__link" href="#compose"><span>08</span> Docker Compose</a></li>
+            <li><a class="toc__link" href="#pratique"><span>09</span> S'entraîner</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -126,7 +128,7 @@
                         <tr><td><strong>Image &amp; UFS</strong></td><td>Des couches empilées par un système de fichiers en union (<code>overlay2</code>), partagées entre tous les conteneurs qui les utilisent.</td></tr>
                         <tr><td><strong>Lecture seule &amp; COW</strong></td><td>Les couches de l'image ne changent jamais : un conteneur écrit dans sa propre couche, et seule la différence est stockée (<em>copy-on-write</em>).</td></tr>
                         <tr><td><strong>Registre</strong></td><td><strong>Docker Hub</strong>, public : <code>docker pull</code> pour télécharger, <code>docker push</code> pour publier. Un registre interne est possible.</td></tr>
-                        <tr><td><strong>Volume</strong></td><td>Un répertoire de l'hôte monté dans le conteneur : la seule façon de garder des données (chapitre 06).</td></tr>
+                        <tr><td><strong>Volume</strong></td><td>Un stockage géré par Docker (<code>/var/lib/docker/volumes/…</code>), monté dans le conteneur. À ne pas confondre avec le <strong>bind mount</strong>, un dossier choisi de l'hôte (<code>-v /srv/site:/usr/share/nginx/html</code>). Les deux survivent au conteneur (chapitre 06).</td></tr>
                         <tr><td><strong>Composition / orchestration</strong></td><td><strong>Compose</strong> décrit une application de plusieurs conteneurs ; <strong>Swarm</strong> ou <strong>Kubernetes</strong> gèrent un cluster.</td></tr>
                     </tbody>
                 </table>
@@ -369,7 +371,12 @@ $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
 
             <div class="tip">
                 <p class="tip__label">Lecture de -p</p>
-                <p>Toujours <strong>hôte:conteneur</strong>. Et un port publié reste soumis au pare-feu de l'hôte : <code>EXPOSE</code> dans le Dockerfile n'ouvre rien du tout.</p>
+                <p>Toujours <strong>hôte:conteneur</strong>. <code>EXPOSE</code> dans le Dockerfile n'ouvre rien du tout : seul <code>-p</code> publie.</p>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Piège de sécurité : -p passe à travers ufw</p>
+                <p>Un port publié <strong>n'est pas filtré par ufw</strong>. Docker écrit ses propres règles iptables (DNAT dans la table <code>nat</code>, puis chaîne <code>FORWARD</code>) : le paquet est redirigé vers le conteneur <em>avant</em> d'atteindre la chaîne <code>INPUT</code>, où vivent les règles d'ufw. Un <code>ufw deny 8080</code> ne protège donc pas un <code>-p 8080:80</code>. Les parades : publier sur la boucle locale (<code>-p 127.0.0.1:8080:80</code>) quand seul un reverse proxy local doit joindre le service, ou filtrer dans la chaîne <code>DOCKER-USER</code>, prévue pour ça.</p>
             </div>
 
             <div class="takeaway">
@@ -434,13 +441,113 @@ $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
         </section>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 09 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">S'entraîner : lancer, vérifier, dépanner</h2>
+            <p class="chapter__intro">Tout le module en exercices : les commandes à retrouver sans regarder, une application complète à monter et vérifier, et les trois pannes les plus fréquentes d'un conteneur.</p>
+
+            <div class="cmdex" data-accept="docker run (-d --name web -p 8080:80|-d -p 8080:80 --name web|--name web -d -p 8080:80|--name web -p 8080:80 -d|-p 8080:80 -d --name web|-p 8080:80 --name web -d) nginx(:latest)?;;docker run -dp 8080:80 --name web nginx(:latest)?;;docker run --name web -dp 8080:80 nginx(:latest)?" data-hint="docker run, -d, --name, -p hôte:conteneur, puis l&#x27;image.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Lance un conteneur <strong>nginx</strong> en arrière-plan, nommé <code>web</code>, qui publie son port 80 sur le port <strong>8080</strong> de l'hôte.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>docker run -d --name web -p 8080:80 nginx</code> — les options <strong>avant</strong> l'image, <code>-p hôte:conteneur</code>. Vérifier : <code>curl -I http://localhost:8080</code> doit répondre <code>HTTP/1.1 200 OK</code>.</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="docker exec -it web (/bin/)?(bash|sh);;docker exec -ti web (/bin/)?(bash|sh)">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Ouvre un shell <strong>bash</strong> dans le conteneur <code>web</code> qui tourne, sans l'arrêter en sortant.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>docker exec -it web bash</code> (ou <code>sh</code> si l'image n'a pas bash). En sortir avec <code>exit</code> n'arrête rien : c'est un nouveau processus, pas le PID 1.</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="docker (container )?logs (-f --tail 20|--tail 20 -f|--follow --tail 20|--tail 20 --follow|-f -n 20|-n 20 -f) web;;docker (container )?logs web (-f --tail 20|--tail 20 -f|--follow --tail 20|--tail 20 --follow)">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Suis en continu les journaux du conteneur <code>web</code>, en partant des 20 dernières lignes.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>docker logs -f --tail 20 web</code> — <kbd>Ctrl</kbd>+<kbd>C</kbd> arrête l'affichage, pas le conteneur.</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="docker compose up (-d --build|--build -d);;docker-compose up (-d --build|--build -d)">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Après avoir modifié <code>app.py</code>, relance la pile Compose en arrière-plan <strong>en reconstruisant</strong> l'image.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>docker compose up -d --build</code>. Sans <code>--build</code>, Compose réutilise l'ancienne image : le code modifié n'est pas pris en compte.</p></div>
+                </details>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>La pile Compose tourne-t-elle, et les deux services se voient-ils ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">docker</span> compose ps
+<span class="k">docker</span> compose exec app getent hosts db<span class="c">       # le nom du service se résout sur le réseau du projet</span></pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">NAME          IMAGE         SERVICE   STATUS          PORTS
+projet-app-1  projet-app    app       Up 2 minutes    0.0.0.0:8080-&gt;5000/tcp
+projet-db-1   postgres:16   db        Up 2 minutes    5432/tcp
+172.18.0.2      db</pre>
+                <p class="verify__fail">Un service en <code>Restarting</code> ou <code>Exited</code> : <code>docker compose logs NOM</code> dit pourquoi (variable manquante, base pas prête). Le nom <code>db</code> ne se résout pas : l'application n'est pas sur le même réseau Compose.</p>
+            </div>
+            <div class="scenario">
+                <p class="scenario__label">Scénario de panne</p>
+                <p class="scenario__title">Le conteneur s'arrête aussitôt lancé</p>
+                <p><code>docker run -d --name test ubuntu</code> rend la main, mais <code>docker ps</code> ne montre rien.</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Que regardes-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>docker ps -a</code> : le conteneur existe-t-il, et dans quel état ?</button>
+                        <button class="scenario__opt" data-why="Docker fonctionne : la commande a rendu un identifiant de conteneur.">Réinstaller Docker</button>
+                        <button class="scenario__opt" data-why="L&#x27;image est là, sinon run l&#x27;aurait téléchargée ou échoué."><code>docker images</code></button>
+                    </div>
+                    <div class="scenario__why"><pre class="verify__out">CONTAINER ID   IMAGE    COMMAND       STATUS                     NAMES
+3f2a1c…        ubuntu   "/bin/bash"   Exited (0) 3 seconds ago   test</pre>
+            </div>
+                </div>
+                <div class="scenario__step">
+                    <p class="scenario__q"><code>Exited (0)</code> : pourquoi s'est-il arrêté ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Son processus principal (bash) s'est terminé faute de terminal : un conteneur vit tant que son PID 1 vit</button>
+                        <button class="scenario__opt" data-why="Code de sortie 0 = fin normale, pas une erreur.">Il a planté</button>
+                        <button class="scenario__opt" data-why="Ce serait un code 137 (tué par le noyau).">Il manque de mémoire</button>
+                    </div>
+                    <div class="scenario__why"><p>Lancé en <code>-d</code> sans <code>-it</code>, bash n'a rien à lire et se termine aussitôt — et le conteneur avec lui.</p></div>
+                </div>
+                <div class="scenario__end"><strong>Correction :</strong> <code>docker run -dit --name test ubuntu</code> pour garder un bash interactif détaché, ou lancer une image dont le processus principal est un service (nginx, postgres). <code>docker logs</code> et le code de sortie disent toujours pourquoi un conteneur s'arrête.</div>
+            </div>
+            <div class="scenario">
+                <p class="scenario__label">Scénario de panne</p>
+                <p class="scenario__title">Les données de la base ont disparu</p>
+                <p>Après <code>docker compose down</code> puis <code>up -d</code>, la base PostgreSQL de l'application est vide.</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Quelle est la première vérification ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le <code>compose.yaml</code> monte-t-il un volume sur <code>/var/lib/postgresql/data</code> ?</button>
+                        <button class="scenario__opt" data-why="Une version différente ne viderait pas la base.">La version de PostgreSQL</button>
+                        <button class="scenario__opt" data-why="Le port n&#x27;a rien à voir avec la persistance.">Le port publié</button>
+                    </div>
+                    <div class="scenario__why"><p>Pas de volume : les données vivaient dans la couche d'écriture du conteneur, supprimée par <code>down</code>.</p></div>
+                </div>
+                <div class="scenario__end"><strong>Correction :</strong> un volume nommé (<code>db_data:/var/lib/postgresql/data</code>) déclaré dans <code>volumes:</code>. Et ne jamais taper <code>down -v</code> sans le vouloir : il supprime aussi les volumes.</div>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Les quatre réflexes : <code>docker ps -a</code> (l'état), <code>docker logs</code> (le pourquoi), <code>docker exec -it</code> (entrer sans casser), <code>docker compose up -d --build</code> (appliquer un changement de code). Et pas de volume = pas de données qui survivent.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="docker">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab &amp; sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab &amp; sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -450,9 +557,10 @@ $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

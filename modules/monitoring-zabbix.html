@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 3 h</span>
-            <span class="fact"><b>Chapitres</b> 9</span>
+            <span class="fact"><b>Chapitres</b> 10</span>
             <span class="fact"><b>Test</b> 9 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a> · <a href="hyperv.html">Hyper-V</a> · <a href="windows-server.html">Windows Server</a></span>
         </div>
@@ -46,6 +47,7 @@
             <li><a class="toc__link" href="#hote"><span>07</span> Déclarer l'hôte</a></li>
             <li><a class="toc__link" href="#exploitation"><span>08</span> Exploiter au quotidien</a></li>
             <li><a class="toc__link" href="#auto"><span>09</span> Un parc qui se répare seul</a></li>
+            <li><a class="toc__link" href="#pratique"><span>10</span> S'entraîner</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -539,6 +541,70 @@
         </div>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 10 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">10</p>
+            <h2 class="chapter__title">S'entraîner : la pastille ZBX et l'agent</h2>
+            <p class="chapter__intro">Neuf fois sur dix, une supervision qui ne remonte rien vient de la relation entre l'agent et le serveur : qui parle à qui, sur quel port, sous quel nom. Ce chapitre en fait un réflexe.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Mode</th><th>Qui ouvre la connexion</th><th>Port</th><th>Réglage de l'agent qui doit concorder</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Passif</strong></td><td>Le serveur interroge l'agent</td><td>TCP 10050 (sur l'agent)</td><td><code>Server=</code> doit contenir l'adresse du serveur</td></tr>
+                        <tr><td><strong>Actif</strong></td><td>L'agent envoie au serveur</td><td>TCP 10051 (sur le serveur)</td><td><code>ServerActive=</code> = le serveur, et <code>Hostname=</code> = le nom de l'hôte <strong>exactement</strong> comme dans l'interface</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le serveur obtient-il une réponse de l'agent ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — sur le serveur Zabbix</span></div>
+                <pre class="terminal__code"><span class="k">zabbix_get</span> <span class="p">-s</span> 172.16.50.20 <span class="p">-k</span> agent.ping</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">1</pre>
+                <p class="verify__fail"><code>Connection refused</code> : l'agent n'écoute pas (service arrêté) ou le pare-feu de l'hôte bloque 10050. <em>Check access restrictions in Zabbix agent configuration</em> : l'agent refuse la connexion, l'adresse du serveur n'est pas dans <code>Server=</code>. Ça marche ici mais la pastille reste rouge : l'interface de l'hôte dans Zabbix pointe vers une autre adresse.</p>
+            </div>
+            <div class="cmdex" data-accept="Restart-Service (-Name )?&quot;Zabbix Agent 2&quot;;;Restart-Service (-Name )?&#x27;Zabbix Agent 2&#x27;;;net stop &quot;Zabbix Agent 2&quot; ?(&amp;&amp;|;) ?net start &quot;Zabbix Agent 2&quot;">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Sur un hôte Windows, redémarre l'agent Zabbix 2 après une modification de sa configuration.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>Restart-Service "Zabbix Agent 2"</code> — guillemets obligatoires, le nom contient des espaces. Une modification de <code>zabbix_agent2.conf</code> (ou un <code>UserParameter</code>) n'est lue qu'au démarrage.</p></div>
+                </details>
+            </div>
+            <div class="scenario">
+                <p class="scenario__label">Scénario de panne</p>
+                <p class="scenario__title">Les données « actives » n'arrivent pas</p>
+                <p>Un nouveau serveur est déclaré dans Zabbix sous le nom <code>SRV-FILE01</code>. Les éléments passifs remontent, mais tous les éléments en vérification active restent vides.</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Qu'est-ce que ce symptôme élimine ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le réseau entre serveur et agent : le passif marche, l'agent est joignable</button>
+                        <button class="scenario__opt" data-why="Justement non : le nom ne compte que pour les vérifications actives.">Le nom de l'hôte</button>
+                        <button class="scenario__opt" data-why="Une partie de sa configuration sert seulement en actif.">La configuration de l'agent</button>
+                    </div>
+                    <div class="scenario__why"><p>Reste ce qui ne concerne que l'actif : <code>ServerActive=</code> et <code>Hostname=</code>.</p></div>
+                </div>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le journal de l'agent dit : <em>host [srv-file01] not found</em>. La cause ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>Hostname=</code> ne correspond pas exactement au nom de l'hôte dans Zabbix (la casse compte)</button>
+                        <button class="scenario__opt" data-why="Le 10050 sert au passif, qui fonctionne.">Le port 10050 est fermé</button>
+                        <button class="scenario__opt" data-why="Sans modèle, il n&#x27;y aurait aucun élément du tout.">Le modèle n'est pas lié</button>
+                    </div>
+                    <div class="scenario__why"><p>L'agent annonce <code>srv-file01</code>, le serveur attend <code>SRV-FILE01</code> : pour lui, cet hôte n'existe pas.</p></div>
+                </div>
+                <div class="scenario__end"><strong>Correction :</strong> <code>Hostname=SRV-FILE01</code> dans la configuration de l'agent, puis redémarrer l'agent. Les données actives arrivent dès que l'agent a rechargé sa liste de vérifications actives.</div>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Passif : serveur → agent:10050, autorisé par <code>Server=</code>. Actif : agent → serveur:10051, identifié par <code>Hostname=</code> au caractère près. <code>zabbix_get</code> depuis le serveur tranche en une commande.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="monitoring-zabbix">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
@@ -555,9 +621,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du labo monitoring</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

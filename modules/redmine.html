@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
-            <span class="fact"><b>Chapitres</b> 7</span>
+            <span class="fact"><b>Chapitres</b> 8</span>
             <span class="fact"><b>Test</b> 10 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="docker.html">Docker</a></span>
         </div>
@@ -44,6 +45,7 @@
             <li><a class="toc__link" href="#env"><span>05</span> Les secrets dans un .env</a></li>
             <li><a class="toc__link" href="#sauvegarde"><span>06</span> Sauvegarder</a></li>
             <li><a class="toc__link" href="#https"><span>07</span> HTTPS derrière nginx</a></li>
+            <li><a class="toc__link" href="#pratique"><span>08</span> S'entraîner</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -391,13 +393,62 @@
         </div>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 08 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">S'entraîner : vérifier la pile et la restauration</h2>
+            <p class="chapter__intro">Un helpdesk qu'on ne sait pas restaurer est un risque. Ce chapitre vérifie la pile de bout en bout, puis fait la seule preuve qui compte : restaurer la sauvegarde sur une base de test.</p>
+
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Les trois conteneurs tournent, et HTTPS répond.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — SRV-REDMINE01</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> <span class="k">docker</span> compose ps
+<span class="k">curl</span> <span class="p">-sk</span> <span class="p">-o</span> /dev/null <span class="p">-w</span> <span class="s">'%{http_code}\n'</span> https://helpdesk.orion.local/</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">NAME            SERVICE  STATUS
+redmine-app     app      Up 3 hours
+redmine-db      db       Up 3 hours
+redmine-nginx   nginx    Up 3 hours
+200</pre>
+                <p class="verify__fail"><code>502 Bad Gateway</code> : nginx tourne mais ne joint pas <code>redmine-app</code> (conteneur arrêté, ou mauvais nom de service dans <code>proxy_pass</code>). <code>redmine-app</code> qui redémarre en boucle : <code>sudo docker compose logs app</code> — souvent la base pas prête ou un mot de passe du <code>.env</code> changé après coup.</p>
+            </div>
+            <div class="lab" data-lab="redmine-restauration">
+                <p class="lab__label">Lab guidé</p>
+                <p class="lab__title">Restaurer la sauvegarde sur une base de test</p>
+                <div class="lab__meta"><span><b>Objectif :</b> prouver que le script de sauvegarde produit quelque chose de restaurable</span><span><b>Point de départ :</b> la pile Redmine du module et au moins une sauvegarde produite par le script cron (chapitre 06)</span><span><b>Durée :</b> 30 min</span></div>
+                <ol class="lab__steps">
+                <li><p>Repérer la dernière sauvegarde de la base dans le dossier de sauvegardes (fichier <code>.sql</code> ou <code>.sql.gz</code>) et vérifier qu'elle n'est pas vide (<code>ls -lh</code>).</p></li>
+                <li><p>Créer une base de test à côté de la vraie, puis y charger la sauvegarde :</p><div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> <span class="k">docker</span> compose exec db sh <span class="p">-c</span> <span class="s">'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "CREATE DATABASE redmine_test"'</span>
+<span class="k">gunzip</span> <span class="p">-c</span> sauvegarde.sql.gz | <span class="k">sudo</span> <span class="k">docker</span> compose exec <span class="p">-T</span> db sh <span class="p">-c</span> <span class="s">'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" redmine_test'</span></pre>
+            </div>
+            </li>
+                <li><p>Compter les tickets dans les deux bases : les nombres doivent correspondre à l'état au moment de la sauvegarde.</p><div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> <span class="k">docker</span> compose exec db sh <span class="p">-c</span> <span class="s">'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "SELECT COUNT(*) FROM redmine.issues; SELECT COUNT(*) FROM redmine_test.issues"'</span></pre>
+            </div>
+            </li>
+                <li><p>Supprimer la base de test (<code>DROP DATABASE redmine_test</code>) et noter le temps total : c'est le temps de restauration réel de la base. Les pièces jointes (<code>files/</code>) se vérifient de la même façon, en comparant une archive extraite au dossier réel.</p></li>
+                </ol>
+            </div>
+            <p>Les commandes de ce lab supposent que le mot de passe root de MariaDB est passé au conteneur par la variable <code>MARIADB_ROOT_PASSWORD</code> du <code>.env</code> (chapitre 05) ; si ton compose la nomme autrement, adapte le nom.</p>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Vérifier une pile Compose : <code>ps</code>, <code>logs</code>, puis le service de bout en bout (<code>curl</code>). Vérifier une sauvegarde : la restaurer ailleurs et compter. Un fichier <code>.sql</code> présent ne prouve rien.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="redmine">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -407,9 +458,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Redmine en remplacement de SCSM »</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

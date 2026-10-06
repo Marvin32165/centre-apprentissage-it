@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -26,7 +27,7 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
-            <span class="fact"><b>Chapitres</b> 9</span>
+            <span class="fact"><b>Chapitres</b> 10</span>
             <span class="fact"><b>Test</b> 8 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a> (utile)</span>
         </div>
@@ -47,6 +48,7 @@
             <li><a class="toc__link" href="#backup"><span>07</span> Sauvegardes &amp; snapshots</a></li>
             <li><a class="toc__link" href="#cluster"><span>08</span> Cluster &amp; haute dispo</a></li>
             <li><a class="toc__link" href="#exploit"><span>09</span> Exploitation au quotidien</a></li>
+            <li><a class="toc__link" href="#pratique"><span>10</span> Commandes</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -59,6 +61,8 @@
                 <div class="section-banner__desc">Debian + KVM + LXC + ZFS, piloté depuis une interface web</div>
             </div>
         </div>
+
+        <p class="theory"><b>Module de théorie, pas encore pratiqué.</b> Rédigé à partir de documentations publiques : Proxmox n'a pas encore fait l'objet d'un TP dans la formation. Les commandes sont à éprouver sur un lab avant de s'y fier — et ce module sera réécrit avec les vraies sorties et les vrais pièges le jour où il le sera.</p>
 
         <section class="brief">
             <p class="brief__label">Ce que tu sauras faire à la fin</p>
@@ -426,13 +430,54 @@
         </section>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 10 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">10</p>
+            <h2 class="chapter__title">Les commandes à connaître</h2>
+            <p class="chapter__intro">Même sans TP, les commandes de base d'un nœud Proxmox se mémorisent : elles servent dès qu'on ouvre un shell sur un hôte.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Commande</th><th>Ce qu'elle fait</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>qm list</code> / <code>pct list</code></td><td>Les VM (KVM) / les conteneurs LXC du nœud</td></tr>
+                        <tr><td><code>qm start 100</code> · <code>qm shutdown 100</code></td><td>Démarrer / arrêter proprement la VM 100</td></tr>
+                        <tr><td><code>pvecm status</code></td><td>État du cluster et du quorum</td></tr>
+                        <tr><td><code>zpool status</code></td><td>Santé des pools ZFS (disques dégradés, erreurs)</td></tr>
+                        <tr><td><code>vzdump 100 --storage local --mode snapshot</code></td><td>Sauvegarder la VM 100 sans l'arrêter</td></tr>
+                        <tr><td><code>pveversion -v</code></td><td>Versions de Proxmox et des paquets</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="cmdex" data-accept="qm list">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Liste les machines virtuelles KVM du nœud.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>qm list</code> — et <code>pct list</code> pour les conteneurs LXC. <code>qm</code> pilote les VM, <code>pct</code> les conteneurs.</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="pvecm status">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Affiche l'état du quorum du cluster.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>pvecm status</code> — la ligne <em>Quorate: Yes</em> dit que le cluster a la majorité des votes ; sans quorum, les invités ne se démarrent plus.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>qm</code> pour les VM, <code>pct</code> pour les conteneurs, <code>pvecm</code> pour le cluster, <code>zpool</code> pour ZFS, <code>vzdump</code> pour sauvegarder. À éprouver sur un vrai nœud avant de s'y fier.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="proxmox">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab & sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab & sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -442,9 +487,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@VirtualizationHowto" target="_blank" rel="noopener">Virtualization HowTo</a> · <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

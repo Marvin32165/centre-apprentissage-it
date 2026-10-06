@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab de référence Orion — Centre d'apprentissage IT</title>
+    <meta name="description" content="Le lab de référence du site : domaine orion.local sur 172.16.50.0/24, plan d'adressage par rôle, réseau Hyper-V avec NAT, ordre de construction et grille de compétences à prouver sur le lab.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="assets/theme.css?v=12">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="index.html">← Portail</a> · Lab de référence</p>
+        <h1 class="hero__title">Le lab <em>Orion</em></h1>
+        <p class="hero__lead">Un seul environnement pour rejouer chez soi tous les TP Windows, de supervision et de support : un domaine, un plan d'adressage, des noms qui disent le rôle. Chaque module y pose sa brique ; la grille de compétences, en bas, dit ce que tu sais vraiment faire.</p>
+        <div class="hero__facts">
+            <span class="fact"><b>Domaine</b> orion.local</span>
+            <span class="fact"><b>Réseau</b> 172.16.50.0/24</span>
+            <span class="fact"><b>Machines</b> 17 + un client</span>
+            <span class="fact"><b>Hyperviseur</b> Hyper-V</span>
+        </div>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="toc">
+        <a class="toc__back" href="index.html">← Portail</a>
+        <p class="toc__label">Lab Orion</p>
+        <ul class="toc__list">
+            <li><a class="toc__link" href="#plan"><span>01</span> Le plan</a></li>
+            <li><a class="toc__link" href="#reseau"><span>02</span> Le réseau sur l'hôte</a></li>
+            <li><a class="toc__link" href="#ordre"><span>03</span> Construire dans l'ordre</a></li>
+            <li><a class="toc__link" href="#competences"><span>04</span> Grille de compétences</a></li>
+        </ul>
+    </aside>
+
+    <main class="content">
+        <section class="panel" id="plan">
+            <p class="chapter__num">Le plan</p>
+            <h2 class="chapter__title">Un seul réseau, un seul domaine, des noms qui disent le rôle</h2>
+            <p class="chapter__intro">Chaque TP du cours a été monté avec son propre domaine et son propre plan d'adressage. Pour les rejouer chez soi sans tout reconstruire à chaque fois, le site les transpose tous sur <strong>un seul lab</strong> : le domaine <code>orion.local</code>, sur le réseau <code>172.16.50.0/24</code>. Quand un module donne une adresse ou un nom de machine, c'est celui-ci.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Réglage</th><th>Valeur</th></tr></thead>
+                    <tbody>
+                        <tr><td>Domaine Active Directory</td><td><code>orion.local</code> — NetBIOS <code>ORION</code></td></tr>
+                        <tr><td>Réseau</td><td><code>172.16.50.0/24</code>, commutateur Hyper-V <code>LABOPS</code></td></tr>
+                        <tr><td>Passerelle</td><td><code>172.16.50.1</code> — l'hôte Hyper-V lui-même, qui fait le NAT vers Internet</td></tr>
+                        <tr><td>DNS des machines</td><td><code>172.16.50.10</code> puis <code>172.16.50.11</code> (les deux contrôleurs de domaine), jamais un DNS public</td></tr>
+                        <tr><td>Adresses fixes</td><td><code>.10</code> à <code>.99</code>, par rôle (tableau ci-dessous)</td></tr>
+                        <tr><td>DHCP (postes)</td><td><code>.100</code> à <code>.199</code>, servi par SRV-AD01</td></tr>
+                        <tr><td>Disque parent</td><td><code>C:\PARENT\TEST-SYSPREP.vhdx</code> — Windows Server 2025 généralisé par Sysprep</td></tr>
+                        <tr><td>VM</td><td><code>C:\VM\LABOPS\&lt;NOM&gt;\</code>, disque de différenciation, génération 2, mémoire fixe</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Les machines</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Machine</th><th>Adresse</th><th>Rôle</th><th>Module</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>SRV-AD01</strong></td><td><code>172.16.50.10</code></td><td>AD DS, DNS, DHCP — premier contrôleur de domaine</td><td><a href="modules/windows-server.html">Windows Server</a></td></tr>
+                        <tr><td><strong>SRV-AD02</strong></td><td><code>172.16.50.11</code></td><td>Second contrôleur de domaine, DNS</td><td><a href="modules/windows-server.html">Windows Server</a></td></tr>
+                        <tr><td><strong>SRV-FILE01</strong></td><td><code>172.16.50.20</code></td><td>Partages, droits NTFS, DFS</td><td><a href="modules/windows-server.html">Windows Server</a>, <a href="modules/storage-clustering.html">Stockage</a></td></tr>
+                        <tr><td><strong>SRV-WEB01</strong></td><td><code>172.16.50.25</code></td><td>IIS, sites et FTP</td><td><a href="modules/iis.html">IIS</a></td></tr>
+                        <tr><td><strong>SRV-SQL01</strong></td><td><code>172.16.50.30</code></td><td>SQL Server (instance du site, de SharePoint et de DPM)</td><td><a href="modules/sql-server.html">SQL Server</a></td></tr>
+                        <tr><td><strong>SRV-DPM01</strong></td><td><code>172.16.50.31</code></td><td>System Center DPM</td><td><a href="modules/dpm.html">DPM</a></td></tr>
+                        <tr><td><strong>SRV-SQL02</strong></td><td><code>172.16.50.32</code></td><td>Second nœud Always On</td><td><a href="modules/sql-server.html#haute-dispo">SQL Server, haute dispo</a></td></tr>
+                        <tr><td><strong>SRV-SP01</strong></td><td><code>172.16.50.35</code></td><td>SharePoint Server SE</td><td><a href="modules/sharepoint.html">SharePoint</a></td></tr>
+                        <tr><td><strong>SRV-ZBX01</strong></td><td><code>172.16.50.40</code></td><td>Zabbix en Docker (Ubuntu)</td><td><a href="modules/zabbix-windows.html">Zabbix &amp; Windows</a></td></tr>
+                        <tr><td><strong>SRV-REDMINE01</strong></td><td><code>172.16.50.41</code></td><td>Redmine en Docker (Ubuntu)</td><td><a href="modules/redmine.html">Redmine</a></td></tr>
+                        <tr><td><strong>SRV-RDSH1 / RDSH2</strong></td><td><code>172.16.50.51</code> / <code>.52</code></td><td>Hôtes de session RDS</td><td><a href="modules/rds.html">RDS</a></td></tr>
+                        <tr><td><strong>SRV-RDCB</strong></td><td><code>172.16.50.53</code></td><td>Service Broker RDS</td><td><a href="modules/rds.html">RDS</a></td></tr>
+                        <tr><td><strong>SRV-RDWA</strong></td><td><code>172.16.50.54</code></td><td>Accès web RDS</td><td><a href="modules/rds.html">RDS</a></td></tr>
+                        <tr><td><strong>SRV-EXCH01</strong></td><td><code>172.16.50.60</code></td><td>Exchange Server</td><td><a href="modules/exchange-securite.html">Exchange &amp; PKI</a></td></tr>
+                        <tr><td><strong>SRV-SAN01</strong></td><td><code>172.16.50.70</code></td><td>Cible iSCSI</td><td><a href="modules/storage-clustering.html">Stockage &amp; clustering</a></td></tr>
+                        <tr><td><strong>SRV-NODE1 / NODE2</strong></td><td><code>172.16.50.71</code> / <code>.72</code></td><td>Nœuds du cluster (nom du cluster <code>.75</code>, rôle fichiers <code>.76</code>)</td><td><a href="modules/storage-clustering.html">Stockage &amp; clustering</a></td></tr>
+                        <tr><td><strong>CLIENT-WIN11</strong></td><td>DHCP</td><td>Poste de test joint au domaine</td><td>tous</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Ne pas tout allumer</p>
+                <p>Avec 8 Go par serveur Windows, tout le lab demande plus de 100 Go de mémoire. On n'allume que le socle (SRV-AD01, le client) et les machines du module en cours. Pour un lab qui ne sert qu'à apprendre, 4 Go par serveur suffisent dans la plupart des modules.</p>
+            </div>
+            <p>Le cluster du module Stockage gagne à séparer ses flux : battement de cœur sur <code>172.16.51.0/24</code>, iSCSI sur <code>172.16.52.0/24</code>, chacun sur son propre commutateur privé. Le lab Packet Tracer du module CCNA, lui, est un réseau simulé à part (<code>10.2.0.0/16</code>).</p>
+        </section>
+
+        <section class="panel" id="reseau">
+            <p class="chapter__num">Étape 0</p>
+            <h2 class="chapter__title">Le réseau du lab sur l'hôte Hyper-V</h2>
+            <p class="chapter__intro">Un commutateur <strong>privé</strong> isole le lab mais lui coupe Internet (mises à jour, paquets Linux, Docker). Un commutateur <strong>interne</strong> avec du NAT sur l'hôte donne le meilleur des deux : les VM sortent sur Internet, mais personne ne peut les joindre de l'extérieur.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell (administrateur) — sur l'hôte Hyper-V, une seule fois</span></div>
+                <pre class="terminal__code"><span class="k">New-VMSwitch</span> <span class="p">-Name</span> <span class="s">"LABOPS"</span> <span class="p">-SwitchType</span> Internal
+<span class="k">New-NetIPAddress</span> <span class="p">-InterfaceAlias</span> <span class="s">"vEthernet (LABOPS)"</span> <span class="p">-IPAddress</span> 172.16.50.1 <span class="p">-PrefixLength</span> 24
+<span class="k">New-NetNat</span> <span class="p">-Name</span> <span class="s">"LABOPS-NAT"</span> <span class="p">-InternalIPInterfaceAddressPrefix</span> 172.16.50.0/24
+<span class="k">New-Item</span> <span class="p">-ItemType</span> Directory C:\PARENT, C:\VM\LABOPS</pre>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le NAT est-il en place ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — hôte</span></div>
+                <pre class="terminal__code"><span class="k">Get-NetNat</span>
+<span class="k">Get-NetIPAddress</span> <span class="p">-InterfaceAlias</span> <span class="s">"vEthernet (LABOPS)"</span> <span class="p">-AddressFamily</span> IPv4</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">Name                             : LABOPS-NAT
+InternalIPInterfaceAddressPrefix : 172.16.50.0/24
+Active                           : True</pre>
+                <p class="verify__fail">Windows n'accepte qu'<strong>un seul</strong> réseau NAT de ce type : si <code>New-NetNat</code> échoue, un ancien NAT existe déjà (<code>Get-NetNat</code>, puis <code>Remove-NetNat</code>). Depuis une VM, tester <code>ping 172.16.50.1</code> puis <code>ping 1.1.1.1</code>.</p>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Commutateur interne <code>LABOPS</code> + l'hôte en <code>172.16.50.1</code> + <code>New-NetNat</code> : les VM du lab sortent sur Internet par l'hôte, et restent invisibles depuis le réseau de la maison.</p>
+            </div>
+        </section>
+
+        <section class="panel" id="ordre">
+            <p class="chapter__num">Construire</p>
+            <h2 class="chapter__title">Monter le lab dans l'ordre</h2>
+            <p class="chapter__intro">Chaque étape s'appuie sur la précédente. Les cases se cochent dans ce navigateur : c'est ta progression sur le lab, à côté de celle des modules.</p>
+            <div class="lab" data-lab="orion-construction">
+                <p class="lab__label">Lab guidé</p>
+                <p class="lab__title">Le lab Orion, du disque parent au dernier service</p>
+                <div class="lab__meta"><span><b>Objectif :</b> un environnement complet et reconstructible, qui sert de terrain à tous les modules Windows et de supervision</span><span><b>Point de départ :</b> un PC Windows 11 Pro ou Windows Server avec Hyper-V, 32 Go de mémoire conseillés, une ISO Windows Server 2025</span><span><b>Durée :</b> à étaler sur tout le parcours</span></div>
+                <ol class="lab__steps">
+                <li><p><strong>Réseau et disque parent</strong> — étape 0 ci-dessus, puis l'image Sysprep : module <a href="modules/hyperv.html#sysprep">Hyper-V, chapitre Sysprep</a>.</p></li>
+                <li><p><strong>SRV-AD01</strong> — réseau, nom, forêt <code>orion.local</code>, OU, groupes, utilisateurs : <a href="modules/windows-server.html">Windows Server</a>. Vérifier : <code>Get-ADDomain</code> répond.</p></li>
+                <li><p><strong>DHCP sur SRV-AD01</strong> — étendue <code>.100–.199</code>, options 3, 6 et 15 ; le client obtient une adresse et joint le domaine.</p></li>
+                <li><p><strong>SRV-AD02</strong> — second contrôleur de domaine ; vérifier la réplication (<code>repadmin /replsummary</code>).</p></li>
+                <li><p><strong>SRV-FILE01</strong> — partages par service, droits NTFS, espace de noms DFS, GPO : <a href="modules/windows-server.html">Windows Server</a>.</p></li>
+                <li><p><strong>SRV-WEB01</strong> — IIS, deux sites, FTP : <a href="modules/iis.html">IIS</a>.</p></li>
+                <li><p><strong>SRV-SQL01</strong> — instance sous gMSA, port fixe, sauvegardes : <a href="modules/sql-server.html">SQL Server</a>.</p></li>
+                <li><p><strong>Services avancés</strong>, au choix : RDS, Exchange, SharePoint, DPM, cluster — chacun dans son module.</p></li>
+                <li><p><strong>Supervision et support</strong> — SRV-ZBX01 surveille tout ce qui précède, SRV-REDMINE01 recueille les tickets : <a href="modules/zabbix-windows.html">Zabbix &amp; Windows</a>, <a href="modules/redmine.html">Redmine</a>.</p></li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="panel" id="competences">
+            <p class="chapter__num">Prouver</p>
+            <h2 class="chapter__title">La grille de compétences</h2>
+            <p class="chapter__intro">Cocher « chapitre acquis » est une déclaration ; ces épreuves sont des preuves. Chacune se fait sur le lab, sans regarder le cours, et se vérifie par une commande dont le résultat ne ment pas. C'est aussi ce que tu pourras raconter en entretien, exemples à l'appui.</p>
+            <div class="lab" data-lab="orion-competences">
+                <p class="lab__label">Lab guidé</p>
+                <p class="lab__title">Ce que le lab prouve que tu sais faire</p>
+                <div class="lab__meta"><span><b>Objectif :</b> valider chaque compétence par un résultat observable, pas par une lecture</span><span><b>Point de départ :</b> le lab Orion monté jusqu'à l'étape correspondante</span><span><b>Durée :</b> au fil des modules</span></div>
+                <ol class="lab__steps">
+                <li><p><strong>Réseau</strong> — depuis CLIENT-WIN11, expliquer chaque ligne de <code>ipconfig /all</code> et prouver le chemin : <code>Test-NetConnection srv-file01 -Port 445</code> → <code>True</code>.</p></li>
+                <li><p><strong>DNS</strong> — créer l'alias <code>intranet</code> vers SRV-WEB01 ; <code>Resolve-DnsName intranet.orion.local</code> répond avec le CNAME.</p></li>
+                <li><p><strong>Active Directory</strong> — créer en script 10 utilisateurs depuis un CSV ; <code>(Get-ADUser -Filter * -SearchBase "OU=ORION-DPT,DC=orion,DC=local").Count</code> les compte.</p></li>
+                <li><p><strong>GPO</strong> — une stratégie qui mappe un lecteur réseau ; sur le client, <code>gpresult /r</code> la liste et le lecteur apparaît.</p></li>
+                <li><p><strong>Droits</strong> — un utilisateur de Comptabilité ouvre son dossier et pas celui du Management ; expliquer le droit effectif (partage + NTFS).</p></li>
+                <li><p><strong>Dépannage</strong> — un camarade casse une chose (DNS du client, passerelle, pare-feu, service arrêté) ; la retrouver en moins de 10 minutes avec la méthode du module <a href="modules/depannage-reseau.html">Dépannage réseau</a>.</p></li>
+                <li><p><strong>Sauvegarde</strong> — supprimer un fichier sur SRV-FILE01 et le restaurer (Windows Server Backup ou DPM), chronomètre en main.</p></li>
+                <li><p><strong>Supervision</strong> — arrêter le service IIS de SRV-WEB01 : Zabbix lève l'alerte, puis le redémarre seul (module <a href="modules/monitoring-zabbix.html">Supervision</a>).</p></li>
+                <li><p><strong>Reconstruire</strong> — supprimer SRV-FILE01 et le recréer entièrement par script en moins de 30 minutes : les scripts sont la documentation.</p></li>
+                </ol>
+            </div>
+        
+        </section>
+
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+            <ul>
+                <li><a href="https://learn.microsoft.com/fr-fr/virtualization/hyper-v-on-windows/user-guide/setup-nat-network" rel="noopener">Microsoft Learn — configurer un réseau NAT pour Hyper-V</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/windows-server/get-started/hardware-requirements" rel="noopener">Microsoft Learn — configuration requise de Windows Server</a></li>
+            </ul>
+        </div>
+    </main>
+</div>
+
+<footer>
+    <p><strong>Lab de référence Orion</strong> — Centre d'apprentissage IT</p>
+    <p><a href="index.html">← Retour au portail</a> · <a href="examens.html">Examens transversaux</a> · <a href="revision.html">Révision du jour</a></p>
+</footer>
+
+<script src="assets/catalogue.js?v=12"></script>
+<script src="assets/app.js?v=12"></script>
+<script src="assets/pratique.js?v=12"></script>
+</body>
+</html>

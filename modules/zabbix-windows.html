@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
-            <span class="fact"><b>Chapitres</b> 7</span>
+            <span class="fact"><b>Chapitres</b> 8</span>
             <span class="fact"><b>Test</b> 10 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="monitoring-zabbix.html">Supervision — Zabbix</a> · <a href="docker.html">Docker</a></span>
         </div>
@@ -44,6 +45,7 @@
             <li><a class="toc__link" href="#modeles"><span>05</span> Un modèle maison</a></li>
             <li><a class="toc__link" href="#heure"><span>06</span> L'heure du domaine</a></li>
             <li><a class="toc__link" href="#certificats"><span>07</span> Les certificats</a></li>
+            <li><a class="toc__link" href="#pratique"><span>08</span> S'entraîner</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -374,13 +376,56 @@
         </div>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 08 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">S'entraîner : PSK, métriques maison, heure</h2>
+            <p class="chapter__intro">Les trois pièges du TP en exercices : l'identité PSK, la métrique maison qui reste « Unknown metric », et le contrôleur de domaine qui prend l'heure de Hyper-V.</p>
+
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Interroger un agent chiffré par PSK depuis le serveur.</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — conteneur zabbix-server</span></div>
+                <pre class="terminal__code"><span class="k">docker</span> exec zabbix-server zabbix_get <span class="p">-s</span> 172.16.50.10 <span class="p">-k</span> system.uptime \
+<span class="k">--tls-connect</span> psk <span class="p">--tls-psk-identity</span> LAB-AD01-PSK <span class="p">--tls-psk-file</span> /var/lib/zabbix/enc/ad01.psk</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">864213</pre>
+                <p class="verify__fail"><code>TLS handshake fail</code> ou <code>PSK identity … not found</code> : l'identité ou la clé diffèrent d'un côté à l'autre — elles doivent être identiques au caractère près dans <code>zabbix_agent2.conf</code> et dans l'onglet <em>Encryption</em> de l'hôte.</p>
+            </div>
+            <div class="cmdex" data-accept="&amp; ?&quot;C:\\Program Files\\Zabbix Agent 2\\zabbix_agent2\.exe&quot; -c &quot;C:\\Program Files\\Zabbix Agent 2\\zabbix_agent2\.conf&quot; -t (windows\.certificates\.expiring|&quot;windows\.certificates\.expiring&quot;);;(\.\\)?zabbix_agent2(\.exe)? -c (\S+|&quot;[^&quot;]+&quot;) -t &quot;?windows\.certificates\.expiring&quot;?" data-hint="l&#x27;exécutable de l&#x27;agent, -c pour la configuration, -t pour tester une clé.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Teste localement, sur l'hôte Windows, la clé <code>windows.certificates.expiring</code> d'un <code>UserParameter</code>, avec la configuration de l'agent.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>&amp; "C:\Program Files\Zabbix Agent 2\zabbix_agent2.exe" -c "C:\Program Files\Zabbix Agent 2\zabbix_agent2.conf" -t windows.certificates.expiring</code>. Si le test répond mais que Zabbix affiche « Unknown metric », c'est que le service tourne encore avec l'ancienne configuration : <code>Restart-Service "Zabbix Agent 2"</code>.</p></div>
+                </details>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le contrôleur de domaine a-t-il la bonne source de temps ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
+                <pre class="terminal__code"><span class="k">w32tm</span> /query /source</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">be.pool.ntp.org,0x8</pre>
+                <p class="verify__fail"><code>VM IC Time Synchronization Provider</code> : le DC prend toujours l'heure de l'hôte Hyper-V (désactiver ce fournisseur, chapitre 06). <code>Local CMOS Clock</code> : aucune source n'est joignable — vérifier UDP 123 en sortie.</p>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>PSK : identité et clé identiques des deux côtés. Métrique maison : <code>-t</code> pour la tester, redémarrer l'agent pour qu'elle existe. Heure : le DC source du domaine ne doit jamais suivre l'hôte Hyper-V.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="zabbix-windows">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -390,9 +435,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Zabbix en remplacement de SCOM »</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

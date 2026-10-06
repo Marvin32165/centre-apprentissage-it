@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Module PowerShell & Automatisation : shell orienté objet, création de VM Hyper-V en script, configuration réseau et renommage, promotion Active Directory, compte de service managé gMSA et mémo des cmdlets.">
-    <title>PowerShell &amp; Automatisation — Module</title>
+    <meta name="description" content="Module PowerShell — console et aide, variables et types, conditions, boucles, tableaux et objets, pipeline, fonctions et erreurs, automatisation du lab Orion (VM, comptes AD depuis un CSV), administration à distance et projets du cours corrigés.">
+    <title>PowerShell — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -16,18 +17,18 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 02 · Infrastructure Windows · 2 / 9</p>
-        <h1 class="hero__title">PowerShell &amp;<br><em>Automatisation</em></h1>
-        <p class="hero__lead">Monter un environnement entier sans toucher à la souris : créer les VM Hyper-V, configurer le réseau, promouvoir un domaine, joindre les serveurs et provisionner un compte de service managé — le tout en scripts rejouables.</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a></p>
+        <h1 class="hero__title">PowerShell</h1>
+        <p class="hero__lead">Le langage d'abord — variables, conditions, boucles, objets, pipeline, fonctions — à partir des exercices du cours, puis ce qu'il permet : reconstruire le lab Orion par script, créer des comptes depuis un tableur, administrer dix serveurs d'une seule commande.</p>
         <div class="hero__meta">
-            <span class="chip">Hyper-V</span><span class="chip">New-VM</span><span class="chip">AD DS</span><span class="chip">GMSA</span><span class="chip">Cheat-sheet</span>
+            <span class="chip">Variables</span><span class="chip">Conditions</span><span class="chip">Boucles</span><span class="chip">Pipeline</span><span class="chip">Fonctions</span><span class="chip">CSV</span><span class="chip">Invoke-Command</span>
         </div>
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
-            <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
-            <span class="fact"><b>Chapitres</b> 6</span>
-            <span class="fact"><b>Test</b> 8 questions</span>
-            <span class="fact"><b>Prérequis</b> <a href="hyperv.html">Hyper-V</a> · <a href="windows-server.html">Windows Server</a></span>
+            <span class="fact"><b>Durée</b> ≈ 5 h</span>
+            <span class="fact"><b>Chapitres</b> 10</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
+            <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a></span>
         </div>
     </div>
 </header>
@@ -37,12 +38,16 @@
         <a class="toc__back" href="../index.html">← Tous les modules</a>
         <p class="toc__label">PowerShell</p>
         <ul class="toc__list">
-            <li><a class="toc__link" href="#bases"><span>01</span> Les bases du langage</a></li>
-            <li><a class="toc__link" href="#vm"><span>02</span> Créer des VM Hyper-V</a></li>
-            <li><a class="toc__link" href="#reseau"><span>03</span> Réseau &amp; renommage</a></li>
-            <li><a class="toc__link" href="#ad"><span>04</span> Promotion AD</a></li>
-            <li><a class="toc__link" href="#gmsa"><span>05</span> Compte managé (GMSA)</a></li>
-            <li><a class="toc__link" href="#memo"><span>06</span> Mémo des cmdlets</a></li>
+            <li><a class="toc__link" href="#console"><span>01</span> Console & aide</a></li>
+            <li><a class="toc__link" href="#variables"><span>02</span> Variables & types</a></li>
+            <li><a class="toc__link" href="#conditions"><span>03</span> Conditions</a></li>
+            <li><a class="toc__link" href="#boucles"><span>04</span> Boucles</a></li>
+            <li><a class="toc__link" href="#objets"><span>05</span> Tableaux & objets</a></li>
+            <li><a class="toc__link" href="#pipeline"><span>06</span> Pipeline</a></li>
+            <li><a class="toc__link" href="#fonctions"><span>07</span> Fonctions & erreurs</a></li>
+            <li><a class="toc__link" href="#automatiser"><span>08</span> Automatiser le lab</a></li>
+            <li><a class="toc__link" href="#distance"><span>09</span> À distance</a></li>
+            <li><a class="toc__link" href="#projets"><span>10</span> Projets du cours</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -52,253 +57,515 @@
             <div class="section-banner__accent"></div>
             <div>
                 <div class="section-banner__label">PowerShell</div>
-                <div class="section-banner__desc">Le script comme documentation vivante de l'infrastructure</div>
+                <div class="section-banner__desc">Le langage, puis le lab Orion en script</div>
             </div>
         </div>
 
         <section class="brief">
             <p class="brief__label">Ce que tu sauras faire à la fin</p>
             <ul class="brief__list">
-                <li>Découvrir seul une commande inconnue avec <code>Get-Command</code>, <code>Get-Help</code> et <code>Get-Member</code>, puis enchaîner un pipeline.</li>
-                <li>Créer commutateur virtuel, disques différentiels et VM Hyper-V entièrement en script.</li>
-                <li>Configurer réseau et nom d'un serveur dans le bon ordre, avant toute promotion de domaine.</li>
-                <li>Scripter une arborescence Active Directory complète — OU, groupes, utilisateurs — sans jamais écrire un mot de passe en clair.</li>
-                <li>Provisionner un compte de service managé (gMSA) dont AD gère et renouvelle le mot de passe.</li>
+                <li>Trouver et comprendre seul une commande inconnue avec <code>Get-Command</code>, <code>Get-Help</code> et <code>Get-Member</code>.</li>
+                <li>Écrire des scripts avec variables typées, conditions, boucles et <code>switch</code>, sans tomber dans le piège de <code>Read-Host</code>.</li>
+                <li>Manipuler des listes d'objets : tableaux, tables de hachage, CSV, et le pipeline (filtrer, trier, sélectionner, compter).</li>
+                <li>Écrire une fonction paramétrée qui gère ses erreurs et renvoie des objets.</li>
+                <li>Créer les VM du lab et les comptes du domaine par script, et administrer plusieurs serveurs à distance.</li>
             </ul>
-            <p class="brief__foot"><strong>Prérequis :</strong> <a href="hyperv.html">Hyper-V</a> · <a href="windows-server.html">Windows Server</a></p>
-            <p class="brief__foot">Les scripts de ce module rejouent les labos de <a href="hyperv.html">Hyper-V</a> et de <a href="windows-server.html">Windows Server</a> — un environnement entier reconstructible à l'identique.</p>
+            <p class="brief__foot"><strong>Prérequis :</strong> <a href="windows-server.html">Windows Server</a> (le domaine Orion) et <a href="hyperv.html">Hyper-V</a>.</p>
+            <p class="brief__foot">Ensuite : chaque module du parcours Windows utilise ces bases — SQL Server, SharePoint et DPM les premiers.</p>
         </section>
 
         <!-- 01 -->
-        <section class="chapter" id="bases">
+        <section class="chapter" id="console">
             <p class="chapter__num">01</p>
-            <h2 class="chapter__title">Les bases du langage</h2>
-            <p class="chapter__intro">PowerShell n'est pas un shell de texte mais un shell <strong>orienté objet</strong> : chaque commande renvoie de vrais objets .NET que l'on peut filtrer, trier et chaîner dans un pipeline.</p>
+            <h2 class="chapter__title">La console, l'aide et la découverte</h2>
+            <p class="chapter__intro">PowerShell n'est pas un shell de texte : chaque commande renvoie des <strong>objets</strong>. Avant d'écrire du code, il faut savoir trouver seul une commande, lire son aide et inspecter ce qu'elle renvoie.</p>
 
-            <h3>Le verbe-nom : une grammaire prévisible</h3>
-            <p>Toutes les commandes (<em>cmdlets</em>) suivent le motif <strong>Verbe-Nom</strong> : <code>Get-</code>, <code>New-</code>, <code>Set-</code>, <code>Remove-</code>, <code>Install-</code>… Connaître le verbe suffit souvent à deviner la commande.</p>
-            <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — découverte</span></div>
-                <pre class="terminal__code"><span class="c"># Chercher une commande</span>
-<span class="k">Get-Command</span> <span class="p">-Verb</span> New <span class="p">-Noun</span> *VM*
-
-<span class="c"># Lire l'aide et des exemples</span>
-<span class="k">Get-Help</span> <span class="k">New-VM</span> <span class="p">-Examples</span>
-
-<span class="c"># Inspecter les propriétés d'un objet</span>
-<span class="k">Get-NetAdapter</span> | <span class="k">Get-Member</span>
-
-<span class="c"># Pipeline : filtrer puis afficher</span>
-<span class="k">Get-Service</span> | <span class="k">Where-Object</span> Status <span class="p">-eq</span> <span class="s">"Running"</span> | <span class="k">Select-Object</span> Name, Status</pre>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Besoin</th><th>Commande</th></tr></thead>
+                    <tbody>
+                        <tr><td>Trouver une commande</td><td><code>Get-Command -Verb New -Noun *VM*</code> · <code>Get-Command *dns*</code></td></tr>
+                        <tr><td>Lire l'aide, avec exemples</td><td><code>Get-Help New-ADUser -Examples</code> (une fois <code>Update-Help</code> passé)</td></tr>
+                        <tr><td>Voir ce qu'un objet contient</td><td><code>Get-Service | Get-Member</code></td></tr>
+                        <tr><td>Connaître un alias</td><td><code>Get-Alias ls</code> → <code>Get-ChildItem</code></td></tr>
+                    </tbody>
+                </table>
             </div>
-
+            <p>Les cmdlets suivent toutes le motif <strong>Verbe-Nom</strong> (<code>Get-</code>, <code>New-</code>, <code>Set-</code>, <code>Remove-</code>…) : connaître le verbe suffit souvent à deviner la commande. Deux versions cohabitent : <strong>Windows PowerShell 5.1</strong>, livré avec Windows, et <strong>PowerShell 7</strong>, à installer, multiplateforme. Les modules d'administration Windows (AD, DHCP, Hyper-V) tournent dans les deux sur un Windows récent.</p>
             <div class="tip">
-                <p class="tip__label">Réflexe</p>
-                <p>Bloqué ? <code>Get-Help &lt;cmdlet&gt; -Examples</code> et <code>&lt;objet&gt; | Get-Member</code> répondent à 90 % des questions sans quitter la console.</p>
+                <p class="tip__label">La stratégie d'exécution</p>
+                <p>Par défaut, Windows 11 refuse d'exécuter les scripts <code>.ps1</code> (<em>Restricted</em>). Pour ses propres scripts : <code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code> — les scripts locaux tournent, ceux téléchargés doivent être signés. Ce n'est pas une barrière de sécurité, juste un garde-fou contre l'exécution accidentelle.</p>
+            </div>
+            <div class="cmdex" data-accept="Get-Help Get-ChildItem -Ex(amples)?;;help Get-ChildItem -Ex(amples)?;;Get-ChildItem -\?" data-hint="Get-Help, avec le nom de la cmdlet et un paramètre.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Affiche les exemples d'utilisation de la cmdlet <code>Get-ChildItem</code>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>Get-Help Get-ChildItem -Examples</code> (ou <code>help Get-ChildItem -Examples</code>). Si l'aide est vide, lancer d'abord <code>Update-Help</code> en administrateur.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Bloqué ? <code>Get-Command</code> pour trouver, <code>Get-Help -Examples</code> pour comprendre, <code>Get-Member</code> pour voir ce qu'un objet contient. Ces trois commandes répondent à presque tout sans quitter la console.</p>
             </div>
         </section>
 
         <!-- 02 -->
-        <section class="chapter" id="vm">
+        <section class="chapter" id="variables">
             <p class="chapter__num">02</p>
-            <h2 class="chapter__title">Créer des VM Hyper-V</h2>
-            <p class="chapter__intro">Toute la mise en place du labo commence par un <strong>commutateur virtuel privé</strong> et des VM de génération 2 créées sur des <strong>disques différentiels</strong> pointant vers l'image SYSPREP de référence.</p>
+            <h2 class="chapter__title">Variables, types et chaînes</h2>
+            <p class="chapter__intro">Le premier exercice du cours déclare des variables, les affiche, les modifie et calcule avec. Trois choses à comprendre pour ne pas se faire piéger : le <strong>type</strong>, ce que renvoie <code>Read-Host</code>, et la différence entre guillemets doubles et simples.</p>
 
-            <h3>Le commutateur et un serveur</h3>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — hôte Hyper-V</span></div>
-                <pre class="terminal__code"><span class="c"># Un réseau privé isolé pour le labo</span>
-<span class="k">New-VMSwitch</span> <span class="p">-Name</span> <span class="s">"LABOPS"</span> <span class="p">-SwitchType</span> Private
-
-<span class="c"># Disque enfant basé sur l'image généralisée</span>
-<span class="k">New-VHD</span> <span class="p">-Path</span> <span class="s">.\SRV-AD01-DISK1-DIFF.vhdx</span> `
-    <span class="p">-ParentPath</span> <span class="s">"C:\PARENT\TEST-SYSPREP.vhdx"</span> <span class="p">-Differencing</span>
-
-<span class="c"># La VM (Gen 2, 8 Go, branchée sur LABOPS)</span>
-<span class="k">New-VM</span> <span class="p">-Name</span> <span class="s">"SRV-AD01"</span> <span class="p">-Generation</span> 2 <span class="p">-MemoryStartupBytes</span> 8GB `
-    <span class="p">-VHDPath</span> <span class="s">.\SRV-AD01-DISK1-DIFF.vhdx</span> <span class="p">-Path</span> <span class="s">.\</span> <span class="p">-SwitchName</span> <span class="s">"LABOPS"</span>
-
-<span class="c"># Mémoire statique + 2 vCPU</span>
-<span class="k">Set-VMMemory</span> <span class="p">-VMName</span> SRV-AD01 <span class="p">-DynamicMemoryEnabled</span> $false
-<span class="k">Set-VMProcessor</span> <span class="p">-VMName</span> SRV-AD01 <span class="p">-Count</span> 2</pre>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — l'essentiel de l'exercice « variables »</span></div>
+                <pre class="terminal__code">$<span class="k">ville</span> = <span class="s">"Mons"</span><span class="c">                     # une chaîne</span>
+<span class="k">[int]$age</span> = 23<span class="c">                     # un entier : le type est forcé</span>
+$<span class="k">taille</span> = 183
+$<span class="k">taille</span> = <span class="p">$taille</span> / 100<span class="c">            # 1.83 : la division donne un décimal</span>
+$<span class="k">age</span> += 10<span class="c">                         # même chose que $age = $age + 10</span>
+$<span class="k">ville</span> += <span class="s">"ville"</span><span class="c">                  # concaténation</span>
+<span class="s">"Tu as $age ans"</span><span class="c">                   # guillemets doubles : la variable est remplacée</span>
+<span class="s">'Tu as $age ans'</span><span class="c">                   # guillemets simples : texte littéral</span>
+$<span class="k">ville.Length</span><span class="c">                      # une chaîne est un objet : propriétés…</span>
+$<span class="k">ville.ToUpper()</span><span class="c">                   # …et méthodes</span></pre>
             </div>
-
-            <h3>Un client Windows 11 (ISO + TPM)</h3>
-            <p>Un client part d'un disque vierge, démarre sur l'ISO, et exige le <strong>TPM virtuel</strong> + <strong>Secure Boot</strong> requis par Windows 11.</p>
-            <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — VM client</span></div>
-                <pre class="terminal__code"><span class="k">New-VHD</span> <span class="p">-Path</span> <span class="s">.\CLIENT-WIN11-DISK1.vhdx</span> <span class="p">-SizeBytes</span> 127GB <span class="p">-Dynamic</span>
-<span class="k">New-VM</span> <span class="p">-Name</span> <span class="s">"CLIENT-WIN11"</span> <span class="p">-Generation</span> 2 <span class="p">-MemoryStartupBytes</span> 8GB `
-    <span class="p">-VHDPath</span> <span class="s">.\CLIENT-WIN11-DISK1.vhdx</span> <span class="p">-SwitchName</span> <span class="s">"LABOPS"</span>
-
-<span class="c"># Monter l'ISO et démarrer dessus</span>
-<span class="k">Add-VMDvdDrive</span> <span class="p">-VMName</span> CLIENT-WIN11 <span class="p">-Path</span> <span class="s">"...\Win11_25H2_x64.iso"</span>
-<span class="k">Set-VMFirmware</span> <span class="p">-VMName</span> CLIENT-WIN11 <span class="p">-FirstBootDevice</span> (<span class="k">Get-VMDvdDrive</span> <span class="p">-VMName</span> CLIENT-WIN11)
-
-<span class="c"># Exigé par Windows 11 : TPM virtuel + Secure Boot</span>
-<span class="k">Set-VMKeyProtector</span> <span class="p">-VMName</span> CLIENT-WIN11 <span class="p">-NewLocalKeyProtector</span>
-<span class="k">Enable-VMTPM</span> <span class="p">-VMName</span> CLIENT-WIN11</pre>
+            <h3>Le piège de Read-Host</h3>
+            <p><code>Read-Host</code> renvoie <strong>toujours une chaîne</strong>. Or <code>+</code> concatène les chaînes : <code>"5" + "3"</code> donne <code>53</code>. Il faut convertir, soit en typant la variable (<code>[int]$n = Read-Host "Nombre"</code>), soit à la volée (<code>[int]$saisie + 3</code>). Règle utile : c'est le type de l'<strong>élément de gauche</strong> qui décide — <code>3 + "5"</code> donne 8, <code>"3" + 5</code> donne <code>35</code>.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Type</th><th>Exemple</th><th>Usage</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>[string]</code></td><td><code>"orion"</code></td><td>Texte</td></tr>
+                        <tr><td><code>[int]</code> / <code>[double]</code></td><td><code>42</code> / <code>1.83</code></td><td>Nombres entiers / décimaux</td></tr>
+                        <tr><td><code>[bool]</code></td><td><code>$true</code>, <code>$false</code></td><td>Résultat d'un test</td></tr>
+                        <tr><td><code>[datetime]</code></td><td><code>Get-Date</code></td><td>Dates : <code>(Get-Date).AddDays(-7)</code></td></tr>
+                        <tr><td><code>[array]</code></td><td><code>@(1, 2, 3)</code></td><td>Liste (chapitre 05)</td></tr>
+                    </tbody>
+                </table>
             </div>
-
+            <div class="exo">
+                <p class="exo__label">Exercice — l'IMC du cours, corrigé</p>
+                <p>Avec <code>$poids = 63</code> (kg) et <code>$taille = 183</code> (cm), calcule l'IMC (poids ÷ taille en mètres au carré) et affiche « Ton IMC est de 18,8 » arrondi à une décimale.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><pre class="verify__out">$taille = $taille / 100
+$imc = $poids / ($taille * $taille)
+"Ton IMC est de {0:N1}" -f $imc</pre><p>L'opérateur <code>-f</code> formate : <code>{0:N1}</code> = le premier argument, une décimale. Plus propre que d'additionner des chaînes, et la virgule suit les réglages régionaux.</p></div>
+                </details>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Switch privé → VHDX <strong>différentiel</strong> sur le parent SYSPREP → <code>New-VM -Generation 2</code> → mémoire statique. Les serveurs réutilisent l'image ; le client Windows 11 part d'un disque neuf avec <strong>TPM + Secure Boot</strong>.</p>
+                <p>Une variable a un type ; <code>Read-Host</code> renvoie du texte qu'il faut convertir. Guillemets doubles = interpolation, simples = littéral. <code>-f</code> pour formater un résultat.</p>
             </div>
         </section>
 
         <!-- 03 -->
-        <section class="chapter" id="reseau">
+        <section class="chapter" id="conditions">
             <p class="chapter__num">03</p>
-            <h2 class="chapter__title">Réseau &amp; renommage</h2>
-            <p class="chapter__intro">Après le premier démarrage, chaque serveur reçoit son <strong>identité réseau définitive</strong> : adresse IP fixe, serveur DNS, désactivation d'IPv6 si inutile, puis renommage et redémarrage.</p>
+            <h2 class="chapter__title">Comparer et décider</h2>
+            <p class="chapter__intro">Les conditions du cours (pair ou impair, majeur ou mineur, année bissextile, mention d'une note) reposent sur des <strong>opérateurs de comparaison</strong> qui ne ressemblent pas à ceux des autres langages : pas de <code>==</code> ni de <code>&gt;</code>, mais <code>-eq</code> et <code>-gt</code>.</p>
 
-            <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — post-déploiement</span></div>
-                <pre class="terminal__code"><span class="c"># 1. Identifier la carte</span>
-<span class="k">Get-NetAdapter</span>
-
-<span class="c"># 2. IP fixe + passerelle</span>
-<span class="k">New-NetIPAddress</span> <span class="p">-InterfaceAlias</span> <span class="s">"Ethernet"</span> <span class="p">-IPAddress</span> 172.16.50.10 `
-    <span class="p">-PrefixLength</span> 24 <span class="p">-DefaultGateway</span> 172.16.50.1
-
-<span class="c"># 3. Serveur DNS (le DC pointe vers lui-même)</span>
-<span class="k">Set-DnsClientServerAddress</span> <span class="p">-InterfaceAlias</span> <span class="s">"Ethernet"</span> <span class="p">-ServerAddresses</span> 172.16.50.10
-
-<span class="c"># 4. Désactiver IPv6 (labo)</span>
-<span class="k">Disable-NetAdapterBinding</span> <span class="p">-Name</span> <span class="s">"Ethernet"</span> <span class="p">-ComponentID</span> ms_tcpip6
-
-<span class="c"># 5. Renommer puis redémarrer</span>
-<span class="k">Rename-Computer</span> <span class="p">-NewName</span> <span class="s">"SRV-AD01"</span> <span class="p">-Restart</span></pre>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Opérateur</th><th>Sens</th><th>Exemple</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>-eq</code> / <code>-ne</code></td><td>égal / différent</td><td><code>$choix -eq 1</code></td></tr>
+                        <tr><td><code>-gt</code> / <code>-ge</code> / <code>-lt</code> / <code>-le</code></td><td>&gt; / ≥ / &lt; / ≤</td><td><code>$age -ge 18</code></td></tr>
+                        <tr><td><code>-like</code></td><td>motif avec jokers</td><td><code>$prenom -like "A*"</code></td></tr>
+                        <tr><td><code>-match</code></td><td>expression régulière</td><td><code>$ip -match "^172\.16\."</code></td></tr>
+                        <tr><td><code>-in</code> / <code>-notin</code></td><td>appartient à une liste</td><td><code>$coup -in "pierre","papier","ciseaux"</code></td></tr>
+                        <tr><td><code>-and</code> / <code>-or</code> / <code>-not</code></td><td>et / ou / non</td><td><code>($n % 2 -eq 0) -and ($n -gt 10)</code></td></tr>
+                    </tbody>
+                </table>
             </div>
-
             <div class="tip">
-                <p class="tip__label">Ordre des opérations</p>
-                <p>Toujours fixer <strong>réseau + nom</strong> <em>avant</em> de promouvoir le domaine ou de joindre une machine. Renommer un contrôleur de domaine après promotion est bien plus délicat.</p>
+                <p class="tip__label">Insensible à la casse</p>
+                <p>Par défaut, <code>-eq</code>, <code>-like</code> et <code>-match</code> ignorent majuscules et minuscules : <code>"Pierre" -eq "pierre"</code> vaut <code>$true</code>. Pour tenir compte de la casse : <code>-ceq</code>, <code>-clike</code>, <code>-cmatch</code>.</p>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — if, elseif, else, puis switch</span></div>
+                <pre class="terminal__code"><span class="k">[int]$note</span> = Read-Host <span class="s">"Note sur 20"</span>
+<span class="k">if</span> ($note <span class="p">-ge</span> 16)     { <span class="s">"A"</span> }
+<span class="k">elseif</span> ($note <span class="p">-ge</span> 14) { <span class="s">"B"</span> }
+<span class="k">elseif</span> ($note <span class="p">-ge</span> 12) { <span class="s">"C"</span> }
+<span class="k">else</span>                  { <span class="s">"Insuffisant"</span> }
+
+<span class="k">switch</span> ([int](Read-Host <span class="s">"Mois (1-12)"</span>)) {
+    <span class="k">2</span>                      { <span class="s">"28 jours"</span> }
+    <span class="k">{</span> <span class="p">$_</span> <span class="p">-in</span> 4, 6, 9, 11 } { <span class="s">"30 jours"</span> }
+    <span class="k">default</span>                { <span class="s">"31 jours"</span> }
+<span class="k">}</span></pre>
+            </div>
+            <div class="exo">
+                <p class="exo__label">Exercice — année bissextile</p>
+                <p>Demande une année et affiche si elle est bissextile. Règle : divisible par 4, sauf les siècles, sauf les siècles divisibles par 400 (2000 l'est, 1900 non).</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><pre class="verify__out">[int]$a = Read-Host "Année"
+if (($a % 4 -eq 0 -and $a % 100 -ne 0) -or ($a % 400 -eq 0)) { "$a est bissextile" }
+else { "$a n'est pas bissextile" }</pre><p><code>%</code> donne le reste de la division : <code>$a % 4 -eq 0</code> = « divisible par 4 ». Les parenthèses rendent la règle lisible.</p></div>
+                </details>
+            </div>
+            <div class="cmdex" data-accept="\(?\$n ?% ?2 -eq 0\)? -and \(?\$n -gt 10\)?;;\(?\$n -gt 10\)? -and \(?\$n ?% ?2 -eq 0\)?" data-hint="le reste de la division par 2, -eq, -and, -gt.">
+                <p class="cmdex__label">À toi d'écrire</p>
+                <p>Écris la condition (sans <code>if</code>) qui vaut vrai si <code>$n</code> est <strong>pair et supérieur à 10</strong>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>($n % 2 -eq 0) -and ($n -gt 10)</code> — exercice 11 du cours.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>-eq -ne -gt -ge -lt -le</code>, <code>-like</code> (jokers), <code>-match</code> (regex), <code>-in</code> (liste), insensibles à la casse par défaut. <code>if/elseif/else</code> pour quelques cas, <code>switch</code> pour beaucoup.</p>
             </div>
         </section>
 
         <!-- 04 -->
-        <section class="chapter" id="ad">
+        <section class="chapter" id="boucles">
             <p class="chapter__num">04</p>
-            <h2 class="chapter__title">Promotion AD en script</h2>
-            <p class="chapter__intro">La promotion d'un contrôleur de domaine et la création de toute l'arborescence (OU, groupes, utilisateurs) se scriptent intégralement — ce qui rend l'environnement <strong>reconstructible à l'identique</strong>.</p>
+            <h2 class="chapter__title">Les boucles</h2>
+            <p class="chapter__intro">Répéter une action est la raison d'être d'un script d'administration : créer 50 comptes, vérifier 20 serveurs, parcourir un fichier. PowerShell offre quatre boucles, plus une cinquième dans le pipeline.</p>
 
-            <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
-                <pre class="terminal__code"><span class="k">Install-WindowsFeature</span> AD-Domain-Services, DNS <span class="p">-IncludeManagementTools</span>
-<span class="k">Install-ADDSForest</span> <span class="p">-DomainName</span> <span class="s">"orion.local"</span> <span class="p">-DomainNetbiosName</span> <span class="s">"ORION"</span> <span class="p">-InstallDns</span>
-
-<span class="c"># Arborescence : OU racine → départements → groupes → users</span>
-<span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"ORION-DPT"</span> <span class="p">-Path</span> <span class="s">"DC=orion,DC=local"</span>
-<span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"Management"</span>  <span class="p">-Path</span> <span class="s">"OU=ORION-DPT,DC=orion,DC=local"</span>
-<span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"Development"</span> <span class="p">-Path</span> <span class="s">"OU=ORION-DPT,DC=orion,DC=local"</span>
-<span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"Accounting"</span>  <span class="p">-Path</span> <span class="s">"OU=ORION-DPT,DC=orion,DC=local"</span>
-
-<span class="k">New-ADGroup</span> <span class="p">-Name</span> <span class="s">"MGMT-GRP"</span> <span class="p">-GroupScope</span> Global <span class="p">-GroupCategory</span> Security `
-    <span class="p">-Path</span> <span class="s">"OU=Management,OU=ORION-DPT,DC=orion,DC=local"</span>
-
-<span class="k">New-ADUser</span> <span class="p">-Name</span> <span class="s">"Mathis Thomas"</span> <span class="p">-SamAccountName</span> <span class="s">"mth"</span> `
-    <span class="p">-UserPrincipalName</span> <span class="s">"mth@orion.local"</span> `
-    <span class="p">-Path</span> <span class="s">"OU=Management,OU=ORION-DPT,DC=orion,DC=local"</span> `
-    <span class="p">-AccountPassword</span> (<span class="k">Read-Host</span> <span class="p">-AsSecureString</span> <span class="s">"Mot de passe"</span>) <span class="p">-Enabled</span> $true
-<span class="k">Add-ADGroupMember</span> <span class="p">-Identity</span> <span class="s">"MGMT-GRP"</span> <span class="p">-Members</span> <span class="s">"mth"</span></pre>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Boucle</th><th>Quand</th><th>Exemple du cours</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>for</code></td><td>Un compteur, un pas</td><td>Les nombres pairs de 0 à 20</td></tr>
+                        <tr><td><code>foreach</code></td><td>Chaque élément d'une liste</td><td>Chaque nom d'un fichier texte</td></tr>
+                        <tr><td><code>while</code></td><td>Tant qu'une condition est vraie (testée avant)</td><td>Le menu de la calculatrice de température</td></tr>
+                        <tr><td><code>do { } until ()</code></td><td>Au moins une fois, jusqu'à une condition</td><td>Redemander une saisie invalide</td></tr>
+                        <tr><td><code>ForEach-Object</code></td><td>Dans un pipeline, objet par objet</td><td><code>Get-Content noms.txt | ForEach-Object { … }</code></td></tr>
+                    </tbody>
+                </table>
             </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — trois boucles du cours</span></div>
+                <pre class="terminal__code"><span class="k">for</span> ($i = 50; <span class="p">$i</span> <span class="p">-ge</span> 20; <span class="p">$i</span> -= 2) { <span class="p">$i</span> }<span class="c">               # pairs de 50 à 20, décroissant</span>
 
+$<span class="k">total</span> = 0
+$<span class="k">nombres</span> = 1..10
+<span class="k">foreach</span> ($n in <span class="p">$nombres)</span> { <span class="p">$total</span> += <span class="p">$n</span> }
+$<span class="k">moyenne</span> = <span class="p">$total</span> / <span class="p">$nombres.Count</span><span class="c">                      # .Count évite un compteur à la main</span>
+
+<span class="k">foreach</span> ($nom in Get-Content <span class="s">"C:\Lab\noms.txt"</span>) {<span class="c">      # chaque ligne d'un fichier</span>
+    <span class="k">Write-Host</span> <span class="s">"Bonjour $nom"</span>
+<span class="k">}</span></pre>
+            </div>
+            <p><code>break</code> sort de la boucle, <code>continue</code> passe directement au tour suivant. Et pour un calcul comme la moyenne, PowerShell a déjà la réponse : <code>(1..10 | Measure-Object -Average).Average</code>.</p>
+            <div class="cmdex" data-accept="for ?\( ?\$\w+ ?= ?3 ?; ?\$\w+ ?-le 30 ?; ?\$\w+ ?\+= ?3 ?\) ?\{ ?(Write-Host |Write-Output )?\$\w+ ?\};;for ?\( ?\$\w+ ?= ?3 ?; ?\$\w+ ?-lt 31 ?; ?\$\w+ ?\+= ?3 ?\) ?\{ ?(Write-Host |Write-Output )?\$\w+ ?\}" data-hint="for ($i = …; $i -le …; $i += …) { $i }">
+                <p class="cmdex__label">À toi d'écrire</p>
+                <p>Écris une boucle <code>for</code> qui affiche les multiples de 3, de 3 à 30.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>for ($i = 3; $i -le 30; $i += 3) { $i }</code> — départ, condition, pas. Variante en pipeline : <code>3..30 | Where-Object { $_ % 3 -eq 0 }</code>.</p></div>
+                </details>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Ne jamais écrire un mot de passe en clair dans un script : <code>Read-Host -AsSecureString</code> le saisit de façon masquée. Pour rejouer en masse, on boucle sur un <code>Import-Csv</code> d'utilisateurs.</p>
+                <p><code>for</code> pour compter, <code>foreach</code> pour parcourir, <code>while</code>/<code>do-until</code> pour attendre une condition, <code>ForEach-Object</code> dans un pipeline. Avant d'écrire une boucle de calcul, vérifier que <code>Measure-Object</code> ne le fait pas déjà.</p>
             </div>
         </section>
 
         <!-- 05 -->
-        <section class="chapter" id="gmsa">
+        <section class="chapter" id="objets">
             <p class="chapter__num">05</p>
-            <h2 class="chapter__title">Compte de service managé (GMSA)</h2>
-            <p class="chapter__intro">Un <strong>gMSA</strong> (Group Managed Service Account) est un compte de service dont Active Directory gère <strong>automatiquement le mot de passe</strong> — long, complexe, renouvelé tout seul. Idéal pour SQL Server, IIS ou un planificateur de tâches : plus de mot de passe à connaître ni à faire tourner à la main.</p>
-
-            <h3>Mise en place (vue dans le labo SharePoint/SQL)</h3>
-            <ol class="steps">
-                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Créer la clé racine KDS</strong>Une seule fois par forêt. Elle permet à AD de générer les mots de passe gMSA.</div></li>
-                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Préparer un groupe</strong>Une OU « GMSA », un groupe <code>GS_GMSA_SQL</code> dont les membres sont les serveurs autorisés (ex. <code>SRV-SQL01</code>).</div></li>
-                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Créer le compte gMSA</strong>En autorisant ce groupe à récupérer le mot de passe managé.</div></li>
-                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Installer sur le serveur cible</strong>Sur SRV-SQL01 : <code>Install-ADServiceAccount</code>, puis on l'affecte au service.</div></li>
-            </ol>
+            <h2 class="chapter__title">Tableaux, tables de hachage et objets</h2>
+            <p class="chapter__intro">Les vraies données d'administration sont des listes d'objets : des utilisateurs, des serveurs, des services. Savoir les fabriquer, les lire depuis un CSV et les réécrire, c'est l'essentiel de l'automatisation.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur le contrôleur de domaine</span></div>
-                <pre class="terminal__code"><span class="c"># 1. Clé racine KDS — UNE SEULE FOIS dans l'environnement</span>
-<span class="k">Add-KdsRootKey</span> <span class="p">-EffectiveTime</span> ((<span class="k">Get-Date</span>).AddHours(-10))
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — les trois structures</span></div>
+                <pre class="terminal__code">$<span class="k">serveurs</span> = @("SRV-AD01", <span class="s">"SRV-AD02"</span>, <span class="s">"SRV-FILE01"</span>)<span class="c">      # tableau</span>
+$<span class="k">serveurs[0];</span> <span class="p">$serveurs.Count;</span> <span class="p">$serveurs</span> += <span class="s">"SRV-WEB01"</span>
 
-<span class="c"># 2. Groupe des serveurs autorisés (membre : SRV-SQL01)</span>
-<span class="c">#    créé dans une OU dédiée « GMSA »</span>
+$<span class="k">ip</span> = @{ <span class="s">"SRV-AD01"</span> = <span class="s">"172.16.50.10"</span>; <span class="s">"SRV-FILE01"</span> = <span class="s">"172.16.50.20"</span> }<span class="c">   # table de hachage</span>
+$<span class="k">ip["SRV-AD01"]</span>
 
-<span class="c"># 3. Le compte managé</span>
-<span class="k">New-ADServiceAccount</span> GMSA_SQL <span class="p">-DNSHostName</span> gmsa_sql.marvin.lan `
-    <span class="p">-PrincipalsAllowedToRetrieveManagedPassword</span> GS_GMSA_SQL
-
-<span class="c"># 4. Sur SRV-SQL01 :</span>
-<span class="c"># Install-ADServiceAccount GMSA_SQL</span></pre>
+$<span class="k">vm</span> = [PSCustomObject]@{ Nom = <span class="s">"SRV-WEB01"</span>; IP = <span class="s">"172.16.50.25"</span>; RAM = 4GB }<span class="c">   # objet</span>
+$<span class="k">vm.Nom</span></pre>
             </div>
-
+            <h3>Le CSV, format d'échange de l'administrateur</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — lire, filtrer, écrire</span></div>
+                <pre class="terminal__code">$<span class="k">comptes</span> = Import-Csv <span class="s">"C:\Lab\comptes.csv"</span> <span class="p">-Delimiter</span> <span class="s">";"</span><span class="c">   # une ligne = un objet, une colonne = une propriété</span>
+$<span class="k">comptes</span> | <span class="k">Where-Object</span> Service <span class="p">-eq</span> <span class="s">"Development"</span> | <span class="k">Select-Object</span> Prenom, Nom
+<span class="k">Get-ADUser</span> <span class="p">-Filter</span> * <span class="p">-Properties</span> Department |
+    <span class="k">Select-Object</span> Name, SamAccountName, Department |
+    <span class="k">Export-Csv</span> <span class="s">"C:\Lab\export.csv"</span> <span class="p">-NoTypeInformation</span> <span class="p">-Delimiter</span> <span class="s">";"</span> <span class="p">-Encoding</span> UTF8</pre>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Le point-virgule</p>
+                <p>Un CSV ouvert dans Excel en français utilise le <strong>point-virgule</strong> comme séparateur. Sans <code>-Delimiter ";"</code>, PowerShell lit toute la ligne comme une seule colonne.</p>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Le gMSA résout le cauchemar des <strong>mots de passe de comptes de service</strong> : AD les gère et les renouvelle seul. <code>Add-KdsRootKey</code> ne s'exécute <strong>qu'une fois</strong> par forêt ; le décalage <code>-10h</code> évite d'attendre la propagation.</p>
+                <p>Tableau <code>@()</code>, table de hachage <code>@{}</code>, objet <code>[PSCustomObject]@{}</code>. <code>Import-Csv</code> transforme un fichier en objets, <code>Export-Csv</code> fait l'inverse : c'est le pont entre un tableur et un script.</p>
             </div>
         </section>
 
         <!-- 06 -->
-        <section class="chapter" id="memo">
+        <section class="chapter" id="pipeline">
             <p class="chapter__num">06</p>
-            <h2 class="chapter__title">Mémo des cmdlets</h2>
-            <p class="chapter__intro">La trousse à outils du labo, regroupée par domaine — à garder sous la main.</p>
+            <h2 class="chapter__title">Le pipeline</h2>
+            <p class="chapter__intro">Le pipeline <code>|</code> passe des <strong>objets</strong> d'une commande à la suivante, pas du texte. On filtre, on trie, on sélectionne, on regroupe, sans jamais découper de chaîne à la main.</p>
 
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Domaine</th><th>Cmdlet</th><th>Rôle</th></tr></thead>
+                    <thead><tr><th>Cmdlet</th><th>Rôle</th><th>Exemple</th></tr></thead>
                     <tbody>
-                        <tr><td>Hyper-V</td><td><code>New-VMSwitch</code></td><td>Créer un commutateur virtuel</td></tr>
-                        <tr><td>Hyper-V</td><td><code>New-VHD -Differencing</code></td><td>Disque enfant basé sur un parent</td></tr>
-                        <tr><td>Hyper-V</td><td><code>New-VM</code> / <code>Set-VMProcessor</code></td><td>Créer / dimensionner une VM</td></tr>
-                        <tr><td>Hyper-V</td><td><code>Enable-VMTPM</code></td><td>Activer le TPM virtuel (Windows 11)</td></tr>
-                        <tr><td>Réseau</td><td><code>New-NetIPAddress</code></td><td>Adresse IP fixe</td></tr>
-                        <tr><td>Réseau</td><td><code>Set-DnsClientServerAddress</code></td><td>Serveur DNS du client</td></tr>
-                        <tr><td>Système</td><td><code>Rename-Computer</code></td><td>Renommer + redémarrer</td></tr>
-                        <tr><td>Système</td><td><code>Install-WindowsFeature</code></td><td>Ajouter un rôle/fonctionnalité</td></tr>
-                        <tr><td>AD</td><td><code>Install-ADDSForest</code></td><td>Créer forêt + domaine</td></tr>
-                        <tr><td>AD</td><td><code>New-ADOrganizationalUnit</code></td><td>Créer une OU</td></tr>
-                        <tr><td>AD</td><td><code>New-ADUser</code> / <code>New-ADGroup</code></td><td>Créer utilisateurs / groupes</td></tr>
-                        <tr><td>AD</td><td><code>Add-Computer</code></td><td>Joindre une machine au domaine</td></tr>
-                        <tr><td>Sécurité</td><td><code>New-ADServiceAccount</code></td><td>Compte de service managé (gMSA)</td></tr>
+                        <tr><td><code>Where-Object</code></td><td>Filtrer</td><td><code>Where-Object Status -eq Running</code></td></tr>
+                        <tr><td><code>Select-Object</code></td><td>Choisir des propriétés, ou les N premiers</td><td><code>Select-Object Name, Status -First 5</code></td></tr>
+                        <tr><td><code>Sort-Object</code></td><td>Trier</td><td><code>Sort-Object CPU -Descending</code></td></tr>
+                        <tr><td><code>Group-Object</code></td><td>Regrouper et compter</td><td><code>Group-Object Status</code></td></tr>
+                        <tr><td><code>Measure-Object</code></td><td>Compter, sommer, moyenne</td><td><code>Measure-Object Length -Sum</code></td></tr>
+                        <tr><td><code>ForEach-Object</code></td><td>Agir sur chaque objet (<code>$_</code>)</td><td><code>ForEach-Object { $_.Name.ToUpper() }</code></td></tr>
                     </tbody>
                 </table>
             </div>
-
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — trois questions d'administrateur, trois pipelines</span></div>
+                <pre class="terminal__code"><span class="c"># Les 5 processus qui consomment le plus de mémoire</span>
+<span class="k">Get-Process</span> | <span class="k">Sort-Object</span> WorkingSet64 <span class="p">-Descending</span> | <span class="k">Select-Object</span> Name, Id, WorkingSet64 <span class="p">-First</span> 5
+<span class="c"># Les services automatiques arrêtés (souvent une panne)</span>
+<span class="k">Get-Service</span> | <span class="k">Where-Object</span> { <span class="p">$_.StartType</span> <span class="p">-eq</span> <span class="s">'Automatic'</span> <span class="p">-and</span> <span class="p">$_.Status</span> <span class="p">-ne</span> <span class="s">'Running'</span> }
+<span class="c"># Les comptes AD qui ne se sont pas connectés depuis 90 jours</span>
+<span class="k">Search-ADAccount</span> <span class="p">-AccountInactive</span> <span class="p">-TimeSpan</span> 90.00:00:00 <span class="p">-UsersOnly</span> | <span class="k">Select-Object</span> Name, LastLogonDate</pre>
+            </div>
             <div class="tip">
-                <p class="tip__label">Bonne pratique</p>
-                <p>Scripter toute opération répétitive plutôt que de cliquer : le script devient la <strong>documentation vivante</strong> de l'environnement et permet de tout reconstruire après un incident. Versionner ces scripts sur GitHub (c'est déjà le cas ici 👍).</p>
+                <p class="tip__label">Format-Table en dernier</p>
+                <p><code>Format-Table</code> et <code>Format-List</code> transforment les objets en texte mis en page : après eux, plus rien d'utilisable. Ils ne se mettent qu'en <strong>fin</strong> de pipeline, et jamais avant <code>Export-Csv</code>.</p>
+            </div>
+            <div class="cmdex" data-accept="Get-Service \| (Where-Object|Where|\?) \{? ?\$(_|PSItem)\.Status -eq [&#x27;\&quot;]?Stopped[&#x27;\&quot;]? ?\}?;;Get-Service \| (Where-Object|Where|\?) Status -eq [&#x27;\&quot;]?Stopped[&#x27;\&quot;]?" data-hint="Get-Service | Where-Object …">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Affiche uniquement les services <strong>arrêtés</strong> (<code>Status</code> vaut <code>Stopped</code>).</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>Get-Service | Where-Object Status -eq Stopped</code> — ou, forme longue, <code>Where-Object { $_.Status -eq 'Stopped' }</code>. <code>$_</code> (ou <code>$PSItem</code>) désigne l'objet en cours.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le pipeline transporte des objets : <strong>filtrer</strong> (<code>Where</code>), <strong>trier</strong> (<code>Sort</code>), <strong>choisir</strong> (<code>Select</code>), <strong>compter</strong> (<code>Measure</code>/<code>Group</code>), et ne mettre en forme qu'à la fin.</p>
             </div>
         </section>
 
-        <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 07 -->
+        <section class="chapter" id="fonctions">
+            <p class="chapter__num">07</p>
+            <h2 class="chapter__title">Fonctions, scripts et erreurs</h2>
+            <p class="chapter__intro">Un bon script d'administration se relance sans danger, accepte des paramètres au lieu de valeurs écrites en dur, et s'arrête proprement quand quelque chose échoue.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — une fonction avec paramètres et gestion d'erreur</span></div>
+                <pre class="terminal__code"><span class="k">function</span> Test-Port {
+    <span class="k">param(</span>
+        <span class="k">[Parameter(Mandatory)]</span> [string] <span class="p">$Ordinateur,</span>
+        <span class="k">[int]</span> <span class="p">$Port</span> = 3389<span class="c">                       # valeur par défaut</span>
+    <span class="k">)</span>
+    <span class="k">try</span> {
+        $<span class="k">r</span> = Test-NetConnection <span class="p">$Ordinateur</span> <span class="p">-Port</span> <span class="p">$Port</span> <span class="p">-WarningAction</span> SilentlyContinue <span class="p">-ErrorAction</span> Stop
+        <span class="k">[PSCustomObject]@{</span> Ordinateur = <span class="p">$Ordinateur;</span> Port = <span class="p">$Port;</span> Ouvert = <span class="p">$r.TcpTestSucceeded</span> }
+    <span class="k">}</span>
+    <span class="k">catch</span> {
+        <span class="k">Write-Warning</span> <span class="s">"Test impossible vers $Ordinateur : $($_.Exception.Message)"</span>
+    <span class="k">}</span>
+<span class="k">}</span>
+<span class="s">"SRV-AD01"</span>, <span class="s">"SRV-FILE01"</span> | <span class="k">ForEach-Object</span> { Test-Port <span class="p">-Ordinateur</span> <span class="p">$_</span> <span class="p">-Port</span> 445 }</pre>
+            </div>
+            <ul>
+                <li><code>param()</code> déclare les paramètres ; <code>[Parameter(Mandatory)]</code> les rend obligatoires (PowerShell les demande s'ils manquent).</li>
+                <li><code>try { } catch { }</code> n'attrape que les erreurs <strong>bloquantes</strong> : beaucoup de cmdlets n'émettent que des erreurs non bloquantes, d'où <code>-ErrorAction Stop</code>.</li>
+                <li>Une fonction <strong>renvoie des objets</strong> (pas du texte avec <code>Write-Host</code>) : le résultat se trie, se filtre, s'exporte.</li>
+                <li>Le même bloc <code>param()</code> en tête d'un fichier <code>.ps1</code> en fait un script paramétrable : <code>.\Test-Lab.ps1 -Ordinateur SRV-AD01</code>.</li>
+            </ul>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Des paramètres plutôt que des valeurs en dur, <code>-ErrorAction Stop</code> + <code>try/catch</code> pour décider quoi faire en cas d'échec, des objets en sortie. Un script qui respecte ces trois règles se réutilise.</p>
+            </div>
+        </section>
+
+        <!-- 08 -->
+        <section class="chapter" id="automatiser">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Automatiser le lab Orion</h2>
+            <p class="chapter__intro">Les scripts du cours rejouent tout le lab : création des VM, configuration réseau, annuaire. L'étape suivante est de les rendre <strong>génériques</strong> — une fonction et une liste plutôt qu'un bloc copié-collé par machine.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — hôte Hyper-V : une fonction pour toutes les VM du lab</span></div>
+                <pre class="terminal__code"><span class="k">function</span> New-LabVM {
+    <span class="k">param([Parameter(Mandatory)]</span> [string] <span class="p">$Nom,</span> [int64] <span class="p">$Memoire</span> = 4GB)
+    $<span class="k">dossier</span> = <span class="s">"C:\VM\LABOPS\$Nom"</span>
+    <span class="k">New-Item</span> <span class="p">-ItemType</span> Directory <span class="p">-Path</span> <span class="p">$dossier</span> <span class="p">-Force</span> | <span class="k">Out-Null</span>
+    <span class="k">New-VHD</span> <span class="p">-Path</span> <span class="s">"$dossier\$Nom-DISK1-DIFF.vhdx"</span> <span class="p">-ParentPath</span> <span class="s">"C:\PARENT\TEST-SYSPREP.vhdx"</span> <span class="p">-Differencing</span> | <span class="k">Out-Null</span>
+    <span class="k">New-VM</span> <span class="p">-Name</span> <span class="p">$Nom</span> <span class="p">-Generation</span> 2 <span class="p">-MemoryStartupBytes</span> <span class="p">$Memoire</span> <span class="p">-VHDPath</span> <span class="s">"$dossier\$Nom-DISK1-DIFF.vhdx"</span> <span class="p">-Path</span> <span class="p">$dossier</span> <span class="p">-SwitchName</span> <span class="s">"LABOPS"</span> | <span class="k">Out-Null</span>
+    <span class="k">Set-VMMemory</span> <span class="p">-VMName</span> <span class="p">$Nom</span> <span class="p">-DynamicMemoryEnabled</span> <span class="p">$false</span>
+    <span class="k">Set-VMProcessor</span> <span class="p">-VMName</span> <span class="p">$Nom</span> <span class="p">-Count</span> 2
+<span class="k">}</span>
+<span class="s">"SRV-AD01"</span>, <span class="s">"SRV-AD02"</span>, <span class="s">"SRV-FILE01"</span> | <span class="k">ForEach-Object</span> { New-LabVM <span class="p">-Nom</span> <span class="p">$_</span> }</pre>
+            </div>
+            <div class="lab" data-lab="ps-csv-ad">
+                <p class="lab__label">Lab guidé</p>
+                <p class="lab__title">Créer les comptes du domaine depuis un CSV</p>
+                <div class="lab__meta"><span><b>Objectif :</b> remplacer dix commandes New-ADUser copiées-collées par un script qui lit un fichier</span><span><b>Point de départ :</b> SRV-AD01 promu, l'arborescence ORION-DPT créée (module Windows Server)</span><span><b>Durée :</b> 30 min</span></div>
+                <ol class="lab__steps">
+                <li><p>Créer <code>C:\Lab\comptes.csv</code> (séparateur point-virgule) :</p><pre class="verify__out">Prenom;Nom;Login;Service
+Sébastien;Sotiaux;sso;Development
+Benjamin;Delaunoy;bde;Accounting
+Mathis;Thomas;mth;Management</pre>
+            </li>
+                <li><p>Le script :</p><div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
+                <pre class="terminal__code">$<span class="k">mdp</span> = Read-Host <span class="p">-AsSecureString</span> <span class="s">"Mot de passe initial"</span>
+<span class="k">Import-Csv</span> <span class="s">"C:\Lab\comptes.csv"</span> <span class="p">-Delimiter</span> <span class="s">";"</span> | <span class="k">ForEach-Object</span> {
+    $<span class="k">ou</span> = <span class="s">"OU=$($_.Service),OU=ORION-DPT,DC=orion,DC=local"</span>
+    <span class="k">New-ADUser</span> <span class="p">-Name</span> <span class="s">"$($_.Prenom) $($_.Nom)"</span> <span class="p">-GivenName</span> <span class="p">$_.Prenom</span> <span class="p">-Surname</span> <span class="p">$_.Nom</span> `
+        <span class="k">-SamAccountName</span> <span class="p">$_.Login</span> <span class="p">-UserPrincipalName</span> <span class="s">"$($_.Login)@orion.local"</span> `
+        <span class="k">-Path</span> <span class="p">$ou</span> <span class="p">-AccountPassword</span> <span class="p">$mdp</span> <span class="p">-ChangePasswordAtLogon</span> <span class="p">$true</span> <span class="p">-Enabled</span> <span class="p">$true</span>
+    <span class="k">Add-ADGroupMember</span> <span class="p">-Identity</span> <span class="s">"$(switch ($_.Service) { 'Development' {'DEV'} 'Accounting' {'ACC'} 'Management' {'MGMT'} })-GRP"</span> <span class="p">-Members</span> <span class="p">$_.Login</span>
+<span class="k">}</span></pre>
+            </div>
+            </li>
+                <li><p>Vérifier : <code>Get-ADUser -Filter * -SearchBase "OU=ORION-DPT,DC=orion,DC=local" | Select-Object Name</code> liste les trois comptes.</p></li>
+                <li><p>Relancer le script : il échoue sur les comptes existants. L'améliorer pour qu'il saute un compte déjà présent (<code>if (-not (Get-ADUser -Filter "SamAccountName -eq '$($_.Login)'")) { … }</code>) : un script qu'on peut relancer sans danger est dit <strong>idempotent</strong>.</p></li>
+                </ol>
+            </div>
+            <p>Le compte de service managé (<strong>gMSA</strong>), qui évite tout mot de passe de service à gérer, se crée aussi en PowerShell ; il est détaillé là où il sert, dans le module <a href="sql-server.html#gmsa">SQL Server</a>.</p>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Une fonction paramétrée + une liste (ou un CSV) remplace les blocs copiés-collés. Un mot de passe se saisit avec <code>Read-Host -AsSecureString</code>, jamais en clair dans le script. Et un bon script se relance sans casser ce qui existe.</p>
+            </div>
+        </section>
+
+        <!-- 09 -->
+        <section class="chapter" id="distance">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">Administrer à distance</h2>
+            <p class="chapter__intro">On n'ouvre pas une session graphique sur chaque serveur pour taper une commande. PowerShell exécute du code à distance par <strong>WinRM</strong> (ports 5985/5986), actif par défaut sur Windows Server dans un domaine.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Commande</th><th>Ce qu'elle fait</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>Enter-PSSession SRV-FILE01</code></td><td>Une session interactive à distance (l'invite devient <code>[SRV-FILE01]: PS&gt;</code>)</td></tr>
+                        <tr><td><code>Invoke-Command -ComputerName SRV-AD01, SRV-AD02 -ScriptBlock { … }</code></td><td>Le même bloc sur plusieurs serveurs à la fois ; les résultats reviennent avec une propriété <code>PSComputerName</code></td></tr>
+                        <tr><td><code>Invoke-Command -VMName SRV-FILE01 -ScriptBlock { … }</code></td><td><strong>PowerShell Direct</strong> : depuis l'hôte Hyper-V vers une VM, sans réseau — idéal pour configurer une VM qui n'a pas encore d'adresse</td></tr>
+                        <tr><td><code>Enable-PSRemoting</code></td><td>Active WinRM sur une machine où il ne l'est pas (un poste Windows 11, par exemple)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — l'état d'un service sur tous les DC</span></div>
+                <pre class="terminal__code"><span class="k">Invoke-Command</span> <span class="p">-ComputerName</span> SRV-AD01, SRV-AD02 <span class="p">-ScriptBlock</span> {
+    <span class="k">Get-Service</span> NTDS, DNS, Netlogon | <span class="k">Select-Object</span> Name, Status
+<span class="k">}</span> | <span class="k">Sort-Object</span> PSComputerName</pre>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>WinRM répond-il sur le serveur ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell</span></div>
+                <pre class="terminal__code"><span class="k">Test-WSMan</span> SRV-FILE01</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">wsmid           : http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd
+ProtocolVersion : http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd
+ProductVendor   : Microsoft Corporation</pre>
+                <p class="verify__fail">Erreur WinRM : le pare-feu bloque 5985, le service WinRM est arrêté, ou la machine cible n'est pas dans le domaine (hors domaine, il faut configurer <em>TrustedHosts</em> ou passer en HTTPS).</p>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>Invoke-Command</code> pour plusieurs serveurs d'un coup, <code>Enter-PSSession</code> pour un seul en interactif, <code>-VMName</code> (PowerShell Direct) pour une VM sans réseau. WinRM écoute sur 5985.</p>
+            </div>
+        </section>
+
+        <!-- 10 -->
+        <section class="chapter" id="projets">
+            <p class="chapter__num">10</p>
+            <h2 class="chapter__title">Les projets du cours</h2>
+            <p class="chapter__intro">L'exercice global du cours enchaîne quatre petits programmes : une calculatrice de température avec menu, une opération entre deux nombres, une table de multiplication, la suite de Fibonacci — puis un pierre-papier-ciseaux en trois manches gagnantes. Les refaire sans regarder est le meilleur test du module.</p>
+
+            <div class="exo">
+                <p class="exo__label">Projet 1 — la calculatrice de température</p>
+                <p>Un menu en boucle : 1 convertit des °C en °F, 2 des °F en °C, 0 quitte, tout autre choix affiche « Choix incorrect ». Formules : °F = °C × 9/5 + 32 ; °C = (°F − 32) × 5/9.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><pre class="verify__out">do {
+    $choix = Read-Host "1. °C vers °F`n2. °F vers °C`n0. Quitter"
+    switch ($choix) {
+        '1' { $c = [double](Read-Host "°C"); "$c °C = $($c * 9 / 5 + 32) °F" }
+        '2' { $f = [double](Read-Host "°F"); "$f °F = $(($f - 32) * 5 / 9) °C" }
+        '0' { "Au revoir" }
+        default { "Choix incorrect" }
+    }
+} until ($choix -eq '0')</pre><p>Par rapport à la version du cours : <code>do/until</code> évite la variable <code>$stop</code>, <code>switch</code> remplace la cascade de <code>elseif</code>, et <code>[double]</code> accepte les décimales.</p></div>
+                </details>
+            </div>
+            <div class="exo">
+                <p class="exo__label">Projet 2 — Fibonacci</p>
+                <p>Demande un nombre de termes N (au moins 2) et affiche les N premiers termes de la suite de Fibonacci (0, 1, 1, 2, 3, 5…).</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><pre class="verify__out">[int]$n = Read-Host "Nombre de termes"
+$suite = [System.Collections.Generic.List[int]]@(0, 1)
+while ($suite.Count -lt $n) { $suite.Add($suite[-1] + $suite[-2]) }
+$suite -join ", "</pre><p><code>$suite[-1]</code> et <code>$suite[-2]</code> sont les deux derniers éléments. Une <code>List</code> s'agrandit sans recopier le tableau à chaque ajout, contrairement à <code>+=</code> sur un tableau.</p></div>
+                </details>
+            </div>
+            <div class="exo">
+                <p class="exo__label">Projet 3 — pierre, papier, ciseaux, en mieux</p>
+                <p>La version du cours compare chaque combinaison dans un <code>elseif</code> (sept branches). Réécris la décision du vainqueur avec une table de hachage « ce qui bat quoi », et fais jouer le joueur 2 par l'ordinateur.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><pre class="verify__out">$bat = @{ pierre = 'ciseaux'; papier = 'pierre'; ciseaux = 'papier' }
+$s1 = 0; $s2 = 0
+while ($s1 -lt 3 -and $s2 -lt 3) {
+    $j1 = Read-Host "pierre, papier ou ciseaux"
+    if ($j1 -notin $bat.Keys) { "Entrée invalide"; continue }
+    $j2 = $bat.Keys | Get-Random
+    if ($j1 -eq $j2)           { "Égalité ($j2)" }
+    elseif ($bat[$j1] -eq $j2) { $s1++; "Gagné : $j1 bat $j2" }
+    else                       { $s2++; "Perdu : $j2 bat $j1" }
+    "Score $s1 - $s2"
+}</pre><p>La règle tient en une ligne de données au lieu de sept conditions : ajouter « lézard » et « Spock » ne demanderait que de changer la table.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Refaire ces projets sans regarder la correction valide les chapitres 02 à 05. Le réflexe à garder : quand une cascade de <code>elseif</code> s'allonge, chercher la <strong>donnée</strong> (table de hachage) ou le <code>switch</code> qui la remplace.</p>
+            </div>
+        </section>
+
+
         <section class="test" id="test" data-test="powershell">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a>. Ses questions reviennent aussi dans la <a href="../revision.html">révision du jour</a>.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+            <ul>
+                <li><a href="https://learn.microsoft.com/fr-fr/powershell/" rel="noopener">Microsoft Learn — documentation PowerShell (en français)</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/powershell/module/microsoft.powershell.core/about/about_comparison_operators" rel="noopener">Microsoft Learn — about_Comparison_Operators</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/powershell/module/microsoft.powershell.core/about/about_execution_policies" rel="noopener">Microsoft Learn — about_Execution_Policies</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/virtualization/hyper-v-on-windows/user-guide/powershell-direct" rel="noopener">Microsoft Learn — PowerShell Direct pour les VM Hyper-V</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/training/paths/powershell/" rel="noopener">Microsoft Learn — parcours « Automatiser des tâches d'administration avec PowerShell »</a></li>
+            </ul>
+        </div>
+
     </main>
 </div>
 
 <footer>
-    <p><strong>PowerShell &amp; Automatisation</strong> — Module du centre d'apprentissage IT</p>
-    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse des scripts <code>.ps1</code> du labo</p>
+    <p><strong>PowerShell</strong> — Module du centre d'apprentissage IT</p>
+    <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

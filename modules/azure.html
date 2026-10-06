@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
         <div class="hero__facts">
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 4 h</span>
-            <span class="fact"><b>Chapitres</b> 11</span>
+            <span class="fact"><b>Chapitres</b> 12</span>
             <span class="fact"><b>Test</b> 10 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="subnetting.html">Subnetting</a> · <a href="windows-server.html">Windows Server</a> (utile)</span>
         </div>
@@ -48,6 +49,7 @@
             <li><a class="toc__link" href="#couts"><span>09</span> Coûts, SLA &amp; support</a></li>
             <li><a class="toc__link" href="#monitoring"><span>10</span> Gestion &amp; monitoring</a></li>
             <li><a class="toc__link" href="#examen"><span>11</span> Passer l'AZ-900</a></li>
+            <li><a class="toc__link" href="#pratique"><span>12</span> S'entraîner</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -658,6 +660,49 @@ Scope    : management group, subscription, resource group, ressource</pre>
         </div>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 12 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">12</p>
+            <h2 class="chapter__title">S'entraîner : calculs et décisions de l'examen</h2>
+            <p class="chapter__intro">L'AZ-900 ne demande pas de déployer : il demande de choisir et de calculer. Les exercices typiques, puis les premières commandes d'Azure CLI pour ceux qui ouvrent un compte gratuit.</p>
+
+            <div class="exo">
+                <p class="exo__label">Exercice — un SLA composé</p>
+                <p>Une application dépend d'une App Service (SLA 99,95 %) et d'une base Azure SQL (99,99 %). Quel est le SLA de l'ensemble, et combien de minutes d'indisponibilité par mois (30 jours) cela autorise-t-il ?</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>Les SLA se <strong>multiplient</strong> quand les services sont en série : 0,9995 × 0,9999 ≈ <strong>0,9994</strong>, soit 99,94 %. Indisponibilité permise : 0,06 % de 43 200 minutes ≈ <strong>26 minutes</strong> par mois. Le composite est toujours moins bon que le plus faible des services.</p></div>
+                </details>
+            </div>
+            <div class="exo">
+                <p class="exo__label">Exercice — quel modèle de service ?</p>
+                <p>Pour chaque besoin, IaaS, PaaS ou SaaS ? (a) Faire tourner un vieux logiciel métier qui exige un Windows Server précis. (b) Héberger une application web sans gérer l'OS. (c) La messagerie de l'entreprise.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p>(a) <strong>IaaS</strong> (une VM : on garde la main sur l'OS). (b) <strong>PaaS</strong> (App Service : Microsoft gère l'OS et les mises à jour). (c) <strong>SaaS</strong> (Exchange Online / Microsoft 365). Plus on monte vers le SaaS, moins on a de responsabilités — mais les données et les identités restent toujours à la charge du client.</p></div>
+                </details>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Azure CLI — les premiers pas (compte gratuit ou Cloud Shell)</span></div>
+                <pre class="terminal__code"><span class="k">az</span> login
+<span class="k">az</span> group create <span class="p">--name</span> rg-lab <span class="p">--location</span> westeurope
+<span class="k">az</span> group list <span class="p">--output</span> table
+<span class="k">az</span> group delete <span class="p">--name</span> rg-lab <span class="p">--yes</span> <span class="p">--no-wait</span><span class="c">      # supprimer le groupe supprime tout ce qu'il contient</span></pre>
+            </div>
+            <div class="cmdex" data-accept="az group create (--name|-n) rg-lab (--location|-l) westeurope;;az group create (--location|-l) westeurope (--name|-n) rg-lab">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Avec Azure CLI, crée le groupe de ressources <code>rg-lab</code> dans la région <code>westeurope</code>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>az group create --name rg-lab --location westeurope</code>. Le groupe de ressources est l'unité de cycle de vie : tout ce qui sert au même projet y entre, et disparaît avec lui.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>SLA en série = produit des SLA ; 99,9 % ≈ 43 minutes par mois. IaaS garde l'OS, PaaS le laisse, SaaS laisse tout sauf les données et les identités. Et un groupe de ressources supprimé emporte tout ce qu'il contient.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="azure">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
@@ -674,9 +719,10 @@ Scope    : management group, subscription, resource group, ressource</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du cours Azure Fundamentals</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Révision du jour — Centre d'apprentissage IT</title>
+    <meta name="description" content="La révision du jour : des cartes tirées de tous les tests et d'un jeu de cartes réseau et commandes, revues à intervalles croissants (répétition espacée, 5 boîtes). Quinze minutes par jour.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="assets/theme.css?v=12">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="index.html">← Portail</a> · Révision</p>
+        <h1 class="hero__title">La révision <em>du jour</em></h1>
+        <p class="hero__lead">Quinze minutes par jour valent mieux que trois heures la veille d'un examen. Chaque carte revient au moment où tu allais l'oublier : une carte sue s'éloigne (1, 3, 7, 16 puis 35 jours), une carte ratée revient dès demain — et une dernière fois en fin de séance.</p>
+        <div class="hero__facts">
+            <span class="fact"><b>Méthode</b> 5 boîtes (Leitner)</span>
+            <span class="fact"><b>Nouvelles</b> 15 par jour au plus</span>
+            <span class="fact"><b>Clavier</b> Espace · 1 · 2</span>
+            <span class="fact"><b>Mémoire</b> ce navigateur</span>
+        </div>
+    </div>
+</header>
+
+<main class="srs" id="srs">
+    <p class="section-tag">Que réviser ?</p>
+    <div class="srs__filters" role="group" aria-label="Choisir un parcours"></div>
+    <div class="srs__stats" aria-live="polite"></div>
+    <div class="srs__card" aria-live="polite">
+        <noscript><p>La révision a besoin de JavaScript.</p></noscript>
+    </div>
+    <div class="tip srs__tip">
+        <p class="tip__label">Bien réviser</p>
+        <p>Réponds <strong>dans ta tête</strong> (ou à voix haute) avant de retourner la carte, et sois honnête : « à peu près » vaut « je ne savais pas ». Une carte qui revient trop souvent signale un chapitre à relire — le lien est sous la réponse.</p>
+    </div>
+</main>
+
+<footer>
+    <p><strong>Révision du jour</strong> — Centre d'apprentissage IT · progression enregistrée dans ce navigateur uniquement</p>
+    <p><a href="index.html">← Retour au portail</a> · <a href="examens.html">Examens transversaux</a> · <a href="labo.html">Lab Orion</a></p>
+</footer>
+
+<script src="assets/catalogue.js?v=12"></script>
+<script src="assets/app.js?v=12"></script>
+<script src="assets/quiz-data.js?v=12"></script>
+<script src="assets/cartes.js?v=12"></script>
+<script src="assets/revision.js?v=12"></script>
+</body>
+</html>

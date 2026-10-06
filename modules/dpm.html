@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
         <div class="hero__facts">
             <span class="fact fact--n3"><b>Niveau</b> Avancé</span>
             <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
-            <span class="fact"><b>Chapitres</b> 8</span>
+            <span class="fact"><b>Chapitres</b> 9</span>
             <span class="fact"><b>Test</b> 10 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a> · <a href="sql-server.html">SQL Server</a></span>
         </div>
@@ -45,6 +46,7 @@
             <li><a class="toc__link" href="#groupe"><span>06</span> Le groupe de protection</a></li>
             <li><a class="toc__link" href="#restaurer"><span>07</span> Jobs &amp; restauration</a></li>
             <li><a class="toc__link" href="#depanner"><span>08</span> Dépanner l'erreur 811</a></li>
+            <li><a class="toc__link" href="#pratique"><span>09</span> S'entraîner</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -419,13 +421,55 @@ Execute the SQL script
         </div>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 09 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">S'entraîner : prérequis, protection, restauration</h2>
+            <p class="chapter__intro">DPM est surtout de la console ; ce qui se rate se rate en amont, dans les prérequis. Ce chapitre les transforme en vérifications, puis propose l'exercice qui compte : une restauration chronométrée.</p>
+
+            <div class="cmdex" data-accept="Test-ADServiceAccount (-Identity )?&quot;?gMSA-SQL&quot;?">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Sur SRV-SQL01, vérifie que le compte de service managé <code>gMSA-SQL</code> est utilisable par ce serveur.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>Test-ADServiceAccount gMSA-SQL</code> doit répondre <code>True</code>. <code>False</code> : le serveur n'est pas (encore) membre du groupe autorisé — <code>klist purge -li 0x3e7</code> ou un redémarrage pour rafraîchir son appartenance aux groupes, puis <code>Install-ADServiceAccount gMSA-SQL</code>.</p></div>
+                </details>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le serveur DPM fait-il confiance au certificat de SQL Server ? (la cause de l'erreur 811)</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-DPM01</span></div>
+                <pre class="terminal__code"><span class="k">sqlcmd</span> <span class="p">-b</span> <span class="p">-E</span> <span class="p">-S</span> SRV-SQL01 <span class="p">-Q</span> <span class="s">"SELECT SUSER_SNAME()"</span></pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">ORION\Administrator</pre>
+                <p class="verify__fail"><em>The certificate chain was issued by an authority that is not trusted</em> : le certificat présenté par SQL Server n'est pas approuvé par SRV-DPM01. C'est exactement l'erreur 811 du chapitre 08 — à corriger côté certificat, pas en désactivant le chiffrement.</p>
+            </div>
+            <div class="lab" data-lab="dpm-restauration">
+                <p class="lab__label">Lab guidé</p>
+                <p class="lab__title">Restaurer un fichier, chronomètre en main</p>
+                <div class="lab__meta"><span><b>Objectif :</b> mesurer le temps réel de restauration (le RTO), pas celui qu'on suppose</span><span><b>Point de départ :</b> un groupe de protection actif sur SRV-FILE01 avec au moins un point de récupération</span><span><b>Durée :</b> 20 min</span></div>
+                <ol class="lab__steps">
+                <li><p>Créer un fichier témoin <code>D:\DEPARTMENTS\Public\temoin.txt</code>, attendre la synchronisation suivante (ou lancer <em>Create recovery point</em>).</p></li>
+                <li><p>Supprimer le fichier. Démarrer le chronomètre.</p></li>
+                <li><p>Console DPM → <em>Recovery</em> → le serveur → le volume → la date du point de récupération → le fichier → <em>Recover</em> → <em>Recover to the original location</em>.</p></li>
+                <li><p>Arrêter le chronomètre quand le fichier est de retour et lisible. Noter le temps, et refaire l'exercice en restaurant vers un <strong>autre</strong> emplacement (cas réel : ne pas écraser la version actuelle).</p></li>
+                </ol>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Les prérequis se vérifient par commande (<code>Test-ADServiceAccount</code>, <code>sqlcmd</code> vers SQL depuis le serveur DPM) avant de lancer l'installation. Et une protection DPM n'est prouvée que par une restauration réussie, chronométrée.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="dpm">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -435,9 +479,10 @@ Execute the SQL script
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center DPM 2025</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

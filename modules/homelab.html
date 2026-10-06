@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -26,7 +27,7 @@
         <div class="hero__facts">
             <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
             <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
-            <span class="fact"><b>Chapitres</b> 8</span>
+            <span class="fact"><b>Chapitres</b> 9</span>
             <span class="fact"><b>Test</b> 8 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a> · <a href="proxmox.html">Proxmox</a> · <a href="docker.html">Docker</a> (utiles)</span>
         </div>
@@ -46,6 +47,7 @@
             <li><a class="toc__link" href="#stockage"><span>06</span> Stockage &amp; NAS</a></li>
             <li><a class="toc__link" href="#backup"><span>07</span> Sauvegardes &amp; résilience</a></li>
             <li><a class="toc__link" href="#distant"><span>08</span> Accès distant sécurisé</a></li>
+            <li><a class="toc__link" href="#pratique"><span>09</span> S'entraîner</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -58,6 +60,8 @@
                 <div class="section-banner__desc">Héberger ses propres services, apprendre en cassant sans risque</div>
             </div>
         </div>
+
+        <p class="theory"><b>Module de théorie, pas encore pratiqué.</b> Rédigé à partir de documentations publiques : le homelab n'a pas encore fait l'objet d'un TP dans la formation. Les commandes sont à éprouver sur un lab avant de s'y fier — et ce module sera réécrit avec les vraies sorties et les vrais pièges le jour où il le sera.</p>
 
         <section class="brief">
             <p class="brief__label">Ce que tu sauras faire à la fin</p>
@@ -343,13 +347,53 @@
         </section>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 09 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">09</p>
+            <h2 class="chapter__title">S'entraîner : vérifier ses services</h2>
+            <p class="chapter__intro">Un homelab sert à apprendre l'exploitation : savoir vérifier qu'un service tourne, qu'il répond, et ce qui se passe quand il tombe.</p>
+
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le DNS local répond-il, et filtre-t-il ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">dig</span> @192.168.1.53 debian.org +short<span class="c">             # résolution normale</span>
+<span class="k">dig</span> @192.168.1.53 doubleclick.net +short<span class="c">        # domaine bloqué</span></pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">151.101.2.132
+0.0.0.0</pre>
+                <p class="verify__fail">Aucune réponse : le conteneur est arrêté ou le port 53 n'est pas publié. Tout le réseau perd Internet quand le DNS local tombe : c'est le point unique de défaillance du chapitre 04 — d'où un second DNS sur une autre machine.</p>
+            </div>
+            <div class="scenario">
+                <p class="scenario__label">Scénario de panne</p>
+                <p class="scenario__title">Plus rien ne marche à la maison</p>
+                <p>Un matin, aucun appareil de la maison n'ouvre de site web, mais <code>ping 1.1.1.1</code> répond depuis le PC.</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Ping vers une IP OK, sites KO : où chercher ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le DNS : le serveur DNS local (Pi-hole) est-il en marche ?</button>
+                        <button class="scenario__opt" data-why="Le ping vers Internet passe : la box et la sortie fonctionnent.">La box</button>
+                        <button class="scenario__opt" data-why="Le ping passe : le lien est bon.">Le câble du PC</button>
+                    </div>
+                    <div class="scenario__why"><p>Le mini-PC qui hébergeait le DNS a redémarré après une mise à jour, et le conteneur n'avait pas de politique de redémarrage.</p></div>
+                </div>
+                <div class="scenario__end"><strong>Correction :</strong> <code>restart: unless-stopped</code> dans le compose, et un second serveur DNS distribué par le DHCP de la box. Leçon : tout service dont dépend toute la maison mérite un plan B.</div>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Vérifier un service, c'est vérifier qu'il <strong>répond</strong> (dig, curl), pas seulement qu'il tourne. Et tout ce dont dépend tout le réseau — DNS, DHCP — a besoin d'une redondance ou d'un redémarrage automatique.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="homelab">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab & sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab & sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -359,9 +403,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a> · <a href="https://www.youtube.com/@TechHut" target="_blank" rel="noopener">TechHut</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -59,6 +60,8 @@
             </div>
         </div>
 
+        <p class="theory"><b>Module de théorie, pas encore pratiqué.</b> Rédigé à partir de documentations publiques : aucun TP de sécurité offensive n'a encore été fait dans la formation. Les commandes sont à éprouver sur un lab avant de s'y fier — et ce module sera réécrit avec les vraies sorties et les vrais pièges le jour où il le sera.</p>
+
         <section class="brief">
             <p class="brief__label">Ce que tu sauras faire à la fin</p>
             <ul class="brief__list">
@@ -81,7 +84,7 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Avertissement</p>
-                <p>Tester, scanner ou attaquer un système <strong>sans autorisation écrite</strong> est illégal (en France, articles <strong>323-1 et suivants du Code pénal</strong> : jusqu'à plusieurs années de prison et de lourdes amendes). Tout ce qui suit s'applique <strong>uniquement</strong> à des systèmes que tu possèdes ou que tu es explicitement autorisé à tester, dans un <strong>labo isolé</strong>.</p>
+                <p>Tester, scanner ou attaquer un système <strong>sans autorisation écrite</strong> est illégal. En <strong>Belgique</strong>, l'<strong>article 550bis du Code pénal</strong> punit le simple accès non autorisé (ou le fait de s'y maintenir) de six mois à deux ans de prison et d'une amende, jusqu'à trois ans avec une intention frauduleuse ; en <strong>France</strong>, ce sont les <strong>articles 323-1 et suivants</strong>. Les « bonnes intentions » ne changent rien : l'accès sans autorisation est l'infraction. Tout ce qui suit s'applique <strong>uniquement</strong> à des systèmes que tu possèdes ou que tu es explicitement autorisé à tester, dans un <strong>labo isolé</strong>.</p>
             </div>
 
             <h3>Les trois « chapeaux »</h3>
@@ -192,26 +195,30 @@
             <h2 class="chapter__title">Vulnérabilités courantes &amp; OWASP</h2>
             <p class="chapter__intro">La majorité des compromissions exploitent quelques classes de failles bien connues. Les repérer, c'est déjà pouvoir les éviter dans ce qu'on développe ou administre.</p>
 
-            <h3>Les grands classiques (OWASP Top 10)</h3>
+            <h3>Les grands classiques (OWASP Top 10:2025)</h3>
+            <p>L'<strong>OWASP Top 10</strong> classe les risques des applications web à partir de données réelles. Dans l'édition 2025, le premier rang reste au <strong>contrôle d'accès défaillant</strong> — un utilisateur qui lit ou modifie ce qui ne lui appartient pas, souvent en changeant simplement un identifiant dans l'URL.</p>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Faille</th><th>En bref</th><th>Défense</th></tr></thead>
+                    <thead><tr><th>Rang</th><th>Faille</th><th>En bref</th><th>Défense</th></tr></thead>
                     <tbody>
-                        <tr><td>Injection (SQLi)</td><td>Injecter du code via une entrée non filtrée</td><td>Requêtes préparées, validation des entrées</td></tr>
-                        <tr><td>XSS</td><td>Injecter du JavaScript dans une page</td><td>Échapper les sorties, CSP</td></tr>
-                        <tr><td>Auth cassée</td><td>Sessions/mdp mal gérés</td><td>MFA, hachage fort, verrouillage</td></tr>
-                        <tr><td>Mauvaise config</td><td>Défauts d'usine, services exposés</td><td>Hardening, moindre privilège</td></tr>
-                        <tr><td>Composants obsolètes</td><td>Lib/CMS non patchés</td><td>Mises à jour, veille CVE</td></tr>
+                        <tr><td>A01</td><td><strong>Contrôle d'accès défaillant</strong></td><td>Accéder aux données ou fonctions d'un autre (<code>/facture?id=124</code> au lieu de 123) ; inclut désormais le SSRF</td><td>Refuser par défaut, vérifier les droits <strong>côté serveur</strong> à chaque requête</td></tr>
+                        <tr><td>A02</td><td>Mauvaise configuration</td><td>Défauts d'usine, comptes par défaut, messages d'erreur bavards, services exposés</td><td>Hardening, moindre privilège, configuration reproductible</td></tr>
+                        <tr><td>A03</td><td>Chaîne d'approvisionnement logicielle</td><td>Bibliothèque, image ou paquet compromis ou obsolète</td><td>Sources fiables, versions figées, mises à jour, veille CVE</td></tr>
+                        <tr><td>A04</td><td>Défaillances cryptographiques</td><td>Données sensibles en clair, algorithmes faibles</td><td>TLS partout, hachage fort des mots de passe</td></tr>
+                        <tr><td>A05</td><td>Injection (SQLi, XSS…)</td><td>Du code glissé dans une entrée non filtrée</td><td>Requêtes préparées, échappement des sorties, CSP</td></tr>
+                        <tr><td>A07</td><td>Défaillances d'authentification</td><td>Sessions ou mots de passe mal gérés</td><td>MFA, verrouillage, gestion de session robuste</td></tr>
+                        <tr><td>A09</td><td>Journalisation et alertes insuffisantes</td><td>L'attaque passe inaperçue</td><td>Journaux centralisés, alertes testées</td></tr>
                     </tbody>
                 </table>
             </div>
+            <p>Les trois autres catégories : conception non sécurisée (A06), intégrité des logiciels et des données (A08) et mauvaise gestion des conditions exceptionnelles (A10 — une erreur qui laisse le système « ouvert »).</p>
 
             <h3>Le maillon faible : les mots de passe</h3>
             <p>Beaucoup d'attaques ne « cassent » rien : elles <em>devinent</em>. Attaques par dictionnaire, <em>credential stuffing</em> (réutilisation de fuites), force brute sur des mots de passe courts. La contre-mesure n'est pas un mot de passe « compliqué » mais un mot de passe <strong>long, unique par service</strong>, plus un second facteur.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Injection, XSS, auth cassée, mauvaise config, composants obsolètes : le Top 10 OWASP couvre l'essentiel. La défense tient en peu de mots : <strong>valider les entrées, mettre à jour, MFA, moindre privilège</strong>.</p>
+                <p>Contrôle d'accès, configuration, dépendances, chiffrement, injection : le Top 10 OWASP couvre l'essentiel. La défense tient en peu de mots : <strong>valider les entrées, mettre à jour, MFA, moindre privilège</strong>.</p>
             </div>
         </section>
 
@@ -234,7 +241,12 @@
                 <pre class="terminal__code"><span class="p">PermitRootLogin</span> <span class="s">no</span>          <span class="c"># pas de connexion root directe</span>
 <span class="p">PasswordAuthentication</span> <span class="s">no</span>  <span class="c"># clés uniquement</span>
 <span class="p">MaxAuthTries</span> <span class="s">3</span>              <span class="c"># limite les essais</span>
-<span class="c"># puis : systemctl restart ssh  — et installer fail2ban</span></pre>
+<span class="c"># puis : sshd -t (vérifie la syntaxe), systemctl restart ssh — et installer fail2ban</span></pre>
+            </div>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Ne pas se fermer la porte</p>
+                <p>Avant <code>PasswordAuthentication no</code>, <strong>vérifier que la connexion par clé marche</strong> (<code>ssh -i ~/.ssh/id_ed25519 user@serveur</code> depuis un second terminal) et garder la session actuelle ouverte pendant le redémarrage de SSH. Si la clé n'est pas reconnue, on n'a plus d'accès à distance — sur un serveur loué, cela veut dire passer par la console de secours.</p>
             </div>
 
             <p>Pour aller plus loin, des <strong>guides de référence</strong> existent : les <em>CIS Benchmarks</em> et les <em>STIG</em> listent, système par système, les réglages à appliquer. On les suit comme des checklists.</p>
@@ -308,7 +320,7 @@
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab & sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab & sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -318,9 +330,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@zSecurity" target="_blank" rel="noopener">zSecurity</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

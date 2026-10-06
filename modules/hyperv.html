@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,8 +26,8 @@
         <div class="hero__facts">
             <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
             <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
-            <span class="fact"><b>Chapitres</b> 7</span>
-            <span class="fact"><b>Test</b> 8 questions</span>
+            <span class="fact"><b>Chapitres</b> 8</span>
+            <span class="fact"><b>Test</b> 9 questions</span>
             <span class="fact"><b>Prérequis</b> aucun</span>
         </div>
     </div>
@@ -44,6 +45,7 @@
             <li><a class="toc__link" href="#sysprep"><span>05</span> Sysprep : fabriquer une image réutilisable</a></li>
             <li><a class="toc__link" href="#differenciation"><span>06</span> Déployer des VM en série (disque parent)</a></li>
             <li><a class="toc__link" href="#commutateurs"><span>07</span> Choisir son commutateur virtuel</a></li>
+            <li><a class="toc__link" href="#checkpoints"><span>08</span> Points de contrôle</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -125,7 +127,7 @@
                     <thead><tr><th>Rubrique</th><th>À faire</th><th>Pourquoi</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Microprogramme</strong></td><td>C'est l'ordre de démarrage (<em>boot order</em>)</td><td>Pour booter sur l'ISO, puis sur le disque</td></tr>
-                        <tr><td><strong>Sécurité</strong></td><td>Désactiver le <strong>démarrage sécurisé</strong> pour une VM Linux</td><td>Secure Boot rejette les chargeurs non signés Microsoft</td></tr>
+                        <tr><td><strong>Sécurité</strong></td><td>Pour une VM Linux : garder le démarrage sécurisé mais choisir le modèle <strong>Microsoft UEFI Certificate Authority</strong> (le désactiver seulement si la distribution n'est pas signée)</td><td>Le modèle par défaut (« Microsoft Windows ») rejette les chargeurs Linux ; Debian et Ubuntu sont signés pour l'autre modèle</td></tr>
                         <tr><td><strong>Mémoire</strong></td><td>Ne pas activer la mémoire dynamique</td><td>Évite les à-coups sur un serveur</td></tr>
                         <tr><td><strong>Processeurs</strong></td><td>Passer de 12 (valeur native) à <strong>2</strong></td><td>Laisse des cœurs à l'hôte et aux autres VM</td></tr>
                     </tbody>
@@ -203,7 +205,7 @@
                 <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Lancer l'outil</strong><p>Ouvrir <code>C:\Windows\System32\Sysprep</code> et exécuter <code>sysprep.exe</code>.</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Cocher « Generalize »</strong><p>Et choisir <em>Shutdown</em> dans les options d'arrêt.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Ne pas rallumer la VM</strong><p>Un seul démarrage suffirait à réattribuer un SID et à ruiner l'image.</p></div></div>
-                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Supprimer la VM dans Hyper-V Manager</strong><p>Cela fusionne les fichiers de points de contrôle (<code>.avhdx</code>) dans le disque principal (<code>.vhdx</code>). Le disque virtuel, lui, reste sur le disque de l'hôte.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Supprimer la VM dans Hyper-V Manager</strong><p>Le disque virtuel reste sur le disque de l'hôte. <strong>Avant</strong> le Sysprep, la VM ne doit avoir aucun point de contrôle : sinon l'état généralisé est dans un fichier <code>.avhdx</code> à côté, et le <code>.vhdx</code> qu'on récupère n'est pas l'image finale. Supprimer les points de contrôle les fusionne dans le disque principal.</p></div></div>
                 <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Isoler le disque</strong><p>Aller dans <code>C:\VM\WS01\Virtual Hard Disks</code>, renommer <code>WS01.vhdx</code> en <code>sysprep.vhdx</code>, puis le copier dans un dossier parent dédié, par exemple <code>C:\PARENT\</code>.</p></div></div>
                 <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Nettoyer</strong><p>Supprimer <code>C:\VM\WS01</code>. Il ne reste que l'image, réutilisable indéfiniment.</p></div></div>
             </div>
@@ -260,18 +262,72 @@
 
             <div class="tip">
                 <p class="tip__label">Le réflexe du labo AD</p>
-                <p>Un domaine de test se monte sur un commutateur <strong>privé</strong> : le DHCP et le DNS du labo ne risquent alors pas de répondre sur le réseau de la maison ou de l'école. Si les VM ont besoin d'Internet ponctuellement (mises à jour), on leur ajoute une <em>seconde</em> carte sur un commutateur externe plutôt que de tout basculer.</p>
+                <p>Un domaine de test se monte sur un commutateur <strong>privé</strong> : le DHCP et le DNS du labo ne risquent alors pas de répondre sur le réseau de la maison ou de l'école. Si les VM ont besoin d'Internet ponctuellement (mises à jour), on leur ajoute une <em>seconde</em> carte sur un commutateur externe plutôt que de tout basculer. Autre solution, celle du <a href="../labo.html#reseau">lab Orion</a> : un commutateur <strong>interne</strong> avec du NAT sur l'hôte (<code>New-NetNat</code>) — les VM sortent sur Internet, personne n'entre.</p>
             </div>
         </section>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 08 -->
+        <section class="chapter" id="checkpoints">
+            <p class="chapter__num">08</p>
+            <h2 class="chapter__title">Points de contrôle et vérifications</h2>
+            <p class="chapter__intro">Un point de contrôle (<em>checkpoint</em>) fige l'état d'une VM pour pouvoir y revenir : c'est l'outil idéal d'un lab — tester, casser, revenir. À condition de savoir ce qu'il n'est pas : une sauvegarde.</p>
+
+            <div class="cards">
+                <div class="card">
+                    <h4>Standard</h4>
+                    <p>Capture le disque <strong>et la mémoire</strong> : on revient exactement à l'instant figé, applications ouvertes. Le choix du lab, pour revenir avant une manipulation risquée.</p>
+                </div>
+                <div class="card">
+                    <h4>Production (par défaut)</h4>
+                    <p>S'appuie sur les sauvegardes internes de l'OS invité (VSS sous Windows) : la VM revient comme après un arrêt propre, sans la mémoire. Plus sûr pour les applications et les bases de données.</p>
+                </div>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — hôte Hyper-V</span></div>
+                <pre class="terminal__code"><span class="k">Checkpoint-VM</span> <span class="p">-Name</span> SRV-FILE01 <span class="p">-SnapshotName</span> <span class="s">"Avant DFS"</span><span class="c">          # figer</span>
+<span class="k">Get-VMSnapshot</span> <span class="p">-VMName</span> SRV-FILE01<span class="c">                                  # lister</span>
+<span class="k">Restore-VMSnapshot</span> <span class="p">-VMName</span> SRV-FILE01 <span class="p">-Name</span> <span class="s">"Avant DFS"</span> <span class="p">-Confirm:$false</span><span class="c">   # revenir</span>
+<span class="k">Remove-VMSnapshot</span> <span class="p">-VMName</span> SRV-FILE01 <span class="p">-Name</span> <span class="s">"Avant DFS"</span><span class="c">             # supprimer = fusionner</span></pre>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Pas une sauvegarde</p>
+                <p>Un point de contrôle vit <strong>à côté</strong> du disque (fichier <code>.avhdx</code>) et sur le même stockage : si le disque de l'hôte meurt, tout part. Ce n'est pas une sauvegarde. Et sur un contrôleur de domaine, revenir en arrière dans un domaine à plusieurs DC peut désynchroniser l'annuaire : on préfère restaurer une vraie sauvegarde.</p>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>La VM s'appuie-t-elle bien sur le disque parent ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — hôte</span></div>
+                <pre class="terminal__code"><span class="k">Get-VHD</span> <span class="s">"C:\VM\LABOPS\SRV-FILE01\SRV-FILE01-DISK1-DIFF.vhdx"</span> | <span class="k">Select-Object</span> VhdType, ParentPath</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">VhdType      ParentPath
+-------      ----------
+Differencing C:\PARENT\TEST-SYSPREP.vhdx</pre>
+                <p class="verify__fail"><code>ParentPath</code> introuvable : le disque parent a été déplacé ou renommé, et toutes les VM qui en dépendent refusent de démarrer. On le remet à sa place, ou on reconnecte l'enfant (<em>Edit Disk → Reconnect</em>).</p>
+            </div>
+            <div class="cmdex" data-accept="New-VMSwitch (-Name )?&quot;?LAN1&quot;? -SwitchType &quot;?Private&quot;?;;New-VMSwitch -SwitchType &quot;?Private&quot;? (-Name )?&quot;?LAN1&quot;?" data-hint="New-VMSwitch, avec -Name et -SwitchType.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Crée en PowerShell un commutateur virtuel <strong>privé</strong> nommé <code>LAN1</code>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>New-VMSwitch -Name "LAN1" -SwitchType Private</code>. Pour un commutateur interne : <code>-SwitchType Internal</code> ; pour un externe, on donne la carte physique : <code>-NetAdapterName "Ethernet"</code>.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un point de contrôle avant chaque manipulation risquée du lab, supprimé ensuite pour ne pas allonger la chaîne de disques. <code>Get-VHD</code> pour vérifier qu'un disque enfant retrouve son parent.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="hyperv">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -281,9 +337,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -25,7 +26,7 @@
         <div class="hero__facts">
             <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
             <span class="fact"><b>Durée</b> ≈ 3 h</span>
-            <span class="fact"><b>Chapitres</b> 9</span>
+            <span class="fact"><b>Chapitres</b> 10</span>
             <span class="fact"><b>Test</b> 10 questions</span>
             <span class="fact"><b>Prérequis</b> aucun</span>
         </div>
@@ -46,6 +47,7 @@
             <li><a class="toc__link" href="#sprint-backlog"><span>07</span> Sprint Backlog &amp; incrément</a></li>
             <li><a class="toc__link" href="#kanban"><span>08</span> Kanban</a></li>
             <li><a class="toc__link" href="#bout-en-bout"><span>09</span> Un sprint de bout en bout</a></li>
+            <li><a class="toc__link" href="#pratique"><span>10</span> S'entraîner</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -515,6 +517,50 @@
         </div>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
+        <!-- 10 -->
+        <section class="chapter" id="pratique">
+            <p class="chapter__num">10</p>
+            <h2 class="chapter__title">S'entraîner : situations de sprint</h2>
+            <p class="chapter__intro">Scrum se joue dans des situations concrètes où il faut savoir qui décide. Trois situations courantes, à résoudre avant d'ouvrir la réponse.</p>
+
+            <div class="scenario">
+                <p class="scenario__label">Scénario de panne</p>
+                <p class="scenario__title">Le client veut ajouter une fonctionnalité en plein sprint</p>
+                <p>Au jour 4 d'un sprint de deux semaines, le directeur commercial demande directement aux développeurs d'ajouter un export Excel « pour vendredi ».</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Qui décide de ce qui entre dans le Product Backlog ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le Product Owner</button>
+                        <button class="scenario__opt" data-why="Ils décident du comment et de ce qu&#x27;ils peuvent faire dans le sprint, pas de ce qui entre dans le backlog.">Les développeurs</button>
+                        <button class="scenario__opt" data-why="Il protège le processus ; il ne priorise pas le produit.">Le Scrum Master</button>
+                    </div>
+                    <div class="scenario__why"><p>La demande passe par le Product Owner, qui l'ordonne dans le Product Backlog.</p></div>
+                </div>
+                <div class="scenario__step">
+                    <p class="scenario__q">Faut-il l'intégrer au sprint en cours ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Seulement si l'objectif du sprint n'est pas mis en danger ; sinon elle attend le prochain sprint</button>
+                        <button class="scenario__opt" data-why="L&#x27;objectif du sprint ne change pas en cours de route ; le sprint protège le travail engagé.">Oui, le client est prioritaire</button>
+                        <button class="scenario__opt" data-why="Seul le Product Owner peut annuler un sprint, et seulement si son objectif est devenu obsolète.">Il faut annuler le sprint</button>
+                    </div>
+                    <div class="scenario__why"><p>Le Sprint Backlog peut s'ajuster avec les développeurs, mais l'<strong>objectif du sprint</strong> est stable.</p></div>
+                </div>
+                <div class="scenario__end"><strong>Réponse :</strong> le Scrum Master rappelle le circuit, le Product Owner évalue la demande et la place dans le backlog — probablement au prochain sprint. Si l'export est vraiment urgent et ne menace pas l'objectif, développeurs et PO peuvent négocier un ajustement.</div>
+            </div>
+            <div class="exo">
+                <p class="exo__label">Exercice — une user story qui tient</p>
+                <p>Réécris « Faire un module de tickets » en une user story avec ses critères d'acceptation, et vérifie-la avec INVEST.</p>
+                <details class="reveal">
+                    <summary>Afficher la correction</summary>
+                    <div class="reveal__body"><p><strong>En tant qu'</strong>utilisateur du helpdesk, <strong>je veux</strong> créer un ticket avec un titre, une description et une priorité <strong>afin de</strong> signaler un problème sans téléphoner.</p><p><em>Critères :</em> le titre est obligatoire ; la priorité vaut « normale » par défaut ; l'utilisateur reçoit un numéro de ticket ; le ticket apparaît dans la liste du support.</p><p>INVEST : <strong>I</strong>ndépendante (ne dépend pas d'une autre story), <strong>N</strong>égociable, porte une <strong>V</strong>aleur pour l'utilisateur, <strong>E</strong>stimable, <strong>S</strong>mall (tient dans un sprint), <strong>T</strong>estable (les critères le permettent). L'original échouait sur V, E, S et T.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Le Product Owner décide du quoi et de l'ordre, les développeurs du comment et du combien dans le sprint, le Scrum Master du respect du cadre. L'objectif du sprint ne bouge pas en cours de route ; seul le PO peut annuler un sprint.</p>
+            </div>
+        </section>
+
         <section class="test" id="test" data-test="scrum">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
@@ -531,9 +577,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du cours Agile / Scrum</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>

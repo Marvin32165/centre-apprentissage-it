@@ -8,36 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/theme.css?v=10">
-    <style>
-        /* ── Visuels spécifiques au module Linux (permissions), version thème clair ── */
-        .lsline { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; background:#F8FAFC; border:1px solid var(--border); border-radius:var(--r); padding:20px 16px; margin:16px 0; }
-        .lsseg { display:flex; flex-direction:column; align-items:center; gap:6px; }
-        .lsseg .val { font-family:var(--font-mono); font-size:.88rem; color:var(--ink); background:#fff; padding:6px 12px; border-radius:6px; border:2px solid var(--border-md); }
-        .lsseg .lab { font-size:.67rem; color:var(--ink-soft); text-align:center; max-width:110px; }
-        .lsseg.c1 .val{border-color:#0EA5E9} .lsseg.c2 .val{border-color:#7C3AED} .lsseg.c3 .val{border-color:var(--accent)}
-        .lsseg.c4 .val{border-color:var(--warn)} .lsseg.c5 .val{border-color:var(--yes)} .lsseg.c6 .val{border-color:var(--warn)} .lsseg.c7 .val{border-color:#0EA5E9}
-
-        .octal { display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin:16px 0; }
-        .oct { text-align:center; background:#F8FAFC; border:1px solid var(--border); border-radius:var(--r-sm); padding:12px 20px; }
-        .oct .big { font-size:1.5rem; font-weight:700; color:var(--accent); }
-        .oct .m { color:var(--ink-soft); font-family:var(--font-mono); font-size:.82rem; }
-        .oct small { color:var(--ink-faint); font-size:.72rem; }
-
-        .triplet { margin:18px 0; overflow-x:auto; }
-        .triplet-groups { display:flex; justify-content:center; gap:8px; min-width:520px; }
-        .tg-group { flex:1; text-align:center; }
-        .tg-group .glabel { font-family:var(--font-mono); font-weight:600; font-size:.78rem; padding-bottom:6px; margin-bottom:8px; border-bottom:2px solid; }
-        .tg-u .glabel{color:#0EA5E9;border-color:#0EA5E9} .tg-g .glabel{color:var(--warn);border-color:var(--warn)} .tg-o .glabel{color:var(--accent);border-color:var(--accent)}
-        .tg-cells { display:flex; gap:5px; justify-content:center; }
-        .tcell { flex:1; }
-        .tcell .cbox { background:#0F172A; color:#fff; border-radius:5px; font-family:var(--font-mono); font-weight:700; font-size:1.05rem; padding:8px 0; border:2px solid transparent; }
-        .tg-u .tcell .cbox{border-color:#0EA5E9} .tg-g .tcell .cbox{border-color:var(--warn)} .tg-o .tcell .cbox{border-color:var(--accent)}
-        .tcell .stem { width:1px; height:14px; background:var(--border-md); margin:4px auto; }
-        .tcell .cdesc { background:#F8FAFC; border:1px solid var(--border); border-radius:5px; padding:6px 7px; font-size:.67rem; color:var(--ink-soft); line-height:1.4; }
-        .tcell .cdesc strong { display:block; color:var(--ink); font-size:.73rem; margin-bottom:2px; }
-        .tcell .cdesc .maybe { color:var(--yes); font-family:var(--font-mono); }
-    </style>
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="../assets/theme.css?v=12">
 </head>
 <body>
 
@@ -53,9 +25,9 @@
         </div>
         <div class="hero__facts">
             <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
-            <span class="fact"><b>Durée</b> ≈ 4 h</span>
-            <span class="fact"><b>Chapitres</b> 22</span>
-            <span class="fact"><b>Test</b> 10 questions</span>
+            <span class="fact"><b>Durée</b> ≈ 6 h</span>
+            <span class="fact"><b>Chapitres</b> 25</span>
+            <span class="fact"><b>Test</b> 12 questions</span>
             <span class="fact"><b>Prérequis</b> aucun</span>
         </div>
     </div>
@@ -86,8 +58,12 @@
             <li><a class="toc__link" href="#chap18"><span>18</span> Disques &amp; système</a></li>
             <li><a class="toc__link" href="#chap19"><span>19</span> Logs &amp; audit</a></li>
             <li><a class="toc__link" href="#chap20"><span>20</span> Partitions, GRUB &amp; virtu</a></li>
-            <li><a class="toc__link" href="#chap21"><span>21</span> Raccourcis &amp; réflexes</a></li>
-            <li><a class="toc__link" href="#chap22"><span>22</span> Commandes : mémo complet</a></li>
+            <li><a class="toc__link" href="#disques-fstab"><span>21</span> Disques &amp; fstab</a></li>
+            <li><a class="toc__link" href="#raid"><span>22</span> RAID logiciel</a></li>
+            <li><a class="toc__link" href="#lvm"><span>23</span> LVM</a></li>
+            <li><a class="toc__link" href="#sauvegardes"><span>24</span> Sauvegardes</a></li>
+            <li><a class="toc__link" href="#chap21"><span>25</span> Raccourcis &amp; réflexes</a></li>
+            <li><a class="toc__link" href="#memo"><span>A</span> Annexe : mémo des commandes</a></li>
             <li><a class="toc__link" href="#test"><span>✓</span> Test de fin de module</a></li>
         </ul>
     </aside>
@@ -1262,8 +1238,242 @@ iface ens33 inet <span class="k">static</span>
         </section>
 
         <!-- 21 -->
-        <section class="chapter" id="chap21">
+        <section class="chapter" id="disques-fstab">
             <p class="chapter__num">21</p>
+            <h2 class="chapter__title">Disques : partitionner, formater, monter pour de bon</h2>
+            <p class="chapter__intro">Ajouter un disque à un serveur suit toujours la même séquence : le repérer, le partitionner, le formater, le monter, puis rendre ce montage permanent dans <code>/etc/fstab</code>. C'est la dernière étape qui peut empêcher la machine de redémarrer.</p>
+
+            <div class="steps">
+                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Repérer</strong><p><code>lsblk</code> : le nouveau disque apparaît sans partition (ex. <code>sdb</code>). Ajouté à chaud dans l'hyperviseur et absent ? <code>echo "- - -" | sudo tee /sys/class/scsi_host/host*/scan</code> force la détection.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Partitionner</strong><p><code>sudo fdisk /dev/sdb</code> (<code>n</code> nouvelle partition, <code>w</code> écrire). En MBR : 4 partitions primaires au plus, ou 3 + une étendue qui contient des logiques numérotées à partir de <strong>5</strong>.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Formater</strong><p><code>sudo mkfs.ext4 /dev/sdb1</code> — ext4 par défaut sous Debian ; xfs s'agrandit mais ne se réduit pas.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Monter</strong><p><code>sudo mkdir /mnt/donnees</code> puis <code>sudo mount /dev/sdb1 /mnt/donnees</code> : immédiat, mais perdu au redémarrage.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Rendre permanent</strong><p>Une ligne dans <code>/etc/fstab</code>, par <strong>UUID</strong> (<code>sudo blkid /dev/sdb1</code>), puis <strong>tester</strong> avec <code>sudo mount -a</code> avant tout redémarrage.</p></div></div>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">/etc/fstab — une ligne par montage</span></div>
+                <pre class="terminal__code"><span class="c"># périphérique                            point de montage  type  options   dump  fsck</span>
+<span class="k">UUID=dc447407-6ceb-4a36-b677-44016b5efd91</span>  /mnt/backup       ext4  defaults  0     2</pre>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Ce que le TP a montré</p>
+                <p>Les lettres <code>sda</code>, <code>sdb</code>… <strong>changent</strong> d'un démarrage à l'autre : c'est arrivé plusieurs fois sur la VM du cours, après un ajout de disque ou un simple redémarrage. Dans <code>fstab</code>, toujours l'UUID. Et toujours <code>sudo mount -a</code> avant de redémarrer : une erreur dans <code>fstab</code> peut bloquer le démarrage en mode de secours.</p>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le disque est-il monté, et le sera-t-il au prochain démarrage ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">lsblk</span> <span class="p">-f</span>
+<span class="k">sudo</span> <span class="k">mount</span> <span class="p">-a</span> &amp;&amp; findmnt /mnt/backup</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">NAME   FSTYPE LABEL UUID                                 MOUNTPOINTS
+sde
+└─sde1 ext4         dc447407-6ceb-4a36-b677-44016b5efd91 /mnt/backup
+TARGET      SOURCE    FSTYPE OPTIONS
+/mnt/backup /dev/sde1 ext4   rw,relatime</pre>
+                <p class="verify__fail"><code>mount -a</code> affiche une erreur : la ligne de <code>fstab</code> est fausse (UUID mal recopié, point de montage absent, type erroné). La corriger <strong>avant</strong> de redémarrer. Si c'est trop tard, le mode de secours (<em>emergency mode</em>) permet d'éditer <code>/etc/fstab</code>.</p>
+            </div>
+            <div class="cmdex" data-accept="(sudo )?blkid /dev/sdb1;;lsblk -f /dev/sdb1" data-hint="la commande s&#x27;appelle « block id ».">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Affiche l'UUID et le type de système de fichiers de la partition <code>/dev/sdb1</code>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>sudo blkid /dev/sdb1</code> (ou <code>lsblk -f</code> pour tous les disques). C'est cette valeur <code>UUID=…</code> qui va dans <code>/etc/fstab</code>.</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Repérer (<code>lsblk</code>), partitionner (<code>fdisk</code>), formater (<code>mkfs</code>), monter, puis <code>fstab</code> par UUID et <code>mount -a</code> pour tester. Sauvegarder la table avant de toucher à un disque : <code>sudo sfdisk -d /dev/sdb &gt; table.sfdisk</code>.</p>
+            </div>
+        </section>
+
+        <!-- 22 -->
+        <section class="chapter" id="raid">
+            <p class="chapter__num">22</p>
+            <h2 class="chapter__title">Le RAID logiciel avec mdadm</h2>
+            <p class="chapter__intro">Le TP du cours monte un <strong>RAID 5</strong> sur trois disques avec <code>mdadm</code>, lui ajoute un disque de secours, puis vérifie qu'il survit à un redémarrage. Le RAID protège contre la panne d'un disque ; il ne remplace jamais une sauvegarde.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Niveau</th><th>Disques mini</th><th>Capacité utile</th><th>Tolère la perte de</th></tr></thead>
+                    <tbody>
+                        <tr><td>RAID 0</td><td>2</td><td>100 %</td><td>aucun disque — performance seule</td></tr>
+                        <tr><td>RAID 1</td><td>2</td><td>50 %</td><td>un disque sur deux (miroir)</td></tr>
+                        <tr><td>RAID 5</td><td>3</td><td>(n − 1) disques</td><td>un disque</td></tr>
+                        <tr><td>RAID 6</td><td>4</td><td>(n − 2) disques</td><td>deux disques</td></tr>
+                        <tr><td>RAID 10</td><td>4</td><td>50 %</td><td>un disque par miroir</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — créer, formater, rendre permanent (démarche du TP)</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> <span class="k">apt</span> install mdadm
+<span class="k">sudo</span> <span class="k">mdadm</span> <span class="p">--create</span> /dev/md0 <span class="p">--level=5</span> <span class="p">--raid-devices=3</span> /dev/sdb /dev/sdc /dev/sdd
+<span class="k">cat</span> /proc/mdstat<span class="c">                                     # suivre la synchronisation</span>
+<span class="k">sudo</span> <span class="k">mkfs.ext4</span> /dev/md0<span class="c">                              # pas besoin de partitionner un RAID</span>
+<span class="k">sudo</span> <span class="k">mkdir</span> <span class="p">-p</span> /mnt/raid5 &amp;&amp; sudo mount /dev/md0 /mnt/raid5
+<span class="k">sudo</span> <span class="k">mdadm</span> <span class="p">--detail</span> <span class="p">--scan</span> | <span class="k">sudo</span> <span class="k">tee</span> <span class="p">-a</span> /etc/mdadm/mdadm.conf<span class="c">   # réassemblage au démarrage</span>
+<span class="k">sudo</span> <span class="k">update-initramfs</span> <span class="p">-u</span>
+<span class="c"># puis une ligne UUID=… /mnt/raid5 ext4 defaults 0 2 dans /etc/fstab, et sudo mount -a</span></pre>
+            </div>
+            <div class="tip">
+                <p class="tip__label">md0 devenu md127</p>
+                <p>Dans le TP, l'array créé sous le nom <code>md0</code> est apparu en <code>/dev/md127</code> : sans ligne <code>ARRAY</code> dans <code>mdadm.conf</code> au moment de la création, le noyau lui donne un nom « de secours ». <code>sudo mdadm --detail /dev/md0</code> échouait donc. Réflexe : lire le vrai nom dans <code>cat /proc/mdstat</code> ou <code>lsblk</code> avant toute commande.</p>
+            </div>
+            <h3>Disque de secours et panne</h3>
+            <p><code>sudo mdadm --add /dev/md127 /dev/sde</code> ajoute un disque en <strong>spare</strong> (marqué <code>(S)</code> dans <code>/proc/mdstat</code>) : si un disque actif tombe, la reconstruction démarre seule dessus. Pour simuler une panne : <code>--fail</code> puis <code>--remove</code> sur un membre, observer la reconstruction, et <code>--add</code> pour réintégrer.</p>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>L'array est-il sain ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">cat</span> /proc/mdstat</pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">Personalities : [raid6] [raid5] [raid4]
+md127 : active raid5 sdd[3] sdc[1] sdb[0] sde[4](S)
+      20953088 blocks super 1.2 level 5, 512k chunk, algorithm 2 [3/3] [UUU]</pre>
+                <p class="verify__fail"><code>[UU_]</code> : un disque manque, l'array est dégradé — il fonctionne, mais une deuxième panne serait fatale. <code>sudo mdadm --detail /dev/md127</code> dit lequel. Après un redémarrage, l'array absent : la ligne <code>ARRAY</code> manque dans <code>mdadm.conf</code>, ou l'initramfs n'a pas été régénéré.</p>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>mdadm --create</code>, puis <strong>trois</strong> étapes pour la persistance : ligne <code>ARRAY</code> dans <code>mdadm.conf</code>, <code>update-initramfs -u</code>, entrée <code>fstab</code> par UUID. <code>[UUU]</code> = sain, un <code>_</code> = dégradé. Le RAID protège du disque mort, pas du fichier effacé.</p>
+            </div>
+        </section>
+
+        <!-- 23 -->
+        <section class="chapter" id="lvm">
+            <p class="chapter__num">23</p>
+            <h2 class="chapter__title">LVM : des volumes qu'on agrandit à chaud</h2>
+            <p class="chapter__intro">Avec des partitions classiques, agrandir un disque plein veut dire repartitionner. Avec <strong>LVM</strong>, on met l'espace de plusieurs disques en commun et on y découpe des volumes qu'on agrandit en une commande, sans arrêter le service.</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Couche</th><th>Ce que c'est</th><th>Commande de création</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>PV</strong> (<em>Physical Volume</em>)</td><td>Un disque ou une partition donné à LVM</td><td><code>pvcreate /dev/sdc</code></td></tr>
+                        <tr><td><strong>VG</strong> (<em>Volume Group</em>)</td><td>Le « pot commun » d'espace, formé d'un ou plusieurs PV</td><td><code>vgcreate vg_data /dev/sdc</code></td></tr>
+                        <tr><td><strong>LV</strong> (<em>Logical Volume</em>)</td><td>Le volume découpé dans le VG, qu'on formate et qu'on monte</td><td><code>lvcreate -n lv_storage -L 15G vg_data</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — la séquence du TP</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> <span class="k">apt</span> install lvm2
+<span class="k">sudo</span> <span class="k">pvcreate</span> /dev/sdc
+<span class="k">sudo</span> <span class="k">vgcreate</span> vg_data /dev/sdc
+<span class="k">sudo</span> <span class="k">lvcreate</span> <span class="p">-n</span> lv_storage <span class="p">-L</span> 15G vg_data<span class="c">           # garder de la marge dans le VG</span>
+<span class="k">sudo</span> <span class="k">mkfs.ext4</span> /dev/vg_data/lv_storage
+<span class="k">sudo</span> <span class="k">mkdir</span> /mnt/storage &amp;&amp; sudo mount /dev/vg_data/lv_storage /mnt/storage
+
+<span class="c"># Plus tard, le volume est plein : on ajoute un disque et on agrandit, à chaud</span>
+<span class="k">sudo</span> <span class="k">pvcreate</span> /dev/sdd
+<span class="k">sudo</span> <span class="k">vgextend</span> vg_data /dev/sdd
+<span class="k">sudo</span> <span class="k">lvextend</span> <span class="p">-l</span> +100%FREE /dev/vg_data/lv_storage<span class="c">   # le LV prend tout l'espace libre</span>
+<span class="k">sudo</span> <span class="k">resize2fs</span> /dev/vg_data/lv_storage<span class="c">               # puis le système de fichiers</span></pre>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Ce que le TP a montré</p>
+                <p>Deux erreurs réellement commises en TP : <code>lvextend -L +5G /dev/vg_data</code> échoue (il faut le chemin du <strong>LV</strong>, pas du VG) ; <code>lvextend -l 100%FREE …</code> sans le <strong>+</strong> est lu comme une taille absolue, plus petite que l'actuelle, et refusé. Et agrandir le LV ne suffit pas : ext4 ne voit l'espace qu'après <code>resize2fs</code> (ou <code>lvextend -r</code>, qui fait les deux).</p>
+            </div>
+            <h3>Le snapshot LVM</h3>
+            <p><code>sudo lvcreate -n lv_storage_snap -L 2G -s /dev/vg_data/lv_storage</code> fige le volume : seuls les blocs modifiés ensuite sont copiés (copy-on-write). On peut le monter en lecture seule pour récupérer un fichier, ou revenir en arrière : volumes démontés, <code>sudo lvconvert --merge /dev/vg_data/lv_storage_snap</code>. Comme un point de contrôle Hyper-V, ce n'est pas une sauvegarde : il vit sur les mêmes disques.</p>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Combien reste-t-il de place dans le VG, et quelle taille fait le LV ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> <span class="k">vgs</span>
+<span class="k">sudo</span> <span class="k">lvs</span></pre>
+            </div>
+                <p class="verify__sub">Sortie attendue</p>
+            <pre class="verify__out">VG      #PV #LV #SN Attr   VSize   VFree
+vg_data   3   1   0 wz--n- &lt;34,16g 4,16g
+LV         VG      Attr       LSize  Pool Origin
+lv_storage vg_data -wi-ao---- 30,00g</pre>
+                <p class="verify__fail"><code>VFree</code> à 0 : il faut ajouter un PV (<code>vgextend</code>) avant de pouvoir agrandir quoi que ce soit. <code>df -h</code> montre l'ancienne taille après <code>lvextend</code> : <code>resize2fs</code> oublié.</p>
+            </div>
+            <div class="cmdex" data-accept="(sudo )?lvextend (-r -L ?\+5G|-L ?\+5G -r|--resizefs -L ?\+5G|-L ?\+5G --resizefs) /dev/vg_data/lv_storage;;(sudo )?lvextend /dev/vg_data/lv_storage (-r -L ?\+5G|-L ?\+5G -r)" data-hint="lvextend, l&#x27;option qui redimensionne le système de fichiers, et -L avec un signe devant la taille.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Agrandis le LV <code>/dev/vg_data/lv_storage</code> de <strong>5 Go</strong> et son système de fichiers ext4 en une seule commande.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>sudo lvextend -r -L +5G /dev/vg_data/lv_storage</code> — <code>-r</code> (<code>--resizefs</code>) enchaîne le redimensionnement du système de fichiers. Sans le <code>+</code>, <code>-L 5G</code> voudrait dire « fixer la taille à 5 Go ».</p></div>
+                </details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>PV → VG → LV → système de fichiers → montage. Pour agrandir : <code>vgextend</code> si le VG est plein, puis <code>lvextend -r -l +100%FREE</code> sur le chemin du LV. Le snapshot LVM fige un état, mais n'est pas une sauvegarde.</p>
+            </div>
+        </section>
+
+        <!-- 24 -->
+        <section class="chapter" id="sauvegardes">
+            <p class="chapter__num">24</p>
+            <h2 class="chapter__title">Sauvegarder : tar incrémentiel, rsync et cron</h2>
+            <p class="chapter__intro">Le TP de sauvegarde du cours prépare un disque dédié, fait une sauvegarde complète de <code>/home</code> avec <code>tar</code>, puis vérifie que la suivante ne contient que ce qui a changé. Il reste à l'automatiser — et à vérifier qu'on sait restaurer.</p>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — complète, puis incrémentielle (tar -g)</span></div>
+                <pre class="terminal__code"><span class="k">sudo</span> <span class="k">mkdir</span> <span class="p">-p</span> /mnt/backup/home/{full,incremental}
+<span class="c"># Complète : tar enregistre dans snapshot_file l'état de ce qu'il a archivé</span>
+<span class="k">sudo</span> <span class="k">tar</span> <span class="p">-czf</span> /mnt/backup/home/full/home_full_$(date +%Y%m%d).tar.gz \
+    <span class="k">-g</span> /mnt/backup/home/full/snapshot_file /home
+<span class="c"># Incrémentielle : même fichier de suivi, sortie différente — seuls les changements sont archivés</span>
+<span class="k">sudo</span> <span class="k">tar</span> <span class="p">-czf</span> /mnt/backup/home/incremental/home_incr_$(date +%Y%m%d-%H%M).tar.gz \
+    <span class="k">-g</span> /mnt/backup/home/full/snapshot_file /home</pre>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Ce que le TP a montré</p>
+                <p>Trois erreurs rencontrées en TP : <code>$(date+%Y%m%d)</code> sans espace cherche une commande « date+%Y%m%d » qui n'existe pas — il faut <code>$(date +%Y%m%d)</code> ; le fichier de suivi <code>-g</code> ne s'édite <strong>jamais</strong> à la main (tar refuse un horodatage invalide) ; et une faute de frappe dans <code>{full,…}</code> a créé un dossier de trop puis un <em>fichier</em> <code>full</code> qui bloquait tout. Relire avant Entrée.</p>
+            </div>
+            <h3>rsync : une copie qui ne transfère que les différences</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">rsync</span> <span class="p">-aAXv</span> <span class="p">--delete</span> /home/ /mnt/backup/home-miroir/<span class="c">     # -a conserve droits, dates, liens</span>
+<span class="k">rsync</span> <span class="p">-avz</span> /srv/donnees/ sauvegarde@srv-backup:/backups/web01/<span class="c">  # vers un autre serveur, par SSH</span></pre>
+            </div>
+            <p>Attention à la <strong>barre oblique finale</strong> : <code>/home/</code> copie le <em>contenu</em> de <code>/home</code>, <code>/home</code> copie le dossier lui-même. Et <code>--delete</code> fait un miroir exact : un fichier effacé par erreur à la source disparaît aussi de la copie au passage suivant. Un miroir n'est donc pas un historique.</p>
+            <h3>cron : l'automatisation</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">sudo crontab -e — la sauvegarde complète le dimanche, l'incrémentielle les autres soirs</span></div>
+                <pre class="terminal__code"><span class="c"># min heure jour mois jour-semaine  commande</span>
+<span class="k">30</span> 2 * * 0    /usr/local/bin/sauvegarde-home.sh full
+<span class="k">30</span> 2 * * 1-6  /usr/local/bin/sauvegarde-home.sh incr</pre>
+            </div>
+            <p>Dans un script lancé par cron, l'environnement est minimal : chemins <strong>absolus</strong> partout, et la sortie redirigée vers un journal (<code>&gt;&gt; /var/log/sauvegarde.log 2&gt;&amp;1</code>) pour savoir ce qui s'est passé à 2 h 30. Le site <a href="https://crontab.guru/" rel="noopener">crontab.guru</a> traduit une ligne cron en clair. Sur une Debian récente, un <em>timer</em> systemd fait la même chose avec un journal intégré.</p>
+            <div class="lab" data-lab="linux-restauration">
+                <p class="lab__label">Lab guidé</p>
+                <p class="lab__title">Prouver que la sauvegarde se restaure</p>
+                <div class="lab__meta"><span><b>Objectif :</b> une sauvegarde n'existe que si on a réussi à la restaurer</span><span><b>Point de départ :</b> la sauvegarde complète et une incrémentielle de /home du TP</span><span><b>Durée :</b> 20 min</span></div>
+                <ol class="lab__steps">
+                <li><p>Supprimer un fichier de test dans <code>/home</code> (créé pour l'occasion).</p></li>
+                <li><p>Lister ce que contient l'archive, sans extraire :</p><div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">tar</span> <span class="p">-tzf</span> /mnt/backup/home/full/home_full_20260717.tar.gz | <span class="k">grep</span> fichier-test</pre>
+            </div>
+            </li>
+                <li><p>Restaurer dans un dossier temporaire, d'abord la complète puis chaque incrémentielle <strong>dans l'ordre</strong> :</p><div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
+                <pre class="terminal__code"><span class="k">mkdir</span> /tmp/restau
+<span class="k">sudo</span> <span class="k">tar</span> <span class="p">-xzf</span> /mnt/backup/home/full/home_full_20260717.tar.gz <span class="p">-g</span> /dev/null <span class="p">-C</span> /tmp/restau
+<span class="k">sudo</span> <span class="k">tar</span> <span class="p">-xzf</span> /mnt/backup/home/incremental/home_incr_20260718-0230.tar.gz <span class="p">-g</span> /dev/null <span class="p">-C</span> /tmp/restau</pre>
+            </div>
+            </li>
+                <li><p>Comparer avec <code>diff -r</code>, puis remettre le fichier à sa place. Noter le temps passé : c'est le temps de restauration réel.</p></li>
+                </ol>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Une complète, puis des incrémentielles qui partagent le même fichier de suivi <code>-g</code> ; <code>rsync</code> pour un miroir (pas un historique) ; cron avec des chemins absolus et un journal. Et la règle 3-2-1 : trois copies, deux supports, une hors site — dont une restauration testée.</p>
+            </div>
+        </section>
+
+        <!-- 25 -->
+        <section class="chapter" id="chap21">
+            <p class="chapter__num">25</p>
             <h2 class="chapter__title">Raccourcis &amp; réflexes</h2>
             <p class="chapter__intro">Les gestes qui font gagner un temps fou au quotidien.</p>
 
@@ -1286,8 +1496,8 @@ iface ens33 inet <span class="k">static</span>
         </section>
 
         <!-- 22 -->
-        <section class="chapter" id="chap22">
-            <p class="chapter__num">22</p>
+        <section class="panel" id="memo">
+            <p class="chapter__num">Annexe</p>
             <h2 class="chapter__title">Commandes : mémo complet</h2>
             <p class="chapter__intro">Ce chapitre ne présente rien de nouveau : c'est un <strong>aide-mémoire de révision</strong>. Chaque commande ci-dessous a été expliquée — avec le pourquoi et le contexte — dans les chapitres précédents. Ici on la retrouve vite, rangée par tâche, une fois qu'on a compris ce qu'elle fait. Si une ligne reste obscure, c'est le signe qu'il faut relire le chapitre correspondant plutôt que de la recopier.</p>
 
@@ -1556,7 +1766,7 @@ iface ens33 inet <span class="k">static</span>
 
         <section class="brief">
             <p class="brief__label">Une fois le test validé</p>
-            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-cinq modules.</p>
+            <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
     </main>
 </div>
@@ -1566,9 +1776,10 @@ iface ens33 inet <span class="k">static</span>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=10"></script>
-<script src="../assets/app.js?v=10"></script>
-<script src="../assets/quiz-data.js?v=10"></script>
-<script src="../assets/quiz.js?v=10"></script>
+<script src="../assets/catalogue.js?v=12"></script>
+<script src="../assets/app.js?v=12"></script>
+<script src="../assets/quiz-data.js?v=12"></script>
+<script src="../assets/quiz.js?v=12"></script>
+<script src="../assets/pratique.js?v=12"></script>
 </body>
 </html>
