@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="assets/theme.css?v=14">
+    <link rel="stylesheet" href="assets/theme.css?v=15">
 </head>
 <body>
 
@@ -121,6 +121,20 @@
     </div>
 </section>
 
+<!-- ════════ POUR S'ENTRAÎNER ════════ -->
+<section class="resources" id="entrainement">
+    <div class="resources__head">
+        <p class="section-tag">Pour s'entraîner</p>
+        <h2>Quatre outils, en plus des modules</h2>
+    </div>
+    <div class="res-grid">
+        <a class="res" href="revision.html"><div class="res__top"><span class="res__badge res__badge--yt">Chaque jour</span><span class="res__name">Révision du jour</span></div><p class="res__desc">Les cartes à revoir aujourd'hui, tirées de tous les tests : un quart d'heure qui fait retenir.</p></a>
+        <a class="res" href="atelier.html"><div class="res__top"><span class="res__badge res__badge--web">Outils</span><span class="res__name">Atelier</span></div><p class="res__desc">chmod et umask, crontab, calculateur IPv4, ports, binaire, regex : manipuler pour comprendre.</p></a>
+        <a class="res" href="glossaire.html"><div class="res__top"><span class="res__badge res__badge--web">A–Z</span><span class="res__name">Glossaire</span></div><p class="res__desc">Chaque terme en deux phrases, avec les chapitres qui l'expliquent.</p></a>
+        <a class="res" href="labo.html"><div class="res__top"><span class="res__badge res__badge--local">Lab</span><span class="res__name">Lab Orion</span></div><p class="res__desc">Le réseau et les serveurs de référence sur lesquels se rejouent tous les TP Windows.</p></a>
+    </div>
+</section>
+
 <!-- ════════ CARTE DES MODULES ════════
      Rendue par app.js à partir de assets/catalogue.js : un clic sur un
      module montre ce qu'il faut connaître avant, ce qui s'appuie dessus
@@ -134,419 +148,6 @@
     <div class="map" data-map>
         <noscript><p class="note">La carte a besoin de JavaScript ; les parcours ci-dessus donnent le même ordre.</p></noscript>
     </div>
-</section>
-
-<!-- ════════ MODULES ════════ -->
-<section class="portal">
-    <div class="portal__head">
-        <p class="section-tag">Les modules</p>
-        <h2>Le catalogue complet</h2>
-        <p>Chaque module : objectifs annoncés, théorie synthétisée, labo pas à pas reproductible chez soi, puis un test noté avec correction commentée. Les cartes suivent l'ordre des parcours ; le score du test s'affiche ici une fois passé.</p>
-    </div>
-
-    <!-- ── Parcours 01 ── -->
-    <p class="res-group__title">Parcours 01 · Fondations — aucun prérequis</p>
-    <div class="grid">
-
-        <a class="mod" data-file="reseau-bases.html" data-chapters="12" href="modules/reseau-bases.html">
-            <div class="mod__top">
-                <div class="mod__icon">IP</div>
-                <span class="mod__status">12 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Réseau : les bases</div>
-            <p class="mod__desc">Le point d'entrée : équipements, OSI et TCP/IP, Ethernet et MAC, IPv4, ARP, TCP/UDP et ports, DNS, DHCP, routage et NAT, IPv6, VLAN et Wi-Fi — chaque notion avec la commande qui la rend visible, et une requête web suivie dans Wireshark.</p>
-            <div class="mod__tags"><span class="tg">TCP/IP</span><span class="tg">ARP</span><span class="tg">DNS</span><span class="tg">DHCP</span><span class="tg">IPv6</span><span class="tg">Wireshark</span></div>
-            <div class="mod__meta"><span class="lvl lvl--1"><b>Débutant</b></span><span>≈ 5 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="subnetting.html" data-chapters="10" href="modules/subnetting.html">
-            <div class="mod__top">
-                <div class="mod__icon">/24</div>
-                <span class="mod__status">10 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Réseau &amp; Subnetting</div>
-            <p class="mod__desc">Le module qui fait enfin « cliquer » les sous-réseaux : binaire, masques, CIDR, VLSM pas à pas, calcul mental, masques génériques, découpage IPv6 — et des générateurs d'exercices illimités qui corrigent en expliquant.</p>
-            <div class="mod__tags"><span class="tg">Binaire</span><span class="tg">CIDR</span><span class="tg">VLSM</span><span class="tg">Wildcard</span><span class="tg">IPv6</span><span class="tg">Entraînement</span></div>
-            <div class="mod__meta"><span class="lvl lvl--1"><b>Débutant</b></span><span>≈ 2 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="hyperv.html" data-chapters="8" href="modules/hyperv.html">
-            <div class="mod__top">
-                <div class="mod__icon">HV</div>
-                <span class="mod__status">8 chapitres · test 9 q.</span>
-            </div>
-            <div class="mod__title">Hyper-V &amp; labo virtuel</div>
-            <p class="mod__desc">Créer et régler des VM Windows Server, configurer le serveur au premier démarrage, fabriquer une image Sysprep, déployer en série par disques de différenciation, choisir son commutateur virtuel, et se servir des points de contrôle sans les prendre pour des sauvegardes.</p>
-            <div class="mod__tags"><span class="tg">Génération 2</span><span class="tg">Sysprep</span><span class="tg">Disque parent</span><span class="tg">vSwitch</span><span class="tg">Checkpoints</span></div>
-            <div class="mod__meta"><span class="lvl lvl--1"><b>Débutant</b></span><span>≈ 2 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="linux-debian.html" data-chapters="25" href="modules/linux-debian.html">
-            <div class="mod__top">
-                <div class="mod__icon">LX</div>
-                <span class="mod__status">25 chapitres · test 12 q.</span>
-            </div>
-            <div class="mod__title">Linux Debian</div>
-            <p class="mod__desc">Du premier login root à l'administration d'un serveur : fichiers, permissions et lecture de ls -l, redirections et filtres texte, réseau et SSH, APT, processus et systemd, disques et fstab, RAID logiciel, LVM, sauvegardes tar/rsync/cron — avec les pièges réellement rencontrés en TP.</p>
-            <div class="mod__tags"><span class="tg">Terminal</span><span class="tg">Permissions</span><span class="tg">grep/sed/awk</span><span class="tg">SSH</span><span class="tg">fstab</span><span class="tg">RAID</span><span class="tg">LVM</span><span class="tg">cron</span></div>
-            <div class="mod__meta"><span class="lvl lvl--1"><b>Débutant</b></span><span>≈ 6 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="depannage-reseau.html" data-chapters="8" href="modules/depannage-reseau.html">
-            <div class="mod__top">
-                <div class="mod__icon">?!</div>
-                <span class="mod__status">8 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Dépannage réseau</div>
-            <p class="mod__desc">La méthode par couches, les commandes de diagnostic Windows, Linux et Cisco, la lecture de captures, les signatures d'une douzaine de pannes classiques et six scénarios de panne interactifs.</p>
-            <div class="mod__tags"><span class="tg">Méthode</span><span class="tg">Test-NetConnection</span><span class="tg">ss</span><span class="tg">show</span><span class="tg">Scénarios</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 3 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-    </div>
-
-    <!-- ── Parcours 02 ── -->
-    <p class="res-group__title">Parcours 02 · Infrastructure Windows</p>
-    <div class="grid">
-
-        <a class="mod" data-file="windows-server.html" data-chapters="13" href="modules/windows-server.html">
-            <div class="mod__top">
-                <div class="mod__icon">WS</div>
-                <span class="mod__status">13 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Windows Server 2025</div>
-            <p class="mod__desc">Le domaine orion.local brique par brique : préparation des serveurs, forêt AD, second DC par IFM, OU, groupes et délégation, DNS, DHCP autorisé, partages et NTFS, DFS Namespace, GPO, sécurité des comptes et LAPS, dépannage d'AD, et le TP final guidé avec son erreur volontaire.</p>
-            <div class="mod__tags"><span class="tg">AD DS</span><span class="tg">DNS</span><span class="tg">DHCP</span><span class="tg">NTFS</span><span class="tg">DFS</span><span class="tg">GPO</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 6 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="powershell.html" data-chapters="10" href="modules/powershell.html">
-            <div class="mod__top">
-                <div class="mod__icon">PS</div>
-                <span class="mod__status">10 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">PowerShell &amp; Automatisation</div>
-            <p class="mod__desc">Le langage à partir des exercices du cours — variables et types, conditions, boucles, tableaux et objets, pipeline, fonctions et erreurs — puis le lab Orion en script, les comptes AD depuis un CSV, l'administration à distance et les projets du cours corrigés.</p>
-            <div class="mod__tags"><span class="tg">Variables</span><span class="tg">Boucles</span><span class="tg">Pipeline</span><span class="tg">Fonctions</span><span class="tg">CSV</span><span class="tg">Invoke-Command</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 5 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="storage-clustering.html" data-chapters="12" href="modules/storage-clustering.html">
-            <div class="mod__top">
-                <div class="mod__icon">SAN</div>
-                <span class="mod__status">12 chapitres · test 8 q.</span>
-            </div>
-            <div class="mod__title">Stockage &amp; Clustering</div>
-            <p class="mod__desc">DAS/NAS/SAN, RAID et pools de stockage, permissions NTFS et droits effectifs, partages, quotas FSRM, DFS et sauvegardes — puis le montage complet d'un SAN iSCSI et d'un cluster de basculement à deux nœuds avec rôle Serveur de fichiers.</p>
-            <div class="mod__tags"><span class="tg">iSCSI</span><span class="tg">RAID</span><span class="tg">NTFS</span><span class="tg">DFS</span><span class="tg">Failover</span><span class="tg">Quorum</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 3 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="rds.html" data-chapters="7" href="modules/rds.html">
-            <div class="mod__top">
-                <div class="mod__icon">RD</div>
-                <span class="mod__status">7 chapitres · test 8 q.</span>
-            </div>
-            <div class="mod__title">Bureau à distance (RDS)</div>
-            <p class="mod__desc">Les rôles RDS, un déploiement session-based sur le lab Orion (Server Manager ou PowerShell), collections et RemoteApp, licences et période de grâce, certificat créé, affecté et approuvé, et la passerelle pour l'accès externe.</p>
-            <div class="mod__tags"><span class="tg">RDSH</span><span class="tg">Broker</span><span class="tg">RemoteApp</span><span class="tg">Licences</span><span class="tg">Certificat</span><span class="tg">Gateway</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 2 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="iis.html" data-chapters="9" href="modules/iis.html">
-            <div class="mod__top">
-                <div class="mod__icon">IIS</div>
-                <span class="mod__status">9 chapitres · test 8 q.</span>
-            </div>
-            <div class="mod__title">IIS — Serveur web Windows</div>
-            <p class="mod__desc">Publier des sites depuis un Windows Server du domaine : rôle Web Server, console IIS Manager, pools d'applications, bindings et noms d'hôte, alias CNAME dans le DNS, déploiement de deux sites et service FTP.</p>
-            <div class="mod__tags"><span class="tg">Rôle Web Server</span><span class="tg">Pools</span><span class="tg">Bindings</span><span class="tg">CNAME</span><span class="tg">FTP</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 2 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="exchange-securite.html" data-chapters="7" href="modules/exchange-securite.html">
-            <div class="mod__top">
-                <div class="mod__icon">EX</div>
-                <span class="mod__status">7 chapitres · test 7 q.</span>
-            </div>
-            <div class="mod__title">Exchange &amp; PKI</div>
-            <p class="mod__desc">Messagerie Exchange 2019, gestion des boîtes aux lettres, PKI et chaîne de confiance, chiffrement asymétrique, certificats et AD CS.</p>
-            <div class="mod__tags"><span class="tg">Exchange</span><span class="tg">PKI</span><span class="tg">Certificats</span><span class="tg">AD CS</span></div>
-            <div class="mod__meta"><span class="lvl lvl--3"><b>Avancé</b></span><span>≈ 1 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="sql-server.html" data-chapters="15" href="modules/sql-server.html">
-            <div class="mod__top">
-                <div class="mod__icon">SQL</div>
-                <span class="mod__status">15 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">SQL Server</div>
-            <p class="mod__desc">Administrer une instance SQL Server : installation, compte de service géré, réseau et pare-feu, mémoire et tempdb, création et dimensionnement des bases, sauvegarde et restauration, droits au moindre privilège, maintenance et Agent, diagnostic des blocages, supervision, cluster et Always On.</p>
-            <div class="mod__tags"><span class="tg">Instance</span><span class="tg">gMSA</span><span class="tg">Sauvegarde</span><span class="tg">Diagnostic</span><span class="tg">Always On</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 4 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="sharepoint.html" data-chapters="19" href="modules/sharepoint.html">
-            <div class="mod__top">
-                <div class="mod__icon">SP</div>
-                <span class="mod__status">19 chapitres · test 8 q.</span>
-            </div>
-            <div class="mod__title">SharePoint Server SE</div>
-            <p class="mod__desc">Le guide complet : théorie (Server vs Online, licences, architecture physique et logique) et pratique (SQL Server, installation, ferme, premier site, droits, workflows, PowerShell, sauvegarde).</p>
-            <div class="mod__tags"><span class="tg">Théorie</span><span class="tg">Pratique</span><span class="tg">Ferme</span><span class="tg">SQL</span></div>
-            <div class="mod__meta"><span class="lvl lvl--3"><b>Avancé</b></span><span>≈ 4 h</span></div>
-            <div class="mod__go">Ouvrir le guide →</div>
-        </a>
-
-        <a class="mod" data-file="dpm.html" data-chapters="9" href="modules/dpm.html">
-            <div class="mod__top">
-                <div class="mod__icon">DPM</div>
-                <span class="mod__status">9 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">System Center DPM</div>
-            <p class="mod__desc">La sauvegarde de la suite System Center : base sur un SQL Server distant sous gMSA, pool de stockage, agents, groupe de protection — synchronisation ou point de récupération —, restauration, et le diagnostic de l'erreur 811 jusqu'au certificat refusé.</p>
-            <div class="mod__tags"><span class="tg">DPM 2025</span><span class="tg">gMSA</span><span class="tg">Groupe de protection</span><span class="tg">Restauration</span><span class="tg">Erreur 811</span></div>
-            <div class="mod__meta"><span class="lvl lvl--3"><b>Avancé</b></span><span>≈ 2 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-    </div>
-
-    <!-- ── Parcours 03 ── -->
-    <p class="res-group__title">Parcours 03 · Réseau &amp; téléphonie</p>
-    <div class="grid">
-
-        <a class="mod" data-file="ccna-reseau.html" data-chapters="15" href="modules/ccna-reseau.html">
-            <div class="mod__top">
-                <div class="mod__icon">NET</div>
-                <span class="mod__status">15 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">CCNA — Réseau Cisco</div>
-            <p class="mod__desc">La topologie d'entreprise du cours, brique par brique : IOS et SSH, VLAN et trunks, inter-VLAN, DHCP et relais, VLSM, routes statiques et flottantes, OSPF, spanning tree et EtherChannel, HSRP, NAT, ACL, NTP/Syslog, IPv6 — chaque étape prouvée par sa commande show.</p>
-            <div class="mod__tags"><span class="tg">VLAN</span><span class="tg">OSPF</span><span class="tg">HSRP</span><span class="tg">EtherChannel</span><span class="tg">NAT</span><span class="tg">ACL</span><span class="tg">IPv6</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 8 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="cisco-securite.html" data-chapters="11" href="modules/cisco-securite.html">
-            <div class="mod__top">
-                <div class="mod__icon">ACL</div>
-                <span class="mod__status">11 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Cisco IOS — Sécurité, VLAN, STP &amp; ACL</div>
-            <p class="mod__desc">IOS, sécurisation de base, SSH et port-security, VLAN et trunk, inter-VLAN, spanning tree avec PortFast et BPDU Guard, ACL et leur dépannage (ping, traceroute, compteurs), DHCP snooping et DAI, les TP du cours en labs guidés et les commandes à taper par cœur.</p>
-            <div class="mod__tags"><span class="tg">Port-security</span><span class="tg">STP</span><span class="tg">BPDU Guard</span><span class="tg">ACL</span><span class="tg">DHCP snooping</span><span class="tg">Labs</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 5 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="voip.html" data-chapters="11" href="modules/voip.html">
-            <div class="mod__top">
-                <div class="mod__icon">SIP</div>
-                <span class="mod__status">11 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Téléphonie IP (VoIP / ToIP)</div>
-            <p class="mod__desc">VoIP et ToIP, PoE et QoS, la voix en chiffres (délai, gigue, débit par codec), SIP, RTP et RTCP, VLAN voix, codecs et architecture d'un standard, dépannage d'un appel dans Wireshark, PBX 3CX en labo et checklist de déploiement.</p>
-            <div class="mod__tags"><span class="tg">SIP</span><span class="tg">RTP</span><span class="tg">VLAN voix</span><span class="tg">QoS</span><span class="tg">Wireshark</span><span class="tg">3CX</span></div>
-            <div class="mod__meta"><span class="lvl lvl--1"><b>Débutant</b></span><span>≈ 3 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-    </div>
-
-    <!-- ── Parcours 04 ── -->
-    <p class="res-group__title">Parcours 04 · Virtualisation, homelab &amp; sécurité</p>
-    <div class="grid">
-
-        <a class="mod" data-file="proxmox.html" data-chapters="10" href="modules/proxmox.html">
-            <div class="mod__top">
-                <div class="mod__icon">PVE</div>
-                <span class="mod__status">10 chapitres · test 8 q.</span>
-            </div>
-            <div class="mod__title">Proxmox &amp; Virtualisation</div>
-            <p class="mod__desc">Le cœur du métier : Proxmox VE, VM (KVM) vs conteneurs LXC, stockage ZFS, snapshots &amp; backups, réseau (bridges/VLAN), cluster et haute disponibilité.</p>
-            <div class="mod__tags"><span class="tg">Proxmox VE</span><span class="tg">KVM</span><span class="tg">LXC</span><span class="tg">ZFS</span><span class="tg">Cluster</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 2 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="docker.html" data-chapters="9" href="modules/docker.html">
-            <div class="mod__top">
-                <div class="mod__icon">DK</div>
-                <span class="mod__status">9 chapitres · test 8 q.</span>
-            </div>
-            <div class="mod__title">Docker &amp; conteneurs</div>
-            <p class="mod__desc">Conteneur ou VM, images et registre, installation propre de docker-ce, cycle de vie des conteneurs, Dockerfile, volumes persistants, réseau bridge et mappage de ports, puis une application entière décrite avec Docker Compose.</p>
-            <div class="mod__tags"><span class="tg">docker-ce</span><span class="tg">Dockerfile</span><span class="tg">Volumes</span><span class="tg">Réseau</span><span class="tg">Compose</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 3 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="homelab.html" data-chapters="9" href="modules/homelab.html">
-            <div class="mod__top">
-                <div class="mod__icon">LAB</div>
-                <span class="mod__status">9 chapitres · test 8 q.</span>
-            </div>
-            <div class="mod__title">Homelab &amp; Self-hosting</div>
-            <p class="mod__desc">Monter son labo maison et héberger ses propres services : Docker &amp; Compose, reverse proxy, DNS local (Pi-hole), *arr / médias, sauvegardes et accès distant sécurisé.</p>
-            <div class="mod__tags"><span class="tg">Docker</span><span class="tg">Reverse proxy</span><span class="tg">Pi-hole</span><span class="tg">Backup</span></div>
-            <div class="mod__meta"><span class="lvl lvl--1"><b>Débutant</b></span><span>≈ 1 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="securite.html" data-chapters="8" href="modules/securite.html">
-            <div class="mod__top">
-                <div class="mod__icon">SEC</div>
-                <span class="mod__status">8 chapitres · test 8 q.</span>
-            </div>
-            <div class="mod__title">Cybersécurité &amp; Hacking éthique</div>
-            <p class="mod__desc">Fondamentaux offensifs et défensifs, en labo isolé : Kali, méthodologie de pentest, reconnaissance, hardening, pare-feu, VPN et hygiène numérique. Usage éthique.</p>
-            <div class="mod__tags"><span class="tg">Kali</span><span class="tg">Pentest</span><span class="tg">Hardening</span><span class="tg">VPN</span></div>
-            <div class="mod__meta"><span class="lvl lvl--1"><b>Débutant</b></span><span>≈ 1 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-    </div>
-
-    <!-- ── Parcours 05 ── -->
-    <p class="res-group__title">Parcours 05 · Cloud, supervision &amp; méthode</p>
-    <div class="grid">
-
-        <a class="mod" data-file="monitoring-zabbix.html" data-chapters="10" href="modules/monitoring-zabbix.html">
-            <div class="mod__top">
-                <div class="mod__icon">ZBX</div>
-                <span class="mod__status">10 chapitres · test 9 q.</span>
-            </div>
-            <div class="mod__title">Supervision — Zabbix</div>
-            <p class="mod__desc">Monter un serveur Zabbix de zéro sur Ubuntu (MySQL, Nginx), y raccorder un Windows Server par agent, lire ce qui remonte — puis laisser Zabbix redémarrer seul les services arrêtés et nettoyer les fichiers temporaires.</p>
-            <div class="mod__tags"><span class="tg">Monitoring</span><span class="tg">Agent</span><span class="tg">Templates</span><span class="tg">Triggers</span><span class="tg">Auto-remédiation</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 3 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="zabbix-windows.html" data-chapters="8" href="modules/zabbix-windows.html">
-            <div class="mod__top">
-                <div class="mod__icon">ZBW</div>
-                <span class="mod__status">8 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Zabbix &amp; serveurs Windows</div>
-            <p class="mod__desc">Zabbix à la place de SCOM : la pile en Docker Compose, des agents Windows en vérifications actives chiffrées par PSK, l'agent du serveur en conteneur, puis des modèles maison pour l'heure du domaine et l'expiration des certificats.</p>
-            <div class="mod__tags"><span class="tg">Docker Compose</span><span class="tg">Agent 2</span><span class="tg">PSK</span><span class="tg">UserParameter</span><span class="tg">LLD</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 2 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="azure.html" data-chapters="12" href="modules/azure.html">
-            <div class="mod__top">
-                <div class="mod__icon">AZ</div>
-                <span class="mod__status">12 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Azure — AZ-900</div>
-            <p class="mod__desc">Les fondamentaux du cloud Microsoft, dans l'ordre de l'examen : concepts et CapEx/OpEx, IaaS/PaaS/SaaS et responsabilité partagée, régions et hiérarchie ARM, compute, réseau, stockage, Entra ID et RBAC, gouvernance, coûts et SLA, monitoring.</p>
-            <div class="mod__tags"><span class="tg">AZ-900</span><span class="tg">IaaS / PaaS / SaaS</span><span class="tg">RBAC</span><span class="tg">Policy</span><span class="tg">SLA</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 4 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="scrum.html" data-chapters="10" href="modules/scrum.html">
-            <div class="mod__top">
-                <div class="mod__icon">AGL</div>
-                <span class="mod__status">10 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Agile &amp; Scrum</div>
-            <p class="mod__desc">Le seul module qui parle de la façon de travailler : triangle d'or et Waterfall, Manifeste Agile, sprint et trois piliers, les quatre cérémonies, les trois rôles, backlogs, user stories et Definition of Done, puis Kanban.</p>
-            <div class="mod__tags"><span class="tg">Manifeste Agile</span><span class="tg">Sprint</span><span class="tg">Backlog</span><span class="tg">User story</span><span class="tg">Kanban</span></div>
-            <div class="mod__meta"><span class="lvl lvl--1"><b>Débutant</b></span><span>≈ 3 h</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="redmine.html" data-chapters="8" href="modules/redmine.html">
-            <div class="mod__top">
-                <div class="mod__icon">RDM</div>
-                <span class="mod__status">8 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Redmine — helpdesk</div>
-            <p class="mod__desc">Redmine à la place de SCSM : un outil de tickets en Docker Compose, branché sur l'Active Directory en LDAP (et le piège de Windows Server 2025), puis rendu exploitable — secrets dans un .env, sauvegarde par cron, HTTPS derrière nginx.</p>
-            <div class="mod__tags"><span class="tg">Ticketing</span><span class="tg">LDAP / AD</span><span class="tg">.env</span><span class="tg">cron</span><span class="tg">nginx HTTPS</span></div>
-            <div class="mod__meta"><span class="lvl lvl--2"><b>Intermédiaire</b></span><span>≈ 2 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        <a class="mod" data-file="entretien-recrutement.html" data-chapters="9" href="modules/entretien-recrutement.html">
-            <div class="mod__top">
-                <div class="mod__icon">JOB</div>
-                <span class="mod__status">9 chapitres · test 10 q.</span>
-            </div>
-            <div class="mod__title">Entretien de recrutement</div>
-            <p class="mod__desc">Le module du jour J : se préparer, raconter son expérience avec la méthode STARR, reconnaître le type de question, tenir sa posture, conclure — et faire de son stress un allié, respiration à l'appui.</p>
-            <div class="mod__tags"><span class="tg">STARR</span><span class="tg">Questions</span><span class="tg">Posture</span><span class="tg">Stress</span><span class="tg">Simulation</span></div>
-            <div class="mod__meta"><span class="lvl lvl--1"><b>Débutant</b></span><span>≈ 1 h 30</span></div>
-            <div class="mod__go">Ouvrir le module →</div>
-        </a>
-
-        
-
-    </div>
-</section>
-
-<!-- ════════ ÉVALUATIONS ════════ -->
-<section class="exams-index">
-    <p class="section-tag">Se vérifier</p>
-    <h2>Tests de module &amp; examens transversaux</h2>
-    <p>Deux niveaux d'évaluation. Le <strong>test de fin de module</strong> ferme un sujet : il est en bas de chaque page, avec correction commentée et renvoi au chapitre à relire. L'<strong>examen de parcours</strong> vérifie autre chose — que les modules tiennent ensemble : il tire ses questions au hasard dans les modules couverts et y ajoute des questions de synthèse. Deux passages ne se ressemblent jamais.</p>
-
-    <div class="exam-grid">
-        <a class="exam-card" href="examens.html#fondations">
-            <p class="exam-card__num">Examen 01</p>
-            <p class="exam-card__title">Parcours Fondations</p>
-            <p class="exam-card__desc">Hyper-V, Linux Debian et subnetting, croisés : monter une VM qui accède au réseau, diagnostiquer une interface muette, dimensionner un labo.</p>
-            <div class="exam-card__foot"><span>20 questions · seuil 70 %</span></div>
-        </a>
-        <a class="exam-card" href="examens.html#windows">
-            <p class="exam-card__num">Examen 02</p>
-            <p class="exam-card__title">Infrastructure Windows</p>
-            <p class="exam-card__desc">Neuf modules, sauvegarde comprise. Ce qui circule de l'un à l'autre : le gMSA, la chaîne de confiance, la superposition des droits, la limite des mécanismes de haute disponibilité.</p>
-            <div class="exam-card__foot"><span>30 questions · seuil 70 %</span></div>
-        </a>
-        <a class="exam-card" href="examens.html#reseau">
-            <p class="exam-card__num">Examen 03</p>
-            <p class="exam-card__title">Réseau &amp; téléphonie</p>
-            <p class="exam-card__desc">Du plan d'adressage à la voix qui passe, en passant par la sécurisation Cisco, avec les cas de dépannage qui distinguent un problème de signalisation d'un problème de flux.</p>
-            <div class="exam-card__foot"><span>20 questions · seuil 70 %</span></div>
-        </a>
-        <a class="exam-card" href="examens.html#virtualisation">
-            <p class="exam-card__num">Examen 04</p>
-            <p class="exam-card__title">Virtualisation &amp; homelab</p>
-            <p class="exam-card__desc">Architecture d'hébergement, conteneurs Docker, segmentation VLAN sur Proxmox, réduction de la surface d'attaque et cadre légal du test d'intrusion.</p>
-            <div class="exam-card__foot"><span>20 questions · seuil 70 %</span></div>
-        </a>
-        <a class="exam-card" href="examens.html#cloud">
-            <p class="exam-card__num">Examen 05</p>
-            <p class="exam-card__title">Cloud, supervision &amp; méthode</p>
-            <p class="exam-card__desc">Ce qui relie la supervision d'un parc, une plateforme cloud et la façon d'organiser le travail : la même chaîne mesurer / alerter / agir, le même moindre privilège — et le recul qu'on en tire en entretien.</p>
-            <div class="exam-card__foot"><span>20 questions · seuil 70 %</span></div>
-        </a>
-        <a class="exam-card" href="examens.html#final">
-            <p class="exam-card__num">Examen final</p>
-            <p class="exam-card__title">Les vingt-sept modules</p>
-            <p class="exam-card__desc">Le grand test de synthèse : quarante-cinq questions tirées dans tout le centre, plus les principes qui traversent les cinq parcours.</p>
-            <div class="exam-card__foot"><span>45 questions · seuil 75 %</span></div>
-        </a>
-    </div>
-
-    <div class="scoreboard" data-scoreboard data-base="modules/" style="margin-top:26px;"></div>
 </section>
 
 
@@ -659,11 +260,11 @@
     <p><a href="#carte">Carte des modules</a> · <a href="examens.html">Examens transversaux</a> · Progression et résultats enregistrés dans ce navigateur uniquement</p>
 </footer>
 
-<script src="assets/catalogue.js?v=14"></script>
-<script src="assets/app.js?v=14"></script>
-<script src="assets/quiz-data.js?v=14"></script>
-<script src="assets/quiz.js?v=14"></script>
-<script src="assets/search-index.js?v=14"></script>
-<script src="assets/search.js?v=14"></script>
+<script src="assets/catalogue.js?v=15"></script>
+<script src="assets/app.js?v=15"></script>
+<script src="assets/quiz-data.js?v=15"></script>
+<script src="assets/quiz.js?v=15"></script>
+<script src="assets/search-index.js?v=15"></script>
+<script src="assets/search.js?v=15"></script>
 </body>
 </html>

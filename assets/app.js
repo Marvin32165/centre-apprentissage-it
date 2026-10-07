@@ -219,41 +219,10 @@
     }
 
     /* ══════════════ PORTAIL ══════════════ */
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.mod[data-file]'));
-    if (cards.length && !chapters.length) {
-        var started = 0;
+    if (document.querySelector('.resume') && !chapters.length) {
+        var started = Object.keys(progress).filter(function (k) { return Array.isArray(progress[k]) && progress[k].length; }).length;
         var scores = read(KEY_SCORES, {}) || {};
 
-        cards.forEach(function (card) {
-            var file = card.getAttribute('data-file');
-            var total = parseInt(card.getAttribute('data-chapters'), 10) || 0;
-            var done = doneList(file).length;
-            var meta = card.querySelector('.mod__meta');
-
-            /* Score du test de fin de module. La clé du fonds de
-               questions est le nom de fichier sans son extension. */
-            var rec = scores['test:' + file.replace(/\.html$/, '')];
-            if (rec && meta) {
-                var badge = document.createElement('span');
-                badge.innerHTML = 'Test <b>' + rec.best + ' %</b>';
-                badge.title = rec.passed ? 'Test validé' : 'Test non validé';
-                meta.appendChild(badge);
-            }
-
-            if (!total || !done) return;
-            started++;
-            var pct = Math.min(100, Math.round((done / total) * 100));
-            var wrap = document.createElement('div');
-            wrap.className = 'mod__prog is-on';
-            wrap.title = done + ' / ' + total + ' chapitres acquis';
-            wrap.innerHTML = '<i style="width:' + pct + '%"></i>';
-            card.appendChild(wrap);
-            if (meta) {
-                var span = document.createElement('span');
-                span.innerHTML = '<b>' + pct + ' %</b> acquis';
-                meta.appendChild(span);
-            }
-        });
 
         var last = read(KEY_LAST, null);
         var tests = Object.keys(scores).length;
@@ -466,6 +435,8 @@
             var p = [
                 ['index.html', 'Portail', 'Parcours, carte des modules, reprise', '⌂'],
                 ['index.html#carte', 'Carte des modules', 'Prérequis et suites de chaque module', '◇'],
+                ['atelier.html', 'Atelier', 'Outils interactifs : chmod, crontab, calculateur IP…', '⚙'],
+                ['glossaire.html', 'Glossaire', 'Tous les termes, avec les chapitres qui les expliquent', 'A–Z'],
                 ['labo.html', 'Lab Orion', 'Plan d’adressage et ordre de construction', 'LAB'],
                 ['revision.html', 'Révision du jour', 'Cartes à revoir aujourd’hui', 'REV'],
                 ['examens.html', 'Examens', 'Examens de parcours et examen final', 'EX']
@@ -482,6 +453,14 @@
                 };
             });
         }
+        function glossary() {
+            return ((window.GLOSSAIRE && window.GLOSSAIRE.termes) || []).map(function (e) {
+                return {
+                    href: SITE + 'glossaire.html#t-' + e.id, title: e.t + (e.x ? ' — ' + e.x : ''), icon: 'Aa', group: 'Glossaire',
+                    sub: e.d, hay: norm(e.t + ' ' + e.x), body: norm(e.d)
+                };
+            });
+        }
         function chapters() {
             return (window.SEARCH_INDEX || []).map(function (e) {
                 return {
@@ -491,13 +470,19 @@
             });
         }
         function loadIndex() {
-            if (window.SEARCH_INDEX || indexState !== 'none') return;
+            if (indexState !== 'none') return;
             indexState = 'loading';
-            var sc = document.createElement('script');
-            sc.src = SITE + 'assets/search-index.js';
-            sc.onload = function () { indexState = 'done'; if (el && !el.hidden) render(); };
-            sc.onerror = function () { indexState = 'failed'; };
-            document.head.appendChild(sc);
+            var todo = [];
+            if (!window.SEARCH_INDEX) todo.push('assets/search-index.js');
+            if (!window.GLOSSAIRE) todo.push('assets/glossaire.js');
+            var left = todo.length;
+            if (!left) { indexState = 'done'; return; }
+            todo.forEach(function (src) {
+                var sc = document.createElement('script');
+                sc.src = SITE + src;
+                sc.onload = sc.onerror = function () { if (--left === 0) { indexState = 'done'; if (el && !el.hidden) render(); } };
+                document.head.appendChild(sc);
+            });
         }
 
         function search(q) {
@@ -516,15 +501,15 @@
                 }
                 return s;
             }
-            var found = all.concat(chapters()).map(function (it) { return { it: it, s: score(it) }; })
+            var found = all.concat(glossary(), chapters()).map(function (it) { return { it: it, s: score(it) }; })
                 .filter(function (x) { return x.s > 0; })
                 .sort(function (a, b) { return b.s - a.s; });
-            var out = [], perGroup = { Pages: 0, Modules: 0, Chapitres: 0 };
+            var out = [], perGroup = { Pages: 0, Modules: 0, Glossaire: 0, Chapitres: 0 };
             found.forEach(function (x) {
-                var cap = x.it.group === 'Chapitres' ? 14 : 8;
+                var cap = x.it.group === 'Chapitres' ? 12 : x.it.group === 'Glossaire' ? 5 : 8;
                 if (perGroup[x.it.group]++ < cap) out.push(x.it);
             });
-            var order = { Pages: 0, Modules: 1, Chapitres: 2 };
+            var order = { Pages: 0, Modules: 1, Glossaire: 2, Chapitres: 3 };
             return out.sort(function (a, b) { return order[a.group] - order[b.group]; });
         }
 
@@ -621,11 +606,12 @@
         nav.setAttribute('aria-label', 'Navigation du site');
         var links = [
             ['index.html#parcours', 'Parcours'],
-            ['index.html#carte', 'Carte des modules'],
-            ['index.html#outils', 'Outils & supports'],
+            ['atelier.html', 'Atelier'],
+            ['glossaire.html', 'Glossaire'],
             ['labo.html', 'Lab Orion'],
             ['revision.html', 'Révision'],
-            ['examens.html', 'Examens']
+            ['examens.html', 'Examens'],
+            ['index.html#outils', 'Supports']
         ].filter(function (l) {
             // Version publiée : ni supports ni outils (ils vivent dans le dépôt privé).
             return !(CAT.public && l[0] === 'index.html#outils');
@@ -752,8 +738,7 @@
     var mapHost = document.querySelector('[data-map]');
     if (mapHost) {
         var descOf = function (id) {
-            var d = document.querySelector('.mod[data-file="' + id + '.html"] .mod__desc');
-            return d ? d.textContent.trim() : '';
+            return (CAT.modules[id] && CAT.modules[id].desc) || '';
         };
         var cols = CAT.parcours.map(function (p) {
             var ids = p.modules.concat(p.soon || []);

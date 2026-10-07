@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=14">
+    <link rel="stylesheet" href="../assets/theme.css?v=15">
 </head>
 <body>
 
@@ -69,13 +69,6 @@
     </aside>
 
     <main class="content">
-        <div class="section-banner">
-            <div class="section-banner__accent"></div>
-            <div>
-                <div class="section-banner__label">Linux Debian</div>
-                <div class="section-banner__desc">Du premier login à la maîtrise du terminal — pour débutant complet</div>
-            </div>
-        </div>
 
         <section class="brief">
             <p class="brief__label">Ce que tu sauras faire à la fin</p>
@@ -581,6 +574,7 @@
 <span class="k">chmod</span> <span class="p">1777</span> /srv/depot   <span class="c"># Sticky Bit sur un dossier (« t » à la place du x des autres) ; sans effet sur un fichier</span></pre>
             </div>
 
+            <div class="tool" data-tool="chmod"><noscript><p>Cet outil a besoin de JavaScript.</p></noscript></div>
             <h3>umask — les droits par défaut, et pourquoi</h3>
             <p>Quand vous créez un fichier ou un dossier, d'où viennent ses droits ? Le système part d'une <strong>base</strong> et en <strong>retire</strong> ce qu'indique le <code>umask</code>. La base est fixe :</p>
             <ul>
@@ -618,6 +612,7 @@
                 <p>Le fichier <code>rapport.txt</code> doit être lisible et modifiable par son propriétaire, lisible par son groupe, et inaccessible aux autres. Pose ces droits en notation octale.</p>
                 <details class="reveal"><summary>Voir la réponse</summary><div class="reveal__body"><p><code>chmod 640 rapport.txt</code> — <code>rw-</code> = 4+2 = 6, <code>r--</code> = 4, <code>---</code> = 0. Vérifier avec <code>ls -l rapport.txt</code> : <code>-rw-r-----</code>.</p></div></details>
             </div>
+            <div class="tool" data-tool="umask"><noscript><p>Cet outil a besoin de JavaScript.</p></noscript></div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Trois publics (u, g, o) × trois droits (r=4, w=2, x=1). Sur un <strong>dossier</strong>, <code>x</code> = pouvoir y entrer, <code>w</code> = créer et supprimer des fichiers dedans. Les nouveaux fichiers naissent avec <code>666 − umask</code>, les dossiers avec <code>777 − umask</code>.</p>
@@ -811,6 +806,7 @@ EOF</pre>
 <span class="c"># filtre les comptes "nologin", trie, ne garde que le login (1er champ)</span></pre>
             </div>
 
+            <div class="tool" data-tool="regex"><noscript><p>Cet outil a besoin de JavaScript.</p></noscript></div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p><code>sed</code> travaille <strong>ligne par ligne</strong> (<code>s/avant/après/</code>), <code>awk</code> travaille <strong>en colonnes</strong> (<code>$1</code>, <code>$2</code>…). Sans <code>-i</code>, <code>sed</code> se contente d'<em>afficher</em> le résultat : le fichier n'est pas modifié. C'est le filet de sécurité — on teste toujours sans <code>-i</code> avant de l'ajouter.</p>
@@ -1615,7 +1611,9 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
 <span class="k">30</span> 2 * * 0    /usr/local/bin/sauvegarde-home.sh full
 <span class="k">30</span> 2 * * 1-6  /usr/local/bin/sauvegarde-home.sh incr</pre>
             </div>
-            <p>Dans un script lancé par cron, l'environnement est minimal : chemins <strong>absolus</strong> partout, et la sortie redirigée vers un journal (<code>&gt;&gt; /var/log/sauvegarde.log 2&gt;&amp;1</code>) pour savoir ce qui s'est passé à 2 h 30. Le site <a href="https://crontab.guru/" rel="noopener">crontab.guru</a> traduit une ligne cron en clair. Sur une Debian récente, un <em>timer</em> systemd fait la même chose avec un journal intégré.</p>
+            <p>Dans un script lancé par cron, l'environnement est minimal : chemins <strong>absolus</strong> partout, et la sortie redirigée vers un journal (<code>&gt;&gt; /var/log/sauvegarde.log 2&gt;&amp;1</code>) pour savoir ce qui s'est passé à 2 h 30. L'outil ci-dessous traduit une ligne cron en clair et calcule ses prochaines exécutions. Sur une Debian récente, un <em>timer</em> systemd fait la même chose avec un journal intégré.</p>
+
+            <div class="tool" data-tool="cron"><noscript><p>Cet outil a besoin de JavaScript.</p></noscript></div>
             <div class="lab" data-lab="linux-restauration">
                 <p class="lab__label">Lab guidé</p>
                 <p class="lab__title">Prouver que la sauvegarde se restaure</p>
@@ -1947,10 +1945,11 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=14"></script>
-<script src="../assets/app.js?v=14"></script>
-<script src="../assets/quiz-data.js?v=14"></script>
-<script src="../assets/quiz.js?v=14"></script>
-<script src="../assets/pratique.js?v=14"></script>
+<script src="../assets/catalogue.js?v=15"></script>
+<script src="../assets/app.js?v=15"></script>
+<script src="../assets/quiz-data.js?v=15"></script>
+<script src="../assets/quiz.js?v=15"></script>
+<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/atelier.js?v=15"></script>
 </body>
 </html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glossaire — Centre d'apprentissage IT</title>
+    <meta name="description" content="Tous les termes des modules — réseau, Windows, Linux, virtualisation, sécurité, supervision, cloud — avec une définition courte et des liens vers les chapitres qui les expliquent.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="assets/theme.css?v=15">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="index.html">← Portail</a> · Glossaire</p>
+        <h1 class="hero__title">Le <em>glossaire</em></h1>
+        <p class="hero__lead">Chaque sigle, chaque mot technique des modules, en une ou deux phrases — et surtout <strong>où il est expliqué</strong> : chaque terme renvoie aux chapitres qui le traitent. Un mot inconnu dans un chapitre ? Cherche-le ici, ou tape <kbd>Ctrl</kbd> <kbd>K</kbd> depuis n'importe quelle page.</p>
+        <div class="hero__facts" data-glo-facts>
+            <span class="fact"><b>Termes</b> —</span>
+        </div>
+    </div>
+</header>
+
+<main class="glo" id="glossaire">
+    <div class="glo__bar">
+        <input class="glo__search" type="search" placeholder="Filtrer : un sigle, un mot, une notion…" aria-label="Filtrer le glossaire" autocomplete="off" spellcheck="false">
+        <div class="glo__doms" role="group" aria-label="Domaines"></div>
+        <nav class="glo__az" aria-label="Lettres"></nav>
+    </div>
+    <p class="glo__count" aria-live="polite"></p>
+    <div class="glo__list">
+        <noscript><p>Le glossaire a besoin de JavaScript.</p></noscript>
+    </div>
+</main>
+
+<footer>
+    <p><strong>Glossaire</strong> — Centre d'apprentissage IT · généré à partir des modules</p>
+    <p><a href="index.html">← Retour au portail</a> · <a href="atelier.html">Atelier</a> · <a href="revision.html">Révision du jour</a></p>
+</footer>
+
+<script src="assets/catalogue.js?v=15"></script>
+<script src="assets/app.js?v=15"></script>
+<script src="assets/glossaire.js?v=15"></script>
+<script src="assets/glossaire-ui.js?v=15"></script>
+</body>
+</html>

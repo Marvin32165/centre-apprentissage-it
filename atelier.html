@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier — Centre d'apprentissage IT</title>
+    <meta name="description" content="Outils interactifs pour s'entraîner et vérifier : calculateur chmod et umask, traducteur de crontab, calculateur IPv4, ports courants, conversions binaire et hexadécimal, testeur d'expressions régulières.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="assets/theme.css?v=15">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero">
+    <div class="hero__inner">
+        <p class="eyebrow"><a href="index.html">← Portail</a> · Atelier</p>
+        <h1 class="hero__title">L'<em>atelier</em></h1>
+        <p class="hero__lead">Des outils pour comprendre en manipulant : coche des droits et regarde la commande <code>chmod</code> se construire, écris une ligne de crontab et vois quand elle tournera, tape une adresse et lis son réseau en binaire. Les mêmes outils se retrouvent dans les chapitres qui en parlent.</p>
+        <div class="hero__facts">
+            <span class="fact"><b>Outils</b> 7</span>
+            <span class="fact"><b>Données</b> rien n'est envoyé</span>
+            <span class="fact"><b>Usage</b> s'entraîner, vérifier un calcul</span>
+        </div>
+    </div>
+</header>
+
+<main class="atelier">
+    <nav class="atelier__nav" aria-label="Outils">
+        <a href="#chmod">chmod</a><a href="#umask">umask</a><a href="#cron">crontab</a><a href="#ipcalc">Calculateur IPv4</a><a href="#ports">Ports</a><a href="#convert">Binaire / hexa</a><a href="#regex">Regex</a>
+    </nav>
+
+    <div class="tool" data-tool="chmod" id="chmod"><noscript><p>Cet outil a besoin de JavaScript.</p></noscript></div>
+    <p class="atelier__from">Dans le cours : <a href="modules/linux-debian.html#chap7">Linux Debian · permissions</a></p>
+    <div class="tool" data-tool="umask" id="umask"></div>
+    <p class="atelier__from">Dans le cours : <a href="modules/linux-debian.html#chap7">Linux Debian · umask</a></p>
+    <div class="tool" data-tool="cron" id="cron"></div>
+    <p class="atelier__from">Dans le cours : <a href="modules/linux-debian.html#sauvegardes">Linux Debian · sauvegardes et cron</a></p>
+    <div class="tool" data-tool="ipcalc" id="ipcalc"></div>
+    <p class="atelier__from">Dans le cours : <a href="modules/subnetting.html">Subnetting</a> · <a href="modules/reseau-bases.html#ipv4">Réseau · IPv4</a></p>
+    <div class="tool" data-tool="ports" id="ports"></div>
+    <p class="atelier__from">Dans le cours : <a href="modules/reseau-bases.html#transport">Réseau · TCP, UDP, ports</a></p>
+    <div class="tool" data-tool="convert" id="convert"></div>
+    <p class="atelier__from">Dans le cours : <a href="modules/subnetting.html#binaire">Subnetting · le binaire</a></p>
+    <div class="tool" data-tool="regex" id="regex"></div>
+    <p class="atelier__from">Dans le cours : <a href="modules/linux-debian.html#chap10">Linux Debian · sed, awk et regex</a></p>
+</main>
+
+<footer>
+    <p><strong>Atelier</strong> — Centre d'apprentissage IT · tout se calcule dans ce navigateur</p>
+    <p><a href="index.html">← Retour au portail</a> · <a href="glossaire.html">Glossaire</a> · <a href="revision.html">Révision du jour</a></p>
+</footer>
+
+<script src="assets/catalogue.js?v=15"></script>
+<script src="assets/app.js?v=15"></script>
+<script src="assets/atelier.js?v=15"></script>
+</body>
+</html>
