@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -114,7 +114,7 @@
         <section class="chapter" id="presentation">
             <p class="chapter__num">01</p>
             <h2 class="chapter__title">Présentation</h2>
-            <p class="chapter__intro">SharePoint est une plateforme Microsoft qui réunit trois métiers en un : gérer les documents, bâtir un intranet et faire collaborer les équipes. Plus de 200 millions de personnes l'utilisent au quotidien.</p>
+            <p class="chapter__intro">SharePoint est une plateforme Microsoft qui réunit trois métiers en un : gérer les documents, bâtir un intranet et faire collaborer les équipes. Plus de 200 millions d'utilisateurs actifs chaque mois, selon le chiffre annoncé par Microsoft en 2020.</p>
 
             <p>Développée par Microsoft et intégrée à l'écosystème <strong>Microsoft 365</strong>, SharePoint sert à créer des portails intranet, à organiser les documents d'entreprise et à fournir aux équipes un espace de travail partagé. C'est aujourd'hui l'une des solutions de gestion de contenu d'entreprise les plus répandues au monde.</p>
 
@@ -123,11 +123,11 @@
                 <div class="tl-item"><div class="tl-year">2001</div><div class="tl-dot"></div><div class="tl-body"><strong>SharePoint Portal Server 2001</strong> — première version, centrée sur la gestion documentaire et les portails intranet basiques.</div></div>
                 <div class="tl-item"><div class="tl-year">2003</div><div class="tl-dot"></div><div class="tl-body"><strong>SharePoint Portal Server 2003</strong> — intégration avec Office et Active Directory, essor des sites d'équipe.</div></div>
                 <div class="tl-item"><div class="tl-year">2007</div><div class="tl-dot"></div><div class="tl-body"><strong>Office SharePoint Server 2007 (MOSS)</strong> — arrivée des workflows, des métadonnées et d'un vrai moteur de recherche.</div></div>
-                <div class="tl-item"><div class="tl-year">2010</div><div class="tl-dot"></div><div class="tl-body"><strong>SharePoint Server 2010</strong> — applications de service, Business Intelligence, première version cloud.</div></div>
+                <div class="tl-item"><div class="tl-year">2010</div><div class="tl-dot"></div><div class="tl-body"><strong>SharePoint Server 2010</strong> — applications de service, Business Intelligence ; sa base sert à SharePoint Online dans Office 365 (2011).</div></div>
                 <div class="tl-item"><div class="tl-year">2013</div><div class="tl-dot"></div><div class="tl-body"><strong>SharePoint Server 2013</strong> — modèle d'apps, API REST, recherche enrichie et lien renforcé avec Office 365.</div></div>
                 <div class="tl-item"><div class="tl-year">2016</div><div class="tl-dot"></div><div class="tl-body"><strong>SharePoint Server 2016</strong> — architecture hybride, gains de performance, rôles MinRole pour les fermes.</div></div>
                 <div class="tl-item"><div class="tl-year">2019</div><div class="tl-dot"></div><div class="tl-body"><strong>SharePoint Server 2019</strong> — expérience moderne (pages, listes, bibliothèques), SharePoint Framework (SPFx).</div></div>
-                <div class="tl-item"><div class="tl-year">2022</div><div class="tl-dot"></div><div class="tl-body"><strong>SharePoint Server Subscription Edition (SE)</strong> — modèle d'abonnement, mises à jour continues, alignement maximal avec Online.</div></div>
+                <div class="tl-item"><div class="tl-year">2021</div><div class="tl-dot"></div><div class="tl-body"><strong>SharePoint Server Subscription Edition (SE)</strong> — sortie en novembre 2021 : licence par abonnement, mises à jour continues (versions 22H2, 23H1…), plus de grande version tous les trois ans. Depuis le <strong>14 juillet 2026</strong>, c'est la seule version sur site encore supportée : 2016 et 2019 sont en fin de support.</div></div>
                 <div class="tl-item tl-item--now"><div class="tl-year">Aujourd'hui</div><div class="tl-dot"></div><div class="tl-body"><strong>SharePoint Online (Microsoft 365)</strong> — évolution permanente, intégration native avec Teams, Viva, Copilot et Microsoft Graph.</div></div>
             </div>
 
@@ -158,11 +158,11 @@
                     <thead><tr><th>Critère</th><th class="th-server">SharePoint Server</th><th class="th-online">SharePoint Online</th></tr></thead>
                     <tbody>
                         <tr><td>Hébergement</td><td class="col-server">Sur site (serveurs locaux)</td><td class="col-online">Cloud (Microsoft 365)</td></tr>
-                        <tr><td>Modèle de licence</td><td class="col-server">Licence perpétuelle + CAL</td><td class="col-online">Abonnement mensuel / annuel</td></tr>
+                        <tr><td>Modèle de licence</td><td class="col-server">Licence serveur + CAL par utilisateur — <strong>par abonnement</strong> (ou Software Assurance) pour SE</td><td class="col-online">Abonnement mensuel / annuel</td></tr>
                         <tr><td>Maintenance</td><td class="col-server">Équipe IT interne</td><td class="col-online">Microsoft</td></tr>
                         <tr><td>Mises à jour</td><td class="col-server">Manuelles, planifiées par l'IT</td><td class="col-online">Automatiques et continues</td></tr>
                         <tr><td>Accès</td><td class="col-server">Réseau local / VPN requis</td><td class="col-online">Partout via internet</td></tr>
-                        <tr><td>Personnalisation</td><td class="col-server">Très haute (accès total au serveur)</td><td class="col-online">Limitée (sandbox)</td></tr>
+                        <tr><td>Personnalisation</td><td class="col-server">Très haute (accès total au serveur)</td><td class="col-online">Limitée : SPFx et applications, aucun code sur les serveurs</td></tr>
                         <tr><td>Intégration Microsoft 365</td><td class="col-server">Partielle (connecteurs requis)</td><td class="col-online">Native (Teams, OneDrive…)</td></tr>
                         <tr><td>Sécurité &amp; conformité</td><td class="col-server">Contrôle total par l'entreprise</td><td class="col-online">Gérée par Microsoft (ISO, SOC)</td></tr>
                         <tr><td>Scalabilité</td><td class="col-server">Limitée par l'infra physique</td><td class="col-online">Élastique, gérée par Microsoft</td></tr>
@@ -177,13 +177,26 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Tout se résume à une question : <strong>qui gère l'infrastructure ?</strong> <span class="pill pill--server">Server</span> = contrôle et personnalisation maximaux, au prix d'une équipe IT. <span class="pill pill--online">Online</span> = simplicité et accès partout, au prix d'une moindre flexibilité technique.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un cabinet d'avocats doit garder ses documents dans ses propres locaux (exigence contractuelle de ses clients) et veut un workflow développé sur mesure, avec du code .NET côté serveur. Quelle offre ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>SharePoint Server SE, sur ses serveurs</button>
+                        <button class="scenario__opt" data-why="SharePoint Online, plan 2">Online est hébergé chez Microsoft : la donnée quitte les locaux, et le code côté serveur n&#x27;y est pas permis.</button>
+                        <button class="scenario__opt" data-why="SharePoint Server 2019, en licence perpétuelle">2019 est hors support depuis le 14 juillet 2026 : plus aucun correctif de sécurité, inacceptable pour des données sensibles.</button>
+                    </div>
+                    <div class="scenario__why"><p>Deux critères tranchent : la donnée <strong>reste sur site</strong> et le <strong>code serveur</strong> est permis. Seul SharePoint Server le permet, et la seule version encore supportée est la <strong>Subscription Edition</strong>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- ===== 03 ===== -->
         <section class="chapter" id="licences">
             <p class="chapter__num">03</p>
             <h2 class="chapter__title">Licences, prix &amp; fonctionnalités</h2>
-            <p class="chapter__intro">Deux familles de licences cohabitent : les plans <strong>Microsoft 365</strong> (SaaS, Online inclus) et les licences <strong>SharePoint Server</strong> (sur site). Tarifs indicatifs Microsoft, par utilisateur et par mois, hors taxes.</p>
+            <p class="chapter__intro">Deux familles de licences cohabitent : les plans <strong>Microsoft 365</strong> (SaaS, Online inclus) et les licences <strong>SharePoint Server</strong> (sur site). Tarifs publics indicatifs de Microsoft en dollars, par utilisateur et par mois, hors taxes, relevés à la rédaction : ils changent régulièrement (hausse annoncée pour juillet 2026) et varient selon le pays et l'engagement. Vérifie toujours sur le site de Microsoft avant de chiffrer une offre.</p>
 
             <h3><span class="pill pill--online">Online</span>&nbsp; SharePoint Online — via Microsoft 365</h3>
             <div class="table-wrap">
@@ -191,31 +204,31 @@
                     <thead><tr><th>Plan</th><th>Prix / utilisateur / mois</th><th>Stockage SharePoint</th><th>Fonctionnalités clés</th></tr></thead>
                     <tbody>
                         <tr><td>SharePoint Plan 1</td><td>5,00 $</td><td>1 To + 10 Go/utilisateur</td><td>Sites, listes, bibliothèques, partage externe, co-édition Office</td></tr>
-                        <tr><td>SharePoint Plan 2</td><td>10,00 $</td><td>Illimité*</td><td>Plan 1 + recherche avancée, eDiscovery, conformité, audit</td></tr>
+                        <tr><td>SharePoint Plan 2</td><td>10,00 $</td><td>1 To + 10 Go/utilisateur</td><td>Plan 1 + recherche avancée, eDiscovery, conformité, audit</td></tr>
                         <tr><td>Microsoft 365 Business Basic</td><td>6,00 $</td><td>1 To + 10 Go/utilisateur</td><td>SharePoint Plan 1, Teams, Exchange, OneDrive 1 To</td></tr>
                         <tr><td>Microsoft 365 Business Standard</td><td>12,50 $</td><td>1 To + 10 Go/utilisateur</td><td>Basic + applications Office bureau</td></tr>
-                        <tr><td>Microsoft 365 E3</td><td>36,00 $</td><td>Illimité*</td><td>SharePoint Plan 2, Teams, Exchange, eDiscovery, DLP</td></tr>
-                        <tr><td>Microsoft 365 E5</td><td>57,00 $</td><td>Illimité*</td><td>E3 + conformité avancée, Defender, Power BI Pro, Entra ID P2</td></tr>
+                        <tr><td>Microsoft 365 E3</td><td>36,00 $</td><td>1 To + 10 Go/utilisateur</td><td>SharePoint Plan 2, Teams, Exchange, eDiscovery, DLP</td></tr>
+                        <tr><td>Microsoft 365 E5</td><td>57,00 $</td><td>1 To + 10 Go/utilisateur</td><td>E3 + conformité avancée, Defender, Power BI Pro, Entra ID P2</td></tr>
                     </tbody>
                 </table>
             </div>
-            <p class="note">* 1 To de base + 10 Go par licence achetée ; au-delà sur demande Microsoft.</p>
+            <p class="note">Le stockage SharePoint est mutualisé à l'échelle du locataire (<em>tenant</em>) : 1 To de base + 10 Go par licence, quel que soit le plan ; au-delà, du stockage supplémentaire s'achète. Aucun plan n'offre un stockage SharePoint illimité.</p>
 
             <h3><span class="pill pill--server">Server</span>&nbsp; SharePoint Server — sur site</h3>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Édition</th><th>Licence serveur</th><th>CAL utilisateur</th><th>Fonctionnalités clés</th></tr></thead>
                     <tbody>
-                        <tr><td>Server Standard</td><td>~3 600 $ (perpétuelle)</td><td>~110 $ / utilisateur</td><td>Sites, bibliothèques, workflows, recherche de base, profils</td></tr>
-                        <tr><td>Server Enterprise</td><td>~6 800 $ (perpétuelle)</td><td>~110 $ + ~47 $ Enterprise</td><td>Standard + Excel/Visio Services, PerformancePoint, eDiscovery</td></tr>
-                        <tr><td>Subscription Edition (SE)</td><td>Abonnement annuel</td><td>Inclus</td><td>Mises à jour continues, fonctions modernes, hybride simplifié</td></tr>
+                        <tr><td>Server 2016 / 2019 Standard</td><td>Perpétuelle (prix sur devis)</td><td>CAL Standard par utilisateur</td><td><strong>Fin de support le 14 juillet 2026</strong> : plus de correctifs</td></tr>
+                        <tr><td>Server 2016 / 2019 Enterprise</td><td>Perpétuelle (prix sur devis)</td><td>CAL Standard + CAL Enterprise</td><td>Idem, plus les fonctions Enterprise (eDiscovery, BI…)</td></tr>
+                        <tr><td>Subscription Edition (SE)</td><td>Licence serveur par <strong>abonnement</strong> (ou avec Software Assurance)</td><td>CAL Standard (+ Enterprise) <strong>toujours requises</strong>, elles aussi par abonnement</td><td>Mises à jour continues, fonctions modernes, hybride simplifié</td></tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p><span class="pill pill--online">Online</span> se paie à l'<strong>abonnement par utilisateur</strong> (de 5 $ à 57 $/mois), tout compris. <span class="pill pill--server">Server</span> se paie en <strong>licence perpétuelle + CAL</strong>, auxquelles s'ajoutent SQL Server et Windows Server — d'où un coût initial bien plus élevé.</p>
+                <p><span class="pill pill--online">Online</span> se paie à l'<strong>abonnement par utilisateur</strong> (de 5 $ à 57 $/mois), tout compris. <span class="pill pill--server">Server</span> se paie en <strong>licence serveur + CAL</strong> (par abonnement pour SE), auxquelles s'ajoutent SQL Server et Windows Server — d'où un coût initial bien plus élevé.</p>
             </div>
         </section>
 
@@ -226,8 +239,8 @@
             <p class="chapter__intro">Ces quatre modèles décrivent <strong>qui gère quoi</strong> dans la pile technique. Plus on monte vers le SaaS, moins l'entreprise gère d'infrastructure — et plus elle délègue au fournisseur.</p>
 
             <div class="table-wrap">
-                <table style="text-align:center;">
-                    <thead><tr><th style="text-align:left;">Composant</th><th>On-site</th><th>IaaS</th><th>PaaS</th><th class="th-online">SaaS</th></tr></thead>
+                <table>
+                    <thead><tr><th>Composant</th><th>On-site</th><th>IaaS</th><th>PaaS</th><th class="th-online">SaaS</th></tr></thead>
                     <tbody>
                         <tr><td>Application</td><td><span class="dot dot--you"></span></td><td><span class="dot dot--you"></span></td><td><span class="dot dot--you"></span></td><td class="col-online"><span class="dot dot--cloud"></span></td></tr>
                         <tr><td>Données</td><td><span class="dot dot--you"></span></td><td><span class="dot dot--you"></span></td><td><span class="dot dot--you"></span></td><td class="col-online"><span class="dot dot--you"></span></td></tr>
@@ -317,6 +330,23 @@
                 <div class="topo__item"><div class="topo__head"><span class="topo__n">4</span><span class="topo__title">Scalabilité &amp; redondance</span></div><div class="topo__diagram"><span class="srv"><b>WFE</b> ×N (NLB)</span><span class="srv"><b>APP</b> ×N</span><span class="srv"><b>SQL</b> cluster</span></div><p>Rôles multipliés. Résilience quasi totale, mais coût de licence élevé.</p></div>
             </div>
 
+            <h3>MinRole : le rôle de chaque serveur</h3>
+            <p>Depuis 2016, on ne dit plus « WFE » et « serveur d'applications » : à l'installation (écran <em>Specify Server Role</em> de l'assistant de configuration), on donne à chaque serveur un <strong>rôle MinRole</strong>, et SharePoint démarre lui-même les bons services dessus.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Rôle MinRole</th><th>Ce qu'il porte</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Front-end</strong></td><td>Les requêtes des utilisateurs (l'ancien WFE)</td></tr>
+                        <tr><td><strong>Application</strong></td><td>Les services de fond et les tâches planifiées</td></tr>
+                        <tr><td><strong>Distributed Cache</strong></td><td>Le cache distribué (fils d'actualité, jetons de connexion)</td></tr>
+                        <tr><td><strong>Search</strong></td><td>La recherche : analyse, index, requêtes</td></tr>
+                        <tr><td><strong>Front-end with Distributed Cache</strong> / <strong>Application with Search</strong></td><td>Rôles partagés, pour les petites fermes (deux à quatre serveurs)</td></tr>
+                        <tr><td><strong>Single-Server Farm</strong></td><td>Tout sur un seul serveur, SQL à part : le cas du labo</td></tr>
+                        <tr><td><strong>Custom</strong></td><td>Rien d'automatique : l'administrateur choisit les services</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
             <h3>Choisir sa topologie : analyse de risque</h3>
             <div class="riskgrid">
                 <div class="rg-cell rg-corner"></div>
@@ -334,6 +364,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Trois tiers — <strong>WFE → Application → SQL Server</strong> (obligatoire) — déclinés en 4 topologies. Le bon niveau de redondance se décide par <strong>analyse de risque</strong> (probabilité × impact). Le point le plus sensible à sauvegarder est toujours la <strong>base SQL</strong>.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le labo a un seul serveur SharePoint (SRV-SP01) et SQL Server sur une autre machine. Quel rôle MinRole choisis-tu dans l&#x27;assistant de configuration ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><em>Single-Server Farm</em></button>
+                        <button class="scenario__opt" data-why="<em>Front-end</em>">Un serveur Front-end seul ne fait tourner ni la recherche ni les services de fond : la ferme serait incomplète.</button>
+                        <button class="scenario__opt" data-why="<em>Custom</em>">Custom fonctionne, mais plus rien n&#x27;est automatique : c&#x27;est toi qui démarres chaque service, à la main.</button>
+                    </div>
+                    <div class="scenario__why"><p><em>Single-Server Farm</em> regroupe tous les services sur un serveur, SQL étant à part : c'est le rôle prévu pour un labo ou une petite ferme sans redondance. Il ne permet pas d'ajouter d'autres serveurs : pour grandir, on change de rôle. <code>Get-SPServer | Select-Object Name, Role</code> affiche le rôle de chaque serveur.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- ===== 07 ===== -->
@@ -348,7 +391,7 @@
                     <div class="model__box model--svc">
                         <div class="model__h">Applications de service <small>services mutualisés, partagés par toutes les applications web</small></div>
                         <div class="model__svc-list">
-                            <span class="svc">User Profile</span><span class="svc">Recherche</span><span class="svc">Managed Metadata</span><span class="svc">Excel Services</span><span class="svc">BCS</span><span class="svc">Secure Store</span>
+                            <span class="svc">User Profile</span><span class="svc">Recherche</span><span class="svc">Managed Metadata</span><span class="svc">App Management</span><span class="svc">BCS</span><span class="svc">Secure Store</span>
                         </div>
                     </div>
                     <div class="model__box model--web">
@@ -370,6 +413,19 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>La hiérarchie — <strong>Ferme → App. de service / App. web → Content DB → Collection de sites → Sites</strong> — commande deux décisions concrètes : on <strong>sauvegarde</strong> au niveau de la base de contenu, et on <strong>sécurise</strong> au niveau de la collection de sites.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">La base de contenu <code>SP_Content_Intranet</code> contient trois collections de sites. Les RH veulent restaurer <strong>leur seule</strong> collection à l'état d'hier, sans toucher aux deux autres. Que fais-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Restaurer la base SQL d&#x27;hier à côté, puis en extraire la collection</button>
+                        <button class="scenario__opt" data-why="Restaurer la base de contenu d&#x27;hier par-dessus l&#x27;actuelle">Restaurer la base en place ramènerait aussi les deux autres collections à hier : leur travail du jour serait perdu.</button>
+                        <button class="scenario__opt" data-why="Recoller les morceaux de la collection répartis sur plusieurs bases">Une collection vit entièrement dans une seule base : elle n&#x27;est jamais répartie, il n&#x27;y a rien à recoller.</button>
+                    </div>
+                    <div class="scenario__why"><p>La base de contenu est l'unité de restauration SQL, mais elle peut contenir plusieurs collections. On restaure donc <strong>à côté</strong> (autre nom), on la lit sans la rattacher (<em>Recover data from an unattached content database</em> dans l'Administration centrale), puis on exporte la seule collection voulue. Si une sauvegarde <code>Backup-SPSite</code> de la collection existe, c'est encore plus simple.</p></div>
+                </div>
             </div>
         </section>
 
@@ -436,11 +492,12 @@
             <h3>2 · Logiciel</h3>
             <ul>
                 <li><strong>OS</strong> — Windows Server 2019, 2022 ou 2025 (Standard ou Datacenter).</li>
-                <li><strong>Base de données</strong> — SQL Server 2019 CU5+ ou SQL Server 2022 (Standard ou Enterprise).</li>
+                <li><strong>Base de données</strong> — SQL Server Standard ou Enterprise prenant en charge le niveau de compatibilité 150 : SQL Server 2019 CU5 ou plus, 2022, et les versions suivantes. <strong>Express n'est pas pris en charge.</strong> Réglage imposé sur l'instance : <code>max degree of parallelism = 1</code> (voir P01).</li>
                 <li><strong>Framework</strong> — Microsoft .NET Framework 4.8.</li>
                 <li><strong>Rôle serveur</strong> — Web Server (IIS) et ses composants.</li>
                 <li><strong>Prérequis additionnels</strong> — installés automatiquement par <code>prerequisiteinstaller.exe</code>.</li>
             </ul>
+            <p class="note">Comptes : le <strong>compte d'installation</strong> doit être administrateur local des serveurs SharePoint et membre des rôles SQL <code>dbcreator</code> et <code>securityadmin</code>. Le <strong>compte de ferme</strong> reçoit ces rôles automatiquement pendant la configuration ; il ne doit être ni administrateur du domaine ni utilisé pour ouvrir une session.</p>
 
             <h3>3 · Autres dépendances</h3>
             <ul>
@@ -454,6 +511,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Quatre piliers avant l'installation : <strong>matériel</strong> (4 cœurs, 16–24 Go min), <strong>logiciel</strong> (Windows Server 2019–2025 + SQL Server 2019 CU5 / 2022 + .NET 4.8), <strong>topologie</strong> (mono-serveur ou MinRole) et <strong>dépendances</strong> (AD, DNS, SSL, comptes de service dédiés).</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">La configuration de la ferme échoue avec : « This SQL Server instance does not have the required &#x27;max degree of parallelism&#x27; setting of 1 ». Que fais-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Régler MAXDOP à 1 sur l&#x27;instance SQL, puis relancer</button>
+                        <button class="scenario__opt" data-why="Réinstaller SQL Server avec la bonne collation">La collation se pose base par base à la création : elle n&#x27;a rien à voir avec ce message, qui nomme le paramètre fautif.</button>
+                        <button class="scenario__opt" data-why="Passer de SQL Server 2022 à SQL Server 2019">La version de SQL est bien prise en charge (2019 CU5+ ou 2022) : le message porte sur un réglage, pas sur la version.</button>
+                    </div>
+                    <div class="scenario__why"><p>SharePoint exige <code>max degree of parallelism = 1</code> : ses procédures stockées ne sont pas écrites pour le parallélisme. <code>EXEC sp_configure 'max degree of parallelism', 1; RECONFIGURE;</code> (option avancée), ou <em>Server Properties → Advanced</em> dans SSMS. Le compte d'installation pourrait le poser lui-même s'il était <code>sysadmin</code>, ce qu'on évite.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- ===== 10 ===== -->
@@ -462,7 +532,7 @@
             <h2 class="chapter__title">Sauvegarde des données</h2>
             <p class="chapter__intro">Le point que beaucoup découvrent trop tard : <strong>Microsoft ne garantit pas la restauration de votre contenu</strong>. Sa responsabilité porte sur la disponibilité de la plateforme — pas sur la récupération de vos fichiers.</p>
 
-            <div class="takeaway takeaway--warn" style="margin-top:0;margin-bottom:24px;">
+            <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Le point à connaître</p>
                 <p>Cela concerne tout Microsoft 365 : vos boîtes <strong>Exchange</strong>, vos fichiers <strong>OneDrive</strong>, vos espaces <strong>Teams</strong>. Vous êtes <strong>garant de vos données</strong>. Si vous perdez tout, c'est votre business et votre problème — pas celui de Microsoft.</p>
             </div>
@@ -495,8 +565,8 @@
                 </div>
             </div>
 
-            <h3>Solution recommandée : Synology + Active Backup for M365</h3>
-            <p>Un <strong>NAS Synology</strong> avec <strong>Active Backup for Microsoft 365</strong> (inclus dans DSM, sans surcoût) sauvegarde automatiquement et de façon incrémentale les bibliothèques SharePoint, les boîtes Exchange Online, les espaces OneDrive et Teams. Restauration granulaire depuis une console web. La donnée reste sur un stockage que vous contrôlez — un atout pour le <strong>RGPD</strong>.</p>
+            <h3>Exemple de solution : Synology + Active Backup for M365</h3>
+            <p>Un <strong>NAS Synology</strong> compatible avec <strong>Active Backup for Microsoft 365</strong> (paquet gratuit sur ces modèles ; d'autres éditeurs proposent l'équivalent) sauvegarde automatiquement et de façon incrémentale les bibliothèques SharePoint, les boîtes Exchange Online, les espaces OneDrive et Teams. Restauration granulaire depuis une console web. La donnée reste sur un stockage que vous contrôlez — un atout pour le <strong>RGPD</strong>.</p>
 
             <h3>Bonnes pratiques</h3>
             <ul>
@@ -508,6 +578,19 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Microsoft garantit la <strong>disponibilité</strong>, pas la <strong>restauration de votre contenu</strong>. La sauvegarde vous incombe : un backup tiers (type Synology) et la règle <strong>3-2-1</strong> sont le filet de sécurité indispensable.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un utilisateur a vidé une bibliothèque SharePoint Online il y a quatre mois ; il s'en aperçoit aujourd'hui. Pas de sauvegarde tierce. Que peux-tu récupérer ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Rien par la corbeille : ses 93 jours sont dépassés</button>
+                        <button class="scenario__opt" data-why="Tout, par la corbeille de second niveau">La corbeille de second niveau fait partie des 93 jours au total, elle ne les prolonge pas.</button>
+                        <button class="scenario__opt" data-why="Tout, grâce au versioning de la bibliothèque">Le versioning garde les versions d&#x27;un fichier existant ; un fichier supprimé part à la corbeille avec ses versions, et la corbeille est purgée.</button>
+                    </div>
+                    <div class="scenario__why"><p>Les deux niveaux de corbeille couvrent <strong>93 jours au total</strong>. Au-delà, Microsoft ne promet aucune restauration de contenu : c'est exactement le cas que couvre une sauvegarde tierce, avec une rétention choisie par l'entreprise.</p></div>
+                </div>
             </div>
         </section>
 
@@ -534,8 +617,8 @@
                 <table>
                     <thead><tr><th>Compte</th><th>Rôle</th><th>Droits SQL nécessaires</th></tr></thead>
                     <tbody>
-                        <tr><td><code>orion\sp_farm</code></td><td>Compte de ferme SharePoint</td><td>dbcreator, securityadmin</td></tr>
-                        <tr><td><code>orion\sp_setup</code></td><td>Installation et admin local</td><td>dbcreator, securityadmin</td></tr>
+                        <tr><td><code>orion\sp_farm</code></td><td>Compte de ferme SharePoint</td><td>dbcreator, securityadmin — <strong>donnés automatiquement</strong> par l'assistant de configuration</td></tr>
+                        <tr><td><code>orion\sp_setup</code></td><td>Installation et admin local</td><td>dbcreator, securityadmin — <strong>à donner à la main</strong> avant l'installation</td></tr>
                         <tr><td><code>orion\sp_services</code></td><td>App pools des applications web</td><td>Aucun (SharePoint les attribue)</td></tr>
                         <tr><td><code>orion\sp_search</code></td><td>Service de recherche</td><td>Aucun (SharePoint les attribue)</td></tr>
                     </tbody>
@@ -606,14 +689,14 @@
                     <div class="step__num">09</div>
                     <div class="step__body">
                         <strong>Server Configuration → onglet <em>Collation</em> — étape critique</strong>
-                        <p>Cliquer sur l'onglet <strong>Collation</strong>, puis <strong>Customize…</strong>. Choisir <em>Windows collation designator and sort order</em>, sélectionner <code>Latin1_General</code> et cocher <strong>Case-insensitive (CI)</strong>, <strong>Accent-sensitive (AS)</strong>, <strong>Kana-sensitive (KS)</strong> et <strong>Width-sensitive (WS)</strong> — soit <code>Latin1_General_CI_AS_KS_WS</code>, l'équivalent exact de <code>SQL_Latin1_General_CP1_CI_AS</code> requis par SharePoint. <strong>SharePoint refuse toute autre collation.</strong> <strong>Next</strong>.</p>
+                        <p>Cliquer sur l'onglet <strong>Collation</strong>, puis <strong>Customize…</strong>. Choisir <em>Windows collation designator and sort order</em>, sélectionner <code>Latin1_General</code> et cocher <strong>Case-insensitive (CI)</strong>, <strong>Accent-sensitive (AS)</strong>, <strong>Kana-sensitive (KS)</strong> et <strong>Width-sensitive (WS)</strong> — soit <code>Latin1_General_CI_AS_KS_WS</code>, la collation qu'exige SharePoint. Attention : ce n'est <strong>pas</strong> l'équivalent de <code>SQL_Latin1_General_CP1_CI_AS</code>, collation SQL proposée par défaut sur un Windows en anglais, qui ne distingue ni kana ni largeur. SharePoint crée ses bases avec <code>Latin1_General_CI_AS_KS_WS</code> ; la donner aussi à l'instance évite les conflits de collation avec <code>tempdb</code>. <strong>Next</strong>.</p>
                     </div>
                 </li>
                 <li class="step">
                     <div class="step__num">10</div>
                     <div class="step__body">
                         <strong>Database Engine Configuration → onglet <em>Server Configuration</em></strong>
-                        <p>Sélectionner <strong>Windows authentication mode</strong> (recommandé par Microsoft pour SharePoint). Sous <em>Specify SQL Server administrators</em>, cliquer <strong>Add…</strong> et ajouter <code>orion\sp_farm</code>, <code>orion\sp_setup</code> et votre compte admin. <em>Add Current User</em> ajoute le compte connecté.</p>
+                        <p>Sélectionner <strong>Windows authentication mode</strong> (recommandé par Microsoft pour SharePoint). Sous <em>Specify SQL Server administrators</em>, ajouter ton compte d'administration (<em>Add Current User</em>). Ces comptes deviennent <code>sysadmin</code> : n'y mets <strong>pas</strong> les comptes SharePoint. Le minimum documenté pour <code>sp_setup</code> est <code>dbcreator</code> + <code>securityadmin</code>, à donner après l'installation (ci-dessous) ; <code>sp_farm</code> reçoit les siens tout seul.</p>
                     </div>
                 </li>
                 <li class="step">
@@ -633,8 +716,8 @@
                                 </tbody>
                             </table>
                         </div>
-                        <p><em>TempDB</em> : <strong>2 fichiers</strong> de données (1 par cœur, la VM a 2 vCPU), taille initiale 8 Mo, croissance 64 Mo — données sur <strong>T:</strong>, journal sur <strong>L:</strong>. <em>Memory</em> : <strong>Max Server Memory = 10240 Mo</strong>, <strong>Min = 1024 Mo</strong> (sur 16 Go de RAM, ~6 Go laissés à l'OS). <em>MAXDOP</em> : <strong>2</strong> (égal au nombre de cœurs). <strong>Next</strong>.</p>
-                        <div class="tip" style="margin-top:8px;">
+                        <p><em>TempDB</em> : <strong>2 fichiers</strong> de données (1 par cœur, la VM a 2 vCPU), taille initiale 8 Mo, croissance 64 Mo — données sur <strong>T:</strong>, journal sur <strong>L:</strong>. <em>Memory</em> : <strong>Max Server Memory = 10240 Mo</strong>, <strong>Min = 1024 Mo</strong> (sur 16 Go de RAM, ~6 Go laissés à l'OS). <em>MAXDOP</em> : <strong>1</strong> — <strong>exigé par SharePoint</strong>, quel que soit le nombre de cœurs (sinon la création de la base de configuration échoue). <strong>Next</strong>.</p>
+                        <div class="tip">
                             <p class="tip__label">Important — disques supplémentaires &amp; Hyper-V</p>
                             <p>Après avoir ajouté les VHDX dédiés (D, L, T) à la VM SRV-SQL01, <strong>désactiver la réplication Hyper-V</strong> ou réintégrer ces disques dans l'ensemble répliqué : un disque ajouté après l'activation de la réplication n'est pas répliqué et casse la cohérence de la VM.</p>
                         </div>
@@ -682,11 +765,40 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                         <p>Installer <strong>SQL Server Management Studio</strong> (téléchargement séparé). S'y connecter en local sur <code>SRV-SQL01\SHAREPOINT</code>, puis vérifier que la mémoire max (10240 Mo) est bien appliquée (clic droit sur le serveur → <em>Properties → Memory</em>). Depuis SRV-SP01, tester : <code>Test-NetConnection SRV-SQL01 -Port 1433</code>.</p>
                     </div>
                 </li>
+                <li class="step">
+                    <div class="step__num">04</div>
+                    <div class="step__body">
+                        <strong>Donner ses rôles au compte d'installation</strong>
+                        <p>Dans SSMS, nouvelle requête sur <code>SRV-SQL01\SHAREPOINT</code> :</p>
+                        <div class="terminal">
+                            <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">T-SQL — SRV-SQL01\SHAREPOINT</span></div>
+                            <pre class="terminal__code"><span class="k">CREATE LOGIN</span> [ORION\sp_setup] <span class="k">FROM WINDOWS</span>;
+<span class="k">ALTER SERVER ROLE</span> dbcreator     <span class="k">ADD MEMBER</span> [ORION\sp_setup];
+<span class="k">ALTER SERVER ROLE</span> securityadmin <span class="k">ADD MEMBER</span> [ORION\sp_setup];</pre>
+                        </div>
+                    </div>
+                </li>
             </ol>
+
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Avant d'aller sur SRV-SP01 : collation, MAXDOP et rôles du compte d'installation.</p>
+                <div class="terminal">
+                    <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">T-SQL — SRV-SQL01\SHAREPOINT</span></div>
+                    <pre class="terminal__code"><span class="k">SELECT</span> SERVERPROPERTY(<span class="s">'Collation'</span>) <span class="k">AS</span> Collation;
+<span class="k">SELECT</span> value_in_use <span class="k">FROM</span> sys.configurations <span class="k">WHERE</span> name <span class="p">=</span> <span class="s">'max degree of parallelism'</span>;
+<span class="k">SELECT</span> IS_SRVROLEMEMBER(<span class="s">'dbcreator'</span>, <span class="s">'ORION\sp_setup'</span>), IS_SRVROLEMEMBER(<span class="s">'securityadmin'</span>, <span class="s">'ORION\sp_setup'</span>);</pre>
+                </div>
+                <p class="verify__sub">Sortie attendue</p>
+                <pre class="verify__out">Latin1_General_CI_AS_KS_WS
+1
+1   1</pre>
+                <p class="verify__fail">MAXDOP à 0 ou 2 : <code>EXEC sp_configure 'max degree of parallelism', 1; RECONFIGURE;</code> (après <code>show advanced options</code>). Un <code>0</code> dans les rôles : rejouer le <code>ALTER SERVER ROLE</code>. Une autre collation d'instance : SharePoint fonctionnera (il pose la sienne sur ses bases), mais prévois des conflits avec <code>tempdb</code>.</p>
+            </div>
 
             <div class="tip">
                 <p class="tip__label">Bonne pratique</p>
-                <p>Ne jamais utiliser le compte <code>sa</code> pour SharePoint : Windows Authentication est plus sécurisé et recommandé par Microsoft. Le découpage des disques (données sur <strong>D</strong>, journaux sur <strong>L</strong>, TempDB sur <strong>T</strong>) sépare les I/O et améliore nettement les performances. Enfin, une instance nommée avec port statique évite les surprises de connexion côté SharePoint.</p>
+                <p>Ne jamais utiliser le compte <code>sa</code> pour SharePoint : Windows Authentication est plus sécurisé et recommandé par Microsoft. Et retenir les deux réglages non négociables de l'instance : <strong>MAXDOP = 1</strong> et la collation <strong>Latin1_General_CI_AS_KS_WS</strong>. Le découpage des disques (données sur <strong>D</strong>, journaux sur <strong>L</strong>, TempDB sur <strong>T</strong>) sépare les I/O et améliore nettement les performances. Enfin, une instance nommée avec port statique évite les surprises de connexion côté SharePoint.</p>
             </div>
         </section>
 
@@ -711,7 +823,7 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                     <div class="step__body">
                         <strong>Monter l'ISO SharePoint Server SE et lancer les prérequis</strong>
                         <p>Exécuter <code>prerequisiteinstaller.exe</code> en administrateur. Il installe automatiquement .NET Framework 4.8, Visual C++ Redistributable, WCF Activation, et configure le rôle IIS avec tous les composants requis. Le serveur peut redémarrer 2 à 3 fois — laisser le processus se terminer jusqu'au message <em>Installation complete</em>.</p>
-                        <div class="tip" style="margin-top:8px;">
+                        <div class="tip">
                             <p class="tip__label">Sans accès internet</p>
                             <p>Utiliser le switch <code>/unattended</code> avec les chemins locaux vers chaque prérequis. Voir la documentation Microsoft pour la liste complète des packages offline.</p>
                         </div>
@@ -721,7 +833,7 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                     <div class="step__num">02</div>
                     <div class="step__body">
                         <strong>Lancer setup.exe</strong>
-                        <p>Exécuter <code>setup.exe</code> en administrateur. Entrer la clé produit (ou laisser vide pour la version d'évaluation 180 jours). Accepter le CLUF → sélectionner le chemin d'installation → <strong>Install Now</strong>. Durée : 10 à 20 minutes. À la fin, <strong>décocher</strong> l'option "Run the SharePoint Products Configuration Wizard now" avant de fermer.</p>
+                        <p>Exécuter <code>setup.exe</code> en administrateur. Entrer la clé produit : l'installation en exige une ; pour l'évaluation de 180 jours, utiliser la clé d'évaluation fournie sur la page de téléchargement Microsoft. Accepter le CLUF → sélectionner le chemin d'installation → <strong>Install Now</strong>. Durée : 10 à 20 minutes. À la fin, <strong>décocher</strong> l'option "Run the SharePoint Products Configuration Wizard now" avant de fermer.</p>
                     </div>
                 </li>
                 <li class="step">
@@ -732,10 +844,11 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                         <ul>
                             <li><em>Connect to a server farm</em> → <strong>Create a new server farm</strong></li>
                             <li><em>Database server</em> → <code>SRV-SQL01\SHAREPOINT</code></li>
-                            <li><em>Database name</em> → <code>SP_Config</code> (laisser par défaut)</li>
+                            <li><em>Database name</em> → <code>SharePoint_Config</code> (la valeur proposée par défaut)</li>
                             <li><em>Username</em> → <code>orion\sp_farm</code> + mot de passe</li>
                             <li><em>Passphrase</em> → choisir une passphrase forte et la <strong>noter précieusement</strong> — indispensable pour ajouter d'autres serveurs à la ferme.</li>
-                            <li><em>Central Administration Web Application port</em> → <code>2016</code></li>
+                            <li><em>Specify Server Role</em> (MinRole) → <strong>Single-Server Farm</strong> pour ce labo à un seul serveur SharePoint</li>
+                            <li><em>Central Administration Web Application port</em> → <code>2016</code> (l'assistant propose un port aléatoire : en fixer un qu'on retient)</li>
                             <li><em>Authentication provider</em> → NTLM</li>
                         </ul>
                         <p>Cliquer <strong>Next</strong>, puis <strong>Finish</strong>. La configuration exécute 10 tâches (3 à 8 minutes).</p>
@@ -755,9 +868,38 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                 </li>
             </ol>
 
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>La ferme existe, le serveur y est inscrit avec le bon rôle, et l'Administration centrale répond.</p>
+                <div class="terminal">
+                    <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">SharePoint Management Shell — SRV-SP01</span></div>
+                    <pre class="terminal__code"><span class="k">Get-SPServer</span> | <span class="k">Select-Object</span> Name, Role
+<span class="k">(Invoke-WebRequest</span> http://SRV-SP01:2016 <span class="p">-UseDefaultCredentials</span> <span class="p">-UseBasicParsing</span>).StatusCode</pre>
+                </div>
+                <p class="verify__sub">Sortie attendue (extrait)</p>
+                <pre class="verify__out">Name        Role
+----        ----
+SRV-SP01    SingleServerFarm
+200</pre>
+                <p class="verify__fail">« Cannot access the local farm » : la console n'est pas lancée avec un compte administrateur de ferme, ou SQL est injoignable. Le serveur SQL apparaît aussi dans la liste avec le rôle <code>Invalid</code> : c'est normal, ce n'est pas un serveur SharePoint.</p>
+            </div>
+
             <div class="tip">
                 <p class="tip__label">Bonne pratique</p>
                 <p><strong>Ne jamais installer SharePoint sous un compte Domain Admin</strong> — utiliser <code>sp_setup</code> avec uniquement les droits nécessaires. Conserver la passphrase de ferme dans un gestionnaire de mots de passe : sans elle, il est impossible d'ajouter un serveur à la ferme ultérieurement.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu dois ajouter plus tard un second serveur SharePoint à la ferme, mais personne n'a noté la <em>passphrase</em>. Que fais-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>La redéfinir sur la ferme avec <code>Set-SPPassPhrase</code>, puis joindre le serveur</button>
+                        <button class="scenario__opt" data-why="Utiliser le mot de passe du compte <code>sp_farm</code>">Le mot de passe du compte de ferme et la passphrase sont deux secrets différents : l&#x27;un n&#x27;ouvre pas l&#x27;autre.</button>
+                        <button class="scenario__opt" data-why="Recréer la ferme avec une nouvelle passphrase">Recréer la ferme détruirait la configuration existante : c&#x27;est démesuré pour un secret qui se redéfinit.</button>
+                    </div>
+                    <div class="scenario__why"><p>La passphrase protège la jonction de nouveaux serveurs. Un administrateur de ferme peut en poser une nouvelle depuis un serveur déjà membre : <code>Set-SPPassPhrase -PassPhrase (Read-Host -AsSecureString) -Confirm:$false</code>. Ensuite, la noter dans le coffre de mots de passe.</p></div>
+                </div>
             </div>
         </section>
 
@@ -779,7 +921,7 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                     <div class="step__num">02</div>
                     <div class="step__body">
                         <strong>Démarrer les services sur le serveur</strong>
-                        <p><em>System Settings → Manage Services on Server</em>. Démarrer au minimum :</p>
+                        <p><em>System Settings → Manage Services on Server</em>. Avec un rôle MinRole autre que <em>Custom</em>, SharePoint démarre lui-même les services dont les applications de service ont besoin ; sinon, démarrer au minimum :</p>
                         <ul>
                             <li>Microsoft SharePoint Foundation Web Application</li>
                             <li>SharePoint Server Search</li>
@@ -810,7 +952,7 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                             <pre class="terminal__code">Add-DnsServerResourceRecordA -ZoneName "orion.local" `
     -Name "intranet" -IPv4Address "172.16.50.35"</pre>
                         </div>
-                        <p>L'URL <code>http://intranet</code> sera résolu vers SRV-SP01.</p>
+                        <p>L'URL <code>http://intranet</code> sera résolue vers SRV-SP01. Un enregistrement A plutôt qu'un CNAME (comme au module IIS) : c'est ce que Microsoft conseille pour SharePoint, parce que l'authentification Kerberos se comporte mal avec les alias.</p>
                     </div>
                 </li>
             </ol>
@@ -835,8 +977,8 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                         <p><em>Central Admin → Application Management → Manage Web Applications → New</em>. Paramètres :</p>
                         <ul>
                             <li>IIS Web Site Name : <code>SharePoint - 80</code></li>
-                            <li>Port : <code>80</code> — URL : <code>http://intranet</code></li>
-                            <li>Application Pool : créer nouveau → nom <code>SharePoint Web Services Default</code> → compte <code>orion\sp_services</code></li>
+                            <li>Port : <code>80</code> — <strong>Host Header</strong> : <code>intranet</code> — URL : <code>http://intranet</code>. Le nom d'hôte est obligatoire ici : le <em>Default Web Site</em> d'IIS occupe déjà <code>*:80</code> (même règle qu'au module IIS).</li>
+                            <li>Application Pool : créer nouveau → nom <code>SharePoint - 80</code> → compte <code>orion\sp_services</code>. Ne pas reprendre le nom <code>SharePoint Web Services Default</code> : c'est celui du pool que SharePoint crée pour ses applications de service.</li>
                             <li>Database Server : <code>SRV-SQL01\SHAREPOINT</code> — Database Name : <code>SP_Content_Intranet</code></li>
                         </ul>
                         <p>Cliquer <strong>OK</strong> (1 à 2 minutes).</p>
@@ -872,6 +1014,11 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                     </div>
                 </li>
             </ol>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Piège : le bouclage local</p>
+                <p>Ouvrir <code>http://intranet</code> <strong>depuis SRV-SP01 lui-même</strong> redemande sans fin les identifiants (erreur 401). C'est la <strong>vérification de bouclage</strong> (<em>loopback check</em>) de Windows, qui refuse l'authentification NTLM vers un nom qui désigne la machine locale. Tester depuis un poste client ; sur le serveur, déclarer le nom dans la valeur de registre <code>BackConnectionHostNames</code>.</p>
+            </div>
 
             <div class="tip">
                 <p class="tip__label">Bonne pratique</p>
@@ -932,7 +1079,12 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
         <section class="chapter chapter--pratique" id="automatisation">
             <p class="chapter__num">P06</p>
             <h2 class="chapter__title">Automatiser avec SharePoint Designer</h2>
-            <p class="chapter__intro">Sur un lab SharePoint Server SE sans connexion internet, <strong>SharePoint Designer 2013</strong> est l'outil d'automatisation natif disponible gratuitement. Il permet de créer des workflows déclenchés par des événements sur les listes et bibliothèques.</p>
+            <p class="chapter__intro">Sur un lab SharePoint Server SE sans connexion internet, <strong>SharePoint Designer 2013</strong> a longtemps été l'outil d'automatisation gratuit. Il permet de créer des workflows déclenchés par des événements sur les listes et bibliothèques.</p>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Outil en fin de vie</p>
+                <p>SharePoint Designer 2013 est <strong>hors support depuis le 14 juillet 2026</strong> : plus aucun correctif. Ce chapitre montre le principe d'un workflow ; pour un nouveau projet, on part sur <strong>Power Automate</strong>. Autre point : la plateforme <em>SharePoint 2013 Workflow</em> n'existe que si <strong>SharePoint Workflow Manager</strong> a été installé et relié à la ferme (avec les services <em>App Management</em> et <em>Subscription Settings</em>). Sans lui, Designer ne propose que <em>SharePoint 2010 Workflow</em>.</p>
+            </div>
 
             <h3>Installer SharePoint Designer 2013</h3>
             <p>Télécharger <strong>SharePoint Designer 2013</strong> (gratuit, version x64) depuis le centre de téléchargement Microsoft. L'installer sur le poste d'administration ou directement sur SRV-SP01. La version 2013 est compatible avec SharePoint Server SE en mode classique.</p>
@@ -950,7 +1102,7 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
                     <div class="step__num">02</div>
                     <div class="step__body">
                         <strong>Créer le workflow</strong>
-                        <p><em>Workflows → List Workflow</em> → sélectionner la liste ou bibliothèque cible (ex. "Procédures IT") → nommer le workflow "Approbation Procédure". Choisir la plateforme <strong>SharePoint 2013 Workflow</strong>.</p>
+                        <p><em>Workflows → List Workflow</em> → sélectionner la liste ou bibliothèque cible (ex. "Procédures IT") → nommer le workflow "Approbation Procédure". Choisir la plateforme <strong>SharePoint 2013 Workflow</strong> (disponible seulement si Workflow Manager est configuré, voir l'encadré plus haut).</p>
                     </div>
                 </li>
                 <li class="step">
@@ -984,7 +1136,7 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
         <section class="chapter chapter--pratique" id="powershell-admin">
             <p class="chapter__num">P07</p>
             <h2 class="chapter__title">Administrer SharePoint via PowerShell</h2>
-            <p class="chapter__intro">Deux outils PowerShell coexistent : le <strong>SharePoint Management Shell</strong> (classique, natif sur le serveur) et <strong>PnP PowerShell</strong> (moderne, multiplateforme). Les deux s'utilisent quotidiennement en administration.</p>
+            <p class="chapter__intro">Deux outils PowerShell coexistent : le <strong>SharePoint Management Shell</strong> (natif sur le serveur, pour SharePoint Server) et <strong>PnP PowerShell</strong> (moderne, multiplateforme, pour <strong>SharePoint Online</strong>). Ils ne visent pas la même cible : c'est la première chose à savoir.</p>
 
             <h3>SharePoint Management Shell</h3>
             <p>À lancer sur <strong>SRV-SP01</strong> via le menu Démarrer → Microsoft SharePoint Products → <strong>SharePoint Management Shell</strong> (en administrateur). Doit être exécuté avec un compte administrateur de ferme.</p>
@@ -1017,15 +1169,16 @@ Backup-SPFarm -Directory "\\SRV-SQL01\Backup\SP" `
             </div>
 
             <h3>PnP PowerShell</h3>
-            <p>Module moderne installable sur n'importe quelle machine avec PowerShell 7+. Plus expressif que le Management Shell pour les opérations sur le contenu.</p>
+            <p>Module moderne installable sur n'importe quelle machine avec PowerShell 7+. Plus expressif que le Management Shell pour les opérations sur le contenu, mais <strong>il ne prend en charge que SharePoint Online</strong> : il ne se connecte pas à une ferme SharePoint Server comme celle du labo. L'ancien module « PnP PowerShell legacy », qui visait aussi les versions sur site, n'est plus maintenu. Les exemples ci-dessous s'appliquent donc à un site Online.</p>
 
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell 7 — n'importe quelle machine</span></div>
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell 7 — SharePoint Online uniquement</span></div>
                 <pre class="terminal__code"># Installation du module
 Install-Module PnP.PowerShell -Scope CurrentUser
 
-# Connexion à SharePoint Server on-premises
-Connect-PnPOnline -Url "http://intranet" -CurrentCredentials
+# Connexion à un site SharePoint Online
+# (depuis 2024, il faut enregistrer sa propre application dans Entra ID et passer son ID)
+Connect-PnPOnline -Url "https://&lt;tenant&gt;.sharepoint.com/sites/rh" -Interactive -ClientId &lt;id-application&gt;
 
 # Lister toutes les listes
 Get-PnPList | Select Title, ItemCount, Hidden
@@ -1039,8 +1192,8 @@ Add-PnPFile -Path "C:\docs\procedure.docx" `
 
 # Ajouter un utilisateur à un groupe
 Add-PnPGroupMember `
-    -LoginName "orion\jdupont" `
-    -Identity "Intranet Orion Members"
+    -LoginName "jdupont@example.com" `
+    -Group "RH Members"
 
 # Créer un sous-site
 New-PnPWeb -Title "Projets" -Url "projets" `
@@ -1079,10 +1232,11 @@ Backup-SPFarm -Directory "E:\Backups\SP\$(Get-Date -f yyyyMMdd)" `
                 <pre class="terminal__code"># Importer le module SQL Server
 Import-Module SqlServer
 
-# Backup de la base de configuration (toujours la sauvegarder)
+# Base de configuration : on peut la sauvegarder, mais Microsoft ne prend pas
+# en charge sa restauration depuis SQL -> elle se protège par Backup-SPFarm
 Backup-SqlDatabase -ServerInstance "SRV-SQL01\SHAREPOINT" `
-    -Database "SP_Config" `
-    -BackupFile "D:\SHAREPOINT\Backup\SP_Config_$(Get-Date -f yyyyMMdd).bak"
+    -Database "SharePoint_Config" `
+    -BackupFile "D:\SHAREPOINT\Backup\SharePoint_Config_$(Get-Date -f yyyyMMdd).bak"
 
 # Backup de la base de contenu intranet
 Backup-SqlDatabase -ServerInstance "SRV-SQL01\SHAREPOINT" `
@@ -1090,18 +1244,22 @@ Backup-SqlDatabase -ServerInstance "SRV-SQL01\SHAREPOINT" `
     -BackupFile "D:\SHAREPOINT\Backup\SP_Content_Intranet_$(Get-Date -f yyyyMMdd).bak"</pre>
             </div>
 
-            <h3>Niveau 3 — Export d'une collection de sites</h3>
-            <p>Granularité maximale : exporter une seule collection, ses sous-sites, sa sécurité et les versions de documents.</p>
+            <h3>Niveau 3 — Une collection de sites, ou un site</h3>
+            <p>Granularité maximale. Deux outils à ne pas confondre : <code>Backup-SPSite</code> sauvegarde une <strong>collection de sites</strong> entière (avec sa sécurité et ses versions), restaurée par <code>Restore-SPSite</code> ; <code>Export-SPWeb</code> exporte un <strong>site, une liste ou une bibliothèque</strong>, réimporté par <code>Import-SPWeb</code> dans un site existant de même modèle.</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">SharePoint Management Shell</span></div>
-                <pre class="terminal__code"># Export d'une collection de sites
+                <pre class="terminal__code"># Sauvegarde d'une collection de sites
+Backup-SPSite -Identity "http://intranet" `
+    -Path "E:\Backups\Sites\intranet_$(Get-Date -f yyyyMMdd).bak"
+
+# Restauration de la collection vers une autre URL, pour vérifier avant d'écraser
+Restore-SPSite -Identity "http://intranet/sites/restore-test" `
+    -Path "E:\Backups\Sites\intranet_20260630.bak"
+
+# Export d'un site (ou d'une liste), avec sa sécurité et toutes les versions
 Export-SPWeb -Identity "http://intranet" `
     -Path "E:\Backups\Sites\intranet_$(Get-Date -f yyyyMMdd).cmp" `
-    -IncludeUserSecurity -Versions 4 -Verbose
-
-# Restauration d'une collection dans une application web existante
-Import-SPWeb -Identity "http://intranet/sites/restore-test" `
-    -Path "E:\Backups\Sites\intranet_20260630.cmp" -Force
+    -IncludeUserSecurity -IncludeVersions All
 
 # Monter une base de contenu SQL restaurée
 Mount-SPContentDatabase -Name "SP_Content_Intranet" `
@@ -1110,7 +1268,7 @@ Mount-SPContentDatabase -Name "SP_Content_Intranet" `
             </div>
 
             <h3>Planifier les sauvegardes automatiques</h3>
-            <p>Sur Windows Server 2025, créer une tâche planifiée via le <em>Task Scheduler</em> ou une règle <strong>Windows Server Backup</strong> qui déclenche le script PowerShell de backup chaque nuit. Stocker les sauvegardes sur un partage réseau (<code>\\SRV-AD01\Backup</code>) pour respecter la règle 3-2-1 : donnée locale + partage réseau + NAS Synology hors site.</p>
+            <p>Sur Windows Server 2025, créer une tâche planifiée (<em>Task Scheduler</em>) qui lance chaque nuit le script PowerShell de backup, sous un compte administrateur de ferme. Stocker les sauvegardes sur un partage réseau (<code>\\SRV-AD01\Backup</code>) pour respecter la règle 3-2-1 : donnée locale + partage réseau + NAS Synology hors site.</p>
 
             <div class="tip">
                 <p class="tip__label">Bonne pratique</p>
@@ -1119,7 +1277,7 @@ Mount-SPContentDatabase -Name "SP_Content_Intranet" `
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Trois niveaux de backup : <strong>ferme complète</strong> (Backup-SPFarm), <strong>bases SQL</strong> (le plus fiable, Backup-SqlDatabase) et <strong>collection de sites</strong> (Export-SPWeb). La règle <strong>3-2-1</strong> reste la norme. Tester les restaurations régulièrement — une sauvegarde jamais testée n'est pas une sauvegarde.</p>
+                <p>Trois niveaux de backup : <strong>ferme complète</strong> (Backup-SPFarm), <strong>bases SQL</strong> (le plus fiable, Backup-SqlDatabase) et <strong>collection de sites</strong> (Backup-SPSite ; Export-SPWeb pour un site, une liste ou une bibliothèque). La règle <strong>3-2-1</strong> reste la norme. Tester les restaurations régulièrement — une sauvegarde jamais testée n'est pas une sauvegarde.</p>
             </div>
         </section>
 
@@ -1175,11 +1333,11 @@ SharePoint - 80       http://intranet/</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · 10 chapitres de théorie + 8 chapitres de pratique</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 
 </body>
 </html>

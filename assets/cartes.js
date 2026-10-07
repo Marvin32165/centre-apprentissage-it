@@ -108,5 +108,89 @@ window.CARTES = [
 /* ── Hyper-V ── */
 { m: "hyperv", f: "Le seul réglage d'une VM Hyper-V définitif à la création ?", b: "La génération (1 ou 2)" },
 { m: "hyperv", f: "Commutateur où les VM ne parlent qu'entre elles ?", b: "Privé (interne : VM ↔ hôte ; externe : vers le réseau physique)" },
-{ m: "hyperv", f: "Un point de contrôle est-il une sauvegarde ?", b: "Non : il vit à côté du disque, sur le même stockage" }
+{ m: "hyperv", f: "Un point de contrôle est-il une sauvegarde ?", b: "Non : il vit à côté du disque, sur le même stockage" },
+/* ── Linux (compléments) ── */
+{ m: "linux-debian", f: "Ajouter un utilisateur au groupe <code>sudo</code> sans lui retirer ses autres groupes ?", b: "<code>sudo usermod -aG sudo nom</code> — sans <code>-a</code>, la liste des groupes est remplacée" },
+{ m: "linux-debian", f: "Démarrer un service et l'activer au démarrage, en une commande ?", b: "<code>sudo systemctl enable --now nom</code>" },
+{ m: "linux-debian", f: "Droits attendus sur <code>~/.ssh</code> et sur la clé privée ?", b: "700 pour le dossier, 600 pour la clé privée" },
+{ m: "linux-debian", f: "Suivre en direct le journal d'un service systemd ?", b: "<code>journalctl -u nom -f</code>" },
+
+/* ── Windows Server (compléments) ── */
+{ m: "windows-server", f: "Vérifier depuis un poste qu'il trouve un contrôleur de domaine ?", b: "<code>nltest /dsgetdc:orion.local</code>" },
+{ m: "windows-server", f: "Les cinq rôles FSMO, et leur portée ?", b: "Forêt : maître de schéma, maître d'attribution de noms de domaine. Domaine : RID, émulateur PDC, infrastructure" },
+{ m: "windows-server", f: "Lister les détenteurs des rôles FSMO ?", b: "<code>netdom query fsmo</code>" },
+{ m: "windows-server", f: "Prérequis d'un gMSA, et comment le tester sur le serveur ?", b: "Une clé racine KDS (<code>Add-KdsRootKey</code>) ; test : <code>Test-ADServiceAccount nom</code> → True" },
+
+/* ── RDS ── */
+{ m: "rds", f: "Combien de temps un déploiement RDS fonctionne-t-il sans serveur de licences ?", b: "120 jours (période de grâce)" },
+{ m: "rds", f: "Quel rôle RDS reconnecte un utilisateur à sa session existante ?", b: "Le Connection Broker (RDCB)" },
+{ m: "rds", f: "Port de la passerelle RD (RD Gateway) ?", b: "TCP 443 (HTTPS), plus UDP 3391 en option pour le transport UDP" },
+{ m: "rds", f: "CAL <em>Per User</em> ou <em>Per Device</em> ?", b: "Per User : une personne, plusieurs appareils. Per Device : un poste partagé par plusieurs personnes" },
+{ m: "rds", f: "Affecter un certificat aux rôles d'un déploiement RDS en PowerShell ?", b: "<code>Set-RDCertificate -Role RDWebAccess …</code> (aussi RDGateway, RDPublishing, RDRedirector)" },
+
+/* ── IIS ── */
+{ m: "iis", f: "Quel processus exécute un pool d'applications IIS ?", b: "<code>w3wp.exe</code> (un par pool actif)" },
+{ m: "iis", f: "Quel compte autoriser en NTFS pour le pool <code>cafe</code> ?", b: "<code>IIS AppPool\\cafe</code>" },
+{ m: "iis", f: "Codes HTTP et couche en cause : 404, 401.3, 403, 500, 503 ?", b: "404 contenu absent, 401.3 droit NTFS manquant (ACL), 403 refus d'IIS lui-même (ex. 403.14 : pas de document par défaut), 500 application ou configuration, 503 pool arrêté" },
+
+/* ── Exchange & PKI ── */
+{ m: "exchange-securite", f: "Retirer la boîte aux lettres d'un utilisateur sans supprimer son compte AD ?", b: "<code>Disable-Mailbox</code> (<code>Remove-Mailbox</code> supprime aussi le compte)" },
+{ m: "exchange-securite", f: "Chiffrer pour un destinataire / signer : avec quelle clé ?", b: "Chiffrer : clé <strong>publique</strong> du destinataire. Signer : sa propre clé <strong>privée</strong>" },
+
+/* ── SQL Server ── */
+{ m: "sql-server", f: "Les trois modes de récupération d'une base ?", b: "SIMPLE, FULL, BULK_LOGGED — seuls FULL et BULK_LOGGED permettent les sauvegardes du journal" },
+{ m: "sql-server", f: "Appliquer une valeur posée par <code>sp_configure</code> ?", b: "<code>RECONFIGURE</code> (et <code>show advanced options</code> à 1 pour les options avancées)" },
+{ m: "sql-server", f: "Recoller un user orphelin à son login après une restauration ?", b: "<code>ALTER USER [nom] WITH LOGIN = [nom]</code>" },
+{ m: "sql-server", f: "Priorité des permissions SQL Server ?", b: "DENY &gt; GRANT &gt; rien ; REVOKE retire seulement une attribution. <code>sysadmin</code> passe outre tout" },
+{ m: "sql-server", f: "Port fixe : que mettre dans <em>TCP Dynamic Ports</em> ?", b: "Rien (vide). <code>0</code> réactive le port dynamique ; le port fixe va dans <em>TCP Port</em>" },
+{ m: "sql-server", f: "Vérifier l'intégrité physique et logique d'une base ?", b: "<code>DBCC CHECKDB</code> (sans option de réparation en premier diagnostic)" },
+
+/* ── DPM ── */
+{ m: "dpm", f: "Collation exigée par DPM pour l'instance SQL de sa base ?", b: "<code>SQL_Latin1_General_CP1_CI_AS</code> — choisie à l'installation de SQL" },
+{ m: "dpm", f: "Synchronisation ou point de récupération : lequel se restaure ?", b: "Le point de récupération ; la synchronisation ne fait que tenir le réplica à jour" },
+
+/* ── VoIP (compléments) ── */
+{ m: "voip", f: "Débit de la voix seule en G.711 et en G.729 ?", b: "64 kb/s et 8 kb/s (hors en-têtes)" },
+{ m: "voip", f: "Marquage DSCP habituel du flux voix (RTP) ?", b: "EF (Expedited Forwarding), valeur 46" },
+{ m: "voip", f: "Sur quels ports passe le RTP ?", b: "Une plage UDP dynamique négociée dans le SDP (souvent 10000–20000, selon le PBX)" },
+
+/* ── Proxmox ── */
+{ m: "proxmox", f: "Adresse de l'interface web de Proxmox VE ?", b: "<code>https://IP:8006</code>" },
+{ m: "proxmox", f: "Lister les VM, puis les conteneurs, en ligne de commande ?", b: "<code>qm list</code> et <code>pct list</code>" },
+{ m: "proxmox", f: "Outil de sauvegarde intégré à Proxmox VE ?", b: "<code>vzdump</code> (planifié dans Datacenter → Backup), ou Proxmox Backup Server" },
+{ m: "proxmox", f: "Voir l'état du cluster et du quorum ?", b: "<code>pvecm status</code>" },
+{ m: "proxmox", f: "<code>local</code> ou <code>local-lvm</code> : qui stocke quoi ?", b: "<code>local</code> : ISO, templates, sauvegardes. <code>local-lvm</code> : disques des VM et conteneurs" },
+
+/* ── Docker ── */
+{ m: "docker", f: "Sortir d'un conteneur lancé en <code>-it</code> sans l'arrêter ?", b: "Ctrl+P puis Ctrl+Q" },
+{ m: "docker", f: "Ouvrir un shell dans un conteneur qui tourne ?", b: "<code>docker exec -it NOM bash</code> (ou <code>sh</code>)" },
+{ m: "docker", f: "Publier le port 5000 du conteneur sur le port 8000 de l'hôte ?", b: "<code>-p 8000:5000</code> (hôte:conteneur)" },
+{ m: "docker", f: "<code>docker compose down</code> supprime-t-il les volumes ?", b: "Non ; <code>docker compose down -v</code> les supprime" },
+{ m: "docker", f: "Suivre les journaux d'un conteneur en continu ?", b: "<code>docker logs -f NOM</code>" },
+{ m: "docker", f: "Voir un Compose avec ses variables <code>${…}</code> remplacées ?", b: "<code>docker compose config</code>" },
+
+/* ── Zabbix ── */
+{ m: "monitoring-zabbix", f: "Interroger un agent depuis le serveur Zabbix, en passif ?", b: "<code>zabbix_get -s IP -k agent.ping</code> → 1" },
+{ m: "monitoring-zabbix", f: "Tester une clé d'item localement, sur l'agent ?", b: "<code>zabbix_agent2 -t clé</code> (ou <code>zabbix_agentd -t</code>)" },
+{ m: "monitoring-zabbix", f: "Les trois maillons de la chaîne d'alerte Zabbix ?", b: "Item (mesure) → trigger (condition) → action (notification ou commande)" },
+{ m: "monitoring-zabbix", f: "Ce qui doit être identique, casse comprise, entre l'agent et l'hôte ?", b: "Le <code>Hostname=</code> de l'agent et le <em>Host name</em> de l'hôte" },
+{ m: "zabbix-windows", f: "Les quatre paramètres PSK d'un agent ?", b: "<code>TLSConnect=psk</code>, <code>TLSAccept=psk</code>, <code>TLSPSKIdentity</code>, <code>TLSPSKFile</code>" },
+{ m: "zabbix-windows", f: "Ajouter une métrique maison à l'agent ?", b: "<code>UserParameter=clé,commande</code> dans un .conf, puis redémarrer l'agent" },
+{ m: "zabbix-windows", f: "<em>Execute now</em> fonctionne-t-il sur un item actif ?", b: "Non : il ne vaut que pour les vérifications passives. Redémarrer l'agent force la collecte" },
+
+/* ── Azure ── */
+{ m: "azure", f: "LRS, ZRS, GRS, RA-GRS ?", b: "Un datacenter · plusieurs zones d'une région · une région secondaire · GRS avec lecture secondaire" },
+{ m: "azure", f: "Scalabilité ou élasticité ?", b: "Scalabilité : on ajuste la capacité. Élasticité : elle s'ajuste toute seule à la charge" },
+{ m: "azure", f: "Hiérarchie de gestion Azure, du plus large au plus fin ?", b: "Management groups → subscriptions → resource groups → ressources" },
+{ m: "azure", f: "RBAC ou Azure Policy ?", b: "RBAC : ce qu'une identité a le droit de faire. Policy : les propriétés qu'une ressource doit respecter" },
+{ m: "azure", f: "Load Balancer ou Application Gateway ?", b: "Load Balancer : couche 4 (TCP/UDP). Application Gateway : couche 7 (URL, nom d'hôte, WAF)" },
+{ m: "azure", f: "Pricing Calculator ou business case d'Azure Migrate ?", b: "Pricing Calculator : estimer le coût d'une architecture Azure. Business case d'Azure Migrate (successeur du TCO Calculator) : comparer le coût local à celui d'Azure" },
+{ m: "azure", f: "SLA de 99,9 % : indisponibilité tolérée par mois ?", b: "Environ 43 minutes" },
+
+/* ── Scrum ── */
+{ m: "scrum", f: "Les trois piliers de Scrum ?", b: "Transparence, inspection, adaptation" },
+{ m: "scrum", f: "Les trois responsabilités de l'équipe Scrum ?", b: "Product Owner, Scrum Master, Developers" },
+{ m: "scrum", f: "Durée maximale d'un sprint ?", b: "Un mois (souvent deux semaines)" },
+{ m: "scrum", f: "Timebox des événements pour un sprint d'un mois (Scrum Guide 2020) ?", b: "Planning 8 h, Daily 15 min, Review 4 h, Rétrospective 3 h (moins pour un sprint plus court)" },
+{ m: "scrum", f: "Les trois artefacts et leur engagement ?", b: "Product Backlog → Product Goal ; Sprint Backlog → Sprint Goal ; Incrément → Definition of Done" }
 ];

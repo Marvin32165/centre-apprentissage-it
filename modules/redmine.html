@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -97,12 +97,25 @@
 
             <div class="tip">
                 <p class="tip__label">Redmine n'est pas né helpdesk</p>
-                <p>Il vient de la gestion de projets de développement. Configuré (un projet « Support », un tracker d'assistance, un workflow adapté, la connexion à l'AD), il fait un honnête outil de support — mais il lui manque nativement ce qu'ont les outils dédiés comme <strong>GLPI</strong> : un portail simplifié pour l'utilisateur, des SLA, l'inventaire du parc. Des plugins, souvent payants, comblent ces manques.</p>
+                <p>Il vient de la gestion de projets de développement. Configuré (un projet « Support », un tracker d'assistance, un workflow adapté, la connexion à l'AD), il fait un honnête outil de support — mais il lui manque nativement ce qu'ont les outils dédiés comme <strong>GLPI</strong> : un portail simplifié pour l'utilisateur, des SLA, l'inventaire du parc. Des plugins, gratuits ou payants, comblent une partie de ces manques.</p>
             </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Tout tourne autour de la <strong>demande</strong>, rangée dans un <strong>projet</strong>, typée par un <strong>tracker</strong>, et qui avance de <strong>statut</strong> en statut selon un <strong>workflow</strong> qui dépend du rôle. Les droits ne sont pas portés par l'utilisateur mais par son <strong>rôle dans le projet</strong>.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un technicien a le rôle <em>Developer</em> dans le projet Support. Sur une demande du tracker <em>Support</em>, la liste des statuts ne propose pas <em>Resolved</em>. Où regardes-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le workflow, pour le couple rôle <em>Developer</em> × tracker <em>Support</em></button>
+                        <button class="scenario__opt" data-why="Les droits ne sont pas portés par le compte : ils viennent du rôle qu&#x27;il a dans le projet, et des transitions permises à ce rôle.">Le profil de l'utilisateur dans Administration &gt; Users</button>
+                        <button class="scenario__opt" data-why="Le statut existe, puisqu&#x27;il sert ailleurs ; ce qui manque, c&#x27;est la transition autorisée vers lui.">La liste des statuts dans Administration &gt; Issue statuses</button>
+                    </div>
+                    <div class="scenario__why"><p>Les passages de statut se règlent dans <strong>Administration &gt; Workflow</strong>, <strong>par rôle et par tracker</strong> : une case non cochée de « New » vers « Resolved » pour <em>Developer</em> sur <em>Support</em>, et le statut n'apparaît pas.</p></div>
+                </div>
             </div>
         </section>
 
@@ -169,6 +182,43 @@
                 </table>
             </div>
             <p><strong>Test</strong>, sur la ligne du mode, vérifie seulement la connexion au DC avec le compte de service : il ne crée aucun utilisateur.</p>
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">La première connexion d'un compte du domaine</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · navigateur → Redmine</p>
+                        <p class="walk__head">L'utilisateur saisit son login Windows</p>
+                        <p>Il tape son <code>sAMAccountName</code> (sans <code>ORION\</code>) et son mot de passe du domaine. Redmine cherche d'abord un compte local de ce nom : il n'en trouve pas.</p>
+                        <p class="walk__change">Sans compte local, Redmine se tourne vers les <b>modes d'authentification LDAP</b> qui autorisent la <b>création à la volée</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · Redmine → SRV-AD01:389</p>
+                        <p class="walk__head">Connexion avec le compte de service</p>
+                        <p>Redmine ouvre une session LDAP (<em>bind</em>) avec le compte de service renseigné dans le champ <em>Account</em>. C'est ici qu'un DC Windows Server 2025 qui exige la signature répond <code>Stronger Auth Needed</code>.</p>
+                        <p class="walk__change">Le <b>compte de service</b> ne sert qu'à <b>chercher</b> : un simple utilisateur du domaine suffit.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · Redmine → SRV-AD01</p>
+                        <p class="walk__head">Recherche de l'utilisateur</p>
+                        <p>Sous la <em>Base DN</em> <code>DC=orion,DC=local</code>, Redmine cherche l'objet dont <code>sAMAccountName</code> vaut le login saisi, et récupère son nom complet (DN).</p>
+                        <p class="walk__change">Un compte <b>hors de la Base DN</b> (une autre OU que celle visée) n'est jamais trouvé : connexion refusée.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · Redmine → SRV-AD01</p>
+                        <p class="walk__head">Vérification du mot de passe</p>
+                        <p>Redmine refait un <em>bind</em>, cette fois avec le DN de l'utilisateur et le mot de passe saisi. Si le DC l'accepte, le mot de passe est bon. En LDAP simple sur 389, ce mot de passe traverse le réseau <strong>en clair</strong>.</p>
+                        <p class="walk__change">Redmine ne <b>stocke</b> pas le mot de passe AD : c'est le <b>DC</b> qui le vérifie, à chaque connexion.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · Redmine → base MariaDB</p>
+                        <p class="walk__head">Création du compte Redmine</p>
+                        <p>Redmine lit <code>givenName</code>, <code>sn</code> et <code>mail</code>, crée le compte rattaché à ce mode LDAP et ouvre la session. Si un attribut manque dans l'AD (pas d'adresse mail), Redmine demande de compléter le profil.</p>
+                        <p class="walk__change">Le compte existe, mais il n'est <b>membre d'aucun projet</b> : ses droits viendront des rôles qu'on lui donnera (chapitre 04).</p>
+                    </li>
+                </ol>
+            </div>
+
 
             <h3>Le refus du DC</h3>
             <p>Premier test : <em>« Unable to connect (Invalid LDAP Account/Password) »</em>. Le compte et le mot de passe étaient pourtant bons : Redmine affiche ce message pour <strong>tout</strong> refus. La vraie réponse du DC était <code>Stronger Auth Needed</code>.</p>
@@ -187,6 +237,19 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Un mode LDAP vers le DC + la création à la volée = les comptes AD se connectent avec leur login Windows. Face à « Invalid LDAP Account/Password », ne pas s'acharner sur le mot de passe : sur un DC 2025, la cause est d'abord la <strong>signature LDAP</strong> exigée.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le <strong>Test</strong> du mode LDAP passe, mais un utilisateur du domaine dont le compte est rangé dans <code>OU=Compta,DC=orion,DC=local</code> obtient « Invalid user or password ». La Base DN vaut <code>OU=Support,DC=orion,DC=local</code>. La cause ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Son compte est hors de la Base DN : la recherche ne le trouve pas</button>
+                        <button class="scenario__opt" data-why="Le Test passe : la connexion du compte de service au DC fonctionne, la signature n&#x27;est donc pas en cause.">La signature LDAP exigée par le DC</button>
+                        <button class="scenario__opt" data-why="Sans elle, aucun compte AD ne pourrait se connecter sans être créé à la main ; ici le problème ne touche que les comptes d&#x27;une autre OU.">La création à la volée n'est pas cochée</button>
+                    </div>
+                    <div class="scenario__why"><p>La recherche part de la <strong>Base DN</strong> et descend dans ses sous-OU, jamais au-dessus. Remonter la Base DN à <code>DC=orion,DC=local</code> (ou au parent commun) règle le cas — en acceptant que tout le domaine puisse alors se connecter.</p></div>
+                </div>
             </div>
         </section>
 
@@ -263,6 +326,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Secrets dans un <strong><code>.env</code> en 600</strong>, hors de Git ; <code>${VARIABLE}</code> dans le Compose ; <strong><code>docker compose config</code></strong> pour vérifier le remplacement avant de relancer.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Pour « sécuriser », un collègue change <code>MYSQL_PASSWORD</code> dans le <code>.env</code> puis lance <code>docker compose up -d</code>. Redmine n'arrive plus à se connecter à la base. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>MariaDB ne lit <code>MARIADB_PASSWORD</code> qu'à la création de la base : l'utilisateur garde l'ancien mot de passe</button>
+                        <button class="scenario__opt" data-why="Compose relit le .env à chaque commande ; c&#x27;est justement parce que Redmine a reçu la nouvelle valeur que la connexion échoue.">Compose n'a pas relu le .env, il faut un docker compose down d'abord</button>
+                        <button class="scenario__opt" data-why="Ce sont Compose et la commande docker qui lisent le .env, avec les droits de sudo ; les conteneurs reçoivent seulement les valeurs.">Le .env doit être en 644 pour que les conteneurs le lisent</button>
+                    </div>
+                    <div class="scenario__why"><p>Redmine présente le <strong>nouveau</strong> mot de passe, la base attend l'<strong>ancien</strong>. Pour changer réellement : <code>ALTER USER</code> dans MariaDB d'abord, puis la même valeur dans le <code>.env</code>, puis <code>docker compose up -d</code>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 06 -->
@@ -308,6 +384,19 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Une sauvegarde applicative complète = <strong>base</strong> (dump cohérent) + <strong>fichiers</strong> (le volume) + <strong>configuration</strong>, avec une <strong>rotation</strong> et une planification. Puis la question de la <a href="homelab.html#backup">règle 3-2-1</a> : où est la copie qui survit à la perte du serveur ?</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">La ligne cron <code>0 16 * * 1-5 /home/admin/redmine/backup/backup-redmine.sh</code> est posée dans la crontab de root. Quand tourne la sauvegarde ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>À 16 h 00, du lundi au vendredi</button>
+                        <button class="scenario__opt" data-why="Le cinquième champ (jour de la semaine) vaut 1-5 : samedi (6) et dimanche (0 ou 7) sont exclus.">Tous les jours à 16 h 00</button>
+                        <button class="scenario__opt" data-why="Le premier champ est la minute (0), le deuxième l&#x27;heure (16) ; « 1-5 » est en cinquième position, celle des jours de la semaine.">Toutes les 16 minutes, du 1er au 5 du mois</button>
+                    </div>
+                    <div class="scenario__why"><p>Ordre des champs : <strong>minute, heure, jour du mois, mois, jour de la semaine</strong>. <code>0 16 * * 1-5</code> = minute 0 de 16 h, tous les jours du mois, tous les mois, du lundi (1) au vendredi (5).</p></div>
+                </div>
             </div>
         </section>
 
@@ -377,6 +466,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Un reverse proxy : <strong>seul nginx publie des ports</strong>, il redirige 80 vers 443, termine le TLS et joint l'application <strong>par son nom de service</strong>. Les en-têtes <code>X-Forwarded-*</code> et le réglage <em>Host name / Protocol</em> rendent à l'application ce que le proxy lui cache : l'IP du client, le protocole et l'adresse publique.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Depuis la mise en place de nginx, le site s'ouvre bien en HTTPS, mais les liens des e-mails de notification pointent vers <code>http://localhost:3000/issues/12</code>. Que corriges-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Administration &gt; Settings &gt; General : <em>Host name and path</em> et <em>Protocol</em> HTTPS</button>
+                        <button class="scenario__opt" data-why="Le site fonctionne : nginx joint bien Redmine. Le problème est l&#x27;adresse que Redmine écrit dans ses e-mails, qu&#x27;il ne peut pas deviner.">Le proxy_pass de nginx, qui doit viser helpdesk.orion.local</button>
+                        <button class="scenario__opt" data-why="Le certificat sert au navigateur ; il ne change pas le texte des liens que Redmine génère.">Le certificat, dont le SAN ne contient pas localhost</button>
+                    </div>
+                    <div class="scenario__why"><p>Un e-mail est rédigé hors de toute requête du navigateur : Redmine n'a que ses <strong>réglages</strong> pour connaître son adresse publique. <em>Host name and path</em> = <code>helpdesk.orion.local</code>, <em>Protocol</em> = HTTPS.</p></div>
+                </div>
+            </div>
         </section>
 
         <div class="gloss">
@@ -401,19 +503,19 @@
 
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
-                <p>Les trois conteneurs tournent, et HTTPS répond.</p>
+                <p>Les trois conteneurs tournent, et HTTPS répond (sortie simplifiée : <code>compose ps</code> affiche aussi l'image, la commande et les ports).</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — SRV-REDMINE01</span></div>
                 <pre class="terminal__code"><span class="k">sudo</span> <span class="k">docker</span> compose ps
 <span class="k">curl</span> <span class="p">-sk</span> <span class="p">-o</span> /dev/null <span class="p">-w</span> <span class="s">'%{http_code}\n'</span> https://helpdesk.orion.local/</pre>
             </div>
                 <p class="verify__sub">Sortie attendue</p>
-            <pre class="verify__out">NAME            SERVICE  STATUS
-redmine-app     app      Up 3 hours
-redmine-db      db       Up 3 hours
-redmine-nginx   nginx    Up 3 hours
+            <pre class="verify__out">NAME            SERVICE   STATUS
+redmine-app     redmine   Up 3 hours
+redmine-db      db        Up 3 hours
+redmine-nginx   nginx     Up 3 hours
 200</pre>
-                <p class="verify__fail"><code>502 Bad Gateway</code> : nginx tourne mais ne joint pas <code>redmine-app</code> (conteneur arrêté, ou mauvais nom de service dans <code>proxy_pass</code>). <code>redmine-app</code> qui redémarre en boucle : <code>sudo docker compose logs app</code> — souvent la base pas prête ou un mot de passe du <code>.env</code> changé après coup.</p>
+                <p class="verify__fail"><code>502 Bad Gateway</code> : nginx tourne mais ne joint pas <code>redmine-app</code> (conteneur arrêté, ou mauvais nom de service dans <code>proxy_pass</code>). <code>redmine-app</code> qui redémarre en boucle : <code>sudo docker compose logs redmine</code> (le nom du <strong>service</strong>, pas celui du conteneur) — souvent la base pas prête ou un mot de passe du <code>.env</code> changé après coup.</p>
             </div>
             <div class="lab" data-lab="redmine-restauration">
                 <p class="lab__label">Lab guidé</p>
@@ -458,10 +560,10 @@ redmine-nginx   nginx    Up 3 hours
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Redmine en remplacement de SCSM »</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

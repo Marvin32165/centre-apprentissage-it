@@ -151,7 +151,7 @@
                         b.classList.add('is-ok');
                         st.querySelectorAll('.scenario__opt').forEach(function (o) { o.disabled = true; });
                         fb.className = 'cmdex__fb is-ok';
-                        fb.textContent = 'Bon réflexe.';
+                        fb.textContent = sc.classList.contains('scenario--quick') ? 'Exact.' : 'Bon réflexe.';
                         if (why) why.hidden = false;
                         if (steps[i + 1]) steps[i + 1].hidden = false;
                         else if (end) end.hidden = false;
@@ -170,7 +170,9 @@
     /* ── Entraînement illimité au subnetting (.subgen[data-mode]) ──
        situer   : réseau, broadcast, plage et nombre d'hôtes d'une adresse /n
        taille   : plus petit préfixe pour N hôtes
-       wildcard : masque générique d'un préfixe                        */
+       wildcard : masque générique d'un préfixe
+       binaire  : un octet décimal ↔ binaire
+       decoupe  : découper un /24 en N sous-réseaux égaux             */
     function ipStr(n) { return [n >>> 24, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.'); }
     function maskOf(p) { return p === 0 ? 0 : (0xFFFFFFFF << (32 - p)) >>> 0; }
     function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
@@ -209,6 +211,31 @@
                     (bits > 2 ? ', alors que 2<sup>' + (bits - 1) + '</sup> − 2 = ' + (Math.pow(2, bits - 1) - 2) + ' ne suffit pas' : '') + '). Préfixe = 32 − ' + bits + ' = <b>/' + p + '</b>.'
             };
         },
+        binaire: function () {
+            var d = [128, 192, 224, 240, 248, 252, 254, 255, rnd(1, 254), rnd(1, 254)][rnd(0, 9)];
+            var b = rnd(1, 254), bin = ('00000000' + b.toString(2)).slice(-8);
+            var bits = ('00000000' + d.toString(2)).slice(-8);
+            var detail = [128, 64, 32, 16, 8, 4, 2, 1].filter(function (v, i) { return bin[i] === '1'; });
+            return {
+                text: 'Convertis <code>' + d + '</code> en binaire (8 bits), puis <code>' + bin.replace(/(\d{4})(\d{4})/, '$1 $2') + '</code> en décimal.',
+                fields: [[d + ' en binaire', bits], [bin + ' en décimal', String(b)]],
+                explain: 'Poids des 8 bits : 128 64 32 16 8 4 2 1. ' + d + ' = <b>' + bits + '</b> (on retire du plus grand poids au plus petit). ' +
+                    bin + ' = ' + (detail.length ? detail.join(' + ') : '0') + ' = <b>' + b + '</b>.'
+            };
+        },
+        decoupe: function () {
+            var n = [2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 30, 50][rnd(0, 11)];
+            var bits = 0; while (Math.pow(2, bits) < n) bits++;
+            var p = 24 + bits, size = Math.pow(2, 8 - bits), k = rnd(2, Math.min(n, Math.pow(2, bits)));
+            var base = ((192 << 24) | (168 << 16) | (rnd(0, 254) << 8)) >>> 0;
+            var kth = (base + (k - 1) * size) >>> 0;
+            return {
+                text: 'Tu dois découper <code>' + ipStr(base) + '/24</code> en <b>' + n + '</b> sous-réseaux de même taille, les plus grands possible.',
+                fields: [['Nouveau préfixe', '/' + p], ['Hôtes par sous-réseau', String(size - 2)], ['Adresse du ' + k + '<sup>e</sup> sous-réseau', ipStr(kth)]],
+                explain: 'Il faut b bits empruntés tels que 2<sup>b</sup> ≥ ' + n + ' : b = <b>' + bits + '</b> (' + Math.pow(2, bits) + ' sous-réseaux). /24 + ' + bits + ' = <b>/' + p + '</b>. ' +
+                    'Pas (block size) = 2<sup>' + (8 - bits) + '</sup> = ' + size + ', soit <b>' + (size - 2) + '</b> hôtes. Les sous-réseaux commencent à 0, ' + size + ', ' + (2 * size) + '… : le ' + k + '<sup>e</sup> est à (' + k + ' − 1) × ' + size + ' = ' + ((k - 1) * size) + ' → <b>' + ipStr(kth) + '</b>.'
+            };
+        },
         wildcard: function () {
             var p = rnd(8, 30), m = maskOf(p);
             return {
@@ -242,7 +269,7 @@
             form.innerHTML = ''; inputs = [];
             cur.fields.forEach(function (f, i) {
                 var lab = el('label', 'subgen__field');
-                lab.appendChild(el('span', null, f[0]));
+                var lt = el('span'); lt.innerHTML = f[0]; lab.appendChild(lt);
                 var inp = el('input', 'cmdex__input');
                 inp.type = 'text'; inp.spellcheck = false; inp.setAttribute('inputmode', 'decimal');
                 lab.appendChild(inp); form.appendChild(lab); inputs.push(inp);
@@ -277,5 +304,46 @@
         });
         next.addEventListener('click', function () { draw(true); });
         draw();
+    });
+    /* ── Pas à pas (.walk) : une étape à la fois, avec précédent / suivant ──
+       <div class="walk"> … <ol class="walk__steps"><li class="walk__step">…</li></ol>
+       Sans JavaScript, toutes les étapes restent visibles, en liste.      */
+    document.querySelectorAll('.walk').forEach(function (w) {
+        var steps = Array.prototype.slice.call(w.querySelectorAll('.walk__step'));
+        if (steps.length < 2) return;
+        var i = 0;
+        var nav = el('div', 'walk__nav');
+        var prev = el('button', 'cmdex__btn cmdex__btn--ghost', '← Précédent'); prev.type = 'button';
+        var next = el('button', 'cmdex__btn', 'Étape suivante →'); next.type = 'button';
+        var pos = el('span', 'walk__pos');
+        var dots = el('span', 'walk__dots');
+        steps.forEach(function (st, k) {
+            var d = el('button', 'walk__dot'); d.type = 'button';
+            d.setAttribute('aria-label', 'Étape ' + (k + 1));
+            d.addEventListener('click', function () { show(k); });
+            dots.appendChild(d);
+        });
+        nav.appendChild(prev); nav.appendChild(dots); nav.appendChild(pos); nav.appendChild(next);
+        w.appendChild(nav);
+        w.classList.add('is-js');
+        function show(k) {
+            i = Math.max(0, Math.min(steps.length - 1, k));
+            steps.forEach(function (st, n) { st.hidden = n !== i; });
+            Array.prototype.forEach.call(dots.children, function (d, n) {
+                d.classList.toggle('is-on', n === i);
+                d.classList.toggle('is-seen', n < i);
+            });
+            pos.textContent = (i + 1) + ' / ' + steps.length;
+            prev.disabled = i === 0;
+            next.disabled = i === steps.length - 1;
+        }
+        prev.addEventListener('click', function () { show(i - 1); });
+        next.addEventListener('click', function () { show(i + 1); });
+        w.addEventListener('keydown', function (e) {
+            if (e.target.closest('input, textarea')) return;
+            if (e.key === 'ArrowRight') { e.preventDefault(); show(i + 1); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); show(i - 1); }
+        });
+        show(0);
     });
 })();

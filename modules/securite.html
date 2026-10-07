@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -84,7 +84,12 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Avertissement</p>
-                <p>Tester, scanner ou attaquer un système <strong>sans autorisation écrite</strong> est illégal. En <strong>Belgique</strong>, l'<strong>article 550bis du Code pénal</strong> punit le simple accès non autorisé (ou le fait de s'y maintenir) de six mois à deux ans de prison et d'une amende, jusqu'à trois ans avec une intention frauduleuse ; en <strong>France</strong>, ce sont les <strong>articles 323-1 et suivants</strong>. Les « bonnes intentions » ne changent rien : l'accès sans autorisation est l'infraction. Tout ce qui suit s'applique <strong>uniquement</strong> à des systèmes que tu possèdes ou que tu es explicitement autorisé à tester, dans un <strong>labo isolé</strong>.</p>
+                <p>Tester, scanner ou attaquer un système <strong>sans autorisation écrite</strong> est illégal. En <strong>Belgique</strong>, l'<strong>article 550bis du Code pénal</strong> punit d'emprisonnement et d'amende le simple fait d'accéder sans autorisation à un système informatique, ou de s'y maintenir — plus lourdement avec une intention frauduleuse ou de nuire ; en <strong>France</strong>, ce sont les <strong>articles 323-1 et suivants</strong> du Code pénal. Les « bonnes intentions » ne changent rien : l'accès sans autorisation est l'infraction. Tout ce qui suit s'applique <strong>uniquement</strong> à des systèmes que tu possèdes ou que tu es explicitement autorisé à tester, dans un <strong>labo isolé</strong>.</p>
+            </div>
+
+            <div class="tip">
+                <p class="tip__label">L'exception belge, très encadrée</p>
+                <p>Depuis le <strong>15 février 2023</strong>, la loi belge (loi NIS, reprise par la loi NIS2 de 2024) protège la personne qui cherche et signale une vulnérabilité <strong>sans</strong> autorisation préalable, à des conditions strictes : aucune intention frauduleuse ni de nuire, ne faire que le <strong>strict nécessaire</strong> pour démontrer la faille, la signaler au plus vite à l'organisation <strong>et</strong> au <strong>CCB</strong> (Centre pour la Cybersécurité Belgique), et ne rien divulguer sans l'accord du CCB. Ce n'est pas un permis de tester : hors de ces conditions, l'article 550bis s'applique.</p>
             </div>
 
             <h3>Les trois « chapeaux »</h3>
@@ -104,6 +109,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Pas d'autorisation = pas de test. On s'entraîne sur <strong>ses propres machines</strong> ou sur des <strong>plateformes prévues pour</strong>. L'objectif de ce module est <strong>défensif</strong> : comprendre l'attaque pour protéger.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">En révisant Nmap, tu as envie de scanner le serveur web de ton ancienne école « juste pour voir quels ports sont ouverts », sans rien attaquer. Est-ce légal ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Non : sans autorisation écrite du propriétaire, tu n&#x27;as pas à interroger ses machines</button>
+                        <button class="scenario__opt" data-why="Un scan actif interroge directement les machines d&#x27;autrui ; c&#x27;est souvent l&#x27;acte préparatoire d&#x27;une intrusion, et il peut perturber le service. Sans autorisation, on s&#x27;abstient.">Oui, un scan ne fait que regarder, il n&#x27;entre pas</button>
+                        <button class="scenario__opt" data-why="Signaler après coup ne crée pas l&#x27;autorisation qui manquait au départ ; le cadre belge exige en plus de ne faire que le strict nécessaire et de prévenir le CCB.">Oui, si tu leur envoies ensuite les résultats</button>
+                    </div>
+                    <div class="scenario__why"><p>La règle du module : <strong>pas d'autorisation écrite = pas de test</strong>, même « passif » à tes yeux. Pour t'entraîner, scanne ton labo isolé ou une plateforme prévue pour (TryHackMe, Hack The Box, <code>scanme.nmap.org</code>, que le projet Nmap autorise explicitement à scanner).</p></div>
+                </div>
             </div>
         </section>
 
@@ -147,7 +164,56 @@
                 <div class="tl-item"><div class="tl-year">5</div><div class="tl-dot"></div><div class="tl-body"><strong>Rapport</strong> — la phase la plus importante : documenter les failles, leur criticité et surtout les <em>correctifs</em>.</div></div>
             </div>
 
-            <p>Des cadres formalisent cette démarche : <strong>PTES</strong> (Penetration Testing Execution Standard), le <strong>MITRE ATT&amp;CK</strong> (matrice des techniques adverses) ou l'<strong>OWASP Testing Guide</strong> pour le web.</p>
+            <p>Côté défense, on décrit l'attaque elle-même avec la <strong>kill chain</strong> : chaque étape est une occasion de la casser.</p>
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Une intrusion type, vue par la « kill chain » (Lockheed Martin)</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · attaquant → sources publiques</p>
+                        <p class="walk__head">Reconnaissance</p>
+                        <p>L'attaquant collecte : noms et adresses e-mail sur le site et LinkedIn, sous-domaines, services exposés (moteurs comme Shodan). Rien n'a encore touché la cible.</p>
+                        <p class="walk__change">Défense : réduire ce qui est <b>exposé</b> et ce qui <b>fuite</b> (bannières, organigrammes, e-mails publics).</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · attaquant</p>
+                        <p class="walk__head">Armement</p>
+                        <p>Il prépare son outil : un document piégé (macro), un lien vers une fausse page de connexion, ou un exploit pour la version de VPN repérée.</p>
+                        <p class="walk__change">Défense : <b>mises à jour</b> (l'exploit vise une version connue), macros bloquées.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · attaquant → victime</p>
+                        <p class="walk__head">Livraison</p>
+                        <p>L'e-mail d'hameçonnage arrive dans la boîte d'un employé, ou l'exploit est envoyé au service exposé.</p>
+                        <p class="walk__change">Défense : <b>filtrage</b> des e-mails, sensibilisation au <b>phishing</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · victime → poste</p>
+                        <p class="walk__head">Exploitation</p>
+                        <p>L'employé ouvre la pièce jointe, ou saisit son mot de passe sur la fausse page : le code s'exécute, ou l'identifiant est volé.</p>
+                        <p class="walk__change">Défense : <b>MFA</b> (un mot de passe volé ne suffit plus), EDR, moindre privilège.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · poste compromis</p>
+                        <p class="walk__head">Installation</p>
+                        <p>L'attaquant s'installe durablement : tâche planifiée, service, compte ajouté — pour survivre à un redémarrage.</p>
+                        <p class="walk__change">Défense : <b>journalisation</b> des créations de services et de comptes, alertes.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · poste → serveur de l'attaquant</p>
+                        <p class="walk__head">Commande et contrôle (C2)</p>
+                        <p>Le poste compromis contacte régulièrement un serveur de l'attaquant (souvent en HTTPS) pour recevoir des ordres.</p>
+                        <p class="walk__change">Défense : <b>filtrage sortant</b>, DNS filtrant, détection de connexions inhabituelles (IDS).</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · attaquant → réseau interne</p>
+                        <p class="walk__head">Actions sur l'objectif</p>
+                        <p>Mouvement latéral, élévation de privilèges, vol de données, puis souvent chiffrement par rançongiciel.</p>
+                        <p class="walk__change">Défense : <b>segmentation</b>, comptes admin séparés, <b>sauvegardes hors ligne</b>.</p>
+                    </li>
+                </ol>
+            </div>
+            <p>Des cadres formalisent cette démarche : <strong>PTES</strong> (Penetration Testing Execution Standard), le <strong>MITRE ATT&amp;CK</strong> (base de connaissances des tactiques et techniques réellement observées chez les attaquants, plus fine que la kill chain : sert autant à planifier un test qu'à vérifier ce que la défense détecte) ou l'<strong>OWASP Testing Guide</strong> pour le web.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -174,7 +240,7 @@
 <span class="c"># Détection d'OS + scripts par défaut (reconnaissance approfondie)</span>
 <span class="k">nmap</span> <span class="p">-A</span> <span class="s">10.10.10.20</span></pre>
             </div>
-            <p class="note">Lecture d'un résultat : un port <code>open</code> avec un service et sa <em>version</em> permet de chercher des vulnérabilités connues (CVE) associées à cette version.</p>
+            <p class="note">Lecture d'un résultat : un port <code>open</code> avec un service et sa <em>version</em> permet de chercher des vulnérabilités connues (<strong>CVE</strong> = identifiant public d'une faille, ex. <code>CVE-2024-3094</code>) associées à cette version. Chaque CVE porte une note <strong>CVSS</strong> de 0 à 10 (version 4.0 depuis novembre 2023, la 3.1 reste très répandue) : 0,1–3,9 faible, 4,0–6,9 moyenne, 7,0–8,9 élevée, 9,0–10 critique. La note mesure la gravité technique, pas le risque <em>chez toi</em> : une faille critique sur un service non exposé peut passer après une faille moyenne sur Internet.</p>
 
             <h3>Côté défense : ce que ça t'apprend</h3>
             <ul>
@@ -186,6 +252,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Nmap cartographie ports, services et versions. En défense, l'objectif est l'inverse : <strong>réduire la surface</strong> — moins de ports ouverts, pas de bannières bavardes, services à jour.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le scan de ta cible de labo montre <code>21/tcp open ftp vsftpd 2.3.4</code>. Quelle est ta prochaine étape ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Chercher les CVE connues pour vsftpd 2.3.4, et noter la correction à proposer</button>
+                        <button class="scenario__opt" data-why="Un seul port ouvert suffit si le service est vulnérable : la version exacte est justement l&#x27;indice à exploiter.">Conclure que le serveur est sûr, puisque seul le FTP est ouvert</button>
+                        <button class="scenario__opt" data-why="Un scan complet est utile, mais il ne dit rien de plus sur ce service : la version déjà trouvée est l&#x27;information à exploiter.">Relancer le scan avec -p- pour être certain</button>
+                    </div>
+                    <div class="scenario__why"><p>La <strong>version</strong> est l'information la plus précieuse d'un scan : vsftpd 2.3.4 est célèbre pour une porte dérobée (CVE-2011-2523). Côté défense, la conclusion du rapport est simple : mettre à jour ou couper ce service, et filtrer le port.</p></div>
+                </div>
             </div>
         </section>
 
@@ -220,6 +298,18 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Contrôle d'accès, configuration, dépendances, chiffrement, injection : le Top 10 OWASP couvre l'essentiel. La défense tient en peu de mots : <strong>valider les entrées, mettre à jour, MFA, moindre privilège</strong>.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Connecté à une boutique en ligne, tu ouvres <code>/commande?id=1052</code>, ta commande. En tapant <code>id=1051</code>, tu vois l&#x27;adresse d&#x27;un autre client. Quelle catégorie de l&#x27;OWASP Top 10 ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>A01 — contrôle d&#x27;accès défaillant</button>
+                        <button class="scenario__opt" data-why="Rien n&#x27;est injecté : l&#x27;identifiant est une valeur normale. C&#x27;est le serveur qui oublie de vérifier à qui appartient la commande.">A05 — injection</button>
+                        <button class="scenario__opt" data-why="L&#x27;authentification a marché : tu es bien toi. C&#x27;est l&#x27;autorisation (ce que tu as le droit de voir) qui manque.">A07 — défaillance d&#x27;authentification</button>
+                    </div>
+                    <div class="scenario__why"><p>C'est un <strong>IDOR</strong> (référence directe à un objet non contrôlée), cas d'école du <strong>A01</strong>. La correction : à chaque requête, le serveur vérifie que l'objet demandé appartient à l'utilisateur connecté — masquer ou rendre l'identifiant aléatoire ne suffit pas.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 06 -->
@@ -246,7 +336,7 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Ne pas se fermer la porte</p>
-                <p>Avant <code>PasswordAuthentication no</code>, <strong>vérifier que la connexion par clé marche</strong> (<code>ssh -i ~/.ssh/id_ed25519 user@serveur</code> depuis un second terminal) et garder la session actuelle ouverte pendant le redémarrage de SSH. Si la clé n'est pas reconnue, on n'a plus d'accès à distance — sur un serveur loué, cela veut dire passer par la console de secours.</p>
+                <p>Avant <code>PasswordAuthentication no</code>, <strong>vérifier que la connexion par clé marche</strong> (<code>ssh -i ~/.ssh/id_ed25519 user@serveur</code> depuis un second terminal) et garder la session actuelle ouverte pendant le redémarrage de SSH. Si la clé n'est pas reconnue, on n'a plus d'accès à distance — sur un serveur loué, cela veut dire passer par la console de secours. Autre piège : sur Debian, <code>sshd_config</code> commence par <code>Include /etc/ssh/sshd_config.d/*.conf</code>, et pour chaque réglage <strong>la première valeur lue l'emporte</strong>. Un fichier déposé là (par cloud-init, par exemple) avec <code>PasswordAuthentication yes</code> annule ta ligne. Contrôle la configuration réellement appliquée avec <code>sudo sshd -T | grep -i passwordauthentication</code>.</p>
             </div>
 
             <p>Pour aller plus loin, des <strong>guides de référence</strong> existent : les <em>CIS Benchmarks</em> et les <em>STIG</em> listent, système par système, les réglages à appliquer. On les suit comme des checklists.</p>
@@ -254,6 +344,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Durcir = <strong>mettre à jour + désactiver l'inutile + moindre privilège + SSH par clés</strong>. Un antivirus/EDR et <code>fail2ban</code> complètent. Les <em>CIS Benchmarks</em> donnent la checklist par OS.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu as mis <code>PasswordAuthentication no</code> à la fin de <code>/etc/ssh/sshd_config</code> et redémarré SSH. Pourtant, une connexion par mot de passe passe encore. Que vérifies-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Un fichier de sshd_config.d qui fixe la valeur avant ta ligne</button>
+                        <button class="scenario__opt" data-why="Sur Debian, le service s&#x27;appelle ssh ; s&#x27;il n&#x27;avait pas redémarré, systemctl l&#x27;aurait signalé. Le comportement vient de la configuration lue.">Que le service s&#x27;appelle bien sshd et pas ssh</button>
+                        <button class="scenario__opt" data-why="Les valeurs yes / no ne sont pas sensibles à la casse : le problème est ailleurs.">Qu&#x27;il faut écrire « No » avec une majuscule</button>
+                    </div>
+                    <div class="scenario__why"><p>Pour sshd, la <strong>première</strong> occurrence d'un mot-clé gagne. Or l'<code>Include</code> de <code>sshd_config.d/*.conf</code> est en tête du fichier. <code>sudo sshd -T</code> affiche la configuration effective ; on corrige le fichier fautif, ou on place son réglage dans un fichier de ce dossier au nom qui passe en premier.</p></div>
+                </div>
             </div>
         </section>
 
@@ -269,8 +371,13 @@
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">ufw — pare-feu simple</span></div>
                 <pre class="terminal__code"><span class="k">ufw</span> default <span class="s">deny incoming</span>      <span class="c"># bloquer tout en entrée</span>
 <span class="k">ufw</span> default <span class="s">allow outgoing</span>     <span class="c"># autoriser les sorties</span>
-<span class="k">ufw</span> allow <span class="s">22/tcp</span>               <span class="c"># n'ouvrir que SSH</span>
-<span class="k">ufw</span> enable</pre>
+<span class="k">ufw</span> allow <span class="s">22/tcp</span>               <span class="c"># n'ouvrir que SSH — AVANT enable si tu es connecté en SSH</span>
+<span class="k">ufw</span> enable
+<span class="k">ufw</span> status verbose               <span class="c"># politique par défaut et règles actives</span></pre>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Deux pièges</p>
+                <p>Sur un serveur distant, un <code>ufw enable</code> avant d'autoriser SSH coupe ta propre session. Et sur un hôte Docker, un port publié avec <code>-p</code> <strong>contourne</strong> ufw : Docker écrit ses règles avant celles d'ufw (voir le module <a href="docker.html">Docker</a>, chapitre réseau).</p>
             </div>
 
             <h3>Segmentation, VPN &amp; surveillance</h3>
@@ -284,6 +391,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Pare-feu en <strong>deny par défaut</strong>, réseau <strong>segmenté</strong>, accès distant par <strong>VPN (WireGuard)</strong> et non par exposition directe, et des <strong>logs centralisés</strong> pour la détection. La défense en profondeur, c'est empiler ces couches.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Une caméra connectée bon marché est installée sur le même réseau que le NAS familial. Quelle mesure limite le plus les dégâts si la caméra est compromise ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>La placer dans un VLAN IoT qui n&#x27;a pas le droit de joindre le NAS</button>
+                        <button class="scenario__opt" data-why="On ne peut généralement rien installer sur ce genre d&#x27;objet : c&#x27;est le réseau qu&#x27;on adapte.">Installer un antivirus sur la caméra</button>
+                        <button class="scenario__opt" data-why="Le Wi-Fi n&#x27;y change rien : une fois la caméra compromise, elle est déjà dans le réseau, avec un accès direct au NAS.">Changer le mot de passe Wi-Fi tous les mois</button>
+                    </div>
+                    <div class="scenario__why"><p>La <strong>segmentation</strong> transforme une compromission en incident local : la caméra compromise ne voit que son VLAN, et le pare-feu entre VLAN bloque tout ce qui n'est pas explicitement autorisé (deny par défaut).</p></div>
+                </div>
             </div>
         </section>
 
@@ -299,12 +418,12 @@
                 <li><strong>MFA / 2FA partout</strong> — un second facteur (appli TOTP, clé FIDO2) bloque l'essentiel des vols de compte.</li>
                 <li><strong>Mises à jour</strong> — OS, navigateur, applis : les failles corrigées ne servent qu'à ceux qui n'ont pas patché.</li>
                 <li><strong>Phishing</strong> — vérifier l'expéditeur et l'URL, ne pas cliquer dans l'urgence. L'humain reste la première cible.</li>
-                <li><strong>Sauvegardes 3-2-1</strong> — la seule vraie parade au rançongiciel (cf. module <a href="proxmox.html">Proxmox</a>, chapitre backup).</li>
+                <li><strong>Sauvegardes 3-2-1</strong> — le dernier rempart contre le rançongiciel, à condition qu'une copie soit <strong>hors ligne ou non modifiable</strong> (un rançongiciel chiffre aussi les sauvegardes qu'il peut atteindre) et que la restauration ait été testée (cf. module <a href="proxmox.html">Proxmox</a>, chapitre backup).</li>
             </ul>
 
             <div class="tip">
                 <p class="tip__label">Pour aller plus loin</p>
-                <p>Côté chaîne : <a href="https://www.youtube.com/@zSecurity" target="_blank" rel="noopener">zSecurity</a> pour le hacking éthique. Côté pratique légale : <em>TryHackMe</em> et <em>Hack The Box</em> pour s'entraîner sur des cibles prévues pour ça. En France, l'<strong>ANSSI</strong> publie d'excellents guides de sécurité gratuits.</p>
+                <p>Côté chaîne : <a href="https://www.youtube.com/@zSecurity" target="_blank" rel="noopener">zSecurity</a> pour le hacking éthique. Côté pratique légale : <em>TryHackMe</em> et <em>Hack The Box</em> pour s'entraîner sur des cibles prévues pour ça. En Belgique, le <strong>CCB</strong> publie ses conseils sur <em>Safeonweb</em> et reçoit les signalements ; en France, l'<strong>ANSSI</strong> publie d'excellents guides de sécurité gratuits.</p>
             </div>
 
             <div class="takeaway takeaway--warn">
@@ -313,7 +432,6 @@
             </div>
         </section>
 
-        <!-- Test de fin de module — rendu par assets/quiz.js -->
         <section class="test" id="test" data-test="securite">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
@@ -330,10 +448,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@zSecurity" target="_blank" rel="noopener">zSecurity</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

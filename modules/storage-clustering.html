@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -107,6 +107,18 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>NAS = partage de <strong>fichiers</strong> ; SAN = livraison de <strong>blocs</strong>. C'est pour ça qu'un serveur voit un LUN SAN comme un disque local qu'il peut partitionner et formater lui-même — et c'est exactement ce qui rend le clustering possible.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">SRV-NODE1 et SRV-NODE2 doivent voir le <strong>même volume</strong> comme un disque local, pour que le cluster le formate et le fasse passer de l&#x27;un à l&#x27;autre. Que choisis-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Un LUN sur un SAN iSCSI, présenté aux deux nœuds</button>
+                        <button class="scenario__opt" data-why="Un NAS livre des fichiers par un partage : les nœuds n&#x27;y voient pas un disque qu&#x27;ils pourraient initialiser et formater.">Un partage SMB sur un NAS, monté sur les deux nœuds</button>
+                        <button class="scenario__opt" data-why="Un disque en DAS n&#x27;est visible que de son serveur : si SRV-NODE1 tombe, le disque tombe avec lui.">Un second disque interne dans SRV-NODE1</button>
+                    </div>
+                    <div class="scenario__why"><p>Le cluster a besoin d'un stockage en mode <strong>bloc</strong>, visible de tous les nœuds : c'est la définition d'un SAN. Chaque nœud voit le LUN comme un disque local (<code>Get-Disk</code> affiche <code>BusType iSCSI</code>), et le cluster décide lequel l'utilise.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 02 -->
@@ -116,18 +128,18 @@
             <p class="chapter__intro">Avant de partager quoi que ce soit, il faut décider comment le disque est découpé et comment on encaisse la panne d'un disque.</p>
 
             <h3>GPT ou MBR</h3>
-            <p><strong>GPT</strong> est le partitionnement moderne, adapté aux gros disques et à l'UEFI. <strong>MBR</strong> est plus ancien et plafonne autour de 2 To. Pour un nouveau volume Windows, GPT est le choix par défaut.</p>
+            <p><strong>GPT</strong> est le partitionnement moderne, adapté aux gros disques et à l'UEFI. <strong>MBR</strong> est plus ancien : 4 partitions principales et 2 Tio au plus (avec des secteurs de 512 octets). GPT accepte 128 partitions sous Windows et des disques bien plus gros. Pour un nouveau volume Windows, GPT est le choix par défaut, et le seul possible pour démarrer en UEFI.</p>
 
             <h3>Les niveaux de RAID</h3>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Niveau</th><th>Principe</th><th>Tolérance</th></tr></thead>
+                    <thead><tr><th>Niveau</th><th>Principe</th><th>Disques min.</th><th>Capacité utile (n disques)</th><th>Tolérance</th></tr></thead>
                     <tbody>
-                        <tr><td>RAID 0</td><td>Répartition (striping) — performances maximales</td><td>Aucune</td></tr>
-                        <tr><td>RAID 1</td><td>Miroir : copie identique sur deux disques</td><td>1 disque, mais capacité utile divisée par deux</td></tr>
-                        <tr><td>RAID 5</td><td>Parité répartie</td><td>1 disque</td></tr>
-                        <tr><td>RAID 6</td><td>Double parité</td><td>2 disques</td></tr>
-                        <tr><td>RAID 10</td><td>Miroir + répartition</td><td>Performant, mais coûteux en capacité</td></tr>
+                        <tr><td>RAID 0</td><td>Répartition (striping) — performances maximales</td><td>2</td><td>n</td><td>Aucune</td></tr>
+                        <tr><td>RAID 1</td><td>Miroir : copie identique sur deux disques</td><td>2</td><td>n ÷ 2</td><td>1 disque</td></tr>
+                        <tr><td>RAID 5</td><td>Parité répartie</td><td>3</td><td>n − 1</td><td>1 disque</td></tr>
+                        <tr><td>RAID 6</td><td>Double parité</td><td>4</td><td>n − 2</td><td>2 disques quelconques</td></tr>
+                        <tr><td>RAID 10</td><td>Miroirs, puis répartition sur les miroirs</td><td>4</td><td>n ÷ 2</td><td>1 disque par miroir (2 si elles touchent deux miroirs différents)</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -146,13 +158,25 @@
                 </div>
                 <div class="card">
                     <h4>Miroir / Parité</h4>
-                    <p>Le miroir duplique, la parité calcule. Le miroir coûte de la capacité, la parité coûte des écritures. Les deux survivent à une panne de disque.</p>
+                    <p>Le miroir duplique, la parité calcule. Le miroir coûte de la capacité, la parité coûte des écritures. Miroir double et parité simple survivent à une panne de disque ; miroir triple et double parité, à deux.</p>
                 </div>
             </div>
 
             <div class="tip">
                 <p class="tip__label">Provisionnement fin (thin)</p>
                 <p>Un disque virtuel <em>thin</em> ne consomme sur le pool que ce qui est réellement écrit. Pratique pour surprovisionner — à condition de surveiller le pool, car un pool plein met tous les volumes en défaut d'un coup.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu as quatre disques de 2 To et tu dois survivre à la panne de <strong>deux disques quelconques</strong>. Quel niveau de RAID, et combien d&#x27;espace utile ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>RAID 6, 4 To utiles</button>
+                        <button class="scenario__opt" data-why="RAID 10 survit à deux pannes seulement si elles touchent deux miroirs différents : deux disques du même miroir, et tout est perdu.">RAID 10, 4 To utiles</button>
+                        <button class="scenario__opt" data-why="RAID 5 n&#x27;a qu&#x27;une parité : il survit à un disque, pas à deux.">RAID 5, 6 To utiles</button>
+                    </div>
+                    <div class="scenario__why"><p>La double parité de RAID 6 encaisse la perte de n'importe quels deux disques, au prix de deux disques de capacité : (4 − 2) × 2 To = 4 To. Et aucun RAID ne remplace une sauvegarde.</p></div>
+                </div>
             </div>
         </section>
 
@@ -170,6 +194,7 @@
                         <tr><td>exFAT</td><td>Supports amovibles, gros fichiers</td><td>Pas d'ACL, pas de journalisation</td></tr>
                         <tr><td>HFS+</td><td>Ancien format Apple</td><td>Peu compatible nativement avec Windows</td></tr>
                         <tr><td><strong>NTFS</strong></td><td>Référence Windows Server</td><td>MFT, ACL, compression, quotas, EFS, gros volumes</td></tr>
+                        <tr><td><strong>ReFS</strong></td><td>Volumes de données résilients : Hyper-V, Storage Spaces, sauvegardes</td><td>Pas d'EFS ni de quotas de disque NTFS, et Windows ne démarre pas dessus</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -222,6 +247,22 @@
                 <li><strong>NFS</strong> — le standard côté Unix/Linux.</li>
                 <li><strong>AFP</strong> — ancien protocole Apple, aujourd'hui remplacé par SMB.</li>
             </ul>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Un partage = un chemin UNC <code>\\serveur\partage</code> + ses propres permissions. Par le réseau, le droit effectif est le <strong>plus restrictif</strong> entre partage et NTFS ; en local, seul le NTFS compte. Pratique courante : partage large, NTFS précis.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Partage <code>DEV</code> : <em>Domain Users : Change</em>. NTFS du dossier : <code>DEV-GRP</code> en <em>Read &amp; Execute</em>, rien d&#x27;autre pour eux. Que peut faire sso (membre de DEV-GRP) par <code>\\SRV-FILE01\DEV</code> ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Lire les fichiers, sans pouvoir les modifier</button>
+                        <button class="scenario__opt" data-why="Change est le droit du partage seulement. Par le réseau, on garde le plus restrictif des deux couches : ici le NTFS, en lecture.">Lire et modifier les fichiers</button>
+                        <button class="scenario__opt" data-why="Il n&#x27;y a aucun refus : les deux couches lui donnent au moins la lecture.">Rien : l&#x27;accès lui est refusé</button>
+                    </div>
+                    <div class="scenario__why"><p>Partage : Change. NTFS : Read &amp; Execute. Le plus restrictif des deux l'emporte : <strong>lecture</strong>. Pour vérifier depuis le serveur : onglet <em>Security</em> → <em>Advanced</em> → <em>Effective Access</em>, qui calcule le droit NTFS d'un utilisateur.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 05 -->
@@ -271,6 +312,20 @@
             <h3>Restaurer, concrètement</h3>
             <p>Choisir l'emplacement puis la date de sauvegarde, le type de récupération, les éléments, la destination et les options de conflit — puis <strong>contrôler le statut</strong> en fin d'opération plutôt que de supposer que tout s'est bien passé.</p>
 
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Les sauvegardes existent-elles, et que peut-on en restaurer ?</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Invite de commandes (administrateur)</span></div>
+                <pre class="terminal__code"><span class="k">wbadmin</span> get versions<span class="c">          # liste les sauvegardes disponibles</span></pre>
+            </div>
+                <p class="verify__sub">Sortie attendue (extrait)</p>
+            <pre class="verify__out">Backup time: …
+Backup location: …
+Version identifier: …
+Can recover: Volume(s), File(s), Application(s), Bare Metal Recovery, System State</pre>
+                <p class="verify__fail">Aucune version listée : la sauvegarde planifiée n'a jamais tourné (destination absente ou pleine). Le journal <em>Applications and Services Logs → Microsoft → Windows → Backup</em> dit pourquoi. Et une version listée ne prouve rien tant qu'on n'en a pas restauré un fichier.</p>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">La règle 3-2-1</p>
                 <p><strong>3</strong> copies des données, sur <strong>2</strong> supports différents, dont <strong>1</strong> hors site. Une sauvegarde en ligne ajoute la protection contre le sinistre local : elle doit être chiffrée, soumise à une stratégie de rétention, et <strong>testée</strong>. Une sauvegarde jamais restaurée n'est pas une sauvegarde, c'est une hypothèse.</p>
@@ -356,6 +411,22 @@
                 <p class="takeaway__label">Pourquoi remettre offline</p>
                 <p>Le même LUN est visible par les deux nœuds simultanément. Si les deux l'écrivent en même temps hors du contrôle du cluster, le système de fichiers est corrompu. Tant que le cluster n'a pas pris la main sur ces disques, ils doivent rester offline.</p>
             </div>
+            <div class="tip">
+                <p class="tip__label">En production : MPIO</p>
+                <p>Avec deux cartes iSCSI par nœud, le serveur verrait le même LUN deux fois. La fonctionnalité <strong>MPIO</strong> (<em>Multipath I/O</em>) les regroupe en un seul disque à deux chemins : si un chemin tombe, l'autre prend le relais. <code>Install-WindowsFeature Multipath-IO</code>, puis <code>Enable-MSDSMAutomaticClaim -BusType iSCSI</code> (redémarrage nécessaire), et dans l'initiateur, connexion avec <em>Enable multi-path</em> coché. Inutile dans le lab à une seule carte.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur SRV-NODE2, <em>Disk Management</em> affiche les deux disques iSCSI en <strong>Offline</strong>, alors que SRV-NODE1 les a initialisés. Que fais-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Rien : c&#x27;est voulu, le cluster les prendra en main</button>
+                        <button class="scenario__opt" data-why="Deux nœuds qui écrivent sur le même LUN hors du contrôle du cluster corrompent le système de fichiers.">Les passer Online sur SRV-NODE2 aussi</button>
+                        <button class="scenario__opt" data-why="Réinitialiser efface la table de partitions créée par SRV-NODE1 : on repart de zéro, avec le même risque.">Les initialiser à nouveau depuis SRV-NODE2</button>
+                    </div>
+                    <div class="scenario__why"><p>Un LUN partagé ne doit être en ligne que sur <strong>un</strong> nœud à la fois. Une fois ajouté au cluster, c'est le cluster qui décide quel nœud l'utilise (et, pour un CSV, coordonne l'accès de tous).</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 09 -->
@@ -399,7 +470,7 @@
 <span class="c"># Rôle de chaque réseau vu par le cluster</span>
 <span class="k">Get-ClusterNetwork</span> | <span class="k">Select-Object</span> <span class="s">Name, Role, Address, AddressMask</span></pre>
             </div>
-            <p>Côté contrôleur de domaine, l'objet ordinateur du cluster doit apparaître dans <strong>Active Directory Users and Computers → Computers</strong>. C'est le <em>Cluster Name Object</em> : s'il manque, c'est un problème de droits AD, pas de réseau.</p>
+            <p>Côté contrôleur de domaine, l'objet ordinateur du cluster doit apparaître dans <strong>Active Directory Users and Computers</strong>, dans la même OU que les comptes des nœuds (<em>Computers</em> par défaut). C'est le <em>Cluster Name Object</em> (CNO) : s'il manque, c'est un problème de droits AD (le droit de créer des objets ordinateurs dans cette OU), pas de réseau.</p>
 
             <h3>Ajouter le stockage partagé</h3>
             <div class="steps">
@@ -410,7 +481,7 @@
 
             <div class="tip">
                 <p class="tip__label">Test rapide</p>
-                <p>Créer un fichier dans <code>C:\ClusterStorage\Volume1</code>, puis déplacer le disque vers l'autre nœud (<em>Move</em>). Le fichier doit toujours être là — c'est la preuve que le stockage suit le rôle.</p>
+                <p>Créer un fichier dans <code>C:\ClusterStorage\Volume1</code> depuis SRV-NODE1, puis le chercher depuis SRV-NODE2 : il y est déjà, sans rien déplacer — c'est le propre d'un CSV, lisible et inscriptible par tous les nœuds à la fois. <em>Move</em> ne change que le nœud <strong>coordinateur</strong> (celui qui gère les métadonnées du volume), et le fichier reste accessible pendant l'opération.</p>
             </div>
         </section>
 
@@ -428,9 +499,20 @@
                 <div class="step"><div class="step__num">4</div><div class="step__body"><p><em>Next</em>, <em>Finish</em>.</p></div></div>
             </div>
 
+            <p>En PowerShell : <code>Set-ClusterQuorum -DiskWitness "Cluster Disk 2"</code> (le nom du disque tel que l'affiche <code>Get-ClusterResource</code>). Trois sortes de témoins existent :</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Témoin</th><th>Ce que c'est</th><th>Quand</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Disque</strong></td><td>Un petit LUN partagé (512 Mo suffisent)</td><td>Cluster avec stockage partagé : le TP</td></tr>
+                        <tr><td><strong>Partage de fichiers</strong></td><td>Un partage SMB sur un serveur qui n'est pas un nœud</td><td>Pas de stockage partagé, ou nœuds sur deux sites</td></tr>
+                        <tr><td><strong>Cloud</strong></td><td>Un compte de stockage Azure (Blob)</td><td>Pas de troisième site disponible ; accès Internet nécessaire</td></tr>
+                    </tbody>
+                </table>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">Pourquoi un témoin</p>
-                <p>Avec deux nœuds, un incident réseau donnerait à chacun une voix — égalité parfaite, et le risque que les deux se déclarent actifs (<em>split-brain</em>) en écrivant sur le même LUN. Le disque témoin apporte la voix impaire qui départage.</p>
+                <p>Avec deux nœuds, un incident réseau donnerait à chacun une voix — égalité parfaite, et le risque que les deux se déclarent actifs (<em>split-brain</em>) en écrivant sur le même LUN. Le disque témoin apporte la voix impaire qui départage : il faut une <strong>majorité</strong> des voix (ici 2 sur 3) pour que le cluster tourne. Depuis Windows Server 2012, le <em>quorum dynamique</em> ajuste aussi les voix quand des nœuds s'arrêtent proprement.</p>
             </div>
 
             <h3>Installer et configurer le rôle</h3>
@@ -449,6 +531,18 @@
             <div class="tip">
                 <p class="tip__label">Le nom qui compte</p>
                 <p>Les clients ne se connectent <strong>jamais</strong> à SRV-NODE1 ou SRV-NODE2 : ils utilisent <code>\\SRV-FS01\…</code>. C'est ce nom-là qui bascule d'un nœud à l'autre, et c'est tout l'intérêt de l'opération.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un cluster de deux nœuds, un dans chaque bâtiment, <strong>sans stockage partagé</strong> (chaque nœud a ses disques). Quel témoin lui donnes-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Un partage de fichiers témoin sur un troisième serveur</button>
+                        <button class="scenario__opt" data-why="Un disque témoin doit être vu par les deux nœuds : il suppose un stockage partagé, qui n&#x27;existe pas ici.">Un disque témoin de 2 Go</button>
+                        <button class="scenario__opt" data-why="Avec deux voix seulement, la perte du lien entre bâtiments laisse chaque nœud sans majorité : il faut une troisième voix.">Aucun : deux nœuds suffisent</button>
+                    </div>
+                    <div class="scenario__why"><p>Le témoin doit être joignable par les deux nœuds, et idéalement ailleurs qu'eux. Sans stockage partagé, c'est un <strong>partage de fichiers</strong> sur un troisième serveur (ou un <strong>témoin cloud</strong> Azure). <code>Get-ClusterQuorum</code> affiche le témoin en place.</p></div>
+                </div>
             </div>
         </section>
 
@@ -470,6 +564,48 @@
                 <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Test 5 — Basculement pendant une copie.</strong><p>Lancer une copie de fichier vers le partage, puis déplacer le rôle vers l'autre nœud et observer côté client.</p></div></div>
             </div>
 
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Test 2 vu de l'intérieur : SRV-NODE1 s'arrête net</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · SRV-NODE1 → SRV-NODE2 (battements de cœur, UDP 3343)</p>
+                        <p class="walk__head">Les battements de cœur s'arrêtent</p>
+                        <p>Les nœuds s'envoient un battement de cœur par seconde. Par défaut depuis Windows Server 2016, après <strong>10 battements manqués</strong> sur un même sous-réseau (20 entre sous-réseaux), le nœud muet est considéré comme perdu.</p>
+                        <p class="walk__change">Une dizaine de secondes de silence avant toute réaction : c'est le <strong>délai de détection</strong>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · SRV-NODE2</p>
+                        <p class="walk__head">SRV-NODE1 est retiré du cluster</p>
+                        <p>SRV-NODE2 recalcule la liste des membres actifs et retire SRV-NODE1. Le journal <em>System</em> enregistre l'événement <strong>1135</strong> (nœud retiré de l'appartenance active).</p>
+                        <p class="walk__change">Le cluster ne compte plus qu'<strong>un nœud vivant</strong>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · SRV-NODE2 + disque témoin</p>
+                        <p class="walk__head">Le quorum est-il toujours atteint ?</p>
+                        <p>Trois voix au total : SRV-NODE1, SRV-NODE2, le disque témoin. SRV-NODE2 prend possession du témoin : il a 2 voix sur 3, la majorité. Le cluster continue.</p>
+                        <p class="walk__change">Sans témoin, 1 voix sur 2 ne serait pas une majorité : le <strong>témoin</strong> est ce qui permet de survivre.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · SRV-NODE2 → SAN (iSCSI, 3260)</p>
+                        <p class="walk__head">Prendre la main sur le disque de données</p>
+                        <p>SRV-NODE2 pose une <strong>réservation</strong> sur le LUN de données auprès de la cible : désormais, lui seul y écrit. Si SRV-NODE1 revenait brutalement, la cible refuserait ses écritures.</p>
+                        <p class="walk__change">Un seul propriétaire à la fois : c'est ce qui évite le <strong>split-brain</strong> et la corruption.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · SRV-NODE2</p>
+                        <p class="walk__head">Remettre le rôle en ligne, dans l'ordre des dépendances</p>
+                        <p>Le disque d'abord, puis l'adresse IP <code>172.16.50.76</code>, puis le nom réseau <code>SRV-FS01</code>, enfin le serveur de fichiers et ses partages. Le rôle passe de <em>Pending</em> à <em>Online</em>.</p>
+                        <p class="walk__change">Chaque ressource attend celle dont elle <strong>dépend</strong> : pas de partage sans disque, pas de nom sans adresse.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · Client → SRV-FS01 (SMB, 445)</p>
+                        <p class="walk__head">Le client se reconnecte</p>
+                        <p>Le client parle toujours à <code>\\SRV-FS01</code>, même nom, même adresse : il se reconnecte seul après une courte pause. Selon l'application, une copie en cours reprend ou échoue — c'est ce que montre le test 5.</p>
+                        <p class="walk__change">Pour l'utilisateur, une <strong>coupure de quelques secondes</strong>, pas une panne.</p>
+                    </li>
+                </ol>
+            </div>
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Ce que le cluster ne fait pas</p>
                 <p>Le stockage partagé améliore la <strong>disponibilité</strong> — il ne remplace pas les sauvegardes. Le cluster protège de la panne d'un <em>nœud</em>. Il ne protège ni de la panne du SAN, ni d'un fichier supprimé, ni d'un ransomware : ces trois-là frappent le stockage partagé, que le service soit clusterisé ou non.</p>
@@ -497,9 +633,9 @@
 <span class="k">Get-Disk</span> | <span class="k">Where-Object</span> BusType <span class="p">-eq</span> iSCSI</pre>
             </div>
                 <p class="verify__sub">Sortie attendue</p>
-            <pre class="verify__out">TargetNodeAddress                                   IsConnected IsPersistent
------------------                                   ----------- ------------
-iqn.1991-05.com.microsoft:srv-san01-cible-target    True        True</pre>
+            <pre class="verify__out">TargetNodeAddress                                     IsConnected IsPersistent
+-----------------                                     ----------- ------------
+iqn.1991-05.com.microsoft:srv-san01-lun-target-target True        True</pre>
                 <p class="verify__fail"><code>IsPersistent : False</code> : la session ne reviendra pas après un redémarrage (cocher « Add this connection to the list of Favorite Targets »). Pas de session : l'IQN de l'initiateur n'est pas autorisé sur la cible, ou le port 3260 est filtré.</p>
             </div>
             <div class="verify">
@@ -522,7 +658,7 @@ Name       OwnerNode  State
 SRV-FS01   SRV-NODE1  Online</pre>
                 <p class="verify__fail">Un nœud <code>Down</code> ou <code>Paused</code> : vérifier le réseau de battement de cœur et le service de cluster. Avant tout changement, <code>Test-Cluster</code> produit un rapport complet.</p>
             </div>
-            <div class="cmdex" data-accept="Move-ClusterGroup (-Name )?&quot;?SRV-FS01&quot;? -Node &quot;?SRV-NODE2&quot;?">
+            <div class="cmdex" data-accept="Move-ClusterGroup (-Name )?&quot;?SRV-FS01&quot;? -Node &quot;?SRV-NODE2&quot;?" data-hint="Move-ClusterGroup, avec le nom du rôle et -Node.">
                 <p class="cmdex__label">À toi de taper</p>
                 <p>Déplace le rôle <code>SRV-FS01</code> sur le nœud <code>SRV-NODE2</code>.</p>
                 <details class="reveal">
@@ -532,7 +668,7 @@ SRV-FS01   SRV-NODE1  Online</pre>
             </div>
             <div class="exo">
                 <p class="exo__label">Exercice — le droit effectif</p>
-                <p>Le dossier <code>Compta</code> est partagé avec <em>Everyone : Read</em>. En NTFS, <code>ACC-GRP</code> a <em>Modify</em> et <code>Users</em> a <em>Read &amp; Execute</em>. Quel est le droit de Benjamin (membre d'ACC-GRP) par le réseau ? Et s'il ouvre une session sur le serveur ?</p>
+                <p>Le dossier <code>Compta</code> est partagé avec <em>Everyone : Read</em>. En NTFS, <code>ACC-GRP</code> a <em>Modify</em> et <code>Users</code> a <em>Read &amp; Execute</em>. Quel est le droit de Benjamin (membre d'ACC-GRP) par le réseau ? Et s'il ouvre une session sur le serveur ?</p>
                 <details class="reveal">
                     <summary>Afficher la correction</summary>
                     <div class="reveal__body"><p>Par le réseau : NTFS donne Modify (le cumul de ses groupes), le partage donne Read → le plus restrictif : <strong>Read</strong>. En local, le partage ne compte pas : <strong>Modify</strong>. Correction habituelle : partage en <em>Change</em> (ou <em>Full</em>) pour les utilisateurs authentifiés, et tout le réglage fin en NTFS.</p></div>
@@ -552,6 +688,18 @@ SRV-FS01   SRV-NODE1  Online</pre>
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+            <ul>
+                <li><a href="https://learn.microsoft.com/fr-fr/windows-server/failover-clustering/failover-clustering-overview" rel="noopener">Microsoft Learn — vue d&#x27;ensemble du clustering de basculement</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/windows-server/failover-clustering/manage-cluster-quorum" rel="noopener">Microsoft Learn — configurer et gérer le quorum</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/windows-server/failover-clustering/failover-cluster-csvs" rel="noopener">Microsoft Learn — volumes partagés de cluster (CSV)</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/windows-server/failover-clustering/prestage-cluster-adds" rel="noopener">Microsoft Learn — objets ordinateur du cluster dans AD DS</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/powershell/module/iscsi/" rel="noopener">Microsoft Learn — module PowerShell iSCSI</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/troubleshoot/windows-server/high-availability/iaas-sql-failover-cluster-network-thresholds" rel="noopener">Microsoft Learn — seuils réseau du cluster (battements de cœur)</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/windows-server/storage/refs/refs-overview" rel="noopener">Microsoft Learn — vue d&#x27;ensemble de ReFS</a></li>
+            </ul>
+        </div>
     </main>
 </div>
 
@@ -560,10 +708,10 @@ SRV-FS01   SRV-NODE1  Online</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

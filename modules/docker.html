@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -107,11 +107,23 @@
 
             <h3>Ce qu'on appelle « Docker Engine »</h3>
             <p>La commande <code>docker</code> n'est qu'un client. La chaîne complète : <strong>CLI → démon <code>dockerd</code> → containerd → runc → namespaces / cgroups</strong>. Le client parle au démon par la socket <code>/var/run/docker.sock</code>.</p>
-            <p>Docker dérive de <strong>LXC</strong> : LXC fournit des conteneurs « système » (un OS bas niveau, comme les CT de Proxmox), Docker des conteneurs d'<strong>application</strong>, avec l'outillage pour les construire et les distribuer.</p>
+            <p>Docker s'appuyait à ses débuts (2013-2014) sur <strong>LXC</strong>, avant d'utiliser sa propre bibliothèque, devenue <code>runc</code>. La différence d'usage demeure : LXC fournit des conteneurs « système » (un OS presque complet, comme les CT de Proxmox), Docker des conteneurs d'<strong>application</strong> — un processus principal — avec l'outillage pour les construire et les distribuer.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Un conteneur est un <strong>processus isolé</strong>, pas une petite VM : namespaces pour ne pas voir, cgroups pour ne pas déborder, et le noyau de l'hôte pour tout le monde.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur ton serveur Debian (noyau Linux, processeur x86_64), un collègue veut lancer une image construite pour Windows Server. Que se passe-t-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Ça échoue : un conteneur utilise le noyau de l&#x27;hôte, ici un noyau Linux</button>
+                        <button class="scenario__opt" data-why="Docker n&#x27;émule rien : il isole des processus qui tournent sur le noyau de l&#x27;hôte. Une image Windows exige un noyau Windows.">Ça marche, Docker émule le système de l&#x27;image</button>
+                        <button class="scenario__opt" data-why="Ce n&#x27;est pas une question de vitesse : sans noyau Windows, le binaire ne peut tout simplement pas s&#x27;exécuter.">Ça marche, mais plus lentement</button>
+                    </div>
+                    <div class="scenario__why"><p>Un conteneur n'apporte pas de noyau : l'image doit correspondre au <strong>système</strong> (Linux / Windows) et à l'<strong>architecture</strong> (x86_64 / ARM) de l'hôte. Pour un autre OS, il faut une VM.</p></div>
+                </div>
             </div>
         </section>
 
@@ -249,6 +261,54 @@ $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
 <span class="k">docker</span> system prune                     <span class="c"># ménage des objets orphelins</span></pre>
             </div>
 
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Ce qui se passe pendant <code>docker run -d --name web -p 8080:80 nginx</code></p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · CLI → dockerd</p>
+                        <p class="walk__head">Le client transmet la demande au démon</p>
+                        <p><code>docker</code> envoie la requête à <code>dockerd</code> par la socket <code>/var/run/docker.sock</code>. Le client ne fait rien d'autre.</p>
+                        <p class="walk__change">Le <b>client</b> n'est qu'une télécommande : c'est le <b>démon</b> qui travaille, en root.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · dockerd → registre</p>
+                        <p class="walk__head">L'image est cherchée, téléchargée si absente</p>
+                        <p>Pas de <code>nginx:latest</code> en local ? Le démon le tire du Docker Hub, couche par couche (<em>Pulling fs layer</em>). Les couches déjà présentes ne sont pas retéléchargées.</p>
+                        <p class="walk__change">Sans tag, c'est <b>latest</b>. Les <b>couches</b> sont partagées entre images.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · dockerd</p>
+                        <p class="walk__head">Le conteneur est créé</p>
+                        <p>Une couche d'écriture vide est posée sur les couches de l'image (<code>overlay2</code>), le conteneur reçoit un identifiant et le nom <code>web</code>. À ce stade il existe (<code>docker ps -a</code>) mais ne tourne pas : c'est ce que fait <code>docker create</code> seul.</p>
+                        <p class="walk__change">Image en <b>lecture seule</b> + couche d'écriture = le conteneur.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · dockerd → noyau</p>
+                        <p class="walk__head">Le réseau est branché</p>
+                        <p>Un namespace réseau est créé ; une paire d'interfaces <code>veth</code> relie le conteneur au pont <code>docker0</code>, qui lui attribue une adresse en <code>172.17.0.x</code>. Le <code>-p 8080:80</code> devient une règle de NAT (DNAT) sur l'hôte.</p>
+                        <p class="walk__change"><b>veth</b> + pont <b>docker0</b> + règle <b>DNAT</b> pour le port publié.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · containerd → runc</p>
+                        <p class="walk__head">Le processus principal démarre, isolé</p>
+                        <p><code>containerd</code> confie le lancement à <code>runc</code>, qui crée les namespaces (PID, montages, nom d'hôte…), applique les cgroups, puis exécute la commande de l'image : <code>nginx</code> devient le <strong>PID 1</strong> du conteneur.</p>
+                        <p class="walk__change">Le conteneur vit <b>tant que son PID 1 vit</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · conteneur → dockerd</p>
+                        <p class="walk__head">La sortie part dans les journaux</p>
+                        <p>Ce que nginx écrit sur sa sortie standard et sa sortie d'erreur est capté par Docker : c'est ce que montre <code>docker logs web</code>. Avec <code>-d</code>, le terminal est rendu tout de suite.</p>
+                        <p class="walk__change"><b>docker logs</b> = stdout et stderr du PID 1.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · docker stop → PID 1</p>
+                        <p class="walk__head">L'arrêt : SIGTERM, puis SIGKILL</p>
+                        <p><code>docker stop web</code> envoie SIGTERM au PID 1 et attend 10 secondes ; s'il n'est pas sorti, SIGKILL. Le conteneur passe en <code>Exited</code> : sa couche d'écriture existe toujours, jusqu'à <code>docker rm</code>.</p>
+                        <p class="walk__change"><b>Arrêté</b> n'est pas <b>supprimé</b> ; <b>rm</b> efface la couche d'écriture, pas les volumes.</p>
+                    </li>
+                </ol>
+            </div>
             <div class="tip">
                 <p class="tip__label">PID 1</p>
                 <p>Dans un conteneur, le processus n° 1 est l'<strong>application</strong>, pas systemd : <code>systemctl</code> n'y fonctionne pas. Et ce qu'on installe à la main dans un conteneur disparaît quand il est recréé depuis son image.</p>
@@ -257,6 +317,18 @@ $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Pour intervenir dans un conteneur qui tourne : <strong><code>docker exec -it</code></strong>, et Ctrl+P Ctrl+Q pour en sortir. <code>attach</code> et Ctrl+D arrêtent le service.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu as fait <code>docker attach web</code> sur un conteneur dont le processus principal est un shell, puis tapé <code>exit</code>. <code>docker ps</code> ne montre plus <code>web</code>. Où est-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Arrêté mais pas supprimé : visible avec docker ps -a, relançable avec docker start</button>
+                        <button class="scenario__opt" data-why="Un conteneur n&#x27;est supprimé que par docker rm (ou s&#x27;il a été lancé avec --rm) ; ici il est seulement arrêté.">Supprimé, il faut le recréer depuis l&#x27;image</button>
+                        <button class="scenario__opt" data-why="docker ps liste tous les conteneurs en marche : s&#x27;il n&#x27;y est pas, il est arrêté.">Toujours en marche, mais caché</button>
+                    </div>
+                    <div class="scenario__why"><p>Quitter le PID 1 arrête le conteneur. <code>docker ps -a</code> le montre en <code>Exited</code>, et <code>docker start -ai web</code> le relance. Pour intervenir sans risque : <code>docker exec -it web bash</code>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -305,9 +377,26 @@ $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
                 <p><code>CMD ["python", "app.py"]</code> lance le programme en PID 1. La forme chaîne <code>CMD python app.py</code> passe par <code>/bin/sh -c</code> : le shell ne transmet pas SIGTERM, et <code>docker stop</code> finit par tuer le conteneur au bout de 10 secondes.</p>
             </div>
 
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Bonnes pratiques d'un Dockerfile</p>
+                <p><strong>Une image de base maintenue et légère</strong> : <code>python:3.8</code>, celle de l'exemple du cours, n'a plus de correctifs depuis octobre 2024 — on prendrait aujourd'hui une version supportée, en variante <code>-slim</code>. <strong>L'ordre des couches</strong> : copier <code>requirements.txt</code> et installer les dépendances <em>avant</em> le code, comme ci-dessus, pour que le cache serve à chaque reconstruction. <strong>Un <code>.dockerignore</code></strong> pour ne pas envoyer <code>.git</code>, les secrets ou les environnements virtuels dans le contexte. <strong>Un utilisateur non root</strong> (<code>USER</code>) pour l'application. Et un tag précis plutôt que <code>latest</code>.</p>
+            </div>
+
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p><strong>RUN</strong> construit, <strong>CMD</strong> propose, <strong>ENTRYPOINT</strong> impose. Et <code>docker build</code> prend un <strong>dossier</strong> (le contexte), pas un fichier : sans le point final, rien ne se construit.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Ton Dockerfile contient <code>EXPOSE 5000</code>. Tu lances <code>docker run -d mon-app</code>, mais <code>curl http://localhost:5000</code> depuis l'hôte échoue. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>EXPOSE documente le port mais ne publie rien : il manque -p 5000:5000</button>
+                        <button class="scenario__opt" data-why="Le numéro de port n&#x27;y est pour rien : aucun port n&#x27;est publié sur l&#x27;hôte tant qu&#x27;on ne donne pas -p.">L&#x27;application doit écouter sur le port 80 pour être joignable</button>
+                        <button class="scenario__opt" data-why="FROM est toujours la première instruction ; et EXPOSE, où qu&#x27;il soit, ne publie rien.">Il fallait mettre EXPOSE avant FROM</button>
+                    </div>
+                    <div class="scenario__why"><p><code>EXPOSE</code> est une <strong>documentation</strong> pour qui lit l'image. Seul <code>-p hôte:conteneur</code> (ou <code>ports:</code> dans Compose) crée la règle de NAT. Pense aussi à faire écouter l'application sur <code>0.0.0.0</code> et non <code>127.0.0.1</code>, sinon elle reste injoignable même avec <code>-p</code>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -337,6 +426,18 @@ $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Tout ce qui doit survivre au conteneur — base de données, fichiers d'un site — va dans un <strong>volume monté au chemin attendu par l'application</strong>. Le conteneur, lui, reste jetable.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu fais <code>docker rm -f web1</code> sur le conteneur qui montait le volume nommé <code>mes_donnees</code>. Que deviennent les fichiers du volume ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Ils restent : un volume nommé survit au conteneur</button>
+                        <button class="scenario__opt" data-why="Seule la couche d&#x27;écriture du conteneur disparaît. Un volume nommé ne part qu&#x27;avec docker volume rm (ou prune -a, ou compose down -v).">Ils sont supprimés avec le conteneur</button>
+                        <button class="scenario__opt" data-why="Le volume ne change pas d&#x27;état : il attend simplement le prochain conteneur qui le montera.">Ils passent en lecture seule</button>
+                    </div>
+                    <div class="scenario__why"><p>Le volume vit dans <code>/var/lib/docker/volumes/mes_donnees/_data</code>, indépendamment des conteneurs. Un nouveau <code>docker run -v mes_donnees:/usr/share/nginx/html nginx</code> retrouve tout.</p></div>
+                </div>
             </div>
         </section>
 
@@ -382,6 +483,18 @@ $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Entrant : il faut un <strong>mappage de port</strong>. Entre conteneurs : un <strong>réseau créé</strong>, sur lequel le nom du conteneur sert de nom DNS.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Deux conteneurs, <code>app</code> et <code>db</code>, lancés avec <code>docker run</code> sans option <code>--network</code>. Depuis <code>app</code>, <code>ping db</code> répond « bad address », alors que <code>ping 172.17.0.3</code> passe. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Sur le pont par défaut, il n&#x27;y a pas de résolution par nom</button>
+                        <button class="scenario__opt" data-why="-p sert à joindre un conteneur depuis l&#x27;extérieur de l&#x27;hôte ; entre conteneurs, le ping par IP passe déjà.">db n&#x27;a pas publié de port avec -p</button>
+                        <button class="scenario__opt" data-why="Ils le sont : tous deux sur bridge, d&#x27;où le ping par adresse qui fonctionne.">Les deux conteneurs ne sont pas sur le même réseau</button>
+                    </div>
+                    <div class="scenario__why"><p>Le DNS interne de Docker ne fonctionne que sur un réseau <strong>créé</strong> : <code>docker network create labnet</code>, puis <code>--network labnet</code> pour les deux. Compose le fait tout seul avec son réseau <code>&lt;projet&gt;_default</code>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -438,9 +551,20 @@ $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
                 <p class="takeaway__label">À retenir</p>
                 <p>Un <code>compose.yaml</code> est la <strong>mémoire</strong> d'une application : services, ports, volumes et redémarrage écrits une fois. <code>down</code> garde les données, <code>down -v</code> les efface.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Au <code>docker compose up -d</code>, le service <code>app</code> plante avec « connection refused » vers <code>db</code>, alors qu'il a bien <code>depends_on: - db</code>. Il repart si on le relance une minute après. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>depends_on attend que db soit démarré, pas que PostgreSQL soit prêt à répondre</button>
+                        <button class="scenario__opt" data-why="Il est bien pris en compte : db démarre avant app. Mais démarré ne veut pas dire prêt.">depends_on est ignoré par docker compose v2</button>
+                        <button class="scenario__opt" data-why="« connection refused » prouve que le nom est résolu et que la machine répond : c&#x27;est le service qui n&#x27;écoute pas encore.">Le nom db ne se résout pas encore</button>
+                    </div>
+                    <div class="scenario__why"><p>Par défaut, <code>depends_on</code> ne règle que l'<strong>ordre</strong>. Les parades : une politique <code>restart</code> sur <code>app</code>, une application qui réessaie, ou un <code>healthcheck</code> sur <code>db</code> combiné à <code>depends_on: db: condition: service_healthy</code>.</p></div>
+                </div>
+            </div>
         </section>
 
-        <!-- Test de fin de module — rendu par assets/quiz.js -->
         <!-- 09 -->
         <section class="chapter" id="pratique">
             <p class="chapter__num">09</p>
@@ -487,7 +611,7 @@ $(. /etc/os-release &amp;&amp; echo $VERSION_CODENAME) stable"</span> \
                 <pre class="terminal__code"><span class="k">docker</span> compose ps
 <span class="k">docker</span> compose exec app getent hosts db<span class="c">       # le nom du service se résout sur le réseau du projet</span></pre>
             </div>
-                <p class="verify__sub">Sortie attendue</p>
+                <p class="verify__sub">Sortie attendue (colonnes COMMAND et CREATED omises)</p>
             <pre class="verify__out">NAME          IMAGE         SERVICE   STATUS          PORTS
 projet-app-1  projet-app    app       Up 2 minutes    0.0.0.0:8080-&gt;5000/tcp
 projet-db-1   postgres:16   db        Up 2 minutes    5432/tcp
@@ -557,10 +681,10 @@ projet-db-1   postgres:16   db        Up 2 minutes    5432/tcp
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

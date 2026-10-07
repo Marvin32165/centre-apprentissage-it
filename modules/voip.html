@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -118,10 +118,10 @@
             <h3>PoE — Power over Ethernet</h3>
             <p>Le PoE alimente les équipements du LAN par le câble réseau lui-même : caméras, téléphones IP, bornes Wi-Fi.</p>
             <ul>
-                <li>Régi par la norme <strong>IEEE 802.3af</strong> (et ses successeurs).</li>
-                <li>N'entrave pas la capacité de transmission et ne limite pas la portée.</li>
-                <li>Convient à tous les types de téléphones IP.</li>
-                <li>Déclinaisons selon la puissance : <strong>PoE</strong>, <strong>PoE+</strong>, <strong>PoE++</strong>, <em>High-Power PoE</em>.</li>
+                <li>Régi par les normes IEEE : <strong>802.3af</strong> (PoE, 15,4 W par port côté switch), <strong>802.3at</strong> (PoE+, 30 W), <strong>802.3bt</strong> (PoE++, 60 et 90 W).</li>
+                <li>Ne réduit pas le débit, et la portée reste celle de l'Ethernet cuivre : 100 m.</li>
+                <li>La plupart des téléphones IP d'entreprise l'acceptent ; vérifier la puissance demandée (un modèle à grand écran ou avec module d'extension peut exiger du PoE+).</li>
+                <li>Le switch a un <strong>budget PoE</strong> total : il peut manquer de puissance avant de manquer de ports.</li>
             </ul>
 
             <div class="tip">
@@ -151,6 +151,18 @@
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">À retenir</p>
                 <p>La voix ne tolère ni la latence ni la perte de paquets : un fichier qui arrive en retard se répare, une syllabe non — elle est simplement perdue. C'est pour ça que la QoS n'est pas une option en téléphonie IP.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un nouveau modèle de téléphone, qui demande jusqu'à 25,5 W (PoE classe 4), ne s'allume pas sur un switch 802.3af. L'ancien modèle fonctionnait sur le même port. Cause la plus probable ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le 802.3af fournit au plus 15,4 W par port : il faut du PoE+ (802.3at)</button>
+                        <button class="scenario__opt" data-why="L&#x27;ancien téléphone marchait sur le même port et le même câble : la longueur n&#x27;a pas changé.">Le câble dépasse 100 m depuis le switch</button>
+                        <button class="scenario__opt" data-why="Le VLAN ne joue aucun rôle dans l&#x27;alimentation : sans VLAN voix, le téléphone s&#x27;allumerait mais resterait « non enregistré ».">Le VLAN voix n&#x27;est pas déclaré sur le port</button>
+                    </div>
+                    <div class="scenario__why"><p>L'alimentation est négociée avant tout le reste : un téléphone qui ne s'allume pas pointe vers le PoE (norme, budget du switch). Vérifier : <code>show power inline</code> sur un switch Cisco (puissance disponible, consommée, et classe de chaque port).</p></div>
+                </div>
             </div>
         </section>
 
@@ -194,7 +206,7 @@
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Compression</strong><p>On réduit la taille des données pour économiser la bande passante — c'est le rôle du codec.</p></div></div>
                 <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Habillage des en-têtes</strong><p>Le flux audio compressé est découpé en paquets.</p></div></div>
                 <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Émission et transport</strong><p>Les paquets partent sur le réseau.</p></div></div>
-                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Réception</strong><p>Les paquets sont reçus et remis dans le bon ordre.</p></div></div>
+                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Réception</strong><p>Les paquets sont reçus, remis dans l'ordre grâce au numéro de séquence RTP, et lissés par un <strong>tampon de gigue</strong> (<em>jitter buffer</em>) qui absorbe les écarts d'arrivée.</p></div></div>
                 <div class="step"><div class="step__num">7</div><div class="step__body"><strong>Conversion numérique → analogique</strong><p>Les données redeviennent un signal analogique.</p></div></div>
                 <div class="step"><div class="step__num">8</div><div class="step__body"><strong>Restitution</strong><p>Le haut-parleur reproduit la voix.</p></div></div>
             </div>
@@ -216,7 +228,7 @@
                     <h4>Transport de l'audio/vidéo</h4>
                     <ul>
                         <li><strong>RTP</strong> (Real-time Transport Protocol) — transporte les flux audio/vidéo en temps réel.</li>
-                        <li><strong>RTCP</strong> (Real-time Control Protocol) — contrôle du flux et remontée de la qualité de service.</li>
+                        <li><strong>RTCP</strong> (RTP Control Protocol, défini avec RTP dans la RFC 3550) — contrôle du flux et remontée de la qualité de service.</li>
                     </ul>
                 </div>
                 <div class="card">
@@ -229,7 +241,7 @@
             </div>
 
             <h3>SIP en trois couches</h3>
-            <p>SIP est un <strong>standard ouvert</strong> de gestion de sessions. Il s'appuie sur la pile classique : couche <strong>application</strong> (SIP) → couche <strong>transport</strong> (TCP/UDP) → couche <strong>réseau</strong> (IP).</p>
+            <p>SIP est un <strong>standard ouvert</strong> de gestion de sessions. Il s'appuie sur la pile classique : couche <strong>application</strong> (SIP) → couche <strong>transport</strong> (UDP le plus souvent, TCP, ou TLS sur TCP pour chiffrer) → couche <strong>réseau</strong> (IP).</p>
 
             <h3>Les codes de réponse SIP</h3>
             <div class="table-wrap">
@@ -248,20 +260,70 @@
             <p>Ces familles sont calquées sur HTTP — un <code>404</code> SIP se lit exactement comme un <code>404</code> web.</p>
 
             <h3>Le déroulé d'un appel</h3>
-            <div class="steps">
-                <div class="step"><div class="step__num">1</div><div class="step__body"><strong>INVITE</strong><p>A demande l'établissement de la session avec B.</p></div></div>
-                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>100 Trying</strong><p>La demande est prise en charge.</p></div></div>
-                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>180 Ringing</strong><p>Le poste de B sonne.</p></div></div>
-                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>200 OK</strong><p>B décroche : la session est acceptée.</p></div></div>
-                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>ACK</strong><p>A confirme l'établissement. La signalisation a fait son travail.</p></div></div>
-                <div class="step"><div class="step__num">6</div><div class="step__body"><strong>RTP / RTCP</strong><p>La conversation elle-même circule, en dehors de SIP.</p></div></div>
-                <div class="step"><div class="step__num">7</div><div class="step__body"><strong>BYE</strong><p>L'un des deux raccroche.</p></div></div>
-                <div class="step"><div class="step__num">8</div><div class="step__body"><strong>200 OK</strong><p>Terminaison confirmée.</p></div></div>
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Le poste 101 appelle le poste 102, à travers le PBX</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · 101 → PBX</p>
+                        <p class="walk__head">INVITE, avec une offre SDP</p>
+                        <p>Le poste demande l'ouverture de la session. Le corps du message, en <strong>SDP</strong> (Session Description Protocol), dit où et comment il veut recevoir la voix : son adresse (<code>c=IN IP4 …</code>), son port RTP et ses codecs par ordre de préférence (<code>m=audio 10000 RTP/AVP 8 0 9</code> : 8 = G.711a, 0 = G.711u, 9 = G.722). Un PBX répond souvent d'abord <code>407 Proxy Authentication Required</code> : le poste renvoie alors l'INVITE avec ses identifiants.</p>
+                        <p class="walk__change">SIP sur le port <b>5060</b> ; l'<b>offre SDP</b> annonce adresse, port et codecs.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · PBX → 101</p>
+                        <p class="walk__head">100 Trying</p>
+                        <p>Le PBX accuse réception : la demande est prise en charge, inutile de la renvoyer. Il transmet à son tour un INVITE au poste 102.</p>
+                        <p class="walk__change">Réponse <b>1xx</b> : provisoire, l'appel n'est pas encore établi.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · 102 → PBX → 101</p>
+                        <p class="walk__head">180 Ringing</p>
+                        <p>Le poste 102 sonne ; le 101 entend la tonalité de retour d'appel.</p>
+                        <p class="walk__change">Toujours du <b>1xx</b> : aucune voix ne circule encore.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · 102 → PBX → 101</p>
+                        <p class="walk__head">200 OK, avec la réponse SDP</p>
+                        <p>Le 102 décroche. Sa réponse SDP retient un codec commun et donne son adresse et son port RTP. Sans codec commun, l'appel aurait échoué ici (<code>488 Not Acceptable Here</code>), sauf si le PBX transcode.</p>
+                        <p class="walk__change">Codec <b>négocié</b> ; chacun connaît l'adresse et le port RTP de l'autre.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · 101 → PBX → 102</p>
+                        <p class="walk__head">ACK</p>
+                        <p>Le 101 confirme qu'il a reçu le 200 OK. Sans ACK, le 102 répète son 200 OK puis abandonne l'appel au bout d'environ 32 s (64 × 500 ms, RFC 3261).</p>
+                        <p class="walk__change">Poignée de main en trois temps : <b>INVITE → 200 OK → ACK</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · 101 ⇄ 102</p>
+                        <p class="walk__head">La voix : RTP et RTCP</p>
+                        <p>La voix part en <strong>RTP sur UDP</strong>, vers les ports annoncés dans le SDP (plage 9000–10999 sur un 3CX), un paquet toutes les 20 ms dans chaque sens. Selon la configuration, elle va directement d'un poste à l'autre ou passe par le PBX. RTCP rapporte à côté pertes et gigue.</p>
+                        <p class="walk__change">Un <b>autre chemin</b> et d'autres ports que SIP : un pare-feu peut laisser passer l'un et pas l'autre.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · celui qui raccroche → l'autre</p>
+                        <p class="walk__head">BYE, puis 200 OK</p>
+                        <p>Le premier qui raccroche envoie BYE ; l'autre confirme par 200 OK. Les flux RTP s'arrêtent.</p>
+                        <p class="walk__change">Fin de session : <b>BYE → 200 OK</b> (pas d'ACK ici : l'ACK ne suit qu'un INVITE).</p>
+                    </li>
+                </ol>
             </div>
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Le piège du dépannage</p>
                 <p>SIP monte l'appel, RTP porte la voix — <strong>par des chemins différents</strong>. D'où le symptôme classique « ça sonne, on décroche, mais personne n'entend rien » : la signalisation passe, le flux RTP est bloqué (pare-feu, NAT). Deux problèmes distincts, deux endroits à regarder.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Dans une capture, l'appel du 101 vers le 102 montre : INVITE, 100 Trying, puis <code>486 Busy Here</code>. Que s'est-il passé ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le 102 est déjà en ligne : il refuse l'appel, aucun flux RTP n'est ouvert</button>
+                        <button class="scenario__opt" data-why="Les erreurs du serveur sont en 5xx. Un 4xx dit que la demande ne peut pas aboutir chez ce destinataire.">Le PBX est en panne : c&#x27;est une erreur du serveur</button>
+                        <button class="scenario__opt" data-why="Un appel établi passe par un 2xx (200 OK) puis un ACK. Un 4xx est une réponse finale : l&#x27;appel est terminé.">L&#x27;appel est établi, le 102 est simplement lent à décrocher</button>
+                    </div>
+                    <div class="scenario__why"><p>Toute réponse 4xx, 5xx ou 6xx est <strong>finale</strong> : l'appel s'arrête là (l'appelant envoie seulement un ACK pour en accuser réception). <code>486</code> = occupé ; le PBX peut alors appliquer le renvoi « si occupé ». Dans Wireshark : <em>Téléphonie → Appels VoIP → Diagramme de flux</em>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -278,7 +340,8 @@
                     <tbody>
                         <tr><td><strong>G.711a</strong></td><td>PCMA</td><td>Europe et une grande partie du monde</td></tr>
                         <tr><td><strong>G.711u</strong></td><td>PCMU</td><td>Amérique du Nord, Japon</td></tr>
-                        <tr><td><strong>G.729</strong></td><td>—</td><td>Partout où la bande passante est comptée (compression forte)</td></tr>
+                        <tr><td><strong>G.729</strong></td><td>—</td><td>Partout où la bande passante est comptée (compression forte : 8 kb/s au lieu de 64)</td></tr>
+                        <tr><td><strong>G.722</strong></td><td>« HD voice », large bande</td><td>Entre postes du même réseau : même débit que G.711 (64 kb/s), mais un son nettement plus riche</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -294,6 +357,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Le codec est un <strong>arbitrage</strong> : G.711 privilégie la qualité, G.729 la bande passante. Et une téléphonie IP tient toujours sur les mêmes quatre briques — les postes, le PBX, le trunk SIP de l'opérateur et la connexion Internet. C'est la dernière, la moins visible, qui décide de la qualité perçue.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le poste A propose G.711a et G.722 ; le trunk de l'opérateur n'accepte que G.729. Le PBX ne fait pas de transcodage. Que donne un appel de A vers l'extérieur ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Il échoue faute de codec commun (souvent <code>488 Not Acceptable Here</code>)</button>
+                        <button class="scenario__opt" data-why="Un codec n&#x27;est utilisé que s&#x27;il figure des deux côtés de la négociation SDP. L&#x27;opérateur n&#x27;accepte pas G.711a.">Il passe en G.711a, le codec le plus répandu en Europe</button>
+                        <button class="scenario__opt" data-why="Le poste ne peut choisir que parmi les codecs qu&#x27;il a lui-même proposés. G.729 n&#x27;est pas dans sa liste.">Il passe en G.729 : le poste s&#x27;adapte au trunk</button>
+                    </div>
+                    <div class="scenario__why"><p>La négociation SDP retient un codec présent <strong>des deux côtés</strong>. Solutions : ajouter le codec du trunk sur les postes, ou laisser le PBX transcoder (au prix de CPU). À vérifier dans la configuration des codecs du trunk et des postes, et dans le SDP de la capture.</p></div>
+                </div>
             </div>
         </section>
 
@@ -394,7 +469,7 @@
                 </table>
             </div>
             <h3>Combien pèse un appel</h3>
-            <p>Un codec produit un débit « utile », mais chaque paquet RTP (un toutes les 20 ms, soit 50 par seconde) porte aussi ses en-têtes IP, UDP et RTP (40 octets), plus l'en-tête Ethernet. Le débit réel sur le câble est donc bien supérieur, et il compte <strong>dans chaque sens</strong>.</p>
+            <p>Un codec produit un débit « utile », mais chaque paquet RTP (un toutes les 20 ms, soit 50 par seconde) porte aussi ses en-têtes IP, UDP et RTP (20 + 8 + 12 = 40 octets), plus 18 octets d'Ethernet. En G.711 : 160 octets de voix + 40 + 18 = 218 octets × 50 × 8 = 87,2 kb/s. Le débit réel sur le câble est donc bien supérieur, et il compte <strong>dans chaque sens</strong>.</p>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Codec</th><th>Débit du codec</th><th>Débit réel sur Ethernet, par sens</th></tr></thead>
@@ -422,7 +497,7 @@
 <span class="k">switchport</span> voice vlan 50<span class="c">             ! le téléphone</span>
 <span class="k">spanning-tree</span> portfast</pre>
             </div>
-            <p>Côté QoS, la voix est marquée <strong>DSCP EF</strong> (46) par le téléphone, la signalisation SIP en <strong>CS3</strong> (24) ; chaque équipement traversé doit faire confiance à ce marquage et servir cette file en priorité. Les commandes exactes dépendent du modèle de switch : se référer à sa documentation.</p>
+            <p>Côté QoS, la voix est marquée <strong>DSCP EF</strong> (46) par le téléphone, la signalisation SIP en <strong>CS3</strong> (24) dans les modèles Cisco (la RFC 4594 propose CS5, 40 : suivre le plan de l'opérateur ou du constructeur) ; chaque équipement traversé doit faire confiance à ce marquage et servir cette file en priorité. Les commandes exactes dépendent du modèle de switch : se référer à sa documentation.</p>
             <div class="cmdex" data-accept="sw(itchport)? voice vlan 50">
                 <p class="cmdex__label">À toi de taper</p>
                 <p>Sur le port d'un poste, déclare le VLAN <strong>50</strong> comme VLAN voix.</p>
@@ -434,6 +509,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Une voix correcte : ≤ 150 ms de délai, ≤ 30 ms de gigue, ≤ 1 % de perte. Un appel G.711 pèse ≈ 87 kb/s par sens. Le VLAN voix se déclare sur le port d'accès (<code>switchport voice vlan</code>), et la voix est marquée EF.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur le lien montant, 2 Mb/s sont réservés à la voix. Combien d'appels G.711 simultanés y tiennent, au plus ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>22 appels</button>
+                        <button class="scenario__opt" data-why="2 000 ÷ 64 = 31 : c&#x27;est oublier les en-têtes IP, UDP, RTP et Ethernet. Un appel G.711 pèse 87,2 kb/s sur le câble.">31 appels</button>
+                        <button class="scenario__opt" data-why="C&#x27;est diviser encore par deux pour « les deux sens ». Or le lien montant ne porte que le sens sortant ; le sens entrant passe par le lien descendant.">11 appels</button>
+                    </div>
+                    <div class="scenario__why"><p>2 000 ÷ 87,2 ≈ 22,9 : on garde <strong>22</strong> appels entiers, par sens. En G.729 (31,2 kb/s), le même lien en porte 64. C'est ce calcul, et pas le débit du codec, qui dimensionne un lien.</p></div>
+                </div>
             </div>
         </section>
 
@@ -452,7 +539,7 @@
                         <tr><td>Ça sonne, on décroche, personne n'entend</td><td>RTP bloqué : pare-feu, NAT, plage de ports RTP non ouverte</td><td>Capture : SIP présent, RTP absent</td></tr>
                         <tr><td>Son dans un seul sens</td><td>NAT : l'adresse annoncée dans le SDP est privée, ou un « SIP ALG » de la box réécrit mal</td><td>Adresse <code>c=</code> du SDP dans la capture</td></tr>
                         <tr><td>Voix hachée, robotique</td><td>Gigue et pertes : congestion, Wi-Fi, absence de QoS</td><td>Wireshark → <em>Téléphonie → Flux RTP</em> : gigue et pertes</td></tr>
-                        <tr><td>Coupure à 30 s pile</td><td>L'ACK ou la réponse 200 OK se perd (NAT, ALG)</td><td>Capture SIP : retransmissions du 200 OK</td></tr>
+                        <tr><td>Coupure au bout de ≈ 32 s</td><td>L'ACK n'arrive pas (NAT, ALG, adresse privée dans l'en-tête <em>Contact</em>) : le poste appelé abandonne après 64 × 500 ms</td><td>Capture SIP : 200 OK répété, aucun ACK</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -462,7 +549,7 @@
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Voir les appels</strong><p>Menu <em>Téléphonie → Appels VoIP</em> : chaque appel avec ses messages SIP, et un <strong>diagramme de flux</strong> INVITE → 180 → 200 → ACK → BYE.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Analyser l'audio</strong><p><em>Téléphonie → RTP → Flux RTP</em> : gigue maximale et moyenne, pourcentage de paquets perdus, dans chaque sens. On peut même réécouter la conversation (en labo).</p></div></div>
             </div>
-            <p>Les ports à ouvrir pour un 3CX : SIP en <strong>5060</strong> (UDP/TCP, 5061 en TLS) et une plage RTP, <strong>9000–10999</strong> UDP par défaut. Un pare-feu qui n'ouvre que 5060 donne exactement le symptôme « ça sonne mais pas de son ».</p>
+            <p>Les ports à ouvrir pour un 3CX : SIP en <strong>5060</strong> (UDP/TCP, 5061 en TLS) et une plage RTP, <strong>9000–10999</strong> UDP par défaut ; <strong>5090</strong> (UDP/TCP) en plus pour le tunnel des postes distants et du SBC. Un pare-feu qui n'ouvre que 5060 donne exactement le symptôme « ça sonne mais pas de son ».</p>
             <div class="scenario">
                 <p class="scenario__label">Scénario de panne</p>
                 <p class="scenario__title">Les appels sortants n'ont pas de son</p>
@@ -512,7 +599,7 @@
                 </div>
                 <div class="card">
                     <h4>3CX SBC</h4>
-                    <p>Un simple relais, à installer sur le réseau d'un <em>autre</em> site pour le raccorder à un System hébergé ailleurs.</p>
+                    <p>Un simple relais (<em>Session Border Controller</em>), à installer sur le réseau d'un <em>autre</em> site : il raccorde les téléphones de ce site à un System hébergé ailleurs, par un tunnel (port 5090).</p>
                 </div>
             </div>
 
@@ -540,7 +627,7 @@
 
             <div class="tip">
                 <p class="tip__label">Trunk SIP OVH</p>
-                <p>Dans la configuration du trunk, choisir le pays <strong>France</strong> puis le fournisseur <strong>OVH</strong>. Pour une ligne belge, le modèle reste le même : il suffit de remplacer le suffixe du champ <em>serveur</em> par <code>.be</code>.</p>
+                <p>Dans la configuration du trunk, choisir le pays <strong>France</strong> puis le fournisseur <strong>OVH</strong>. Pour une ligne belge, le modèle reste le même : il a suffi, en TP, de remplacer le suffixe du champ <em>serveur</em> par <code>.be</code>. Vérifier ensuite l'état du trunk dans la console 3CX (enregistré) et passer un appel sortant de test.</p>
             </div>
         </section>
 
@@ -596,10 +683,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

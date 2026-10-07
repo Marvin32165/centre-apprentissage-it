@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -114,7 +114,7 @@
 <span class="k">reload</span>                              <span class="c">! redémarrer</span></pre>
             </div>
 
-            <p><code>exit</code> redescend d'un niveau, <code>end</code> (ou Ctrl+Z) remonte directement au mode privilégié, et <code>?</code> liste partout les commandes possibles. Les exercices se font dans <strong>Packet Tracer</strong>, qui n'émule pas tout : aucune commande <code>debug</code>, et certaines <code>show</code> complexes n'y répondent pas.</p>
+            <p><code>exit</code> redescend d'un niveau, <code>end</code> (ou Ctrl+Z) remonte directement au mode privilégié, et <code>?</code> liste partout les commandes possibles. Les exercices se font dans <strong>Packet Tracer</strong>, qui n'émule pas tout : très peu de commandes <code>debug</code> (aucune de celles du cours), et certaines <code>show</code> complexes n'y répondent pas.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -133,7 +133,7 @@
                 <pre class="terminal__code"><span class="k">line console 0</span>
  <span class="p">password</span> <span class="s">MOT_DE_PASSE</span>
  <span class="p">login</span>                       <span class="c">! sans login, le mot de passe n'est jamais demandé</span>
- <span class="p">exec-timeout</span> 10             <span class="c">! déconnexion après 10 minutes d'inactivité</span>
+ <span class="p">exec-timeout</span> 10             <span class="c">! déconnexion après 10 min d'inactivité (déjà la valeur par défaut ; 5 0 pour durcir)</span>
  <span class="k">exit</span>
 <span class="k">enable secret</span> <span class="s">MOT_DE_PASSE</span>   <span class="c">! haché — enable password ne s'utilise plus</span>
 <span class="k">service password-encryption</span>  <span class="c">! masque les autres mots de passe (type 7)</span></pre>
@@ -163,6 +163,18 @@
                 <p class="takeaway__label">À retenir</p>
                 <p><code>password</code> <strong>et</strong> <code>login</code> sur la console, <code>enable secret</code> pour le mode privilégié, <code>exec-timeout</code> pour les sessions oubliées, et un VLAN 1 vidé puis éteint.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu as tapé <code>password</code> sous <code>line console 0</code>, sauvegardé, redémarré. En te rebranchant sur la console, aucun mot de passe n'est demandé. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Il manque <code>login</code> sous <code>line console 0</code></button>
+                        <button class="scenario__opt" data-why="Cette commande ne fait que masquer les mots de passe dans la configuration ; elle ne déclenche aucune demande.">Il manque <code>service password-encryption</code></button>
+                        <button class="scenario__opt" data-why="&lt;code&gt;enable secret&lt;/code&gt; protège le passage au mode privilégié, pas l&#x27;ouverture de la console.">Il manque <code>enable secret</code></button>
+                    </div>
+                    <div class="scenario__why"><p>Le mot de passe de ligne n'est demandé que si <code>login</code> est présent (ou <code>login local</code> avec un compte <code>username</code>). Vérifier : <code>show running-config | section line con</code>, puis se déconnecter (<code>exit</code>) et se reconnecter.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 03 -->
@@ -177,7 +189,7 @@
                 <pre class="terminal__code"><span class="k">hostname</span> SW1      <span class="c">! nom d'hôte + domaine = nom de la paire de clés</span>
 <span class="k">ip domain-name</span> <span class="s">cisco.com</span>
 <span class="k">username</span> <span class="s">NOM</span> <span class="p">secret</span> <span class="s">MOT_DE_PASSE</span>
-<span class="k">crypto key generate rsa</span>
+<span class="k">crypto key generate rsa</span>  <span class="c">! IOS demande la taille : 2048 (au moins 768 pour SSHv2)</span>
 <span class="k">line vty</span> 0 15
  <span class="p">login local</span>
  <span class="p">transport input ssh</span>
@@ -190,6 +202,7 @@
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — configuration d'interface</span></div>
                 <pre class="terminal__code"><span class="k">interface</span> fa0/2
  <span class="p">switchport mode access</span>  <span class="c">! prérequis : refusé sur un port non « access »</span>
+ <span class="p">switchport port-security</span>  <span class="c">! l'active : sans elle, les lignes suivantes n'agissent pas</span>
  <span class="p">switchport port-security maximum</span> 1
  <span class="p">switchport port-security mac-address sticky</span>
  <span class="p">switchport port-security violation shutdown</span></pre>
@@ -205,11 +218,39 @@
                     </tbody>
                 </table>
             </div>
-            <p>Un port en <code>err-disabled</code> ne revient pas tout seul : une fois la cause levée, <code>shutdown</code> puis <code>no shutdown</code>.</p>
+            <p>Un port en <code>err-disabled</code> ne revient pas tout seul : une fois la cause levée, <code>shutdown</code> puis <code>no shutdown</code>. (Une remise en service automatique existe, <code>errdisable recovery cause psecure-violation</code>, mais elle rouvre le port même si l'intrus est toujours là.)</p>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Port-security est-il actif, et a-t-il vu une violation ?</p>
+                <div class="terminal">
+                    <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS</span></div>
+                    <pre class="terminal__code">S1# <span class="k">show</span> port-security interface fa0/2</pre>
+                </div>
+                <p class="verify__sub">Sortie attendue (extrait)</p>
+                <pre class="verify__out">Port Security              : Enabled
+Port Status                : Secure-up
+Violation Mode             : Shutdown
+Maximum MAC Addresses      : 1
+Sticky MAC Addresses       : 1
+Security Violation Count   : 0</pre>
+                <p class="verify__fail"><code>Port Security : Disabled</code> : la ligne <code>switchport port-security</code> seule manque. <code>Secure-shutdown</code> et un compteur à 1 : une violation a eu lieu, le port est en <code>err-disabled</code>.</p>
+            </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>SSH : nom d'hôte, domaine, compte local, clés RSA, <code>transport input ssh</code>, <code>login local</code>, <code>ip ssh version 2</code>. port-security ne rend pas l'usurpation de MAC impossible : il la rend <strong>bruyante</strong>.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Fa0/2 a <code>port-security maximum 1</code> et <code>violation restrict</code>. Un utilisateur branche un petit switch et un second PC derrière. Que se passe-t-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le port reste actif, les trames du second PC sont jetées et le compteur monte</button>
+                        <button class="scenario__opt" data-why="C&#x27;est le comportement du mode &lt;code&gt;shutdown&lt;/code&gt; (par défaut), pas de &lt;code&gt;restrict&lt;/code&gt;.">Le port passe en <code>err-disabled</code> et les deux PC perdent le réseau</button>
+                        <button class="scenario__opt" data-why="&lt;code&gt;restrict&lt;/code&gt; ne se contente pas d&#x27;alerter : il jette les trames des adresses MAC en trop.">Les deux PC fonctionnent, et seule une alerte est journalisée</button>
+                    </div>
+                    <div class="scenario__why"><p><code>restrict</code> = rejet + compteur + journal, sans couper le premier PC. <code>show port-security interface fa0/2</code> : <em>Secure-up</em> et <em>Security Violation Count</em> qui augmente.</p></div>
+                </div>
             </div>
         </section>
 
@@ -232,7 +273,7 @@
 <span class="k">interface</span> FastEthernet 0/11
  <span class="p">switchport mode trunk</span>
  <span class="p">switchport trunk native vlan</span> 99
- <span class="p">switchport trunk allowed vlan</span> 1,10,20
+ <span class="p">switchport trunk allowed vlan</span> 10,20,99  <span class="c">! liste restreinte (natif compris)</span>
  <span class="p">switchport nonegotiate</span>  <span class="c">! coupe DTP : trunk figé</span></pre>
             </div>
 
@@ -240,7 +281,7 @@
                 <li>Le trunk <strong>n'appartient à aucun VLAN</strong> : il en transporte plusieurs, marqués selon la norme ouverte <strong>IEEE 802.1Q</strong> (<code>dot1q</code>).</li>
                 <li>Par défaut il laisse passer <strong>tous</strong> les VLAN : on restreint la liste.</li>
                 <li><strong>DTP</strong> négocie un trunk tout seul — donc en offre un à qui se fait passer pour un commutateur.</li>
-                <li>Un port assigné à un VLAN <strong>non déclaré</strong> devient inactif ; des listes discordantes aux deux bouts d'un trunk font fuiter du trafic (CDP signale un <em>VLAN mismatch</em>).</li>
+                <li>Un port assigné à un VLAN <strong>non déclaré</strong> devient inactif. Des listes autorisées différentes aux deux bouts coupent simplement les VLAN absents d'un côté ; un <strong>VLAN natif</strong> différent, lui, fait passer les trames non étiquetées d'un VLAN dans l'autre (CDP signale <code>NATIVE_VLAN_MISMATCH</code>).</li>
             </ul>
 
             <div class="table-wrap">
@@ -258,6 +299,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Accès : <code>switchport mode access</code> + <code>switchport access vlan</code>. Trunk : <code>switchport mode trunk</code>, VLAN natif, liste <strong>restreinte</strong> et <code>nonegotiate</code>.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur le trunk entre SW1 et SW2, SW1 a <code>native vlan 99</code> et SW2 est resté en VLAN natif 1. Que constates-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le trunk monte, mais le trafic non étiqueté passe du VLAN 99 au VLAN 1, et CDP le signale</button>
+                        <button class="scenario__opt" data-why="Le trunk monte bien : les VLAN étiquetés (10, 20) passent normalement. C&#x27;est justement ce qui rend l&#x27;erreur sournoise.">Le trunk refuse de monter tant que les VLAN natifs diffèrent</button>
+                        <button class="scenario__opt" data-why="Seules les trames non étiquetées sont concernées ; les VLAN étiquetés traversent sans problème.">Tous les VLAN sont coupés sur ce lien</button>
+                    </div>
+                    <div class="scenario__why"><p>Chaque côté considère les trames sans étiquette comme les siennes : SW1 les range en VLAN 99, SW2 en VLAN 1. Deux VLAN sont mélangés. <code>show interfaces trunk</code> des deux côtés, colonne <em>Native vlan</em>, et le message <code>%CDP-4-NATIVE_VLAN_MISMATCH</code>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -290,6 +343,18 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Router entre VLAN : <strong>sous-interfaces + <code>encapsulation dot1q</code></strong> sur un routeur relié par un trunk, ou commutateur de niveau 3 avec <code>ip routing</code>.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu as créé <code>G0/0.10</code> et <code>G0/0.20</code> avec leur encapsulation et leur adresse. <code>show ip interface brief</code> les montre toutes en <code>administratively down</code>. Quel oubli ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>no shutdown</code> sur l'interface physique <code>G0/0</code></button>
+                        <button class="scenario__opt" data-why="Une sous-interface hérite de l&#x27;état de l&#x27;interface physique : c&#x27;est &lt;code&gt;G0/0&lt;/code&gt; qui est éteinte."><code>no shutdown</code> sur chaque sous-interface</button>
+                        <button class="scenario__opt" data-why="Un routeur route par défaut ; &lt;code&gt;ip routing&lt;/code&gt; concerne un commutateur de niveau 3. Et elle ne changerait pas l&#x27;état des interfaces."><code>ip routing</code> en configuration globale</button>
+                    </div>
+                    <div class="scenario__why"><p>Les sous-interfaces suivent l'interface physique. Le cours la coupe exprès au début (<code>shutdown</code>) : il faut la rallumer à la fin. Vérifier : <code>show ip interface brief</code>, toutes en <code>up up</code>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 06 -->
@@ -302,7 +367,7 @@
 
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Élire le pont racine</strong><p>Le BID le plus faible gagne (priorité + identifiant de VLAN + MAC) ; à priorité égale, la MAC la plus basse. Une priorité fixée à la main est un multiple de 4096.</p></div></div>
-                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Élire les ports</strong><p>Chaque autre commutateur choisit son port racine, au moindre coût vers la racine. Les ports non désignés passent en blocage.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Élire les ports</strong><p>Chaque autre commutateur choisit son <strong>port racine</strong>, au moindre coût vers la racine. Sur chaque segment, un seul <strong>port désigné</strong> (celui qui offre le moindre coût vers la racine). Les ports ni racine ni désignés passent en blocage.</p></div></div>
             </div>
 
             <div class="table-wrap">
@@ -311,7 +376,7 @@
                     <tbody>
                         <tr><td>STP</td><td>802.1D</td><td>l'original, lent à reconverger (≈ 30 s avant qu'un port transmette)</td></tr>
                         <tr><td>RSTP</td><td>802.1w</td><td>même algorithme, bien plus réactif</td></tr>
-                        <tr><td>PVST+</td><td>Cisco</td><td>une instance par VLAN — <strong>actif par défaut</strong> : on peut répartir les racines</td></tr>
+                        <tr><td>PVST+</td><td>Cisco</td><td>une instance par VLAN — <strong>actif par défaut</strong> sur les Catalyst 2960 et dans Packet Tracer : on peut répartir les racines (Rapid PVST+ = la même chose avec RSTP)</td></tr>
                         <tr><td>MST</td><td>802.1s</td><td>une instance pour plusieurs VLAN</td></tr>
                     </tbody>
                 </table>
@@ -326,14 +391,74 @@
 <span class="k">show spanning-tree</span>                 <span class="c">! racine, BID local, état et coût des ports</span></pre>
             </div>
 
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Trois switchs en triangle : l'élection, puis la panne (STP 802.1D, liens FastEthernet)</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · SW1, SW2, SW3 au démarrage</p>
+                        <p class="walk__head">Chacun se croit racine</p>
+                        <p>Tous ont la priorité par défaut, 32768 + 1 (VLAN 1) = <code>32769</code>. Leurs MAC : SW1 <code>0001.aaaa.0001</code>, SW2 <code>0002.bbbb.0002</code>, SW3 <code>0003.cccc.0003</code>. Chacun envoie des BPDU qui disent « la racine, c'est moi ».</p>
+                        <p class="walk__change">BPDU toutes les <b>2 s</b> (Hello), chacun annonce son propre <b>BID</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · échange des BPDU</p>
+                        <p class="walk__head">Le plus petit BID gagne</p>
+                        <p>Priorités égales : la MAC départage. SW1 a la plus petite, SW2 et SW3 reconnaissent SW1 comme racine et relaient désormais ses BPDU.</p>
+                        <p class="walk__change">Racine = <b>SW1</b>. Tous ses ports sont <b>désignés</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · SW2 et SW3</p>
+                        <p class="walk__head">Choisir le port racine</p>
+                        <p>Coût d'un lien à 100 Mb/s : <code>19</code> (1 Gb/s : 4). Le lien direct vers SW1 coûte 19, le détour par l'autre switch 38 : SW2 et SW3 prennent chacun leur port vers SW1. À coût égal, départage par le plus petit BID voisin, puis le plus petit numéro de port voisin.</p>
+                        <p class="walk__change">Un <b>port racine</b> par switch non racine : le moins cher vers la racine.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · segment SW2 – SW3</p>
+                        <p class="walk__head">Choisir le port désigné du segment</p>
+                        <p>Les deux bouts sont à 19 de la racine : égalité. Le BID le plus petit l'emporte : le port de SW2 devient désigné.</p>
+                        <p class="walk__change">Un seul <b>port désigné</b> par segment.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · port de SW3 vers SW2</p>
+                        <p class="walk__head">Le port restant se bloque</p>
+                        <p>Ni racine ni désigné : il passe en <strong>blocking</strong>. Il écoute les BPDU mais ne transmet aucune trame. La boucle est coupée, le câble reste branché.</p>
+                        <p class="walk__change"><code>show spanning-tree</code> sur SW3 : ce port en <b>Altn BLK</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · panne du lien SW1 – SW3</p>
+                        <p class="walk__head">La reconvergence, lente en 802.1D</p>
+                        <p>Si SW3 voit tomber son port racine, il bascule tout de suite sur le port bloqué. Si la panne est ailleurs et qu'il ne reçoit simplement plus de BPDU, il attend d'abord le <em>max age</em> (20 s). Dans les deux cas, le port passe ensuite par <strong>listening</strong> (15 s) puis <strong>learning</strong> (15 s) avant <strong>forwarding</strong>.</p>
+                        <p class="walk__change">30 à 50 s de coupure en <b>802.1D</b> ; quelques secondes ou moins en <b>RSTP</b> (rapid-pvst), où le port alternatif est déjà prêt.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · l'administrateur</p>
+                        <p class="walk__head">Ne pas subir le hasard des MAC</p>
+                        <p>SW1 a gagné parce que sa MAC était la plus petite, pas parce qu'il est au centre du réseau. On fixe la racine (<code>spanning-tree vlan 1 root primary</code> sur le switch de cœur) et sa remplaçante (<code>root secondary</code>).</p>
+                        <p class="walk__change">La racine se <b>choisit</b> : priorité basse, multiple de <b>4096</b>.</p>
+                    </li>
+                </ol>
+            </div>
             <div class="tip">
                 <p class="tip__label">Jamais sur un trunk</p>
-                <p>PortFast supprime la seule protection contre la boucle : il ne va que sur un port relié à un périphérique terminal. BPDU Guard l'accompagne, parce qu'un port de poste qui reçoit un BPDU signifie qu'un commutateur a pris la place du poste.</p>
+                <p>PortFast fait sauter au port les 30 s d'écoute qui protègent d'une boucle au branchement : il ne va que sur un port relié à un périphérique terminal (la variante <code>portfast trunk</code>, pour un serveur ou un hyperviseur en trunk, est hors programme). BPDU Guard l'accompagne, parce qu'un port de poste qui reçoit un BPDU signifie qu'un commutateur a pris la place du poste.</p>
             </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>STP coupe logiquement la boucle et rouvre le lien de secours en cas de panne. Aux ports d'accès, le couple <strong>PortFast + BPDU Guard</strong> : réactivité sans ouvrir la porte à un commutateur pirate.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Pour faire de SW2 la racine du VLAN 10, tu tapes <code>spanning-tree vlan 10 priority 30000</code>. Que répond IOS ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Il refuse : la priorité doit être un multiple de 4096</button>
+                        <button class="scenario__opt" data-why="IOS n&#x27;arrondit pas : il refuse et liste les valeurs permises (0, 4096, 8192… 61440).">Il accepte et arrondit à 28672</button>
+                        <button class="scenario__opt" data-why="Les 12 bits de poids faible de la priorité portent le numéro de VLAN : seuls les multiples de 4096 restent possibles.">Il accepte 30000 telle quelle</button>
+                    </div>
+                    <div class="scenario__why"><p>La priorité occupe 4 bits du BID, le numéro de VLAN les 12 autres : d'où les pas de 4096. Taper <code>priority 28672</code> ou <code>24576</code>, ou simplement <code>root primary</code>. Vérifier : <code>show spanning-tree vlan 10</code>, <em>This bridge is the root</em>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -372,8 +497,8 @@
 
             <ul>
                 <li>Une règle nouvelle s'ajoute <strong>à la fin</strong> : les règles précises d'abord, les générales ensuite.</li>
-                <li>Une ACL <strong>numérotée</strong> ne se corrige pas règle par règle : <code>no access-list N</code> la supprime entière. Une ACL <strong>nommée</strong> accepte <code>no permit …</code> / <code>no deny …</code>.</li>
-                <li>L'opérande <code>eq</code>, <code>gt</code>, <code>lt</code>, <code>neq</code> qualifie le port écrit <strong>juste avant lui</strong> : après la destination, c'est le port de destination.</li>
+                <li>Attention à <code>no access-list N …</code> en configuration globale : même suivi d'une règle précise, il supprime l'ACL <strong>entière</strong>. Pour retirer une seule ligne, passer par le mode ACL : une ACL <strong>nommée</strong> accepte <code>no permit …</code> / <code>no deny …</code> ou <code>no</code> + numéro de séquence (sur un IOS récent, <code>ip access-list extended 100</code> ouvre aussi une ACL numérotée dans ce mode).</li>
+                <li>L'opérande <code>eq</code>, <code>gt</code>, <code>lt</code>, <code>neq</code>, <code>range</code> porte sur l'adresse écrite <strong>juste avant lui</strong> : après la source, c'est le port source ; après la destination, le port de destination (le cas courant).</li>
             </ul>
 
             <div class="table-wrap">
@@ -382,7 +507,7 @@
                     <tbody>
                         <tr><td>ça passe alors que ça ne devrait pas</td><td>tous à zéro</td><td>ACL absente ou dans le mauvais sens (<code>show ip interface</code>)</td></tr>
                         <tr><td>ça passe alors que ça ne devrait pas</td><td>le <code>permit</code> compte, le <code>deny</code> non</td><td>règles dans le mauvais ordre</td></tr>
-                        <tr><td>plus rien ne passe</td><td>rien ne compte, sauf le refus final</td><td><code>permit</code> final oublié</td></tr>
+                        <tr><td>plus rien ne passe</td><td>aucun <code>permit</code> ne compte (le refus implicite n'affiche jamais de compteur)</td><td><code>permit</code> final oublié</td></tr>
                         <tr><td>ça ne passe pas, l'ACL ne compte rien</td><td>tous à zéro</td><td>le blocage vient d'ailleurs : routage, adressage</td></tr>
                     </tbody>
                 </table>
@@ -391,6 +516,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Ordre séquentiel, première correspondance, <strong><code>deny any</code> implicite</strong>. <code>show access-lists</code> donne le contenu et les compteurs, <code>show ip interface</code> dit où l'ACL est appliquée et dans quel sens.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">L'ACL 110 contient, dans cet ordre : <code>10 permit ip any any</code>, puis <code>20 deny tcp host 10.1.1.101 any eq 22</code>. Le poste 10.1.1.101 peut-il ouvrir une session SSH ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Oui : la ligne 10 correspond la première, la 20 n'est jamais lue</button>
+                        <button class="scenario__opt" data-why="Aucune priorité entre permit et deny : seul compte l&#x27;ordre. La première ligne qui correspond décide.">Non : un <code>deny</code> l&#x27;emporte toujours sur un <code>permit</code></button>
+                        <button class="scenario__opt" data-why="IOS ne trie pas les règles par précision : il les lit dans l&#x27;ordre des numéros de séquence.">Non : la règle la plus précise est appliquée en premier</button>
+                    </div>
+                    <div class="scenario__why"><p>Première correspondance gagnante : <code>permit ip any any</code> accepte tout avant le <code>deny</code>. Corriger en insérant <code>5 deny tcp host 10.1.1.101 any eq 22</code> (ACL ouverte par <code>ip access-list extended 110</code>). Vérifier : le compteur de la ligne 5 monte, celui de la 20 reste à zéro.</p></div>
+                </div>
             </div>
         </section>
 
@@ -641,10 +778,10 @@ SW2(config)# <span class="k">spanning-tree</span> vlan 20 root primary</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -78,7 +78,7 @@
         <section class="chapter" id="architecture">
             <p class="chapter__num">01</p>
             <h2 class="chapter__title">DPM et son architecture</h2>
-            <p class="chapter__intro"><strong>DPM</strong> (<em>System Center Data Protection Manager</em>) est l'outil de sauvegarde de la suite System Center. Il sauvegarde des serveurs Windows — volumes, dossiers, état du système, bases SQL ou Exchange — sur son propre stockage, et les restaure depuis une console unique.</p>
+            <p class="chapter__intro"><strong>DPM</strong> (<em>System Center Data Protection Manager</em>) est l'outil de sauvegarde de la suite System Center. Il sauvegarde des serveurs Windows — volumes, dossiers, état du système, bases SQL ou Exchange — sur son propre stockage, et les restaure depuis une console unique. Le TP utilise <strong>DPM 2025</strong>, sorti fin 2024 avec le reste de System Center 2025 ; il s'installe sur Windows Server 2022 ou 2025.</p>
 
             <div class="net">
                 <div class="node"><b>SRV-AD01</b><span class="ip">172.16.50.10</span><span>Contrôleur de domaine + DNS — porte le compte de service gMSA</span></div>
@@ -107,6 +107,19 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Trois rôles, trois machines : <strong>l'annuaire</strong> (comptes, gMSA), <strong>la base</strong> (SQL distant) et <strong>DPM</strong> (console et stockage). Sur les serveurs protégés, un <strong>agent</strong> ; côté politique, des <strong>groupes de protection</strong>. Et une distinction qui revient partout : on synchronise souvent, mais on ne restaure qu'un <strong>point de récupération</strong>.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu viens d'installer l'agent DPM sur SRV-FILE01 ; l'installation affiche <em>Success</em>. Une semaine plus tard, il n'existe toujours aucun point de récupération pour ce serveur. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le serveur n&#x27;est dans aucun groupe de protection</button>
+                        <button class="scenario__opt" data-why="Les synchronisations n&#x27;ont pas encore eu lieu">Une synchronisation tient le réplica à jour ; mais sans groupe, il n&#x27;y a même pas de réplica à synchroniser.</button>
+                        <button class="scenario__opt" data-why="L&#x27;agent ne marche pas sans pool de stockage">L&#x27;agent s&#x27;installe sans pool ; c&#x27;est le groupe de protection qui réserve de la place dans le pool, et il n&#x27;existe pas.</button>
+                    </div>
+                    <div class="scenario__why"><p>Un agent rend le serveur <strong>visible</strong> pour DPM, rien de plus : il reste dans <em>Unprotected computers with protection agent</em>. C'est le <strong>groupe de protection</strong> qui dit quoi sauvegarder, quand et combien de temps.</p></div>
+                </div>
             </div>
         </section>
 
@@ -169,6 +182,30 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>La check-list de SQL : <strong>collation</strong> <code>SQL_Latin1_General_CP1_CI_AS</code>, service sous le <strong>gMSA</strong>, <strong>TCP/IP</strong> activé, <strong>SSRS</strong> configuré, <strong>DPM Support Files</strong> installés, <strong>certificat</strong> approuvé par le serveur DPM. La collation est la seule qui ne se rattrape pas sans réinstaller l'instance.</p>
             </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Produit</th><th>Collation exigée</th><th>Conséquence</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>DPM</strong></td><td><code>SQL_Latin1_General_CP1_CI_AS</code> (collation SQL)</td><td>À poser sur l'<strong>instance</strong> qui porte DPMDB</td></tr>
+                        <tr><td><strong>SharePoint</strong> (module <a href="sharepoint.html">SharePoint</a>)</td><td><code>Latin1_General_CI_AS_KS_WS</code> (collation Windows)</td><td>SharePoint la pose sur ses bases ; idéalement aussi sur l'instance</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Deux produits Microsoft, deux collations différentes : une instance unique ne peut pas satisfaire les deux à la fois. C'est une raison concrète de donner à chacun <strong>sa propre instance</strong>.</p>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu veux héberger DPMDB sur l'instance SQL déjà installée pour SharePoint, en collation <code>Latin1_General_CI_AS_KS_WS</code>. Que fais-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Une instance dédiée à DPM, en <code>SQL_Latin1_General_CP1_CI_AS</code></button>
+                        <button class="scenario__opt" data-why="Créer DPMDB à la main avec la bonne collation">La collation d&#x27;une base ne change pas celle de l&#x27;instance, ni de tempdb et master : DPM exige la collation au niveau de l&#x27;instance.</button>
+                        <button class="scenario__opt" data-why="Changer la collation de l&#x27;instance SharePoint">Changer la collation de l&#x27;instance impose de reconstruire les bases système, et SharePoint perdrait la collation qu&#x27;il attend.</button>
+                    </div>
+                    <div class="scenario__why"><p>DPM vérifie la collation de l'<strong>instance</strong>, qui ne se change pas sans reconstruire les bases système. Comme SharePoint en veut une autre, la solution propre est une seconde instance (nommée) sur le même serveur, ou un autre serveur SQL. <code>SELECT SERVERPROPERTY('Collation');</code> vérifie avant d'installer.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 04 -->
@@ -214,6 +251,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>SQL <strong>distant</strong>, domaine en <strong>NetBIOS</strong>, et une session ouverte avec un compte <strong>sysadmin</strong> sur SQL : c'est elle, et non le compte de l'assistant, qui crée la base.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Connecté sur SRV-DPM01 avec un compte local, tu saisis dans l'assistant un compte du domaine <code>sysadmin</code> sur SQL. Le setup échoue à la création de la base. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le script de création tourne avec <code>sqlcmd -E</code>, donc sous ta session locale</button>
+                        <button class="scenario__opt" data-why="Le domaine devait être saisi <code>orion.local</code>">Le champ Domain attend bien le nom NetBIOS (ORION) : ce n&#x27;est pas ce qui fait échouer le script de création.</button>
+                        <button class="scenario__opt" data-why="Le compte saisi doit être <code>dbcreator</code> plutôt que <code>sysadmin</code>">Le compte saisi a déjà tous les droits : sysadmin couvre la création de base. Le problème est qu&#x27;il n&#x27;est pas utilisé pour cette étape.</button>
+                    </div>
+                    <div class="scenario__why"><p><code>-E</code> = authentification Windows de la <strong>session ouverte</strong>. Un compte local n'existe pas sur SRV-SQL01 : connexion refusée. Il faut ouvrir la session sur le serveur DPM avec un compte du domaine qui est <code>sysadmin</code> sur l'instance.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 05 -->
@@ -223,7 +273,7 @@
             <p class="chapter__intro">Avant de protéger quoi que ce soit, DPM a besoin de deux choses : un endroit où écrire, et un agent sur chaque serveur à lire.</p>
 
             <h3>Le pool de stockage</h3>
-            <p><strong>Management &gt; Disk Storage &gt; Add</strong> : choisir le volume dans <em>Available volumes</em>, <strong>Add &gt;</strong>, lui donner un <em>Friendly Name</em>, <strong>OK</strong>. Il apparaît ensuite dans le pool, état <em>Healthy</em>.</p>
+            <p>Depuis DPM 2016, le stockage disque s'appelle <strong>Modern Backup Storage</strong> (MBS) : DPM écrit ses sauvegardes sur des <strong>volumes ReFS</strong> et profite de leurs clones de blocs, ce qui rend les points de récupération rapides et économes en place. <strong>Management &gt; Disk Storage &gt; Add</strong> : choisir le volume dans <em>Available volumes</em>, <strong>Add &gt;</strong>, lui donner un <em>Friendly Name</em>, <strong>OK</strong>. Il apparaît ensuite dans le pool, état <em>Healthy</em>.</p>
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">DPM formate le volume</p>
@@ -244,6 +294,19 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>L'ordre est imposé : <strong>stockage</strong> d'abord (un volume que DPM formate et se réserve), <strong>agents</strong> ensuite. Un agent installé ne protège rien à lui seul — c'est le groupe de protection qui décide quoi sauvegarder.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Pour gagner du temps, un collègue veut ajouter au pool DPM le volume <code>E:</code> de SRV-DPM01, qui contient déjà les ISO d'installation de l'équipe. Ton avis ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Non : DPM le reformate en ReFS, les ISO seraient perdues</button>
+                        <button class="scenario__opt" data-why="Oui, DPM range ses sauvegardes à côté des ISO">DPM ne partage pas un volume : il le formate entièrement et se le réserve, rien n&#x27;est conservé à côté.</button>
+                        <button class="scenario__opt" data-why="Oui, à condition de ne donner à DPM qu&#x27;un sous-dossier">Un dossier ne s&#x27;ajoute pas au pool : seuls des volumes entiers y entrent, et ils sont formatés.</button>
+                    </div>
+                    <div class="scenario__why"><p>Ajouter un volume au pool, c'est le donner à DPM : <strong>formatage en ReFS</strong>, nom remplacé par un GUID, plus rien à y déposer à la main. On lui donne un volume vide et dédié.</p></div>
+                </div>
             </div>
         </section>
 
@@ -278,7 +341,8 @@
                     <ul>
                         <li>Recopie les <strong>modifications</strong> vers le réplica.</li>
                         <li>Ici toutes les 15 min — ou juste avant chaque point de récupération.</li>
-                        <li>Tient le réplica à jour, mais <strong>ne crée rien de restaurable</strong>.</li>
+                        <li>Pour des <strong>fichiers</strong>, tient le réplica à jour mais <strong>ne crée rien de restaurable</strong>.</li>
+                        <li>Exception : pour une <strong>base SQL</strong> en modèle <code>FULL</code>, chaque synchronisation transfère une sauvegarde du journal et crée un point de récupération.</li>
                     </ul>
                 </div>
                 <div class="card">
@@ -300,9 +364,65 @@
                 </details>
             </div>
 
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">De « Create Group » au premier fichier restaurable</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · console DPM → pool</p>
+                        <p class="walk__head">Réserver la place</p>
+                        <p>À <em>Create Group</em>, DPM réserve dans le pool la place calculée à l'écran <em>Review disk storage</em> : un volume ReFS pour le réplica de chaque membre et ses points de récupération.</p>
+                        <p class="walk__change">La place est <b>réservée par membre</b> avant toute copie.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · agent → DPM</p>
+                        <p class="walk__head">Créer le réplica</p>
+                        <p>Job <em>Replica creation</em> : l'agent du serveur protégé envoie une <strong>copie complète</strong> des données par le réseau. C'est le job le plus long ; l'état du membre affiche <em>Replica creation in progress</em>.</p>
+                        <p class="walk__change">Le <b>réplica</b> = la copie complète, faite une fois.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · serveur protégé</p>
+                        <p class="walk__head">Suivre les changements</p>
+                        <p>Entre deux transferts, l'agent <strong>note les blocs modifiés</strong> sur le volume protégé (suivi des changements), pour ne renvoyer que ce qui a bougé.</p>
+                        <p class="walk__change">L'agent sait <b>ce qui a changé</b> sans tout relire.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · agent → DPM, toutes les 15 min</p>
+                        <p class="walk__head">Synchroniser</p>
+                        <p>Chaque synchronisation envoie les changements et met le réplica à jour. Pour des fichiers, rien de restaurable n'est encore créé ; pour une base SQL en <code>FULL</code>, c'est une sauvegarde de journal, donc un point de récupération.</p>
+                        <p class="walk__change">Synchronisation = <b>réplica à jour</b>, pas encore une version figée (fichiers).</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · DPM, vendredi 19 h</p>
+                        <p class="walk__head">Figer un point de récupération</p>
+                        <p>À l'heure prévue, DPM synchronise une dernière fois puis <strong>fige</strong> l'état du réplica (un instantané du volume ReFS). C'est ce point qui apparaît en gras dans le calendrier de l'espace <em>Recovery</em>.</p>
+                        <p class="walk__change">Seul le <b>point de récupération</b> se restaure.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · DPM, au fil des jours</p>
+                        <p class="walk__head">Purger et contrôler</p>
+                        <p>Les points plus vieux que la <strong>rétention</strong> (5 jours ici) sont supprimés. Si un réplica devient incohérent (agent arrêté, journal de changements perdu), DPM lance une <strong>vérification de cohérence</strong> qui le compare à la source et corrige.</p>
+                        <p class="walk__change">La <b>rétention</b> dit jusqu'où on peut remonter dans le temps.</p>
+                    </li>
+                </ol>
+            </div>
+
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Un groupe = des <strong>membres</strong> + une <strong>politique</strong> : rétention, fréquence de synchronisation, points de récupération, création du réplica, vérification de cohérence. Et la question à se poser toujours : <strong>quel point de récupération pourrai-je restaurer</strong>, à n'importe quel moment de la semaine ?</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le groupe du TP garde ses points <strong>5 jours</strong> et n'en crée qu'<strong>un par semaine</strong> (vendredi 19 h). Un jeudi, combien de points de récupération sont disponibles ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Aucun : celui du vendredi précédent a déjà été purgé</button>
+                        <button class="scenario__opt" data-why="Un seul, celui du vendredi précédent">Le point du vendredi a plus de 5 jours le jeudi suivant (6 jours) : la rétention l&#x27;a supprimé.</button>
+                        <button class="scenario__opt" data-why="Des dizaines, un par synchronisation de 15 minutes">Les synchronisations de 15 min ne créent pas de points de récupération pour des fichiers.</button>
+                    </div>
+                    <div class="scenario__why"><p>Vendredi 19 h + 5 jours = mercredi 19 h : le jeudi, le point a expiré et le suivant n'existe pas encore. Une rétention <strong>plus courte</strong> que l'intervalle entre deux points laisse des trous sans aucune restauration possible. Règle : rétention &gt; intervalle entre deux points, avec de la marge.</p></div>
+                </div>
             </div>
         </section>
 
@@ -338,6 +458,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p><strong>Une sauvegarde jamais restaurée n'est pas une sauvegarde, c'est une hypothèse.</strong> La restauration se teste dès le premier point de récupération, et <em>Create copy</em> est le choix prudent : il ne détruit rien de ce qui existe encore.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un utilisateur a <strong>abîmé</strong> (pas supprimé) un tableur hier ; il a aussi fait des modifications utiles ce matin dans le même fichier. Tu restaures la version d'avant-hier à son emplacement d'origine. Quelle option choisis-tu si le fichier existe ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><em>Create copy</em>, puis l&#x27;utilisateur compare les deux</button>
+                        <button class="scenario__opt" data-why="<em>Overwrite</em>, pour remettre la bonne version">Overwrite remplace le fichier actuel : les modifications utiles de ce matin seraient perdues.</button>
+                        <button class="scenario__opt" data-why="<em>Skip</em>, pour ne rien abîmer">Skip ne restaure rien puisque le fichier existe : l&#x27;utilisateur n&#x27;a rien récupéré.</button>
+                    </div>
+                    <div class="scenario__why"><p><em>Create copy</em> restaure la version d'avant-hier <strong>à côté</strong> de l'actuelle : l'utilisateur récupère ce qui a été abîmé sans perdre le travail de ce matin. <em>Overwrite</em> ne se choisit que quand la version actuelle n'a plus aucune valeur.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 08 -->
@@ -368,7 +501,7 @@ Execute the SQL script
             </div>
 
             <h3>La cause, et la correction</h3>
-            <p>Depuis sa version 18, le pilote ODBC <strong>chiffre toujours</strong> la connexion et exige un certificat <strong>de confiance</strong>. Or SQL Server présente par défaut un certificat auto-généré. Changer de version de pilote ne sert à rien : le setup appelle ce <code>sqlcmd</code> par un chemin écrit en dur. La correction se fait en deux temps :</p>
+            <p>Depuis sa version 18, le pilote ODBC <strong>chiffre par défaut</strong> la connexion (<code>Encrypt=yes</code>) et, sauf demande contraire (<code>TrustServerCertificate</code>), exige un certificat <strong>de confiance</strong>. Or SQL Server présente par défaut un certificat auto-généré. Changer de version de pilote ne sert à rien : le setup appelle ce <code>sqlcmd</code> par un chemin écrit en dur. La correction se fait en deux temps :</p>
             <div class="cards">
                 <div class="card">
                     <h4>Sur le serveur SQL</h4>
@@ -405,6 +538,19 @@ Execute the SQL script
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Erreur 811 = le <code>sqlcmd</code> ODBC 18 du setup refuse le certificat auto-généré de SQL. Remède : un <strong>certificat dédié sur SQL</strong>, <strong>approuvé sur DPM</strong>. C'est la chaîne de confiance déjà vue avec <a href="exchange-securite.html">Exchange &amp; PKI</a> : un client ne fait confiance qu'à un certificat qu'il peut rattacher à une autorité qu'il connaît.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le setup DPM échoue en 811 ; à la main, <code>sqlcmd -E -S SRV-SQL01</code> depuis SRV-DPM01 répond « <em>Login failed for user &#x27;ORION\tech&#x27;</em> » au lieu d'une erreur de certificat. Que conclus-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Une autre cause que le certificat : un problème de compte, à traiter d&#x27;abord</button>
+                        <button class="scenario__opt" data-why="C&#x27;est la même erreur de certificat : importer la racine">Le certificat est passé : l&#x27;échange TLS a réussi, puisque SQL a pu refuser un login. Importer un certificat ne changera rien.</button>
+                        <button class="scenario__opt" data-why="Désactiver le chiffrement forcé côté SQL">Désactiver le chiffrement n&#x27;a aucun rapport avec un login refusé, et affaiblirait la sécurité pour rien.</button>
+                    </div>
+                    <div class="scenario__why"><p>Le message nomme un <strong>compte</strong>, pas un certificat : la connexion TLS a abouti, c'est l'authentification qui échoue. Ici, le compte de la session (<code>ORION\tech</code>) n'a pas de login sur l'instance : c'est lui que <code>-E</code> présente. Même méthode qu'au chapitre : reproduire, lire le <strong>premier</strong> message, traiter cette cause-là.</p></div>
+                </div>
             </div>
         </section>
 
@@ -443,7 +589,11 @@ Execute the SQL script
                 <pre class="terminal__code"><span class="k">sqlcmd</span> <span class="p">-b</span> <span class="p">-E</span> <span class="p">-S</span> SRV-SQL01 <span class="p">-Q</span> <span class="s">"SELECT SUSER_SNAME()"</span></pre>
             </div>
                 <p class="verify__sub">Sortie attendue</p>
-            <pre class="verify__out">ORION\Administrator</pre>
+            <pre class="verify__out">
+--------------------
+ORION\Administrator
+
+(1 rows affected)</pre>
                 <p class="verify__fail"><em>The certificate chain was issued by an authority that is not trusted</em> : le certificat présenté par SQL Server n'est pas approuvé par SRV-DPM01. C'est exactement l'erreur 811 du chapitre 08 — à corriger côté certificat, pas en désactivant le chiffrement.</p>
             </div>
             <div class="lab" data-lab="dpm-restauration">
@@ -479,10 +629,10 @@ Execute the SQL script
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center DPM 2025</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

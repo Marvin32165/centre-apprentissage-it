@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -176,7 +176,7 @@
                     <tbody>
                         <tr><td><strong>Transparence</strong></td><td>Le travail et son avancement sont visibles par tous</td><td>La liste du travail est affichée, « terminé » veut dire la même chose pour tous, et <strong>on dit quand on ne comprend pas</strong></td></tr>
                         <tr><td><strong>Inspection</strong></td><td>On examine régulièrement produit et avancement</td><td>Chaque jour au point quotidien, et en fin de sprint aux deux réunions de bilan</td></tr>
-                        <tr><td><strong>Adaptation</strong></td><td>Dès qu'un écart est détecté, on ajuste</td><td>On réordonne la liste, l'équipe réorganise sa journée, les décisions s'appliquent dès le sprint suivant</td></tr>
+                        <tr><td><strong>Adaptation</strong></td><td>Dès qu'un écart est détecté, on ajuste</td><td>On ajuste <strong>le plus tôt possible</strong> : on réordonne la liste, l'équipe réorganise sa journée, la rétrospective change la façon de travailler</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -184,7 +184,7 @@
 
             <h3>Le sprint</h3>
             <ul>
-                <li>Sa <strong>durée est fixe</strong> — un mois maximum, le plus souvent deux semaines — et elle ne change pas en cours de route.</li>
+                <li>Sa <strong>durée est fixe</strong> — un mois maximum, souvent deux semaines dans la pratique — et elle ne change pas en cours de route.</li>
                 <li>Un nouveau sprint <strong>démarre dès que le précédent se termine</strong>, sans pause.</li>
                 <li>À la fin, l'équipe doit avoir produit un morceau de produit <strong>utilisable et réellement terminé</strong>.</li>
                 <li>Toutes les réunions de Scrum ont lieu <strong>à l'intérieur</strong> du sprint.</li>
@@ -196,6 +196,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Les trois piliers sont <strong>indissociables</strong> : sans transparence, l'inspection n'a rien à examiner ; et une inspection qui ne débouche sur aucune adaptation ne sert à rien — c'est une réunion pour la réunion. Une équipe peut cocher toutes les cases de Scrum et travailler très mal : ce sont les valeurs qui rendent les piliers réels.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Au jour 9 d'un sprint de deux semaines, l'équipe sent qu'elle ne finira pas tout. Quelqu'un propose de prolonger le sprint de trois jours. Que répond Scrum ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Non : la durée reste fixe ; on renégocie le contenu avec le PO et on en parle en rétrospective</button>
+                        <button class="scenario__opt" data-why="Le PO ordonne le backlog mais ne change pas la durée d&#x27;un sprint en cours : c&#x27;est une timebox, fixe par définition.">Oui, si le Product Owner est d'accord</button>
+                        <button class="scenario__opt" data-why="Allonger puis raccourcir casse le rythme et fausse toute la mesure de ce que l&#x27;équipe sait livrer.">Oui, une fois, à condition de raccourcir le sprint suivant</button>
+                    </div>
+                    <div class="scenario__why"><p>La timebox protège la régularité et force les arbitrages : ce qui ne tient pas retourne dans le Product Backlog. Le retard devient une <strong>information</strong> à inspecter en Review et en Rétrospective — c'est l'adaptation, pas la prolongation.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 03 -->
@@ -203,22 +216,26 @@
             <p class="chapter__num">03</p>
             <h2 class="chapter__title">Les quatre cérémonies</h2>
             <p class="chapter__intro">Une <strong>cérémonie</strong> (officiellement un « événement ») n'est pas une réunion improvisée : c'est un rendez-vous prévu à l'avance, qui revient à chaque sprint, avec un objectif précis, des participants définis et une <strong>durée maximale fixe</strong> — la <em>timebox</em> — qu'on ne dépasse jamais.</p>
+            <p>Le <strong>Guide Scrum 2020</strong> compte en fait <strong>cinq événements</strong> : le <strong>Sprint</strong> lui-même, qui contient tous les autres, et les quatre cérémonies ci-dessous.</p>
 
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Cérémonie</th><th>Timebox (1 mois · 2 semaines)</th><th>Objet</th><th>Qui</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Sprint Planning</strong></td><td>8 h · 4 h</td><td>Choisir le travail et fixer l'objectif du sprint</td><td>Toute l'équipe Scrum</td></tr>
-                        <tr><td><strong>Daily Scrum</strong></td><td>15 min, chaque jour</td><td>Se synchroniser, repérer les blocages</td><td>L'équipe technique</td></tr>
-                        <tr><td><strong>Sprint Review</strong></td><td>4 h · 2 h</td><td>Montrer le <strong>produit</strong> qui fonctionne</td><td>L'équipe <strong>et</strong> les parties prenantes</td></tr>
+                        <tr><td><strong>Daily Scrum</strong></td><td>15 min, chaque jour</td><td>Inspecter l'avancement vers l'objectif du sprint, ajuster le plan du jour</td><td>Les développeurs (l'équipe technique)</td></tr>
+                        <tr><td><strong>Sprint Review</strong></td><td>4 h · 2 h</td><td>Inspecter le <strong>produit</strong> livré et décider de la suite du backlog</td><td>L'équipe <strong>et</strong> les parties prenantes</td></tr>
                         <tr><td><strong>Rétrospective</strong></td><td>3 h · 1 h 30</td><td>Améliorer la <strong>façon de travailler</strong></td><td>L'équipe Scrum seule</td></tr>
                     </tbody>
                 </table>
             </div>
 
+            <p>Le Guide ne fixe que les durées pour un sprint d'un mois et dit que, pour un sprint plus court, l'événement est <strong>généralement plus court</strong> : les durées de la colonne « 2 semaines » sont la règle de proportion habituelle, pas un texte officiel.</p>
+
             <p>Le <strong>Sprint Planning</strong> répond à trois questions, dans cet ordre : <em>pourquoi ce sprint a-t-il de la valeur ? qu'est-il possible d'accomplir ? comment le travail va-t-il être accompli ?</em> Pour notre portail, l'objectif du premier sprint serait : « <em>permettre à un employé de réinitialiser seul son mot de passe</em> ».</p>
 
-            <p>Le <strong>Daily Scrum</strong> n'est pas un compte rendu à un chef : c'est un point sur l'avancement vers l'objectif du sprint, souvent debout pour que ça reste court. Chacun répond classiquement à : <em>qu'ai-je fait hier ? que vais-je faire aujourd'hui ? qu'est-ce qui me bloque ?</em></p>
+            <p>Le <strong>Daily Scrum</strong> n'est pas un compte rendu à un chef : c'est un point sur l'avancement vers l'objectif du sprint, souvent debout pour que ça reste court. Beaucoup d'équipes utilisent les trois questions classiques — <em>qu'ai-je fait hier ? que vais-je faire aujourd'hui ? qu'est-ce qui me bloque ?</em> — mais le Guide 2020 ne les impose plus : les développeurs choisissent la forme, tant que le point porte sur l'objectif du sprint.</p>
+            <p>La <strong>Sprint Review</strong> n'est pas une simple démonstration : c'est une séance de travail où l'équipe et les parties prenantes regardent ce qui a été fait, ce qui a changé autour du produit, et décident ensemble de ce qu'il faut faire ensuite — le Product Backlog en sort ajusté.</p>
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Piège classique n° 1 — Review ou Rétrospective ?</p>
@@ -229,20 +246,33 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>La timebox paraît brutale, elle est protectrice : elle garantit que les réunions ne mangent pas le temps de travail et force à se préparer. Et surtout, <strong>chaque cérémonie est un moment d'inspection et d'adaptation</strong> — c'est là que les trois piliers deviennent concrets.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">En fin de sprint, l'équipe constate qu'elle a perdu deux jours parce que l'environnement de test était en panne. Lors de quel événement en discute-t-elle pour l'éviter la prochaine fois ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>La Rétrospective</button>
+                        <button class="scenario__opt" data-why="La Review porte sur le produit et le backlog, avec les parties prenantes ; la façon de travailler de l&#x27;équipe se traite ailleurs.">La Sprint Review</button>
+                        <button class="scenario__opt" data-why="Le Planning prépare le contenu du sprint suivant ; l&#x27;amélioration de la façon de travailler a son propre événement, juste avant.">Le prochain Sprint Planning</button>
+                    </div>
+                    <div class="scenario__why"><p>Une perte de temps due à <strong>la façon de travailler</strong> (outils, environnement, organisation), c'est le <em>comment</em> : la <strong>Rétrospective</strong>. Elle en sort avec une action concrète — par exemple vérifier l'environnement de test avant le début du sprint.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 04 -->
         <section class="chapter" id="equipe">
             <p class="chapter__num">04</p>
             <h2 class="chapter__title">L'équipe Scrum : trois rôles, aucun chef</h2>
-            <p class="chapter__intro">La chose la plus déstabilisante quand on vient d'une organisation classique : <strong>aucun des trois rôles n'est le chef des deux autres</strong>. Il n'y a pas de chef de projet dans Scrum.</p>
+            <p class="chapter__intro">La chose la plus déstabilisante quand on vient d'une organisation classique : <strong>aucun des trois rôles n'est le chef des deux autres</strong>. Il n'y a pas de chef de projet dans Scrum. Le Guide 2020 ne parle d'ailleurs plus de « rôles » mais de trois <strong>responsabilités</strong> (<em>accountabilities</em>) : <strong>Product Owner</strong>, <strong>Scrum Master</strong> et <strong>Developers</strong> — ce que ce module appelle l'équipe technique.</p>
 
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Rôle</th><th>Responsabilité en un mot</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Product Owner</strong></td><td>Décide <strong>quoi</strong> faire, et dans quel ordre</td></tr>
-                        <tr><td><strong>Équipe technique</strong></td><td>Décide <strong>comment</strong> le faire</td></tr>
+                        <tr><td><strong>Équipe technique</strong> (<em>Developers</em>)</td><td>Décide <strong>comment</strong> le faire, et combien elle peut en faire dans un sprint</td></tr>
                         <tr><td><strong>Scrum Master</strong></td><td>Veille à ce que la méthode fonctionne et lève les obstacles</td></tr>
                     </tbody>
                 </table>
@@ -256,19 +286,32 @@
             <p>Développeurs, administrateurs système, techniciens — ceux qui réalisent la solution. Quatre caractéristiques : elle est <strong>pluridisciplinaire</strong> (si elle doit attendre trois semaines qu'un service extérieur configure un serveur, ce n'est pas une équipe Scrum complète), <strong>auto-organisée</strong> (personne ne lui distribue les tâches), <strong>sans hiérarchie interne</strong> (les expertises diffèrent, l'autorité non) et <strong>collectivement responsable</strong>.</p>
 
             <h3>Le Scrum Master</h3>
-            <p>Le rôle le plus mal compris, parce qu'on l'assimile à un chef d'équipe — c'est exactement l'inverse. C'est un <strong>facilitateur</strong>, un <strong>leader serviteur</strong> : au service de l'équipe, pas au-dessus d'elle. Il travaille vis-à-vis de trois publics :</p>
+            <p>Le rôle le plus mal compris, parce qu'on l'assimile à un chef d'équipe — c'est exactement l'inverse. C'est un <strong>facilitateur</strong>, un <strong>leader serviteur</strong> (le Guide 2020 dit : « un vrai leader au service de l'équipe Scrum et de l'organisation ») : au service de l'équipe, pas au-dessus d'elle. Il est responsable de l'<strong>efficacité</strong> de l'équipe Scrum. Il travaille vis-à-vis de trois publics :</p>
             <ul>
                 <li><strong>L'équipe technique</strong> : l'aider à appliquer Scrum et surtout <strong>éliminer les blocages</strong> — un accès manquant, un fournisseur qui ne répond pas, une réunion parasite.</li>
                 <li><strong>Le Product Owner</strong> : l'aider à clarifier l'objectif du produit et à bien gérer sa liste.</li>
                 <li><strong>L'organisation</strong> : accompagner l'adoption de Scrum là où l'entreprise résiste ou n'a pas compris.</li>
             </ul>
-            <p>C'est également lui qui anime les quatre cérémonies.</p>
+            <p>Il veille aussi à ce que les événements <strong>aient lieu</strong>, soient utiles et respectent leur timebox. Il peut les animer, mais ce n'est pas une obligation : la Daily, par exemple, appartient aux développeurs.</p>
 
             <p>Prise globalement, l'équipe Scrum est de <strong>dix personnes ou moins</strong> (la règle antérieure disait de trois à neuf). La raison est mathématique : plus il y a de monde, plus les canaux de communication se multiplient, et plus le temps de coordination mange le temps de production.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p><strong>Le PO dit ce qui est prioritaire ; l'équipe dit comment et ce que ça coûte ; le Scrum Master ne décide ni l'un ni l'autre.</strong> Et une règle de comportement qui paraît anodine mais qui est centrale : <strong>il faut toujours dire quand on ne comprend pas</strong> — un malentendu tu pendant trois jours coûte trois jours.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Au Sprint Planning, le directeur demande au Scrum Master : « Combien de temps prendra la réinitialisation de mot de passe ? » Qui doit répondre ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Les développeurs, qui feront le travail et estiment l'effort</button>
+                        <button class="scenario__opt" data-why="Il facilite et lève les obstacles ; s&#x27;il estimait à la place de l&#x27;équipe, il deviendrait le chef de projet que Scrum n&#x27;a pas.">Le Scrum Master, qui connaît bien l'équipe</button>
+                        <button class="scenario__opt" data-why="Le PO dit ce qui a de la valeur et dans quel ordre ; l&#x27;effort, il peut le discuter mais pas le décider.">Le Product Owner, qui est responsable du backlog</button>
+                    </div>
+                    <div class="scenario__why"><p>Celui qui fait le travail l'estime : ce sont les <strong>Developers</strong>. Le Scrum Master peut, en revanche, rediriger la question vers eux — c'est exactement son rôle de gardien du cadre.</p></div>
+                </div>
             </div>
         </section>
 
@@ -381,6 +424,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Un élément affiné doit pouvoir être <strong>réalisé en un seul sprint</strong>. S'il ne rentre pas, c'est qu'il faut encore le découper — c'est tout le sens de la descente initiative → epic → user story → tâche.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">« En tant qu'employé, je veux réinitialiser mon mot de passe et déverrouiller mon compte, afin de reprendre le travail sans appeler le support. » Que fais-tu de cette story ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>La découper en deux stories : réinitialiser le mot de passe, déverrouiller le compte</button>
+                        <button class="scenario__opt" data-why="Elle a bien les trois parties, mais le « et » cache deux besoins qui peuvent être livrés, testés et priorisés séparément.">La garder telle quelle : elle a un utilisateur, un besoin et un bénéfice</button>
+                        <button class="scenario__opt" data-why="Deux besoins précis ne font pas une epic : il suffit de séparer la story, chaque moitié tient dans un sprint.">La transformer en epic et la retirer du backlog</button>
+                    </div>
+                    <div class="scenario__why"><p>Le « et » est le signal : deux besoins = deux stories, chacune <strong>indépendante</strong>, <strong>petite</strong> et <strong>testable</strong> (INVEST). Le PO peut alors livrer la réinitialisation d'abord, si c'est elle qui génère 80 % des appels.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 07 -->
@@ -400,7 +456,7 @@
                 </table>
             </div>
 
-            <p>Il <strong>appartient à l'équipe technique</strong> — elle seule le modifie, y compris le PO qui n'y touche pas. Il est mis à jour en continu, notamment au Daily, et visible par tous, souvent sur un tableau <em>À faire → En cours → Terminé</em>.</p>
+            <p>Il <strong>appartient à l'équipe technique</strong> — elle seule le modifie ; le PO peut en discuter le contenu, mais il n'y touche pas. Il est mis à jour en continu, notamment au Daily, et visible par tous, souvent sur un tableau <em>À faire → En cours → Terminé</em>.</p>
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Piège classique n° 2 — Product ou Sprint Backlog ?</p>
@@ -444,13 +500,14 @@
 
             <p>Le mot vient du japonais (<em>kanban</em> = « étiquette ») et des usines Toyota, où des cartes circulaient pour signaler qu'un poste avait besoin d'être réapprovisionné. <strong>Différence fondamentale avec Scrum</strong> : Kanban n'est pas un framework avec des rôles et des cérémonies. C'est une <strong>méthode de gestion du flux de travail</strong>, qui s'applique par-dessus une organisation existante — sans rien changer aux postes ni aux titres.</p>
 
-            <h3>Les cinq pratiques</h3>
+            <h3>Les six pratiques</h3>
             <ul>
                 <li><strong>Visualiser le flux</strong> — des colonnes qui reflètent les <em>vraies</em> étapes du travail, pas trois colonnes génériques. Ce qui n'est pas visible ne peut pas être amélioré.</li>
                 <li><strong>Limiter le travail en cours</strong> (<em>WIP limit</em>) — plafonner le nombre de cartes autorisées dans une colonne. Quand elle est pleine, il faut d'abord en finir une.</li>
                 <li><strong>Gérer le flux</strong> — l'objectif n'est pas de remplir les colonnes mais que les tâches <strong>traversent</strong> le tableau sans à-coups. Si « en revue » est constamment pleine, le problème est là, pas chez les développeurs.</li>
                 <li><strong>Rendre les règles explicites</strong> — tout le monde sait ce que veut dire « prêt à passer à l'étape suivante ». Même esprit que la DoD.</li>
-                <li><strong>S'améliorer en continu</strong>, à partir de ce qu'on observe sur le tableau.</li>
+                <li><strong>Mettre en place des boucles de rétroaction</strong> — des points réguliers (réunion quotidienne devant le tableau, revue du service) pour regarder le flux et décider ensemble.</li>
+                <li><strong>S'améliorer en continu</strong>, par petites expériences, à partir de ce qu'on observe sur le tableau.</li>
             </ul>
 
             <div class="tip">
@@ -467,7 +524,7 @@
                         <tr><td><strong>Rythme</strong></td><td>Flux continu, pas de sprints</td><td>Sprints à durée fixe</td></tr>
                         <tr><td><strong>Rôles</strong></td><td>Aucun rôle imposé</td><td>PO, Scrum Master, équipe technique</td></tr>
                         <tr><td><strong>Changements</strong></td><td>On repriorise à tout moment</td><td>Déconseillés en cours de sprint</td></tr>
-                        <tr><td><strong>Mesure principale</strong></td><td><em>Cycle time</em> / <em>lead time</em></td><td>Vélocité</td></tr>
+                        <tr><td><strong>Mesure courante</strong></td><td><em>Cycle time</em> / <em>lead time</em> (temps de traversée)</td><td>Vélocité (pratique répandue, absente du Guide Scrum)</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -475,6 +532,19 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Le choix se fait selon <strong>la façon dont le travail arrive</strong>. Une équipe projet, qui construit un produit par étapes planifiables, tire profit du rythme de Scrum. Une équipe dont le travail arrive de façon <strong>imprévisible</strong> — un support informatique, une équipe d'exploitation qui reçoit des incidents — s'accommode mal de sprints figés : on ne peut pas dire à une panne d'attendre le sprint suivant. Mélanger sérieusement les deux s'appelle du <strong>Scrumban</strong>.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur le tableau Kanban du support, la colonne « En attente de validation » déborde : 14 tickets, alors que les techniciens sont disponibles. Que fais-tu en premier ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Poser une limite de travail en cours sur cette colonne et aider à la vider avant d'en commencer d'autres</button>
+                        <button class="scenario__opt" data-why="Ajouter du travail en amont gonfle encore la file d&#x27;attente : le goulet est en aval, pas chez les techniciens.">Demander aux techniciens de prendre plus de nouveaux tickets</button>
+                        <button class="scenario__opt" data-why="Le support reçoit un travail imprévisible ; des sprints figés n&#x27;y conviennent pas et ne règlent pas le goulet.">Passer en sprints de deux semaines pour tout planifier</button>
+                    </div>
+                    <div class="scenario__why"><p>Le problème est un <strong>goulet d'étranglement</strong> visible sur le tableau. Kanban répond par la <strong>limite de WIP</strong> : tant que la colonne est pleine, on aide à la vider plutôt que d'ouvrir de nouveaux chantiers. Le flux se mesure à ce qui sort, pas à ce qui entre.</p></div>
+                </div>
             </div>
         </section>
 
@@ -486,14 +556,54 @@
 
             <p><strong>Le contexte.</strong> L'objectif du produit est de réduire de moitié les appels au support d'ici la fin de l'année. Le Product Backlog contient une trentaine d'éléments ordonnés par le PO ; les premiers sont détaillés et estimés, les derniers sont encore des idées vagues. L'équipe compte sept personnes.</p>
 
-            <ol class="steps">
-                <li class="step"><div class="step__num">00</div><div class="step__body"><strong>Avant le sprint — le raffinage</strong>Au fil du sprint précédent, l'epic « gestion des comptes » a été découpée en user stories, celle du mot de passe a reçu ses critères d'acceptation, et l'équipe a estimé l'effort. Ces éléments sont <strong>prêts</strong>.</div></li>
-                <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Jour 1, matin — le Sprint Planning</strong> (4 h max)<em>Pourquoi ?</em> Les mots de passe représentent 80 % des appels : l'objectif sera « un employé peut réinitialiser seul son mot de passe ». <em>Quoi ?</em> L'équipe choisit les stories tenables et <strong>refuse les deux dernières</strong> — c'est elle qui décide de la quantité, pas le PO. <em>Comment ?</em> Découpage en tâches. Résultat : le Sprint Backlog, affiché sur le tableau.</div></li>
-                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Jours 1 à 10 — le travail quotidien</strong>Quinze minutes de Daily chaque matin. Jour 3 : quelqu'un attend un accès au serveur de test depuis deux jours — c'est un obstacle, le <strong>Scrum Master</strong> s'en charge dans la journée. Jour 8 : une story se révèle plus complexe que prévu, l'équipe va voir le PO et <strong>renégocie le contenu</strong> ; une story secondaire retourne au Product Backlog. <strong>L'objectif du sprint, lui, ne bouge pas.</strong></div></li>
-                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Jour 10, matin — la Sprint Review</strong> (2 h max)L'équipe, le PO, le responsable du support et deux employés testeurs. On <strong>montre le produit qui fonctionne</strong>, et uniquement ce qui respecte la DoD — une story « pas tout à fait testée » n'est pas présentée. Le responsable du support réagit : « les intérimaires n'ont pas d'adresse mail personnelle ». Personne n'y avait pensé ; ça devient un nouvel élément du backlog.</div></li>
-                <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Jour 10, après-midi — la Rétrospective</strong> (1 h 30 max)Entre soi. Ce qui a marché : le découpage en petites tâches. Ce qui a coûté cher : les deux jours d'attente des accès. <strong>Action décidée</strong> : demander les accès techniques une semaine avant le début du sprint, dès le prochain sprint.</div></li>
-                <li class="step"><div class="step__num">05</div><div class="step__body"><strong>Jour 11</strong>Le sprint suivant démarre immédiatement, avec un nouveau Planning et un nouvel objectif — probablement la demande d'accès logiciel, à moins que le problème des intérimaires soit devenu prioritaire. C'est au PO de trancher.</div></li>
-            </ol>
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Un sprint de deux semaines sur le portail</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · PO + développeurs, pendant le sprint précédent</p>
+                        <p class="walk__head">Le raffinage prépare le terrain</p>
+                        <p>L'epic « gestion des comptes » est découpée en user stories ; celle du mot de passe reçoit ses critères d'acceptation, et les développeurs estiment l'effort. Ces éléments sont <strong>prêts</strong>.</p>
+                        <p class="walk__change">Le <b>raffinage</b> est une activité continue, pas un événement : il rend le haut du backlog <b>prêt</b> pour le Planning.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · toute l'équipe Scrum, jour 1 matin (4 h max)</p>
+                        <p class="walk__head">Le Sprint Planning</p>
+                        <p><em>Pourquoi ?</em> Les mots de passe représentent 80 % des appels : l'objectif sera « un employé peut réinitialiser seul son mot de passe ». <em>Quoi ?</em> Les développeurs choisissent les stories tenables et <strong>refusent les deux dernières</strong> — ce sont eux qui décident de la quantité, pas le PO. <em>Comment ?</em> Découpage en tâches.</p>
+                        <p class="walk__change">Sortie : un <b>Sprint Goal</b> et un <b>Sprint Backlog</b> (pourquoi, quoi, comment), affichés sur le tableau.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · développeurs + Scrum Master, jours 1 à 10</p>
+                        <p class="walk__head">Le travail quotidien et les obstacles</p>
+                        <p>Quinze minutes de Daily chaque matin. Jour 3 : quelqu'un attend un accès au serveur de test depuis deux jours — c'est un obstacle, le <strong>Scrum Master</strong> s'en charge dans la journée.</p>
+                        <p class="walk__change">La <b>Daily</b> inspecte l'avancement vers l'objectif ; le Scrum Master <b>lève les obstacles</b>, il ne distribue pas le travail.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · développeurs + PO, jour 8</p>
+                        <p class="walk__head">L'imprévu : on renégocie le contenu</p>
+                        <p>Une story se révèle plus complexe que prévu. L'équipe va voir le PO : une story secondaire retourne au Product Backlog. <strong>L'objectif du sprint, lui, ne bouge pas</strong>, et la durée non plus.</p>
+                        <p class="walk__change">Le <b>contenu</b> s'ajuste avec le PO ; l'<b>objectif</b> et la <b>timebox</b> restent fixes.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · équipe Scrum + parties prenantes, jour 10 matin (2 h max)</p>
+                        <p class="walk__head">La Sprint Review</p>
+                        <p>Le PO, les développeurs, le responsable du support et deux employés testeurs. On <strong>inspecte le produit qui fonctionne</strong>, et uniquement ce qui respecte la DoD — une story « pas tout à fait testée » n'est pas présentée. Le responsable du support réagit : « les intérimaires n'ont pas d'adresse mail personnelle ». Personne n'y avait pensé ; ça devient un nouvel élément du backlog.</p>
+                        <p class="walk__change">Seul l'<b>incrément</b> conforme à la <b>DoD</b> est montré ; le <b>Product Backlog</b> sort ajusté.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · équipe Scrum seule, jour 10 après-midi (1 h 30 max)</p>
+                        <p class="walk__head">La Rétrospective</p>
+                        <p>Ce qui a marché : le découpage en petites tâches. Ce qui a coûté cher : les deux jours d'attente des accès. <strong>Action décidée</strong> : demander les accès techniques une semaine avant le début du sprint, dès le prochain sprint.</p>
+                        <p class="walk__change">La <b>Rétro</b> change la <b>façon de travailler</b> : au moins une action concrète, appliquée tout de suite.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · PO, jour 11</p>
+                        <p class="walk__head">Le sprint suivant démarre</p>
+                        <p>Sans pause, avec un nouveau Planning et un nouvel objectif — probablement la demande d'accès logiciel, à moins que le problème des intérimaires soit devenu prioritaire. C'est au PO de trancher.</p>
+                        <p class="walk__change">Les sprints s'<b>enchaînent</b> ; l'ordre du backlog reste la décision du <b>PO</b>.</p>
+                    </li>
+                </ol>
+            </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">Le retour du jour 10 est un succès, pas un échec</p>
@@ -577,10 +687,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du cours Agile / Scrum</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

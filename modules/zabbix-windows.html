@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -161,6 +161,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Trois conteneurs, deux réseaux : la <strong>base sur un réseau interne</strong>, le serveur et l'interface à cheval sur les deux. Les secrets dans un <strong><code>.env</code> en 600</strong>, les données dans un <strong>volume nommé</strong>. Et chaque service joint l'autre <strong>par son nom</strong>, jamais par une IP de conteneur.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Depuis SRV-AD01, un collègue tente de se connecter à PostgreSQL sur 172.16.50.40:5432 pour « jeter un œil à la base ». Que se passe-t-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>La connexion échoue : la base n'a aucun port publié et vit sur un réseau interne</button>
+                        <button class="scenario__opt" data-why="Un conteneur n&#x27;est joignable par l&#x27;IP de la VM que sur les ports explicitement publiés (ports:) ; la base n&#x27;en publie aucun.">Il se connecte, car tous les conteneurs de la VM partagent son adresse IP</button>
+                        <button class="scenario__opt" data-why="Le mot de passe ne sert à rien si rien n&#x27;écoute sur l&#x27;adresse de la VM : la connexion n&#x27;atteint jamais PostgreSQL.">Il se connecte s'il connaît le mot de passe du fichier .env</button>
+                    </div>
+                    <div class="scenario__why"><p>Le conteneur <code>zabbix-postgres</code> ne publie aucun port, et le réseau <code>zabbix-backend</code> est <code>internal: true</code>. Seuls les conteneurs reliés à ce réseau (serveur et interface) l'atteignent, par le nom <code>postgres</code>. Pour l'administrer : <code>docker exec -it zabbix-postgres psql -U …</code> depuis la VM.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 03 -->
@@ -210,6 +223,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Trois choses doivent correspondre exactement entre l'agent et Zabbix : le <strong>nom d'hôte</strong>, l'<strong>identité PSK</strong> et la <strong>valeur PSK</strong>. Et en mode actif, une interface 10050 « Unknown » n'est pas une panne.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">SRV-WEB01 : <em>Latest data</em> se remplit, l'infobulle indique <em>Active checks : Available</em>, mais l'interface <code>172.16.50.25:10050</code> reste « Unknown ». Que fais-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Rien : le modèle <em>agent active</em> ne fait aucune vérification passive</button>
+                        <button class="scenario__opt" data-why="Le serveur n&#x27;appelle jamais ce port avec un modèle actif : l&#x27;ouvrir ne change rien et agrandit la surface d&#x27;attaque.">J'ouvre le port 10050 entrant dans le pare-feu de SRV-WEB01</button>
+                        <button class="scenario__opt" data-why="Un échec PSK empêcherait toute donnée d&#x27;arriver ; or Latest data se remplit.">Je régénère la clé PSK, la négociation a dû échouer</button>
+                    </div>
+                    <div class="scenario__why"><p>« Unknown » veut dire « jamais testé », pas « en erreur ». Avec <em>Windows by Zabbix agent active</em>, toutes les données passent par la connexion sortante de l'agent vers le 10051 : c'est l'indicateur <em>Active checks</em> qui compte.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 04 -->
@@ -254,6 +280,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Entre conteneurs, <code>127.0.0.1</code> ne désigne jamais « la machine » : on vise le <strong>nom du service</strong> sur un réseau commun, et on choisit <strong>Connect to : DNS</strong>. Un agent en conteneur voit les processus de l'hôte, pas ses disques.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">L'hôte <em>Zabbix server</em> garde son interface <code>127.0.0.1:10050</code> alors que le conteneur <code>zabbix-agent</code> tourne. Pourquoi reste-t-il indisponible ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Dans le conteneur serveur, 127.0.0.1 désigne le conteneur serveur lui-même, où aucun agent n'écoute</button>
+                        <button class="scenario__opt" data-why="C&#x27;est vrai mais hors sujet : 127.0.0.1 ne vise de toute façon pas la VM, il vise le conteneur qui pose la question.">Le port 10050 de l'agent n'est pas publié sur la VM</button>
+                        <button class="scenario__opt" data-why="Ce n&#x27;est pas l&#x27;agent qui refuse : la requête n&#x27;arrive même pas jusqu&#x27;à lui.">L'agent 2 n'accepte pas les connexions sur 127.0.0.1</button>
+                    </div>
+                    <div class="scenario__why"><p>Chaque conteneur a sa propre pile réseau et son propre <code>localhost</code>. La correction : interface en <strong>DNS</strong> <code>zabbix-agent</code>, <em>Connect to : DNS</em>, sur le réseau Docker que les deux conteneurs partagent.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 05 -->
@@ -280,11 +319,24 @@
                 <p><code>-t</code> relit la configuration <strong>à neuf</strong> et réussit ; mais le service déjà lancé ne connaît pas encore la nouvelle clé. Sans <strong>redémarrage de l'agent</strong>, l'item reste en <em>Unknown metric</em> — vu sur le serveur de fichiers du TP.</p>
             </div>
 
-            <p>Deux réglages communs aux deux modèles : leurs items sont en <strong>Zabbix agent (active)</strong>, comme le reste du labo, avec un <strong>timeout de 10 s</strong> — un script PowerShell dépasse souvent les 3 s par défaut. Et un item actif, c'est l'agent qui l'envoie : le bouton <strong>Execute now</strong> ne fait rien. Pour forcer une collecte, on redémarre l'agent.</p>
+            <p>Deux réglages communs aux deux modèles : leurs items sont en <strong>Zabbix agent (active)</strong>, comme le reste du labo, avec un <strong>timeout de 10 s</strong> — un script PowerShell dépasse souvent les 3 s par défaut. Et un item actif, c'est l'agent qui l'envoie : le bouton <strong>Execute now</strong> ne s'applique pas aux items actifs (il ne vaut que pour les vérifications que le serveur lance lui-même). Pour forcer une collecte, on redémarre l'agent.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Un modèle maison = un <strong>script</strong> dans <code>scripts\</code>, un <strong><code>UserParameter</code></strong> dans <code>zabbix_agent2.d\</code>, un <strong>redémarrage de l'agent</strong>, puis l'import et la liaison du <code>.yaml</code>. Items actifs : timeout relevé, et pas d'<em>Execute now</em>.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu ajoutes <code>UserParameter=windows.time.source,…</code> dans <code>zabbix_agent2.d\</code>. Le test <code>zabbix_agent2.exe -t windows.time.source</code> renvoie bien une valeur, mais l'item affiche « Unknown metric ». Que manque-t-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le redémarrage du service <em>Zabbix Agent 2</em>, qui n'a pas relu sa configuration</button>
+                        <button class="scenario__opt" data-why="Sans le modèle, l&#x27;item n&#x27;existerait pas du tout dans Zabbix ; ici il existe et reçoit un refus de l&#x27;agent.">L'import du modèle .yaml dans Zabbix</button>
+                        <button class="scenario__opt" data-why="Un délai trop court donne une erreur de délai dépassé, pas « Unknown metric » : ce message dit que l&#x27;agent ne connaît pas la clé.">Un timeout plus long sur l'item</button>
+                    </div>
+                    <div class="scenario__why"><p><code>-t</code> lance un processus neuf qui lit la configuration actuelle ; le service, lui, tourne avec celle qu'il a lue au démarrage. <code>Restart-Service "Zabbix Agent 2"</code>, puis la clé est connue.</p></div>
+                </div>
             </div>
         </section>
 
@@ -324,6 +376,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Dans un domaine virtualisé : <strong>le DC sur une source externe</strong> (<code>/reliable:yes</code>), <strong>les membres en <code>domhier</code></strong>, et le fournisseur Hyper-V désactivé. L'heure compte plus qu'il n'y paraît : Kerberos refuse l'authentification au-delà de quelques minutes d'écart. C'est un bon exemple de ce qu'une supervision apporte — un défaut silencieux rendu visible.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur SRV-FILE01, membre du domaine, <code>w32tm /query /source</code> répond <code>be.pool.ntp.org,0x8</code>. Est-ce la bonne configuration ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Non : un membre doit suivre la hiérarchie du domaine (<code>domhier</code>) et répondre avec le nom d'un DC</button>
+                        <button class="scenario__opt" data-why="La précision n&#x27;est pas le but : Kerberos exige que les membres soient alignés sur le DC, quel que soit l&#x27;écart avec l&#x27;heure « vraie ».">Oui : une source publique est plus précise que le contrôleur de domaine</button>
+                        <button class="scenario__opt" data-why="Désactiver VMIC est nécessaire mais pas suffisant : le membre doit aussi prendre son heure du DC.">Oui, à condition que le fournisseur VMIC soit désactivé</button>
+                    </div>
+                    <div class="scenario__why"><p>Seul le DC émulateur PDC de la racine de la forêt va chercher une source externe. Les membres : <code>w32tm /config /syncfromflags:domhier /update</code>, puis <code>w32tm /resync /rediscover</code> ; la source doit devenir <code>SRV-AD01.orion.local</code>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 07 -->
@@ -362,6 +427,19 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Une découverte (LLD) transforme une liste JSON en items et déclencheurs, un jeu par objet trouvé. Pour ce modèle : <strong><code>@</code> dans le FriendlyName</strong>, magasins <strong><code>My</code> et <code>WebHosting</code> de la machine</strong>, alerte Average à moins de 15 jours — et un JSON qui doit rester un tableau, même vide.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur un serveur qui n'a qu'<strong>un seul</strong> certificat marqué <code>@</code>, la découverte échoue alors qu'elle marche ailleurs. Le script se termine par <code>$result | ConvertTo-Json</code> (PowerShell 5.1). Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Avec un seul élément, PowerShell renvoie un objet JSON et non un tableau, que la découverte n'accepte pas</button>
+                        <button class="scenario__opt" data-why="La longueur du nom n&#x27;empêche pas la découverte ; c&#x27;est la forme du JSON qui est en cause, puisque le cas ne survient qu&#x27;avec un seul élément.">Le FriendlyName du certificat est trop long pour Zabbix</button>
+                        <button class="scenario__opt" data-why="Une découverte peut créer des items pour un seul objet, et même ne rien créer pour un tableau vide.">Une découverte a besoin d'au moins deux objets pour créer des items</button>
+                    </div>
+                    <div class="scenario__why"><p>Dans le pipeline, PowerShell 5.1 « déroule » la collection : un seul objet sort en <code>{…}</code>, aucun objet ne sort rien du tout. <code>ConvertTo-Json -InputObject @($result)</code> garde toujours un tableau <code>[…]</code>.</p></div>
+                </div>
+            </div>
         </section>
 
         <div class="gloss">
@@ -384,7 +462,7 @@
 
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
-                <p>Interroger un agent chiffré par PSK depuis le serveur.</p>
+                <p>Interroger un agent chiffré par PSK depuis le serveur. Ce test passe par une vérification <strong>passive</strong> : il suppose que le pare-feu de SRV-AD01 laisse entrer 10050 depuis SRV-ZBX01 (inutile en mode actif seul), et que la valeur PSK a été copiée dans un fichier lisible par le conteneur (ici <code>/var/lib/zabbix/enc/ad01.psk</code>, chemin à adapter).</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — conteneur zabbix-server</span></div>
                 <pre class="terminal__code"><span class="k">docker</span> exec zabbix-server zabbix_get <span class="p">-s</span> 172.16.50.10 <span class="p">-k</span> system.uptime \
@@ -392,7 +470,7 @@
             </div>
                 <p class="verify__sub">Sortie attendue</p>
             <pre class="verify__out">864213</pre>
-                <p class="verify__fail"><code>TLS handshake fail</code> ou <code>PSK identity … not found</code> : l'identité ou la clé diffèrent d'un côté à l'autre — elles doivent être identiques au caractère près dans <code>zabbix_agent2.conf</code> et dans l'onglet <em>Encryption</em> de l'hôte.</p>
+                <p class="verify__fail">Un échec de la négociation TLS (<em>handshake</em>) : l'identité ou la clé diffèrent d'un côté à l'autre — elles doivent être identiques au caractère près dans <code>zabbix_agent2.conf</code> et dans l'onglet <em>Encryption</em> de l'hôte.</p>
             </div>
             <div class="cmdex" data-accept="&amp; ?&quot;C:\\Program Files\\Zabbix Agent 2\\zabbix_agent2\.exe&quot; -c &quot;C:\\Program Files\\Zabbix Agent 2\\zabbix_agent2\.conf&quot; -t (windows\.certificates\.expiring|&quot;windows\.certificates\.expiring&quot;);;(\.\\)?zabbix_agent2(\.exe)? -c (\S+|&quot;[^&quot;]+&quot;) -t &quot;?windows\.certificates\.expiring&quot;?" data-hint="l&#x27;exécutable de l&#x27;agent, -c pour la configuration, -t pour tester une clé.">
                 <p class="cmdex__label">À toi de taper</p>
@@ -435,10 +513,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Zabbix en remplacement de SCOM »</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -148,6 +148,18 @@ DNSServer            : 172.16.50.10</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Adresse fixe, DNS vers les DC, nom, puis domaine — dans cet ordre. Renommer après la jonction ou la promotion est possible, mais plus délicat.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">SRV-FILE01 a l'adresse 172.16.50.20, la passerelle .1 et le DNS 8.8.8.8. <code>ping 172.16.50.10</code> répond, mais <code>Add-Computer -DomainName orion.local</code> échoue. Que corriges-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le DNS du serveur : 172.16.50.10, le DNS du domaine</button>
+                        <button class="scenario__opt" data-why="Le ping vers le DC répond : le réseau et la passerelle fonctionnent. C&#x27;est la résolution du nom orion.local qui échoue.">La passerelle : 172.16.50.10 à la place de .1</button>
+                        <button class="scenario__opt" data-why="Le nom du serveur n&#x27;empêche pas la jonction. Le problème est que le serveur ne trouve pas le domaine.">Le nom : renommer le serveur avant la jonction</button>
+                    </div>
+                    <div class="scenario__why"><p>Le ping par adresse prouve que le réseau marche. Pour joindre le domaine, le serveur doit trouver un DC par les enregistrements SRV de <code>orion.local</code> : seul le DNS du domaine les connaît. <code>Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses 172.16.50.10</code>, puis <code>Resolve-DnsName orion.local</code> pour vérifier.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 03 -->
@@ -172,8 +184,9 @@ DNSServer            : 172.16.50.10</pre>
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
                 <pre class="terminal__code"><span class="k">Install-WindowsFeature</span> AD-Domain-Services, DNS <span class="p">-IncludeManagementTools</span>
 <span class="k">Install-ADDSForest</span> <span class="p">-DomainName</span> <span class="s">"orion.local"</span> <span class="p">-DomainNetbiosName</span> <span class="s">"ORION"</span> <span class="p">-InstallDns</span>
-<span class="c"># demande le mot de passe DSRM (restauration de l'annuaire), puis redémarre</span></pre>
+<span class="c"># demande le mot de passe DSRM (restauration de l'annuaire), une confirmation, puis redémarre</span></pre>
             </div>
+            <p>La promotion fixe aussi les <strong>niveaux fonctionnels</strong> de la forêt et du domaine (paramètres <code>-ForestMode</code> et <code>-DomainMode</code>) : ils décident des fonctions d'AD disponibles et de la version minimale de Windows des DC. Windows Server 2025 apporte son propre niveau (Windows Server 2025). Dans l'autre sens, pour ajouter un DC 2025 à une forêt existante, celle-ci doit être au moins au niveau <strong>Windows Server 2016</strong>. Le niveau se lit avec <code>(Get-ADForest).ForestMode</code> et <code>(Get-ADDomain).DomainMode</code>. On le monte une fois tous les DC à jour ; le redescendre n'est possible que dans des cas limités.</p>
             <p>La promotion crée la zone DNS <code>orion.local</code> intégrée à l'annuaire, avec les enregistrements <strong>SRV</strong> (<code>_ldap._tcp</code>, <code>_kerberos._tcp</code>) par lesquels les postes trouvent leurs contrôleurs. C'est pour ça qu'AD ne fonctionne pas sans un DNS correct.</p>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
@@ -215,6 +228,19 @@ orion.local ORION       SRV-AD01.orion.local</pre>
             <p>Sur un petit lab, l'IFM ne fait gagner que quelques secondes ; sur un site distant relié par un lien lent, il évite de faire transiter des gigaoctets. La réplication ne transfère ensuite que ce qui a changé depuis la création du média.</p>
             <h3>Les rôles FSMO</h3>
             <p>Tous les DC sont égaux pour authentifier, mais cinq opérations n'ont qu'un seul maître : les <strong>rôles FSMO</strong>. Le premier DC les porte tous. Le plus sollicité au quotidien est l'<strong>émulateur PDC</strong> : source de temps du domaine, référence pour les changements de mot de passe.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Rôle FSMO</th><th>Portée</th><th>Ce qu'il fait seul</th><th>S'il est arrêté</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Maître de schéma</strong></td><td>Forêt</td><td>Modifie le schéma (ajout de classes et d'attributs : Exchange, LAPS…)</td><td>Rien ne se voit, sauf une extension de schéma impossible</td></tr>
+                        <tr><td><strong>Maître d'attribution des noms de domaine</strong></td><td>Forêt</td><td>Ajoute ou retire un domaine de la forêt</td><td>Rien ne se voit au quotidien</td></tr>
+                        <tr><td><strong>Maître RID</strong></td><td>Domaine</td><td>Distribue aux DC des blocs d'identifiants pour les nouveaux objets</td><td>Les DC créent des objets tant qu'il leur reste des RID</td></tr>
+                        <tr><td><strong>Émulateur PDC</strong></td><td>Domaine</td><td>Heure du domaine, mots de passe récents, verrouillages, édition des GPO par défaut</td><td>Le premier à se remarquer : heure, verrouillages</td></tr>
+                        <tr><td><strong>Maître d'infrastructure</strong></td><td>Domaine</td><td>Tient à jour les références vers des objets d'autres domaines</td><td>Sans effet dans une forêt à un seul domaine</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><code>netdom query fsmo</code> les liste. On les <strong>transfère</strong> proprement quand le DC source est en ligne (<code>Move-ADDirectoryServerOperationMasterRole</code>) ; on ne les <strong>saisit</strong> (<code>-Force</code>) que si l'ancien porteur est perdu pour de bon, et il ne doit jamais revenir sur le réseau.</p>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
                 <p>Les deux DC répliquent-ils ?</p>
@@ -233,6 +259,18 @@ SRV-AD02                 02m:48s    0 /   5    0</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Deux DC minimum ; l'IFM promeut le second à partir d'une copie locale de l'annuaire. <code>repadmin /replsummary</code> doit afficher zéro échec. L'émulateur PDC donne l'heure à tout le domaine.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">SRV-AD01, qui porte les cinq rôles FSMO, est arrêté une heure pour maintenance. SRV-AD02 (DNS, catalogue global) tourne. Que se passe-t-il pour les utilisateurs ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Rien de visible : SRV-AD02 les authentifie seul</button>
+                        <button class="scenario__opt" data-why="Tous les DC authentifient. Les rôles FSMO ne concernent que quelques opérations rares, pas l&#x27;ouverture de session.">Plus personne ne peut ouvrir de session</button>
+                        <button class="scenario__opt" data-why="La saisie est réservée à un DC perdu pour de bon : l&#x27;ancien porteur ne doit plus jamais revenir. Pour une heure d&#x27;arrêt, on attend.">Il faut saisir les rôles sur SRV-AD02</button>
+                    </div>
+                    <div class="scenario__why"><p>Un second DC sert justement à ça : il a toute la base, le DNS et le catalogue global. Pendant une heure, aucune opération à maître unique ne manque vraiment. Pour une absence longue, on <strong>transfère</strong> les rôles avant l'arrêt ; on ne les <strong>saisit</strong> que si SRV-AD01 ne reviendra jamais.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 05 -->
@@ -244,13 +282,13 @@ SRV-AD02                 02m:48s    0 /   5    0</pre>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — l'arborescence du TP final</span></div>
                 <pre class="terminal__code"><span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="s">"ORION-DPT"</span> <span class="p">-Path</span> <span class="s">"DC=orion,DC=local"</span>
-<span class="s">"Management"</span>,"Development","Accounting" | <span class="k">ForEach-Object</span> {
-    <span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> <span class="p">$_</span> <span class="p">-Path</span> <span class="s">"OU=ORION-DPT,DC=orion,DC=local"</span>
+<span class="s">"Management"</span>, <span class="s">"Development"</span>, <span class="s">"Accounting"</span> | <span class="k">ForEach-Object</span> {
+    <span class="k">New-ADOrganizationalUnit</span> <span class="p">-Name</span> $_ <span class="p">-Path</span> <span class="s">"OU=ORION-DPT,DC=orion,DC=local"</span>
 <span class="k">}</span>
 <span class="k">New-ADGroup</span> <span class="p">-Name</span> <span class="s">"DEV-GRP"</span> <span class="p">-GroupScope</span> Global <span class="p">-GroupCategory</span> Security <span class="p">-Path</span> <span class="s">"OU=Development,OU=ORION-DPT,DC=orion,DC=local"</span>
-<span class="k">New-ADUser</span> <span class="p">-Name</span> <span class="s">"Sébastien Sotiaux"</span> <span class="p">-SamAccountName</span> <span class="s">"sso"</span> <span class="p">-UserPrincipalName</span> <span class="s">"sso@orion.local"</span> `
-    <span class="k">-Path</span> <span class="s">"OU=Development,OU=ORION-DPT,DC=orion,DC=local"</span> `
-    <span class="k">-AccountPassword</span> (Read-Host <span class="p">-AsSecureString</span> <span class="s">"Mot de passe"</span>) <span class="p">-Enabled</span> <span class="p">$true</span>
+<span class="k">New-ADUser</span> <span class="p">-Name</span> <span class="s">"Sacha Somers"</span> <span class="p">-SamAccountName</span> <span class="s">"sso"</span> <span class="p">-UserPrincipalName</span> <span class="s">"sso@orion.local"</span> `
+    <span class="p">-Path</span> <span class="s">"OU=Development,OU=ORION-DPT,DC=orion,DC=local"</span> `
+    <span class="p">-AccountPassword</span> (Read-Host <span class="p">-AsSecureString</span> <span class="s">"Mot de passe"</span>) <span class="p">-Enabled</span> <span class="p">$true</span>
 <span class="k">Add-ADGroupMember</span> <span class="p">-Identity</span> <span class="s">"DEV-GRP"</span> <span class="p">-Members</span> <span class="s">"sso"</span></pre>
             </div>
             <h3>Les étendues de groupes, et la règle AGDLP</h3>
@@ -258,9 +296,9 @@ SRV-AD02                 02m:48s    0 /   5    0</pre>
                 <table>
                     <thead><tr><th>Étendue</th><th>Contient</th><th>Sert à</th></tr></thead>
                     <tbody>
-                        <tr><td><strong>Globale</strong></td><td>Des comptes du même domaine</td><td>Regrouper des <strong>personnes</strong> par fonction (DEV-GRP)</td></tr>
-                        <tr><td><strong>Domaine local</strong></td><td>Des groupes globaux, de n'importe quel domaine de la forêt</td><td>Porter des <strong>droits</strong> sur une ressource (DL-DEV-Modif)</td></tr>
-                        <tr><td><strong>Universelle</strong></td><td>Des groupes de toute la forêt</td><td>Forêts à plusieurs domaines</td></tr>
+                        <tr><td><strong>Globale</strong></td><td>Des comptes et des groupes globaux du même domaine</td><td>Regrouper des <strong>personnes</strong> par fonction (DEV-GRP)</td></tr>
+                        <tr><td><strong>Domaine local</strong></td><td>Des comptes, des groupes globaux et universels de toute la forêt (et des domaines approuvés), d'autres groupes de domaine local du même domaine</td><td>Porter des <strong>droits</strong> sur une ressource (DL-DEV-Modif)</td></tr>
+                        <tr><td><strong>Universelle</strong></td><td>Des comptes, des groupes globaux et universels de toute la forêt</td><td>Forêts à plusieurs domaines</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -290,8 +328,8 @@ SRV-AD02                 02m:48s    0 /   5    0</pre>
                 <p class="verify__sub">Sortie attendue</p>
             <pre class="verify__out">Name              SamAccountName
 ----              --------------
-Sébastien Sotiaux sso</pre>
-                <p class="verify__fail">Un compte créé sans <code>-Enabled $true</code> reste désactivé ; sans mot de passe valide, <code>New-ADUser</code> crée un compte qu'on ne peut pas activer : la stratégie de mots de passe s'applique aussi aux scripts.</p>
+Sacha Somers sso</pre>
+                <p class="verify__fail">Un compte créé sans <code>-Enabled $true</code> reste désactivé ; avec un mot de passe refusé par la stratégie (trop court, pas assez complexe), <code>New-ADUser</code> renvoie une erreur mais crée quand même le compte, <strong>désactivé</strong> : lui donner un mot de passe conforme (<code>Set-ADAccountPassword -Reset</code>), puis <code>Enable-ADAccount</code>.</p>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -343,6 +381,18 @@ Aliases:  storage.orion.local</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Zone intégrée à AD dès qu'il y a un domaine, zone inverse pour les PTR, CNAME pour les alias, redirecteur vers Internet. Un changement qui « ne prend pas » est souvent un cache : <code>ipconfig /flushdns</code>.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu passes l'enregistrement A de <code>srv-web01</code> de .25 à .26. Sur le client, <code>nslookup srv-web01.orion.local</code> répond bien .26, mais <code>ping srv-web01</code> vise toujours .25. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le cache DNS du client garde l&#x27;ancienne réponse jusqu&#x27;à son TTL</button>
+                        <button class="scenario__opt" data-why="nslookup interroge le serveur DNS et obtient déjà .26 : la zone est à jour sur ce serveur.">La zone n&#x27;a pas encore répliqué vers SRV-AD02</button>
+                        <button class="scenario__opt" data-why="Le PTR sert à la résolution inverse (adresse vers nom). ping par nom utilise l&#x27;enregistrement A.">Il manque l&#x27;enregistrement PTR de .26</button>
+                    </div>
+                    <div class="scenario__why"><p><code>nslookup</code> interroge directement le serveur DNS et ignore le cache du poste ; <code>ping</code> passe par le client DNS de Windows, qui réutilise la réponse en cache. <code>ipconfig /displaydns</code> le montre, <code>ipconfig /flushdns</code> (ou <code>Clear-DnsClientCache</code>) règle le problème tout de suite.</p></div>
+                </div>
             </div>
         </section>
 
@@ -439,7 +489,7 @@ Serveurs DNS. . . . . . . . . . . . . .: 172.16.50.1</pre>
             <p>Pour un accès <strong>par le réseau</strong>, Windows calcule le droit du partage et le droit NTFS séparément, puis applique <strong>le plus restrictif des deux</strong>. Pratique courante : partage large (<em>Change</em> pour les utilisateurs du domaine), droits fins en NTFS. Le calcul détaillé, avec exercices, est dans le module <a href="storage-clustering.html">Stockage &amp; clustering</a>.</p>
             <div class="tip">
                 <p class="tip__label">Pourquoi « pas de Deny »</p>
-                <p>Un <code>Deny</code> l'emporte sur tout <code>Allow</code> et se propage : il finit par bloquer quelqu'un qu'on n'avait pas prévu (un admin membre du mauvais groupe). Il suffit de ne <strong>pas accorder</strong> : sans permission, pas d'accès.</p>
+                <p>Un <code>Deny</code> explicite l'emporte sur tout <code>Allow</code> et se propage aux sous-dossiers par héritage (seul un <code>Allow</code> explicite bat un <code>Deny</code> hérité) : il finit par bloquer quelqu'un qu'on n'avait pas prévu (un admin membre du mauvais groupe). Il suffit de ne <strong>pas accorder</strong> : sans permission, pas d'accès.</p>
             </div>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
@@ -459,6 +509,18 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Partage large, NTFS précis, droit effectif = le plus restrictif des deux. Couper l'héritage avec copie (<code>/inheritance:d</code>), donner aux groupes, retirer <em>Users</em>, jamais de Deny. Un changement de groupe ne compte qu'après une nouvelle ouverture de session.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">À 10 h, tu ajoutes <code>sso</code> au groupe DEV-GRP. À 10 h 05, toujours connecté depuis 8 h, il est refusé sur <code>\\SRV-FILE01\DEPARTMENTS\Development</code>. Que lui dis-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Fermer sa session et la rouvrir</button>
+                        <button class="scenario__opt" data-why="Les droits NTFS du groupe sont justes : le problème est que son jeton ne contient pas encore le groupe. Un Allow direct ferait passer, mais casserait la règle « des droits par groupe ».">Lui donner Modify en direct sur le dossier</button>
+                        <button class="scenario__opt" data-why="La réplication entre DC prend au plus quelques minutes dans un même site, et elle n&#x27;y changerait rien : c&#x27;est le jeton de l&#x27;utilisateur qui est ancien.">Attendre la réplication entre SRV-AD01 et SRV-AD02</button>
+                    </div>
+                    <div class="scenario__why"><p>Les groupes d'un utilisateur sont lus à l'ouverture de session et placés dans son <strong>jeton</strong> (et son ticket Kerberos). Tant qu'il ne se reconnecte pas, il garde la liste de 8 h. <code>whoami /groups</code> sur le poste montre les groupes du jeton actuel.</p></div>
+                </div>
             </div>
         </section>
 
@@ -521,7 +583,7 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
                         <tr><td><strong>Enforced</strong> (appliquée) sur un lien</td><td>Elle gagne même contre une GPO plus proche, et traverse un blocage</td></tr>
                         <tr><td><strong>Block Inheritance</strong> sur une OU</td><td>Les GPO des niveaux supérieurs ne descendent plus (sauf Enforced)</td></tr>
                         <tr><td><strong>Filtrage de sécurité</strong></td><td>Restreindre la GPO à un groupe (par défaut : Authenticated Users)</td></tr>
-                        <tr><td>Partie <strong>Computer</strong> / <strong>User</strong></td><td>S'applique à l'ordinateur au démarrage, à l'utilisateur à l'ouverture de session</td></tr>
+                        <tr><td>Partie <strong>Computer</strong> / <strong>User</strong></td><td>S'applique à l'ordinateur au démarrage, à l'utilisateur à l'ouverture de session, puis en arrière-plan toutes les 90 minutes environ (avec un décalage aléatoire de 0 à 30 minutes)</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -571,6 +633,18 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Une GPO s'applique par son <strong>lien</strong>, dans l'ordre local → site → domaine → OU, la plus proche gagnant. Les réglages <em>User</em> visent des utilisateurs, <em>Computer</em> des machines. <code>gpresult /r</code> dit ce qui s'applique vraiment.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">La GPO du lecteur X: (partie <em>User</em>) est liée à l'OU <code>Postes</code>, qui ne contient que les comptes ordinateurs. Les utilisateurs sont dans <code>ORION-DPT</code>. Ils n'ont pas de X:. Que fais-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Lier la GPO à l&#x27;OU ORION-DPT, où sont les utilisateurs</button>
+                        <button class="scenario__opt" data-why="Enforced fait gagner une GPO contre une autre, mais elle ne s&#x27;applique toujours qu&#x27;aux objets sous son lien : aucun utilisateur n&#x27;est dans Postes.">Cocher Enforced sur le lien existant</button>
+                        <button class="scenario__opt" data-why="gpupdate rejoue les GPO qui s&#x27;appliquent déjà. Celle-ci ne vise aucun utilisateur : rien ne change.">Lancer gpupdate /force sur chaque poste</button>
+                    </div>
+                    <div class="scenario__why"><p>La partie <em>User</em> d'une GPO s'applique aux <strong>utilisateurs</strong> situés sous son lien, la partie <em>Computer</em> aux <strong>ordinateurs</strong>. <code>New-GPLink -Name "GPO_Drive_Map" -Target "OU=ORION-DPT,DC=orion,DC=local"</code>, puis <code>gpresult /r /scope user</code> sur le client. (Le <em>loopback</em> permet l'inverse, mais c'est un cas particulier.)</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 11 -->
@@ -600,7 +674,7 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
                         <tr><td>4624</td><td>Security</td><td>Ouverture de session réussie</td></tr>
                         <tr><td>4625</td><td>Security</td><td>Échec d'ouverture de session — en rafale, une tentative de force brute</td></tr>
                         <tr><td>4740</td><td>Security (sur le DC)</td><td>Compte verrouillé</td></tr>
-                        <tr><td>4720 / 4728</td><td>Security</td><td>Compte créé / ajouté à un groupe de sécurité</td></tr>
+                        <tr><td>4720 / 4728</td><td>Security</td><td>Compte utilisateur créé / membre ajouté à un groupe de sécurité global (4732 : domaine local, 4756 : universel)</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -610,6 +684,10 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
 <span class="k">Select-Object</span> TimeCreated, @{ n = <span class="s">'Compte'</span>; e = { <span class="p">$_.Properties[5].Value</span> } }</pre>
             </div>
             <p>Lire les journaux un par un ne passe pas à l'échelle : on les centralise (SIEM) ou on fait surveiller les ID critiques par un outil de supervision (module <a href="zabbix-windows.html">Zabbix &amp; Windows</a>). Et une <strong>sauvegarde jamais restaurée n'est qu'une hypothèse</strong> : la tester fait partie de la sécurité (module <a href="dpm.html">DPM</a>).</p>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Piège</p>
+                <p>Une politique de mots de passe placée dans une GPO liée à une <strong>OU</strong> ne change rien pour les comptes du domaine : elle ne s'applique qu'aux comptes <em>locaux</em> des ordinateurs de cette OU. Pour les comptes du domaine, une seule politique : celle liée au domaine (Default Domain Policy). Pour exiger plus d'un groupe précis (les administrateurs), on utilise une <strong>stratégie de mots de passe affinée</strong> (FGPP, <code>New-ADFineGrainedPasswordPolicy</code>).</p>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Politique de mots de passe et de verrouillage dans la Default Domain Policy, comptes d'administration séparés, LAPS pour les administrateurs locaux, et les ID 4625 / 4740 sous surveillance.</p>
@@ -635,6 +713,23 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
                     </tbody>
                 </table>
             </div>
+            <h3>Les ports qu'un DC doit pouvoir recevoir</h3>
+            <p>Entre deux sites, ou quand un pare-feu se glisse entre les postes et les DC, une partie de ces ports bloquée donne des pannes « à moitié » : la jonction marche, mais pas les GPO ; l'authentification marche, mais pas la réplication.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Port</th><th>Protocole</th><th>Sert à</th></tr></thead>
+                    <tbody>
+                        <tr><td>53 (TCP/UDP)</td><td>DNS</td><td>Trouver les DC (enregistrements SRV)</td></tr>
+                        <tr><td>88 (TCP/UDP)</td><td>Kerberos</td><td>Authentification, tickets</td></tr>
+                        <tr><td>123 (UDP)</td><td>NTP (W32Time)</td><td>Synchroniser l'heure sur le domaine</td></tr>
+                        <tr><td>135 (TCP) + 49152–65535 (TCP)</td><td>RPC</td><td>Réplication entre DC, outils d'administration</td></tr>
+                        <tr><td>389 (TCP/UDP) · 636 (TCP)</td><td>LDAP · LDAPS</td><td>Lire et écrire l'annuaire (LDAPS : chiffré)</td></tr>
+                        <tr><td>445 (TCP)</td><td>SMB</td><td>SYSVOL et NETLOGON : GPO et scripts</td></tr>
+                        <tr><td>464 (TCP/UDP)</td><td>Kerberos kpasswd</td><td>Changement de mot de passe</td></tr>
+                        <tr><td>3268 · 3269 (TCP)</td><td>Catalogue global</td><td>Recherches dans toute la forêt</td></tr>
+                    </tbody>
+                </table>
+            </div>
             <div class="cmdex" data-accept="nltest /dsgetdc:orion\.local;;Get-ADDomainController -Discover( -DomainName orion\.local)?( -Service .*)?" data-hint="nltest, avec l&#x27;option qui « obtient un DC ».">
                 <p class="cmdex__label">À toi de taper</p>
                 <p>Depuis un poste, vérifie qu'un contrôleur de domaine du domaine <code>orion.local</code> est trouvé.</p>
@@ -643,9 +738,69 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
                     <div class="reveal__body"><p><code>nltest /dsgetdc:orion.local</code> : il interroge le DNS (enregistrements SRV), contacte le DC trouvé et affiche son nom. En PowerShell avec les outils RSAT : <code>Get-ADDomainController -Discover</code>.</p></div>
                 </details>
             </div>
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Ce qui se passe quand sso ouvre une session sur CLIENT-WIN11</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · CLIENT-WIN11 → DNS (SRV-AD01)</p>
+                        <p class="walk__head">Trouver un contrôleur de domaine</p>
+                        <p>Le poste demande au DNS les enregistrements SRV du domaine, par exemple <code>_ldap._tcp.dc._msdcs.orion.local</code>. Réponse : SRV-AD01 et SRV-AD02, avec leurs adresses.</p>
+                        <p class="walk__change">Sans le DNS du domaine, tout s'arrête ici : <strong>enregistrements SRV</strong>, testés par <code>nltest /dsgetdc:orion.local</code>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · CLIENT-WIN11 → SRV-AD01 (LDAP, 389)</p>
+                        <p class="walk__head">Choisir le DC qui répond</p>
+                        <p>Le poste envoie une courte requête LDAP (le « ping LDAP ») aux DC trouvés et garde le premier qui répond, de préférence dans son <strong>site</strong>.</p>
+                        <p class="walk__change">Le poste a choisi <strong>son DC</strong> pour la suite de la session.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · CLIENT-WIN11 → KDC de SRV-AD01 (Kerberos, 88)</p>
+                        <p class="walk__head">AS-REQ / AS-REP : obtenir le TGT</p>
+                        <p>Le poste envoie un horodatage chiffré avec une clé tirée du mot de passe de sso : le mot de passe ne circule jamais. Le DC le déchiffre, vérifie l'heure, et renvoie un <strong>TGT</strong> (<em>Ticket Granting Ticket</em>), le « laissez-passer » valable 10 heures par défaut.</p>
+                        <p class="walk__change">Écart d'heure de plus de <strong>5 minutes</strong> ou mauvais mot de passe : refus ici. C'est pourquoi l'heure fait partie du trio de dépannage.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · CLIENT-WIN11 → KDC (TGS-REQ / TGS-REP)</p>
+                        <p class="walk__head">Échanger le TGT contre des tickets de service</p>
+                        <p>Pour chaque service dont il a besoin (le poste lui-même, LDAP et SMB du DC…), le poste présente le TGT et reçoit un <strong>ticket de service</strong>. Chaque ticket porte les groupes de l'utilisateur, lus à ce moment-là.</p>
+                        <p class="walk__change">Un ticket par service, sans redemander le mot de passe : c'est l'<strong>authentification unique</strong>. <code>klist</code> les affiche.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · CLIENT-WIN11 (local)</p>
+                        <p class="walk__head">Construire le jeton d'accès</p>
+                        <p>Windows fabrique le <strong>jeton</strong> de la session : le SID de sso et ceux de tous ses groupes (DEV-GRP, Domain Users…). Toutes les vérifications de droits de la session s'appuieront sur ce jeton.</p>
+                        <p class="walk__change">Le jeton est figé : un groupe ajouté après cette étape ne compte qu'à la <strong>prochaine ouverture de session</strong>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · CLIENT-WIN11 → SRV-AD01 (LDAP 389, SMB 445)</p>
+                        <p class="walk__head">Appliquer les GPO utilisateur</p>
+                        <p>Le poste demande par LDAP la liste des GPO liées aux OU de sso (site, domaine, ORION-DPT…), puis lit leur contenu dans <code>\\orion.local\SYSVOL</code>. Les GPO <em>Computer</em> ont déjà été appliquées au démarrage du poste.</p>
+                        <p class="walk__change">Ordre <strong>L-S-D-OU</strong> ; port 445 bloqué ou SYSVOL non répliqué : la session s'ouvre, mais sans ses GPO.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · CLIENT-WIN11 → SRV-FILE01 (SMB, 445)</p>
+                        <p class="walk__head">Ouvrir le lecteur X:</p>
+                        <p>La GPO monte <code>X:</code>. Le poste obtient un ticket de service pour SRV-FILE01 (étape 4) et le présente au serveur de fichiers, qui vérifie le partage puis le NTFS sans recontacter le DC pour le mot de passe.</p>
+                        <p class="walk__change">Droit effectif = le plus restrictif entre <strong>partage</strong> et <strong>NTFS</strong>, calculé avec les groupes du ticket.</p>
+                    </li>
+                </ol>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Pour AD, toujours dans cet ordre : le <strong>DNS</strong> (nltest, SRV), l'<strong>heure</strong> (w32tm), la <strong>réplication</strong> (repadmin), puis <code>dcdiag</code>. Les trois premières causes représentent l'immense majorité des pannes.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Une VM poste, restaurée d'un point de contrôle d'il y a trois semaines, refuse toute ouverture de session : « la relation d'approbation entre cette station de travail et le domaine principal a échoué ». Quelle commande lances-tu (en administrateur local) ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>Test-ComputerSecureChannel -Repair -Credential ORION\admin</code></button>
+                        <button class="scenario__opt" data-why="L&#x27;heure peut jouer, mais le message parle de relation d&#x27;approbation : le mot de passe du compte machine ne correspond plus.">w32tm /resync, pour recaler l&#x27;heure</button>
+                        <button class="scenario__opt" data-why="Le poste est déjà membre : Add-Computer échoue. Il faudrait sortir du domaine puis y revenir, ce qui est plus long que réparer le canal.">Add-Computer -DomainName orion.local</button>
+                    </div>
+                    <div class="scenario__why"><p>Un poste change le mot de passe de son <strong>compte machine</strong> tous les 30 jours par défaut. Le point de contrôle a remis un ancien mot de passe, que le DC ne reconnaît plus. <code>Test-ComputerSecureChannel</code> renvoie <code>False</code> ; avec <code>-Repair</code> et un compte autorisé, il réinitialise le mot de passe des deux côtés, sans sortir du domaine.</p></div>
+                </div>
             </div>
         </section>
 
@@ -664,7 +819,7 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
                 <li><p><strong>SRV-AD02</strong> par IFM (chapitre 04). Vérifier : <code>repadmin /replsummary</code> sans échec.</p></li>
                 <li><p><strong>Annuaire</strong> : OU, groupes, plusieurs utilisateurs par service, utilisateur modèle, heures d'ouverture, délégation à <code>jsmith</code> sur Development (chapitre 05). Vérifier : <code>jsmith</code> crée un compte dans Development, et échoue ailleurs.</p></li>
                 <li><p><strong>DNS</strong> : enregistrements, alias <code>storage</code>, zone inverse ; tester le cache (chapitre 06).</p></li>
-                <li><p><strong>DHCP</strong> : le TP le place sur SRV-FILE01, le lab Orion sur SRV-AD01 — les deux fonctionnent. Étendue <code>.100–.200</code>, autorisée dans AD (chapitre 07). Le client obtient une adresse — et trouver l'erreur volontaire.</p></li>
+                <li><p><strong>DHCP</strong> : le TP le place sur SRV-FILE01, le lab Orion sur SRV-AD01 — les deux fonctionnent. Étendue <code>.100–.199</code>, autorisée dans AD (chapitre 07). Le client obtient une adresse — et trouver l'erreur volontaire.</p></li>
                 <li><p><strong>Fichiers</strong> : <code>D:\DEPARTMENTS</code>, un dossier par service, Public pour tous, sans Deny (chapitre 08). Vérifier avec deux utilisateurs de services différents.</p></li>
                 <li><p><strong>DFS</strong> : <code>\\orion.local\shares</code> et ses dossiers (chapitre 09).</p></li>
                 <li><p><strong>GPO</strong> : restrictions, fond d'écran, lecteur X: (chapitre 10). Vérifier : <code>gpresult /r</code> et <code>gpresult /h</code> sur le client.</p></li>
@@ -708,6 +863,9 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
                 <li><a href="https://learn.microsoft.com/fr-fr/windows-server/identity/laps/laps-overview" rel="noopener">Microsoft Learn — Windows LAPS</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/windows-server/administration/windows-commands/icacls" rel="noopener">Microsoft Learn — icacls</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/windows-server/administration/windows-commands/gpresult" rel="noopener">Microsoft Learn — gpresult</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/windows-server/identity/ad-ds/active-directory-functional-levels" rel="noopener">Microsoft Learn — niveaux fonctionnels d&#x27;Active Directory</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/troubleshoot/windows-server/active-directory/fsmo-roles" rel="noopener">Microsoft Learn — les rôles FSMO</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements" rel="noopener">Microsoft Learn — ports utilisés par les services Windows</a></li>
             </ul>
         </div>
 
@@ -719,10 +877,10 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

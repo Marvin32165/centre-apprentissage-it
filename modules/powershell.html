@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -91,10 +91,23 @@
                     </tbody>
                 </table>
             </div>
-            <p>Les cmdlets suivent toutes le motif <strong>Verbe-Nom</strong> (<code>Get-</code>, <code>New-</code>, <code>Set-</code>, <code>Remove-</code>…) : connaître le verbe suffit souvent à deviner la commande. Deux versions cohabitent : <strong>Windows PowerShell 5.1</strong>, livré avec Windows, et <strong>PowerShell 7</strong>, à installer, multiplateforme. Les modules d'administration Windows (AD, DHCP, Hyper-V) tournent dans les deux sur un Windows récent.</p>
+            <p>Les cmdlets suivent toutes le motif <strong>Verbe-Nom</strong> (<code>Get-</code>, <code>New-</code>, <code>Set-</code>, <code>Remove-</code>…) : connaître le verbe suffit souvent à deviner la commande. Deux versions cohabitent, et s'installent côte à côte sans se gêner :</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th></th><th>Windows PowerShell 5.1</th><th>PowerShell 7</th></tr></thead>
+                    <tbody>
+                        <tr><td>Livraison</td><td>Intégré à Windows 10/11 et Windows Server, plus d'évolution (correctifs seulement)</td><td>À installer (winget, MSI), versions régulières</td></tr>
+                        <tr><td>Exécutable</td><td><code>powershell.exe</code></td><td><code>pwsh.exe</code></td></tr>
+                        <tr><td>Plateformes</td><td>Windows seulement (.NET Framework)</td><td>Windows, Linux, macOS (.NET moderne)</td></tr>
+                        <tr><td>Modules Windows (AD, DHCP, Hyper-V…)</td><td>Tous</td><td>La plupart directement, les autres via la couche de compatibilité Windows PowerShell</td></tr>
+                        <tr><td>Nouveautés</td><td>—</td><td><code>ForEach-Object -Parallel</code>, opérateurs <code>??</code> et <code>?:</code>, <code>&amp;&amp;</code> / <code>||</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><code>$PSVersionTable.PSVersion</code> dit dans laquelle tu te trouves. Les scripts de ce module tournent dans les deux.</p>
             <div class="tip">
                 <p class="tip__label">La stratégie d'exécution</p>
-                <p>Par défaut, Windows 11 refuse d'exécuter les scripts <code>.ps1</code> (<em>Restricted</em>). Pour ses propres scripts : <code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code> — les scripts locaux tournent, ceux téléchargés doivent être signés. Ce n'est pas une barrière de sécurité, juste un garde-fou contre l'exécution accidentelle.</p>
+                <p>Par défaut, Windows 11 refuse d'exécuter les scripts <code>.ps1</code> (<em>Restricted</em>) ; Windows Server, lui, est en <em>RemoteSigned</em>. Pour ses propres scripts sur un poste : <code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code> — les scripts écrits localement tournent, ceux téléchargés d'Internet doivent être signés (ou débloqués avec <code>Unblock-File</code> après relecture). <code>Get-ExecutionPolicy -List</code> montre la stratégie de chaque portée. Ce n'est pas une barrière de sécurité, juste un garde-fou contre l'exécution accidentelle.</p>
             </div>
             <div class="cmdex" data-accept="Get-Help Get-ChildItem -Ex(amples)?;;help Get-ChildItem -Ex(amples)?;;Get-ChildItem -\?" data-hint="Get-Help, avec le nom de la cmdlet et un paramètre.">
                 <p class="cmdex__label">À toi de taper</p>
@@ -107,6 +120,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Bloqué ? <code>Get-Command</code> pour trouver, <code>Get-Help -Examples</code> pour comprendre, <code>Get-Member</code> pour voir ce qu'un objet contient. Ces trois commandes répondent à presque tout sans quitter la console.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur ton poste Windows 11, <code>.\Test-Lab.ps1</code>, que tu viens d'écrire, répond « l'exécution de scripts est désactivée sur ce système ». Que fais-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code></button>
+                        <button class="scenario__opt" data-why="Unrestricted pour toute la machine lève aussi l&#x27;avertissement sur les scripts téléchargés : plus large que nécessaire.">Set-ExecutionPolicy Unrestricted -Scope LocalMachine</button>
+                        <button class="scenario__opt" data-why="Unblock-File retire la marque « téléchargé d&#x27;Internet ». Ton script écrit en local n&#x27;en a pas : la stratégie Restricted bloque tous les scripts.">Unblock-File .\Test-Lab.ps1</button>
+                    </div>
+                    <div class="scenario__why"><p>Le poste est en <em>Restricted</em> : aucun script ne passe. <em>RemoteSigned</em> pour ton seul compte suffit — tes scripts tournent, ceux venus d'Internet restent contrôlés. Pas besoin d'être administrateur avec <code>-Scope CurrentUser</code>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -156,6 +181,18 @@ $imc = $poids / ($taille * $taille)
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Une variable a un type ; <code>Read-Host</code> renvoie du texte qu'il faut convertir. Guillemets doubles = interpolation, simples = littéral. <code>-f</code> pour formater un résultat.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q"><code>$a = Read-Host "Nombre"</code> (tu tapes 7), puis <code>$a + 3</code>. Qu'affiche PowerShell ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>73</code></button>
+                        <button class="scenario__opt" data-why="10 serait le résultat avec [int]$a. Ici $a est une chaîne : + concatène.">10</button>
+                        <button class="scenario__opt" data-why="PowerShell convertit 3 en texte pour suivre le type de gauche : pas d&#x27;erreur, juste une concaténation.">Une erreur de type</button>
+                    </div>
+                    <div class="scenario__why"><p><code>Read-Host</code> renvoie une chaîne, et c'est le type de l'élément de <strong>gauche</strong> qui décide : <code>"7" + 3</code> donne <code>"73"</code>. <code>[int]$a + 3</code> ou <code>3 + $a</code> donnent 10. <code>$a.GetType().Name</code> affiche <code>String</code>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -346,6 +383,18 @@ $<span class="k">comptes</span> | <span class="k">Where-Object</span> Service <s
                 <p class="takeaway__label">À retenir</p>
                 <p>Le pipeline transporte des objets : <strong>filtrer</strong> (<code>Where</code>), <strong>trier</strong> (<code>Sort</code>), <strong>choisir</strong> (<code>Select</code>), <strong>compter</strong> (<code>Measure</code>/<code>Group</code>), et ne mettre en forme qu'à la fin.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q"><code>Get-Service | Format-Table Name, Status | Export-Csv services.csv</code> produit un fichier plein de lignes illisibles (<code>Microsoft.PowerShell.Commands.Internal.Format…</code>). Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Format-Table a transformé les services en objets de mise en page</button>
+                        <button class="scenario__opt" data-why="Le délimiteur change la séparation des colonnes, pas leur contenu : les noms de classes de mise en forme resteraient.">Il manque -Delimiter &quot;;&quot; sur Export-Csv</button>
+                        <button class="scenario__opt" data-why="L&#x27;encodage change les accents, pas la nature des objets exportés.">Il manque -Encoding UTF8 sur Export-Csv</button>
+                    </div>
+                    <div class="scenario__why"><p>Après <code>Format-Table</code>, le pipeline ne transporte plus des services mais des instructions d'affichage. On choisit les propriétés avec <code>Select-Object</code> : <code>Get-Service | Select-Object Name, Status | Export-Csv services.csv -NoTypeInformation</code>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 07 -->
@@ -375,11 +424,24 @@ $<span class="k">comptes</span> | <span class="k">Where-Object</span> Service <s
                 <li><code>param()</code> déclare les paramètres ; <code>[Parameter(Mandatory)]</code> les rend obligatoires (PowerShell les demande s'ils manquent).</li>
                 <li><code>try { } catch { }</code> n'attrape que les erreurs <strong>bloquantes</strong> : beaucoup de cmdlets n'émettent que des erreurs non bloquantes, d'où <code>-ErrorAction Stop</code>.</li>
                 <li>Une fonction <strong>renvoie des objets</strong> (pas du texte avec <code>Write-Host</code>) : le résultat se trie, se filtre, s'exporte.</li>
+                <li>Ici, un port fermé n'est pas une erreur : <code>Test-NetConnection</code> renvoie simplement <code>TcpTestSucceeded = False</code> (avec un avertissement, masqué par <code>-WarningAction SilentlyContinue</code>). Le <code>catch</code> ne sert que pour les vraies erreurs.</li>
                 <li>Le même bloc <code>param()</code> en tête d'un fichier <code>.ps1</code> en fait un script paramétrable : <code>.\Test-Lab.ps1 -Ordinateur SRV-AD01</code>.</li>
             </ul>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Des paramètres plutôt que des valeurs en dur, <code>-ErrorAction Stop</code> + <code>try/catch</code> pour décider quoi faire en cas d'échec, des objets en sortie. Un script qui respecte ces trois règles se réutilise.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Ton script fait <code>try { Get-Item C:\Inexistant } catch { "Introuvable" }</code>. L'erreur rouge s'affiche, mais jamais « Introuvable ». Que corriges-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Ajouter <code>-ErrorAction Stop</code> à Get-Item</button>
+                        <button class="scenario__opt" data-why="finally s&#x27;exécute dans tous les cas, mais ne rend pas l&#x27;erreur bloquante : le catch resterait muet.">Ajouter un bloc finally après le catch</button>
+                        <button class="scenario__opt" data-why="SilentlyContinue masque l&#x27;erreur : le catch ne s&#x27;exécute toujours pas, et tu ne sais même plus qu&#x27;il y a eu un problème.">Ajouter -ErrorAction SilentlyContinue</button>
+                    </div>
+                    <div class="scenario__why"><p>Un chemin introuvable est une erreur <strong>non bloquante</strong> : la cmdlet l'affiche et continue, sans passer par <code>catch</code>. <code>-ErrorAction Stop</code> la rend bloquante pour cette commande ; <code>$ErrorActionPreference = 'Stop'</code> le fait pour tout le script.</p></div>
+                </div>
             </div>
         </section>
 
@@ -408,8 +470,8 @@ $<span class="k">comptes</span> | <span class="k">Where-Object</span> Service <s
                 <div class="lab__meta"><span><b>Objectif :</b> remplacer dix commandes New-ADUser copiées-collées par un script qui lit un fichier</span><span><b>Point de départ :</b> SRV-AD01 promu, l'arborescence ORION-DPT créée (module Windows Server)</span><span><b>Durée :</b> 30 min</span></div>
                 <ol class="lab__steps">
                 <li><p>Créer <code>C:\Lab\comptes.csv</code> (séparateur point-virgule) :</p><pre class="verify__out">Prenom;Nom;Login;Service
-Sébastien;Sotiaux;sso;Development
-Benjamin;Delaunoy;bde;Accounting
+Sacha;Somers;sso;Development
+Bastien;Delmotte;bde;Accounting
 Mathis;Thomas;mth;Management</pre>
             </li>
                 <li><p>Le script :</p><div class="terminal">
@@ -418,8 +480,8 @@ Mathis;Thomas;mth;Management</pre>
 <span class="k">Import-Csv</span> <span class="s">"C:\Lab\comptes.csv"</span> <span class="p">-Delimiter</span> <span class="s">";"</span> | <span class="k">ForEach-Object</span> {
     $<span class="k">ou</span> = <span class="s">"OU=$($_.Service),OU=ORION-DPT,DC=orion,DC=local"</span>
     <span class="k">New-ADUser</span> <span class="p">-Name</span> <span class="s">"$($_.Prenom) $($_.Nom)"</span> <span class="p">-GivenName</span> <span class="p">$_.Prenom</span> <span class="p">-Surname</span> <span class="p">$_.Nom</span> `
-        <span class="k">-SamAccountName</span> <span class="p">$_.Login</span> <span class="p">-UserPrincipalName</span> <span class="s">"$($_.Login)@orion.local"</span> `
-        <span class="k">-Path</span> <span class="p">$ou</span> <span class="p">-AccountPassword</span> <span class="p">$mdp</span> <span class="p">-ChangePasswordAtLogon</span> <span class="p">$true</span> <span class="p">-Enabled</span> <span class="p">$true</span>
+        <span class="p">-SamAccountName</span> <span class="p">$_.Login</span> <span class="p">-UserPrincipalName</span> <span class="s">"$($_.Login)@orion.local"</span> `
+        <span class="p">-Path</span> <span class="p">$ou</span> <span class="p">-AccountPassword</span> <span class="p">$mdp</span> <span class="p">-ChangePasswordAtLogon</span> <span class="p">$true</span> <span class="p">-Enabled</span> <span class="p">$true</span>
     <span class="k">Add-ADGroupMember</span> <span class="p">-Identity</span> <span class="s">"$(switch ($_.Service) { 'Development' {'DEV'} 'Accounting' {'ACC'} 'Management' {'MGMT'} })-GRP"</span> <span class="p">-Members</span> <span class="p">$_.Login</span>
 <span class="k">}</span></pre>
             </div>
@@ -439,7 +501,7 @@ Mathis;Thomas;mth;Management</pre>
         <section class="chapter" id="distance">
             <p class="chapter__num">09</p>
             <h2 class="chapter__title">Administrer à distance</h2>
-            <p class="chapter__intro">On n'ouvre pas une session graphique sur chaque serveur pour taper une commande. PowerShell exécute du code à distance par <strong>WinRM</strong> (ports 5985/5986), actif par défaut sur Windows Server dans un domaine.</p>
+            <p class="chapter__intro">On n'ouvre pas une session graphique sur chaque serveur pour taper une commande. PowerShell exécute du code à distance par <strong>WinRM</strong> (ports 5985/5986), actif par défaut sur Windows Server (depuis 2012). 5985 = HTTP, mais le contenu reste chiffré par l'authentification Kerberos dans un domaine ; 5986 = HTTPS, avec un certificat.</p>
 
             <div class="table-wrap">
                 <table>
@@ -447,7 +509,7 @@ Mathis;Thomas;mth;Management</pre>
                     <tbody>
                         <tr><td><code>Enter-PSSession SRV-FILE01</code></td><td>Une session interactive à distance (l'invite devient <code>[SRV-FILE01]: PS&gt;</code>)</td></tr>
                         <tr><td><code>Invoke-Command -ComputerName SRV-AD01, SRV-AD02 -ScriptBlock { … }</code></td><td>Le même bloc sur plusieurs serveurs à la fois ; les résultats reviennent avec une propriété <code>PSComputerName</code></td></tr>
-                        <tr><td><code>Invoke-Command -VMName SRV-FILE01 -ScriptBlock { … }</code></td><td><strong>PowerShell Direct</strong> : depuis l'hôte Hyper-V vers une VM, sans réseau — idéal pour configurer une VM qui n'a pas encore d'adresse</td></tr>
+                        <tr><td><code>Invoke-Command -VMName SRV-FILE01 -ScriptBlock { … }</code></td><td><strong>PowerShell Direct</strong> : depuis l'hôte Hyper-V vers une VM qui tourne sur cet hôte, sans réseau, avec un compte de la VM (<code>-Credential</code>) — idéal pour configurer une VM qui n'a pas encore d'adresse</td></tr>
                         <tr><td><code>Enable-PSRemoting</code></td><td>Active WinRM sur une machine où il ne l'est pas (un poste Windows 11, par exemple)</td></tr>
                     </tbody>
                 </table>
@@ -474,6 +536,18 @@ ProductVendor   : Microsoft Corporation</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p><code>Invoke-Command</code> pour plusieurs serveurs d'un coup, <code>Enter-PSSession</code> pour un seul en interactif, <code>-VMName</code> (PowerShell Direct) pour une VM sans réseau. WinRM écoute sur 5985.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu viens de créer SRV-WEB01 sur l'hôte Hyper-V : elle n'a ni adresse IP ni domaine. Comment lui passer <code>New-NetIPAddress</code> sans ouvrir sa console ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>Invoke-Command -VMName SRV-WEB01 -Credential (Get-Credential) -ScriptBlock { … }</code></button>
+                        <button class="scenario__opt" data-why="-ComputerName passe par le réseau et WinRM : sans adresse IP, la VM est injoignable.">Invoke-Command -ComputerName SRV-WEB01 -ScriptBlock { … }</button>
+                        <button class="scenario__opt" data-why="Enable-PSRemoting active WinRM sur la machine où on le tape ; il ne donne pas d&#x27;adresse à la VM.">Enable-PSRemoting, puis Enter-PSSession SRV-WEB01</button>
+                    </div>
+                    <div class="scenario__why"><p><strong>PowerShell Direct</strong> (<code>-VMName</code>) passe par le bus de la VM, pas par le réseau. Il se lance depuis l'hôte Hyper-V, avec un compte <strong>de la VM</strong> (l'administrateur local tant qu'elle n'est pas dans le domaine).</p></div>
+                </div>
             </div>
         </section>
 
@@ -549,6 +623,8 @@ while ($s1 -lt 3 -and $s2 -lt 3) {
                 <li><a href="https://learn.microsoft.com/fr-fr/powershell/" rel="noopener">Microsoft Learn — documentation PowerShell (en français)</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/powershell/module/microsoft.powershell.core/about/about_comparison_operators" rel="noopener">Microsoft Learn — about_Comparison_Operators</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/powershell/module/microsoft.powershell.core/about/about_execution_policies" rel="noopener">Microsoft Learn — about_Execution_Policies</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/powershell/scripting/whats-new/differences-from-windows-powershell" rel="noopener">Microsoft Learn — différences entre Windows PowerShell 5.1 et PowerShell 7</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/powershell/module/microsoft.powershell.core/about/about_try_catch_finally" rel="noopener">Microsoft Learn — about_Try_Catch_Finally</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/virtualization/hyper-v-on-windows/user-guide/powershell-direct" rel="noopener">Microsoft Learn — PowerShell Direct pour les VM Hyper-V</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/training/paths/powershell/" rel="noopener">Microsoft Learn — parcours « Automatiser des tâches d'administration avec PowerShell »</a></li>
             </ul>
@@ -562,10 +638,10 @@ while ($s1 -lt 3 -and $s2 -lt 3) {
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

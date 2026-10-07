@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -103,6 +103,18 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>RDSH exécute, RDCB répartit et retient, RDWA publie, la Gateway ouvre l'accès externe, le Licensing délivre les CAL. En session-based, plusieurs utilisateurs partagent un serveur.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le Wi-Fi d&#x27;une utilisatrice coupe en pleine saisie. Elle se reconnecte et retrouve sa session ouverte, sur le même hôte que tout à l&#x27;heure, alors qu&#x27;il y en a deux. Quel service de rôle a fait ça ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le Connection Broker (RDCB)</button>
+                        <button class="scenario__opt" data-why="RD Web Access affiche la liste des ressources publiées ; il ne sait pas sur quel hôte tourne une session.">Le Web Access (RDWA)</button>
+                        <button class="scenario__opt" data-why="La passerelle fait entrer le trafic RDP depuis l&#x27;extérieur ; elle ne suit pas les sessions ouvertes sur les hôtes.">La passerelle (RDG)</button>
+                    </div>
+                    <div class="scenario__why"><p>Le <strong>broker</strong> garde la trace de chaque session : à la reconnexion, il renvoie l'utilisatrice vers l'hôte qui détient sa session déconnectée, au lieu d'en ouvrir une nouvelle ailleurs. <code>Get-RDUserSession</code> l'interroge.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 02 -->
@@ -141,8 +153,8 @@
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — le même déploiement (sur SRV-AD01, module RemoteDesktop)</span></div>
                 <pre class="terminal__code"><span class="k">New-RDSessionDeployment</span> <span class="p">-ConnectionBroker</span> srv-rdcb.orion.local `
-<span class="k">-WebAccessServer</span> srv-rdwa.orion.local `
-<span class="k">-SessionHost</span> srv-rdsh1.orion.local, srv-rdsh2.orion.local</pre>
+<span class="p">-WebAccessServer</span> srv-rdwa.orion.local `
+<span class="p">-SessionHost</span> srv-rdsh1.orion.local, srv-rdsh2.orion.local</pre>
             </div>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
@@ -180,9 +192,9 @@ srv-rdsh2.orion.local  {RDS-RD-SERVER}</pre>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — la collection et une RemoteApp</span></div>
                 <pre class="terminal__code"><span class="k">New-RDSessionCollection</span> <span class="p">-CollectionName</span> <span class="s">"Collection1"</span> `
-    <span class="k">-SessionHost</span> srv-rdsh1.orion.local, srv-rdsh2.orion.local <span class="p">-ConnectionBroker</span> srv-rdcb.orion.local
+    <span class="p">-SessionHost</span> srv-rdsh1.orion.local, srv-rdsh2.orion.local <span class="p">-ConnectionBroker</span> srv-rdcb.orion.local
 <span class="k">New-RDRemoteApp</span> <span class="p">-CollectionName</span> <span class="s">"Collection1"</span> <span class="p">-DisplayName</span> <span class="s">"Bloc-notes"</span> `
-    <span class="k">-FilePath</span> <span class="s">"C:\Windows\System32\notepad.exe"</span> <span class="p">-ConnectionBroker</span> srv-rdcb.orion.local</pre>
+    <span class="p">-FilePath</span> <span class="s">"C:\Windows\System32\notepad.exe"</span> <span class="p">-ConnectionBroker</span> srv-rdcb.orion.local</pre>
             </div>
             <div class="tip">
                 <p class="tip__label">WordPad n'existe plus</p>
@@ -205,6 +217,18 @@ Collection1     ORION       sso       srv-rdsh1.orion.local  STATE_ACTIVE</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>La collection est l'unité de publication et de contrôle d'accès. Une RemoteApp doit être installée à l'identique sur tous les hôtes de session de sa collection.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">La RemoteApp « Compta » s&#x27;ouvre pour certains utilisateurs et affiche une erreur pour d&#x27;autres. <code>Get-RDUserSession</code> montre que les erreurs viennent toutes de SRV-RDSH2. Cause probable ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>L&#x27;application n&#x27;est installée que sur SRV-RDSH1</button>
+                        <button class="scenario__opt" data-why="Sans droit sur la collection, ils ne verraient même pas la RemoteApp dans le portail.">Ces utilisateurs ne sont pas dans le groupe de la collection</button>
+                        <button class="scenario__opt" data-why="La fin de la grâce bloquerait les connexions sur tous les hôtes, pas seulement sur SRV-RDSH2.">La période de grâce des licences est terminée</button>
+                    </div>
+                    <div class="scenario__why"><p>Le broker répartit les utilisateurs entre les hôtes de la collection : une RemoteApp doit exister au <strong>même chemin</strong> sur chacun. Installer l'application sur SRV-RDSH2 (en mode installation : <code>change user /install</code>, puis <code>change user /execute</code>), ou la retirer de la collection en attendant.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 05 -->
@@ -217,11 +241,11 @@ Collection1     ORION       sso       srv-rdsh1.orion.local  STATE_ACTIVE</pre>
             <div class="cards">
                 <div class="card">
                     <h4>Par utilisateur (Per User)</h4>
-                    <p>Une CAL par personne, quel que soit le nombre d'appareils. Le bon choix quand chacun se connecte depuis plusieurs postes, ou depuis chez lui.</p>
+                    <p>Une CAL par personne, quel que soit le nombre d'appareils. Le bon choix quand chacun se connecte depuis plusieurs postes, ou depuis chez lui. Demande un domaine AD ; le serveur de licences compte les CAL attribuées mais ne bloque pas : rester en règle est ta responsabilité.</p>
                 </div>
                 <div class="card">
                     <h4>Par périphérique (Per Device)</h4>
-                    <p>Une CAL par appareil, quel que soit le nombre de personnes. Pour des postes partagés en équipes (accueil, atelier).</p>
+                    <p>Une CAL par appareil, quel que soit le nombre de personnes. Pour des postes partagés en équipes (accueil, atelier). À la première connexion, l'appareil reçoit une CAL temporaire de 90 jours, remplacée par une permanente s'il en reste ; ce mode-là est réellement contrôlé.</p>
                 </div>
             </div>
             <div class="terminal">
@@ -244,9 +268,25 @@ Collection1     ORION       sso       srv-rdsh1.orion.local  STATE_ACTIVE</pre>
      117           0</pre>
                 <p class="verify__fail">Le Server Manager affiche « <em>The licensing mode for the Remote Desktop Session Host server is not configured</em> » : le mode et le serveur de licences ne sont pas réglés (<code>Set-RDLicenseConfiguration</code>).</p>
             </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Piège : la version des CAL</p>
+                <p>Une CAL donne accès aux hôtes de sa version ou d'une version <strong>antérieure</strong> : des hôtes de session Windows Server 2025 demandent des CAL RDS <strong>2025</strong>. Et le serveur de licences doit être de la même version que les CAL qu'il délivre, ou plus récent. On met donc à jour le serveur de licences avant les hôtes. Pour administrer un serveur sans le rôle RDSH, aucune CAL n'est nécessaire : Windows Server accepte deux connexions d'administration simultanées.</p>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>120 jours de grâce, puis plus de connexion sans CAL. Choisir Per User ou Per Device selon l'usage, désigner le serveur de licences, et l'activer. Dans un lab, on note la date de fin de grâce.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un atelier a 3 postes partagés par 30 ouvriers en trois équipes, qui n&#x27;utilisent jamais d&#x27;autre appareil. Quelles CAL achètes-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>3 CAL par périphérique</button>
+                        <button class="scenario__opt" data-why="C&#x27;est en règle, mais dix fois plus cher : ici, ce sont les appareils qui sont peu nombreux, pas les personnes.">30 CAL par utilisateur</button>
+                        <button class="scenario__opt" data-why="La grâce ne dure que 120 jours : ensuite, plus aucune connexion sans serveur de licences ni CAL.">Aucune, la période de grâce suffit</button>
+                    </div>
+                    <div class="scenario__why"><p>On compte ce qui est le moins nombreux : 3 appareils contre 30 personnes. Mode <code>PerDevice</code> : <code>Set-RDLicenseConfiguration -Mode PerDevice -LicenseServer srv-rdcb.orion.local -ConnectionBroker srv-rdcb.orion.local</code>. Le jour où les ouvriers se connectent de chez eux, le calcul s'inverse.</p></div>
+                </div>
             </div>
         </section>
 
@@ -259,9 +299,10 @@ Collection1     ORION       sso       srv-rdsh1.orion.local  STATE_ACTIVE</pre>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — sur SRV-RDCB : créer (TP du cours), exporter, affecter</span></div>
                 <pre class="terminal__code">$<span class="k">cert</span> = New-SelfSignedCertificate <span class="p">-DnsName</span> <span class="s">"rdwa.orion.local"</span> <span class="p">-CertStoreLocation</span> <span class="s">"Cert:\LocalMachine\My"</span> `
-    <span class="k">-NotAfter</span> (Get-Date).AddYears(2) <span class="p">-KeyLength</span> 4096 <span class="p">-KeyExportPolicy</span> Exportable <span class="p">-FriendlyName</span> <span class="s">"RDS"</span>
+    <span class="p">-NotAfter</span> (Get-Date).AddYears(2) <span class="p">-KeyLength</span> 4096 <span class="p">-KeyExportPolicy</span> Exportable <span class="p">-FriendlyName</span> <span class="s">"RDS"</span>
 $<span class="k">mdp</span> = Read-Host <span class="p">-AsSecureString</span> <span class="s">"Mot de passe du PFX"</span>
 <span class="k">Export-PfxCertificate</span> <span class="p">-Cert</span> <span class="p">$cert</span> <span class="p">-FilePath</span> <span class="s">"C:\Lab\rds.pfx"</span> <span class="p">-Password</span> <span class="p">$mdp</span>
+<span class="k">Export-Certificate</span> <span class="p">-Cert</span> <span class="p">$cert</span> <span class="p">-FilePath</span> <span class="s">"C:\Lab\rds.cer"</span><span class="c">   # partie publique, pour les clients</span>
 <span class="k">foreach</span> ($role in <span class="s">"RDWebAccess"</span>, <span class="s">"RDPublishing"</span>, <span class="s">"RDRedirector"</span>) {
     <span class="k">Set-RDCertificate</span> <span class="p">-Role</span> <span class="p">$role</span> <span class="p">-ImportPath</span> <span class="s">"C:\Lab\rds.pfx"</span> <span class="p">-Password</span> <span class="p">$mdp</span> <span class="p">-ConnectionBroker</span> srv-rdcb.orion.local <span class="p">-Force</span>
 <span class="k">}</span></pre>
@@ -277,17 +318,34 @@ $<span class="k">mdp</span> = Read-Host <span class="p">-AsSecureString</span> <
                 <pre class="terminal__code"><span class="k">Get-RDCertificate</span> <span class="p">-ConnectionBroker</span> srv-rdcb.orion.local</pre>
             </div>
                 <p class="verify__sub">Sortie attendue</p>
-            <pre class="verify__out">Role          Level    ExpiresOn   IssuedTo
-----          -----    ---------   --------
-RDRedirector  Trusted  …           CN=rdwa.orion.local
-RDPublishing  Trusted  …           CN=rdwa.orion.local
-RDWebAccess   Trusted  …           CN=rdwa.orion.local
+            <pre class="verify__out">Role          Level          ExpiresOn   IssuedTo
+----          -----          ---------   --------
+RDRedirector  Untrusted      …           CN=rdwa.orion.local
+RDPublishing  Untrusted      …           CN=rdwa.orion.local
+RDWebAccess   Untrusted      …           CN=rdwa.orion.local
 RDGateway     NotConfigured</pre>
-                <p class="verify__fail">Alerte « le nom ne correspond pas » : l'utilisateur tape un nom qui n'est pas dans le certificat (<code>srv-rdwa</code> au lieu de <code>rdwa</code>). Alerte « non approuvé » : le certificat n'est pas dans les racines de confiance du poste.</p>
+                <p><em>Untrusted</em> est normal ici : c'est le niveau que Microsoft attribue à un certificat <strong>auto-signé</strong>. Avec un certificat de la CA d'entreprise ou d'une autorité publique, la colonne affiche <em>Trusted</em>. <em>NotConfigured</em> : aucun certificat valide pour ce rôle.</p>
+                <p class="verify__fail">Un rôle toujours en <em>NotConfigured</em> : <code>Set-RDCertificate</code> n'a pas été passé pour lui. Alerte « le nom ne correspond pas » : l'utilisateur tape un nom qui n'est pas dans le certificat (<code>srv-rdwa</code> au lieu de <code>rdwa</code>). Alerte « non approuvé » : le certificat n'est pas dans les racines de confiance du poste.</p>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Un certificat, plusieurs noms</p>
+                <p>Les rôles <code>RDRedirector</code> et <code>RDPublishing</code> sont portés par le broker : le client y voit le nom <code>srv-rdcb.orion.local</code>. Un certificat qui ne porte que <code>rdwa.orion.local</code> peut donc encore déclencher une alerte de nom à la connexion. Plus propre : un certificat qui porte les deux noms, par exemple <code>New-SelfSignedCertificate -DnsName "rdwa.orion.local", "srv-rdcb.orion.local" …</code></p>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Un certificat RDS se <strong>crée</strong> au bon nom, s'<strong>affecte</strong> aux rôles (<code>Set-RDCertificate</code>) et doit être <strong>reconnu</strong> par les clients (racine de confiance par GPO, ou CA d'entreprise). Sans les deux dernières étapes, l'alerte reste.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le certificat est affecté et approuvé par GPO. Pourtant, un utilisateur qui ouvre <code>https://srv-rdwa.orion.local/RDWeb</code> reçoit une alerte. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le nom tapé n&#x27;est pas dans le certificat</button>
+                        <button class="scenario__opt" data-why="La GPO l&#x27;y a placé : l&#x27;alerte « non approuvé » aurait disparu. Ici, c&#x27;est le nom qui ne correspond pas.">Le certificat n&#x27;est pas dans les racines de confiance</button>
+                        <button class="scenario__opt" data-why="Le certificat est déjà affecté ; le réaffecter ne change pas les noms qu&#x27;il porte.">Il faut relancer Set-RDCertificate</button>
+                    </div>
+                    <div class="scenario__why"><p>Le certificat ne porte que <code>rdwa.orion.local</code>. Le navigateur compare le nom tapé à ceux du certificat : <code>srv-rdwa</code> n'y est pas. Donner aux utilisateurs l'adresse <code>https://rdwa.orion.local/RDWeb</code> (un raccourci, un favori par GPO), ou ajouter le nom au certificat.</p></div>
+                </div>
             </div>
         </section>
 
@@ -302,11 +360,71 @@ RDGateway     NotConfigured</pre>
                 <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Le rôle</strong><p><code>Add-RDServer -Server srv-rdwa.orion.local -Role RDS-GATEWAY -ConnectionBroker srv-rdcb.orion.local -GatewayExternalFqdn rds.exemple.be</code> : souvent sur le même serveur que le Web Access, en DMZ.</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Les stratégies</strong><p><strong>CAP</strong> (<em>Connection Authorization Policy</em>) : qui a le droit de passer. <strong>RAP</strong> (<em>Resource Authorization Policy</em>) : vers quels serveurs.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Le certificat</strong><p>Public cette fois (nom externe, autorité reconnue par tous les clients), affecté au rôle <code>RDGateway</code>.</p></div></div>
-                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>L'exposition</strong><p>Seul le port <strong>443</strong> est publié vers la passerelle ; 3389 n'est jamais ouvert sur Internet.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>L'exposition</strong><p>Seul le port <strong>443</strong> (TCP) est publié vers la passerelle — plus, en option, <strong>3391</strong> (UDP) pour le transport UDP, plus fluide ; s'il est fermé, la passerelle se contente de 443. 3389 n'est jamais ouvert sur Internet.</p></div></div>
+            </div>
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">De l'URL RDWeb à la RemoteApp à l'écran</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · Navigateur → SRV-RDWA (HTTPS, 443)</p>
+                        <p class="walk__head">Le portail</p>
+                        <p>L'utilisateur ouvre <code>https://rdwa.orion.local/RDWeb</code> et s'authentifie avec son compte du domaine. Le serveur présente le certificat du rôle <code>RDWebAccess</code>.</p>
+                        <p class="walk__change">Première vérification du <strong>certificat</strong> : nom et confiance.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · SRV-RDWA → SRV-RDCB</p>
+                        <p class="walk__head">La liste des ressources</p>
+                        <p>Le Web Access demande au broker les bureaux et RemoteApp publiés dans les collections auxquelles l'utilisateur a droit (par ses groupes), et les affiche.</p>
+                        <p class="walk__change">Une ressource absente ici = un problème de <strong>groupe autorisé</strong> sur la collection.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · SRV-RDWA → navigateur</p>
+                        <p class="walk__head">Le fichier .rdp</p>
+                        <p>Un clic télécharge un petit fichier <code>.rdp</code>, signé avec le certificat <code>RDPublishing</code>. Il contient l'adresse du broker, la collection visée et, si elle est configurée, celle de la passerelle. Le client Bureau à distance (<code>mstsc</code>) l'ouvre.</p>
+                        <p class="walk__change">La signature permet au client de savoir <strong>qui a publié</strong> la ressource.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · mstsc → passerelle (HTTPS 443, UDP 3391)</p>
+                        <p class="walk__head">Depuis l'extérieur seulement : la passerelle</p>
+                        <p>Le client ouvre un tunnel HTTPS vers la passerelle, s'y authentifie ; la passerelle vérifie la <strong>CAP</strong> (cet utilisateur peut-il passer ?) puis la <strong>RAP</strong> (vers ce serveur ?). Sur le réseau interne, le client saute cette étape.</p>
+                        <p class="walk__change">Seul <strong>443</strong> est exposé ; RDP voyage à l'intérieur du tunnel.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · mstsc → SRV-RDCB (RDP, 3389)</p>
+                        <p class="walk__head">Le broker choisit l'hôte</p>
+                        <p>Le broker regarde si l'utilisateur a déjà une session déconnectée dans la collection : si oui, il le renvoie vers cet hôte ; sinon, vers l'hôte le moins chargé. Le client est <strong>redirigé</strong> (rôle <code>RDRedirector</code>).</p>
+                        <p class="walk__change">Reconnexion et <strong>répartition de charge</strong> se décident ici.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · mstsc → SRV-RDSH1 (RDP, 3389) ; SRV-RDSH1 → serveur de licences</p>
+                        <p class="walk__head">La session s'ouvre</p>
+                        <p>L'hôte de session ouvre la session de l'utilisateur et s'adresse au serveur de licences : CAL par périphérique délivrée (ou temporaire), ou CAL par utilisateur comptée. Tant que court la période de grâce, l'absence de serveur de licences n'empêche pas la connexion.</p>
+                        <p class="walk__change">Après 120 jours sans serveur de licences configuré, c'est ici que la connexion est <strong>refusée</strong>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · SRV-RDSH1 → poste</p>
+                        <p class="walk__head">La RemoteApp à l'écran</p>
+                        <p>L'application tourne sur SRV-RDSH1 ; le poste n'affiche que sa fenêtre, comme une application locale. Fermer la dernière RemoteApp ferme en principe la session ; une coupure réseau la laisse <em>déconnectée</em> sur l'hôte, prête à être reprise à l'étape 5.</p>
+                        <p class="walk__change">Le calcul est sur le <strong>serveur</strong>, l'affichage sur le poste.</p>
+                    </li>
+                </ol>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Jamais de 3389 ouvert sur Internet : la passerelle RD encapsule RDP dans HTTPS (443), filtre par CAP et RAP, et présente un certificat public. Ajouter une MFA sur la passerelle est la mesure suivante.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le directeur veut ouvrir sa RemoteApp depuis chez lui. Un collègue propose de rediriger le port 3389 du pare-feu vers SRV-RDCB, avec un mot de passe solide. Que réponds-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Non : passerelle RD, avec seulement 443 publié</button>
+                        <button class="scenario__opt" data-why="Le verrouillage transforme les robots qui scannent 3389 en déni de service sur le compte, et RDP reste exposé à ses propres failles.">D&#x27;accord, si le compte est verrouillé après 5 échecs</button>
+                        <button class="scenario__opt" data-why="Un port changé est retrouvé en quelques minutes par un scan : c&#x27;est masquer, pas protéger.">D&#x27;accord, en changeant 3389 pour un autre port</button>
+                    </div>
+                    <div class="scenario__why"><p>Exposer RDP directement, même sur un autre port, laisse n'importe qui sur Internet tenter sa chance. La <strong>passerelle RD</strong> n'expose que HTTPS, authentifie avant d'atteindre un serveur, filtre par CAP et RAP, et peut recevoir une MFA.</p></div>
+                </div>
             </div>
         </section>
 
@@ -325,6 +443,8 @@ RDGateway     NotConfigured</pre>
                 <li><a href="https://learn.microsoft.com/fr-fr/windows-server/remote/remote-desktop-services/rds-client-access-license" rel="noopener">Microsoft Learn — licences RDS (CAL) : période de grâce et modes</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/powershell/module/remotedesktop/" rel="noopener">Microsoft Learn — module PowerShell RemoteDesktop</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/troubleshoot/windows-server/remote/remote-desktop-licensing-mode-not-configured-warning" rel="noopener">Microsoft Learn — avertissement « licensing mode not configured »</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/troubleshoot/windows-server/remote/ports-used-by-rds" rel="noopener">Microsoft Learn — ports utilisés par RDS (dont la passerelle, 443 et 3391)</a></li>
+                <li><a href="https://learn.microsoft.com/fr-fr/powershell/module/remotedesktop/get-rdcertificate" rel="noopener">Microsoft Learn — Get-RDCertificate (niveaux Trusted / Untrusted / NotConfigured)</a></li>
                 <li><a href="https://www.it-connect.fr/windows-server-2019-installer-un-serveur-rds-avec-powershell/" rel="noopener">IT-Connect — installer un serveur RDS avec PowerShell (tutoriel en français)</a></li>
             </ul>
         </div>
@@ -337,10 +457,10 @@ RDGateway     NotConfigured</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

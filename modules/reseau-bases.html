@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -123,6 +123,18 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Le <strong>switch</strong> relie les machines d'un même réseau en lisant les adresses <strong>MAC</strong> ; le <strong>routeur</strong> relie des réseaux différents en lisant les adresses <strong>IP</strong>. Presque toute panne se ramène à « qui ne parle pas à qui, et à quel niveau ».</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Ton PC est branché en <strong>1 Gb/s</strong>. Combien de temps faut-il, au mieux, pour copier un fichier de <strong>4 Go</strong> depuis le serveur ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Un peu plus de 30 secondes</button>
+                        <button class="scenario__opt" data-why="Ce calcul confond bits et octets : 1 Gb/s fait environ 125 Mo/s, pas 1 Go/s.">Environ 4 secondes</button>
+                        <button class="scenario__opt" data-why="Trop pessimiste : à 125 Mo/s, 4 000 Mo passent en 32 secondes, hors lenteur des disques.">Environ 4 minutes</button>
+                    </div>
+                    <div class="scenario__why"><p>4 Go = 4 × 8 = <strong>32 Gb</strong>. À 1 Gb/s : 32 secondes en théorie, un peu plus en réalité (en-têtes, disques). Débit en <strong>bits</strong>, taille en <strong>octets</strong> : on multiplie par 8.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 02 -->
@@ -155,6 +167,11 @@
                 <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Physique</strong><p>La carte transforme la trame en signaux sur le câble ou en ondes.</p></div></div>
             </div>
             <p>À l'arrivée, chaque couche retire <em>son</em> en-tête et passe le reste au-dessus : c'est la <strong>désencapsulation</strong>. Un routeur, lui, ne remonte que jusqu'à la couche 3 : il lit l'IP, puis refabrique une nouvelle trame (nouvelles MAC) pour le tronçon suivant.</p>
+            <h3>La trame, vue de l'intérieur</h3>
+            <p>Voici la même requête, une fois toutes les enveloppes posées, telle qu'elle part sur le câble. Lis-la de gauche à droite : c'est l'ordre dans lequel les octets circulent, et l'ordre dans lequel un équipement les lit.</p>
+            <div class="frame"><span class="hdr hdr--l2"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:00:25</i> (ton PC)<br>MAC dst <i>aa:aa:aa:00:00:01</i> (la passerelle)</span><span class="hdr hdr--l3"><b>IPv4 (couche 3)</b>IP src <i>192.168.1.25</i><br>IP dst <i>203.0.113.10</i><br>TTL 128</span><span class="hdr hdr--l4"><b>TCP (couche 4)</b>port src <i>51234</i><br>port dst <i>443</i></span><span class="hdr hdr--data"><b>Données (couche 7)</b>GET / HTTP/1.1<br>Host: www.exemple.be</span></div>
+            <p class="frame__legend">Un <strong>switch</strong> lit la case brune et s'arrête là. Un <strong>routeur</strong> lit aussi la case terre cuite. Un <strong>pare-feu</strong> va jusqu'à la case des ports. Seul le serveur ouvre la dernière.</p>
+            <p>Pour retenir l'ordre des sept couches OSI, de 1 à 7 : <strong>P</strong>our <strong>L</strong>e <strong>R</strong>éseau, <strong>T</strong>out <strong>S</strong>e <strong>P</strong>asse <strong>A</strong>utomatiquement — Physique, Liaison, Réseau, Transport, Session, Présentation, Application.</p>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Les <strong>adresses IP</strong> restent les mêmes de bout en bout (hors NAT) ; les <strong>adresses MAC</strong> changent à chaque routeur traversé. C'est la phrase qui explique la moitié des pannes et des questions d'examen.</p>
@@ -162,6 +179,18 @@
             <div class="tip">
                 <p class="tip__label">Pour dépanner</p>
                 <p>On remonte les couches : le câble est-il branché (1) ? la carte voit-elle le switch (2) ? ai-je une IP et une passerelle (3) ? le port répond-il (4) ? le service répond-il correctement (7) ? Le module <a href="depannage-reseau.html">Dépannage réseau</a> transforme ce réflexe en méthode.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un routeur reçoit une trame destinée à un autre réseau. Jusqu'à quelle couche la « remonte »-t-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Jusqu'à la couche 3 : il lit l'IP de destination, puis fabrique une nouvelle trame</button>
+                        <button class="scenario__opt" data-why="Un switch s&#x27;arrête à la MAC. Le routeur, lui, doit lire l&#x27;IP pour choisir sa route.">Couche 2 seulement, comme un switch</button>
+                        <button class="scenario__opt" data-why="Un routeur n&#x27;ouvre ni les ports ni le contenu : c&#x27;est le rôle d&#x27;un pare-feu applicatif ou d&#x27;un proxy.">Jusqu'à la couche 7, pour lire la requête</button>
+                    </div>
+                    <div class="scenario__why"><p>Le routeur retire l'en-tête Ethernet, lit l'en-tête IP, consulte sa table de routage, décrémente le TTL, puis repose le paquet dans une <strong>nouvelle trame</strong> pour le tronçon suivant.</p></div>
+                </div>
             </div>
         </section>
 
@@ -197,7 +226,7 @@
                     <tbody>
                         <tr><td>Cuivre cat. 5e</td><td>1 Gb/s</td><td>100 m</td><td>Postes de travail</td></tr>
                         <tr><td>Cuivre cat. 6 / 6a</td><td>1 Gb/s (10 Gb/s sur 55 m en cat. 6, 100 m en 6a)</td><td>100 m</td><td>Bureaux récents, serveurs</td></tr>
-                        <tr><td>Fibre multimode</td><td>10 Gb/s et plus</td><td>300 à 550 m</td><td>Liaisons entre baies d'un bâtiment</td></tr>
+                        <tr><td>Fibre multimode</td><td>10 Gb/s et plus</td><td>300 à 400 m à 10 Gb/s (fibre OM3 / OM4)</td><td>Liaisons entre baies d'un bâtiment</td></tr>
                         <tr><td>Fibre monomode</td><td>10 Gb/s et plus</td><td>plusieurs km</td><td>Entre bâtiments, opérateurs</td></tr>
                     </tbody>
                 </table>
@@ -224,6 +253,18 @@ Vlan    Mac Address       Type        Ports
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Le switch <strong>apprend</strong> les MAC sources, <strong>commute</strong> vers la MAC de destination connue et <strong>inonde</strong> l'inconnu et les broadcasts. Un switch découpe les collisions, pas les broadcasts : pour ça, il faut un routeur ou des VLAN.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un switch reçoit une trame pour une adresse MAC qu'il n'a pas encore dans sa table. Que fait-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Il l'envoie sur tous ses ports, sauf celui d'arrivée</button>
+                        <button class="scenario__opt" data-why="Un switch ne jette pas une destination inconnue : il ne saurait jamais apprendre où elle se trouve.">Il la jette</button>
+                        <button class="scenario__opt" data-why="ARP est l&#x27;affaire des machines qui ont une IP. Un switch de base ne fait que lire et apprendre des MAC.">Il envoie une requête ARP pour trouver la machine</button>
+                    </div>
+                    <div class="scenario__why"><p>C'est l'<strong>inondation</strong> (<em>flooding</em>). Quand la machine répond, le switch apprend sa MAC et son port grâce à l'adresse source : la trame suivante ira directement au bon port.</p></div>
+                </div>
             </div>
         </section>
 
@@ -254,7 +295,7 @@ Vlan    Mac Address       Type        Ports
                 </div>
                 <div class="card">
                     <h4>Non — destination distante</h4>
-                    <p>Elle envoie la trame à la <strong>passerelle</strong> (MAC de la passerelle, IP du destinataire). Sans passerelle configurée, le paquet ne part pas : « Le réseau est inaccessible ».</p>
+                    <p>Elle envoie la trame à la <strong>passerelle</strong> (MAC de la passerelle, IP du destinataire). Sans passerelle configurée, le paquet ne part pas : <code>ping</code> échoue tout de suite (<em>General failure</em> / « Défaillance générale » sous Windows, <em>Network is unreachable</em> sous Linux).</p>
                 </div>
             </div>
             <p>C'est pour cela qu'un <strong>masque faux</strong> donne des pannes étranges : une machine en <code>/16</code> au lieu de <code>/24</code> croit que <code>192.168.5.10</code> est « chez elle », ne passe pas par la passerelle, et n'obtient jamais de réponse. Le calcul exact du masque est l'objet du module <a href="subnetting.html">Subnetting</a>.</p>
@@ -286,10 +327,13 @@ Vlan    Mac Address       Type        Ports
             </div>
                 <p class="verify__sub">Sortie attendue</p>
             <pre class="verify__out">Carte Ethernet Ethernet :
-Adresse IPv4. . . . . . . . . . . . . .: 192.168.1.25(préféré)
-Masque de sous-réseau. . . . . . . . . : 255.255.255.0
-Passerelle par défaut. . . . . . . . . : 192.168.1.1
-Serveurs DNS. . . . . . . . . . . . . .: 192.168.1.1</pre>
+   …
+   Adresse IPv4. . . . . . . . . . . . . .: 192.168.1.25(préféré)
+   Masque de sous-réseau. . . . . . . . . : 255.255.255.0
+   …
+   Passerelle par défaut. . . . . . . . . : 192.168.1.1
+   …
+   Serveurs DNS. . . . . . . . . . . . . .: 192.168.1.1</pre>
                 <p class="verify__fail">Une adresse en <code>169.254.x.x</code> veut dire que le DHCP n'a pas répondu (câble, VLAN, serveur DHCP). Une passerelle vide sur un poste en DHCP : l'étendue ne distribue pas l'option 3.</p>
             </div>
             <div class="lab" data-lab="reseau-bases-ipfixe">
@@ -298,7 +342,7 @@ Serveurs DNS. . . . . . . . . . . . . .: 192.168.1.1</pre>
                 <div class="lab__meta"><span><b>Objectif :</b> configurer une adresse statique permanente et vérifier qu'elle survit au redémarrage</span><span><b>Point de départ :</b> une VM Debian 12/13 sur un commutateur qui a accès à ta box (commutateur externe Hyper-V), en DHCP</span><span><b>Durée :</b> 20 min</span></div>
                 <ol class="lab__steps">
                 <li><p>Relève ce que le DHCP t'a donné : <code>ip -4 addr</code>, <code>ip route</code> et <code>cat /etc/resolv.conf</code>. Choisis une adresse libre <strong>hors de la plage DHCP</strong> de ta box (souvent la plage commence à .100 : prends .50).</p></li>
-                <li><p>Repère le nom de l'interface (<code>ens33</code>, <code>eth0</code>…) avec <code>ip link</code>, puis édite <code>/etc/network/interfaces</code> :</p><div class="terminal">
+                <li><p>Repère le nom de l'interface (<code>ens33</code>, <code>eth0</code>…) avec <code>ip link</code>, puis édite <code>/etc/network/interfaces</code> en <strong>remplaçant</strong> la ligne <code>iface ens33 inet dhcp</code> (une seule ligne <code>iface</code> par interface) :</p><div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">/etc/network/interfaces</span></div>
                 <pre class="terminal__code"><span class="k">auto</span> ens33
 <span class="k">iface</span> ens33 inet static
@@ -308,7 +352,7 @@ Serveurs DNS. . . . . . . . . . . . . .: 192.168.1.1</pre>
             </li>
                 <li><p>Indique le DNS dans <code>/etc/resolv.conf</code> (<code>nameserver 192.168.1.1</code>), puis applique :</p><div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
-                <pre class="terminal__code"><span class="k">sudo</span> <span class="k">systemctl</span> restart networking
+                <pre class="terminal__code"><span class="k">sudo</span> <span class="k">systemctl</span> restart networking<span class="c">   # si l'ancienne adresse DHCP reste affichée : sudo reboot</span>
 <span class="k">ip</span> -4 addr show ens33<span class="c">          # doit afficher 192.168.1.50/24</span>
 <span class="k">ping</span> <span class="p">-c</span> 3 192.168.1.1<span class="c">          # la passerelle répond</span>
 <span class="k">ping</span> <span class="p">-c</span> 3 debian.org<span class="c">           # le DNS et la sortie Internet marchent</span></pre>
@@ -322,6 +366,18 @@ Serveurs DNS. . . . . . . . . . . . . .: 192.168.1.1</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>IP + masque disent <strong>où je suis</strong> ; la passerelle dit <strong>par où sortir</strong> ; le DNS dit <strong>comment s'appelle ce que je cherche</strong>. Une adresse en <code>169.254.x.x</code> n'est jamais une configuration : c'est un DHCP qui n'a pas répondu.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un poste a l'adresse <code>192.168.1.25/24</code> et la passerelle <code>192.168.2.1</code>. Que constates-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Il joint les machines de son réseau, mais rien au-delà</button>
+                        <button class="scenario__opt" data-why="Le trafic local ne passe pas par la passerelle : il fonctionne avec la seule IP et le masque.">Plus rien ne marche, même en local</button>
+                        <button class="scenario__opt" data-why="La passerelle doit être joignable directement, donc dans le même réseau que le poste.">Tout marche : la passerelle peut être n'importe où</button>
+                    </div>
+                    <div class="scenario__why"><p>192.168.2.1 n'est pas dans 192.168.1.0/24 : le poste ne peut pas la joindre par ARP, donc rien ne sort du réseau local. Erreur de saisie classique sur une IP fixe.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 05 -->
@@ -333,7 +389,7 @@ Serveurs DNS. . . . . . . . . . . . . .: 192.168.1.1</pre>
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><strong>La question, en broadcast</strong><p>« Qui a <code>192.168.1.1</code> ? Réponds à <code>192.168.1.25</code> » — trame envoyée à <code>FF-FF-FF-FF-FF-FF</code>, reçue par tout le réseau local.</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>La réponse, en unicast</strong><p>Seule la machine concernée répond : « <code>192.168.1.1</code>, c'est <code>00-1A-2B-3C-4D-5E</code> ».</p></div></div>
-                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>La mémoire</strong><p>La réponse est gardée dans le <strong>cache ARP</strong> quelques minutes : pas de nouvelle question à chaque paquet.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>La mémoire</strong><p>La réponse est gardée dans le <strong>cache ARP</strong> : de quelques dizaines de secondes à quelques minutes sur un poste, 4 heures par défaut sur un routeur Cisco. Pas de nouvelle question à chaque paquet.</p></div></div>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">Le point qui piège</p>
@@ -378,6 +434,18 @@ Adresse Internet      Adresse physique      Type
                     <summary>Afficher la correction</summary>
                     <div class="reveal__body"><p>Vers <strong>PC2</strong> : même réseau (<code>192.168.1.0/24</code>), ARP sur <code>192.168.1.40</code> directement. Vers le <strong>serveur web</strong> : réseau différent, donc ARP sur la <strong>passerelle</strong> <code>192.168.1.1</code>. La trame part avec la MAC de la passerelle et l'IP du serveur. PC1 ne connaîtra jamais la MAC du serveur web.</p></div>
                 </details>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">On remplace la box par un modèle neuf, même adresse IP. Pendant quelques minutes, certains PC n'ont plus Internet, puis tout revient. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Ils gardaient dans leur cache ARP l'ancienne MAC de la passerelle</button>
+                        <button class="scenario__opt" data-why="Le DNS donne des IP, et l&#x27;IP de la passerelle n&#x27;a pas changé. Ici c&#x27;est la correspondance IP → MAC qui est fausse.">Le cache DNS des postes était périmé</button>
+                        <button class="scenario__opt" data-why="Les postes gardent la même IP et la même passerelle : le bail n&#x27;a rien à voir avec le changement de matériel.">Le bail DHCP devait expirer</button>
+                    </div>
+                    <div class="scenario__why"><p>Même IP, nouvelle MAC : les postes envoient leurs trames à une carte qui n'existe plus, jusqu'à l'expiration de l'entrée ARP. <code>arp -d *</code> (ou un redémarrage) règle le problème tout de suite.</p></div>
+                </div>
             </div>
         </section>
 
@@ -465,6 +533,18 @@ TcpTestSucceeded : True</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Un service = une <strong>IP</strong> + un <strong>protocole</strong> + un <strong>port</strong>. « Connexion refusée » (RST) veut dire que la machine est là mais pas le service ; « délai expiré » veut dire que quelque chose a jeté le paquet en route — souvent un pare-feu.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q"><code>ping SRV-WEB01</code> répond, mais <code>Test-NetConnection SRV-WEB01 -Port 443</code> renvoie <code>TcpTestSucceeded : False</code>. Première hypothèse ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le service web est arrêté, ou un pare-feu bloque le port 443</button>
+                        <button class="scenario__opt" data-why="Le ping passe : les couches 1 à 3 fonctionnent jusqu&#x27;au serveur.">Le câble est débranché</button>
+                        <button class="scenario__opt" data-why="Le ping par nom a fonctionné : la résolution est bonne.">Le DNS ne résout pas le nom</button>
+                    </div>
+                    <div class="scenario__why"><p>Le réseau fonctionne jusqu'à la couche 3 ; c'est la couche 4 qui échoue. Sur le serveur : le service écoute-t-il (<code>netstat -ano | findstr :443</code>) ? Le pare-feu autorise-t-il le port ?</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 07 -->
@@ -492,7 +572,7 @@ TcpTestSucceeded : True</pre>
                         <tr><td><strong>CNAME</strong></td><td>Alias vers un autre nom</td><td><code>intranet → srv-web01.orion.local</code></td></tr>
                         <tr><td><strong>MX</strong></td><td>Serveur de messagerie du domaine, avec une priorité</td><td><code>10 mail.exemple.be</code></td></tr>
                         <tr><td><strong>NS</strong></td><td>Serveurs qui font autorité pour la zone</td><td><code>ns1.exemple.be</code></td></tr>
-                        <tr><td><strong>PTR</strong></td><td>Adresse → nom (zone inverse)</td><td><code>10.113.0.203.in-addr.arpa → www</code></td></tr>
+                        <tr><td><strong>PTR</strong></td><td>Adresse → nom (zone inverse)</td><td><code>10.113.0.203.in-addr.arpa → www.exemple.be</code></td></tr>
                         <tr><td><strong>SRV</strong></td><td>Où trouver un service (port, priorité)</td><td><code>_ldap._tcp.orion.local</code> : c'est ainsi qu'un poste trouve ses contrôleurs de domaine</td></tr>
                         <tr><td><strong>TXT</strong></td><td>Texte libre : SPF, DKIM, vérification de domaine</td><td><code>v=spf1 mx -all</code></td></tr>
                         <tr><td><strong>SOA</strong></td><td>Fiche de la zone : serveur maître, n° de série, délais</td><td>—</td></tr>
@@ -537,6 +617,18 @@ Address:  203.0.113.10</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Un nom se résout par le <strong>cache</strong>, le fichier <strong>hosts</strong>, puis le <strong>serveur DNS</strong> configuré. Test décisif : si l'IP répond et pas le nom, c'est le DNS. En domaine AD, les postes ne parlent qu'au DNS des contrôleurs de domaine.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q"><code>ping 172.16.50.20</code> répond, <code>ping SRV-FILE01</code> échoue avec « hôte inconnu ». Où chercher ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Du côté de la résolution de noms : DNS configuré sur le poste, enregistrement A du serveur</button>
+                        <button class="scenario__opt" data-why="Le ping par IP fonctionne : le chemin réseau est bon.">Du côté de la passerelle</button>
+                        <button class="scenario__opt" data-why="Le serveur répond par IP : il n&#x27;est pas filtré. Le message « hôte inconnu » vient du poste, avant tout envoi.">Du côté du pare-feu du serveur</button>
+                    </div>
+                    <div class="scenario__why"><p>Par IP ça marche, par nom non : c'est le DNS, presque toujours. <code>ipconfig /all</code> pour voir le serveur DNS utilisé, puis <code>nslookup SRV-FILE01</code> pour voir ce qu'il répond.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 08 -->
@@ -580,7 +672,7 @@ Address:  203.0.113.10</pre>
                 <pre class="terminal__code"><span class="k">ipconfig</span> /release<span class="c">            # rend l'adresse</span>
 <span class="k">ipconfig</span> /renew<span class="c">              # DORA complet</span>
 <span class="k">ipconfig</span> /all | <span class="k">findstr</span> /i <span class="s">"bail DHCP"</span><span class="c">    # serveur DHCP et dates du bail</span>
-<span class="k">sudo</span> <span class="k">dhclient</span> <span class="p">-r</span> &amp;&amp; sudo dhclient <span class="p">-v</span><span class="c">      # Linux (ifupdown)</span></pre>
+<span class="k">sudo</span> <span class="k">ifdown</span> ens33 &amp;&amp; <span class="k">sudo</span> <span class="k">ifup</span> ens33<span class="c">      # Linux (ifupdown) : rend puis redemande le bail</span></pre>
             </div>
                 <p class="verify__sub">Sortie attendue</p>
             <pre class="verify__out">DHCP activé. . . . . . . . . . . . . . : Oui
@@ -600,6 +692,18 @@ Serveur DHCP . . . . . . . . . . . . . : 192.168.1.1</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>DHCP = <strong>DORA</strong> en broadcast, un <strong>bail</strong> renouvelé à 50 %, et des options (passerelle, DNS, domaine). Entre réseaux, il faut un <strong>relais</strong>. Les adresses fixes se mettent <strong>hors de l'étendue</strong>, ou en réservation.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">On crée un nouveau VLAN. Ses postes prennent une adresse en <code>169.254.x.x</code> ; le serveur DHCP est dans un autre VLAN. Que manque-t-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Un relais DHCP sur l'interface du routeur de ce VLAN</button>
+                        <button class="scenario__opt" data-why="Le DNS n&#x27;intervient pas dans l&#x27;obtention d&#x27;une adresse.">Un serveur DNS dans le nouveau VLAN</button>
+                        <button class="scenario__opt" data-why="Il en a déjà une. Le problème est que le Discover, en broadcast, ne traverse pas le routeur.">Une adresse IP fixe sur le serveur DHCP</button>
+                    </div>
+                    <div class="scenario__why"><p>Le Discover DHCP est un <strong>broadcast</strong> : il s'arrête au routeur. Le relais (<code>ip helper-address</code> sur Cisco) le transforme en unicast vers le serveur, qui doit aussi avoir une étendue pour ce réseau.</p></div>
+                </div>
             </div>
         </section>
 
@@ -664,6 +768,18 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Le routeur choisit la route au <strong>préfixe le plus long</strong>, puis la plus fiable, puis la meilleure métrique. Le <strong>NAT/PAT</strong> fait sortir tout un réseau privé derrière une IP publique ; il empêche aussi, de fait, les connexions entrantes non prévues.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Table de routage : <code>0.0.0.0/0 → A</code>, <code>10.0.0.0/8 → B</code>, <code>10.1.2.0/24 → C</code>. Par où part un paquet pour <code>10.1.2.9</code> ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Par C</button>
+                        <button class="scenario__opt" data-why="La route par défaut ne sert que si aucune route plus précise ne correspond.">Par A, la route par défaut</button>
+                        <button class="scenario__opt" data-why="L&#x27;ordre d&#x27;écriture ne compte pas : c&#x27;est la précision du préfixe qui décide.">Par B, la première route qui correspond</button>
+                    </div>
+                    <div class="scenario__why"><p>Les trois routes correspondent, mais <code>/24</code> est la plus <strong>précise</strong> : c'est la règle du <strong>préfixe le plus long</strong>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 10 -->
@@ -699,7 +815,7 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
                     <tbody>
                         <tr><td>ARP (broadcast)</td><td><strong>NDP</strong> (RFC 4861), en multicast ICMPv6 : sollicitation / annonce de voisin</td></tr>
                         <tr><td>DHCP obligatoire ou config manuelle</td><td><strong>SLAAC</strong> (RFC 4862) : le routeur annonce le préfixe, la machine fabrique son adresse seule ; DHCPv6 reste possible</td></tr>
-                        <tr><td>Masques variables, NAT partout</td><td>Réseau local = <strong>/64</strong> presque toujours ; pas de NAT : chaque machine a une adresse globale, c'est le <strong>pare-feu</strong> qui protège</td></tr>
+                        <tr><td>Masques variables, NAT partout</td><td>Réseau local = <strong>/64</strong> presque toujours ; pas de NAT en principe : chaque machine a une adresse globale, c'est le <strong>pare-feu</strong> qui protège</td></tr>
                         <tr><td>ICMP souvent bloqué « par sécurité »</td><td>Bloquer ICMPv6 casse IPv6 (NDP, découverte du MTU) : on filtre, on ne coupe pas</td></tr>
                     </tbody>
                 </table>
@@ -715,9 +831,9 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
 <span class="k">ip</span> -6 neigh<span class="c">                     # Linux : le « cache ARP » d'IPv6 (NDP)</span></pre>
             </div>
                 <p class="verify__sub">Sortie attendue</p>
-            <pre class="verify__out">Adresse IPv6. . . . . . . . . . . . . .: 2001:db8:4a:1200:5d2e:91ff:fe3a:7c10
-Adresse IPv6 temporaire . . . . . . . .: 2001:db8:4a:1200:b1c4:2e9:a7f0:3d11
-Adresse IPv6 de liaison locale. . . . .: fe80::5d2e:91ff:fe3a:7c10%7</pre>
+            <pre class="verify__out">   Adresse IPv6. . . . . . . . . . . . . .: 2001:db8:4a:1200:5d2e:91a4:c3b0:7c10
+   Adresse IPv6 temporaire . . . . . . . .: 2001:db8:4a:1200:b1c4:2e9:a7f0:3d11
+   Adresse IPv6 de liaison locale. . . . .: fe80::5d2e:91a4:c3b0:7c10%7</pre>
                 <p class="verify__fail">Seule l'adresse <code>fe80::</code> présente : pas de routeur IPv6 annoncé sur ce réseau (normal dans beaucoup de labos). Le <code>%7</code> est l'index de l'interface : obligatoire pour pinguer une adresse lien local, car elle existe sur chaque carte.</p>
             </div>
             <div class="cmdex" data-accept="2001:db8::10" data-hint="retire les zéros de tête, puis remplace la longue suite de groupes 0000 par deux deux-points.">
@@ -731,6 +847,18 @@ Adresse IPv6 de liaison locale. . . . .: fe80::5d2e:91ff:fe3a:7c10%7</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>IPv6 : <strong>128 bits</strong>, des <strong>/64</strong> pour les réseaux locaux, une adresse <strong>fe80::</strong> sur chaque interface, <strong>NDP</strong> à la place d'ARP et <strong>SLAAC</strong> à côté de DHCP. Pas de NAT : la sécurité repose sur le pare-feu.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur un serveur du lab, <code>ip -6 addr</code> n'affiche qu'une adresse <code>fe80::…/64</code>. Un collègue conclut que la carte est en panne. Qu'en penses-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>C'est normal : aucun routeur n'annonce de préfixe IPv6 sur ce réseau</button>
+                        <button class="scenario__opt" data-why="Non : fe80:: existe sur chaque interface, même quand tout va bien. Ce n&#x27;est pas une adresse de secours comme APIPA.">Il a raison : fe80:: est l&#x27;équivalent de 169.254</button>
+                        <button class="scenario__opt" data-why="::1 est la boucle locale : elle vit sur l&#x27;interface lo, jamais sur une carte réseau.">Il manque l&#x27;adresse ::1 sur la carte réseau</button>
+                    </div>
+                    <div class="scenario__why"><p>L'adresse <strong>lien local</strong> est toujours là ; l'adresse <strong>globale</strong> n'apparaît que si un routeur envoie des annonces (SLAAC) ou si un DHCPv6 répond. Dans un lab sans routeur IPv6, n'avoir que <code>fe80::</code> est normal.</p></div>
+                </div>
             </div>
         </section>
 
@@ -773,6 +901,18 @@ Adresse IPv6 de liaison locale. . . . .: fe80::5d2e:91ff:fe3a:7c10%7</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Un <strong>VLAN</strong> = un domaine de broadcast = un sous-réseau ; <strong>access</strong> pour un appareil, <strong>trunk</strong> 802.1Q entre équipements. En Wi-Fi : <strong>WPA3</strong> (ou WPA2-AES), 5 GHz pour le débit, et un SSID par usage relié à son VLAN.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur un switch, on passe le port de l'imprimante en <strong>VLAN 20</strong> ; les postes restent en VLAN 10, sans routeur entre les deux. Plus personne n'imprime. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Deux VLAN = deux réseaux : sans routage, les postes ne joignent plus l'imprimante</button>
+                        <button class="scenario__opt" data-why="Un changement de VLAN sur un port s&#x27;applique tout de suite, sans redémarrage.">Le switch doit redémarrer pour appliquer le VLAN</button>
+                        <button class="scenario__opt" data-why="Un trunk relie des équipements qui gèrent les étiquettes 802.1Q. Une imprimante se branche sur un port access.">Le port de l&#x27;imprimante doit passer en trunk</button>
+                    </div>
+                    <div class="scenario__why"><p>Chaque VLAN est un <strong>domaine de broadcast</strong> séparé : l'ARP des postes n'atteint plus l'imprimante. Il faut soit la remettre en VLAN 10, soit lui donner une adresse du réseau du VLAN 20 et router entre les deux.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 12 -->
@@ -791,6 +931,69 @@ Adresse IPv6 de liaison locale. . . . .: fe80::5d2e:91ff:fe3a:7c10%7</pre>
                 <div class="step"><div class="step__num">6</div><div class="step__body"><strong>TCP</strong><p>Poignée de main SYN, SYN-ACK, ACK sur le port 443.</p></div></div>
                 <div class="step"><div class="step__num">7</div><div class="step__body"><strong>TLS</strong><p>Échange de certificats et de clés : la suite est chiffrée (module <a href="exchange-securite.html">PKI</a>).</p></div></div>
                 <div class="step"><div class="step__num">8</div><div class="step__body"><strong>HTTP</strong><p><code>GET /</code> → <code>200 OK</code> et la page. Puis des dizaines d'autres requêtes pour les images, scripts, styles.</p></div></div>
+            </div>
+            <h3>Pas à pas : les en-têtes à chaque étape</h3>
+            <p>Les mêmes étapes, trame par trame. À chaque fois, regarde ce qui a changé par rapport à l'étape d'avant : c'est entouré.</p>
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Du PC 192.168.1.25 jusqu'au serveur web 203.0.113.10</p>
+                <p class="frame__legend">Couche 2 en brun, couche 3 en terre cuite, couche 4 en ocre, contenu en vert. Flèches du clavier ou boutons pour avancer.</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · PC → switch → tous les ports</p>
+                        <p class="walk__head">Le PC cherche la MAC de sa passerelle : requête ARP</p>
+                        <div class="frame"><span class="hdr hdr--l2"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:00:25</i><br>MAC dst <i>ff:ff:ff:ff:ff:ff</i> (tout le monde)</span><span class="hdr hdr--data"><b>ARP</b>Qui a 192.168.1.1 ? Réponds à 192.168.1.25</span></div>
+                        <p class="walk__change">Pas d'en-tête IP : ARP vit directement dans la trame. La destination est le <b>broadcast</b> : le switch la recopie sur tous ses ports.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · box → PC</p>
+                        <p class="walk__head">La passerelle répond : réponse ARP</p>
+                        <div class="frame"><span class="hdr hdr--l2 is-changed"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:00:01</i><br>MAC dst <i>aa:aa:aa:00:00:25</i></span><span class="hdr hdr--data"><b>ARP</b>192.168.1.1 est à aa:aa:aa:00:00:01</span></div>
+                        <p class="walk__change">Réponse en <b>unicast</b>, directement au PC. Le PC range le couple IP ↔ MAC dans son cache ARP (<code>arp -a</code>) : il ne redemandera pas à chaque paquet.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · PC → box (serveur DNS)</p>
+                        <p class="walk__head">Requête DNS : quelle est l'adresse de www.exemple.be ?</p>
+                        <div class="frame"><span class="hdr hdr--l2"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:00:25</i><br>MAC dst <i>aa:aa:aa:00:00:01</i></span><span class="hdr hdr--l3 is-changed"><b>IPv4</b>IP src <i>192.168.1.25</i><br>IP dst <i>192.168.1.1</i></span><span class="hdr hdr--l4 is-changed"><b>UDP</b>port src <i>53117</i><br>port dst <i>53</i></span><span class="hdr hdr--data is-changed"><b>DNS</b>A www.exemple.be ?</span></div>
+                        <p class="walk__change">Ici la box joue aussi le rôle de serveur DNS. <b>UDP</b> : pas de poignée de main, une question, une réponse.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · box → PC</p>
+                        <p class="walk__head">Réponse DNS</p>
+                        <div class="frame"><span class="hdr hdr--l2 is-changed"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:00:01</i><br>MAC dst <i>aa:aa:aa:00:00:25</i></span><span class="hdr hdr--l3 is-changed"><b>IPv4</b>IP src <i>192.168.1.1</i><br>IP dst <i>192.168.1.25</i></span><span class="hdr hdr--l4 is-changed"><b>UDP</b>port src <i>53</i><br>port dst <i>53117</i></span><span class="hdr hdr--data is-changed"><b>DNS</b>www.exemple.be A 203.0.113.10</span></div>
+                        <p class="walk__change">Tout est <b>inversé</b> : source et destination échangent leur place, aux trois couches. Le port 53117 permet au PC de savoir à quelle question correspond la réponse.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · PC → box</p>
+                        <p class="walk__head">Ouverture de la connexion vers le serveur : SYN</p>
+                        <div class="frame"><span class="hdr hdr--l2"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:00:25</i><br>MAC dst <i>aa:aa:aa:00:00:01</i> (la passerelle !)</span><span class="hdr hdr--l3 is-changed"><b>IPv4</b>IP src <i>192.168.1.25</i><br>IP dst <i>203.0.113.10</i> (le serveur)</span><span class="hdr hdr--l4 is-changed"><b>TCP</b>port src <i>51234</i><br>port dst <i>443</i><br>drapeau <i>SYN</i></span></div>
+                        <p class="walk__change">Le moment clé du module : la <b>MAC de destination est celle de la passerelle</b>, l'<b>IP de destination est celle du serveur</b>. Le PC a vu, avec son masque, que 203.0.113.10 n'est pas dans son réseau.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · box → routeur du fournisseur → Internet</p>
+                        <p class="walk__head">Le même SYN, après la box</p>
+                        <div class="frame"><span class="hdr hdr--l2 is-changed"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:01:07</i> (box, côté Internet)<br>MAC dst <i>bb:bb:bb:00:00:01</i> (routeur du FAI)</span><span class="hdr hdr--l3 is-changed"><b>IPv4</b>IP src <i>198.51.100.7</i> (IP publique de la box)<br>IP dst <i>203.0.113.10</i><br>TTL 127</span><span class="hdr hdr--l4 is-changed"><b>TCP</b>port src <i>61001</i><br>port dst <i>443</i><br>drapeau <i>SYN</i></span></div>
+                        <p class="walk__change">Trois choses ont changé : les <b>MAC</b> (nouveau tronçon), l'<b>IP et le port source</b> (le NAT de la box, qui note 192.168.1.25:51234 ↔ 61001 dans sa table), et le <b>TTL</b> (−1 à chaque routeur). La destination, elle, n'a pas bougé.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · Internet → box → PC</p>
+                        <p class="walk__head">Le serveur accepte : SYN-ACK</p>
+                        <div class="frame"><span class="hdr hdr--l2 is-changed"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:00:01</i><br>MAC dst <i>aa:aa:aa:00:00:25</i></span><span class="hdr hdr--l3 is-changed"><b>IPv4</b>IP src <i>203.0.113.10</i><br>IP dst <i>192.168.1.25</i></span><span class="hdr hdr--l4 is-changed"><b>TCP</b>port src <i>443</i><br>port dst <i>51234</i><br>drapeaux <i>SYN, ACK</i></span></div>
+                        <p class="walk__change">Le SYN-ACK est arrivé sur la box adressé à 198.51.100.7:61001. Grâce à sa <b>table NAT</b>, la box le renvoie à 192.168.1.25:51234, dans une nouvelle trame. Le PC répond par un <b>ACK</b> : la connexion TCP est ouverte.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 8</b> · PC → serveur</p>
+                        <p class="walk__head">Début du chiffrement : TLS Client Hello</p>
+                        <div class="frame"><span class="hdr hdr--l2"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:00:25</i><br>MAC dst <i>aa:aa:aa:00:00:01</i></span><span class="hdr hdr--l3"><b>IPv4</b>IP src <i>192.168.1.25</i><br>IP dst <i>203.0.113.10</i></span><span class="hdr hdr--l4"><b>TCP</b>port src <i>51234</i><br>port dst <i>443</i></span><span class="hdr hdr--data is-changed"><b>TLS</b>Client Hello<br>SNI : www.exemple.be (en clair)</span></div>
+                        <p class="walk__change">Le PC propose ses algorithmes et annonce le nom du site (<b>SNI</b>), encore lisible. Le serveur répond (<em>Server Hello</em>) et prouve son identité avec son <b>certificat</b> — en TLS 1.3, ce certificat voyage déjà chiffré. Ensuite, plus rien n'est lisible.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 9</b> · PC → serveur</p>
+                        <p class="walk__head">Enfin, la requête HTTP</p>
+                        <div class="frame"><span class="hdr hdr--l2"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:00:25</i><br>MAC dst <i>aa:aa:aa:00:00:01</i></span><span class="hdr hdr--l3"><b>IPv4</b>IP src <i>192.168.1.25</i><br>IP dst <i>203.0.113.10</i></span><span class="hdr hdr--l4"><b>TCP</b>port src <i>51234</i><br>port dst <i>443</i></span><span class="hdr hdr--data is-changed"><b>TLS (chiffré)</b><em>GET / HTTP/1.1</em> — illisible sur le réseau</span></div>
+                        <p class="walk__change">Sur le câble, on voit encore les MAC, les IP et les ports : c'est ce qui permet de router et de filtrer. Le contenu, lui, est chiffré. C'est exactement ce que le lab ci-dessous te fera constater dans Wireshark.</p>
+                    </li>
+                </ol>
             </div>
             <div class="lab" data-lab="reseau-bases-wireshark">
                 <p class="lab__label">Lab guidé</p>
@@ -823,6 +1026,18 @@ Adresse IPv6 de liaison locale. . . . .: fe80::5d2e:91ff:fe3a:7c10%7</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Une requête web = <strong>DHCP</strong> (avant), <strong>ARP</strong>, <strong>DNS</strong>, <strong>routage</strong>, <strong>NAT</strong>, <strong>TCP</strong>, <strong>TLS</strong>, <strong>HTTP</strong>. Si tu sais dire à chaque étape ce qui peut casser et quelle commande le montre, tu sais dépanner un réseau.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Dans ta capture, la trame qui porte le <strong>SYN</strong> vers <code>203.0.113.10</code> quitte ton PC. Quelle est sa <strong>MAC de destination</strong> ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>La MAC de la passerelle</button>
+                        <button class="scenario__opt" data-why="Le serveur est sur un autre réseau : le PC ne connaît jamais sa MAC, il confie la trame à la passerelle.">La MAC du serveur web</button>
+                        <button class="scenario__opt" data-why="Seule la question ARP part en broadcast. Le SYN est une trame unicast vers un équipement précis.">ff:ff:ff:ff:ff:ff, le broadcast</button>
+                    </div>
+                    <div class="scenario__why"><p>IP de destination = le <strong>serveur</strong> ; MAC de destination = la <strong>passerelle</strong>. Dans Wireshark, ouvre la ligne <em>Ethernet II</em> du SYN : la destination est la MAC qu'affiche <code>arp -a</code> pour la passerelle.</p></div>
+                </div>
             </div>
         </section>
 
@@ -877,10 +1092,10 @@ Adresse IPv6 de liaison locale. . . . .: fe80::5d2e:91ff:fe3a:7c10%7</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

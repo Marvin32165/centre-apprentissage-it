@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -113,7 +113,7 @@
                 <li><code>no</code> devant une commande l'annule (<code>no shutdown</code>, <code>no ip address</code>).</li>
                 <li><strong>Deux configurations</strong> : la <code>running-config</code> (en mémoire vive, active) et la <code>startup-config</code> (en NVRAM, rechargée au démarrage). Sans <code>copy running-config startup-config</code> (ou <code>write</code>), tout est perdu au redémarrage.</li>
             </ul>
-            <div class="cmdex" data-accept="do sh(ow?)? ip int(erface)? br(ief?)?" data-hint="il faut un préfixe devant la commande show.">
+            <div class="cmdex" data-accept="do sh(ow?)? ip int\w* br\w*" data-hint="il faut un préfixe devant la commande show.">
                 <p class="cmdex__label">À toi de taper</p>
                 <p>Depuis le mode configuration d'interface, affiche le résumé des interfaces <strong>sans quitter</strong> ce mode.</p>
                 <details class="reveal">
@@ -189,6 +189,18 @@ Authentication timeout: 120 secs; Authentication retries: 3</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Nom, <code>enable secret</code>, compte local en <code>secret</code>, bannière, <code>exec-timeout</code>, SSH v2 avec clé 2048 bits et <code>transport input ssh</code> : la base de tout équipement, avant même le premier VLAN.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur un switch fraîchement configuré, <code>show ip ssh</code> affiche <code>SSH Enabled - version 1.99</code>. Qu'en conclus-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>SSH v1 et v2 sont acceptés : il manque <code>ip ssh version 2</code></button>
+                        <button class="scenario__opt" data-why="1.99 n&#x27;est pas une version : c&#x27;est la façon dont IOS dit « j&#x27;accepte v1 et v2 ». SSH v1 est obsolète et faible.">La version 1.99 est une révision récente de SSH v2 : rien à faire</button>
+                        <button class="scenario__opt" data-why="Une clé trop courte (moins de 768 bits) empêcherait d&#x27;activer la v2, mais le message serait autre : ici SSH est actif, il accepte simplement aussi la v1.">La clé RSA est trop courte : il faut la régénérer en 2048 bits</button>
+                    </div>
+                    <div class="scenario__why"><p>Par défaut, IOS accepte SSH v1 et v2 et l'affiche <code>1.99</code>. <code>ip ssh version 2</code> ferme la v1 ; <code>show ip ssh</code> doit alors répondre <code>version 2.0</code>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 03 -->
@@ -250,9 +262,25 @@ Gi0/1       10,20,30,40,50,60,70,80,90,99,100,110,120</pre>
                     <div class="reveal__body"><p><code>switchport trunk allowed vlan add 30</code>. Sans <code>add</code>, la liste deviendrait « 30 » seul, et les VLAN 10 et 20 seraient coupés sur ce lien.</p></div>
                 </details>
             </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Piège</p>
+                <p>Sur un switch de niveau 3 (le <strong>3560</strong> de Packet Tracer), <code>switchport mode trunk</code> est refusé tant que <code>switchport trunk encapsulation dot1q</code> n'a pas été tapé : ce modèle connaît aussi l'ancien protocole ISL et ne choisit pas seul. Le 2960, lui, ne fait que du 802.1Q.</p>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Port <strong>access</strong> : un VLAN (+ un VLAN voix éventuel). Port <strong>trunk</strong> : VLAN natif inutilisé et identique des deux côtés, liste autorisée explicite, DTP coupé. Et toujours <code>add</code> pour compléter une liste.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Deux switchs sont reliés. Les PC du VLAN 10 se joignent sur un même switch, mais pas d'un switch à l'autre. Le VLAN 20 fonctionne partout. Cause la plus probable ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le VLAN 10 n'est pas autorisé sur le trunk (ou n'existe pas sur l'autre switch)</button>
+                        <button class="scenario__opt" data-why="Même VLAN, même réseau IP : aucune route n&#x27;intervient, tout se passe en couche 2.">Il manque une route entre les deux switchs</button>
+                        <button class="scenario__opt" data-why="La passerelle ne sert qu&#x27;à sortir du réseau. Deux PC du même VLAN se parlent sans elle.">Les PC du VLAN 10 ont une mauvaise passerelle</button>
+                    </div>
+                    <div class="scenario__why"><p>Le VLAN 20 traverse : le trunk est monté. C'est donc la liste des VLAN du trunk qui est en cause. <code>show interfaces trunk</code> sur les deux switchs, colonne <em>Vlans allowed and active</em>, et <code>show vlan brief</code>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -312,6 +340,18 @@ C    10.2.112.0/21 is directly connected, GigabitEthernet0/0.10</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>La passerelle d'un VLAN, c'est l'adresse de sa <strong>sous-interface</strong> (<code>encapsulation dot1q N</code>) ou de sa <strong>SVI</strong> (<code>interface vlan N</code> + <code>ip routing</code>). Le lien vers le routeur doit être un trunk qui transporte ce VLAN.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">En router-on-a-stick, la sous-interface <code>G0/0.10</code> a la bonne IP mais les PC du VLAN 10 n'atteignent pas leur passerelle. Qu'oublie-t-on souvent ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>encapsulation dot1Q 10</code> sur la sous-interface</button>
+                        <button class="scenario__opt" data-why="Un routeur route par défaut ; &lt;code&gt;ip routing&lt;/code&gt; concerne un switch de niveau 3."><code>ip routing</code> sur le routeur</button>
+                        <button class="scenario__opt" data-why="Le réseau du VLAN 10 est directement connecté à la sous-interface : sa route est automatique.">Une route statique vers le VLAN 10</button>
+                    </div>
+                    <div class="scenario__why"><p>Sans <code>encapsulation dot1Q 10</code>, la sous-interface ne sait pas quelles trames étiquetées lui reviennent. Vérifier aussi que le port du switch vers le routeur est bien en <strong>trunk</strong>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 05 -->
@@ -363,6 +403,18 @@ R-EDGE1# <span class="k">show</span> ip dhcp pool V10_Host</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Exclusions d'abord, pool ensuite ; <code>default-router</code> = l'adresse virtuelle HSRP quand il y en a une. Serveur DHCP ailleurs : <code>ip helper-address</code> sur l'interface du VLAN.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le serveur DHCP Windows est en <code>10.2.120.10</code> (VLAN 70). Les PC du VLAN 70 reçoivent une adresse, ceux du VLAN 10 restent en 169.254.x.x. Que manque-t-il le plus probablement ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>ip helper-address 10.2.120.10</code> sur <code>g0/0.10</code></button>
+                        <button class="scenario__opt" data-why="Le réseau 10.2.120.0/22 est directement connecté à &lt;code&gt;g0/0.70&lt;/code&gt; : le routeur le connaît déjà.">Une route statique vers 10.2.120.0 sur le routeur</button>
+                        <button class="scenario__opt" data-why="Le relais se pose côté clients, sur l&#x27;interface qui reçoit leurs broadcasts. Dans le VLAN 70, le serveur est déjà joignable sans relais."><code>ip helper-address 10.2.120.10</code> sur <code>g0/0.70</code></button>
+                    </div>
+                    <div class="scenario__why"><p>Un DISCOVER est un <strong>broadcast</strong> : il ne traverse pas le routeur. Le relais se pose sur l'interface du VLAN des <strong>clients</strong>, et le serveur doit avoir une étendue pour <code>10.2.112.0/21</code>. Vérifier : <code>ipconfig /renew</code> sur un PC, puis <code>show running-config interface g0/0.10</code>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 06 -->
@@ -389,6 +441,7 @@ R-EDGE1# <span class="k">show</span> ip dhcp pool V10_Host</pre>
                     </tbody>
                 </table>
             </div>
+            <p>Deux blocs sont plus larges que le strict minimum : pour 1 000 postes, un <code>/22</code> (1 022 hôtes) suffirait, et pour 508 serveurs un <code>/23</code> (510). Le plan du cours prend un cran de plus pour garder de la marge : à faire exprès et à noter, jamais par erreur de calcul.</p>
             <p>Les conventions du labo, à garder partout : <strong>.1</strong> et <strong>.2</strong> pour les deux routeurs, la <strong>dernière adresse utilisable</strong> pour l'adresse virtuelle HSRP (la passerelle des postes), les <strong>50 premières</strong> exclues du DHCP pour le matériel en fixe.</p>
             <div class="exo">
                 <p class="exo__label">Exercice — un VLAN de plus</p>
@@ -436,7 +489,7 @@ R-EDGE1# <span class="k">show</span> ip dhcp pool V10_Host</pre>
                     </tbody>
                 </table>
             </div>
-            <p>Une route <strong>flottante</strong> est une statique dont on a monté exprès la distance : elle reste cachée tant que la route principale existe, et n'entre dans la table que si celle-ci disparaît (interface tombée).</p>
+            <p>Une route <strong>flottante</strong> est une statique dont on a monté exprès la distance : elle reste cachée tant que la route principale existe, et n'entre dans la table que si celle-ci disparaît. Attention : une statique ne disparaît que si son <strong>interface de sortie</strong> tombe (ou si le prochain saut n'est plus joignable par la table de routage). Une panne plus loin chez le FAI, interface restée <em>up</em>, ne déclenche pas la flottante : il faut alors un suivi (IP SLA + <code>track</code>), hors programme ici.</p>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
                 <p>Quelle route par défaut est active ?</p>
@@ -461,6 +514,18 @@ S*    0.0.0.0/0 [1/0] via 203.0.113.1</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Statique : <code>ip route réseau masque prochain-saut [distance]</code>. Route par défaut : <code>0.0.0.0 0.0.0.0</code>. Une distance plus haute fait une route de secours <strong>flottante</strong>. Et chaque aller a besoin de son retour.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Une route flottante <code>ip route 0.0.0.0 0.0.0.0 10.2.104.2 200</code> doit-elle apparaître dans <code>show ip route</code> quand le lien principal fonctionne ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Non : elle n'y entre que si la route principale disparaît</button>
+                        <button class="scenario__opt" data-why="Deux routes vers la même destination avec des distances différentes : seule la plus petite distance entre dans la table.">Oui, à côté de la route principale</button>
+                        <button class="scenario__opt" data-why="Le partage de charge suppose des distances et métriques égales. 200 est volontairement plus grand.">Oui, et elle partage la charge</button>
+                    </div>
+                    <div class="scenario__why"><p>La distance administrative 200 la rend moins crédible que la route principale (1 en statique, 110 en OSPF). Elle reste en réserve et entre dans la table à la panne : c'est tout son intérêt.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 08 -->
@@ -481,11 +546,12 @@ S*    0.0.0.0/0 [1/0] via 203.0.113.1</pre>
 <span class="k">router-id</span> 1.1.1.1<span class="c">                    ! identité fixe, sinon IOS la choisit seul</span>
 <span class="k">auto-cost</span> reference-bandwidth 10000<span class="c">  ! en Mb/s : 10 Gb/s, pour distinguer 1G de 10G</span>
 <span class="k">passive-interface</span> default<span class="c">            ! pas de Hello partout…</span>
-<span class="k">no</span> passive-interface g0/2<span class="c">            ! …seulement là où il y a un voisin</span>
+<span class="k">no</span> passive-interface g0/0.99<span class="c">        ! …seulement là où il y a un voisin (R-EDGE2)</span>
 <span class="k">network</span> 10.2.0.0 0.0.255.255 area 0<span class="c">  ! masque générique (wildcard)</span>
-<span class="k">network</span> 203.0.113.0 0.0.0.3 area 0
-<span class="k">default-information</span> originate<span class="c">        ! annonce la route par défaut aux autres</span></pre>
+<span class="k">network</span> 203.0.113.0 0.0.0.3 area 0<span class="c">   ! le lien WAN est annoncé, mais le FAI ne parle pas OSPF</span>
+<span class="k">default-information</span> originate<span class="c">        ! annonce SA route par défaut (il faut qu'il en ait une)</span></pre>
             </div>
+            <p>La configuration complète du cours ouvre OSPF sur toutes les sous-interfaces : les deux routeurs deviennent alors voisins dans chaque VLAN. Ça marche, mais un seul lien de voisinage suffit ; chaque interface non passive est aussi une porte par laquelle un faux routeur pourrait injecter des routes. Et <code>auto-cost reference-bandwidth</code> se règle à la <strong>même valeur sur tous les routeurs</strong>, sinon les coûts ne se comparent plus.</p>
             <div class="tip">
                 <p class="tip__label">Le masque générique</p>
                 <p><code>network</code> utilise un <strong>masque générique</strong> (<em>wildcard</em>) : l'inverse du masque. <code>255.255.255.252</code> → <code>0.0.0.3</code> ; <code>255.255.0.0</code> → <code>0.0.255.255</code>. Calcul : 255 − chaque octet du masque. Les mêmes masques servent dans les ACL.</p>
@@ -526,7 +592,19 @@ R-EDGE1# <span class="k">show</span> ip protocols</pre>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>OSPF : <code>router-id</code> fixe, <code>network … wildcard area 0</code>, interfaces passives par défaut, et <code>show ip ospf neighbor</code> doit afficher <strong>FULL</strong> (ou 2WAY/DROTHER). Pas de voisin = aire, masque, minuteurs, MTU ou interface passive.</p>
+                <p>OSPF : <code>router-id</code> fixe, <code>network … wildcard area 0</code>, interfaces passives par défaut, et <code>show ip ospf neighbor</code> doit afficher <strong>FULL</strong> (ou 2WAY/DROTHER). Pas de voisin = aire, masque, minuteurs ou interface passive ; voisin bloqué en EXSTART/EXCHANGE = MTU.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q"><code>show ip ospf neighbor</code> montre R-EDGE2 bloqué en <code>EXSTART</code> depuis plusieurs minutes. Quelle est la cause la plus probable ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Une MTU différente sur les deux interfaces</button>
+                        <button class="scenario__opt" data-why="Avec une aire différente, les Hello sont rejetés : le voisin n&#x27;apparaît pas du tout, il ne peut pas atteindre EXSTART.">Une aire différente des deux côtés</button>
+                        <button class="scenario__opt" data-why="Une interface passive n&#x27;envoie aucun Hello : pas de voisin du tout, et non un voisin bloqué en cours d&#x27;échange.">L&#x27;interface est passive sur R-EDGE2</button>
+                    </div>
+                    <div class="scenario__why"><p>Arriver en EXSTART prouve que les Hello concordent (aire, réseau, minuteurs, authentification). Le blocage pendant l'échange des bases signe une <strong>MTU</strong> différente. Comparer <code>show interfaces g0/0</code> (ligne <em>MTU</em>) des deux côtés.</p></div>
+                </div>
             </div>
         </section>
 
@@ -537,7 +615,7 @@ R-EDGE1# <span class="k">show</span> ip protocols</pre>
             <p class="chapter__intro">Deux switchs de cœur reliés par deux câbles, c'est de la redondance… et une boucle. Le <strong>spanning tree</strong> bloque les liens en trop ; l'<strong>EtherChannel</strong> fait des deux câbles un seul lien logique, plus large, sans rien bloquer.</p>
 
             <h3>Choisir la racine, ne pas la subir</h3>
-            <p>Le spanning tree élit un <strong>switch racine</strong> (le plus petit identifiant : priorité, puis MAC) et bloque les ports qui créeraient une boucle. Laissé par défaut, c'est le switch à la plus petite MAC qui gagne — souvent le plus vieux. On désigne donc la racine et sa remplaçante. Le détail de l'élection, PortFast et BPDU Guard sont dans <a href="cisco-securite.html#stp">Cisco sécurité</a>.</p>
+            <p>Le spanning tree élit un <strong>switch racine</strong> (le plus petit identifiant : priorité, puis MAC) et bloque les ports qui créeraient une boucle. Laissé par défaut, c'est le switch à la plus petite MAC qui gagne — souvent le plus vieux. On désigne donc la racine et sa remplaçante. <code>root primary</code> n'est qu'une macro : elle pose 24576, ou 4096 de moins que la racine actuelle si celle-ci est déjà plus basse ; <code>root secondary</code> pose 28672. Le détail de l'élection, PortFast et BPDU Guard sont dans <a href="cisco-securite.html#stp">Cisco sécurité</a>.</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — SW-CORE1 (racine) et SW-CORE2 (secours)</span></div>
                 <pre class="terminal__code"><span class="k">spanning-tree</span> mode rapid-pvst<span class="c">        ! RSTP, un arbre par VLAN, convergence en secondes</span>
@@ -590,6 +668,18 @@ VLAN0010
                 <p class="takeaway__label">À retenir</p>
                 <p>On <strong>désigne</strong> la racine (<code>root primary</code> / <code>secondary</code>) au lieu de la subir. EtherChannel LACP en <code>active</code>, configuration sur le <code>port-channel</code>, ports membres identiques, et <code>show etherchannel summary</code> doit afficher <strong>SU</strong> et des ports <strong>P</strong>.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">SW-CORE1 et SW-CORE2 ont tous deux <code>channel-group 1 mode passive</code> sur Fa0/23-24. Que donne <code>show etherchannel summary</code> ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Pas de canal : les deux côtés attendent que l'autre propose LACP</button>
+                        <button class="scenario__opt" data-why="Un port passive répond à LACP mais ne le propose jamais : il faut au moins un côté en &lt;code&gt;active&lt;/code&gt;.">Un canal LACP formé normalement, Po1 en SU</button>
+                        <button class="scenario__opt" data-why="&lt;code&gt;passive&lt;/code&gt; est un mode LACP ; PAgP utilise &lt;code&gt;desirable&lt;/code&gt; et &lt;code&gt;auto&lt;/code&gt;. Aucun protocole ne change de lui-même.">Un canal formé, mais en PAgP au lieu de LACP</button>
+                    </div>
+                    <div class="scenario__why"><p><code>passive</code> + <code>passive</code> ne forme rien (de même <code>auto</code> + <code>auto</code> en PAgP). Les ports apparaissent en <code>(I)</code> et le spanning tree bloque l'un des deux câbles. Correction : <code>channel-group 1 mode active</code> sur au moins un côté.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 10 -->
@@ -631,7 +721,7 @@ VLAN0010
                 <p class="verify__sub">Sortie attendue</p>
             <pre class="verify__out">Interface   Grp  Pri P State   Active          Standby         Virtual IP
 Gi0/0.10    10   110 P Active  local           10.2.112.2      10.2.119.254</pre>
-                <p class="verify__fail">Les deux routeurs se disent <code>Active</code> : ils ne se voient pas (VLAN absent du trunk, groupe ou version différents). Un état <code>Init</code> : l'adresse virtuelle ou le sous-réseau ne correspond pas.</p>
+                <p class="verify__fail">Les deux routeurs se disent <code>Active</code> : ils ne se voient pas (VLAN absent du trunk, groupe ou version différents). Un état <code>Init</code> : l'interface est down, ou le groupe n'a pas d'adresse virtuelle (ni configurée, ni apprise du voisin) — vérifier le numéro de groupe des deux côtés.</p>
             </div>
             <div class="exo">
                 <p class="exo__label">Exercice — la bascule</p>
@@ -644,6 +734,18 @@ Gi0/0.10    10   110 P Active  local           10.2.112.2      10.2.119.254</pre
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>HSRP : une <strong>adresse virtuelle</strong> comme passerelle (celle que distribue le DHCP), une <strong>priorité</strong> pour choisir l'actif, <code>preempt</code> pour reprendre la main, <code>track</code> pour basculer quand le lien de sortie tombe.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">R-EDGE1 (priorité 110) est actif, R-EDGE2 (100) en attente. R-EDGE1 redémarre ; R-EDGE2 prend la main. R-EDGE1 revient, mais <strong>sans</strong> <code>preempt</code> configuré. Qui est actif ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>R-EDGE2, jusqu'à sa propre panne</button>
+                        <button class="scenario__opt" data-why="Sans &lt;code&gt;preempt&lt;/code&gt;, la priorité ne sert qu&#x27;à l&#x27;élection initiale : un routeur ne prend pas la place d&#x27;un actif en bonne santé.">R-EDGE1, puisque sa priorité est la plus haute</button>
+                        <button class="scenario__opt" data-why="HSRP n&#x27;a qu&#x27;un routeur actif par groupe. Répartir la charge demande deux groupes (ou GLBP).">Les deux, chacun pour la moitié des postes</button>
+                    </div>
+                    <div class="scenario__why"><p>Sans <code>preempt</code>, HSRP ne reprend jamais la main à un actif qui fonctionne. C'est souvent voulu (éviter deux bascules), mais alors le <code>track</code> ne sert à rien. <code>show standby brief</code> : colonne <em>P</em> vide = pas de préemption.</p></div>
+                </div>
             </div>
         </section>
 
@@ -677,7 +779,55 @@ R-EDGE1# <span class="k">show</span> ip nat statistics</pre>
             <pre class="verify__out">Pro  Inside global       Inside local        Outside local      Outside global
 tcp  203.0.113.2:1024    10.2.112.51:49731   203.0.113.10:80    203.0.113.10:80
 tcp  203.0.113.2:443     10.2.126.10:443     ---                ---</pre>
-                <p class="verify__fail">Table vide alors qu'un poste essaie de sortir : <code>ip nat inside</code> oublié sur la sous-interface du VLAN, ou ACL-NAT qui ne couvre pas son réseau. Les compteurs <em>misses</em> de <code>show ip nat statistics</code> qui montent sans traduction : même piste.</p>
+                <p class="verify__fail">Table vide alors qu'un poste essaie de sortir : <code>ip nat inside</code> oublié sur la sous-interface du VLAN, ou ACL-NAT qui ne couvre pas son réseau. <code>show ip nat statistics</code> liste les interfaces <em>Inside</em> et <em>Outside</em> : chaque sous-interface LAN doit y figurer.</p>
+            </div>
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Un PC du VLAN 10 ouvre le site 203.0.113.10 : ce que fait R-EDGE1, dans l'ordre</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · PC 10.2.112.51 → passerelle</p>
+                        <p class="walk__head">Le PC envoie à sa passerelle</p>
+                        <p>203.0.113.10 n'est pas dans son <code>/21</code> : le PC envoie la trame à la MAC de sa passerelle <code>10.2.119.254</code>, l'adresse virtuelle HSRP (MAC virtuelle <code>0000.0c9f.f00a</code> en HSRPv2, groupe 10). Le switch l'étiquette VLAN 10 sur le trunk.</p>
+                        <p class="walk__change">Paquet : source <b>10.2.112.51:49731</b>, destination <b>203.0.113.10:80</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · entrée sur g0/0.10</p>
+                        <p class="walk__head">ACL d'entrée</p>
+                        <p>Si une ACL est posée <code>in</code> sur l'interface d'entrée (comme <code>ACL-GUEST</code> sur <code>g0/0.40</code>), elle est lue maintenant, avec l'<strong>adresse privée</strong> d'origine.</p>
+                        <p class="walk__change">Une ACL <b>in</b> côté LAN voit les adresses <b>internes</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · table de routage</p>
+                        <p class="walk__head">Le routage choisit la sortie</p>
+                        <p>Aucune route précise pour 203.0.113.10 : la route par défaut <code>S* 0.0.0.0/0 via 203.0.113.1</code> l'envoie vers <code>g0/2</code>. Sans route, pas de NAT : le paquet serait jeté avant.</p>
+                        <p class="walk__change">Dans le sens LAN → Internet, le <b>routage passe avant le NAT</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · inside → outside</p>
+                        <p class="walk__head">La traduction</p>
+                        <p>Le paquet va d'une interface <code>ip nat inside</code> vers une <code>ip nat outside</code>, et sa source est couverte par <code>ACL-NAT</code> : le routeur remplace la source par l'adresse de <code>g0/2</code>, avec un port libre, et note l'association dans sa table.</p>
+                        <p class="walk__change">Source devenue <b>203.0.113.2:port</b> ; une ligne apparaît dans <b>show ip nat translations</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · sortie sur g0/2</p>
+                        <p class="walk__head">ACL de sortie</p>
+                        <p>Une ACL posée <code>out</code> sur <code>g0/2</code> est lue <strong>après</strong> la traduction : elle ne voit plus jamais <code>10.2.112.51</code>, seulement <code>203.0.113.2</code>.</p>
+                        <p class="walk__change">Une ACL <b>out</b> côté Internet voit l'adresse <b>publique</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · réponse : 203.0.113.10 → 203.0.113.2</p>
+                        <p class="walk__head">Retour : ACL d'entrée, puis NAT, puis routage</p>
+                        <p>La réponse arrive sur <code>g0/2</code>. Une ACL <code>in</code> y verrait encore la destination publique. Puis le NAT retrouve la ligne de sa table et remet la destination <code>10.2.112.51:49731</code>, et seulement ensuite le routage l'envoie vers <code>g0/0.10</code>.</p>
+                        <p class="walk__change">Dans le sens Internet → LAN, le <b>NAT passe avant le routage</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · R-EDGE1 → PC</p>
+                        <p class="walk__head">Remise au PC</p>
+                        <p>Le routeur étiquette la trame VLAN 10 et la remet au PC, qui ne saura jamais qu'il a été traduit. Une connexion qui <em>arrive</em> d'Internet sans ligne dans la table est jetée, sauf si une traduction <code>static</code> la prévoit (le serveur web en 10.2.126.10).</p>
+                        <p class="walk__change">Le PAT n'ouvre que le <b>retour</b> de ce qui est sorti ; publier un serveur demande un <b>NAT statique</b>.</p>
+                    </li>
+                </ol>
             </div>
             <div class="cmdex" data-accept="ip nat inside source list ACL-NAT interface g(igabitethernet)?0/2 overload" data-hint="ip nat inside source list … interface … overload">
                 <p class="cmdex__label">À toi de taper</p>
@@ -691,6 +841,18 @@ tcp  203.0.113.2:443     10.2.126.10:443     ---                ---</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p><code>ip nat inside</code> / <code>outside</code> sur les interfaces, une ACL qui dit <em>qui</em> est traduit, <code>overload</code> pour le PAT, une ligne <code>static tcp</code> par port publié. <code>show ip nat translations</code> prouve que ça marche.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Pour bloquer le poste <code>10.2.112.51</code> vers Internet, un collègue pose sur <code>g0/2</code> une ACL <code>out</code> avec <code>deny ip host 10.2.112.51 any</code>. Le poste sort toujours. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>En sortie de <code>g0/2</code>, la source est déjà traduite en 203.0.113.2</button>
+                        <button class="scenario__opt" data-why="Une ACL se pose in ou out sur n&#x27;importe quelle interface. Le problème est l&#x27;adresse qu&#x27;elle voit à cet endroit.">Une ACL ne s&#x27;applique jamais en <code>out</code> sur une interface WAN</button>
+                        <button class="scenario__opt" data-why="&lt;code&gt;host 10.2.112.51&lt;/code&gt; et &lt;code&gt;10.2.112.51 0.0.0.0&lt;/code&gt; sont strictement équivalents.">Il faut écrire l&#x27;adresse avec un masque générique au lieu de <code>host</code></button>
+                    </div>
+                    <div class="scenario__why"><p>Côté LAN → Internet, le NAT se fait avant la lecture de l'ACL de sortie. Filtrer un poste interne se fait <code>in</code> sur son interface LAN (<code>g0/0.10</code>), où son adresse privée est encore visible. Vérifier : les compteurs de <code>show access-lists</code>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 12 -->
@@ -701,11 +863,11 @@ tcp  203.0.113.2:443     10.2.126.10:443     ---                ---</pre>
 
             <div class="cards">
                 <div class="card">
-                    <h4>Standard (1–99, nommée)</h4>
+                    <h4>Standard (1–99, 1300–1999, ou nommée)</h4>
                     <p>Ne regarde que l'<strong>adresse source</strong>. Se place <strong>près de la destination</strong> (sinon elle bloque trop large). Usage type : qui peut se connecter en SSH (<code>access-class</code>).</p>
                 </div>
                 <div class="card">
-                    <h4>Étendue (100–199, nommée)</h4>
+                    <h4>Étendue (100–199, 2000–2699, ou nommée)</h4>
                     <p>Regarde source, destination, protocole et ports. Se place <strong>près de la source</strong>, pour jeter le trafic avant qu'il traverse le réseau.</p>
                 </div>
             </div>
@@ -722,6 +884,8 @@ tcp  203.0.113.2:443     10.2.126.10:443     ---                ---</pre>
 <span class="k">ip</span> access-list extended ACL-MGMT-ISOL
  <span class="k">permit</span> tcp 10.2.104.0 0.0.7.255 any eq 22
  <span class="k">permit</span> icmp 10.2.104.0 0.0.7.255 any
+ <span class="k">permit</span> ospf host 10.2.104.2 any<span class="c">        ! ajout : l'OSPF de R-EDGE2 (voir le piège)</span>
+ <span class="k">permit</span> udp host 10.2.104.10 eq ntp any<span class="c">  ! ajout : les réponses du serveur NTP</span>
  <span class="k">deny</span> ip 10.2.104.0 0.0.7.255 10.2.0.0 0.0.255.255
  <span class="k">permit</span> ip any any<span class="c">                    ! Internet reste autorisé</span>
 <span class="k">interface</span> g0/0.99
@@ -734,6 +898,10 @@ tcp  203.0.113.2:443     10.2.126.10:443     ---                ---</pre>
  <span class="k">permit</span> ip any any
 <span class="k">interface</span> g0/0.40
  <span class="k">ip</span> access-group ACL-GUEST in</pre>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Piège</p>
+                <p>Une ACL posée <code>in</code> filtre <strong>aussi</strong> le trafic destiné au routeur lui-même. Telle qu'écrite dans le cours (sans les deux lignes « ajout »), <code>ACL-MGMT-ISOL</code> jette les paquets OSPF unicast que R-EDGE2 envoie à <code>10.2.104.1</code> pendant l'échange des bases (le voisinage reste bloqué en EXSTART sur ce VLAN), et les réponses du serveur NTP <code>10.2.104.10</code>. De même, les journaux Syslog que les switchs du VLAN 99 envoient à <code>10.2.120.100</code> (UDP 514) sont refusés : à autoriser si on en a besoin. Une ACL se teste avec <strong>tous</strong> les services qui passent par l'interface, pas seulement ceux qu'on voulait filtrer.</p>
             </div>
             <div class="tip">
                 <p class="tip__label">in ou out ?</p>
@@ -764,6 +932,18 @@ tcp  203.0.113.2:443     10.2.126.10:443     ---                ---</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Lue de haut en bas, première correspondance gagnante, <code>deny any</code> implicite. Standard près de la destination, étendue près de la source ; <code>in</code>/<code>out</code> vus du routeur ; les compteurs de <code>show access-lists</code> pour prouver.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Une ACL étendue ne contient que <code>permit tcp any host 10.2.10.10 eq 80</code>, appliquée en entrée. Que devient un ping vers 10.2.10.10 ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Il est bloqué</button>
+                        <button class="scenario__opt" data-why="Une ACL finit toujours par un &lt;em&gt;deny any&lt;/em&gt; implicite : ce qui n&#x27;est pas autorisé est refusé.">Il passe : l'ACL ne parle que de TCP</button>
+                        <button class="scenario__opt" data-why="ICMP se filtre comme le reste (&lt;code&gt;permit icmp …&lt;/code&gt;).">Il passe, car ICMP n'est pas filtré par les ACL</button>
+                    </div>
+                    <div class="scenario__why"><p>Le <strong>deny implicite</strong> en fin de liste refuse tout ce qui n'a pas été autorisé, dont l'ICMP. Penser à ajouter explicitement ce qui doit passer, et à vérifier avec <code>show access-lists</code> (compteurs de correspondances).</p></div>
+                </div>
             </div>
         </section>
 
@@ -862,6 +1042,18 @@ FE80::2D0:97FF:FE2B:1A01
                 <p class="takeaway__label">À retenir</p>
                 <p><code>ipv6 unicast-routing</code> d'abord ; une adresse <code>/64</code> par interface (la <code>fe80::</code> vient seule) ; les drapeaux M et O de l'annonce disent aux postes s'ils prennent l'adresse et le DNS par SLAAC ou DHCPv6.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Les PC du VLAN 30 obtiennent bien une adresse <code>2001:db8:cafe:30::/64</code> par SLAAC, mais aucun serveur DNS IPv6. Le pool <code>VLAN30-V6</code> existe. Que manque-t-il le plus probablement sur <code>g0/0.30</code> ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>ipv6 nd other-config-flag</code> (ou <code>ipv6 dhcp server VLAN30-V6</code>)</button>
+                        <button class="scenario__opt" data-why="Sans elle, le routeur n&#x27;enverrait aucune annonce : les PC n&#x27;auraient même pas d&#x27;adresse SLAAC globale."><code>ipv6 unicast-routing</code> en configuration globale</button>
+                        <button class="scenario__opt" data-why="M=1 sert à distribuer les adresses elles-mêmes par DHCPv6. Pour le seul DNS, O=1 (sans état) suffit, comme dans le labo."><code>ipv6 nd managed-config-flag</code> pour passer en DHCPv6 avec état</button>
+                    </div>
+                    <div class="scenario__why"><p>L'adresse vient de l'annonce du routeur (SLAAC) ; le DNS vient de DHCPv6 seulement si l'annonce porte O=1 et que l'interface sert le pool. Vérifier : <code>show ipv6 interface g0/0.30</code> doit dire <em>Hosts use DHCP to obtain other configuration</em>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 15 -->
@@ -938,10 +1130,10 @@ FE80::2D0:97FF:FE2B:1A01
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -97,7 +97,7 @@
                     <tbody>
                         <tr><td>Proxmox VE</td><td>1 (Debian)</td><td>Open source (support payant optionnel)</td><td class="yes">KVM</td><td class="yes">LXC</td></tr>
                         <tr><td>VMware ESXi</td><td>1</td><td>Propriétaire (payant)</td><td class="yes">Oui</td><td class="no">Non natif</td></tr>
-                        <tr><td>Hyper-V</td><td>1</td><td>Windows Server / gratuit limité</td><td class="yes">Oui</td><td class="partial">Windows/conteneurs</td></tr>
+                        <tr><td>Hyper-V</td><td>1</td><td>Inclus dans Windows Server et Windows Pro (l'édition gratuite Hyper-V Server s'est arrêtée à 2019)</td><td class="yes">Oui</td><td class="partial">Windows/conteneurs</td></tr>
                         <tr><td>VirtualBox</td><td>2</td><td>Open source</td><td class="yes">Oui</td><td class="no">Non</td></tr>
                     </tbody>
                 </table>
@@ -129,6 +129,18 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Proxmox = <strong>Debian + KVM + LXC + ZFS</strong>, gratuit et open source. VM quand il faut un OS complet ou non-Linux ; conteneur LXC quand on veut un service Linux léger et rapide.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">On te demande d'héberger sur Proxmox un serveur de fichiers Windows Server et un petit DNS Linux. Que crées-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Une VM KVM pour Windows, un conteneur LXC pour le DNS</button>
+                        <button class="scenario__opt" data-why="Un conteneur LXC partage le noyau Linux de l&#x27;hôte : impossible d&#x27;y faire tourner Windows.">Deux conteneurs LXC, plus légers</button>
+                        <button class="scenario__opt" data-why="Un service DNS Linux tourne très bien en LXC ; une VM fonctionnerait aussi, mais consommerait plus pour rien.">Deux VM, un conteneur ne pouvant pas faire de DNS</button>
+                    </div>
+                    <div class="scenario__why"><p>Le critère est le <strong>noyau</strong> : Windows a besoin du sien, donc d'une VM. Un service Linux léger profite d'un conteneur LXC, qui démarre en une seconde et consomme quelques Mo.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 02 -->
@@ -141,23 +153,35 @@
             <ul class="steps">
                 <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Télécharger &amp; graver l'ISO</strong>Récupère l'ISO sur <code>proxmox.com</code>, écris-la sur une clé USB (Rufus, Ventoy ou <code>dd</code>), puis boote dessus.</div></li>
                 <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Choisir le disque &amp; le filesystem</strong>Sur un seul disque : <code>ext4</code> suffit. Sur plusieurs disques : choisis <strong>ZFS</strong> (RAID1 = miroir, RAIDZ = parité) pour la résilience et les snapshots.</div></li>
-                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Réseau &amp; identité</strong>Renseigne le <em>hostname</em> (FQDN, ex. <code>pve01.homelab.lan</code>), une IP fixe, la passerelle et le DNS. Le mot de passe root et un email d'admin.</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Réseau &amp; identité</strong>Renseigne le <em>hostname</em> (FQDN, ex. <code>pve01.home.arpa</code>), une IP fixe, la passerelle et le DNS. Le mot de passe root et un email d'admin.</div></li>
                 <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Accéder à l'interface</strong>Après reboot, ouvre <code>https://IP-DU-SERVEUR:8006</code> dans un navigateur. Connexion en <code>root</code> / realm <em>Linux PAM</em>. Le certificat auto-signé déclenche un avertissement : normal en labo.</div></li>
             </ul>
 
             <h3>Corriger les dépôts (sans abonnement)</h3>
-            <p>Par défaut Proxmox pointe vers le dépôt entreprise (payant). En labo, on bascule sur le dépôt <em>no-subscription</em> pour recevoir les mises à jour :</p>
+            <p>Par défaut Proxmox pointe vers le dépôt <em>enterprise</em>, réservé aux abonnés : sans clé, <code>apt update</code> échoue (erreur <code>401</code>). En labo, on bascule sur le dépôt <em>no-subscription</em>. Le plus sûr : l'interface, <em>Nœud → Updates → Repositories</em> → <em>Disable</em> sur <em>enterprise</em>, puis <em>Add</em> → <em>No-Subscription</em>. En ligne de commande, cela dépend de la version :</p>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Shell — nœud Proxmox (root)</span></div>
-                <pre class="terminal__code"><span class="c"># Désactiver le dépôt entreprise</span>
-<span class="k">sed</span> <span class="p">-i</span> <span class="s">'s/^deb/#deb/'</span> /etc/apt/sources.list.d/pve-enterprise.list
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Shell — Proxmox VE 9 (Debian 13 « trixie », format deb822)</span></div>
+                <pre class="terminal__code"><span class="c"># Désactiver le dépôt entreprise (fichier .sources)</span>
+<span class="k">echo</span> <span class="s">"Enabled: false"</span> &gt;&gt; /etc/apt/sources.list.d/pve-enterprise.sources
 
-<span class="c"># Ajouter le dépôt no-subscription (Debian 12 « bookworm »)</span>
-<span class="k">echo</span> <span class="s">"deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription"</span> \
-  > /etc/apt/sources.list.d/pve-no-sub.list
+<span class="c"># Ajouter le dépôt no-subscription</span>
+<span class="k">cat</span> &gt; /etc/apt/sources.list.d/proxmox.sources &lt;&lt; EOF
+Types: deb
+URIs: http://download.proxmox.com/debian/pve
+Suites: trixie
+Components: pve-no-subscription
+Signed-By: /usr/share/keyrings/proxmox-archive-keyring.gpg
+EOF
 
 <span class="k">apt</span> update &amp;&amp; <span class="k">apt</span> <span class="p">-y</span> full-upgrade</pre>
             </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Shell — Proxmox VE 8 (Debian 12 « bookworm », ancien format)</span></div>
+                <pre class="terminal__code"><span class="k">sed</span> <span class="p">-i</span> <span class="s">'s/^deb/#deb/'</span> /etc/apt/sources.list.d/pve-enterprise.list
+<span class="k">echo</span> <span class="s">"deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription"</span> \
+  &gt; /etc/apt/sources.list.d/pve-no-sub.list</pre>
+            </div>
+            <p class="note">Proxmox VE 9 est sorti en août 2025 sur Debian 13 ; la branche 8 n'est plus maintenue depuis le 31 août 2026 : une installation neuve se fait en 9. Le même piège existe pour le dépôt Ceph (<code>ceph.sources</code>) s'il est présent.</p>
 
             <div class="tip">
                 <p class="tip__label">Astuce</p>
@@ -167,6 +191,16 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Interface web sur le port <code>8006</code> en HTTPS. Après l'install, on désactive le dépôt <em>enterprise</em> et on active <em>no-subscription</em> pour pouvoir mettre à jour.</p>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Les dépôts répondent-ils, et quelle version tourne ?</p>
+                <div class="terminal">
+                    <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Shell — nœud Proxmox</span></div>
+                    <pre class="terminal__code"><span class="k">apt</span> update        <span class="c"># aucune ligne « 401 Unauthorized »</span>
+<span class="k">pveversion</span>        <span class="c"># version du gestionnaire et du noyau</span></pre>
+                </div>
+                <p class="verify__fail">Encore une erreur <code>401</code> : le dépôt <em>enterprise</em> est toujours actif (fichier oublié, ou dépôt Ceph enterprise). Une erreur « Release file » sur <code>bookworm</code> alors que le nœud est en 9 : on a recopié la ligne d'une ancienne version.</p>
             </div>
         </section>
 
@@ -198,7 +232,7 @@
 <span class="k">qm</span> set <span class="p">100</span> <span class="p">--scsi0</span> <span class="s">local-lvm:32,discard=on</span>
 
 <span class="c"># Attacher l'ISO en lecteur CD, puis démarrer</span>
-<span class="k">qm</span> set <span class="p">100</span> <span class="p">--ide2</span> <span class="s">local:iso/debian-12.iso,media=cdrom</span>
+<span class="k">qm</span> set <span class="p">100</span> <span class="p">--ide2</span> <span class="s">local:iso/debian-13.iso,media=cdrom</span>
 <span class="k">qm</span> start <span class="p">100</span></pre>
             </div>
 
@@ -226,7 +260,7 @@
             <p>On télécharge d'abord un <strong>template</strong> (Datacenter → stockage <code>local</code> → CT Templates → Templates), puis on crée le CT avec ce template.</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">pct — gestion des conteneurs</span></div>
-                <pre class="terminal__code"><span class="c"># Lister &amp; télécharger un template Debian 12</span>
+                <pre class="terminal__code"><span class="c"># Lister &amp; télécharger un template Debian (le nom exact change : le recopier depuis « pveam available »)</span>
 <span class="k">pveam</span> update
 <span class="k">pveam</span> available <span class="p">--section</span> <span class="s">system</span>
 <span class="k">pveam</span> download <span class="s">local</span> <span class="s">debian-12-standard_12.7-1_amd64.tar.zst</span>
@@ -249,6 +283,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>LXC = service Linux léger et instantané, mais lié au noyau de l'hôte (pas de Windows, pas de noyau custom). Garde-les <strong>unprivileged</strong> par défaut. Pour Docker, préfère une VM plutôt qu'un conteneur LXC.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un conteneur LXC non privilégié est compromis : l'attaquant est root dans le conteneur. Que vaut ce « root » sur l'hôte Proxmox ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Un simple utilisateur sans droits : son UID 0 est traduit en un UID élevé sur l&#x27;hôte</button>
+                        <button class="scenario__opt" data-why="C&#x27;est le cas d&#x27;un conteneur privilégié. En non privilégié, le mappage d&#x27;UID fait de ce root un utilisateur ordinaire côté hôte.">Le root de l&#x27;hôte, puisque le noyau est partagé</button>
+                        <button class="scenario__opt" data-why="Il y a bien un root dans le conteneur (UID 0), avec tous les droits à l&#x27;intérieur ; c&#x27;est côté hôte qu&#x27;il ne vaut rien.">Rien du tout : un conteneur ne peut pas avoir de root</button>
+                    </div>
+                    <div class="scenario__why"><p>Le conteneur non privilégié utilise les <strong>user namespaces</strong> : l'UID 0 du conteneur correspond à un UID comme 100000 sur l'hôte. Une évasion du conteneur donnerait donc un compte sans privilège — d'où ce choix par défaut.</p></div>
+                </div>
             </div>
         </section>
 
@@ -276,21 +322,37 @@
             <p>ZFS est à la fois un système de fichiers et un gestionnaire de volumes RAID logiciel. Ses atouts : sommes de contrôle (détection de corruption silencieuse), snapshots quasi gratuits, compression transparente et <em>self-healing</em> sur un miroir.</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">ZFS — pool en miroir</span></div>
-                <pre class="terminal__code"><span class="c"># Créer un pool « tank » en miroir sur deux disques</span>
-<span class="k">zpool</span> create <span class="p">tank</span> mirror /dev/sdb /dev/sdc
+                <pre class="terminal__code"><span class="c"># Créer un pool « tank » en miroir sur deux disques (ashift=12 : secteurs de 4 Kio)</span>
+<span class="c"># En vrai, désigner les disques par /dev/disk/by-id/… : sdb et sdc peuvent changer d'un démarrage à l'autre</span>
+<span class="k">zpool</span> create <span class="p">-o ashift=12</span> <span class="p">tank</span> mirror /dev/sdb /dev/sdc
 
 <span class="c"># Activer la compression (gratuit, souvent bénéfique)</span>
 <span class="k">zfs</span> set <span class="p">compression=lz4</span> <span class="s">tank</span>
 
 <span class="c"># État du pool &amp; espace</span>
 <span class="k">zpool</span> status <span class="s">tank</span>
-<span class="k">zpool</span> list</pre>
+<span class="k">zpool</span> list
+
+<span class="c"># Le déclarer comme stockage Proxmox (disques de VM et de CT)</span>
+<span class="k">pvesm</span> add zfspool <span class="s">tank</span> <span class="p">--pool</span> <span class="s">tank</span></pre>
             </div>
-            <p class="note">RAM : ZFS aime la mémoire (l'ARC met en cache les lectures). Compter ~1 Go de RAM par To de données comme ordre de grandeur en homelab.</p>
+            <p class="note">RAM : ZFS aime la mémoire (l'ARC met en cache les lectures). La documentation Proxmox donne comme règle de départ <strong>4 Gio + 1 Gio par Tio</strong> de disque brut, en plus de ce que consomment les VM.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p><code>local</code> = fichiers (ISO, backups, templates). <code>local-lvm</code> = disques de VM/CT. Pour la résilience et des snapshots instantanés, monte un pool <strong>ZFS en miroir</strong> et active la compression <code>lz4</code>.</p>
+                <p><code>local</code> = fichiers (ISO, backups, templates). <code>local-lvm</code> = disques de VM/CT (il s'appelle <code>local-zfs</code> si on a installé Proxmox sur ZFS). Pour la résilience et des snapshots instantanés, monte un pool <strong>ZFS en miroir</strong> et active la compression <code>lz4</code>.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu veux stocker tes ISO et tes sauvegardes vzdump sur le stockage <code>local-lvm</code> créé à l'installation. Proxmox ne te le propose pas. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>LVM-Thin ne stocke que des disques de VM et de CT, pas de fichiers</button>
+                        <button class="scenario__opt" data-why="Les snapshots n&#x27;y changent rien : un stockage LVM-Thin n&#x27;accepte tout simplement pas le contenu « ISO » ni « backup ».">Il faut d&#x27;abord activer les snapshots sur local-lvm</button>
+                        <button class="scenario__opt" data-why="Un stockage plein afficherait une erreur à l&#x27;écriture ; ici le type de contenu n&#x27;est même pas proposé.">Le stockage est plein</button>
+                    </div>
+                    <div class="scenario__why"><p>Chaque type de stockage accepte certains <em>contenus</em>. <code>local</code> (un dossier) prend les fichiers : ISO, templates, sauvegardes. <code>local-lvm</code> (LVM-Thin) ne prend que des volumes de disques. C'est visible dans <em>Datacenter → Storage</em>, colonne <em>Content</em>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -342,9 +404,9 @@
             <h3>Sauvegardes vzdump</h3>
             <p>Le moteur natif <code>vzdump</code> exporte VM et CT en archives. Trois modes :</p>
             <ul>
-                <li><strong>Snapshot</strong> — sans interruption (recommandé, nécessite l'agent invité pour la cohérence).</li>
-                <li><strong>Suspend</strong> — met en pause le temps de la copie.</li>
-                <li><strong>Stop</strong> — éteint la VM (backup le plus « propre », mais coupe le service).</li>
+                <li><strong>Snapshot</strong> — sans interruption (recommandé ; avec l'agent invité, les systèmes de fichiers de la VM sont figés pendant l'opération, pour une copie cohérente).</li>
+                <li><strong>Suspend</strong> — gardé pour compatibilité ; coupe plus longtemps que le mode snapshot, rarement utile.</li>
+                <li><strong>Stop</strong> — arrête proprement la VM, lance la sauvegarde, puis la relance aussitôt : la plus grande cohérence, au prix d'une courte coupure.</li>
             </ul>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">vzdump — sauvegarde manuelle</span></div>
@@ -352,7 +414,7 @@
 <span class="k">vzdump</span> <span class="p">100</span> <span class="p">--mode</span> <span class="s">snapshot</span> <span class="p">--compress</span> <span class="s">zstd</span> <span class="p">--storage</span> <span class="s">backup-nas</span>
 
 <span class="c"># Restaurer sous un nouvel ID (110)</span>
-<span class="k">qmrestore</span> /mnt/backup/dump/vzdump-qemu-100-*.vma.zst <span class="p">110</span></pre>
+<span class="k">qmrestore</span> /mnt/pve/backup-nas/dump/vzdump-qemu-100-*.vma.zst <span class="p">110</span>   <span class="c"># un stockage réseau est monté sous /mnt/pve/&lt;nom&gt;</span></pre>
             </div>
 
             <h3>Planifier &amp; Proxmox Backup Server</h3>
@@ -361,6 +423,18 @@
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Règle du 3-2-1</p>
                 <p><strong>3</strong> copies des données, sur <strong>2</strong> supports différents, dont <strong>1</strong> hors site. Un snapshot local ne compte pas comme sauvegarde : teste régulièrement une <em>restauration</em>, pas seulement le backup.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Avant une mise à jour risquée de la VM 100, tu as pris un snapshot sur le pool ZFS. Le lendemain, les deux disques du miroir lâchent. Le snapshot te sauve-t-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Non : il vivait sur le même pool, perdu avec lui</button>
+                        <button class="scenario__opt" data-why="Un snapshot ZFS est stocké dans le pool lui-même : si le pool meurt, ses snapshots meurent avec.">Oui, ZFS garde ses snapshots à part</button>
+                        <button class="scenario__opt" data-why="Inclure la RAM rend le retour plus fidèle, mais tout reste sur le même stockage.">Oui, s&#x27;il incluait la RAM</button>
+                    </div>
+                    <div class="scenario__why"><p>Le snapshot protège d'une <strong>mauvaise manipulation</strong>, la sauvegarde d'une <strong>perte de stockage</strong>. Seul un vzdump ou un PBS sur un <em>autre</em> support aurait permis de restaurer.</p></div>
+                </div>
             </div>
         </section>
 
@@ -384,18 +458,30 @@
             </div>
 
             <h3>Quorum : la règle du nombre impair</h3>
-            <p>Le cluster ne prend de décision que s'il a le <strong>quorum</strong> (majorité des votes), via Corosync. D'où la règle : un nombre <strong>impair</strong> de nœuds (3 minimum pour une vraie HA). Avec 2 nœuds, la panne de l'un bloque l'autre — on ajoute alors un <em>QDevice</em> comme 3ᵉ votant.</p>
+            <p>Le cluster ne prend de décision que s'il a le <strong>quorum</strong> (majorité des votes), via Corosync. D'où la règle : un nombre <strong>impair</strong> de nœuds (3 minimum pour une vraie HA). Avec 2 nœuds, si l'un tombe, le survivant n'a plus que 1 vote sur 2 : il perd le quorum. Ses VM continuent de tourner, mais on ne peut plus en démarrer ni modifier la configuration. On ajoute alors un <em>QDevice</em> (un petit service sur une troisième machine) comme 3ᵉ votant.</p>
 
             <h3>Migration &amp; haute disponibilité</h3>
             <ul>
                 <li><strong>Migration à froid</strong> — VM éteinte, déplacée puis redémarrée sur l'autre nœud.</li>
-                <li><strong>Migration à chaud (live)</strong> — VM déplacée <em>sans coupure</em>. Nécessite un <strong>stockage partagé</strong> (NFS, Ceph…) accessible par les deux nœuds.</li>
-                <li><strong>HA</strong> — on déclare la VM en ressource HA ; si son nœud meurt, le cluster la relance ailleurs automatiquement.</li>
+                <li><strong>Migration à chaud (live)</strong> — VM déplacée <em>sans coupure</em>. Quasi instantanée avec un <strong>stockage partagé</strong> (NFS, Ceph…) ; possible aussi avec des disques locaux, que Proxmox recopie alors pendant la migration (plus long).</li>
+                <li><strong>HA</strong> — on déclare la VM en ressource HA ; si son nœud meurt, le cluster la relance ailleurs automatiquement. Il faut pour cela que ses disques soient accessibles depuis l'autre nœud : stockage partagé, ou réplication ZFS (on perd alors ce qui a changé depuis la dernière réplication).</li>
             </ul>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Cluster = gestion unifiée + migration. La HA suppose un <strong>stockage partagé</strong> et un nombre <strong>impair</strong> de nœuds (≥ 3) pour garder le quorum. À 2 nœuds, ajoute un QDevice témoin.</p>
+                <p>Cluster = gestion unifiée + migration. La HA suppose des disques accessibles depuis les autres nœuds (<strong>stockage partagé</strong> ou réplication) et un nombre <strong>impair</strong> de nœuds (≥ 3) pour garder le quorum. À 2 nœuds, ajoute un QDevice témoin.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Ton cluster compte 4 nœuds, 2 dans chaque salle. Le lien entre les deux salles est coupé. Que se passe-t-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Aucune moitié n&#x27;a la majorité (2 votes sur 4) : les deux perdent le quorum</button>
+                        <button class="scenario__opt" data-why="Ce serait le « split brain » que le quorum empêche justement : sans majorité, aucune moitié ne prend de décision.">Chaque moitié continue normalement de son côté</button>
+                        <button class="scenario__opt" data-why="Le quorum compte des votes, pas l&#x27;ancienneté : 2 votes sur 4 ne font pas une majorité.">La moitié qui contient le premier nœud créé garde la main</button>
+                    </div>
+                    <div class="scenario__why"><p>Le quorum exige <strong>plus de la moitié</strong> des votes : 3 sur 4. Avec 2 + 2, personne ne l'a, donc les VM ne peuvent plus être démarrées ni gérées. C'est pour cela qu'on vise un nombre impair de votants, ou qu'on ajoute un QDevice dans un troisième lieu.</p></div>
+                </div>
             </div>
         </section>
 
@@ -429,7 +515,6 @@
             </div>
         </section>
 
-        <!-- Test de fin de module — rendu par assets/quiz.js -->
         <!-- 10 -->
         <section class="chapter" id="pratique">
             <p class="chapter__num">10</p>
@@ -487,10 +572,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@VirtualizationHowto" target="_blank" rel="noopener">Virtualization HowTo</a> · <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

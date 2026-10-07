@@ -41,9 +41,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "<code>ipconfig</code> affiche <code>Adresse IPv4 : 169.254.12.7</code>. Que s'est-il passé ?",
-        c: ["Aucun serveur DHCP n'a répondu : le poste s'est donné une adresse APIPA", "Le serveur DHCP a distribué une adresse de secours", "Le poste est en IPv6", "L'adresse a été fixée à la main"],
+        c: ["Aucun serveur DHCP n'a répondu : le poste s'est donné une adresse APIPA", "Le serveur DHCP a distribué une adresse de son étendue de secours", "Le poste a reçu une adresse IPv6, affichée ici en notation IPv4", "L'adresse a été fixée à la main par un administrateur"],
         a: 0,
-        why: "169.254.0.0/16 est la plage APIPA : Windows se l'attribue seul quand DORA échoue. On cherche du côté du câble, du VLAN, du service DHCP ou d'une étendue pleine.",
+        why: "169.254.0.0/16 est la plage APIPA : Windows se l'attribue seul quand DORA échoue. Un serveur DHCP ne distribue pas cette plage, une IPv6 ne s'affiche jamais ainsi, et personne ne fixe une adresse APIPA à la main. On cherche du côté du câble, du VLAN, du service DHCP ou d'une étendue pleine.",
         ref: "Chapitre 04"
     },
     {
@@ -55,9 +55,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Un client tente une connexion TCP sur un port ; il envoie <code>SYN</code> et reçoit aussitôt <code>RST</code>. Que conclure ?",
-        c: ["La machine répond, mais aucun service n'écoute sur ce port", "Un pare-feu a jeté le paquet en silence", "La machine est éteinte", "La connexion est établie"],
+        c: ["La machine répond, mais aucun service n'écoute sur ce port", "Un pare-feu a jeté le paquet en silence sur le chemin", "La machine est éteinte ou débranchée du réseau", "La connexion est établie : le RST confirme l'ouverture"],
         a: 0,
-        why: "RST = « connexion refusée » : l'hôte est joignable, le port est fermé. Un paquet jeté par un pare-feu ne donne aucune réponse : on obtient un délai expiré.",
+        why: "RST = « connexion refusée » : l'hôte est joignable, le port est fermé. Un paquet jeté par un pare-feu ou une machine éteinte ne donnent aucune réponse : on obtient un délai expiré. Une connexion établie suit SYN → SYN-ACK → ACK.",
         ref: "Chapitre 06"
     },
     {
@@ -69,23 +69,23 @@ window.QUIZ_BANK = {
     },
     {
         q: "<code>ping 203.0.113.10</code> répond, mais <code>ping www.exemple.be</code> renvoie « impossible de trouver l'hôte ». Où chercher ?",
-        c: ["Le DNS : serveur configuré, nom, cache", "La passerelle par défaut", "Le câble réseau", "Le masque de sous-réseau"],
+        c: ["Le DNS : serveur configuré, nom demandé, cache", "La passerelle par défaut et la table de routage", "Le câble ou la carte réseau du poste", "Le masque de sous-réseau configuré sur le poste"],
         a: 0,
-        why: "Si l'IP répond, la couche 3 et la passerelle fonctionnent. Seule la traduction du nom échoue : c'est le DNS (nslookup, Resolve-DnsName, ipconfig /flushdns).",
+        why: "Si l'IP répond, le câble, le masque, la passerelle et le routage fonctionnent. Seule la traduction du nom échoue : c'est le DNS (nslookup, Resolve-DnsName, ipconfig /flushdns).",
         ref: "Chapitre 07"
     },
     {
         q: "Un poste d'un domaine Active Directory a <code>8.8.8.8</code> comme seul serveur DNS. Quel symptôme est attendu ?",
-        c: ["Internet marche, mais l'ouverture de session et les GPO du domaine échouent", "Plus rien ne marche, même Internet", "Tout marche normalement", "Seule la messagerie échoue"],
+        c: ["Internet marche, mais l'ouverture de session et les GPO échouent", "Plus rien ne marche, ni le domaine ni Internet", "Tout marche : 8.8.8.8 relaie les noms du domaine", "Seule la messagerie échoue, le reste fonctionne"],
         a: 0,
-        why: "Le DNS public ne connaît ni orion.local ni ses enregistrements SRV (_ldap._tcp…) : le poste ne trouve plus ses contrôleurs de domaine. Les postes d'un domaine n'utilisent que le DNS des DC.",
+        why: "Le DNS public ne connaît ni orion.local ni ses enregistrements SRV (_ldap._tcp…) : le poste ne trouve plus ses contrôleurs de domaine. Internet, lui, continue de marcher, puisque 8.8.8.8 résout les noms publics. Les postes d'un domaine n'utilisent que le DNS des DC.",
         ref: "Chapitre 07"
     },
     {
         q: "Les postes du VLAN 20 n'obtiennent pas d'adresse ; le serveur DHCP est dans le VLAN 10 et ses étendues sont correctes. Que manque-t-il le plus probablement ?",
-        c: ["Un relais DHCP (<code>ip helper-address</code>) sur l'interface du VLAN 20", "Une réservation par poste", "Une route par défaut sur le serveur DHCP", "Une étendue IPv6"],
+        c: ["Un relais DHCP (<code>ip helper-address</code>) sur l'interface du VLAN 20", "Une réservation DHCP pour chaque poste du VLAN 20", "Une route par défaut configurée sur le serveur DHCP", "Une étendue IPv6 en plus de l'étendue IPv4"],
         a: 0,
-        why: "DHCPDISCOVER est un broadcast : il ne traverse pas le routeur. Le relais le transmet en unicast au serveur, qui choisit l'étendue d'après l'interface d'origine.",
+        why: "DHCPDISCOVER est un broadcast : il ne traverse pas le routeur. Le relais le transmet en unicast au serveur, qui choisit l'étendue d'après l'interface d'origine. Réservation, route ou étendue IPv6 ne servent à rien tant que la requête n'atteint pas le serveur.",
         ref: "Chapitre 08"
     },
     {
@@ -97,9 +97,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Quelle est la forme abrégée correcte de <code>2001:0db8:0000:0000:0001:0000:0000:0001</code> ?",
-        c: ["<code>2001:db8::1:0:0:1</code>", "<code>2001:db8::1::1</code>", "<code>2001:db8:0:0:1::1</code> et <code>2001:db8::1:0:0:1</code> sont toutes deux valides", "<code>2001:db8:1:1</code>"],
-        a: 2,
-        why: "Le :: ne s'utilise qu'une fois (donc pas « ::1::1 »). Les deux suites de zéros ont la même longueur : les deux formes sont valides ; la RFC 5952 recommande de compresser la première, soit 2001:db8::1:0:0:1.",
+        c: ["<code>2001:db8::1:0:0:1</code>", "<code>2001:db8::1::1</code>", "<code>2001:db8::1:0::1</code>", "<code>2001:db8:1:1</code>"],
+        a: 0,
+        why: "Le :: ne s'utilise qu'une fois dans une adresse : « ::1::1 » et « ::1:0::1 » sont invalides. Il ne remplace que des groupes à zéro : « 2001:db8:1:1 » en perd quatre. Reste 2001:db8::1:0:0:1. (2001:db8:0:0:1::1 serait aussi valide, mais quand deux suites de zéros ont la même longueur, la RFC 5952 demande de compresser la première.)",
         ref: "Chapitre 10"
     }
     ]
@@ -113,7 +113,7 @@ window.QUIZ_BANK = {
     questions: [
     {
         q: "Un utilisateur dit « Internet ne marche pas ». Quelle est ta première action ?",
-        c: ["Délimiter : un poste ou plusieurs ? un service ou tous ? depuis quand, après quel changement ?", "Redémarrer la box", "Réinstaller le pilote réseau", "Changer le câble"],
+        c: ["Délimiter : qui est touché, quel service, depuis quand, après quel changement", "Redémarrer la box, la solution qui marche le plus souvent", "Réinstaller le pilote réseau du poste de l'utilisateur", "Changer le câble pour éliminer d'emblée la couche physique"],
         a: 0,
         why: "Avant de modifier quoi que ce soit, on délimite : chaque réponse divise l'espace de recherche par deux et évite de casser ce qui marche.",
         ref: "Chapitre 01"
@@ -134,9 +134,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Dans une capture, tu vois trois SYN vers le port 443 d'un serveur, à 1, 2 puis 4 secondes d'intervalle, sans aucune réponse. Que conclure ?",
-        c: ["Le paquet est filtré en route (pare-feu, ACL) ou le serveur est injoignable", "Le service HTTPS est arrêté mais le serveur répond", "Le certificat TLS est expiré", "Le DNS est en panne"],
+        c: ["Le paquet est filtré en route (pare-feu, ACL) ou le serveur est injoignable", "Le service HTTPS est arrêté, mais le serveur, lui, répond", "Le certificat TLS du serveur est expiré ou non approuvé", "Le DNS est en panne et ne résout plus le nom du serveur"],
         a: 0,
-        why: "Un service arrêté sur un serveur joignable répond RST. Le silence total signifie que le paquet (ou la réponse) est jeté quelque part.",
+        why: "Un service arrêté sur un serveur joignable répond RST. Le silence total signifie que le paquet (ou la réponse) est jeté quelque part. Le certificat ne se négocie qu'après la poignée de main TCP, et des SYN vers une IP prouvent que le DNS a déjà répondu.",
         ref: "Chapitre 05"
     },
     {
@@ -147,36 +147,36 @@ window.QUIZ_BANK = {
         ref: "Chapitre 03"
     },
     {
-        q: "<code>show interfaces</code> sur un lien montant : <code>Half-duplex, 100Mb/s</code>, des CRC et des <em>late collisions</em> qui montent. Diagnostic le plus probable ?",
-        c: ["Duplex mismatch (un côté forcé, l'autre en auto) ou câble défectueux", "VLAN absent du trunk", "Boucle de spanning tree", "Étendue DHCP pleine"],
+        q: "Un lien montant tombe en panne lente. Côté switch, <code>show interfaces</code> affiche <code>Half-duplex, 100Mb/s</code> et des <em>late collisions</em> qui montent ; côté serveur, réglé en dur sur 100 Mb/s full, des erreurs CRC et des runts. Diagnostic le plus probable ?",
+        c: ["Duplex mismatch : un côté forcé en full, l'autre retombé en half", "Le VLAN du lien n'est pas autorisé sur le trunk", "Une boucle de spanning tree sur le réseau", "Une étendue DHCP pleine sur le serveur"],
         a: 0,
-        why: "Les collisions tardives n'existent pas en full-duplex : leur présence, avec des CRC, signe un désaccord de duplex ou un câble abîmé.",
+        why: "Un côté forcé désactive l'autonégociation : l'autre côté, resté en auto, ne voit rien et retombe en half-duplex. Le côté half voit des collisions tardives (impossibles en full-duplex) ; le côté full, qui émet sans écouter, voit des trames tronquées : CRC et runts. Un VLAN absent, une boucle ou un DHCP plein ne produisent pas d'erreurs de couche 1 sur l'interface. Remède : les deux côtés en auto, ou les deux forcés à l'identique.",
         ref: "Chapitre 06"
     },
     {
         q: "Un poste du domaine refuse les ouvertures de session ; <code>w32tm /query /status</code> montre une heure décalée de 12 minutes par rapport au DC. Pourquoi est-ce bloquant ?",
-        c: ["Kerberos refuse les tickets au-delà de 5 minutes d'écart d'horloge par défaut", "DHCP refuse de renouveler le bail", "Le DNS refuse les requêtes", "Le pare-feu bloque NTP"],
+        c: ["Kerberos refuse les tickets au-delà de 5 minutes d'écart par défaut", "DHCP refuse de renouveler le bail d'un poste mal réglé", "Le DNS refuse les requêtes d'un client à l'heure fausse", "Le pare-feu du poste bloque NTP et donc l'ouverture de session"],
         a: 0,
-        why: "Kerberos utilise des horodatages pour empêcher le rejeu ; au-delà de la tolérance (5 minutes par défaut), l'authentification échoue.",
+        why: "Kerberos utilise des horodatages pour empêcher le rejeu ; au-delà de la tolérance (5 minutes par défaut), l'authentification échoue. DHCP et DNS ne vérifient pas l'heure du client, et un NTP bloqué explique le décalage, pas le refus.",
         ref: "Chapitre 06"
     },
     {
         q: "Un port de switch est <code>err-disabled</code> pour la raison <code>bpduguard</code> après qu'un utilisateur a branché un petit switch. Quelle est la bonne correction ?",
-        c: ["Retirer le petit switch, puis <code>shutdown</code> / <code>no shutdown</code> sur le port", "Désactiver BPDU Guard sur ce port", "Redémarrer le switch d'étage", "Passer le port en trunk"],
+        c: ["Retirer le petit switch, puis <code>shutdown</code> / <code>no shutdown</code> sur le port", "Désactiver BPDU Guard sur ce port pour accepter le switch", "Redémarrer le switch d'étage pour réinitialiser le port", "Passer le port en trunk pour accueillir le petit switch"],
         a: 0,
         why: "BPDU Guard a protégé le spanning tree : on retire la cause et on réactive le port. Retirer la protection ouvrirait la porte aux boucles.",
         ref: "Chapitre 07"
     },
     {
         q: "<code>ping -f -l 1472 10.0.0.1</code> répond « Le paquet doit être fragmenté », <code>ping -f -l 1400 10.0.0.1</code> passe. Que montre ce test ?",
-        c: ["Le MTU du chemin est inférieur à 1500 octets (tunnel, VPN)", "La machine 10.0.0.1 est éteinte", "Un pare-feu bloque ICMP", "Le DNS ne résout pas 10.0.0.1"],
+        c: ["Le MTU du chemin est inférieur à 1500 octets (tunnel, VPN)", "La machine 10.0.0.1 est éteinte ou injoignable", "Un pare-feu bloque l'ICMP vers 10.0.0.1", "Le DNS ne résout pas l'adresse 10.0.0.1"],
         a: 0,
-        why: "Avec le bit DF, un paquet trop grand pour un lien du chemin est refusé. 1472 + 28 = 1500 : le chemin n'accepte pas 1500 octets, typique d'un tunnel.",
+        why: "Avec le bit DF, un paquet trop grand pour un lien du chemin est refusé. 1472 + 28 = 1500 : le chemin n'accepte pas 1500 octets, typique d'un tunnel. Le ping à 1400 passe : la machine répond, l'ICMP n'est pas filtré, et une IP n'a pas besoin du DNS.",
         ref: "Chapitre 06"
     },
     {
         q: "Tu passes un incident au niveau 2. Que doit contenir ta transmission ?",
-        c: ["Le symptôme, le périmètre, ce qui a été testé avec les sorties des commandes", "Juste « ça ne marche toujours pas »", "La liste de tout ce que tu as redémarré", "Le nom de l'utilisateur seulement"],
+        c: ["Le symptôme, le périmètre, les tests faits avec leurs sorties", "Un résumé : « ça ne marche toujours pas, à voir »", "La liste de tout ce que tu as redémarré", "Le nom et le téléphone de l'utilisateur, seulement"],
         a: 0,
         why: "Transmettre les tests déjà faits et leurs résultats évite au suivant de tout recommencer. C'est aussi la base d'un ticket bien rempli.",
         ref: "Chapitre 08"
@@ -208,7 +208,7 @@ window.QUIZ_BANK = {
     },
     {
         q: "À quoi sert Sysprep avec l'option <code>Generalize</code> ?",
-        c: ["À retirer le SID, le nom et les identifiants matériels pour rendre l'installation clonable", "À compresser le disque virtuel pour gagner de la place", "À convertir une VM de génération 1 en génération 2", "À sauvegarder l'état de la VM avant une mise à jour"],
+        c: ["À retirer le SID et le nom pour rendre l'installation clonable", "À compresser le disque virtuel pour gagner de la place", "À convertir une VM de génération 1 en génération 2", "À sauvegarder l'état de la VM avant une mise à jour"],
         a: 0,
         why: "Generalize neutralise l'installation : SID unique, nom de machine et identifiants matériels sont retirés. L'image redevient réutilisable pour toutes les VM suivantes.",
         ref: "Chapitre 05"
@@ -222,9 +222,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Quelle est la vraie limite des disques de différenciation ?",
-        c: ["Les performances : chaque lecture peut devoir traverser la chaîne parent/enfant", "Ils ne fonctionnent qu'en génération 1", "Ils sont limités à 4 machines par disque parent", "Ils empêchent l'usage des snapshots"],
+        c: ["Les performances : les lectures traversent la chaîne parent/enfant", "Ils ne fonctionnent qu'avec des VM de génération 1", "Ils sont limités à 4 VM enfants par disque parent", "Ils empêchent de créer des points de contrôle"],
         a: 0,
-        why: "Ils économisent un disque entier par VM, mais les lectures traversent la chaîne. Pour un labo durable, un disque dynamique classique est un meilleur compromis ; on garde la différenciation pour du jetable.",
+        why: "Ils économisent un disque entier par VM, mais les lectures traversent la chaîne. Ils marchent en génération 1 comme 2, sans limite fixe d'enfants, et acceptent les points de contrôle. Pour un labo durable, un disque dynamique classique est un meilleur compromis ; on garde la différenciation pour du jetable.",
         ref: "Chapitre 06"
     },
     {
@@ -250,9 +250,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Avant de tester une GPO risquée sur SRV-FILE01, tu crées un point de contrôle. Qu'est-ce qu'il ne remplace pas ?",
-        c: ["Une sauvegarde : il vit sur le même stockage que le disque de la VM", "Un retour en arrière en cas d'erreur de configuration", "Un moyen de figer l'état avant un test", "Un fichier .avhdx"],
+        c: ["Une sauvegarde : il vit sur le même stockage que le disque de la VM", "Un retour en arrière en cas d'erreur de configuration", "Un moyen de figer l'état de la VM avant un test", "Une photo de la mémoire et des disques de la VM"],
         a: 0,
-        why: "Le point de contrôle est un fichier de différences à côté du disque : si le stockage de l'hôte meurt, il disparaît avec. Il sert à revenir en arrière dans un lab, pas à protéger des données.",
+        why: "Le point de contrôle (un fichier .avhdx de différences, plus l'état mémoire en mode standard) vit à côté du disque : si le stockage de l'hôte meurt, il disparaît avec. Il sert à revenir en arrière dans un lab — c'est ce que décrivent les trois autres propositions —, pas à protéger des données.",
         ref: "Chapitre 08"
     }]
 },
@@ -273,16 +273,16 @@ window.QUIZ_BANK = {
     },
     {
         q: "Que renvoie <code>echo $?</code> juste après une commande ?",
-        c: ["Son code de sortie : 0 si elle a réussi, autre chose sinon", "Le nombre de lignes qu'elle a affichées", "Son identifiant de processus (PID)", "Le temps d'exécution en millisecondes"],
+        c: ["Son code de sortie : 0 si elle a réussi, autre chose sinon", "Le nombre de lignes qu'elle a affichées à l'écran", "Son identifiant de processus (PID) dans le système", "Son temps d'exécution, exprimé en millisecondes"],
         a: 0,
-        why: "C'est le code de retour de la dernière commande : 0 = succès. C'est exactement ce sur quoi <code>&amp;&amp;</code> et <code>||</code> s'appuient pour enchaîner ou non la commande suivante.",
+        why: "C'est le code de retour de la dernière commande : 0 = succès. C'est exactement ce sur quoi <code>&amp;&amp;</code> et <code>||</code> s'appuient pour enchaîner ou non la commande suivante. Le PID du dernier processus lancé en arrière-plan, c'est <code>$!</code> ; la durée se mesure avec <code>time</code>.",
         ref: "Chapitre 08"
     },
     {
         q: "Quelle différence entre <code>sed</code> et <code>awk</code> ?",
-        c: ["<code>sed</code> travaille ligne par ligne, <code>awk</code> travaille en colonnes", "<code>sed</code> lit les fichiers binaires, <code>awk</code> uniquement le texte", "<code>sed</code> est interne au shell, <code>awk</code> est un binaire externe", "<code>sed</code> ne peut pas utiliser d'expressions régulières"],
+        c: ["<code>sed</code> édite le texte ligne à ligne, <code>awk</code> découpe chaque ligne en champs", "<code>sed</code> lit les fichiers binaires, <code>awk</code> uniquement le texte", "<code>sed</code> est interne au shell, <code>awk</code> est un binaire externe", "<code>sed</code> ne peut pas utiliser d'expressions régulières"],
         a: 0,
-        why: "<code>sed 's/avant/après/'</code> opère sur des lignes ; <code>awk</code> découpe en champs (<code>$1</code>, <code>$2</code>…). Et sans <code>-i</code>, <code>sed</code> se contente d'afficher : le fichier n'est pas modifié — le filet de sécurité à garder.",
+        why: "<code>sed 's/avant/après/'</code> transforme des lignes ; <code>awk</code> découpe chaque ligne en champs (<code>$1</code>, <code>$2</code>…). Les deux sont des programmes externes qui travaillent sur du texte avec des expressions régulières. Et sans <code>-i</code>, <code>sed</code> se contente d'afficher : le fichier n'est pas modifié — le filet de sécurité à garder.",
         ref: "Chapitre 10"
     },
     {
@@ -336,16 +336,16 @@ window.QUIZ_BANK = {
     },
     {
         q: "Pourquoi identifier une partition par son UUID dans <code>/etc/fstab</code> plutôt que par <code>/dev/sdb1</code> ?",
-        c: ["Les lettres sdX peuvent changer d'un démarrage à l'autre, l'UUID jamais", "L'UUID est plus rapide à monter", "fstab refuse les noms /dev/sdX", "L'UUID chiffre la partition"],
+        c: ["Les noms sdX peuvent changer d'un démarrage à l'autre, pas l'UUID", "L'UUID est plus rapide à monter au démarrage", "fstab refuse les noms de la forme /dev/sdX", "L'UUID chiffre la partition qu'il désigne"],
         a: 0,
-        why: "Sur la VM du cours, les lettres ont changé plusieurs fois (ajout de disque, simple redémarrage). L'UUID est écrit dans le système de fichiers lui-même.",
+        why: "Sur la VM du cours, les lettres ont changé plusieurs fois (ajout de disque, simple redémarrage). L'UUID est écrit dans le système de fichiers lui-même : il ne change qu'en reformatant. fstab accepte /dev/sdX, mais c'est un pari sur l'ordre de détection des disques.",
         ref: "Chapitre 21"
     },
     {
         q: "<code>sudo lvextend -l 100%FREE /dev/vg_data/lv_storage</code> est refusé : « New size … not larger than existing size ». Pourquoi ?",
-        c: ["Sans le <code>+</code>, 100%FREE est une taille absolue (l'espace libre), plus petite que le volume actuel", "Le VG est plein", "Il faut démonter le volume", "lvextend ne prend que des tailles en Go"],
+        c: ["Sans le <code>+</code>, 100%FREE est une taille absolue, plus petite que le volume", "L'option <code>-l</code> n'accepte pas de pourcentage, il faut <code>-L</code>", "Il faut démonter le volume avant de l'agrandir", "<code>lvextend</code> n'accepte que des tailles exprimées en Go"],
         a: 0,
-        why: "+100%FREE ajoute tout l'espace libre ; 100%FREE fixe la taille à l'espace libre. Puis resize2fs (ou lvextend -r) pour que ext4 voie l'espace.",
+        why: "<code>+100%FREE</code> ajoute tout l'espace libre ; <code>100%FREE</code> fixe la taille à l'espace libre, d'où le refus. <code>-l</code> accepte bien les pourcentages, et ext4 s'agrandit à chaud. Ensuite <code>resize2fs</code> (ou directement <code>lvextend -r</code>) pour que ext4 voie l'espace.",
         ref: "Chapitre 23"
     }]
 },
@@ -396,7 +396,7 @@ window.QUIZ_BANK = {
         q: "Quel masque pour une liaison point-à-point entre deux routeurs ?",
         c: ["/30", "/29", "/31 obligatoirement", "/24"],
         a: 0,
-        why: "<strong>/30</strong> : 2² − 2 = 2 adresses utilisables, exactement ce qu'il faut pour les deux extrémités, sans gaspiller.",
+        why: "<strong>/30</strong> : 2² − 2 = 2 adresses utilisables, exactement ce qu'il faut pour les deux extrémités : c'est le choix classique, attendu ici. Un <strong>/31</strong> est aussi possible sur une liaison point à point (RFC 3021 : ses deux adresses servent aux deux extrémités, sans réseau ni broadcast) et Cisco l'accepte — mais il n'est pas obligatoire. /29 et /24 gaspillent des adresses.",
         ref: "Chapitre 06"
     },
     {
@@ -440,30 +440,30 @@ window.QUIZ_BANK = {
     questions: [
     {
         q: "SRV-FILE01 a <code>8.8.8.8</code> comme DNS. <code>Add-Computer -DomainName orion.local</code> échoue : « le domaine n'existe pas ». Que corriger ?",
-        c: ["Mettre le DNS du serveur sur <code>172.16.50.10</code>, le contrôleur de domaine", "Recréer la forêt", "Désactiver le pare-feu de SRV-FILE01", "Renommer le serveur avant la jonction"],
+        c: ["Mettre le DNS du serveur sur 172.16.50.10, le contrôleur de domaine", "Recréer la forêt : le domaine orion.local est corrompu", "Désactiver le pare-feu de SRV-FILE01 pendant la jonction", "Renommer le serveur avant de retenter la jonction"],
         a: 0,
         why: "Un DNS public ne connaît pas orion.local ni ses enregistrements SRV. Un membre de domaine n'utilise que le DNS des DC.",
         ref: "Chapitre 02"
     },
     {
         q: "Pourquoi Active Directory ne fonctionne-t-il pas sans DNS ?",
-        c: ["Les postes trouvent leurs contrôleurs de domaine par des enregistrements SRV publiés dans le DNS", "Le DNS stocke les mots de passe", "Kerberos est un service DNS", "Les GPO sont des enregistrements DNS"],
+        c: ["Les postes trouvent leurs DC grâce aux enregistrements SRV du DNS", "Le DNS stocke les hachages des mots de passe du domaine", "Kerberos est un service DNS qui délivre les tickets", "Les GPO sont publiées sous forme d'enregistrements DNS"],
         a: 0,
-        why: "La promotion publie _ldap._tcp, _kerberos._tcp… dans la zone. Sans eux, un poste ne sait pas quel serveur contacter.",
+        why: "La promotion publie _ldap._tcp, _kerberos._tcp… dans la zone. Sans eux, un poste ne sait pas quel serveur contacter. Les mots de passe sont dans la base AD (NTDS.dit), Kerberos est un service du DC, et les GPO vivent dans AD et SYSVOL.",
         ref: "Chapitre 03"
     },
     {
         q: "Qu'apporte la promotion de SRV-AD02 par IFM ?",
-        c: ["L'annuaire est copié depuis un média local, au lieu d'être entièrement répliqué par le réseau", "SRV-AD02 devient maître de tous les rôles FSMO", "Il n'y a plus besoin de DNS sur SRV-AD02", "La réplication entre DC devient inutile"],
+        c: ["L'annuaire est copié depuis un média local plutôt que par le réseau", "SRV-AD02 devient maître de tous les rôles FSMO du domaine", "SRV-AD02 n'a plus besoin du rôle DNS pour fonctionner", "La réplication entre les deux DC devient inutile ensuite"],
         a: 0,
         why: "IFM fournit une copie de la base ; la réplication ne transfère ensuite que les changements. Utile sur un lien lent.",
         ref: "Chapitre 04"
     },
     {
         q: "L'utilisateur <code>jsmith</code> doit pouvoir créer des comptes dans l'OU Development, et nulle part ailleurs. Que faire ?",
-        c: ["Déléguer le contrôle de l'OU Development à jsmith (création et gestion des comptes)", "L'ajouter à Domain Admins", "L'ajouter à Account Operators", "Lui donner le contrôle total sur le domaine"],
+        c: ["Déléguer le contrôle de l'OU Development à jsmith", "L'ajouter au groupe Domain Admins", "L'ajouter au groupe intégré Account Operators", "Lui donner le contrôle total sur l'objet domaine"],
         a: 0,
-        why: "La délégation donne une tâche précise sur un conteneur précis : jsmith n'est pas administrateur du domaine.",
+        why: "La délégation donne une tâche précise sur un conteneur précis : jsmith n'est pas administrateur du domaine. Domain Admins et le contrôle total couvrent tout le domaine ; Account Operators peut créer des comptes presque partout : tous trop larges.",
         ref: "Chapitre 05"
     },
     {
@@ -475,16 +475,16 @@ window.QUIZ_BANK = {
     },
     {
         q: "Le rôle DHCP est installé, l'étendue créée et active, mais aucun client n'obtient d'adresse. Quelle étape a probablement été oubliée ?",
-        c: ["Autoriser le serveur DHCP dans Active Directory", "Créer une zone inverse", "Lier une GPO", "Installer DFS"],
+        c: ["Autoriser le serveur DHCP dans Active Directory", "Créer une zone de recherche inversée dans le DNS", "Lier une GPO de configuration DHCP aux postes", "Installer le rôle DFS sur le serveur DHCP"],
         a: 0,
         why: "Dans un domaine, un serveur DHCP non autorisé ne distribue rien : Add-DhcpServerInDC, puis Get-DhcpServerInDC pour vérifier.",
         ref: "Chapitre 07"
     },
     {
         q: "Un client du domaine obtient <code>172.16.50.100</code> avec le DNS <code>172.16.50.1</code> (la passerelle). Que se passe-t-il ?",
-        c: ["Il a une adresse, mais ne trouve pas le domaine : jonction et ouverture de session échouent", "Tout fonctionne", "Il n'a pas d'accès au réseau local", "Il obtient une adresse APIPA"],
+        c: ["Il a une adresse, mais ne trouve pas le domaine : jonction et session échouent", "Tout fonctionne : la passerelle relaie les noms du domaine", "Il n'a aucun accès au réseau local", "Il obtient une adresse APIPA en 169.254"],
         a: 0,
-        why: "L'option 6 doit désigner les DC. C'est l'erreur à trouver dans le TP final.",
+        why: "Il a bien reçu un bail : pas d'APIPA, et le réseau local répond. Mais l'option 6 doit désigner les DC : la passerelle relaie au mieux vers un DNS public, qui ne connaît pas orion.local. C'est l'erreur à trouver dans le TP final.",
         ref: "Chapitre 07"
     },
     {
@@ -555,16 +555,16 @@ window.QUIZ_BANK = {
     },
     {
         q: "Pourquoi <code>Get-Service | Format-Table | Export-Csv services.csv</code> donne-t-il un fichier inutilisable ?",
-        c: ["Format-Table transforme les objets en mise en page ; il ne se place qu'en fin de pipeline", "Export-Csv ne lit pas les services", "Il manque -Force", "Get-Service ne renvoie pas d'objets"],
+        c: ["<code>Format-Table</code> remplace les objets par de la mise en page", "<code>Export-Csv</code> ne sait pas lire les objets services", "Il manque le paramètre <code>-Force</code> à <code>Export-Csv</code>", "<code>Get-Service</code> renvoie du texte, pas des objets"],
         a: 0,
-        why: "Après Format-*, il n'y a plus d'objets métier, seulement des objets de formatage. On exporte directement, ou après Select-Object.",
+        why: "Après <code>Format-*</code>, il n'y a plus d'objets métier, seulement des objets de formatage : <code>Format-*</code> se place toujours en fin de pipeline. On exporte directement, ou après <code>Select-Object</code>. <code>Get-Service</code> renvoie bien des objets, qu'<code>Export-Csv</code> sait écrire.",
         ref: "Chapitre 06"
     },
     {
         q: "Un <code>try { Get-Item C:\\inexistant } catch { … }</code> n'entre jamais dans le catch. Pourquoi ?",
-        c: ["L'erreur est non bloquante : il faut <code>-ErrorAction Stop</code>", "try/catch n'existe pas en PowerShell", "Il faut un bloc finally", "Get-Item ne produit pas d'erreur"],
+        c: ["L'erreur est non bloquante : il faut <code>-ErrorAction Stop</code>", "<code>try</code>/<code>catch</code> n'existe pas en PowerShell 5.1", "Il faut obligatoirement un bloc <code>finally</code>", "<code>Get-Item</code> ne produit pas d'erreur sur un chemin absent"],
         a: 0,
-        why: "catch n'attrape que les erreurs bloquantes ; -ErrorAction Stop transforme l'erreur de la cmdlet en erreur bloquante.",
+        why: "<code>catch</code> n'attrape que les erreurs bloquantes ; <code>-ErrorAction Stop</code> transforme l'erreur de la cmdlet en erreur bloquante. <code>try</code>/<code>catch</code> existe depuis PowerShell 2.0, <code>finally</code> est facultatif, et <code>Get-Item</code> affiche bien une erreur — non bloquante.",
         ref: "Chapitre 07"
     },
     {
@@ -583,7 +583,7 @@ window.QUIZ_BANK = {
     },
     {
         q: "Une cascade de sept <code>elseif</code> compare toutes les combinaisons de pierre-papier-ciseaux. Quelle structure la remplace le mieux ?",
-        c: ["Une table de hachage « ce qui bat quoi »", "Une boucle for", "Un tableau de sept chaînes", "Une fonction récursive"],
+        c: ["Une table de hachage « ce qui bat quoi »", "Une boucle <code>for</code> sur les combinaisons", "Un tableau de sept chaînes à comparer", "Une fonction récursive par joueur"],
         a: 0,
         why: "La règle devient une donnée ($bat[$j1] -eq $j2) : une ligne au lieu de sept conditions, et facile à étendre.",
         ref: "Chapitre 10"
@@ -595,7 +595,7 @@ window.QUIZ_BANK = {
     name: "Stockage & Clustering",
     file: "storage-clustering.html",
     title: "Test — Stockage & Clustering",
-    intro: "Du disque au cluster de basculement : onze chapitres, huit questions. Beaucoup de pièges classiques de production.",
+    intro: "Du disque au cluster de basculement : douze chapitres, huit questions. Beaucoup de pièges classiques de production.",
     pass: 70,
     questions: [
     {
@@ -614,7 +614,7 @@ window.QUIZ_BANK = {
     },
     {
         q: "Un utilisateur a le Contrôle total en NTFS mais n'accède qu'en lecture via le réseau. Pourquoi ?",
-        c: ["Le droit effectif à travers le réseau est le plus restrictif des droits de partage et NTFS", "Les droits NTFS ne s'appliquent pas au trafic SMB", "Il faut redémarrer le service Serveur pour appliquer NTFS", "Le Contrôle total exige d'être administrateur local"],
+        c: ["À travers le réseau, le plus restrictif du partage et de NTFS l'emporte", "Les droits NTFS ne s'appliquent pas au trafic SMB", "Il faut redémarrer le service Serveur pour appliquer NTFS", "Le Contrôle total exige d'être administrateur local"],
         a: 0,
         why: "Permissions de partage et permissions NTFS sont deux jeux distincts ; à travers le réseau, c'est <strong>le plus restrictif des deux</strong> qui gagne. C'est la cause n°1 des « pourtant je lui ai donné le contrôle total ».",
         ref: "Chapitre 04"
@@ -631,7 +631,7 @@ window.QUIZ_BANK = {
         c: ["Pour apporter la voix impaire qui départage et éviter le split-brain", "Pour stocker les journaux du cluster", "Pour accélérer le basculement", "Pour héberger la base de données du rôle clusterisé"],
         a: 0,
         why: "À deux nœuds, un incident réseau donne une voix à chacun : égalité, et risque que les deux se déclarent actifs en écrivant sur le même LUN. Le témoin (2 Go suffisent) apporte la voix qui tranche.",
-        ref: "Chapitre 09"
+        ref: "Chapitre 10"
     },
     {
         q: "Les deux nœuds voient le même LUN iSCSI. Dans quel état doivent rester ces disques avant que le cluster ne les prenne en charge ?",
@@ -679,16 +679,16 @@ window.QUIZ_BANK = {
     },
     {
         q: "L'assistant de déploiement échoue sur SRV-RDSH2. Quelle vérification faire d'abord ?",
-        c: ["Qu'il est membre du domaine et ajouté au pool de serveurs du Server Manager", "Qu'il a une licence RDS", "Qu'il a un certificat", "Qu'il a WordPad"],
+        c: ["Qu'il est membre du domaine et ajouté au pool du Server Manager", "Qu'il dispose déjà d'une licence RDS (CAL) activée", "Qu'il possède un certificat signé par la CA", "Que l'application à publier y est installée"],
         a: 0,
-        why: "Le déploiement s'orchestre à distance : chaque serveur doit être joignable et visible dans le pool avant de lancer l'assistant.",
+        why: "Le déploiement s'orchestre à distance : chaque serveur doit être joignable et visible dans le pool avant de lancer l'assistant. Licences, certificat et applications se règlent après le déploiement.",
         ref: "Chapitre 03"
     },
     {
         q: "Une RemoteApp s'ouvre pour certains utilisateurs et pas pour d'autres, dans la même collection. Cause probable ?",
-        c: ["Le programme n'est pas installé au même chemin sur tous les hôtes de session", "Le certificat a expiré", "La période de grâce est terminée", "Le DNS du client est faux"],
+        c: ["Le programme n'est pas installé au même chemin sur tous les hôtes", "Le certificat du déploiement a expiré", "La période de grâce des licences est terminée", "Le DNS des postes clients concernés est faux"],
         a: 0,
-        why: "Le broker répartit les utilisateurs entre les hôtes : une application absente d'un hôte ne marche que pour ceux envoyés sur l'autre.",
+        why: "Le broker répartit les utilisateurs entre les hôtes : une application absente d'un hôte ne marche que pour ceux envoyés sur l'autre. Un certificat ou une licence expirés toucheraient tout le monde, et un DNS faux empêcherait la connexion elle-même.",
         ref: "Chapitre 04"
     },
     {
@@ -707,14 +707,14 @@ window.QUIZ_BANK = {
     },
     {
         q: "Le certificat <code>rdwa.orion.local</code> est créé dans le magasin de SRV-RDCB, mais le portail présente toujours l'ancien. Que manque-t-il ?",
-        c: ["L'affecter au déploiement avec <code>Set-RDCertificate</code> (ou Edit Deployment Properties → Certificates)", "Redémarrer le client", "Créer un enregistrement MX", "Passer en licence Per Device"],
+        c: ["L'affecter au déploiement avec <code>Set-RDCertificate</code>", "Redémarrer le poste client pour vider son cache", "Créer un enregistrement MX pour <code>rdwa.orion.local</code>", "Passer le serveur de licences en mode Per Device"],
         a: 0,
-        why: "Créer un certificat ne suffit pas : il doit être affecté à chaque rôle (RDWebAccess, RDPublishing, RDRedirector).",
+        why: "Créer un certificat ne suffit pas : il doit être affecté à chaque rôle (RDWebAccess, RDPublishing, RDRedirector, RDGateway), par <code>Set-RDCertificate</code> ou <em>Edit Deployment Properties → Certificates</em>. Le client, le MX (messagerie) et le mode de licence n'y sont pour rien.",
         ref: "Chapitre 06"
     },
     {
         q: "Comment donner un accès RDS depuis Internet proprement ?",
-        c: ["Par une passerelle RD publiée en HTTPS (443), avec un certificat public", "En ouvrant le port 3389 vers les hôtes de session", "En ouvrant le port 3389 vers le broker", "En désactivant NLA"],
+        c: ["Par une passerelle RD publiée en HTTPS (443), avec un certificat public", "En ouvrant le port 3389 vers les hôtes de session", "En ouvrant le port 3389 vers le Connection Broker", "En désactivant NLA pour simplifier les connexions"],
         a: 0,
         why: "3389 exposé sur Internet est scanné et attaqué en permanence. La passerelle encapsule RDP dans HTTPS et filtre par CAP/RAP.",
         ref: "Chapitre 07"
@@ -737,8 +737,8 @@ window.QUIZ_BANK = {
         ref: "Chapitre 03"
     },
     {
-        q: "Que prouve un message correctement déchiffré avec la clé <strong>publique</strong> de Marvin ?",
-        c: ["Que seul Marvin a pu le produire : c'est une signature numérique", "Que le message est confidentiel", "Que le message n'a pas été lu en chemin", "Que Marvin possède un certificat valide de sa CA"],
+        q: "Que prouve un message correctement déchiffré avec la clé <strong>publique</strong> d’Alice ?",
+        c: ["Que seule Alice a pu le produire : c'est une signature numérique", "Que le message est confidentiel", "Que le message n'a pas été lu en chemin", "Qu’Alice possède un certificat valide de sa CA"],
         a: 0,
         why: "Seule sa clé privée peut produire quelque chose que sa clé publique ouvre. La signature garantit <strong>qui a écrit</strong> et que rien n'a bougé — elle ne cache rien.",
         ref: "Chapitre 03"
@@ -752,9 +752,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Qu'apporte une <strong>Enterprise Root CA</strong> par rapport à un certificat auto-signé ?",
-        c: ["Elle publie sa racine dans AD : tous les postes du domaine lui font confiance sans manipulation", "Elle chiffre plus fortement les communications", "Elle supprime le besoin de renouveler les certificats", "Elle permet de se passer de DNS"],
+        c: ["Sa racine est publiée dans AD : les postes du domaine lui font confiance", "Ses certificats chiffrent plus fortement que ceux d'un auto-signé", "Ses certificats n'ont plus besoin d'être renouvelés", "Elle permet aux clients de se passer du DNS interne"],
         a: 0,
-        why: "Un auto-signé dit « c'est moi qui le dis ». La CA d'entreprise ajoute une autorité de confiance, et sa publication dans AD fait que chaque poste valide la chaîne sans alerte — Outlook et OWA se connectent silencieusement.",
+        why: "Un auto-signé dit « c'est moi qui le dis ». La CA d'entreprise ajoute une autorité de confiance, et sa publication dans AD fait que chaque poste valide la chaîne sans alerte — Outlook et OWA se connectent silencieusement. La force du chiffrement dépend de la clé, pas de l'émetteur, et ses certificats expirent comme les autres.",
         ref: "Chapitre 05"
     },
     {
@@ -845,9 +845,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Un blocage dure depuis vingt minutes. Quelle est la cause la plus probable ?",
-        c: ["Une transaction ouverte et jamais validée", "Un index fragmenté", "Une mémoire insuffisante", "Une sauvegarde en cours"],
+        c: ["Une transaction ouverte et jamais validée", "Un index très fragmenté sur une table", "Une mémoire insuffisante sur le serveur", "Une sauvegarde complète en cours"],
         a: 0,
-        why: "Le blocage est le mécanisme normal d'isolation ; il devient un incident quand il dure. Presque toujours : une fenêtre SSMS laissée après un <code>BEGIN TRAN</code>, ou une application qui ne fait pas son <code>COMMIT</code>.",
+        why: "Le blocage est le mécanisme normal d'isolation ; il devient un incident quand il dure. Presque toujours : une fenêtre SSMS laissée après un <code>BEGIN TRAN</code>, ou une application qui ne fait pas son <code>COMMIT</code>. Fragmentation et manque de mémoire ralentissent sans bloquer, et une sauvegarde ne verrouille pas les données des requêtes.",
         ref: "Chapitre 12"
     },
     {
@@ -889,30 +889,30 @@ window.QUIZ_BANK = {
     },
     {
         q: "Dans Microsoft 365, qui est responsable de la sauvegarde de vos contenus ?",
-        c: ["Vous — Microsoft garantit la disponibilité du service, pas la restauration de vos données", "Microsoft, intégralement, dans le cadre de l'abonnement", "Microsoft pour Exchange, vous pour SharePoint", "Personne : les données sont répliquées, donc indestructibles"],
+        c: ["Vous : Microsoft garantit le service, pas la restauration de vos données", "Microsoft, intégralement, dans le cadre de l'abonnement", "Microsoft pour Exchange Online, vous pour SharePoint", "Personne : les données répliquées sont indestructibles"],
         a: 0,
         why: "Cela vaut pour tout M365 : boîtes Exchange, fichiers OneDrive, espaces Teams. Un backup tiers et la règle 3-2-1 sont le filet de sécurité indispensable.",
         ref: "Chapitre 10"
     },
     {
         q: "Quelle commande sauvegarde une <strong>collection de sites</strong> seule ?",
-        c: ["<code>Export-SPWeb</code>", "<code>Backup-SPFarm</code>", "<code>Backup-SqlDatabase</code>", "<code>Restore-SPSite</code>"],
+        c: ["<code>Backup-SPSite</code>", "<code>Export-SPWeb</code>", "<code>Backup-SPFarm</code>", "<code>Backup-SqlDatabase</code>"],
         a: 0,
-        why: "Trois niveaux : ferme complète (<code>Backup-SPFarm</code>), bases SQL (le plus fiable, <code>Backup-SqlDatabase</code>) et collection de sites (<code>Export-SPWeb</code>).",
-        ref: "Chapitre 18"
+        why: "<code>Backup-SPSite</code> sauvegarde une collection de sites (restauration : <code>Restore-SPSite</code>). <code>Export-SPWeb</code> exporte un site, une liste ou une bibliothèque, pas une collection entière ; <code>Backup-SPFarm</code> prend toute la ferme ; <code>Backup-SqlDatabase</code> une base de contenu, qui peut porter plusieurs collections.",
+        ref: "Chapitre 10"
     },
     {
         q: "Quels sont les prérequis matériels et logiciels d'une installation SharePoint Server SE ?",
         c: ["4 cœurs et 16–24 Go de RAM au minimum", "Windows Server 2019 à 2025 et SQL Server 2019 CU5 ou 2022", "Un cluster de basculement à deux nœuds", "SharePoint Designer installé sur le serveur"],
         a: [0, 1],
-        why: "Quatre piliers avant l'installation : matériel, logiciel (dont .NET 4.8), topologie (mono-serveur ou MinRole) et dépendances (AD, DNS, SSL, comptes de service dédiés).",
+        why: "Microsoft Learn (Subscription Edition) : 4 cœurs 64 bits, 16 Go de RAM (dev/évaluation) à 24 Go (pilote, tous services) ; Windows Server 2019, 2022 ou 2025 ; SQL Server 2019 CU5 ou ultérieur, ou 2022. Un cluster de basculement n'est pas requis, et SharePoint Designer est un outil client abandonné. Quatre piliers avant l'installation : matériel, logiciel (dont .NET 4.8), topologie (mono-serveur ou MinRole) et dépendances (AD, DNS, SSL, comptes de service dédiés).",
         ref: "Chapitre 09"
     },
     {
         q: "Où SharePoint se situe-t-il dans le spectre On-site / IaaS / PaaS / SaaS ?",
-        c: ["Server couvre On-site et IaaS, Online est du pur SaaS ; le PaaS n'existe pas en natif", "Server est du PaaS, Online du SaaS", "Les deux sont du SaaS, à des niveaux de service différents", "Server est On-site uniquement, Online est du IaaS"],
+        c: ["Server couvre On-site et IaaS ; Online est du pur SaaS", "Server est du PaaS, Online est du SaaS", "Les deux sont du SaaS, à des niveaux de service différents", "Server est On-site uniquement, Online est du IaaS"],
         a: 0,
-        why: "SharePoint occupe les deux extrémités du spectre. Le PaaS ne sert qu'à <em>étendre</em> Online, pas à l'héberger.",
+        why: "SharePoint occupe les deux extrémités du spectre : Server s'installe chez soi ou sur des VM louées (IaaS), Online est un service fini (SaaS). Le PaaS n'existe pas en natif : il ne sert qu'à étendre Online, pas à l'héberger.",
         ref: "Chapitre 04"
     },
     {
@@ -982,14 +982,14 @@ window.QUIZ_BANK = {
     },
     {
         q: "Erreur 811 « The DPM database was not created ». Quelle est la cause trouvée dans le TP ?",
-        c: ["Le <code>sqlcmd</code> ODBC 18 du setup refuse le certificat auto-généré de SQL, faute d'autorité de confiance", "La collation de l'instance SQL est incorrecte", "Le compte ordinateur de DPM n'a pas de login sur SQL", "La catégorie de jobs manquante dans <code>msdb</code>"],
+        c: ["Le sqlcmd (ODBC 18) du setup refuse le certificat auto-généré de SQL", "La collation de l'instance SQL est incorrecte", "Le compte ordinateur de DPM n'a pas de login sur SQL", "La catégorie de jobs attendue manque dans msdb"],
         a: 0,
-        why: "Depuis la version 18, le pilote ODBC chiffre toujours et exige un certificat de confiance. Remède : un certificat dédié sur SQL, importé dans les autorités racines de confiance du serveur DPM.",
+        why: "Depuis la version 18, le pilote ODBC chiffre par défaut et exige un certificat de confiance. Remède : un certificat dédié sur SQL, importé dans les autorités racines de confiance du serveur DPM. Une collation incorrecte est refusée dès les vérifications du setup, et la catégorie manquante dans msdb (erreur 14262) n'est qu'une conséquence du nettoyage après l'échec.",
         ref: "Chapitre 08"
     },
     {
         q: "Dans <code>DpmSetup.log</code>, après l'échec du script, apparaissent les erreurs 14262 et 15151. Comment les traiter ?",
-        c: ["Comme des conséquences : c'est le setup qui défait ce qu'il a commencé, la cause est l'erreur d'avant", "Comme la cause : créer la catégorie manquante dans <code>msdb</code>", "Comme un problème de droits à corriger sur le rôle", "En réinstallant SQL Server"],
+        c: ["Comme des conséquences : la cause est l'erreur qui les précède", "Comme la cause : créer la catégorie manquante dans msdb", "Comme un problème de droits à corriger sur le rôle sysadmin", "Comme un SQL Server endommagé, à réinstaller"],
         a: 0,
         why: "Dans un journal, la cause est la première erreur, pas la plus bavarde. On reproduit l'appel <code>sqlcmd</code> à la main pour faire apparaître le vrai message.",
         ref: "Chapitre 08"
@@ -1012,14 +1012,14 @@ window.QUIZ_BANK = {
     questions: [
     {
         q: "IIS est installé sans rien cocher de plus que le rôle. On veut maintenant ajouter le FTP. Que faut-il faire ?",
-        c: ["Ajouter le service de rôle <em>FTP Server</em> par <em>Add roles and features</em>, sans réinstaller le rôle", "Désinstaller puis réinstaller le rôle Web Server en cochant FTP", "Installer un serveur FTP tiers, IIS ne sait pas faire de FTP", "Activer le FTP dans les <em>Bindings</em> du site par défaut"],
+        c: ["Ajouter le service de rôle <em>FTP Server</em>, sans réinstaller le rôle", "Désinstaller puis réinstaller le rôle Web Server avec FTP", "Installer un serveur FTP tiers : IIS ne fait pas de FTP", "Activer le FTP dans les <em>Bindings</em> du site par défaut"],
         a: 0,
-        why: "Les services de rôle s'ajoutent à tout moment sur un rôle déjà installé. C'est précisément pour ça qu'on installe le rôle nu : on n'active que ce dont on a besoin, quand on en a besoin.",
+        why: "Les services de rôle s'ajoutent à tout moment par <em>Add roles and features</em> sur un rôle déjà installé. C'est précisément pour ça qu'on installe le rôle nu : on n'active que ce dont on a besoin, quand on en a besoin. Le FTP est un service de rôle d'IIS, pas un simple binding.",
         ref: "Chapitre 01 · ch. 08"
     },
     {
         q: "Deux sites doivent répondre sur la même IP et le même port 80. Qu'est-ce qui rend cela possible ?",
-        c: ["Le <strong>nom d'hôte</strong> du binding : IIS lit l'en-tête <code>Host</code> et aiguille vers le bon site", "Deux pools d'applications distincts", "Deux dossiers physiques distincts", "Le mode <em>Integrated</em> du pipeline managé"],
+        c: ["Le <strong>nom d'hôte</strong> du binding, lu dans l'en-tête <code>Host</code>", "Deux pools d'applications distincts, un par site", "Deux dossiers physiques distincts sous <code>D:\\web</code>", "Le mode <em>Integrated</em> du pipeline des deux pools"],
         a: 0,
         why: "Sans nom d'hôte, deux sites en <code>*:80</code> entrent en conflit. C'est l'en-tête <code>Host</code> de la requête HTTP qui distingue les sites — pools et dossiers séparés sont nécessaires, mais ne font pas l'aiguillage.",
         ref: "Chapitre 06"
@@ -1039,15 +1039,15 @@ window.QUIZ_BANK = {
         ref: "Chapitre 05"
     },
     {
-        q: "Un site renvoie 403 alors que les fichiers sont bien présents dans le dossier. Quelle piste vient en premier ?",
-        c: ["L'identité du pool d'applications n'a pas la lecture sur le dossier", "Le fichier <code>index.html</code> a un mauvais type MIME", "Le certificat du site a expiré", "Le nom d'hôte n'est pas déclaré dans le DNS"],
+        q: "Un site répond <strong>401.3</strong> (« accès refusé en raison d'une ACL ») alors que les fichiers sont bien présents dans le dossier. Quelle piste vient en premier ?",
+        c: ["L'identité du pool d'applications n'a pas la lecture sur le dossier", "Le fichier <code>index.html</code> est servi avec un mauvais type MIME", "Le certificat HTTPS du site a expiré la veille", "Le nom d'hôte du site n'est pas déclaré dans le DNS"],
         a: 0,
-        why: "IIS lit les fichiers sous l'identité du pool (<code>IIS AppPool\\&lt;nom&gt;</code>), pas sous celle de l'administrateur qui les a copiés. Un nom d'hôte absent du DNS ne donnerait aucune réponse du tout, pas un 403.",
+        why: "IIS lit les fichiers sous l'identité anonyme du site — ici l'identité du pool (<code>IIS AppPool\\&lt;nom&gt;</code>), sinon IUSR —, pas sous celle de l'administrateur qui les a copiés. Un droit NTFS manquant donne <strong>401.3</strong> (accès refusé en raison d'une ACL) ; le 403 est réservé aux refus d'IIS lui-même (403.14 : pas de document par défaut). Un type MIME inconnu donne 404.3, un certificat expiré une alerte du navigateur, et un nom absent du DNS aucune réponse du tout.",
         ref: "Chapitre 05 · ch. 07"
     },
     {
         q: "Pourquoi ne pas déposer son site dans <code>C:\\inetpub\\wwwroot</code> ?",
-        c: ["Il hérite des réglages et du pool du site par défaut, et ne peut plus être arrêté ni sécurisé séparément", "IIS ne sert pas les fichiers de ce dossier aux clients distants", "Le dossier est en lecture seule pour le pool d'applications", "Le dossier est effacé à chaque redémarrage du service"],
+        c: ["Il partage le pool et les réglages du site par défaut : pas d'isolation", "IIS ne sert pas les fichiers de ce dossier aux clients distants", "Le dossier est en lecture seule pour le pool d'applications", "Le dossier est effacé à chaque redémarrage du service W3SVC"],
         a: 0,
         why: "Un site = son propre dossier, son propre binding, son propre pool. Mélanger son contenu avec le site par défaut supprime toute possibilité d'isolation.",
         ref: "Chapitre 06"
@@ -1086,14 +1086,14 @@ window.QUIZ_BANK = {
     },
     {
         q: "Pourquoi <code>service password-encryption</code> ne suffit-il pas à protéger les mots de passe ?",
-        c: ["Il produit un codage de type 7, réversible en quelques secondes", "Il ne s'applique qu'à la console", "Il désactive SSH", "Il supprime enable secret"],
+        c: ["Il produit un codage de type 7, réversible en quelques secondes", "Il ne chiffre que le mot de passe de la console", "Il désactive SSH au profit de Telnet", "Il supprime le mot de passe <code>enable secret</code>"],
         a: 0,
         why: "Le type 7 masque à la lecture mais se décode facilement. La vraie protection vient de <code>secret</code> (haché) au lieu de <code>password</code>.",
         ref: "Chapitre 02"
     },
     {
         q: "Un trunk transporte les VLAN 10 et 20. L'admin tape <code>switchport trunk allowed vlan 30</code>. Que se passe-t-il ?",
-        c: ["Le trunk ne transporte plus que le VLAN 30 : 10 et 20 sont coupés", "Le VLAN 30 s'ajoute aux deux autres", "La commande est refusée", "Le trunk repasse en access"],
+        c: ["Le trunk ne transporte plus que le VLAN 30 : 10 et 20 sont coupés", "Le VLAN 30 s'ajoute aux VLAN 10 et 20 déjà autorisés", "La commande est refusée tant que le VLAN 30 n'existe pas", "Le trunk repasse en mode access dans le VLAN 30"],
         a: 0,
         why: "Sans <code>add</code>, la liste est remplacée. Pour compléter : <code>switchport trunk allowed vlan add 30</code>.",
         ref: "Chapitre 03"
@@ -1114,7 +1114,7 @@ window.QUIZ_BANK = {
     },
     {
         q: "Deux routes vers <code>0.0.0.0/0</code> : une statique (AD 1) via 203.0.113.1 et une autre avec la distance 200 via 10.2.104.2. Laquelle est dans la table ?",
-        c: ["Celle de distance 1 ; l'autre n'apparaît que si la première disparaît", "Les deux, en partage de charge", "Celle de distance 200, plus récente", "Aucune : elles sont en conflit"],
+        c: ["Celle de distance 1 ; l'autre n'apparaît que si elle disparaît", "Les deux, en partage de charge entre les deux sorties", "Celle de distance 200, configurée en dernier", "Aucune : deux routes par défaut sont en conflit"],
         a: 0,
         why: "À préfixe égal, la plus petite distance administrative gagne. La route à 200 est une route flottante de secours.",
         ref: "Chapitre 07"
@@ -1123,14 +1123,14 @@ window.QUIZ_BANK = {
         q: "<code>show ip ospf neighbor</code> n'affiche rien entre deux routeurs reliés. Quelles causes sont possibles ?",
         c: ["L'interface est passive", "Les deux interfaces sont dans des aires différentes", "Les minuteurs Hello/Dead diffèrent", "Le router-id est configuré manuellement"],
         a: [0, 1, 2],
-        why: "Passive = pas de Hello ; aire, masque, minuteurs, authentification et MTU doivent concorder. Un router-id manuel est une bonne pratique, pas une cause de panne (s'il est unique).",
+        why: "Passive = pas de Hello ; aire, masque, minuteurs Hello/Dead et authentification doivent concorder, sinon aucun voisin n'apparaît. (Un MTU différent, lui, laisse le voisin visible mais bloqué en EXSTART/EXCHANGE.) Un router-id manuel est une bonne pratique, pas une cause de panne (s'il est unique).",
         ref: "Chapitre 08"
     },
     {
         q: "<code>show etherchannel summary</code> affiche <code>Po1(SD)</code> et les ports <code>Fa0/23(I)</code>, <code>Fa0/24(I)</code>. Que vérifier ?",
-        c: ["La cohérence des deux côtés : modes LACP compatibles et ports configurés à l'identique", "Le serveur DHCP", "La route par défaut", "Le niveau Syslog"],
+        c: ["Que les deux côtés ont des modes LACP compatibles et des ports identiques", "Que le spanning tree ne bloque pas l'un des deux ports", "Que les deux câbles sont bien de catégorie 6", "Que la route par défaut du switch est présente"],
         a: 0,
-        why: "SD = canal en panne, I = port isolé. Deux côtés en <code>passive</code>, ou des ports aux réglages différents (VLAN, duplex, mode), empêchent la formation du canal.",
+        why: "SD = canal en panne, I = port isolé (stand-alone) : il n'a pas pu s'agréger. Deux côtés en <code>passive</code>, ou des ports aux réglages différents (VLAN, duplex, mode), empêchent la formation du canal. Un port bloqué par STP apparaîtrait dans le canal, et le routage n'a rien à voir avec l'agrégation.",
         ref: "Chapitre 09"
     },
     {
@@ -1142,9 +1142,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Où placer une ACL <strong>étendue</strong> qui empêche les invités (VLAN 40) de joindre le LAN interne ?",
-        c: ["En entrée (<code>in</code>) sur la sous-interface du VLAN 40, près de la source", "En sortie sur l'interface WAN", "Sur les lignes VTY", "Près de la destination, sur chaque VLAN interne"],
+        c: ["En entrée (in) sur la sous-interface du VLAN 40, près de la source", "En sortie (out) sur l'interface WAN du routeur", "Sur les lignes VTY, avec <code>access-class</code>", "En sortie sur chaque VLAN interne, près de la destination"],
         a: 0,
-        why: "Une ACL étendue se pose près de la source : le trafic interdit est jeté dès son entrée dans le routeur.",
+        why: "Une ACL étendue se pose près de la source : le trafic interdit est jeté dès son entrée dans le routeur, en une seule ACL. Sur le WAN elle ne voit pas le trafic interne, les VTY ne filtrent que l'administration, et une ACL par VLAN interne multiplie les règles à maintenir.",
         ref: "Chapitre 12"
     }
     ]
@@ -1194,9 +1194,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Pourquoi ajouter <code>switchport nonegotiate</code> sur un trunk ?",
-        c: ["Pour couper DTP : un appareil qui se fait passer pour un commutateur n'obtient plus de trunk", "Pour que le trunk laisse passer tous les VLAN", "Pour changer le VLAN natif", "Pour activer le marquage 802.1Q"],
+        c: ["Pour couper DTP : aucun appareil ne peut plus négocier de trunk", "Pour que le trunk laisse passer tous les VLAN existants", "Pour changer le VLAN natif et éviter le double marquage", "Pour activer le marquage 802.1Q sur le lien"],
         a: 0,
-        why: "DTP négocie un trunk automatiquement, donc en offre un à qui le demande. <code>nonegotiate</code> fige le trunk par configuration.",
+        why: "DTP négocie un trunk automatiquement, donc en offre un à qui le demande — y compris à un appareil qui se fait passer pour un commutateur. <code>nonegotiate</code> fige le trunk par configuration. Les VLAN autorisés, le VLAN natif et l'encapsulation se règlent par d'autres commandes.",
         ref: "Chapitre 04"
     },
     {
@@ -1208,21 +1208,21 @@ window.QUIZ_BANK = {
     },
     {
         q: "Une ACL contient <code>permit any</code>, puis <code>deny host 10.1.1.1</code>. Que devient le trafic de 10.1.1.1 ?",
-        c: ["Il passe : la première règle correspond et l'évaluation s'arrête", "Il est bloqué : le <code>deny</code> est plus précis", "Il est bloqué par le <code>deny any</code> implicite", "Cela dépend du sens d'application"],
+        c: ["Il passe : la première règle qui correspond décide", "Il est bloqué : le <code>deny</code>, plus précis, est prioritaire", "Il est bloqué par le <code>deny any</code> implicite final", "Cela dépend du sens (in ou out) de l'application"],
         a: 0,
         why: "Les règles sont lues dans l'ordre et la première qui correspond décide. Les règles précises se placent avant les générales ; ici le compteur du <code>deny</code> restera à zéro.",
         ref: "Chapitre 07"
     },
     {
         q: "Un <code>traceroute</code> depuis un poste se termine par <code>A</code> au niveau d'un routeur. Qu'est-ce que cela signale ?",
-        c: ["Le paquet est refusé par une règle administrative : une ACL", "Le routeur n'a pas de route", "Le délai a expiré", "Le port de destination est fermé"],
+        c: ["Le paquet est refusé par une règle administrative : une ACL", "Le routeur n'a pas de route vers la destination", "Le délai d'attente de la réponse a expiré", "Le port de destination est fermé sur la cible"],
         a: 0,
-        why: "<code>A</code> = administratively prohibited : la signature d'une ACL. On lit alors son contenu (<code>show access-lists</code>) et son application (<code>show ip interface</code>).",
+        why: "<code>A</code> = administratively prohibited : la signature d'une ACL. Une route absente donne <code>U</code> ou <code>H</code> (unreachable), un délai expiré <code>*</code>. On lit alors le contenu de l'ACL (<code>show access-lists</code>) et son application (<code>show ip interface</code>).",
         ref: "Chapitre 08"
     },
     {
         q: "Après l'activation de DHCP snooping sur un switch, plus aucun poste n'obtient d'adresse. Quelle est la cause la plus probable ?",
-        c: ["Le port vers le serveur DHCP n'est pas déclaré <code>ip dhcp snooping trust</code>", "Le serveur DHCP est en panne", "Les postes sont en IPv6", "BPDU Guard a coupé les ports"],
+        c: ["Le port vers le serveur DHCP n'est pas déclaré <code>ip dhcp snooping trust</code>", "Le serveur DHCP est tombé en panne au même moment", "Les postes sont passés en IPv6 automatiquement", "BPDU Guard a coupé les ports des postes"],
         a: 0,
         why: "Par défaut tous les ports sont non fiables : les réponses DHCP qui arrivent par le lien montant sont jetées tant qu'il n'est pas en <code>trust</code>.",
         ref: "Chapitre 09"
@@ -1238,7 +1238,7 @@ window.QUIZ_BANK = {
     questions: [
     {
         q: "Quelle est la différence entre VoIP et ToIP ?",
-        c: ["La VoIP transporte la voix ; la ToIP est la centrale téléphonique construite par-dessus", "La VoIP est analogique, la ToIP est numérique", "La VoIP concerne les mobiles, la ToIP les postes fixes", "Ce sont deux noms du même service"],
+        c: ["La VoIP transporte la voix ; la ToIP y ajoute le service téléphonique", "La VoIP est analogique, la ToIP est numérique", "La VoIP concerne les mobiles, la ToIP les postes fixes", "Ce sont deux noms du même service, selon le fabricant"],
         a: 0,
         why: "Un appel Discord fait de la VoIP sans faire de la ToIP : il n'y a ni numéro, ni renvoi, ni messagerie unifiée derrière. La ToIP, c'est le service téléphonique complet.",
         ref: "Chapitre 01"
@@ -1268,7 +1268,7 @@ window.QUIZ_BANK = {
         q: "Sur quelles briques repose toute téléphonie IP ?",
         c: ["Les postes, le PBX, le trunk SIP de l'opérateur et la connexion Internet", "Les postes, le switch PoE, le routeur et le pare-feu", "Le PBX, la passerelle analogique, les DECT et le serveur DHCP", "Le codec, le protocole SIP, le RTP et le RTCP"],
         a: 0,
-        why: "Quatre briques — et c'est la dernière, la connexion Internet, la moins visible, qui décide de la qualité réellement perçue par les utilisateurs.",
+        why: "Quatre briques — et c'est la dernière, la connexion Internet, la moins visible, qui décide de la qualité réellement perçue. Switch PoE, routeur et pare-feu forment le réseau qui porte la voix, et codec, SIP, RTP, RTCP sont des protocoles : ni l'un ni l'autre ne constituent le service téléphonique lui-même.",
         ref: "Chapitre 06"
     },
     {
@@ -1280,23 +1280,23 @@ window.QUIZ_BANK = {
     },
     {
         q: "À quoi sert RTCP ?",
-        c: ["À remonter les statistiques de qualité du flux RTP", "À chiffrer le flux voix", "À établir l'appel avant RTP", "À convertir les codecs à la volée"],
+        c: ["À remonter les statistiques de qualité du flux RTP", "À chiffrer le flux voix entre les postes", "À établir l'appel avant l'envoi du RTP", "À convertir les codecs à la volée"],
         a: 0,
-        why: "RTCP accompagne RTP et fait remonter gigue, perte et délai. C'est ce qui permet de dire objectivement pourquoi une communication était mauvaise.",
+        why: "RTCP accompagne RTP et fait remonter gigue, perte et délai. C'est ce qui permet de dire objectivement pourquoi une communication était mauvaise. Le chiffrement, c'est SRTP ; l'établissement, SIP ; la conversion de codecs, le PBX ou une passerelle.",
         ref: "Chapitre 05"
     },
     {
         q: "Lors d'un déploiement client, qu'est-ce qui casse le plus souvent le jour J ?",
-        c: ["L'acheminement des numéros repris (portabilité)", "L'installation du PBX lui-même", "La configuration des postes", "Le choix du codec"],
+        c: ["L'acheminement des numéros repris (portabilité)", "L'installation et la licence du PBX", "La configuration des postes téléphoniques", "Le choix du codec sur le trunk SIP"],
         a: 0,
-        why: "Les deux dernières étapes de la checklist ne sont pas redondantes : la première valide l'installation, la seconde valide la <strong>portabilité</strong>. Ce qui casse le jour J n'est presque jamais le PBX.",
-        ref: "Chapitre 09"
+        why: "La date de portabilité est la contrainte qui ne se rattrape pas. Les tests sur numéros provisoires valident l'installation (PBX, postes, codec) ; seuls les tests du jour de la bascule valident l'acheminement des numéros repris. Ce qui casse le jour J n'est presque jamais le PBX.",
+        ref: "Chapitre 11"
     },
     {
         q: "Un appel fonctionne, mais seul l'un des deux interlocuteurs entend l'autre. Quelle piste examiner en premier ?",
-        c: ["Le NAT : une adresse privée annoncée dans le SDP, ou un « SIP ALG » qui réécrit mal", "Le codec", "Le PoE du téléphone", "Le serveur DHCP"],
+        c: ["Le NAT : adresse privée annoncée dans le SDP, ou un SIP ALG", "Le codec négocié entre les deux postes", "L'alimentation PoE du téléphone", "Le serveur DHCP du VLAN voix"],
         a: 0,
-        why: "Le son à sens unique est la signature d'un problème de NAT : un des deux flux RTP part vers une adresse injoignable. On le voit dans la capture (adresse <code>c=</code> du SDP, flux RTP dans un seul sens).",
+        why: "Le son à sens unique est la signature d'un problème de NAT : un des deux flux RTP part vers une adresse injoignable. On le voit dans la capture (adresse c= du SDP, flux RTP dans un seul sens). Un codec incompatible ferait échouer l'appel dans les deux sens, un défaut PoE ou DHCP empêcherait le poste de fonctionner du tout.",
         ref: "Chapitre 09"
     },
     {
@@ -1340,7 +1340,7 @@ window.QUIZ_BANK = {
     },
     {
         q: "Quelle est la différence entre les stockages <code>local</code> et <code>local-lvm</code> ?",
-        c: ["<code>local</code> stocke ISO, sauvegardes et templates ; <code>local-lvm</code> stocke les disques de VM/CT", "<code>local</code> est sur SSD, <code>local-lvm</code> sur disque mécanique", "<code>local</code> est partagé dans le cluster, <code>local-lvm</code> non", "Ce sont deux noms du même volume"],
+        c: ["local : ISO, sauvegardes, templates ; local-lvm : disques de VM/CT", "local est sur SSD, local-lvm sur disque mécanique", "local est partagé dans le cluster, local-lvm non", "Ce sont deux noms pour le même volume"],
         a: 0,
         why: "Répartition par type de contenu. Pour la résilience et des snapshots instantanés, on monte plutôt un pool <strong>ZFS en miroir</strong> avec compression lz4.",
         ref: "Chapitre 05"
@@ -1354,16 +1354,16 @@ window.QUIZ_BANK = {
     },
     {
         q: "Un snapshot ZFS local compte-t-il comme une sauvegarde ?",
-        c: ["Non : il vit sur le même stockage que la donnée qu'il protège", "Oui, s'il est planifié quotidiennement", "Oui, à condition d'activer la compression", "Non, sauf pour les conteneurs LXC"],
+        c: ["Non : il vit sur le même stockage que la donnée", "Oui, s'il est planifié chaque jour et gardé un mois", "Oui, à condition d'activer la compression lz4", "Non, sauf pour les conteneurs LXC du pool"],
         a: 0,
         why: "3 copies, 2 supports, 1 hors site. Un snapshot local disparaît avec le pool. Et on teste une restauration régulièrement, pas seulement le fait que le backup s'exécute.",
         ref: "Chapitre 07"
     },
     {
         q: "Que suppose la haute disponibilité (HA) dans un cluster Proxmox ?",
-        c: ["Un stockage partagé et un nombre impair de nœuds (≥ 3) pour garder le quorum", "Deux nœuds identiques et un lien 10 Gb/s", "Un seul nœud, sauvegardé toutes les heures", "Un cluster ZFS répliqué sans quorum"],
+        c: ["Un stockage partagé (ou répliqué) et au moins trois votes de quorum", "Deux nœuds identiques reliés par un lien 10 Gb/s", "Un seul nœud, sauvegardé toutes les heures", "Un pool ZFS répliqué, sans quorum nécessaire"],
         a: 0,
-        why: "Le cluster apporte gestion unifiée et migration ; la HA exige du stockage partagé et le quorum. À deux nœuds, on ajoute un <strong>QDevice</strong> témoin — même logique que le disque témoin d'un cluster Windows.",
+        why: "Le cluster apporte gestion unifiée et migration ; la HA exige que les disques de la VM soient disponibles sur un autre nœud (stockage partagé, ou réplication ZFS) et une majorité de votes : au moins trois nœuds, ou deux nœuds plus un QDevice témoin — même logique que le disque témoin d'un cluster Windows. Sans quorum, aucun nœud n'ose redémarrer les VM.",
         ref: "Chapitre 08"
     },
     {
@@ -1391,9 +1391,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Pourquoi le script <code>get-docker.sh</code> est-il à proscrire en production ?",
-        c: ["Il exécute en root du code téléchargé et impose la dernière version, y compris majeure", "Il n'installe pas le client <code>docker</code>", "Il ne fonctionne que sur Windows", "Il désactive le démon au redémarrage"],
+        c: ["Il lance en root un script distant et impose la dernière version", "Il n'installe que le démon, pas le client <code>docker</code>", "Il ne fonctionne que sur Ubuntu, pas sur Debian", "Il désactive le démarrage du démon au boot"],
         a: 0,
-        why: "En production : dépôt officiel, version choisie puis bloquée. Le script tout-en-un reste un outil de labo.",
+        why: "Le script installe bien Docker complet sur Debian comme sur Ubuntu — c'est justement sa facilité qui piège : du code téléchargé exécuté en root, et la dernière version, y compris majeure. En production : dépôt officiel, version choisie puis bloquée. Le script tout-en-un reste un outil de labo.",
         ref: "Chapitre 03"
     },
     {
@@ -1414,7 +1414,7 @@ window.QUIZ_BANK = {
         q: "Un Dockerfile contient <code>EXPOSE 5000</code>. Que faut-il encore pour joindre l'application depuis le réseau ?",
         c: ["Publier le port au lancement, par exemple <code>-p 8000:5000</code>", "Rien, <code>EXPOSE</code> suffit", "Passer le conteneur en <code>--privileged</code>", "Reconstruire l'image avec <code>--no-cache</code>"],
         a: 0,
-        why: "<code>EXPOSE</code> documente, il ne publie rien. C'est <code>-p hôte:conteneur</code> qui crée le mappage. Attention : ce port publié passe à travers ufw, car Docker écrit ses propres règles iptables avant la chaîne INPUT.",
+        why: "<code>EXPOSE</code> documente, il ne publie rien. C'est <code>-p hôte:conteneur</code> qui crée le mappage. Attention : ce port publié échappe à ufw, car Docker redirige ce trafic par ses propres règles iptables (NAT puis FORWARD), sans passer par la chaîne INPUT que filtre ufw.",
         ref: "Chapitres 05 et 07"
     },
     {
@@ -1426,9 +1426,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Deux conteneurs doivent se joindre par leur nom. Que faut-il ?",
-        c: ["Les attacher à un même réseau créé avec <code>docker network create</code>", "Les laisser sur le bridge par défaut", "Les passer en driver <code>none</code>", "Publier leurs ports avec <code>-p</code>"],
+        c: ["Les attacher à un même réseau créé avec <code>docker network create</code>", "Les laisser sur le réseau bridge par défaut", "Les passer sur le driver réseau <code>none</code>", "Publier leurs ports sur l'hôte avec <code>-p</code>"],
         a: 0,
-        why: "Sur un réseau bridge créé, Docker résout les conteneurs par leur nom. Compose fait la même chose automatiquement pour ses services.",
+        why: "Sur un réseau bridge créé, Docker résout les conteneurs par leur nom. Le bridge par défaut ne fournit pas cette résolution, <code>none</code> coupe tout réseau, et <code>-p</code> publie vers l'hôte sans donner de nom. Compose crée automatiquement un tel réseau pour ses services.",
         ref: "Chapitre 07"
     },
     {
@@ -1456,23 +1456,23 @@ window.QUIZ_BANK = {
     },
     {
         q: "À quoi sert <code>restart: unless-stopped</code> dans un <code>docker-compose.yml</code> ?",
-        c: ["Le conteneur redémarre automatiquement, sauf s'il a été arrêté volontairement", "Le conteneur ne redémarre jamais tout seul", "Le conteneur redémarre toutes les 24 heures", "Le conteneur est recréé à chaque mise à jour d'image"],
+        c: ["Il redémarre tout seul, sauf s'il a été arrêté volontairement", "Il ne redémarre jamais tout seul, même après un crash", "Il redémarre toutes les 24 heures pour se rafraîchir", "Il est recréé à chaque mise à jour de son image"],
         a: 0,
         why: "C'est ce qui fait repartir les services après un redémarrage de l'hôte, sans relancer ce qu'on avait volontairement stoppé. Avec un dossier par service et le <code>.yml</code> versionné, la stack est reproductible.",
         ref: "Chapitre 02"
     },
     {
         q: "Que fait un reverse proxy dans un homelab ?",
-        c: ["Il offre un point d'entrée unique, aiguille par nom de domaine et gère le HTTPS", "Il masque l'adresse IP publique des clients sortants", "Il remplace le pare-feu du routeur", "Il répartit les conteneurs entre plusieurs hôtes"],
+        c: ["Point d'entrée unique, aiguillage par nom de domaine et HTTPS", "Il masque l'adresse IP publique des clients sortants", "Il remplace le pare-feu du routeur Internet", "Il répartit les conteneurs entre plusieurs hôtes"],
         a: 0,
         why: "Sans lui, chaque service vit sur un port différent et sans chiffrement. Nginx Proxy Manager pour débuter, Traefik pour l'auto-découverte. Certificats Let's Encrypt — avec le challenge DNS, aucun port à ouvrir.",
         ref: "Chapitre 03"
     },
     {
         q: "Quel est le principal point de vigilance avec Pi-hole ?",
-        c: ["C'est un point unique de défaillance : sans lui, plus de résolution DNS", "Il ralentit la navigation de tout le réseau", "Il ne fonctionne qu'avec une IP dynamique", "Il empêche l'usage d'un reverse proxy"],
+        c: ["C'est un point unique de défaillance pour la résolution DNS", "Il ralentit fortement la navigation de tout le réseau", "Il ne fonctionne qu'avec une adresse IP dynamique", "Il empêche l'usage d'un reverse proxy sur le réseau"],
         a: 0,
-        why: "Pi-hole est DNS + bloqueur de pub + annuaire local. Comme tout le réseau en dépend, il lui faut une <strong>IP fixe</strong> et un DNS de secours déclaré.",
+        why: "Pi-hole est DNS + bloqueur de pub + annuaire local. Comme tout le réseau en dépend, il lui faut une <strong>IP fixe</strong> et, pour la redondance, un <strong>second Pi-hole</strong> : un DNS public déclaré en secondaire contournerait le filtrage.",
         ref: "Chapitre 04"
     },
     {
@@ -1491,14 +1491,14 @@ window.QUIZ_BANK = {
     },
     {
         q: "Que faut-il sauvegarder en priorité dans un homelab conteneurisé ?",
-        c: ["Les volumes de données et les fichiers <code>docker-compose.yml</code>", "Les images Docker téléchargées", "Les journaux des conteneurs", "Le système d'exploitation de l'hôte"],
+        c: ["Les volumes de données et les fichiers <code>docker-compose.yml</code>", "Les images Docker téléchargées depuis le registre", "Les journaux produits par les conteneurs", "Le système d'exploitation complet de l'hôte"],
         a: 0,
         why: "Les images se retéléchargent, la configuration et les données non. Volumes + fichiers Compose = toute ta stack reconstructible. Et on teste une restauration pour de vrai de temps en temps.",
         ref: "Chapitre 07"
     },
     {
         q: "Par quoi commencer quand on monte son premier homelab ?",
-        c: ["Par ce qui apporte une valeur immédiate : Pi-hole, un cloud perso, un tableau de bord", "Par un cluster Kubernetes, pour partir sur de bonnes bases", "Par l'achat d'un serveur rack professionnel", "Par la mise en place de l'accès distant"],
+        c: ["Par un service utile tout de suite : Pi-hole, cloud perso, tableau de bord", "Par un cluster Kubernetes, pour partir sur de bonnes bases", "Par l'achat d'un serveur rack professionnel d'occasion", "Par l'ouverture de l'accès distant depuis Internet"],
         a: 0,
         why: "Un mini-PC ou un vieux PC sous Proxmox suffit. On commence petit, chaque service ayant son dossier, son <code>docker-compose.yml</code> et son volume à sauvegarder.",
         ref: "Chapitre 01"
@@ -1535,9 +1535,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Nmap cartographie ports, services et versions. Quel est l'objectif <strong>défensif</strong> correspondant ?",
-        c: ["Réduire la surface : moins de ports ouverts, pas de bannières bavardes, services à jour", "Bloquer tous les scans par une règle de pare-feu", "Changer les ports par défaut de tous les services", "Interdire l'ICMP sur le réseau"],
+        c: ["Réduire la surface : moins de ports, pas de bannières, services à jour", "Bloquer tous les scans par une règle de pare-feu dédiée", "Changer les ports par défaut de tous les services exposés", "Interdire l'ICMP pour rendre les machines invisibles"],
         a: 0,
-        why: "On ne se défend pas en empêchant le scan, mais en n'ayant rien d'intéressant à trouver. Changer les ports ne fait que retarder un scan complet.",
+        why: "On ne se défend pas en empêchant le scan, mais en n'ayant rien d'intéressant à trouver. Changer les ports ne fait que retarder un scan complet, et un scan TCP se passe très bien de l'ICMP.",
         ref: "Chapitre 04"
     },
     {
@@ -1556,9 +1556,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "En quoi consiste le durcissement (hardening) d'un système ?",
-        c: ["Mettre à jour, désactiver l'inutile, appliquer le moindre privilège, passer SSH en clés", "Installer un antivirus et activer le pare-feu", "Chiffrer le disque et activer le démarrage sécurisé", "Isoler la machine du réseau"],
+        c: ["Mettre à jour, désactiver l'inutile, moindre privilège, SSH par clés", "Installer un antivirus et activer le pare-feu, sans plus", "Chiffrer le disque et activer le démarrage sécurisé", "Isoler complètement la machine du reste du réseau"],
         a: 0,
-        why: "Antivirus/EDR et fail2ban <em>complètent</em> ces quatre points, ils ne les remplacent pas. Les CIS Benchmarks donnent la checklist détaillée par système.",
+        why: "Antivirus/EDR et fail2ban complètent ces quatre points, ils ne les remplacent pas. Chiffrement et Secure Boot protègent d'autres menaces (vol, bootkit), et une machine isolée ne rend plus de service. Les CIS Benchmarks donnent la checklist détaillée par système.",
         ref: "Chapitre 06"
     },
     {
@@ -1602,16 +1602,16 @@ window.QUIZ_BANK = {
     },
     {
         q: "Les VM du labo se pinguent entre elles mais n'atteignent pas Internet. Qu'est-ce qui manque le plus probablement ?",
-        c: ["Le <code>New-NetNat</code> sur l'hôte, ou l'adresse <code>.1</code> sur sa carte <code>LAN-WAN</code>", "Le service Zabbix Agent sur les VM", "L'ouverture du port 10050 dans le pare-feu", "Un second commutateur virtuel externe par VM"],
+        c: ["Le <code>New-NetNat</code> sur l'hôte, ou l'adresse <code>.1</code> sur sa carte <code>vEthernet (LABOPS)</code>", "Le service Zabbix Agent démarré sur chaque VM", "L'ouverture du port 10050 dans le pare-feu des VM", "Un commutateur virtuel externe supplémentaire par VM"],
         a: 0,
         why: "Un commutateur <strong>interne</strong> ne sort nulle part tout seul : c'est le NAT créé sur l'hôte, plus l'adresse de passerelle posée sur sa carte, qui font la sortie. Le problème est côté hôte, pas côté VM.",
         ref: "Chapitre 03"
     },
     {
         q: "Après <code>systemctl start mysql</code>, la commande ne renvoie rien. Que faut-il en conclure ?",
-        c: ["Que le démarrage a réussi — une commande Linux qui réussit est généralement silencieuse", "Que la commande a échoué sans message", "Que le service est bien activé au démarrage", "Qu'il faut relancer la commande avec <code>sudo</code>"],
+        c: ["Que le service a démarré : sous Linux, le succès est silencieux", "Que la commande a échoué sans afficher de message", "Que le service est aussi activé au démarrage du système", "Qu'il faut relancer la commande avec <code>sudo</code> pour voir"],
         a: 0,
-        why: "Aucune sortie = tout va bien. Pour la preuve, on interroge <code>systemctl status</code> : <code>Loaded: enabled</code>, <code>Active: active (running)</code>.",
+        why: "Aucune sortie = tout va bien ; un échec, lui, s'affiche. <code>start</code> n'active rien au démarrage (c'est <code>enable</code>). Pour la preuve, on interroge <code>systemctl status</code> : <code>Loaded: … enabled</code>, <code>Active: active (running)</code>.",
         ref: "Chapitre 04"
     },
     {
@@ -1623,13 +1623,13 @@ window.QUIZ_BANK = {
     },
     {
         q: "Quelle est la différence entre <em>passive checks</em> et <em>active checks</em> ?",
-        c: ["En passif, le serveur interroge l'agent sur le port 10050 ; en actif, l'agent contacte le serveur et lui envoie les valeurs", "En passif l'agent est en lecture seule ; en actif il peut exécuter des scripts", "En passif les données sont stockées localement ; en actif elles partent en base", "Le passif utilise le chiffrement, l'actif non"],
+        c: ["Passif : le serveur interroge l'agent (10050) ; actif : l'agent envoie au serveur", "Passif : l'agent est en lecture seule ; actif : il peut exécuter des scripts", "Passif : données gardées sur l'agent ; actif : données envoyées en base", "Passif : échanges chiffrés ; actif : échanges toujours en clair"],
         a: 0,
         why: "La distinction décide du sens des flux à ouvrir : en passif il faut le 10050 entrant sur la machine supervisée, en actif c'est l'agent qui sort — et c'est le <code>Hostname=</code> qui l'identifie.",
         ref: "Chapitre 06"
     },
     {
-        q: "Un hôte a été créé sous le nom <code>Zabbix-WS</code> alors que l'agent déclare <code>Hostname=ZABBIX-WS</code>. Que se passe-t-il ?",
+        q: "Un hôte a été créé sous le nom <code>Srv-File01</code> alors que l'agent déclare <code>Hostname=SRV-FILE01</code>. Que se passe-t-il ?",
         c: ["Les <em>active checks</em> sont refusés par le serveur : la correspondance est sensible à la casse", "Rien, Zabbix ignore la casse des noms d'hôte", "L'agent refuse de démarrer", "Les graphes s'affichent mais les triggers ne se déclenchent jamais"],
         a: 0,
         why: "Le <em>Host name</em> de l'interface et le <code>Hostname=</code> du fichier de configuration doivent être strictement identiques, casse comprise — sinon on cherche longtemps un problème de réseau qui est une majuscule.",
@@ -1637,14 +1637,14 @@ window.QUIZ_BANK = {
     },
     {
         q: "Pourquoi mapper des <strong>groupes</strong> AD plutôt que des comptes un par un dans les réglages LDAP ?",
-        c: ["Les droits se gèrent une seule fois par groupe, et un nouvel arrivant obtient son accès automatiquement", "Zabbix ne sait pas authentifier des comptes individuels", "Le mapping par groupe est le seul à chiffrer les échanges LDAP", "Cela évite de créer un compte local Admin"],
+        c: ["Les droits se gèrent par groupe, et un nouvel arrivant est couvert d'office", "Zabbix ne sait pas authentifier des comptes individuels", "Le mapping par groupe est le seul à chiffrer les échanges LDAP", "Cela évite de créer le compte local Admin"],
         a: 0,
         why: "Sinon l'outil devient un annuaire parallèle : comptes d'anciens collègues toujours actifs, droits jamais revus. C'est la même logique de gestion par groupe que dans Active Directory.",
         ref: "Chapitre 08"
     },
     {
         q: "Dans l'exercice d'auto-remédiation, pourquoi la description du trigger cloné ne doit contenir que <code>{#SERVICE.NAME}</code> ?",
-        c: ["Parce que le script la récupère via <code>{TRIGGER.DESCRIPTION}</code> pour former la commande <code>net start</code>", "Parce que Zabbix refuse les descriptions de plus d'une macro", "Parce que c'est ce texte qui s'affiche dans le tableau de bord", "Parce que la description sert de clé unique du trigger"],
+        c: ["Le script la lit via <code>{TRIGGER.DESCRIPTION}</code> pour former <code>net start</code>", "Zabbix refuse les descriptions de plus d'une macro", "C'est ce texte qui s'affiche dans le tableau de bord", "La description sert de clé unique au trigger"],
         a: 0,
         why: "La description transporte le nom court du service jusqu'au script. Tout texte supplémentaire casserait la commande — et les guillemets autour de la macro sauvent les noms de service contenant des espaces.",
         ref: "Chapitre 09"
@@ -1667,23 +1667,23 @@ window.QUIZ_BANK = {
     },
     {
         q: "Un hôte en modèle <em>Windows by Zabbix agent active</em> affiche <em>Active checks : Available</em> et son interface <code>…:10050</code> en <em>Unknown</em>. Que faire ?",
-        c: ["Rien : ce modèle ne fait aucune vérification passive, le serveur n'appelle jamais le port 10050", "Ouvrir le port 10050 dans le pare-feu Windows", "Passer l'interface en <em>Connect to : DNS</em>", "Réinstaller l'agent avec le bon port"],
+        c: ["Rien : ce modèle ne fait que des vérifications actives", "Ouvrir le port 10050 dans le pare-feu Windows", "Passer l'interface en <em>Connect to : DNS</em>", "Réinstaller l'agent avec le bon port d'écoute"],
         a: 0,
-        why: "Unknown veut dire « jamais interrogé », pas « en panne ». Les données arrivent par les vérifications actives, qui sont bien disponibles.",
+        why: "Unknown veut dire « jamais interrogé », pas « en panne » : le modèle <em>active</em> ne fait aucune vérification passive, le serveur n'appelle jamais le port 10050. Les données arrivent par les vérifications actives, qui sont bien disponibles.",
         ref: "Chapitre 03"
     },
     {
         q: "Pourquoi le conteneur PostgreSQL n'est-il branché que sur un réseau déclaré <code>internal: true</code> ?",
-        c: ["Pour que la base soit injoignable depuis le réseau : seuls les conteneurs du même réseau la voient", "Pour accélérer les échanges entre le serveur et la base", "Parce que PostgreSQL ne sait pas écouter sur deux réseaux", "Pour publier son port 5432 sur la VM"],
+        c: ["Pour que seuls les conteneurs de ce réseau puissent joindre la base", "Pour accélérer les échanges entre le serveur et la base", "Parce que PostgreSQL ne sait pas écouter sur deux réseaux", "Pour publier son port 5432 sur l'adresse de la VM"],
         a: 0,
         why: "Un réseau interne n'a aucun accès vers l'extérieur. Le serveur et l'interface sont sur les deux réseaux : le backend pour joindre la base, le frontend pour publier leurs ports.",
         ref: "Chapitre 02"
     },
     {
         q: "<code>docker logs zabbix-server</code> affiche <code>cannot find requested PSK identity \"LAB-APP01-PSK\"</code>. Quelle est la cause la plus probable ?",
-        c: ["L'onglet <em>Encryption</em> de l'hôte n'est pas rempli, ou pas avec la même identité", "Le port 10051 n'est pas publié sur la VM", "L'agent n'est pas de la même version que le serveur", "Le conteneur serveur ne résout pas le nom de l'agent"],
+        c: ["L'onglet <em>Encryption</em> de l'hôte n'est pas rempli avec cette identité", "Le port 10051 n'est pas publié sur la VM", "L'agent n'est pas de la même version que le serveur", "Le conteneur serveur ne résout pas le nom de l'agent"],
         a: 0,
-        why: "Le serveur reçoit bien l'agent — la connexion arrive — mais ne connaît pas cette identité. Identité et valeur PSK doivent être identiques des deux côtés.",
+        why: "Le serveur reçoit bien l'agent — la connexion arrive, donc le port est publié — mais ne connaît pas cette identité. Identité et valeur PSK doivent être identiques des deux côtés.",
         ref: "Chapitre 03"
     },
     {
@@ -1711,7 +1711,7 @@ window.QUIZ_BANK = {
         q: "Sur un item <strong>actif</strong>, le bouton <em>Execute now</em> ne fait rien. Comment forcer une collecte ?",
         c: ["Redémarrer l'agent", "Passer l'item en passif le temps du test", "Augmenter le timeout à 10 s", "Relancer le conteneur <code>zabbix-server</code>"],
         a: 0,
-        why: "Un item actif, c'est l'agent qui l'envoie : le serveur ne peut pas le déclencher. Au redémarrage, l'agent récupère sa liste d'items et collecte aussitôt.",
+        why: "Un item actif, c'est l'agent qui l'envoie : <em>Execute now</em> ne s'applique qu'aux vérifications passives (doc Zabbix 7.0), le serveur ne peut pas déclencher un item actif. Au redémarrage, l'agent récupère sa liste d'items et collecte aussitôt.",
         ref: "Chapitre 05"
     },
     {
@@ -1774,9 +1774,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Que garantit le mode de redondance <strong>ZRS</strong> ?",
-        c: ["Des copies synchrones réparties entre plusieurs zones d'une même région", "Des copies dans un seul datacenter", "Une réplication vers une région secondaire", "Une lecture possible depuis la région secondaire"],
+        c: ["Des copies synchrones dans plusieurs zones d'une même région", "Trois copies dans un seul datacenter de la région", "Une réplication asynchrone vers une région secondaire", "Une réplication vers une région secondaire, lisible"],
         a: 0,
-        why: "LRS = un datacenter · ZRS = plusieurs zones d'une région · GRS = région secondaire · RA-GRS = GRS avec lecture secondaire. Protection et coût croissent ensemble.",
+        why: "LRS = 3 copies dans un datacenter · ZRS = 3 zones d'une région · GRS = LRS + copie dans la région appairée · GZRS = ZRS + région appairée ; les variantes RA- (RA-GRS, RA-GZRS) permettent en plus de lire la copie secondaire. Protection et coût croissent ensemble.",
         ref: "Chapitre 06"
     },
     {
@@ -1797,7 +1797,7 @@ window.QUIZ_BANK = {
         q: "Quel outil pour <strong>estimer</strong> le coût d'une architecture avant de la déployer ?",
         c: ["Le Pricing Calculator", "Cost Management", "Le TCO Calculator", "Azure Advisor"],
         a: 0,
-        why: "Avant de déployer : estimer (Pricing Calculator). Après : surveiller (Cost Management, budgets, alertes). Le TCO Calculator sert à autre chose : comparer le coût local à celui d'Azure.",
+        why: "Avant de déployer : estimer (Pricing Calculator). Après : surveiller (Cost Management, budgets, alertes). Le TCO Calculator (retiré, remplacé par le business case d'Azure Migrate) servait à autre chose : comparer le coût local à celui d'Azure.",
         ref: "Chapitre 09"
     },
     {
@@ -1818,14 +1818,14 @@ window.QUIZ_BANK = {
     questions: [
     {
         q: "Pourquoi ne peut-on pas s'engager à l'avance, simultanément, sur le budget, le délai et le contenu exact ?",
-        c: ["Le triangle d'or : vite, pas cher, bien — on n'en obtient que deux, le troisième varie", "Parce que les clients changent toujours d'avis", "Parce que les estimations en heures sont toujours fausses", "Parce que Scrum interdit les engagements contractuels"],
+        c: ["Le triangle d'or : on ne fixe que deux des trois, le troisième varie", "Parce que les clients changent toujours d'avis en cours de route", "Parce que les estimations en heures sont toujours fausses", "Parce que Scrum interdit tout engagement contractuel"],
         a: 0,
         why: "Choisir une méthode, c'est choisir lequel des trois on fait varier. Waterfall fige le contenu et laisse déraper délais et coûts ; l'Agile fige le temps et les moyens et fait varier la quantité livrée.",
         ref: "Chapitre 01"
     },
     {
         q: "Que dit exactement le Manifeste Agile sur la documentation ?",
-        c: ["Qu'un logiciel opérationnel prime sur une documentation exhaustive, sans que celle-ci perde toute valeur", "Qu'il ne faut plus documenter", "Que la documentation doit être rédigée après la livraison", "Que la documentation remplace les spécifications"],
+        c: ["Le logiciel opérationnel prime sur la documentation, qui garde sa valeur", "Qu'il ne faut plus documenter, seulement livrer", "Que la documentation se rédige après la livraison", "Que la documentation remplace les spécifications"],
         a: 0,
         why: "Contresens le plus fréquent : les éléments de droite gardent de la valeur, ceux de gauche priment. Être Agile ne veut dire ni « ne plus rien documenter », ni « travailler sans plan ».",
         ref: "Chapitre 01"
@@ -1839,9 +1839,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Une équipe tient scrupuleusement ses cérémonies, mais personne ne signale jamais les difficultés. Quel pilier est cassé, et avec quelle conséquence ?",
-        c: ["La transparence — sans elle, l'inspection n'a rien à examiner et l'adaptation ne se déclenche pas", "L'inspection — les cérémonies n'ont pas lieu assez souvent", "L'adaptation — l'équipe ne change pas assez son produit", "Aucun : tenir les cérémonies suffit"],
+        c: ["La transparence : sans elle, l'inspection n'a rien à examiner", "L'inspection : les cérémonies n'ont pas lieu assez souvent", "L'adaptation : l'équipe ne change pas assez son produit", "Aucun : tenir les cérémonies suffit à appliquer Scrum"],
         a: 0,
-        why: "Les trois piliers forment une boucle indissociable. Une équipe peut cocher toutes les cases de Scrum et travailler très mal : ce sont les valeurs — courage, ouverture — qui rendent la transparence réelle.",
+        why: "Les trois piliers forment une boucle : sans transparence, l'inspection n'a rien à examiner et l'adaptation ne se déclenche pas. Les cérémonies ont bien lieu, donc l'inspection est prévue — c'est sa matière qui manque. Une équipe peut cocher toutes les cases de Scrum et travailler très mal : ce sont les valeurs — courage, ouverture — qui rendent la transparence réelle.",
         ref: "Chapitre 02"
     },
     {
@@ -1853,16 +1853,16 @@ window.QUIZ_BANK = {
     },
     {
         q: "Qui décide de la <strong>quantité</strong> de travail prise dans un sprint ?",
-        c: ["L'équipe technique", "Le Product Owner", "Le Scrum Master", "Les parties prenantes, en Review"],
+        c: ["Les Developers (l'équipe technique)", "Le Product Owner", "Le Scrum Master", "Les parties prenantes, en Review"],
         a: 0,
-        why: "Le PO dit ce qui est prioritaire ; l'équipe dit ce qu'elle peut tenir et comment. C'est le même partage que pour l'estimation de l'effort, qui n'appartient qu'à ceux qui feront le travail.",
+        why: "Le PO dit ce qui est prioritaire ; les Developers disent ce qu'ils peuvent tenir et comment (Scrum Guide 2020 : ils sélectionnent les éléments, en discussion avec le PO). C'est le même partage que pour l'estimation de l'effort, qui n'appartient qu'à ceux qui feront le travail.",
         ref: "Chapitre 04 · ch. 06"
     },
     {
         q: "Quelles affirmations décrivent correctement le Scrum Master ?",
-        c: ["Il lève les obstacles qui ralentissent l'équipe", "Il anime les quatre cérémonies", "Il attribue les tâches aux membres de l'équipe", "Il arbitre les priorités du Product Backlog"],
+        c: ["Il lève les obstacles qui ralentissent l'équipe", "Il veille à ce que les cérémonies aient lieu et tiennent leur durée", "Il attribue les tâches aux membres de l'équipe", "Il arbitre les priorités du Product Backlog"],
         a: [0, 1],
-        why: "Leader serviteur : au service de l'équipe, du PO et de l'organisation — jamais au-dessus. Distribuer les tâches contredirait l'auto-organisation, et les priorités appartiennent au PO.",
+        why: "Leader serviteur : au service de l'équipe, du PO et de l'organisation — jamais au-dessus. Le Scrum Guide 2020 lui demande de faire lever les obstacles et de s'assurer que les événements ont lieu, sont utiles et respectent leur timebox ; il n'a pas à les animer tous (la Daily appartient aux Developers). Distribuer les tâches contredirait l'auto-organisation, et les priorités appartiennent au PO.",
         ref: "Chapitre 04"
     },
     {
@@ -1874,9 +1874,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Qu'est-ce qui distingue le Product Backlog du Sprint Backlog ?",
-        c: ["Le premier contient tout ce qui reste à faire et appartient au PO ; le second est la sélection d'un sprint et appartient à l'équipe", "Le premier est technique, le second fonctionnel", "Le premier est figé, le second évolue", "Le premier appartient à l'équipe, le second au Scrum Master"],
+        c: ["Le premier liste tout le reste à faire (PO), le second le plan du sprint (équipe)", "Le premier est technique, le second décrit le fonctionnel attendu", "Le premier est figé au lancement, le second évolue chaque jour", "Le premier appartient à l'équipe, le second au Scrum Master"],
         a: 0,
-        why: "Le Product Backlog est la carte du restaurant, le Sprint Backlog ce que tu as commandé ce midi. L'un vit tant que le produit existe, l'autre le temps d'un sprint.",
+        why: "Le Product Backlog est la carte du restaurant, le Sprint Backlog ce que tu as commandé ce midi. L'un vit tant que le produit existe et est ordonné par le PO ; l'autre, plan des Developers, vit le temps d'un sprint. Les deux évoluent.",
         ref: "Chapitre 06 · ch. 07"
     },
     {
@@ -1932,21 +1932,21 @@ window.QUIZ_BANK = {
     },
     {
         q: "Dans le Compose, <code>${MSQL_USER}</code> est écrit au lieu de <code>${MYSQL_USER}</code>. Que se passe-t-il ?",
-        c: ["Compose remplace la variable par une chaîne vide, avec un simple avertissement — <code>docker compose config</code> le montre", "Compose refuse de démarrer et signale une erreur de syntaxe", "Compose garde le texte <code>${MSQL_USER}</code> tel quel", "Docker demande la valeur au démarrage"],
+        c: ["La variable devient une chaîne vide, avec un simple avertissement", "Compose refuse de démarrer et signale une erreur de syntaxe", "Compose garde le texte <code>${MSQL_USER}</code> tel quel", "Docker demande la valeur manquante au démarrage"],
         a: 0,
-        why: "Aucune erreur bloquante : Redmine tente alors de se connecter sans nom d'utilisateur. <code>docker compose config</code> affiche le résultat du remplacement avant de relancer.",
+        why: "Compose affiche seulement « The \"MSQL_USER\" variable is not set. Defaulting to a blank string » : aucune erreur bloquante, et Redmine tente alors de se connecter sans nom d'utilisateur. <code>docker compose config</code> affiche le résultat du remplacement avant de relancer.",
         ref: "Chapitre 05"
     },
     {
         q: "La base MariaDB existe déjà. On change <code>MYSQL_PASSWORD</code> dans le <code>.env</code> et on relance. Résultat ?",
-        c: ["Redmine ne peut plus se connecter : MariaDB ne lit <code>MARIADB_*</code> qu'à la création de la base", "Le mot de passe de la base est mis à jour au redémarrage", "MariaDB recrée la base avec le nouveau mot de passe", "Rien ne change, Redmine garde l'ancien mot de passe en cache"],
+        c: ["Redmine ne peut plus se connecter : la base garde l'ancien mot de passe", "Le mot de passe de la base est mis à jour au redémarrage", "MariaDB recrée la base vide avec le nouveau mot de passe", "Rien ne change : Redmine garde l'ancien mot de passe en cache"],
         a: 0,
-        why: "Sur une base existante, on garde les mêmes valeurs. Changer un mot de passe de base se fait dans la base elle-même, puis dans le <code>.env</code>.",
+        why: "L'image MariaDB ne lit ses variables d'initialisation (<code>MARIADB_*</code> ou leurs alias <code>MYSQL_*</code>) qu'à la création, quand le dossier de données est vide. Redmine, lui, prend la nouvelle valeur : les deux ne correspondent plus. Changer un mot de passe de base se fait dans la base elle-même, puis dans le <code>.env</code>.",
         ref: "Chapitre 05"
     },
     {
         q: "Pourquoi le script de sauvegarde appelle-t-il <code>mariadb-dump</code> avec <code>--single-transaction</code> ?",
-        c: ["Pour obtenir une photo cohérente de la base sans bloquer Redmine", "Pour compresser le dump", "Pour ne sauvegarder qu'une table à la fois", "Pour inclure les pièces jointes dans le dump"],
+        c: ["Pour une photo cohérente de la base sans bloquer Redmine", "Pour compresser le dump pendant son écriture", "Pour sauvegarder les tables une par une, dans l'ordre", "Pour inclure aussi les pièces jointes dans le dump"],
         a: 0,
         why: "Le dump lit la base dans une seule transaction : cohérent, et l'application continue de tourner. Les pièces jointes, elles, sont dans un volume et s'archivent à part.",
         ref: "Chapitre 06"
@@ -1960,7 +1960,7 @@ window.QUIZ_BANK = {
     },
     {
         q: "Derrière nginx, les liens des e-mails de Redmine pointent vers <code>http://localhost:3000/…</code>. Que corriger ?",
-        c: ["<em>Host name and path</em> et <em>Protocol</em> dans <strong>Administration &gt; Settings &gt; General</strong>", "Publier à nouveau le port 3000 de Redmine", "Ajouter un second <code>server_name</code> dans nginx", "Supprimer l'en-tête <code>X-Forwarded-Proto</code>"],
+        c: ["<em>Host name and path</em> et <em>Protocol</em> dans <strong>Administration &gt; Settings &gt; General</strong>", "Publier à nouveau le port 3000 de Redmine sur l'hôte", "Ajouter un second <code>server_name</code> localhost dans nginx", "Supprimer l'en-tête <code>X-Forwarded-Proto</code> du proxy"],
         a: 0,
         why: "Redmine ne voit que nginx et ignore son adresse publique. Pour les liens absolus envoyés hors du navigateur — e-mails, webhooks, API — on lui donne le nom public et le protocole HTTPS.",
         ref: "Chapitre 07"
@@ -1990,14 +1990,14 @@ window.QUIZ_BANK = {
     },
     {
         q: "« Dans six mois, qu'aurez-vous mis en place chez nous ? » Quelle construction le cours recommande-t-il ?",
-        c: ["L'humilité d'abord (découvrir l'équipe et l'existant), puis des hypothèses annoncées comme telles, avec les actions qui en découlent", "Un plan de transformation détaillé, pour montrer son ambition", "Botter en touche : impossible de répondre sans connaître l'entreprise", "Lister ses réalisations passées, en STARR"],
+        c: ["L'humilité d'abord (découvrir l'existant), puis des hypothèses assumées et leurs actions", "Un plan de transformation détaillé, pour montrer son ambition", "Botter en touche : impossible de répondre sans connaître l'entreprise", "Lister ses réalisations passées, en suivant le STARR"],
         a: 0,
         why: "Pas question de tout changer tout de suite : on ne connaît encore ni l'équipe ni le projet. Une fois cette humilité posée, on s'autorise des hypothèses à partir de ce qu'on sait déjà — « j'imagine que vos défis sont là… du coup, je ferais… ».",
         ref: "Chapitre 03"
     },
     {
         q: "Une étude de cas vous est soumise en entretien. Autour de quoi construire la réponse ?",
-        c: ["La boucle du management : analyse, objectif, plan d'action, mise en œuvre, contrôle, correction", "La méthode STARR, comme pour toute question", "Les trois réponses au stress : fuir, combattre, se figer", "La check-list avant entretien"],
+        c: ["La boucle du management : analyse, objectif, plan, action, contrôle, correction", "La méthode STARR, comme pour toute autre question", "Les trois réponses au stress : fuir, combattre, se figer", "La check-list de préparation avant l'entretien"],
         a: 0,
         why: "Une étude de cas demande de montrer une démarche, pas une anecdote : on comprend avant d'agir, on fixe un objectif, on planifie, on fait, on vérifie et on corrige — puis la boucle repart.",
         ref: "Chapitre 03"
@@ -2018,7 +2018,7 @@ window.QUIZ_BANK = {
     },
     {
         q: "Que retenir du schéma 7 % mots / 38 % voix / 55 % corps ?",
-        c: ["Que la voix et le corps doivent porter le même message que les mots, sinon la réponse ne convainc pas", "Que le contenu des réponses ne compte presque pas en entretien", "Qu'il vaut mieux parler peu et miser sur la gestuelle", "Que ces pourcentages valent pour toute communication"],
+        c: ["Que voix et corps doivent porter le même message que les mots", "Que le contenu des réponses ne compte presque pas", "Qu'il vaut mieux parler peu et miser sur la gestuelle", "Que ces pourcentages valent pour toute communication"],
         a: 0,
         why: "Ces chiffres viennent d'expériences de Mehrabian sur la perception d'un sentiment quand mots, ton et visage se contredisent. Ils ne disent pas que le fond est accessoire — ils disent que le non-verbal décide si le fond sera cru.",
         ref: "Chapitre 04"
@@ -2041,7 +2041,7 @@ window.QUIZ_BANK = {
         q: "Où peut-on agir pour casser le cercle vicieux du stress ?",
         c: ["Sur n'importe laquelle des trois parts : pensées, émotions ou comportements", "Uniquement sur les pensées, d'où viennent les émotions", "Uniquement sur le corps, par la respiration", "Nulle part : il faut attendre que ça passe"],
         a: 0,
-        why: "Les trois parts s'entretiennent : on peut positiver ses pensées (le stress aide à se concentrer), laisser passer l'émotion (environ 90 secondes) ou choisir son attitude (sourire, respiration lente). Agir sur une seule ralentit toute la boucle.",
+        why: "Les trois parts s'entretiennent : on peut positiver ses pensées (le stress aide à se concentrer), laisser passer l'émotion (la « règle des 90 secondes » popularisée par Jill Bolte Taylor est une image, pas une mesure) ou choisir son attitude (sourire, respiration lente). Agir sur une seule ralentit toute la boucle.",
         ref: "Chapitre 07 · ch. 08"
     }]
 },
@@ -2077,21 +2077,21 @@ window.EXAM_BANK = {
     },
     {
         q: "Depuis une VM Debian fraîchement installée, <code>ping 8.8.8.8</code> échoue et <code>ip a</code> ne montre aucune adresse sur <code>ens33</code>. Par quoi commencer ?",
-        c: ["Vérifier la configuration d'interface et le commutateur virtuel auquel la VM est rattachée", "Reconfigurer <code>/etc/resolv.conf</code>", "Réinstaller le système", "Changer le codec réseau de la carte virtuelle"],
+        c: ["Vérifier la configuration d'interface et le commutateur virtuel de la VM", "Reconfigurer <code>/etc/resolv.conf</code> avec un autre DNS", "Réinstaller le système : l'installation a échoué", "Désactiver IPv6 sur l'interface <code>ens33</code>"],
         a: 0,
-        why: "Pas d'adresse du tout = le problème est en amont du DNS : configuration d'interface, ou VM branchée sur un commutateur privé qui ne mène nulle part. <code>resolv.conf</code> ne se regarde que si l'IP fonctionne mais pas les noms.",
+        why: "Pas d'adresse du tout = le problème est en amont du DNS : configuration d'interface, ou VM branchée sur un commutateur privé qui ne mène nulle part. <code>resolv.conf</code> ne se regarde que si l'IP fonctionne mais pas les noms ; IPv6 n'empêche pas IPv4 d'obtenir une adresse ; et réinstaller avant d'avoir regardé, c'est effacer les indices.",
         ref: "Hyper-V ch. 07 · Linux ch. 14"
     },
     {
         q: "Vous devez adresser un labo : 3 serveurs, 20 postes, et une liaison entre deux routeurs. Quel découpage de <code>192.168.10.0/24</code> est correct ?",
-        c: ["Un /27 pour les postes, un /29 pour les serveurs, un /30 pour la liaison", "Un /24 pour tout le monde, plus simple", "Un /30 pour les postes, un /27 pour la liaison", "Trois /25, un par usage"],
+        c: ["Un /27 pour les postes, un /29 pour les serveurs, un /30 pour la liaison", "Un seul /24 pour tout le monde, plus simple à gérer", "Un /30 pour les postes, un /29 pour les serveurs, un /27 pour la liaison", "Trois /25, un par usage, pour garder de la marge"],
         a: 0,
         why: "On sert du plus gros au plus petit : 20 postes → /27 (30 hôtes), 3 serveurs → /29 (6 hôtes), liaison point-à-point → /30 (2 hôtes). Trois /25 ne rentreraient même pas dans un /24.",
         ref: "Subnetting ch. 06"
     },
     {
         q: "Sur le disque parent SYSPREP d'Hyper-V et sur un <code>rm -rf</code> sous Linux, quel réflexe est commun ?",
-        c: ["Relire avant d'agir : les deux opérations sont irréversibles et silencieuses", "Toujours lancer la commande en tant qu'administrateur", "Faire un snapshot après l'opération", "Vérifier l'espace disque disponible"],
+        c: ["Relire avant d'agir : les deux sont irréversibles et silencieux", "Toujours lancer l'opération en tant qu'administrateur", "Faire un snapshot juste après l'opération", "Vérifier d'abord l'espace disque disponible"],
         a: 0,
         why: "Démarrer un disque parent casse toutes les VM enfants ; <code>rm -rf</code> supprime sans corbeille ni confirmation. Deux contextes, un même réflexe : relire avant de valider.",
         ref: "Hyper-V ch. 06 · Linux ch. 04"
@@ -2116,9 +2116,9 @@ window.EXAM_BANK = {
     questions: [
     {
         q: "Le gMSA revient dans plusieurs modules du parcours. Quel problème résout-il, et où l'utilise-t-on ?",
-        c: ["Il supprime les mots de passe de comptes de service à gérer : AD les renouvelle, pour SQL Server comme pour les services applicatifs", "Il permet une ouverture de session interactive partagée entre administrateurs", "Il remplace les certificats pour l'authentification des services", "Il n'existe que pour SQL Server"],
+        c: ["Plus de mot de passe de service à gérer : AD le renouvelle seul", "Une ouverture de session interactive partagée entre admins", "Il remplace les certificats pour authentifier les services", "Il n'existe que pour le service SQL Server"],
         a: 0,
-        why: "AD génère et renouvelle le mot de passe seul. On le déclare dans l'assistant d'installation de SQL Server pour qu'il pose les bonnes ACL, et on le vérifie avec <code>Test-ADServiceAccount</code>.",
+        why: "AD génère et renouvelle le mot de passe seul : un gMSA ne sert pas à ouvrir de session interactive et ne remplace pas un certificat. On le déclare dans l'assistant d'installation de SQL Server pour qu'il pose les bonnes ACL — mais il sert à tout service compatible —, et on le vérifie avec <code>Test-ADServiceAccount</code>.",
         ref: "SQL Server ch. 03 · PowerShell ch. 08"
     },
     {
@@ -2130,35 +2130,35 @@ window.EXAM_BANK = {
     },
     {
         q: "Un utilisateur accède en lecture seule à un partage clusterisé alors que ses droits NTFS sont en Contrôle total, et son login SQL ne voit aucune donnée dans la base restaurée. Quel principe commun explique ces deux symptômes ?",
-        c: ["Deux jeux de droits se superposent : le plus restrictif l'emporte côté partage, et le login ne vaut rien sans user côté base", "Les deux services nécessitent un redémarrage pour appliquer les droits", "Le compte est bloqué par une GPO", "Le cluster et SQL Server ignorent les droits NTFS"],
+        c: ["Deux jeux de droits se superposent : partage/NTFS d'un côté, login/user de l'autre", "Les deux services doivent redémarrer pour appliquer les droits", "Une GPO bloque le compte sur le cluster et sur SQL", "Le cluster et SQL Server ignorent tous deux les droits NTFS"],
         a: 0,
         why: "Côté fichiers : partage et NTFS sont distincts, le plus restrictif gagne à travers le réseau. Côté SQL : le login vit dans <code>master</code>, le user dans la base — une restauration ailleurs laisse des utilisateurs orphelins.",
         ref: "Stockage ch. 04 · SQL Server ch. 10"
     },
     {
         q: "Cluster de basculement, réplication DFS, groupe de disponibilité Always On : que garantissent-ils tous les trois ?",
-        c: ["La disponibilité face à une panne de serveur, jamais un retour en arrière sur les données", "Une protection complète, sauvegardes comprises", "Une protection contre les rançongiciels", "Une restauration au point dans le temps"],
+        c: ["La disponibilité face à une panne, jamais un retour en arrière", "Une protection complète, sauvegardes comprises", "Une protection efficace contre les rançongiciels", "Une restauration à un point dans le temps"],
         a: 0,
         why: "Une base corrompue, une table supprimée ou un chiffrement par rançongiciel se répliquent fidèlement. Seule une sauvegarde permet de revenir en arrière : les deux approches sont complémentaires, jamais alternatives.",
         ref: "Stockage ch. 11 · SQL Server ch. 14 · Windows Server ch. 09"
     },
     {
         q: "Où se sauvegarde en priorité un environnement SharePoint, et pourquoi ?",
-        c: ["Au niveau des bases SQL de contenu — c'est là que vivent les données et c'est la méthode la plus fiable", "Au niveau des serveurs Web Front End", "Au niveau des collections de sites uniquement", "Sur les postes des utilisateurs, via la synchronisation"],
+        c: ["Au niveau des bases SQL de contenu : c'est là que vivent les données", "Au niveau des serveurs Web Front End de la ferme", "Au niveau des collections de sites uniquement", "Sur les postes des utilisateurs, via la synchronisation"],
         a: 0,
         why: "La hiérarchie logique commande : on sauvegarde au niveau de la base de contenu, on sécurise au niveau de la collection de sites. Le point le plus sensible d'une ferme reste toujours SQL Server.",
-        ref: "SharePoint ch. 06 · ch. 07 · ch. 18"
+        ref: "SharePoint ch. 06 · ch. 07 · ch. 10"
     },
     {
         q: "Quel principe traverse tout le parcours Windows en matière de droits ?",
-        c: ["Le moindre privilège : <code>db_datareader</code>/<code>db_datawriter</code> plutôt que <code>sysadmin</code>, un gMSA plutôt qu'un compte admin du domaine", "Le contrôle total, quitte à restreindre plus tard", "Un compte administrateur partagé, documenté dans un coffre", "L'attribution des droits directement aux utilisateurs, sans groupes"],
+        c: ["Le moindre privilège : juste les droits nécessaires, au bon périmètre", "Le contrôle total d'abord, quitte à restreindre plus tard", "Un compte administrateur partagé, documenté dans un coffre", "Des droits donnés directement aux utilisateurs, sans groupes"],
         a: 0,
-        why: "L'erreur la plus fréquente en entreprise est d'ajouter <code>sysadmin</code> pour résoudre un simple problème de permission. Même logique côté AD : on autorise via les groupes, on délègue au niveau de l'OU.",
+        why: "Exemples : <code>db_datareader</code>/<code>db_datawriter</code> plutôt que <code>sysadmin</code>, un gMSA plutôt qu'un compte admin du domaine, une délégation sur l'OU plutôt que Domain Admins. L'erreur la plus fréquente en entreprise est d'ajouter <code>sysadmin</code> pour résoudre un simple problème de permission. Côté AD, on autorise via les groupes.",
         ref: "SQL Server ch. 10 · Windows Server ch. 05 · ch. 11"
     },
     {
         q: "Le setup DPM échoue en erreur 811 : le client SQL (ODBC 18) refuse le certificat auto-généré du serveur SQL. Quel mécanisme déjà rencontré dans le parcours est en jeu ?",
-        c: ["La chaîne de confiance : un client n'accepte qu'un certificat rattaché à une autorité qu'il connaît", "Le moindre privilège : le compte du setup n'est pas sysadmin", "Le quorum : le serveur SQL n'a pas de témoin", "La délégation Kerberos du gMSA"],
+        c: ["La chaîne de confiance : le client exige une autorité qu'il connaît", "Le moindre privilège : le compte du setup n'est pas sysadmin", "Le quorum : le serveur SQL n'a pas de témoin de cluster", "La délégation Kerberos contrainte du gMSA de SQL"],
         a: 0,
         why: "Même cause qu'une alerte de certificat sur RDS Web Access ou Exchange : un auto-signé dit « c'est moi qui le dis ». On fait approuver le certificat par le client — ici, importé dans les autorités racines de confiance du serveur DPM.",
         ref: "DPM ch. 08 · Exchange ch. 04"
@@ -2183,9 +2183,9 @@ window.EXAM_BANK = {
     },
     {
         q: "Après l'ajout d'une ACL sur le routeur de bordure, les téléphones sonnent mais aucune voix ne passe. Quelle est la cause la plus probable ?",
-        c: ["L'ACL laisse passer la signalisation SIP mais bloque le flux RTP", "Le codec négocié n'est plus supporté", "Le VLAN voix a été supprimé", "Le PoE ne délivre plus assez de puissance"],
+        c: ["L'ACL laisse passer la signalisation SIP mais bloque le flux RTP", "Le codec négocié n'est plus supporté par les postes", "Le VLAN voix a été supprimé du switch d'accès", "Le PoE ne délivre plus assez de puissance aux postes"],
         a: 0,
-        why: "SIP monte l'appel, RTP porte la voix, par des chemins et des ports différents. Une ACL évaluée dans l'ordre avec son deny implicite final laisse très bien passer l'un sans l'autre.",
+        why: "SIP monte l'appel, RTP porte la voix, par des chemins et des ports différents. Une ACL évaluée dans l'ordre avec son deny implicite final laisse très bien passer l'un sans l'autre. Le changement récent est l'ACL ; et un VLAN supprimé ou un PoE défaillant empêcheraient aussi la sonnerie.",
         ref: "VoIP ch. 05 · CCNA ch. 12"
     },
     {
@@ -2204,7 +2204,7 @@ window.EXAM_BANK = {
     },
     {
         q: "Un projet réseau complet avec téléphonie s'enchaîne dans quel ordre ?",
-        c: ["Adressage → sécurité → VLAN → routage → services (DHCP/DNS) → bordure (NAT/ACL) → téléphonie", "Téléphonie → VLAN → adressage → routage → bordure", "VLAN → routage → adressage → services → sécurité", "Bordure → services → adressage → VLAN → routage"],
+        c: ["Adressage → sécurité → VLAN → routage → services (DHCP/DNS) → bordure (NAT/ACL) → téléphonie", "Téléphonie → VLAN → adressage → sécurité → routage → services → bordure (NAT/ACL)", "VLAN → routage → adressage → services (DHCP/DNS) → sécurité → bordure → téléphonie", "Bordure (NAT/ACL) → services → adressage → VLAN → routage → sécurité → téléphonie"],
         a: 0,
         why: "La séquence de l'exercice final CCNA, avec la voix posée sur un réseau déjà segmenté, routé et priorisé. On ne configure jamais un VLAN avant d'avoir écrit son plan d'adressage.",
         ref: "CCNA ch. 15 · VoIP ch. 09"
@@ -2250,7 +2250,7 @@ window.EXAM_BANK = {
     },
     {
         q: "Segmenter un homelab en VLAN sur Proxmox : que faut-il côté hôte et côté switch ?",
-        c: ["<code>bridge-vlan-aware</code> sur <code>vmbr0</code>, un VLAN Tag par interface, et un port en trunk côté switch", "Un bridge par VLAN, et un port access par bridge côté switch", "Rien côté switch : Proxmox gère le marquage seul", "Un routeur virtuel dédié par VLAN"],
+        c: ["<code>bridge-vlan-aware</code> sur <code>vmbr0</code>, un VLAN Tag par interface, et un port en trunk côté switch", "Un bridge par VLAN, et le port côté switch en access sur le VLAN 1", "Rien côté switch : Proxmox gère seul le marquage des VLAN", "Un routeur virtuel dédié pour chaque VLAN du homelab"],
         a: 0,
         why: "<code>vmbr0</code> est un switch virtuel : on l'active en VLAN-aware, on tague par interface, et le lien physique doit transporter tous les VLAN — donc en trunk, exactement comme entre deux switches Cisco.",
         ref: "Proxmox ch. 06 · CCNA ch. 03"
@@ -2268,14 +2268,14 @@ window.EXAM_BANK = {
     questions: [
     {
         q: "Zabbix parle d'items, de triggers et d'actions ; Azure Monitor de métriques, d'alertes et d'action groups. Qu'est-ce que cette symétrie dit de la supervision ?",
-        c: ["La mécanique est toujours la même : mesurer, évaluer une condition, déclencher une notification ou une action", "Azure Monitor est une réécriture de Zabbix par Microsoft", "Les deux produits ne sont comparables que sur les graphes", "Azure Monitor supervise le cloud, Zabbix ne supervise que Linux"],
+        c: ["Une même mécanique : mesurer, évaluer une condition, déclencher une action", "Azure Monitor est une réécriture de Zabbix par Microsoft", "Les deux produits ne sont comparables que sur les graphes", "Azure Monitor supervise le cloud, Zabbix seulement Linux"],
         a: 0,
         why: "Les produits changent, la chaîne ne change pas : une valeur collectée, une condition évaluée, une notification ou une action déclenchée. Savoir lire cette chaîne dans un outil permet de la retrouver dans l'autre.",
         ref: "Zabbix ch. 02 · ch. 09 · Azure ch. 10"
     },
     {
         q: "Un même réflexe de sécurité traverse <code>AllowKey=system.run[*]</code> côté Zabbix et le RBAC côté Azure. Lequel ?",
-        c: ["Le moindre privilège : n'autoriser que ce qui est nécessaire, au périmètre le plus étroit possible", "Chiffrer systématiquement les communications", "Journaliser toutes les actions administratives", "Séparer les environnements de test et de production"],
+        c: ["Le moindre privilège : n'autoriser que le nécessaire, au plus petit périmètre", "Chiffrer systématiquement les communications de bout en bout", "Journaliser toutes les actions administratives pour l'audit", "Séparer strictement les environnements de test et de production"],
         a: 0,
         why: "<code>[*]</code> autorise toutes les commandes sur tout le parc ; un rôle posé sur une subscription couvre tout ce qu'elle contient. Dans les deux cas on restreint : <code>system.run[net start *]</code>, ou le rôle au bon scope.",
         ref: "Zabbix ch. 09 · Azure ch. 07"
@@ -2289,7 +2289,7 @@ window.EXAM_BANK = {
     },
     {
         q: "Un SLA à 99,9 % et un seuil d'alerte Zabbix mesurent-ils la même chose ?",
-        c: ["Non : le SLA est un engagement contractuel de disponibilité, le seuil est une condition que vous choisissez pour être prévenu", "Oui : les deux expriment la disponibilité d'un service", "Non : le SLA se mesure en minutes, le seuil en pourcentage", "Oui, à condition d'aligner le seuil sur le SLA"],
+        c: ["Non : le SLA est un engagement contractuel, le seuil une condition d'alerte choisie", "Oui : les deux expriment la disponibilité attendue du service", "Non : le SLA se mesure en minutes, le seuil en pourcentage", "Oui, dès que le seuil d'alerte est aligné sur le SLA"],
         a: 0,
         why: "Un SLA n'améliore rien par lui-même — 99,9 % laisse déjà 43 minutes d'indisponibilité par mois, et des services en série multiplient leurs disponibilités. C'est l'architecture, et la supervision qui la surveille, qui font la disponibilité réelle.",
         ref: "Azure ch. 09 · Zabbix ch. 01"
@@ -2303,21 +2303,21 @@ window.EXAM_BANK = {
     },
     {
         q: "En entretien, vous racontez un projet mené en équipe Scrum avec la méthode STARR. Quelle étape du STARR fait le même travail que la Rétrospective ?",
-        c: ["La Réflexion : ce qu'on referait pareil, ce qu'on ferait différemment la prochaine fois", "La Situation : le contexte du projet", "Les Résultats : ce que le sprint a livré", "Les Actions : ce que chacun a fait pendant le sprint"],
+        c: ["La Réflexion : ce qu'on referait pareil ou autrement", "La Situation : le contexte du projet et de l'équipe", "Les Résultats : ce que le sprint a livré au client", "Les Actions : ce que chacun a fait pendant le sprint"],
         a: 0,
         why: "La Rétrospective inspecte la façon de travailler et décide d'un changement pour le sprint suivant ; la Réflexion du STARR fait le même travail sur votre propre expérience. Ce qui a été livré relève plutôt des Résultats — l'équivalent de la Sprint Review.",
         ref: "Entretien ch. 02 · Scrum ch. 03"
     },
     {
         q: "On veut qu'un problème détecté par Zabbix devienne un ticket du helpdesk sans saisie manuelle. Quelle fonctionnalité de Redmine, ouverte dans le TP, le rend possible ?",
-        c: ["L'API REST (<em>Enable REST web service</em>), avec une clé API dans l'en-tête <code>X-Redmine-API-Key</code>", "La connexion LDAP à l'Active Directory", "Le module Gantt", "La création de comptes à la volée"],
+        c: ["L'API REST, avec une clé API dans l'en-tête <code>X-Redmine-API-Key</code>", "La connexion LDAP à l'Active Directory du domaine", "Le module Gantt et ses dépendances entre tâches", "La création de comptes à la volée (<em>on-the-fly</em>)"],
         a: 0,
-        why: "L'API permet à un script ou à un autre outil de lire et de créer des tickets. C'est la suite logique de la chaîne mesurer / alerter / agir : l'alerte devient une demande suivie jusqu'à sa résolution.",
+        why: "L'API REST (<em>Enable REST web service</em>) permet à un script ou à un autre outil de lire et de créer des tickets. LDAP, Gantt et création à la volée concernent les comptes et le suivi, pas l'entrée automatique de demandes. C'est la suite logique de la chaîne mesurer / alerter / agir : l'alerte devient une demande suivie jusqu'à sa résolution.",
         ref: "Redmine ch. 02 · Zabbix &amp; Windows ch. 01"
     },
     {
         q: "Les Compose de Zabbix et de Redmine appliquent la même règle aux mots de passe. Laquelle ?",
-        c: ["Ils sortent du Compose dans un <code>.env</code> en 600, que Compose lit tout seul et qui ne va jamais dans Git", "Ils sont écrits en dur dans le Compose, protégé en 600", "Ils sont passés en argument à <code>docker compose up</code>", "Ils sont stockés dans le volume de la base"],
+        c: ["Ils sortent dans un <code>.env</code> en 600, lu par Compose et jamais versionné", "Ils restent en dur dans le Compose, lui-même protégé en 600", "Ils sont passés en argument à <code>docker compose up</code>", "Ils sont stockés dans le volume de la base de données"],
         a: 0,
         why: "Le Compose peut alors être copié, montré ou versionné sans livrer les secrets. <code>docker compose config</code> vérifie le remplacement des <code>${VARIABLE}</code> avant de relancer.",
         ref: "Zabbix &amp; Windows ch. 02 · Redmine ch. 05"
@@ -2363,7 +2363,7 @@ window.EXAM_BANK = {
     },
     {
         q: "Un certificat auto-signé déclenche une alerte sur RDS Web Access, sur Exchange et sur un service du homelab. Quelle est la racine du problème ?",
-        c: ["Le client ne peut remonter la chaîne de confiance jusqu'à une autorité qu'il connaît", "L'algorithme de chiffrement est trop faible", "Le certificat ne couvre pas le bon port", "La clé privée a été générée sur le mauvais serveur"],
+        c: ["Le client ne remonte pas la chaîne jusqu'à une autorité qu'il connaît", "L'algorithme de chiffrement du certificat est trop faible", "Le certificat ne couvre pas le bon port du service", "La clé privée a été générée sur le mauvais serveur"],
         a: 0,
         why: "Un auto-signé dit « c'est moi qui le dis ». La réponse est la même partout : une autorité reconnue signe à sa place — CA d'entreprise publiée dans AD en interne, Let's Encrypt côté homelab.",
         ref: "Exchange ch. 04 · RDS ch. 06 · Homelab ch. 03"

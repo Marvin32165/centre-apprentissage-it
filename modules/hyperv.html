@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -84,6 +84,35 @@
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Créer la machine</strong><p><em>New → Virtual Machine</em>, puis dérouler l'assistant.</p></div></div>
             </div>
 
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Avant de cocher : deux prérequis</p>
+                <p>Hyper-V n'existe que dans les éditions <strong>Pro, Entreprise et Éducation</strong> de Windows (et dans Windows Server) : pas dans Windows Famille. Et la <strong>virtualisation matérielle</strong> (Intel VT-x / AMD-V) doit être activée dans le BIOS/UEFI du poste : le Gestionnaire des tâches l'indique dans <em>Performances → Processeur → Virtualisation</em>.</p>
+            </div>
+
+            <h3>La même chose en PowerShell</h3>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell (admin) — hôte</span></div>
+                <pre class="terminal__code"><span class="c"># Activer Hyper-V (redémarrage demandé ensuite)</span>
+<span class="k">Enable-WindowsOptionalFeature</span> <span class="p">-Online</span> <span class="p">-FeatureName</span> Microsoft-Hyper-V <span class="p">-All</span>
+
+<span class="c"># Créer une VM génération 2 : 8 Go de RAM au démarrage, un disque neuf de 60 Go</span>
+<span class="k">New-VM</span> <span class="p">-Name</span> <span class="s">"SRV-FILE01"</span> <span class="p">-Generation</span> 2 <span class="p">-MemoryStartupBytes</span> 8GB <span class="p">-Path</span> <span class="s">"C:\VM"</span> `
+       <span class="p">-NewVHDPath</span> <span class="s">"C:\VM\SRV-FILE01\SRV-FILE01.vhdx"</span> <span class="p">-NewVHDSizeBytes</span> 60GB <span class="p">-SwitchName</span> <span class="s">"Default Switch"</span></pre>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>La VM existe-t-elle, avec la bonne génération ?</p>
+                <div class="terminal">
+                    <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — hôte</span></div>
+                    <pre class="terminal__code"><span class="k">Get-VM</span> <span class="p">-Name</span> SRV-FILE01 | <span class="k">Select-Object</span> Name, State, Generation</pre>
+                </div>
+                <p class="verify__sub">Sortie attendue</p>
+                <pre class="verify__out">Name       State Generation
+----       ----- ----------
+SRV-FILE01   Off          2</pre>
+                <p class="verify__fail"><code>Get-VM</code> inconnu : le module PowerShell Hyper-V n'est pas installé (fonctionnalité pas activée, ou poste pas redémarré). <code>Generation 1</code> : la VM est à recréer, la génération ne se change pas.</p>
+            </div>
+
             <div class="tip">
                 <p class="tip__label">Lancer une console en administrateur</p>
                 <p>Depuis <kbd>Win</kbd> + <kbd>R</kbd>, valider avec <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>Entrée</kbd> au lieu de <kbd>Entrée</kbd> : le programme démarre directement en tant qu'administrateur.</p>
@@ -129,9 +158,32 @@
                         <tr><td><strong>Microprogramme</strong></td><td>C'est l'ordre de démarrage (<em>boot order</em>)</td><td>Pour booter sur l'ISO, puis sur le disque</td></tr>
                         <tr><td><strong>Sécurité</strong></td><td>Pour une VM Linux : garder le démarrage sécurisé mais choisir le modèle <strong>Microsoft UEFI Certificate Authority</strong> (le désactiver seulement si la distribution n'est pas signée)</td><td>Le modèle par défaut (« Microsoft Windows ») rejette les chargeurs Linux ; Debian et Ubuntu sont signés pour l'autre modèle</td></tr>
                         <tr><td><strong>Mémoire</strong></td><td>Ne pas activer la mémoire dynamique</td><td>Évite les à-coups sur un serveur</td></tr>
-                        <tr><td><strong>Processeurs</strong></td><td>Passer de 12 (valeur native) à <strong>2</strong></td><td>Laisse des cœurs à l'hôte et aux autres VM</td></tr>
+                        <tr><td><strong>Processeurs</strong></td><td>L'assistant crée la VM avec <strong>1</strong> processeur virtuel : passer à <strong>2</strong> (le maximum proposé = le nombre de processeurs logiques de l'hôte)</td><td>Un serveur à 1 vCPU rame ; trop de vCPU prive l'hôte et les autres VM</td></tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — les mêmes réglages, VM éteinte</span></div>
+                <pre class="terminal__code"><span class="k">Set-VMMemory</span> <span class="p">-VMName</span> SRV-FILE01 <span class="p">-DynamicMemoryEnabled</span> <span class="s">$false</span> <span class="p">-StartupBytes</span> 8GB
+<span class="k">Set-VMProcessor</span> <span class="p">-VMName</span> SRV-FILE01 <span class="p">-Count</span> 2
+<span class="c"># VM Linux : démarrage sécurisé gardé, modèle « Microsoft UEFI Certificate Authority »</span>
+<span class="k">Set-VMFirmware</span> <span class="p">-VMName</span> SRV-ZBX01 <span class="p">-EnableSecureBoot</span> On <span class="p">-SecureBootTemplate</span> MicrosoftUEFICertificateAuthority</pre>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Génération <strong>2</strong> (définitive), mémoire <strong>fixe</strong>, <strong>2 vCPU</strong>, ordre de démarrage dans <em>Microprogramme</em>. Pour un invité Linux : le modèle de démarrage sécurisé <strong>Microsoft UEFI Certificate Authority</strong>.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu crées une VM génération 2 pour installer Debian depuis l'ISO officielle. Au démarrage, l'écran du microprogramme refuse de booter sur le DVD et signale que l'image n'est pas autorisée par le démarrage sécurisé. Que fais-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Dans Sécurité, je choisis le modèle Microsoft UEFI Certificate Authority</button>
+                        <button class="scenario__opt" data-why="La génération ne se change pas après coup, et une génération 1 n&#x27;est pas nécessaire : Debian démarre très bien en UEFI une fois le bon modèle choisi.">Je repasse la VM en génération 1, plus compatible</button>
+                        <button class="scenario__opt" data-why="L&#x27;ISO Debian n&#x27;est pas en cause : son chargeur est signé, mais pour l&#x27;autorité « UEFI CA », pas pour le modèle « Microsoft Windows » choisi par défaut.">Je retélécharge l&#x27;ISO, elle doit être corrompue</button>
+                    </div>
+                    <div class="scenario__why"><p>Le modèle par défaut (<em>Microsoft Windows</em>) n'accepte que les chargeurs Windows. Debian et Ubuntu sont signés via le <strong>shim</strong> par l'autorité <em>Microsoft UEFI Certificate Authority</em> : on choisit ce modèle et on garde le démarrage sécurisé actif. Le désactiver ne sert que pour une distribution non signée.</p></div>
+                </div>
             </div>
         </section>
 
@@ -149,7 +201,7 @@
 
             <div class="tip">
                 <p class="tip__label">Aucun disque proposé à l'installation ?</p>
-                <p>Sur un serveur <em>physique</em>, cela signifie que Windows n'a pas le pilote du contrôleur de stockage : il faut le charger depuis l'assistant. En VM Hyper-V, le disque est toujours reconnu.</p>
+                <p>Sur un serveur <em>physique</em>, cela signifie que Windows n'a pas le pilote du contrôleur de stockage : il faut le charger depuis l'assistant. En VM Hyper-V avec un Windows Server récent, le pilote du contrôleur virtuel est intégré : le disque apparaît d'office. S'il manque, c'est plutôt que la VM n'a pas de disque attaché.</p>
             </div>
 
             <h3>Deux commandes de confort</h3>
@@ -170,7 +222,7 @@
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Sortir du DHCP</strong><p>Un serveur ne reste jamais en adressage automatique : son adresse doit être prévisible.</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Fuseau horaire</strong><p>Depuis <em>Local Server</em> dans le Gestionnaire de serveur.</p></div></div>
-                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>IE Enhanced Security Configuration → OFF</strong><p>Sans quoi le navigateur bloque à peu près tout, y compris les consoles web d'administration.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>IE Enhanced Security Configuration → OFF (jusqu'à 2022)</strong><p>Sur Windows Server 2022 et avant, sans quoi le navigateur bloque à peu près tout. Windows Server 2025 n'embarque plus Internet Explorer : la ligne n'apparaît plus dans <em>Local Server</em>, on navigue avec Edge.</p></div></div>
                 <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Configurer la carte réseau</strong><p>Via le lien à droite d'<em>Ethernet</em>, ou <kbd>Win</kbd>+<kbd>R</kbd> → <code>ncpa.cpl</code>. Dans les propriétés : décocher IPv6, puis IPv4 en <code>192.168.1.1</code> / <code>255.255.255.0</code>.</p></div></div>
                 <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Autoriser le Bureau à distance</strong><p><em>Allow remote connections to this computer</em> — port RDP <strong>3389</strong>.</p></div></div>
                 <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Windows Update</strong><p>Le passer en <em>download updates only</em> pour éviter un redémarrage en plein TP.</p></div></div>
@@ -206,13 +258,25 @@
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Cocher « Generalize »</strong><p>Et choisir <em>Shutdown</em> dans les options d'arrêt.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Ne pas rallumer la VM</strong><p>Un seul démarrage suffirait à réattribuer un SID et à ruiner l'image.</p></div></div>
                 <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Supprimer la VM dans Hyper-V Manager</strong><p>Le disque virtuel reste sur le disque de l'hôte. <strong>Avant</strong> le Sysprep, la VM ne doit avoir aucun point de contrôle : sinon l'état généralisé est dans un fichier <code>.avhdx</code> à côté, et le <code>.vhdx</code> qu'on récupère n'est pas l'image finale. Supprimer les points de contrôle les fusionne dans le disque principal.</p></div></div>
-                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Isoler le disque</strong><p>Aller dans <code>C:\VM\WS01\Virtual Hard Disks</code>, renommer <code>WS01.vhdx</code> en <code>sysprep.vhdx</code>, puis le copier dans un dossier parent dédié, par exemple <code>C:\PARENT\</code>.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Isoler le disque</strong><p>Aller dans <code>C:\VM\WS01\Virtual Hard Disks</code>, renommer <code>WS01.vhdx</code> en <code>TEST-SYSPREP.vhdx</code>, puis le copier dans un dossier parent dédié, par exemple <code>C:\PARENT\</code>.</p></div></div>
                 <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Nettoyer</strong><p>Supprimer <code>C:\VM\WS01</code>. Il ne reste que l'image, réutilisable indéfiniment.</p></div></div>
             </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Le fichier <code>C:\PARENT\sysprep.vhdx</code> est désormais un <strong>disque parent</strong> en lecture seule de fait : il ne doit plus jamais être démarré ni modifié directement, sinon toutes les VM qui en dépendent deviennent inutilisables.</p>
+                <p>Le fichier <code>C:\PARENT\TEST-SYSPREP.vhdx</code> est désormais un <strong>disque parent</strong> en lecture seule de fait : il ne doit plus jamais être démarré ni modifié directement, sinon toutes les VM qui en dépendent deviennent inutilisables.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sysprep vient d'éteindre la VM de référence. Un collègue la rallume « juste pour vérifier que tout va bien », puis l'éteint. Que vaut encore son disque comme image ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Plus rien : le premier démarrage a consommé la généralisation, il faut relancer Sysprep</button>
+                        <button class="scenario__opt" data-why="L&#x27;arrêt ne « regénéralise » rien : au démarrage, Windows a déjà déroulé sa spécialisation (nouveau SID, nom, OOBE).">Il reste bon, puisque la VM a été éteinte proprement</button>
+                        <button class="scenario__opt" data-why="Le problème n&#x27;est pas la mémoire : c&#x27;est l&#x27;installation elle-même qui a été personnalisée au démarrage.">Il suffit de supprimer son point de contrôle automatique</button>
+                    </div>
+                    <div class="scenario__why"><p>Une image généralisée est faite pour <strong>un seul</strong> premier démarrage : celui de chaque VM qui en dérive. Si on l'a rallumée, on termine l'OOBE, puis on relance <code>sysprep.exe</code> (<em>Generalize</em> + <em>Shutdown</em>) avant d'archiver le disque.</p></div>
+                </div>
             </div>
         </section>
 
@@ -227,7 +291,7 @@
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Ajouter le disque</strong><p>Clic droit sur la machine → <em>Paramètres</em> → <strong>Contrôleur SCSI</strong> → <em>Disque dur</em> → <em>Ajouter</em> → <em>Nouveau</em>.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Type : Différenciation</strong><p>C'est ce choix qui garantit que le sysprep d'origine ne sera jamais modifié.</p></div></div>
                 <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Nommer et placer le disque enfant</strong><p>Nom <code>TEST-WS01-DISK1</code>, emplacement <code>C:\VM\TEST-WS01\</code>.</p></div></div>
-                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Désigner le parent</strong><p><code>C:\PARENT\sysprep.vhdx</code>, puis <em>Appliquer</em>.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Désigner le parent</strong><p><code>C:\PARENT\TEST-SYSPREP.vhdx</code>, puis <em>Appliquer</em>.</p></div></div>
                 <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Corriger l'ordre de démarrage</strong><p>Rubrique <strong>Microprogramme</strong> → booter sur le disque qui vient d'être créé.</p></div></div>
                 <div class="step"><div class="step__num">7</div><div class="step__body"><strong>Répéter pour la deuxième machine</strong><p><code>TEST-WS02</code>, adresse <code>192.168.1.2</code>. Chaque VM finit la personnalisation de Windows à son premier démarrage.</p></div></div>
             </div>
@@ -235,6 +299,31 @@
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Ce que le TP a montré</p>
                 <p>Les disques de différenciation sont pratiques mais <strong>les performances ne suivent pas</strong> : chaque lecture peut devoir traverser la chaîne parent/enfant. Pour un labo durable, un disque à <strong>taille dynamique</strong> classique est un meilleur compromis — on garde la différenciation pour du jetable qu'on recrée souvent.</p>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>La VM s'appuie-t-elle bien sur le disque parent ?</p>
+                <div class="terminal">
+                    <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — hôte</span></div>
+                    <pre class="terminal__code"><span class="k">Get-VHD</span> <span class="s">"C:\VM\TEST-WS01\TEST-WS01-DISK1.vhdx"</span> | <span class="k">Select-Object</span> VhdType, ParentPath</pre>
+                </div>
+                <p class="verify__sub">Sortie attendue</p>
+                <pre class="verify__out">VhdType      ParentPath
+-------      ----------
+Differencing C:\PARENT\TEST-SYSPREP.vhdx</pre>
+                <p class="verify__fail"><code>ParentPath</code> introuvable : le disque parent a été déplacé ou renommé, et toutes les VM qui en dépendent refusent de démarrer. On le remet à sa place, ou on reconnecte l'enfant (<em>Edit Disk → Reconnect</em>).</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Pour « mettre à jour l'image », quelqu'un a démarré une VM directement sur <code>C:\PARENT\TEST-SYSPREP.vhdx</code> et y a installé les correctifs. Le lendemain, TEST-WS01 et TEST-WS02 refusent de démarrer. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le parent a changé : les disques enfants, qui ne stockent que des écarts, ne correspondent plus</button>
+                        <button class="scenario__opt" data-why="Les correctifs n&#x27;ont rien à voir avec les licences : c&#x27;est la chaîne parent / enfant qui est rompue.">Les correctifs ont invalidé la licence d&#x27;évaluation des VM</button>
+                        <button class="scenario__opt" data-why="L&#x27;ordre de démarrage n&#x27;a pas bougé : c&#x27;est le contenu du disque parent qui ne correspond plus à ce que les enfants attendent.">L&#x27;ordre de démarrage des deux VM s&#x27;est réinitialisé</button>
+                    </div>
+                    <div class="scenario__why"><p>Un disque de différenciation enregistre des blocs <strong>par rapport à un état précis</strong> du parent. Modifier le parent casse tous ses enfants. Pour mettre l'image à jour, on crée une <strong>nouvelle</strong> image de référence (nouveau parent) et on y rattache les futures VM.</p></div>
+                </div>
             </div>
         </section>
 
@@ -248,8 +337,8 @@
                 <table>
                     <thead><tr><th>Type</th><th>Qui communique</th><th>Usage</th></tr></thead>
                     <tbody>
-                        <tr><td><strong>Externe</strong></td><td>VM ↔ hôte ↔ réseau physique ↔ Internet</td><td>Utilise la carte de l'hôte pour en créer une copie virtuelle. Quand les VM doivent sortir.</td></tr>
-                        <tr><td><strong>Interne</strong></td><td>VM ↔ hôte uniquement</td><td>Carte propre à Hyper-V, permettant à la VM de dialoguer avec la machine hôte, sans accès extérieur.</td></tr>
+                        <tr><td><strong>Externe</strong></td><td>VM ↔ hôte ↔ réseau physique ↔ Internet</td><td>Le commutateur se branche sur la carte physique de l'hôte ; l'hôte garde l'accès par une carte <code>vEthernet</code> (option <em>Autoriser le système d'exploitation de gestion à partager</em>). Quand les VM doivent être sur le réseau réel.</td></tr>
+                        <tr><td><strong>Interne</strong></td><td>VM ↔ VM ↔ hôte</td><td>L'hôte reçoit une carte virtuelle <code>vEthernet (nom)</code> sur ce commutateur : VM et hôte se parlent, sans accès extérieur… sauf si l'hôte fait du NAT (lab Orion).</td></tr>
                         <tr><td><strong>Privé</strong></td><td>VM ↔ VM uniquement</td><td>Le périmètre le plus fermé. Idéal pour un labo de domaine isolé.</td></tr>
                     </tbody>
                 </table>
@@ -264,9 +353,34 @@
                 <p class="tip__label">Le réflexe du labo AD</p>
                 <p>Un domaine de test se monte sur un commutateur <strong>privé</strong> : le DHCP et le DNS du labo ne risquent alors pas de répondre sur le réseau de la maison ou de l'école. Si les VM ont besoin d'Internet ponctuellement (mises à jour), on leur ajoute une <em>seconde</em> carte sur un commutateur externe plutôt que de tout basculer. Autre solution, celle du <a href="../labo.html#reseau">lab Orion</a> : un commutateur <strong>interne</strong> avec du NAT sur l'hôte (<code>New-NetNat</code>) — les VM sortent sur Internet, personne n'entre.</p>
             </div>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell (admin) — le réseau du lab Orion</span></div>
+                <pre class="terminal__code"><span class="k">New-VMSwitch</span> <span class="p">-Name</span> <span class="s">"LABOPS"</span> <span class="p">-SwitchType</span> Internal
+<span class="k">New-NetIPAddress</span> <span class="p">-InterfaceAlias</span> <span class="s">"vEthernet (LABOPS)"</span> <span class="p">-IPAddress</span> 172.16.50.1 <span class="p">-PrefixLength</span> 24   <span class="c"># l'hôte = passerelle</span>
+<span class="k">New-NetNat</span> <span class="p">-Name</span> <span class="s">"LABOPS-NAT"</span> <span class="p">-InternalIPInterfaceAddressPrefix</span> 172.16.50.0/24</pre>
+            </div>
+            <div class="cmdex" data-accept="New-VMSwitch (-Name )?&quot;?LAN1&quot;? -SwitchType &quot;?Private&quot;?;;New-VMSwitch -SwitchType &quot;?Private&quot;? (-Name )?&quot;?LAN1&quot;?" data-hint="New-VMSwitch, avec -Name et -SwitchType.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Crée en PowerShell un commutateur virtuel <strong>privé</strong> nommé <code>LAN1</code>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>New-VMSwitch -Name "LAN1" -SwitchType Private</code>. Pour un commutateur interne : <code>-SwitchType Internal</code> ; pour un externe, on donne la carte physique : <code>-NetAdapterName "Ethernet"</code>.</p></div>
+                </details>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Ton lab AD a son propre DHCP. Les VM doivent télécharger des mises à jour, mais le DHCP du lab ne doit en aucun cas répondre aux PC de la maison. Quel commutateur ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Un commutateur interne, avec du NAT sur l&#x27;hôte</button>
+                        <button class="scenario__opt" data-why="Un externe met les VM sur le réseau de la maison : le DHCP du lab répondrait aux PC de la famille.">Un commutateur externe sur la carte de l&#x27;hôte</button>
+                        <button class="scenario__opt" data-why="Un privé isole bien, mais sans aucune sortie : pas de mises à jour possibles.">Un commutateur privé, sans autre carte</button>
+                    </div>
+                    <div class="scenario__why"><p>Interne + <code>New-NetNat</code> : les VM sortent par l'hôte (traduction d'adresses), mais aucune trame du lab n'atteint le réseau physique — le DHCP reste confiné. C'est le choix du <a href="../labo.html#reseau">lab Orion</a>.</p></div>
+                </div>
+            </div>
         </section>
 
-        <!-- Test de fin de module — rendu par assets/quiz.js -->
         <!-- 08 -->
         <section class="chapter" id="checkpoints">
             <p class="chapter__num">08</p>
@@ -292,32 +406,23 @@
             </div>
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Pas une sauvegarde</p>
-                <p>Un point de contrôle vit <strong>à côté</strong> du disque (fichier <code>.avhdx</code>) et sur le même stockage : si le disque de l'hôte meurt, tout part. Ce n'est pas une sauvegarde. Et sur un contrôleur de domaine, revenir en arrière dans un domaine à plusieurs DC peut désynchroniser l'annuaire : on préfère restaurer une vraie sauvegarde.</p>
-            </div>
-            <div class="verify">
-                <p class="verify__label">Vérifier</p>
-                <p>La VM s'appuie-t-elle bien sur le disque parent ?</p>
-            <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — hôte</span></div>
-                <pre class="terminal__code"><span class="k">Get-VHD</span> <span class="s">"C:\VM\LABOPS\SRV-FILE01\SRV-FILE01-DISK1-DIFF.vhdx"</span> | <span class="k">Select-Object</span> VhdType, ParentPath</pre>
-            </div>
-                <p class="verify__sub">Sortie attendue</p>
-            <pre class="verify__out">VhdType      ParentPath
--------      ----------
-Differencing C:\PARENT\TEST-SYSPREP.vhdx</pre>
-                <p class="verify__fail"><code>ParentPath</code> introuvable : le disque parent a été déplacé ou renommé, et toutes les VM qui en dépendent refusent de démarrer. On le remet à sa place, ou on reconnecte l'enfant (<em>Edit Disk → Reconnect</em>).</p>
-            </div>
-            <div class="cmdex" data-accept="New-VMSwitch (-Name )?&quot;?LAN1&quot;? -SwitchType &quot;?Private&quot;?;;New-VMSwitch -SwitchType &quot;?Private&quot;? (-Name )?&quot;?LAN1&quot;?" data-hint="New-VMSwitch, avec -Name et -SwitchType.">
-                <p class="cmdex__label">À toi de taper</p>
-                <p>Crée en PowerShell un commutateur virtuel <strong>privé</strong> nommé <code>LAN1</code>.</p>
-                <details class="reveal">
-                    <summary>Voir la solution</summary>
-                    <div class="reveal__body"><p><code>New-VMSwitch -Name "LAN1" -SwitchType Private</code>. Pour un commutateur interne : <code>-SwitchType Internal</code> ; pour un externe, on donne la carte physique : <code>-NetAdapterName "Ethernet"</code>.</p></div>
-                </details>
+                <p>Un point de contrôle vit <strong>à côté</strong> du disque (fichier <code>.avhdx</code>) et sur le même stockage : si le disque de l'hôte meurt, tout part. Ce n'est pas une sauvegarde. Sur un contrôleur de domaine, Windows Server détecte le retour en arrière (identifiant de génération de la VM, depuis 2012) et se protège ; Microsoft déconseille malgré tout de s'en servir comme sauvegarde : on restaure une vraie sauvegarde de l'annuaire.</p>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Un point de contrôle avant chaque manipulation risquée du lab, supprimé ensuite pour ne pas allonger la chaîne de disques. <code>Get-VHD</code> pour vérifier qu'un disque enfant retrouve son parent.</p>
+                <p>Un point de contrôle avant chaque manipulation risquée du lab, supprimé ensuite pour ne pas allonger la chaîne de disques. <code>Get-VHD</code> (chapitre 06) pour vérifier qu'un disque enfant retrouve son parent.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">SRV-FILE01 a un point de contrôle de la veille. Le SSD de l'hôte, qui porte tous les fichiers de la VM, tombe en panne. Que peux-tu récupérer grâce au point de contrôle ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Rien : le .avhdx était sur le même disque mort que le .vhdx</button>
+                        <button class="scenario__opt" data-why="Le point de contrôle n&#x27;est pas une copie complète ailleurs : c&#x27;est un fichier d&#x27;écarts posé à côté du disque, sur le même stockage.">L&#x27;état de la veille, puisque le point de contrôle l&#x27;a figé</button>
+                        <button class="scenario__opt" data-why="La mémoire capturée par un point de contrôle standard est stockée avec la VM, donc perdue elle aussi.">Seulement la mémoire de la VM, pas ses disques</button>
+                    </div>
+                    <div class="scenario__why"><p>Un point de contrôle protège d'une <strong>mauvaise manipulation</strong>, pas d'une <strong>panne matérielle</strong> : il dépend du disque parent et vit sur le même stockage. Contre la panne, il faut une sauvegarde sur un autre support (module <a href="dpm.html">DPM</a>).</p></div>
+                </div>
             </div>
         </section>
 
@@ -337,10 +442,10 @@ Differencing C:\PARENT\TEST-SYSPREP.vhdx</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

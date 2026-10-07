@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -99,7 +99,8 @@
             </div>
             <p>La différence tient en une phrase : on passe de l'<strong>investissement fixe</strong> à la <strong>consommation flexible</strong>.</p>
 
-            <h3>Les six bénéfices</h3>
+            <h3>Les bénéfices du cloud</h3>
+            <p>Microsoft Learn les présente par paires : haute disponibilité et scalabilité, fiabilité et prévisibilité, sécurité et gouvernance, puis la gérabilité.</p>
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Bénéfice</th><th>Définition</th></tr></thead>
@@ -110,13 +111,14 @@
                         <tr><td><strong>Fiabilité</strong></td><td>Reprendre après panne : redondance, sauvegarde, reprise</td></tr>
                         <tr><td><strong>Prévisibilité</strong></td><td>Anticiper performances et coûts avec des métriques</td></tr>
                         <tr><td><strong>Sécurité et gouvernance</strong></td><td>Contrôler accès, conformité, politiques et journalisation</td></tr>
+                        <tr><td><strong>Gérabilité</strong> (<em>manageability</em>)</td><td>Gérer <em>le</em> cloud (mise à l'échelle automatique, supervision, modèles de déploiement) et gérer <em>dans</em> le cloud (portail, CLI, API)</td></tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="tip">
                 <p class="tip__label">Le piège du vocabulaire</p>
-                <p><strong>Scalabilité</strong> = <em>je</em> décide d'ajuster. <strong>Élasticité</strong> = <em>ça</em> s'ajuste tout seul. Une boutique en ligne pendant le Black Friday illustre l'élasticité : la capacité monte pendant le pic, puis redescend — on ne paie pas toute l'année pour la charge maximale.</p>
+                <p><strong>Scalabilité</strong> = <em>pouvoir</em> ajuster la capacité, verticalement (une VM plus grosse) ou horizontalement (plus de VM), à la main ou non. <strong>Élasticité</strong> = <em>ça</em> s'ajuste tout seul, à la hausse comme à la baisse, selon la charge. Une boutique en ligne pendant le Black Friday illustre l'élasticité : la capacité monte pendant le pic, puis redescend — on ne paie pas toute l'année pour la charge maximale.</p>
             </div>
 
             <h3>CapEx vs OpEx</h3>
@@ -188,10 +190,12 @@
                     <thead><tr><th>Couche</th><th>On-premise</th><th>IaaS</th><th>PaaS</th><th>SaaS</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Données</strong></td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
-                        <tr><td><strong>Appareils / identités</strong></td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
-                        <tr><td><strong>Applications</strong></td><td>Vous</td><td>Vous</td><td>Vous</td><td>Microsoft</td></tr>
+                        <tr><td><strong>Appareils</strong> (postes, mobiles)</td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
+                        <tr><td><strong>Comptes et identités</strong></td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
+                        <tr><td><strong>Infrastructure d'identité et d'annuaire</strong></td><td>Vous</td><td>Vous</td><td>Partagé</td><td>Partagé</td></tr>
+                        <tr><td><strong>Applications</strong></td><td>Vous</td><td>Vous</td><td>Partagé</td><td>Microsoft</td></tr>
                         <tr><td><strong>Système d'exploitation</strong></td><td>Vous</td><td>Vous</td><td>Microsoft</td><td>Microsoft</td></tr>
-                        <tr><td><strong>Réseau et contrôle d'accès</strong></td><td>Vous</td><td>Vous</td><td>Microsoft</td><td>Microsoft</td></tr>
+                        <tr><td><strong>Contrôles réseau</strong></td><td>Vous</td><td>Vous</td><td>Partagé</td><td>Microsoft</td></tr>
                         <tr><td><strong>Infrastructure physique</strong></td><td>Vous</td><td>Microsoft</td><td>Microsoft</td><td>Microsoft</td></tr>
                     </tbody>
                 </table>
@@ -199,7 +203,20 @@
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Trois choses restent <strong>toujours</strong> à votre charge, quel que soit le modèle : les <strong>données</strong>, les <strong>identités</strong> et les <strong>décisions de configuration</strong>. Une mauvaise permission RBAC est votre responsabilité sur une VM comme sur un service entièrement managé — le cloud ne déplace jamais cette ligne-là.</p>
+                <p>Trois choses restent <strong>toujours</strong> à votre charge, quel que soit le modèle : les <strong>données</strong>, les <strong>appareils</strong> et les <strong>comptes et identités</strong> — et avec eux les décisions de configuration qu'on prend dessus. Une mauvaise permission RBAC est votre responsabilité sur une VM comme sur un service entièrement managé — le cloud ne déplace jamais cette ligne-là.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Une base Azure SQL Database (PaaS) a été piratée : un compte d'administration de la base avait un mot de passe faible, sans MFA. Qui en porte la responsabilité ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le client : les comptes et identités restent à sa charge dans tous les modèles</button>
+                        <button class="scenario__opt" data-why="Microsoft gère l&#x27;OS, le moteur et l&#x27;infrastructure de la base, pas la qualité des mots de passe que le client choisit.">Microsoft, puisque la base est un service managé</button>
+                        <button class="scenario__opt" data-why="Le PaaS partage certaines couches (réseau, applications, annuaire), mais les comptes et les identités restent entièrement côté client.">Partagée à parts égales, comme tout ce qui est en PaaS</button>
+                    </div>
+                    <div class="scenario__why"><p>Dans le modèle de responsabilité partagée, <strong>données, appareils, comptes et identités</strong> sont toujours au client, du on-premise au SaaS. Activer le MFA et choisir les bons comptes était sa part du contrat.</p></div>
+                </div>
             </div>
         </section>
 
@@ -207,16 +224,16 @@
         <section class="chapter" id="architecture">
             <p class="chapter__num">03</p>
             <h2 class="chapter__title">Architecture et hiérarchie Azure</h2>
-            <p class="chapter__intro">Une <strong>région</strong> est une zone géographique contenant un ou plusieurs datacenters. Une <strong>zone de disponibilité</strong> est un datacenter indépendant <em>à l'intérieur</em> d'une région. Confondre les deux est l'erreur la plus fréquente de l'examen.</p>
+            <p class="chapter__intro">Une <strong>région</strong> est une zone géographique contenant un ou plusieurs datacenters. Une <strong>zone de disponibilité</strong> est un groupe d'un ou plusieurs datacenters, avec alimentation, refroidissement et réseau indépendants, <em>à l'intérieur</em> d'une région. Confondre les deux est l'erreur la plus fréquente de l'examen.</p>
 
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">L'échelle géographique</span></div>
                 <pre class="terminal__code">Paire de régions   → résilience entre 2 régions (réplication, reprise)
    └── Région      → emplacement géographique (ex. France Central)
-         └── Zone  → isolation physique À L'INTÉRIEUR de la région (souvent 3)</pre>
+         └── Zone  → isolation physique À L'INTÉRIEUR de la région (au moins 3 dans les régions qui en ont)</pre>
             </div>
 
-            <p>On choisit une région selon quatre critères : la <strong>latence</strong> (rapprocher les ressources des utilisateurs), la <strong>résidence des données</strong> (où elles ont le droit d'être stockées), la <strong>disponibilité du service</strong> — <em>tous les services n'existent pas partout</em> — et le <strong>prix</strong>, qui varie d'une région à l'autre. Les zones, elles, protègent contre une panne <strong>locale</strong> d'alimentation, de réseau ou de refroidissement.</p>
+            <p>On choisit une région selon quatre critères : la <strong>latence</strong> (rapprocher les ressources des utilisateurs), la <strong>résidence des données</strong> (où elles ont le droit d'être stockées), la <strong>disponibilité du service</strong> — <em>tous les services n'existent pas partout</em> — et le <strong>prix</strong>, qui varie d'une région à l'autre. Les zones, elles, protègent contre une panne <strong>locale</strong> d'alimentation, de réseau ou de refroidissement. Toutes les régions n'ont pas de zones, et toutes n'ont pas de <strong>région jumelle</strong> : beaucoup de régions récentes ne sont pas appairées et misent sur leurs zones. Enfin, les <strong>régions souveraines</strong> (Azure Government aux États-Unis, Azure exploité par 21Vianet en Chine) sont isolées de l'Azure public.</p>
 
             <h3>La hiérarchie, et la notion de scope</h3>
             <div class="terminal">
@@ -240,6 +257,19 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>ARM est le <strong>point de passage unique</strong> : peu importe l'outil, les opérations empruntent le même moteur. Attention toutefois — ARM gère <strong>les ressources</strong>, pas votre application : il crée la VM, il ne sait rien de ce qui tourne dedans.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Une application doit survivre à l'incendie d'un datacenter, sans quitter la région France Central pour des raisons de résidence des données. Que choisis-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Déployer sur plusieurs zones de disponibilité de France Central</button>
+                        <button class="scenario__opt" data-why="Une autre région protège contre la perte de toute la région, mais l&#x27;énoncé interdit de sortir de France Central.">Déployer dans une région jumelle, hors de France Central</button>
+                        <button class="scenario__opt" data-why="Un resource group est un conteneur logique : il ne dit rien de l&#x27;emplacement physique des ressources.">Placer toutes les VM dans un même resource group</button>
+                    </div>
+                    <div class="scenario__why"><p>Les <strong>zones</strong> sont des datacenters séparés <strong>dans</strong> la région : elles couvrent la panne d'un site sans changer de région. La région jumelle répond à une autre question — la perte de la région entière.</p></div>
+                </div>
             </div>
         </section>
 
@@ -274,7 +304,7 @@ Besoin de conteneurs ?
             <h3>Ce que l'examen attend sur chacun</h3>
             <ul>
                 <li><strong>VM</strong> : la <em>taille</em> détermine CPU, RAM, disque temporaire et réseau ; les <em>images</em> sont le point de départ ; les <em>availability sets / zones</em> réduisent le risque de panne simultanée ; les <em>scale sets</em> gèrent un groupe de VM identiques avec mise à l'échelle.</li>
-                <li><strong>Functions</strong> : un <em>trigger</em> (HTTP, timer, file d'attente, événement), une facturation liée au nombre d'exécutions et à leur durée. Une fonction peut en déclencher une autre. Mauvais choix pour un processus long nécessitant le contrôle du serveur.</li>
+                <li><strong>Functions</strong> : un <em>trigger</em> (HTTP, timer, file d'attente, événement), en plan <em>Consommation</em>, une facturation liée au nombre d'exécutions et aux ressources consommées pendant leur durée. Une fonction peut en déclencher une autre. Mauvais choix pour un processus long nécessitant le contrôle du serveur.</li>
                 <li><strong>ACI vs AKS</strong> : ACI lance rapidement un conteneur avec peu d'orchestration ; AKS est du Kubernetes managé pour les microservices — plus puissant, mais il faut connaître Kubernetes.</li>
                 <li><strong>Azure Virtual Desktop</strong> : l'équivalent Azure des services <a href="rds.html">RDS</a> — bureaux et applications distants, pour le télétravail et les prestataires. En pratique : cher et pas simple à mettre en place.</li>
             </ul>
@@ -282,6 +312,19 @@ Besoin de conteneurs ?
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>La règle de l'examen : associer le scénario au <strong>service le plus simple qui répond au besoin</strong>. Une vieille application Windows difficile à modifier ira sur une <strong>VM</strong> ; une API web moderne sur <strong>App Service</strong> ; un traitement déclenché par l'upload d'un fichier sur <strong>Functions</strong>. Choisir plus complexe que nécessaire est compté faux.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Chaque fois qu'une facture PDF est déposée dans un conteneur Blob, il faut en extraire le montant et l'écrire en base. Le traitement dure deux secondes. Quel service compute ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Azure Functions, déclenché par l'arrivée du blob</button>
+                        <button class="scenario__opt" data-why="Elle tournerait et serait facturée 24 h/24 pour quelques secondes de travail, avec un OS à maintenir.">Une machine virtuelle qui surveille le conteneur en permanence</button>
+                        <button class="scenario__opt" data-why="Kubernetes est un orchestrateur pour des applications à plusieurs services ; c&#x27;est démesuré pour un traitement court et ponctuel.">Un cluster AKS avec un microservice dédié</button>
+                    </div>
+                    <div class="scenario__why"><p>Un traitement <strong>court</strong>, <strong>déclenché par un événement</strong> (trigger Blob) et sans besoin de l'OS : c'est le cas d'école du <em>serverless</em>. En plan Consommation, on ne paie que les exécutions.</p></div>
+                </div>
             </div>
         </section>
 
@@ -350,6 +393,19 @@ Base de données</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p><strong>VNet = isolation et connectivité · subnet = découpage · NSG = filtrage.</strong> Et la ligne de partage à mémoriser pour l'examen : couche 4 pour le Load Balancer, couche 7 pour l'Application Gateway.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un site doit envoyer <code>/api/*</code> vers un groupe de serveurs et <code>/images/*</code> vers un autre, et bloquer les injections SQL. Quel service ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Application Gateway avec WAF</button>
+                        <button class="scenario__opt" data-why="Il travaille en couche 4 (adresse IP, port) : il ne lit pas l&#x27;URL et ne peut donc pas router par chemin.">Azure Load Balancer</button>
+                        <button class="scenario__opt" data-why="Un NSG filtre par adresse, port et protocole ; il ne voit ni l&#x27;URL ni le contenu d&#x27;une requête HTTP.">Un NSG sur le subnet des serveurs</button>
+                    </div>
+                    <div class="scenario__why"><p>Router selon le <strong>chemin de l'URL</strong> et inspecter le contenu HTTP, c'est de la <strong>couche 7</strong> : Application Gateway, et son <strong>WAF</strong> pour les attaques web.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 06 -->
@@ -371,21 +427,21 @@ Base de données</pre>
             </div>
 
             <h3>Tiers et redondance</h3>
-            <p>Les <strong>tiers Blob</strong> optimisent le coût selon la fréquence d'accès : <strong>Hot</strong> (consulté souvent : stockage cher, accès bon marché), <strong>Cool</strong> (l'inverse), <strong>Archive</strong> (le moins cher, mais restauration lente). Utiles pour les logs, les sauvegardes et la conformité.</p>
+            <p>Les <strong>tiers Blob</strong> optimisent le coût selon la fréquence d'accès : <strong>Hot</strong> (consulté souvent : stockage cher, accès bon marché), <strong>Cool</strong> (consulté rarement, conservé au moins 30 jours), <strong>Cold</strong> (encore plus rarement, au moins 90 jours) et <strong>Archive</strong> (le moins cher, hors ligne : il faut « réhydrater » le blob, ce qui peut prendre des heures). Hot, Cool et Cold sont en ligne ; seul Archive ne se lit pas directement. Utiles pour les logs, les sauvegardes et la conformité.</p>
 
             <div class="table-wrap">
                 <table>
                     <thead><tr><th>Sigle</th><th>Signification</th><th>Protection</th></tr></thead>
                     <tbody>
-                        <tr><td><strong>LRS</strong></td><td>Locally Redundant Storage</td><td>Copies dans un seul datacenter</td></tr>
+                        <tr><td><strong>LRS</strong></td><td>Locally Redundant Storage</td><td>Trois copies synchrones dans un seul datacenter</td></tr>
                         <tr><td><strong>ZRS</strong></td><td>Zone-Redundant Storage</td><td>Copies synchrones entre plusieurs zones d'une région</td></tr>
-                        <tr><td><strong>GRS</strong></td><td>Geo-Redundant Storage</td><td>Réplication vers une région secondaire</td></tr>
+                        <tr><td><strong>GRS</strong></td><td>Geo-Redundant Storage</td><td>LRS dans la région primaire + copie asynchrone vers une région secondaire</td></tr>
                         <tr><td><strong>GZRS</strong></td><td>Geo-Zone-Redundant Storage</td><td>Zones + région secondaire</td></tr>
-                        <tr><td><strong>RA-GRS</strong></td><td>Read-Access GRS</td><td>GRS + lecture possible depuis la région secondaire</td></tr>
+                        <tr><td><strong>RA-GRS</strong> / <strong>RA-GZRS</strong></td><td>Read-Access GRS / GZRS</td><td>Idem, + lecture possible depuis la région secondaire sans attendre un basculement</td></tr>
                     </tbody>
                 </table>
             </div>
-            <p>De LRS à RA-GRS, <strong>protection et coût croissent ensemble</strong>. Côté disques : les <strong>disques managés</strong> (Standard HDD/SSD, Premium SSD, Ultra) servent les VM, et les <strong>snapshots</strong> capturent un état ponctuel.</p>
+            <p>De LRS à RA-GZRS, <strong>protection et coût croissent ensemble</strong> : ZRS protège d'une panne de zone, GRS d'une panne de région, GZRS des deux. Côté disques : les <strong>disques managés</strong> (Standard HDD/SSD, Premium SSD, Ultra) servent les VM, et les <strong>snapshots</strong> capturent un état ponctuel.</p>
 
             <h3>Bases de données et transfert</h3>
             <ul>
@@ -398,13 +454,26 @@ Base de données</pre>
                 <p class="takeaway__label">À retenir</p>
                 <p>Le choix se fait sur le <strong>modèle de données</strong>, pas sur la mode : tables, lignes et transactions fortes → relationnel (<strong>Azure SQL</strong>) ; documents, schéma souple et distribution mondiale → <strong>Cosmos DB</strong>. Et pour le stockage brut : objet → Blob, partage → Files, message → Queue.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Des sauvegardes doivent être gardées 7 ans pour la conformité. On ne les relira probablement jamais, et un délai de quelques heures est acceptable le jour où il le faudra. Quel tier Blob ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Archive</button>
+                        <button class="scenario__opt" data-why="Hot rend l&#x27;accès bon marché mais le stockage cher : c&#x27;est le pire choix pour des données qu&#x27;on ne lit pas.">Hot</button>
+                        <button class="scenario__opt" data-why="Cool reste en ligne et coûte plus cher à stocker qu&#x27;Archive ; on paie une disponibilité immédiate dont l&#x27;énoncé n&#x27;a pas besoin.">Cool</button>
+                    </div>
+                    <div class="scenario__why"><p>Données <strong>presque jamais lues</strong> et <strong>délai de restauration accepté</strong> : c'est exactement Archive, le moins cher au stockage. Le prix à payer est la réhydratation, lente et facturée, le jour où on en a besoin.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 07 -->
         <section class="chapter" id="identite">
             <p class="chapter__num">07</p>
             <h2 class="chapter__title">Identité, accès et sécurité</h2>
-            <p class="chapter__intro">Dans Azure, <strong>l'identité est le nouveau périmètre de sécurité</strong>. Deux questions distinctes, deux mécanismes : <em>qui se connecte ?</em> relève de <strong>Entra ID</strong>, <em>que peut faire cette identité ?</em> relève du <strong>RBAC</strong>.</p>
+            <p class="chapter__intro">Dans Azure, <strong>l'identité est le nouveau périmètre de sécurité</strong> — c'est l'idée du modèle <strong>Zero Trust</strong> (« ne jamais faire confiance, toujours vérifier »), qui complète la <strong>défense en profondeur</strong> (plusieurs couches de protection successives). Deux questions distinctes, deux mécanismes : <em>qui se connecte ?</em> relève de <strong>Entra ID</strong>, <em>que peut faire cette identité ?</em> relève du <strong>RBAC</strong>.</p>
 
             <div class="table-wrap">
                 <table>
@@ -433,8 +502,9 @@ Scope    : management group, subscription, resource group, ressource</pre>
                     <thead><tr><th>Service</th><th>Ce qu'il fait</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Managed identity</strong></td><td>Identité attribuée à une ressource Azure ; Azure gère les identifiants — plus de secret dans le code</td></tr>
+                        <tr><td><strong>Accès conditionnel</strong></td><td>Règles Entra ID « si… alors » : exiger le MFA hors du réseau de l'entreprise, bloquer un pays, n'autoriser que les appareils conformes</td></tr>
                         <tr><td><strong>Key Vault</strong></td><td>Centralise <strong>secrets</strong>, <strong>clés</strong> et <strong>certificats</strong></td></tr>
-                        <tr><td><strong>Defender for Cloud</strong></td><td>Posture de sécurité : <em>Secure Score</em>, recommandations, protection des workloads</td></tr>
+                        <tr><td><strong>Microsoft Defender for Cloud</strong></td><td>Posture de sécurité : <em>Secure Score</em>, recommandations, protection des workloads, y compris hors d'Azure</td></tr>
                         <tr><td><strong>NSG / Firewall / WAF</strong></td><td>Filtrage réseau simple / contrôle centralisé managé / protection des applications web</td></tr>
                     </tbody>
                 </table>
@@ -448,6 +518,19 @@ Scope    : management group, subscription, resource group, ressource</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p><strong>Least privilege</strong> : accorder le minimum nécessaire, au bon <strong>scope</strong>, et de préférence à un <strong>groupe</strong> plutôt qu'à une personne isolée. C'est exactement le principe des droits par groupe de <a href="windows-server.html">Windows Server</a> — le vocabulaire change, le réflexe est le même.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">La direction veut que le MFA soit exigé uniquement quand un employé se connecte depuis l'extérieur des bureaux. Quel outil ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>L'accès conditionnel d'Entra ID</button>
+                        <button class="scenario__opt" data-why="Policy contrôle les propriétés des ressources Azure (région, taille, tags), pas la façon dont un utilisateur s&#x27;authentifie.">Azure Policy</button>
+                        <button class="scenario__opt" data-why="RBAC dit ce qu&#x27;une identité peut faire une fois connectée ; il n&#x27;ajoute aucun facteur d&#x27;authentification selon le lieu.">Un rôle RBAC plus restreint</button>
+                    </div>
+                    <div class="scenario__why"><p>Une condition (le lieu, l'appareil, le risque) qui déclenche une exigence à la connexion (MFA, blocage) : c'est la définition de l'<strong>accès conditionnel</strong>. C'est de l'<em>authentification</em>, donc Entra ID — pas de l'autorisation.</p></div>
+                </div>
             </div>
         </section>
 
@@ -469,20 +552,33 @@ Scope    : management group, subscription, resource group, ressource</pre>
                 </table>
             </div>
 
-            <p><strong>Azure Policy</strong> vérifie et impose des règles sur les ressources : interdire une région, exiger un tag, limiter les tailles de VM. En mode <em>Audit</em> elle observe, en mode <em>Deny</em> elle bloque ; plusieurs policies se regroupent en <strong>initiatives</strong>.</p>
+            <p><strong>Azure Policy</strong> vérifie et impose des règles sur les ressources : interdire une région, exiger un tag, limiter les tailles de VM. Chaque définition a un <strong>effet</strong> : <em>Audit</em> signale la ressource non conforme, <em>Deny</em> bloque sa création ; d'autres effets peuvent corriger ou compléter (<em>Modify</em>, <em>DeployIfNotExists</em>). Plusieurs policies se regroupent en <strong>initiatives</strong>.</p>
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">La confusion classique de l'examen</p>
                 <p><strong>RBAC contrôle les actions des identités ; Policy contrôle les propriétés des ressources.</strong> Un utilisateur <em>Contributor</em> a bien le <strong>droit</strong> de créer une VM — et une policy peut néanmoins <strong>bloquer</strong> la création si la région choisie n'est pas approuvée. Les deux ne se remplacent pas, ils se superposent.</p>
             </div>
 
-            <p>Les <strong>locks</strong> empêchent l'accident : <em>CanNotDelete</em> (lecture et modification possibles, suppression bloquée) et <em>ReadOnly</em> (modification bloquée). Les <strong>tags</strong> portent les métadonnées : coût, propriétaire, environnement, criticité — ce sont eux qui permettent ensuite de lire une facture par projet.</p>
+            <p>Les <strong>locks</strong> empêchent l'accident : <em>CanNotDelete</em> (lecture et modification possibles, suppression bloquée) et <em>ReadOnly</em> (modification <strong>et</strong> suppression bloquées) — un verrou s'applique même à un <em>Owner</em>, qui doit d'abord le retirer. Les <strong>tags</strong> portent les métadonnées : coût, propriétaire, environnement, criticité — ce sont eux qui permettent ensuite de lire une facture par projet.</p>
 
-            <p>Côté conformité : <strong>Microsoft Purview</strong> (gouvernance et protection des données), le <strong>Service Trust Portal</strong> (documentation et rapports de conformité) et <strong>Compliance Manager</strong> (évaluer et améliorer sa posture). La conformité reste une <strong>responsabilité partagée</strong>.</p>
+            <p>Côté conformité : <strong>Microsoft Purview</strong> (gouvernance et protection des données), le <strong>Service Trust Portal</strong> (documentation et rapports de conformité) et <strong>Compliance Manager</strong>, intégré à Purview (évaluer et améliorer sa posture). La conformité reste une <strong>responsabilité partagée</strong>.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>L'ordre de mise en place est toujours le même : une <strong>structure</strong> (management groups, subscriptions, resource groups), puis des <strong>rôles</strong>, puis des <strong>règles</strong>, puis une <strong>protection contre les erreurs</strong>, puis des <strong>tags</strong> pour piloter. Chaque étage suppose le précédent.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un administrateur a le rôle <em>Owner</em> sur la subscription, mais la création d'une VM en <em>East US</em> est refusée. Seules les régions européennes passent. L'explication la plus probable ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Une Azure Policy à effet <em>Deny</em> limite les régions autorisées</button>
+                        <button class="scenario__opt" data-why="Owner donne tous les droits sur le scope : RBAC ne peut pas être la cause, et le refus dépend de la région, pas de l&#x27;action.">Son rôle RBAC ne lui permet pas de créer des VM</button>
+                        <button class="scenario__opt" data-why="Un verrou ReadOnly bloquerait toute création, quelle que soit la région ; ici l&#x27;Europe passe.">Un verrou ReadOnly est posé sur la subscription</button>
+                    </div>
+                    <div class="scenario__why"><p>Le refus dépend d'une <strong>propriété de la ressource</strong> (sa région) : c'est la signature d'une <strong>Policy</strong>. RBAC répond « qui peut agir », Policy « qu'est-ce qui est permis » — et une Policy s'applique même à un Owner.</p></div>
+                </div>
             </div>
         </section>
 
@@ -497,8 +593,8 @@ Scope    : management group, subscription, resource group, ressource</pre>
                     <thead><tr><th>Outil</th><th>Rôle</th><th>Quand</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Pricing Calculator</strong></td><td>Estimer un coût</td><td><strong>Avant</strong> déploiement</td></tr>
-                        <tr><td><strong>TCO Calculator</strong></td><td>Comparer local <em>vs</em> Azure</td><td>Avant décision de migration</td></tr>
-                        <tr><td><strong>Cost Management</strong></td><td>Suivre les dépenses réelles, budgets, alertes</td><td><strong>Après</strong> déploiement</td></tr>
+                        <tr><td><strong>TCO</strong> (coût total de possession)</td><td>Comparer local <em>vs</em> Azure — l'ancien <em>TCO Calculator</em> a été retiré ; Microsoft oriente vers le <em>business case</em> d'<strong>Azure Migrate</strong></td><td>Avant décision de migration</td></tr>
+                        <tr><td><strong>Microsoft Cost Management</strong></td><td>Suivre les dépenses réelles, budgets, alertes</td><td><strong>Après</strong> déploiement</td></tr>
                         <tr><td><strong>Azure Advisor</strong></td><td>Recommandations coût, performance, fiabilité, sécurité</td><td>En continu</td></tr>
                     </tbody>
                 </table>
@@ -511,7 +607,7 @@ Scope    : management group, subscription, resource group, ressource</pre>
                 <table>
                     <thead><tr><th>SLA</th><th>Indisponibilité maximale par mois</th></tr></thead>
                     <tbody>
-                        <tr><td><strong>99 %</strong></td><td>≈ 7 h 18 min</td></tr>
+                        <tr><td><strong>99 %</strong></td><td>≈ 7 h 18 min (sur un mois moyen de 730 h)</td></tr>
                         <tr><td><strong>99,9 %</strong></td><td>≈ 43 min</td></tr>
                         <tr><td><strong>99,95 %</strong></td><td>≈ 22 min</td></tr>
                         <tr><td><strong>99,99 %</strong></td><td>≈ 4 min</td></tr>
@@ -531,11 +627,24 @@ Scope    : management group, subscription, resource group, ressource</pre>
                 </details>
             </div>
 
-            <p>Enfin, tous les services n'ont pas la même maturité : une fonctionnalité en <strong>Preview</strong> n'est pas toujours couverte comme en <strong>GA</strong> (<em>General Availability</em>). Les <strong>plans de support</strong> se choisissent selon les besoins, et la <strong>status page</strong> renseigne sur l'état des services en cas d'incident.</p>
+            <p>Enfin, tous les services n'ont pas la même maturité : une fonctionnalité en <strong>Preview</strong> n'est en général couverte par <strong>aucun SLA</strong>, contrairement à la <strong>GA</strong> (<em>General Availability</em>) — à éviter en production. Les <strong>plans de support</strong> se choisissent selon les besoins, et la page publique <strong>Azure Status</strong> renseigne sur l'état global des services en cas d'incident (et <strong>Service Health</strong>, chapitre 10, sur ce qui touche <em>vos</em> ressources). Enfin, un SLA non tenu donne droit à des <strong>crédits de service</strong> sur la facture, pas à un dédommagement du préjudice.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p><strong>Avant de déployer : estimer. Après : surveiller.</strong> Deux ressources portant le même nom peuvent coûter très différemment selon leur <strong>SKU</strong> — c'est le niveau, l'édition et la taille qui font le prix, pas le nom du service.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le projet est déployé depuis trois mois. Le directeur financier veut être prévenu dès que la dépense du mois dépasse 80 % du budget prévu. Quel outil ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Microsoft Cost Management, avec un budget et une alerte</button>
+                        <button class="scenario__opt" data-why="Elle estime un coût avant déploiement ; elle ne voit pas les dépenses réelles et n&#x27;envoie aucune alerte.">La Pricing Calculator</button>
+                        <button class="scenario__opt" data-why="Advisor recommande des économies (VM sous-utilisées…), mais ne suit pas un budget et ne prévient pas d&#x27;un seuil.">Azure Advisor</button>
+                    </div>
+                    <div class="scenario__why"><p><strong>Avant</strong> : estimer (Pricing Calculator). <strong>Après</strong> : suivre le réel, poser des <strong>budgets</strong> et des <strong>alertes</strong> — c'est Cost Management.</p></div>
+                </div>
             </div>
         </section>
 
@@ -615,7 +724,7 @@ Scope    : management group, subscription, resource group, ressource</pre>
                         <tr><td>RBAC <em>vs</em> Policy</td><td>Qui a le droit ? <em>vs</em> qu'est-ce qui est autorisé ?</td></tr>
                         <tr><td>Load Balancer <em>vs</em> Application Gateway</td><td>Couche 4 <em>vs</em> HTTP/HTTPS couche 7</td></tr>
                         <tr><td>IaaS <em>vs</em> PaaS</td><td>Contrôle de l'OS <em>vs</em> plateforme managée</td></tr>
-                        <tr><td>Pricing Calculator <em>vs</em> TCO</td><td>Estimer Azure <em>vs</em> comparer local / cloud</td></tr>
+                        <tr><td>Pricing Calculator <em>vs</em> TCO</td><td>Estimer Azure <em>vs</em> comparer local / cloud (aujourd'hui avec Azure Migrate)</td></tr>
                         <tr><td>Scalabilité <em>vs</em> élasticité</td><td>Je décide <em>vs</em> ça s'ajuste tout seul</td></tr>
                         <tr><td>Région <em>vs</em> zone</td><td>Géographie <em>vs</em> isolement dans la région</td></tr>
                     </tbody>
@@ -719,10 +828,10 @@ Scope    : management group, subscription, resource group, ressource</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du cours Azure Fundamentals</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

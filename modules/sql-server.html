@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -137,6 +137,8 @@
                 </table>
             </div>
 
+            <p class="note">Il existe une cinquième base système, cachée : <strong>Resource</strong> (<code>mssqlsystemresource</code>), en lecture seule, qui contient le code des objets système. Elle n'apparaît pas dans SSMS et ne se sauvegarde pas avec <code>BACKUP</code> : elle est remplacée à chaque mise à jour de l'instance.</p>
+
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">La requête à connaître par cœur</span></div>
                 <pre class="terminal__code"><span class="c">-- les bases, leur etat et leur modele de recuperation</span>
@@ -188,7 +190,7 @@
                     <thead><tr><th>Édition</th><th>Ce qu'elle vaut</th><th>Cadre d'usage</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Developer</strong></td><td>Gratuite, avec <strong>toutes</strong> les fonctionnalités de l'Enterprise</td><td>Développement, tests, formation. <strong>Interdite en production.</strong></td></tr>
-                        <tr><td>Express</td><td>Gratuite mais bridée (taille de base, RAM, CPU)</td><td>Petites applications, production légère</td></tr>
+                        <tr><td>Express</td><td>Gratuite mais bridée : 10 Go par base en 2022 (50 Go en 2025), 4 cœurs, environ 1,4 Go de cache de données ; <strong>pas d'Agent</strong></td><td>Petites applications, production légère</td></tr>
                         <tr><td>Standard / Enterprise</td><td>Payantes, sous licence</td><td>Production</td></tr>
                     </tbody>
                 </table>
@@ -198,6 +200,8 @@
                 <p class="takeaway__label">Pourquoi Developer en labo</p>
                 <p>C'est la seule édition gratuite qui expose l'intégralité des fonctionnalités : on apprend sur le même moteur qu'en production, sans licence. La restriction n'est pas technique mais <strong>juridique</strong> — rien n'empêche de la déployer en production, sauf le contrat.</p>
             </div>
+
+            <p class="note">Le module s'appuie sur <strong>SQL Server 2022</strong> (version 16). <strong>SQL Server 2025</strong> (version 17) est disponible depuis novembre 2025 : il dédouble l'édition Developer en <em>Standard Developer</em> et <em>Enterprise Developer</em>, pour tester exactement les fonctionnalités de l'édition qui ira en production. Tout ce qui suit s'applique aux deux versions.</p>
 
             <h3>Ce qui ne se rattrape pas</h3>
             <div class="table-wrap">
@@ -249,6 +253,19 @@
                 <p class="takeaway__label">Le fichier qui rejoue l'installation</p>
                 <p>Le <code>ConfigurationFile.ini</code> écrit par l'assistant contient <strong>l'intégralité des choix faits</strong>. Il permet de rejouer exactement la même installation sur une autre machine — c'est ce qui rend possible la symétrie exigée par un cluster (chapitre 14).</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Une PME veut faire tourner son logiciel de facturation, en production, sur l'édition <strong>Developer</strong> : « elle est gratuite et c'est la plus complète ». Que réponds-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Non : c&#x27;est interdit par la licence, il faut Express, Standard ou Enterprise</button>
+                        <button class="scenario__opt" data-why="Developer n&#x27;a aucune limite technique de taille : la restriction est uniquement contractuelle (développement et tests).">Non : Developer est limitée à 10 Go par base</button>
+                        <button class="scenario__opt" data-why="Techniquement ça marche, mais la licence l&#x27;interdit : un audit de licences le relèverait.">Oui, tant que la base reste sur un serveur interne</button>
+                    </div>
+                    <div class="scenario__why"><p>L'édition Developer a toutes les fonctions de l'Enterprise, mais sa licence la réserve au <strong>développement et aux tests</strong>. Pour une petite production gratuite, c'est <strong>Express</strong> (avec ses limites) ; sinon Standard ou Enterprise sous licence. <code>SELECT SERVERPROPERTY('Edition');</code> dit quelle édition tourne.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 03 -->
@@ -265,7 +282,7 @@
                 </div>
                 <div class="card">
                     <h4>gMSA</h4>
-                    <p>Un compte de domaine dont <strong>Active Directory gère le mot de passe</strong> : 240 caractères, renouvelé automatiquement, jamais connu de personne. On ne le saisit nulle part — le champ mot de passe reste vide.</p>
+                    <p>Un compte de domaine dont <strong>Active Directory gère le mot de passe</strong> : 240 octets aléatoires, renouvelés automatiquement (tous les 30 jours par défaut), jamais connus de personne. On ne le saisit nulle part — le champ mot de passe reste vide.</p>
                 </div>
             </div>
 
@@ -294,6 +311,8 @@
 <span class="k">klist</span> purge <span class="p">-li</span> <span class="s">0x3e7</span>
 <span class="k">gpupdate</span> <span class="p">/force</span> <span class="p">/target:computer</span>
 
+<span class="c"># Les cmdlets *-ADServiceAccount viennent du module ActiveDirectory</span>
+<span class="k">Install-WindowsFeature</span> RSAT-AD-PowerShell
 <span class="k">Install-ADServiceAccount</span> GMSA_SQL
 <span class="k">Test-ADServiceAccount</span> GMSA_SQL   <span class="c"># doit renvoyer True</span></pre>
             </div>
@@ -311,6 +330,19 @@
             <div class="takeaway">
                 <p class="takeaway__label">Vérifier, toujours</p>
                 <p><code>Test-ADServiceAccount</code> doit renvoyer <strong>True</strong>, et la colonne <em>Log On As</em> du Configuration Manager doit afficher le compte sur le moteur <strong>et</strong> sur l'Agent. Le SQL Server Browser, lui, reste sous <code>NT AUTHORITY\LOCALSERVICE</code> : normal, il n'annonce qu'un port.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur SRV-SQL01, <code>Test-ADServiceAccount GMSA_SQL</code> renvoie <strong>False</strong>. Le compte existe bien dans l'AD, et la machine vient d'être ajoutée au groupe <code>GM_GMSA_SQL</code>. Que fais-tu d'abord ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Purger les tickets Kerberos de la machine (<code>klist purge -li 0x3e7</code>) ou la redémarrer</button>
+                        <button class="scenario__opt" data-why="Le compte existe déjà : le recréer ne change rien au fait que la machine ignore encore son appartenance au groupe.">Recréer le gMSA avec <code>New-ADServiceAccount</code></button>
+                        <button class="scenario__opt" data-why="Un gMSA n&#x27;a pas de mot de passe à saisir : c&#x27;est justement l&#x27;intérêt. Le champ reste vide.">Saisir le mot de passe du gMSA dans le Configuration Manager</button>
+                    </div>
+                    <div class="scenario__why"><p>Le ticket Kerberos de la machine date d'avant son ajout au groupe : il ne contient pas encore ce groupe, donc l'AD refuse de lui donner le mot de passe. Purger les tickets du compte système (ou redémarrer) suffit, puis <code>Test-ADServiceAccount</code> doit répondre True.</p></div>
+                </div>
             </div>
         </section>
 
@@ -422,14 +454,14 @@
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Dans cet ordre, jamais un autre</span></div>
                 <pre class="terminal__code"><span class="c"># 0. le nom se resout-il, et vers la bonne IP ?</span>
-<span class="k">Resolve-DnsName</span> SQL
+<span class="k">Resolve-DnsName</span> SRV-SQL01
 
 <span class="c"># 1. le port repond-il ? (reseau + pare-feu, sans SQL)</span>
-<span class="k">Test-NetConnection</span> SQL <span class="p">-Port</span> <span class="s">1433</span>
+<span class="k">Test-NetConnection</span> SRV-SQL01 <span class="p">-Port</span> <span class="s">1433</span>
 
 <span class="c"># 2. la connexion SQL passe-t-elle ?  -E = authentification Windows</span>
-<span class="k">sqlcmd</span> <span class="p">-S</span> <span class="s">SQL,1433</span> <span class="p">-E</span> <span class="p">-Q</span> <span class="s">"SELECT @@VERSION"</span>
-<span class="k">sqlcmd</span> <span class="p">-S</span> <span class="s">SQL\INSPIRATION</span> <span class="p">-E</span> <span class="p">-Q</span> <span class="s">"SELECT @@SERVERNAME"</span></pre>
+<span class="k">sqlcmd</span> <span class="p">-S</span> <span class="s">SRV-SQL01,1433</span> <span class="p">-E</span> <span class="p">-Q</span> <span class="s">"SELECT @@VERSION"</span>
+<span class="k">sqlcmd</span> <span class="p">-S</span> <span class="s">SRV-SQL01\INSPIRATION</span> <span class="p">-E</span> <span class="p">-Q</span> <span class="s">"SELECT @@SERVERNAME"</span></pre>
             </div>
 
             <div class="takeaway">
@@ -444,6 +476,24 @@
                 <p class="tip__label">Le piège 32 / 64 bits</p>
                 <p>Les alias 32 bits et 64 bits sont deux <strong>listes distinctes</strong>. Une application 32 bits ne voit pas les alias 64 bits, et inversement : un alias « qui ne marche pas » a très souvent été créé du mauvais côté. Et comme un alias masque la vraie cible, il se documente au même titre que le port.</p>
             </div>
+
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Instance par défaut : <strong>TCP 1433</strong>. Instance nommée : port dynamique, annoncé par le <strong>Browser sur UDP 1434</strong>. On fixe le port, on ouvre exactement ces ports, et on teste dans l'ordre : nom, port, connexion SQL.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q"><code>sqlcmd -S SRV-SQL01,1433 -E</code> fonctionne depuis un poste client, mais <code>sqlcmd -S SRV-SQL01\INSPIRATION -E</code> échoue (erreur 26). Où regardes-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le service SQL Server Browser et l&#x27;UDP 1434 dans le pare-feu</button>
+                        <button class="scenario__opt" data-why="Le moteur répond déjà sur 1433 avec la même authentification : TCP/IP est forcément activé.">Le protocole TCP/IP de l&#x27;instance</button>
+                        <button class="scenario__opt" data-why="L&#x27;authentification passe dans la première commande : le login est bon, le problème est avant.">Le login Windows de l&#x27;utilisateur dans SQL Server</button>
+                    </div>
+                    <div class="scenario__why"><p>La forme <code>SERVEUR\INSTANCE</code> demande d'abord au <strong>Browser</strong>, sur UDP 1434, le port de l'instance. Si le moteur répond en <code>SERVEUR,PORT</code>, il ne reste que le Browser (arrêté ?) ou la règle UDP 1434. <code>Get-Service SQLBrowser</code> sur le serveur le dit tout de suite.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 06 -->
@@ -453,7 +503,7 @@
             <p class="chapter__intro">Trois réglages qui ne se voient pas tant que tout va bien, et qui expliquent une bonne part des lenteurs quand ça va mal.</p>
 
             <h3><code>max server memory</code></h3>
-            <p>SQL Server aime la RAM, Windows aussi. Par défaut, le moteur est autorisé à prendre presque toute la mémoire de la machine : il met les données en cache et ne les rend pas spontanément. Le système d'exploitation finit par manquer de mémoire, se met à <em>pager</em> sur disque, et <strong>la machine entière ralentit</strong> — SQL Server compris.</p>
+            <p>SQL Server aime la RAM, Windows aussi. Par défaut (<code>2147483647</code> Mo, autant dire sans limite), le moteur est autorisé à prendre presque toute la mémoire de la machine : il met les données en cache et ne les rend pas spontanément. Le système d'exploitation finit par manquer de mémoire, se met à <em>pager</em> sur disque, et <strong>la machine entière ralentit</strong> — SQL Server compris.</p>
 
             <div class="net">
                 <div class="node"><b>RAM totale</b><span class="ip">16 Go</span><span>ce que la machine possède</span></div>
@@ -480,7 +530,7 @@
             <p><em>Maximum Degree Of Parallelism</em> : le nombre maximal de processeurs qu'une <strong>seule</strong> requête peut mobiliser. À <code>0</code>, il n'y a pas de limite — une grosse requête peut occuper tous les cœurs et faire attendre tout le monde. À <code>1</code>, le parallélisme est désactivé. L'assistant d'installation propose désormais une valeur calculée d'après la machine : la laisser est raisonnable tant qu'on n'a pas de raison mesurée d'en changer.</p>
 
             <h3><code>tempdb</code></h3>
-            <p>Recréée à chaque démarrage du service, elle repart à la taille <strong>configurée</strong>, pas à celle qu'elle avait atteinte : un dimensionnement trop petit se paie à chaque redémarrage. Plusieurs fichiers de données répartissent la contention, et un volume dédié lui évite de concurrencer les données et le journal.</p>
+            <p>Recréée à chaque démarrage du service, elle repart à la taille <strong>configurée</strong>, pas à celle qu'elle avait atteinte : un dimensionnement trop petit se paie à chaque redémarrage. Plusieurs fichiers de données répartissent la contention — l'assistant d'installation en propose un par cœur logique, <strong>jusqu'à 8</strong>, tous de même taille — et un volume dédié lui évite de concurrencer les données et le journal.</p>
 
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Les fichiers de tempdb</span></div>
@@ -547,6 +597,12 @@
                 <p>Le modèle n'est qu'une moitié de la décision. Sans <strong>sauvegardes de journal effectivement planifiées</strong>, une base en <code>FULL</code> conserve toutes ses transactions et son <code>.ldf</code> grossit jusqu'à saturer le disque. <code>FULL</code> sans sauvegarde de journal est <em>pire</em> que <code>SIMPLE</code> : on a les inconvénients des deux et les garanties d'aucun.</p>
             </div>
 
+            <div class="cmdex" data-accept="^ALTER DATABASE \[?GESTION\]? SET RECOVERY FULL;?$" data-hint="ALTER DATABASE … SET RECOVERY …">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Passe la base <code>GESTION</code> en modèle de récupération complet.</p>
+                <details class="reveal"><summary>Voir la réponse</summary><div class="reveal__body"><p><code>ALTER DATABASE GESTION SET RECOVERY FULL;</code> — puis, tout de suite, une sauvegarde <strong>complète</strong> : tant qu'il n'y en a pas eu, la chaîne de journaux n'a pas de point de départ et la base se comporte encore comme en <code>SIMPLE</code>. Ensuite seulement, planifier les sauvegardes de journal.</p></div></details>
+            </div>
+
             <h3>Les autres options</h3>
             <ul>
                 <li><strong>Collation</strong> — se fixe à la création. <code>CI</code> = insensible à la casse, <code>AS</code> = sensible aux accents. C'est ce couple qui fait qu'en SQL Server, <code>WHERE nom = 'dupont'</code> ramène aussi <code>DUPONT</code>.</li>
@@ -596,6 +652,19 @@
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Le shrink n'est pas de la maintenance</p>
                 <p>Réduire un fichier dépanne pour récupérer de la place ponctuellement. Mais un shrink provoque des pauses I/O et <strong>fragmente massivement les index</strong> : il impose donc une reconstruction d'index derrière. Un fichier qui regrossit après un shrink signale un <strong>mauvais dimensionnement</strong>, pas un besoin de shrink périodique. À ne jamais automatiser.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">La base <code>STOCK</code> doit pouvoir être restaurée <strong>à la minute près</strong> en cas d'erreur de saisie. Elle est en <code>SIMPLE</code>, avec une sauvegarde complète chaque nuit. Que changes-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Passer en <code>FULL</code> et planifier des sauvegardes de journal</button>
+                        <button class="scenario__opt" data-why="Plus de sauvegardes complètes resserrent les points de retour, mais on ne revient toujours qu&#x27;à l&#x27;heure d&#x27;une sauvegarde, jamais à la minute.">Faire une sauvegarde complète toutes les heures</button>
+                        <button class="scenario__opt" data-why="BULK_LOGGED est fait pour les imports en masse ; et sans sauvegardes de journal planifiées, il ne donne pas plus de restauration à la minute que SIMPLE.">Passer en <code>BULK_LOGGED</code>, plus léger que FULL</button>
+                    </div>
+                    <div class="scenario__why"><p>La restauration à un instant précis (<code>STOPAT</code>) rejoue le <strong>journal</strong> : il faut le modèle <code>FULL</code> <em>et</em> des sauvegardes de journal régulières (leur fréquence = le RPO). En <code>SIMPLE</code>, le journal est tronqué en continu : il n'y a rien à rejouer.</p></div>
+                </div>
             </div>
         </section>
 
@@ -738,8 +807,8 @@
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Restauration parallèle</span></div>
                 <pre class="terminal__code"><span class="k">RESTORE DATABASE</span> GESTION_Recovery
 <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>
-<span class="k">WITH MOVE</span> <span class="s">'GESTION'</span>     <span class="k">TO</span> <span class="s">'D:\data\GESTION_Recovery.mdf'</span>,
-     <span class="k">MOVE</span> <span class="s">'GESTION_log'</span> <span class="k">TO</span> <span class="s">'G:\data\GESTION_Recovery_log.ldf'</span>,
+<span class="k">WITH MOVE</span> <span class="s">'GESTION_Data'</span> <span class="k">TO</span> <span class="s">'D:\INSPIRATION\data\GESTION_Recovery.mdf'</span>,   <span class="c">-- noms logiques : FILELISTONLY</span>
+     <span class="k">MOVE</span> <span class="s">'GESTION_Log'</span>  <span class="k">TO</span> <span class="s">'G:\INSPIRATION\data\GESTION_Recovery_log.ldf'</span>,
      <span class="k">NORECOVERY</span>;
 
 <span class="k">RESTORE LOG</span> GESTION_Recovery
@@ -751,7 +820,7 @@
                 <table>
                     <thead><tr><th>Mot-clé</th><th>Effet</th></tr></thead>
                     <tbody>
-                        <tr><td><code>MOVE</code></td><td>Redirige chaque fichier vers un nouveau chemin — <strong>obligatoire</strong> quand la base d'origine existe encore, sinon on écrase ses fichiers.</td></tr>
+                        <tr><td><code>MOVE</code></td><td>Redirige chaque fichier, désigné par son <strong>nom logique</strong> (celui donné à la création, ici <code>GESTION_Data</code> et <code>GESTION_Log</code>, que <code>RESTORE FILELISTONLY</code> affiche), vers un nouveau chemin — <strong>obligatoire</strong> quand la base d'origine existe encore : sans lui, la restauration échoue sur des fichiers déjà utilisés, ou écrase ceux de la base d'origine si on force avec <code>REPLACE</code>.</td></tr>
                         <tr><td><code>NORECOVERY</code></td><td>Laisse la base en attente d'autres restaurations (état <code>RESTORING</code>). À mettre sur toutes les étapes <strong>sauf la dernière</strong>.</td></tr>
                         <tr><td><code>RECOVERY</code></td><td><strong>Termine</strong> la restauration et rend la base utilisable. Une fois passé, plus aucun journal ne peut être appliqué : c'est irréversible.</td></tr>
                     </tbody>
@@ -769,8 +838,8 @@
 
 <span class="c">-- 2. Full, puis chaque journal dans l'ordre, en NORECOVERY</span>
 <span class="k">RESTORE DATABASE</span> GESTION_Recovery <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>
-<span class="k">WITH MOVE</span> <span class="s">'GESTION'</span> <span class="k">TO</span> <span class="s">'D:\data\GESTION_Recovery.mdf'</span>,
-     <span class="k">MOVE</span> <span class="s">'GESTION_log'</span> <span class="k">TO</span> <span class="s">'G:\data\GESTION_Recovery_log.ldf'</span>, <span class="k">NORECOVERY</span>;
+<span class="k">WITH MOVE</span> <span class="s">'GESTION_Data'</span> <span class="k">TO</span> <span class="s">'D:\INSPIRATION\data\GESTION_Recovery.mdf'</span>,
+     <span class="k">MOVE</span> <span class="s">'GESTION_Log'</span>  <span class="k">TO</span> <span class="s">'G:\INSPIRATION\data\GESTION_Recovery_log.ldf'</span>, <span class="k">NORECOVERY</span>;
 <span class="k">RESTORE LOG</span> GESTION_Recovery <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_LOG.trn'</span> <span class="k">WITH NORECOVERY</span>;
 
 <span class="c">-- 3. Le dernier journal (la fin) rejoue jusqu'a 10:29:50, puis on ouvre la base</span>
@@ -780,6 +849,49 @@
 
             <p><code>STOPAT</code> dit au moteur : rejoue les transactions du journal, mais arrête-toi à cette seconde. Quatre conditions : la base doit être en <code>FULL</code>, la <strong>chaîne de journaux doit être intacte</strong>, un journal doit <strong>couvrir l'instant visé</strong> (d'où la sauvegarde de fin de journal), et l'heure exacte se détermine prudemment — trop tard on rejoue la suppression, trop tôt on perd du travail légitime.</p>
 
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Restaurer GESTION à 10:29:50, juste avant le DELETE</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · constat, 10:35</p>
+                        <p class="walk__head">On arrête les dégâts et on note l'heure</p>
+                        <p>Le DELETE a eu lieu vers 10:30. Avant toute action : noter l'heure la plus précise possible (journal applicatif, utilisateur), et <strong>ne rien restaurer sur la base</strong> en cours d'usage. Vérifier qu'elle est bien en <code>FULL</code> : <code>SELECT recovery_model_desc FROM sys.databases WHERE name = 'GESTION';</code></p>
+                        <p class="walk__change">Sans modèle <b>FULL</b>, pas de retour à la seconde : on s'arrête à la dernière sauvegarde.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · base GESTION</p>
+                        <p class="walk__head">Sauvegarder la fin du journal</p>
+                        <p>La dernière sauvegarde de journal date de 10:20. Ce qui s'est passé depuis, DELETE compris, n'est que dans le <code>.ldf</code> : <code>BACKUP LOG … 'GESTION_TAIL.trn'</code> le capture.</p>
+                        <p class="walk__change">Le <b>tail-log</b> est le seul fichier qui couvre 10:20 → 10:35.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · msdb et fichiers</p>
+                        <p class="walk__head">Retrouver la chaîne</p>
+                        <p><code>msdb.dbo.backupset</code> liste les sauvegardes dans l'ordre ; <code>RESTORE HEADERONLY</code> confirme ce que contient chaque fichier, <code>RESTORE FILELISTONLY</code> donne les noms logiques pour le <code>MOVE</code>. Ici : FULL de 10:00, LOG de 10:20, TAIL de 10:35.</p>
+                        <p class="walk__change">Chaîne = <b>une full + tous les journaux suivants</b>, sans trou.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · nouvelle base GESTION_Recovery</p>
+                        <p class="walk__head">Restaurer la full, à côté, en NORECOVERY</p>
+                        <p><code>RESTORE DATABASE GESTION_Recovery … WITH MOVE …, NORECOVERY</code>. La copie est créée sous un autre nom, d'autres fichiers, et reste en état <code>RESTORING</code> : elle attend la suite.</p>
+                        <p class="walk__change"><b>NORECOVERY</b> : la base attend d'autres journaux.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · GESTION_Recovery</p>
+                        <p class="walk__head">Rejouer les journaux dans l'ordre</p>
+                        <p>Le journal de 10:20 en <code>NORECOVERY</code>, puis le tail-log avec <code>STOPAT = '…T10:29:50'</code> et <code>RECOVERY</code>. Le moteur rejoue les transactions jusqu'à 10:29:50, annule celles qui n'étaient pas validées à cet instant, et ouvre la base.</p>
+                        <p class="walk__change"><b>STOPAT</b> sur le dernier journal, <b>RECOVERY</b> une seule fois, à la fin.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · GESTION_Recovery → GESTION</p>
+                        <p class="walk__head">Contrôler, puis rapatrier</p>
+                        <p>On vérifie que les lignes supprimées sont là (<code>SELECT COUNT(*)</code>…), puis on décide : recopier les seules lignes perdues dans GESTION (<code>INSERT … SELECT</code>), ou remplacer la base entière si le métier l'accepte. Le travail légitime fait après 10:30 n'est que dans GESTION.</p>
+                        <p class="walk__change">Restaurer <b>à côté</b> garde le choix : rien n'est perdu tant qu'on n'a pas écrasé.</p>
+                    </li>
+                </ol>
+            </div>
+
             <div class="tip">
                 <p class="tip__label">L'historique vit dans <code>msdb</code></p>
                 <p>La table <code>msdb.dbo.backupset</code> enregistre ce qui a réellement été sauvegardé (type <code>D</code> = full, <code>I</code> = différentiel, <code>L</code> = journal). Attention : cet historique n'est <strong>pas</strong> dans les fichiers <code>.bak</code>. Si <code>msdb</code> est purgée, l'historique disparaît alors que les sauvegardes sont là — et une ligne dans <code>msdb</code> ne prouve pas que le fichier existe encore sur le disque.</p>
@@ -788,6 +900,19 @@
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Restaurer ailleurs laisse des orphelins</p>
                 <p>Restaurer sur une <strong>autre instance</strong> laisse des utilisateurs orphelins : la base arrive avec ses <em>users</em>, mais leurs <em>logins</em> étaient dans <code>master</code> et n'ont pas suivi. Le recollage se fait par <code>ALTER USER [nom] WITH LOGIN = [nom]</code> — voir le chapitre suivant.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Stratégie : full le dimanche, différentielle chaque soir à 22 h, journal toutes les heures. La base tombe jeudi à 15 h 10. Quel est le jeu de restauration <strong>le plus court</strong> ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>La full de dimanche, la diff de mercredi, puis les journaux de 22 h à 15 h</button>
+                        <button class="scenario__opt" data-why="Les diff de lundi et mardi sont inutiles : chaque différentielle contient tout depuis la full, la dernière suffit.">La full, les diff de lundi, mardi et mercredi, puis les journaux</button>
+                        <button class="scenario__opt" data-why="C&#x27;est possible mais beaucoup plus long : rejouer près de 90 journaux au lieu d&#x27;une diff et de 17 journaux.">La full de dimanche, puis tous les journaux depuis dimanche</button>
+                    </div>
+                    <div class="scenario__why"><p>Différentielle = tout depuis la <strong>dernière full</strong> : on ne garde que la plus récente (mercredi 22 h). Ensuite, les journaux postérieurs à cette diff, dans l'ordre, tous en <code>NORECOVERY</code> sauf le dernier — et, si la base est encore accessible, le tail-log pour ne rien perdre après 15 h.</p></div>
+                </div>
             </div>
         </section>
 
@@ -891,6 +1016,19 @@
                 <p class="takeaway__label">Le moindre privilège, concrètement</p>
                 <p>Un gMSA plutôt qu'un compte administrateur du domaine · une application en <code>datareader</code>/<code>datawriter</code> sur <strong>sa</strong> base · des ACL NTFS limitées au compte de service · des règles de pare-feu avec une portée. Le compte <code>sa</code>, lui, a un nom connu de tous : mot de passe complexe, jamais donné à une application, désactivé si le mode mixte ne sert pas.</p>
             </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Le user <code>stagiaire</code> est membre de <code>db_datareader</code>. Tu lances <code>REVOKE SELECT ON dbo.Salaires TO stagiaire;</code> et il lit toujours la table. Comment l'en empêcher sans le retirer du rôle ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>DENY SELECT ON dbo.Salaires TO stagiaire;</code></button>
+                        <button class="scenario__opt" data-why="Relancer la même commande ne change rien : il n&#x27;y avait aucun GRANT direct à annuler, le droit vient du rôle.">Relancer <code>REVOKE</code> en ajoutant <code>CASCADE</code></button>
+                        <button class="scenario__opt" data-why="Un GRANT ne retire jamais rien : il ajoute un droit."><code>GRANT SELECT ON dbo.Salaires TO public;</code> puis REVOKE</button>
+                    </div>
+                    <div class="scenario__why"><p><code>REVOKE</code> ne fait que retirer une ligne posée directement : le droit hérité de <code>db_datareader</code> reste. Un <code>DENY</code> explicite l'emporte sur tout <code>GRANT</code>, hérité ou non (sauf pour un <code>sysadmin</code>). <code>sys.database_permissions</code> montre les GRANT et DENY posés.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 11 -->
@@ -929,7 +1067,7 @@
                 </table>
             </div>
 
-            <p>Repères d'usage : moins de 5 % de fragmentation → ne rien faire ; entre 5 et 30 % → <code>REORGANIZE</code> ; au-delà → <code>REBUILD</code>. L'ordre naturel est celui des trois commandes : <strong>intégrité, puis index, puis statistiques</strong> — inutile de reconstruire les index d'une base dont on n'a pas vérifié qu'elle est saine.</p>
+            <p>Repères d'usage, hérités des anciennes recommandations : moins de 5 % de fragmentation → ne rien faire ; entre 5 et 30 % → <code>REORGANIZE</code> ; au-delà → <code>REBUILD</code>. Microsoft ne donne plus ces seuils comme une règle : sur du stockage SSD, mieux vaut mesurer si la maintenance améliore vraiment les performances avant de la planifier. L'ordre naturel est celui des trois commandes : <strong>intégrité, puis index, puis statistiques</strong> — inutile de reconstruire les index d'une base dont on n'a pas vérifié qu'elle est saine.</p>
 
             <div class="tip">
                 <p class="tip__label">Pourquoi des statistiques périmées font mal</p>
@@ -965,6 +1103,19 @@
             <div class="takeaway">
                 <p class="takeaway__label">Sauvegarder <code>msdb</code></p>
                 <p>Les jobs et leur historique vivent dans <code>msdb</code>. Cette base système doit être sauvegardée comme les autres, sinon toute la planification disparaît avec le serveur.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Lundi matin, aucune sauvegarde n'a été faite depuis vendredi, et le dossier <em>Jobs</em> de SSMS n'affiche aucun échec. Le serveur a été redémarré samedi pour des mises à jour. Première hypothèse ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le service SQL Server Agent est en démarrage <code>Manual</code> et n&#x27;est pas reparti</button>
+                        <button class="scenario__opt" data-why="Un journal plein ferait échouer les sauvegardes de journal avec une erreur visible dans l&#x27;historique ; ici rien ne s&#x27;est exécuté du tout.">Le journal de transactions est plein (erreur 9002)</button>
+                        <button class="scenario__opt" data-why="Une base corrompue ferait échouer le job avec une erreur ; l&#x27;absence totale d&#x27;exécution pointe vers le planificateur.">La base est corrompue et CHECKDB bloque les sauvegardes</button>
+                    </div>
+                    <div class="scenario__why"><p>Pas d'échec, pas de succès : rien ne s'est exécuté. C'est la signature d'un Agent arrêté. <code>Get-Service 'SQLAgent$INSPIRATION'</code> le confirme ; le passer en <code>Automatic</code>, le démarrer, puis lancer une sauvegarde complète tout de suite.</p></div>
+                </div>
             </div>
         </section>
 
@@ -1275,7 +1426,7 @@ SRV-SQL01   Microsoft SQL Server 2022 (RTM) …</pre>
                 <table>
                     <thead><tr><th>Erreur</th><th>Signification</th><th>Réflexe</th></tr></thead>
                     <tbody>
-                        <tr><td><strong>18456</strong></td><td>Échec de connexion (login refusé)</td><td>Lire l'<em>état</em> dans le journal d'erreurs SQL : 5 = login inexistant, 8 = mauvais mot de passe, 18 = mot de passe à changer, 38 = base par défaut inaccessible</td></tr>
+                        <tr><td><strong>18456</strong></td><td>Échec de connexion (login refusé)</td><td>Lire l'<em>état</em> dans le journal d'erreurs SQL : 5 = login inexistant, 8 = mauvais mot de passe, 18 = mot de passe à changer, 38 = base demandée à la connexion inaccessible, 40 = base <em>par défaut</em> du login inaccessible</td></tr>
                         <tr><td><strong>9002</strong></td><td>Journal de transactions plein</td><td><code>SELECT name, log_reuse_wait_desc FROM sys.databases</code> dit ce qui empêche de le vider (souvent <code>LOG_BACKUP</code> : modèle FULL sans sauvegarde du journal)</td></tr>
                         <tr><td><strong>26 / 40</strong> (client)</td><td>Instance introuvable / impossible d'ouvrir une connexion</td><td>Nom d'instance, service SQL Server Browser (UDP 1434) pour une instance nommée, pare-feu</td></tr>
                     </tbody>
@@ -1344,10 +1495,10 @@ SRV-SQL01   Microsoft SQL Server 2022 (RTM) …</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Module Exchange 2019 & PKI : architecture du labo, gestion des boîtes aux lettres, chiffrement asymétrique et signature, chaîne de confiance, autorité de certification interne AD CS et certificats Exchange.">
+    <meta name="description" content="Module Exchange Server (2019 / SE) & PKI : architecture du labo, gestion des boîtes aux lettres, chiffrement asymétrique et signature, chaîne de confiance, autorité de certification interne AD CS et certificats Exchange.">
     <title>Exchange &amp; Sécurité (PKI) — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -19,9 +19,9 @@
     <div class="hero__inner">
         <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 02 · Infrastructure Windows · 6 / 9</p>
         <h1 class="hero__title">Exchange &amp;<br><em>Sécurité</em> (PKI)</h1>
-        <p class="hero__lead">Déployer une messagerie Exchange 2019, gérer les boîtes aux lettres, puis comprendre en profondeur ce qui sécurise tout cela : la cryptographie asymétrique, les certificats, la chaîne de confiance et l'autorité de certification interne.</p>
+        <p class="hero__lead">Déployer une messagerie Exchange Server (2019 dans le TP, Subscription Edition aujourd'hui), gérer les boîtes aux lettres, puis comprendre en profondeur ce qui sécurise tout cela : la cryptographie asymétrique, les certificats, la chaîne de confiance et l'autorité de certification interne.</p>
         <div class="hero__meta">
-            <span class="chip">Exchange 2019</span><span class="chip">Mailbox</span><span class="chip">PKI</span><span class="chip">Crypto asymétrique</span><span class="chip">AD CS</span>
+            <span class="chip">Exchange 2019 / SE</span><span class="chip">Mailbox</span><span class="chip">PKI</span><span class="chip">Crypto asymétrique</span><span class="chip">AD CS</span>
         </div>
         <div class="hero__facts">
             <span class="fact fact--n3"><b>Niveau</b> Avancé</span>
@@ -79,7 +79,7 @@
 
             <div class="net">
                 <div class="node"><b>SRV-AD01</b><span class="ip">172.16.50.10</span><span>Contrôleur de domaine + DNS — <code>orion.local</code></span></div>
-                <div class="node"><b>SRV-EXCH01</b><span class="ip">172.16.50.60</span><span>Serveur de messagerie Exchange 2019</span></div>
+                <div class="node"><b>SRV-EXCH01</b><span class="ip">172.16.50.60</span><span>Serveur de messagerie Exchange (rôle Mailbox)</span></div>
                 <div class="node"><b>CLIENT-WIN11</b><span class="ip">DHCP</span><span>Poste de test — Outlook / OWA</span></div>
                 <div class="node"><b>Passerelle</b><span class="ip">172.16.50.1</span><span>Default gateway (l'hôte Hyper-V)</span></div>
             </div>
@@ -88,12 +88,44 @@
             <ul>
                 <li>Créer un utilisateur <strong>technicien</strong> disposant de tous les droits d'administration.</li>
                 <li>Joindre les machines au domaine <code>orion.local</code>.</li>
-                <li>Exchange étend le schéma AD : il faut les droits <em>Schema Admins / Enterprise Admins</em> à la préparation.</li>
+                <li>Exchange étend le schéma AD : il faut les droits <em>Schema Admins</em> et <em>Enterprise Admins</em> pour <code>Setup.exe /PrepareSchema</code> puis <code>/PrepareAD</code>.</li>
             </ul>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Quelle version ?</p>
+                <p>Le TP a été fait sur <strong>Exchange Server 2019</strong>, dont le support a pris fin le <strong>14 octobre 2025</strong> (plus aucun correctif de sécurité). Son successeur est <strong>Exchange Server Subscription Edition (SE)</strong>, sorti le 1er juillet 2025 : même code et mêmes cmdlets que la 2019 CU15, mais une licence par abonnement et un support sans date de fin tant qu'on reste à jour. Tout ce module s'applique tel quel à SE.</p>
+            </div>
+
+            <h3>Rôles, connecteurs et ports</h3>
+            <p>Depuis 2019, il ne reste que deux <strong>rôles</strong> : <strong>Mailbox</strong> (boîtes, transport, services clients : OWA, Outlook, ActiveSync) et <strong>Edge Transport</strong> (relais en DMZ, hors domaine, optionnel). Le courrier entre et sort par des <strong>connecteurs</strong> : un <em>connecteur de réception</em> écoute un port, un <em>connecteur d'envoi</em> dit par où sortir. L'installation crée les connecteurs de réception, mais <strong>aucun connecteur d'envoi</strong> vers Internet : il faut le créer.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Connecteur de réception (par défaut)</th><th>Port</th><th>Pour qui</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Default Frontend</strong> <em>&lt;serveur&gt;</em></td><td>25</td><td>Les autres serveurs de messagerie (Internet), connexions anonymes acceptées</td></tr>
+                        <tr><td><strong>Client Frontend</strong> <em>&lt;serveur&gt;</em></td><td>587</td><td>Les clients et applications qui <strong>envoient</strong> en s'authentifiant (soumission)</td></tr>
+                        <tr><td><strong>Default</strong> <em>&lt;serveur&gt;</em></td><td>2525</td><td>Interne : transport entre serveurs Exchange (service de transport du rôle Mailbox)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Côté clients, tout passe en <strong>HTTPS (443)</strong> : OWA (<code>/owa</code>), le centre d'administration (<code>/ecp</code>), Outlook (MAPI over HTTP) et Autodiscover. C'est pour ça qu'Exchange a besoin d'un vrai certificat (chapitres 4 à 6).</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Exchange = <strong>AD + DNS + serveur de messagerie</strong>. Les boîtes aux lettres sont liées à des comptes AD ; le routage SMTP dépend du DNS (enregistrements <code>MX</code>). On prépare donc toujours l'annuaire avant d'installer Exchange.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Une imprimante multifonction doit envoyer ses scans par mail en s'authentifiant avec un compte du domaine. Quel port lui donnes-tu sur <code>SRV-EXCH01</code> ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>587, le connecteur <em>Client Frontend</em></button>
+                        <button class="scenario__opt" data-why="Le 25 est l&#x27;entrée des autres serveurs de messagerie : il accepte l&#x27;anonyme, mais seulement pour livrer aux domaines d&#x27;Exchange, pas pour relayer avec un compte.">25, le connecteur <em>Default Frontend</em></button>
+                        <button class="scenario__opt" data-why="Le 2525 est réservé au transport interne entre serveurs Exchange : un client n&#x27;a rien à y faire.">2525, le connecteur <em>Default</em></button>
+                    </div>
+                    <div class="scenario__why"><p>Un appareil qui <strong>soumet</strong> du courrier avec un compte passe par le port de soumission, 587, avec STARTTLS et authentification : c'est le rôle du connecteur <em>Client Frontend</em>. Le 25 reste la porte d'entrée des serveurs qui livrent du courrier. <code>Get-ReceiveConnector | Format-Table Name, Bindings</code> liste les connecteurs et leurs ports.</p></div>
+                </div>
             </div>
         </section>
 
@@ -110,8 +142,8 @@
     <span class="p">-FirstName</span> <span class="s">'Jean'</span> <span class="p">-LastName</span> <span class="s">'Dupont'</span> <span class="p">-DisplayName</span> <span class="s">'Jean Dupont'</span> `
     <span class="p">-UserPrincipalName</span> <span class="s">'jean.dupont@orion.local'</span> `
     <span class="p">-OrganizationalUnit</span> <span class="s">'orion.local/Admin'</span> `
-    <span class="p">-Database</span> <span class="s">'Mailbox Database 0112725915'</span> `
-    <span class="p">-Password</span> (<span class="k">ConvertTo-SecureString</span> <span class="s">'P@ssw0rd!'</span> <span class="p">-AsPlainText</span> <span class="p">-Force</span>) `
+    <span class="p">-Database</span> <span class="s">'Mailbox Database 01'</span> `   <span class="c"># le nom réel : Get-MailboxDatabase</span>
+    <span class="p">-Password</span> (<span class="k">Read-Host</span> <span class="s">'Mot de passe initial'</span> <span class="p">-AsSecureString</span>) `
     <span class="p">-ResetPasswordOnNextLogon</span> $true</pre>
             </div>
 
@@ -119,7 +151,7 @@
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Exchange Management Shell</span></div>
                 <pre class="terminal__code"><span class="c"># Le compte 'marie.martin' existe déjà dans AD…</span>
-<span class="k">Enable-Mailbox</span> <span class="p">-Identity</span> <span class="s">'marie.martin'</span> <span class="p">-Database</span> <span class="s">'Mailbox Database 0112725915'</span>
+<span class="k">Enable-Mailbox</span> <span class="p">-Identity</span> <span class="s">'marie.martin'</span> <span class="p">-Database</span> <span class="s">'Mailbox Database 01'</span>
 
 <span class="c"># Vérifier le résultat</span>
 <span class="k">Get-Mailbox</span> <span class="p">-Identity</span> <span class="s">'marie.martin'</span> |
@@ -140,7 +172,20 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Attention</p>
-                <p><code>Remove-Mailbox</code> supprime aussi le <strong>compte AD</strong>, pas seulement la boîte. Pour ne retirer que la messagerie en gardant l'utilisateur, on utilise <code>Disable-Mailbox</code>.</p>
+                <p><code>Remove-Mailbox</code> supprime aussi le <strong>compte AD</strong>, pas seulement la boîte. Pour ne retirer que la messagerie en gardant l'utilisateur, on utilise <code>Disable-Mailbox</code> : le compte reste, la boîte devient <strong>déconnectée</strong> et reste récupérable pendant la durée de rétention de la base (30 jours par défaut).</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Marie part en congé de longue durée : sa messagerie doit être coupée, mais son compte AD doit rester (accès aux fichiers à son retour). Quelle cmdlet ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>Disable-Mailbox -Identity marie.martin</code></button>
+                        <button class="scenario__opt" data-why="Remove-Mailbox supprime la boîte ET le compte AD : Marie perdrait aussi son accès aux fichiers.">« <code>Remove-Mailbox -Identity marie.martin</code> »</button>
+                        <button class="scenario__opt" data-why="Désactiver le compte AD bloque toute connexion, fichiers compris, et laisse la boîte active : l&#x27;inverse de la demande.">« <code>Disable-ADAccount -Identity marie.martin</code> »</button>
+                    </div>
+                    <div class="scenario__why"><p><code>Disable-Mailbox</code> retire les attributs Exchange du compte et déconnecte la boîte, sans toucher au compte AD. Au retour, <code>Connect-Mailbox</code> peut la rattacher tant qu'elle est dans la période de rétention.</p></div>
+                </div>
             </div>
         </section>
 
@@ -166,7 +211,7 @@
             <p>Je « chiffre » (= <strong>je signe</strong>) avec <strong>ma</strong> clé privée, que je suis seul à posséder. N'importe qui peut « déchiffrer » (= <strong>vérifier</strong>) avec ma clé publique… qui est publique. <strong>Donc ça ne cache rien.</strong> Le but n'est pas le secret mais la <strong>preuve d'origine</strong> :</p>
             <div class="takeaway">
                 <p class="takeaway__label">L'intuition</p>
-                <p>« Si ça se déchiffre correctement avec la clé publique de Marvin, alors <strong>seul Marvin</strong> a pu le produire — lui seul détient la clé privée. » C'est exactement une <strong>signature numérique</strong>.</p>
+                <p>« Si ça se déchiffre correctement avec la clé publique d'Alice, alors <strong>seule Alice</strong> a pu le produire — elle seule détient la clé privée. » C'est exactement une <strong>signature numérique</strong>.</p>
             </div>
 
             <h3>Comment ça marche vraiment (le hash)</h3>
@@ -182,6 +227,21 @@
                 <p class="takeaway__label">À retenir (formule)</p>
                 <p><strong>Clé publique pour chiffrer → on protège un secret.</strong><br><strong>Clé privée pour chiffrer (= signer) → on prouve une identité.</strong><br>La signature ne cache rien ; elle garantit <em>qui</em> a écrit et <em>que rien n'a bougé</em>.</p>
             </div>
+
+            <p class="note">« Chiffrer l'empreinte avec la clé privée » est l'image exacte pour <strong>RSA</strong>. D'autres algorithmes de signature (ECDSA) ne chiffrent rien au sens strict, mais le principe reste le même : seule la clé privée produit la signature, la clé publique suffit à la vérifier. Et en pratique, on ne chiffre pas non plus un gros message en asymétrique : TLS ou S/MIME chiffrent une <strong>clé de session symétrique</strong> (AES), qui chiffre le contenu.</p>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Alice envoie un contrat à Bob. Bob veut être sûr que c'est bien Alice qui l'a envoyé et que personne ne l'a modifié ; le contenu, lui, n'est pas secret. Quelle clé Alice utilise-t-elle ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Sa propre clé privée, pour signer l&#x27;empreinte</button>
+                        <button class="scenario__opt" data-why="Chiffrer avec la clé publique de Bob rend le message secret, mais n&#x27;importe qui peut le faire : ça ne prouve pas que l&#x27;envoi vient d&#x27;Alice.">La clé publique de Bob, pour chiffrer le contrat</button>
+                        <button class="scenario__opt" data-why="La clé publique d&#x27;Alice est connue de tous : tout le monde pourrait produire ce résultat, il ne prouve rien.">Sa propre clé publique, pour chiffrer l&#x27;empreinte</button>
+                    </div>
+                    <div class="scenario__why"><p>Authenticité et intégrité, c'est la <strong>signature</strong> : Alice signe l'empreinte du contrat avec <strong>sa clé privée</strong>, Bob vérifie avec la clé publique d'Alice. Pour le secret en plus, Alice chiffrerait <em>aussi</em> avec la clé publique de Bob : les deux sens se combinent.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 04 -->
@@ -195,34 +255,34 @@
                 <table>
                     <thead><tr><th>Situation</th><th>Qui affirme l'identité ?</th><th>Confiance</th></tr></thead>
                     <tbody>
-                        <tr><td>« Je m'appelle Marvin Zepp »</td><td>Moi-même → certificat <strong>auto-signé</strong></td><td class="no">Aucune (mensonge possible)</td></tr>
+                        <tr><td>« Je m'appelle Alice Martin »</td><td>Moi-même → certificat <strong>auto-signé</strong></td><td class="no">Aucune (mensonge possible)</td></tr>
                         <tr><td>Un tiers reconnu le garantit</td><td>Une <strong>CA</strong> (autorité de certification)</td><td class="yes">Oui, si on fait confiance au tiers</td></tr>
                     </tbody>
                 </table>
             </div>
-            <p>Je crée une autorité, ex. <code>CA_MARVIN</code>. Avec elle je <strong>délivre et signe</strong> les certificats de tout le monde (<code>stagiaire1</code>, <code>serveur web</code>, <code>mail.orion.local</code>…). Ce n'est plus le sujet qui s'auto-atteste : c'est un <strong>tiers</strong> qui atteste.</p>
+            <p>Je crée une autorité, ex. <code>ORION-CA</code>. Avec elle je <strong>délivre et signe</strong> les certificats de tout le monde (<code>stagiaire1</code>, <code>serveur web</code>, <code>mail.orion.local</code>…). Ce n'est plus le sujet qui s'auto-atteste : c'est un <strong>tiers</strong> qui atteste.</p>
 
             <h3>Établir puis vérifier la confiance</h3>
-            <p>J'importe le <strong>certificat racine</strong> de <code>CA_MARVIN</code> dans le magasin « Autorités racines de confiance » de tous les PC (via <strong>GPO</strong> en AD). Dès lors, chaque machine fait confiance à <strong>tout ce que <code>CA_MARVIN</code> a signé</strong>. À réception d'un certificat, le PC regarde <em>qui l'a émis</em> et <strong>remonte la chaîne</strong> jusqu'à une racine connue.</p>
+            <p>J'importe le <strong>certificat racine</strong> de <code>ORION-CA</code> dans le magasin « Autorités racines de confiance » de tous les PC (via <strong>GPO</strong> en AD). Dès lors, chaque machine fait confiance à <strong>tout ce que <code>ORION-CA</code> a signé</strong>. À réception d'un certificat, le PC regarde <em>qui l'a émis</em> et <strong>remonte la chaîne</strong> jusqu'à une racine connue.</p>
 
-            <h4>Exemple réel — le certificat de <code>*.google.com</code></h4>
+            <h4>Exemple réel — le certificat de <code>*.google.com</code> (chaîne relevée à la rédaction ; les noms des intermédiaires changent de temps en temps)</h4>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Visionneuse de certificats — lecture de bas en haut</span></div>
                 <pre class="terminal__code">GTS Root R1          <span class="c">← CA RACINE — préinstallée dans Windows</span>
   └─ WR2             <span class="c">← CA INTERMÉDIAIRE — signée par la racine</span>
        └─ *.google.com   <span class="c">← CERTIFICAT SERVEUR (feuille, wildcard)</span></pre>
             </div>
-            <p>Le serveur présente <code>*.google.com</code>, signé par <code>WR2</code>, lui-même signé par <code>GTS Root R1</code> (préinstallée) → la chaîne remonte à une racine connue → <strong>cadenas vert</strong>. Une chaîne réelle a souvent <strong>3 niveaux</strong> : l'intermédiaire évite d'exposer la clé privée de la racine au quotidien.</p>
+            <p>Le serveur présente <code>*.google.com</code>, signé par <code>WR2</code>, lui-même signé par <code>GTS Root R1</code> (préinstallée) → la chaîne remonte à une racine connue → <strong>cadenas, aucune alerte</strong>. Une chaîne réelle a souvent <strong>3 niveaux</strong> : l'intermédiaire évite d'exposer la clé privée de la racine au quotidien.</p>
 
             <h3>Pourquoi c'est sûr — le point qui blinde l'oral</h3>
-            <p>La CA signe le certificat avec sa <strong>clé privée</strong> (qu'elle seule possède) ; le PC vérifie avec la <strong>clé publique</strong> de la CA (dans le certificat racine importé). Un attaquant <strong>ne peut pas fabriquer un faux « certificat signé CA_MARVIN »</strong> sans voler la clé privée de la CA. C'est la <strong>signature cryptographique</strong>, pas le nom écrit dessus, qui fait foi.</p>
+            <p>La CA signe le certificat avec sa <strong>clé privée</strong> (qu'elle seule possède) ; le PC vérifie avec la <strong>clé publique</strong> de la CA (dans le certificat racine importé). Un attaquant <strong>ne peut pas fabriquer un faux « certificat signé ORION-CA »</strong> sans voler la clé privée de la CA. C'est la <strong>signature cryptographique</strong>, pas le nom écrit dessus, qui fait foi.</p>
 
             <div class="cards">
                 <div class="card">
                     <h4>Les 3 types de CA</h4>
                     <ul>
                         <li><strong>Auto-signé</strong> — confiance nulle part (tests, labo).</li>
-                        <li><strong>CA interne</strong> (<code>CA_MARVIN</code>) — de confiance sur les PC où la racine est importée (réseau AD).</li>
+                        <li><strong>CA interne</strong> (<code>ORION-CA</code>) — de confiance sur les PC où la racine est importée (réseau AD).</li>
                         <li><strong>CA publique</strong> (DigiCert, Let's Encrypt) — de confiance partout (services exposés sur Internet).</li>
                     </ul>
                 </div>
@@ -240,6 +300,35 @@
                 <p class="takeaway__label">En une phrase</p>
                 <p>Un certificat auto-signé dit « c'est moi qui le dis » ; la PKI ajoute une <strong>autorité de confiance</strong> qui signe à ma place, et chaque machine valide en <strong>remontant la chaîne</strong> jusqu'à une racine qu'elle connaît déjà.</p>
             </div>
+
+            <h3>CDP et AIA : les deux adresses inscrites dans chaque certificat</h3>
+            <p>Pour valider une chaîne, le client a besoin de deux choses qu'il ne possède pas forcément. La CA les inscrit donc dans chaque certificat qu'elle émet, sous forme d'extensions :</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Extension</th><th>Elle donne l'adresse de…</th><th>Si elle est injoignable</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>CDP</strong> (<em>CRL Distribution Point</em>)</td><td>La <strong>CRL</strong>, liste des certificats révoqués, publiée périodiquement par la CA</td><td>Le client ne peut pas vérifier la révocation : alerte, voire refus selon l'application</td></tr>
+                        <tr><td><strong>AIA</strong> (<em>Authority Information Access</em>)</td><td>Le certificat de la CA émettrice (et, le cas échéant, le répondeur <strong>OCSP</strong>)</td><td>Le client ne peut pas reconstruire la chaîne s'il n'a pas déjà l'intermédiaire</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Piège</p>
+                <p>Une CA d'entreprise publie par défaut CDP et AIA dans <strong>LDAP</strong> (lisible seulement par les machines du domaine) et en <strong>HTTP</strong> sur la CA. Un poste hors domaine, ou un client sur Internet, n'atteint ni l'un ni l'autre : la vérification de révocation échoue. Une CRL <strong>expirée</strong> (CA éteinte trop longtemps) fait le même effet sur tout le monde. Pour lire ce que voit le client : <code>certutil -verify -urlfetch fichier.cer</code>.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un poste <strong>hors domaine</strong> ouvre <code>https://mail.orion.local/owa</code> et affiche « certificat non approuvé ». Les postes du domaine, eux, n'ont aucune alerte. Quelle est la cause la plus probable ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>La racine d&#x27;ORION-CA n&#x27;est pas dans son magasin de confiance</button>
+                        <button class="scenario__opt" data-why="Un certificat expiré déclencherait l&#x27;alerte sur TOUS les postes, domaine compris.">Le certificat d&#x27;Exchange a expiré la veille</button>
+                        <button class="scenario__opt" data-why="Un nom absent du certificat donnerait une erreur de nom, et là encore sur tous les postes.">Le nom <code>mail.orion.local</code> manque dans le certificat</button>
+                    </div>
+                    <div class="scenario__why"><p>La différence entre les deux groupes de postes, c'est l'appartenance au domaine : c'est par AD que la racine de la CA d'entreprise arrive dans le magasin <em>Autorités de certification racines de confiance</em>. Sur le poste hors domaine, il faut importer la racine à la main (et qu'il puisse joindre le CDP).</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 05 -->
@@ -256,18 +345,57 @@
 
 <span class="c"># Promouvoir l'autorité racine d'entreprise</span>
 <span class="k">Install-AdcsCertificationAuthority</span> <span class="p">-CAType</span> EnterpriseRootCA `
-    <span class="p">-CACommonName</span> <span class="s">"CATECHNOCITE"</span> `
-    <span class="p">-KeyLength</span> 2048 <span class="p">-HashAlgorithmName</span> SHA256 <span class="p">-Force</span></pre>
+    <span class="p">-CACommonName</span> <span class="s">"ORION-CA"</span> `
+    <span class="p">-KeyLength</span> 2048 <span class="p">-HashAlgorithmName</span> SHA256 <span class="p">-Force</span>
+
+<span class="c"># Le rôle d'inscription web s'installe, puis se configure à part</span>
+<span class="k">Install-AdcsWebEnrollment</span> <span class="p">-Force</span>             <span class="c"># page http://srv-ad01/certsrv</span></pre>
             </div>
 
             <ul>
                 <li><strong>EnterpriseRootCA</strong> — intégrée à AD : la racine est <em>automatiquement</em> distribuée aux membres du domaine (plus besoin d'importer à la main, c'est l'avantage majeur vs une CA autonome).</li>
                 <li><strong>KeyLength / HashAlgorithm</strong> — robustesse de la clé et de l'empreinte (2048 bits, SHA-256 au minimum).</li>
+                <li><strong>Modèles de certificats</strong> — une CA d'entreprise n'émet que d'après des <strong>modèles</strong> publiés (<em>Certificate Templates</em>) : <em>Web Server</em> pour un serveur web ou Exchange, <em>Computer</em>, <em>User</em>… Chaque modèle fixe la durée, l'usage de la clé et <strong>qui a le droit de demander</strong> (permission <em>Enroll</em> dans l'onglet <em>Security</em> du modèle).</li>
             </ul>
+
+            <div class="takeaway takeaway--warn">
+                <p class="takeaway__label">Labo vs production</p>
+                <p>La CA sur le contrôleur de domaine, c'est un raccourci de labo. En production, Microsoft conseille un serveur dédié, et souvent deux niveaux : une <strong>racine hors ligne</strong> (autonome, éteinte, qui ne signe que l'émettrice) et une <strong>CA émettrice d'entreprise</strong> en ligne. Autre piège : une machine qui héberge AD CS <strong>ne peut plus être renommée</strong> ni changer de domaine — choisis son nom avant.</p>
+            </div>
+
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le service de certificats tourne et la CA porte le bon nom.</p>
+                <div class="terminal">
+                    <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-AD01</span></div>
+                    <pre class="terminal__code"><span class="k">Get-Service</span> CertSvc           <span class="c"># Running</span>
+<span class="k">certutil</span> <span class="p">-CAInfo</span> name         <span class="c"># le nom commun de la CA</span></pre>
+                </div>
+                <p class="verify__sub">Sortie attendue (extrait)</p>
+                <pre class="verify__out">Status   Name      DisplayName
+------   ----      -----------
+Running  CertSvc   Active Directory Certificate Services
+
+CA name: ORION-CA</pre>
+                <p class="verify__fail">Service arrêté : lire le journal Application (source <em>CertificationAuthority</em>) ; une CRL expirée empêche par exemple le service de démarrer. Le nom ne convient pas : il ne se change pas, il faut désinstaller et réinstaller la CA.</p>
+            </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Une <strong>Enterprise Root CA</strong> publie sa racine dans AD : tous les postes du domaine lui font confiance sans manipulation. C'est ce qui permet à Outlook/OWA de se connecter à Exchange <strong>sans alerte de certificat</strong>.</p>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur la page <code>/certsrv</code>, tu veux demander un certificat avec le modèle <em>Web Server</em> pour Exchange, mais il n'apparaît pas dans la liste. La CA tourne. Que vérifies-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Qu&#x27;il est publié sur la CA et que ton compte a <em>Enroll</em></button>
+                        <button class="scenario__opt" data-why="La racine sur le poste conditionne la confiance dans les certificats émis, pas la liste des modèles qu&#x27;on peut demander.">Que la racine d&#x27;ORION-CA est sur ton poste</button>
+                        <button class="scenario__opt" data-why="La longueur de clé de la CA n&#x27;a aucun rapport avec les modèles proposés ; et elle ne se change pas sans réinstaller.">Que la clé de la CA fait au moins 4096 bits</button>
+                    </div>
+                    <div class="scenario__why"><p>Un modèle n'est proposé que s'il est <strong>publié</strong> sur la CA (console <em>Certification Authority</em> → <em>Certificate Templates</em> ; <code>certutil -CATemplates</code> les liste) et si le demandeur a la permission <strong>Enroll</strong> sur ce modèle (console <em>Certificate Templates</em>, onglet <em>Security</em>). Par défaut, <em>Web Server</em> n'accorde <em>Enroll</em> qu'aux administrateurs du domaine et de l'entreprise.</p></div>
+                </div>
             </div>
         </section>
 
@@ -299,13 +427,84 @@
             <h3>Le cycle d'un certificat serveur</h3>
             <ol class="steps">
                 <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Générer la demande (CSR)</strong>Côté Exchange : <code>New-ExchangeCertificate -GenerateRequest</code> produit un CSR pour <code>mail.orion.local</code>.</div></li>
-                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Faire signer par la CA</strong>On soumet le CSR à <code>CATECHNOCITE</code> (inscription web AD CS) qui renvoie le certificat signé.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Faire signer par la CA</strong>On soumet le CSR à <code>ORION-CA</code> (inscription web AD CS ou <code>certreq</code>), avec le modèle <em>Web Server</em> ; elle renvoie le certificat signé.</div></li>
                 <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Importer &amp; assigner</strong>On importe le certificat dans Exchange et on l'affecte aux services (IIS pour OWA, SMTP, IMAP…).</div></li>
             </ol>
+
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Exchange Management Shell + PowerShell sur la CA</span></div>
+                <pre class="terminal__code"><span class="c"># 1. Sur SRV-EXCH01 : la demande, avec tous les noms que les clients taperont</span>
+<span class="k">$csr</span> = <span class="k">New-ExchangeCertificate</span> <span class="p">-GenerateRequest</span> <span class="p">-SubjectName</span> <span class="s">"CN=mail.orion.local"</span> `
+    <span class="p">-DomainName</span> mail.orion.local, autodiscover.orion.local <span class="p">-PrivateKeyExportable</span> $true
+<span class="k">Set-Content</span> <span class="p">-Path</span> C:\certs\mail.req <span class="p">-Value</span> $csr
+
+<span class="c"># 2. Sur la CA : signature d'après le modèle Web Server</span>
+<span class="k">certreq</span> <span class="p">-submit</span> <span class="p">-config</span> <span class="s">"SRV-AD01.orion.local\ORION-CA"</span> <span class="p">-attrib</span> <span class="s">"CertificateTemplate:WebServer"</span> C:\certs\mail.req C:\certs\mail.cer
+
+<span class="c"># 3. Sur SRV-EXCH01 : import (la clé privée attend depuis l'étape 1), puis affectation</span>
+<span class="k">Import-ExchangeCertificate</span> <span class="p">-FileData</span> ([System.IO.File]::ReadAllBytes(<span class="s">'C:\certs\mail.cer'</span>))
+<span class="k">Enable-ExchangeCertificate</span> <span class="p">-Thumbprint</span> &lt;empreinte&gt; <span class="p">-Services</span> IIS, SMTP</pre>
+            </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Boucle complète : <strong>CSR sur Exchange → signature par la CA interne → assignation aux services</strong>. Comme la racine de la CA est dans le magasin de confiance via AD, le client valide <code>mail.orion.local</code> sans alerte. C'est la PKI du chapitre 4 appliquée à un cas réel.</p>
+            </div>
+
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">De la demande au cadenas : l'émission du certificat de mail.orion.local</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · SRV-EXCH01</p>
+                        <p class="walk__head">Exchange fabrique une paire de clés</p>
+                        <p><code>New-ExchangeCertificate -GenerateRequest</code> génère une <strong>clé privée</strong> et sa clé publique. La clé privée <strong>ne quitte jamais</strong> le serveur : elle attend dans son magasin, rattachée à une demande en attente.</p>
+                        <p class="walk__change">La clé privée reste <b>chez le demandeur</b>, jamais chez la CA.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · SRV-EXCH01</p>
+                        <p class="walk__head">La demande (CSR) part vers la CA</p>
+                        <p>Le <strong>CSR</strong> contient la clé publique, le sujet (<code>CN=mail.orion.local</code>) et les noms alternatifs (<strong>SAN</strong> : <code>mail</code>, <code>autodiscover</code>). Il est lui-même signé avec la clé privée : la CA a ainsi la preuve que le demandeur la possède.</p>
+                        <p class="walk__change">CSR = <b>clé publique + noms</b>, signé par le demandeur.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · CA ORION-CA</p>
+                        <p class="walk__head">La CA applique le modèle</p>
+                        <p>La demande nomme le modèle <em>Web Server</em>. La CA vérifie qu'il est publié et que le demandeur a <strong>Enroll</strong> dessus ; le modèle fixe la durée de validité et l'usage (<em>Server Authentication</em>). Selon le modèle, le certificat est émis tout de suite ou mis <strong>en attente</strong> d'approbation.</p>
+                        <p class="walk__change">Le <b>modèle</b> décide qui peut demander et ce que contiendra le certificat.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · CA ORION-CA</p>
+                        <p class="walk__head">La CA construit et signe le certificat</p>
+                        <p>Elle assemble : clé publique et noms du demandeur, numéro de série, dates de validité, nom de l'émetteur, extensions <strong>CDP</strong> et <strong>AIA</strong>. Puis elle signe le tout avec <strong>sa clé privée</strong>. Le certificat est inscrit dans sa base (console <em>Issued Certificates</em>).</p>
+                        <p class="walk__change">La valeur du certificat, c'est la <b>signature de la CA</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · CA → SRV-EXCH01</p>
+                        <p class="walk__head">Retour, import, affectation</p>
+                        <p>Le fichier <code>.cer</code> revient sur Exchange. <code>Import-ExchangeCertificate</code> le rapproche de la clé privée restée en attente ; <code>Enable-ExchangeCertificate</code> l'affecte à IIS (OWA, Autodiscover) et à SMTP (STARTTLS).</p>
+                        <p class="walk__change">Certificat + <b>clé privée d'origine</b> = certificat utilisable.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · client → SRV-EXCH01</p>
+                        <p class="walk__head">Le client valide le certificat présenté</p>
+                        <p>À la connexion à <code>https://mail.orion.local/owa</code>, le poste vérifie : la <strong>signature</strong> remonte-t-elle à une racine de confiance ? Les <strong>dates</strong> sont-elles bonnes ? Le <strong>nom tapé</strong> est-il dans le SAN ? Le certificat est-il absent de la <strong>CRL</strong> (adresse lue dans le CDP) ?</p>
+                        <p class="walk__change">Quatre contrôles : <b>chaîne, dates, nom, révocation</b>. Un seul en échec = alerte.</p>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">OWA s'ouvre sans alerte sur <code>https://mail.orion.local</code>, mais Outlook signale un problème de certificat pour <code>autodiscover.orion.local</code>. Que corriges-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Un nouveau certificat qui porte aussi ce nom dans le SAN</button>
+                        <button class="scenario__opt" data-why="La racine est forcément de confiance : le même certificat, signé par la même CA, passe sans alerte sur mail.orion.local.">Réimporter la racine d&#x27;ORION-CA sur le poste</button>
+                        <button class="scenario__opt" data-why="Le service SMTP n&#x27;a rien à voir avec Autodiscover, qui passe en HTTPS par IIS. Le problème est le nom, pas l&#x27;affectation.">Affecter le certificat au service SMTP en plus d&#x27;IIS</button>
+                    </div>
+                    <div class="scenario__why"><p>Même CA, même certificat : la chaîne est bonne. Ce qui change, c'est le <strong>nom</strong>. Un certificat ne couvre que les noms de son SAN : il faut redemander un certificat avec <code>-DomainName mail.orion.local, autodiscover.orion.local</code>, puis l'affecter. On ne peut pas ajouter un nom à un certificat déjà signé.</p></div>
+                </div>
             </div>
         </section>
 
@@ -337,7 +536,7 @@
                 <p>Le certificat présenté est-il signé par la CA d'entreprise, et le poste lui fait-il confiance ?</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell</span></div>
-                <pre class="terminal__code"><span class="k">Get-ChildItem</span> Cert:\LocalMachine\Root | <span class="k">Where-Object</span> Subject <span class="p">-like</span> <span class="s">"*CA*"</span><span class="c">      # sur le client</span>
+                <pre class="terminal__code"><span class="k">Get-ChildItem</span> Cert:\LocalMachine\Root | <span class="k">Where-Object</span> Subject <span class="p">-like</span> <span class="s">"*ORION-CA*"</span> | <span class="k">Select-Object</span> Subject<span class="c">   # sur le client</span>
 <span class="k">certutil</span> <span class="p">-ping</span><span class="c">                                                                  # la CA répond</span></pre>
             </div>
                 <p class="verify__sub">Sortie attendue</p>
@@ -371,10 +570,10 @@ Server "ORION-CA" ICertRequest2 interface is alive</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse des fiches PKI &amp; du TP Exchange 2019</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

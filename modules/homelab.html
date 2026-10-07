@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -123,7 +123,7 @@
             </ul>
 
             <h3>Docker Compose : décrire sa stack en YAML</h3>
-            <p>Plutôt que de longues commandes, on décrit les services dans un fichier <code>docker-compose.yml</code>, versionnable et rejouable. Exemple minimal :</p>
+            <p>Plutôt que de longues commandes, on décrit les services dans un fichier <code>docker-compose.yml</code>, versionnable et rejouable (Compose v2 préfère le nom <code>compose.yaml</code>, mais lit les deux). Exemple minimal :</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">docker-compose.yml</span></div>
                 <pre class="terminal__code"><span class="k">services</span>:
@@ -146,12 +146,24 @@
 
             <div class="tip">
                 <p class="tip__label">Astuce</p>
-                <p>Ajoute <strong>Portainer</strong> pour piloter tes conteneurs depuis une interface web, et <strong>Watchtower</strong> ou <em>Diun</em> pour être averti des mises à jour d'images. Garde chaque service dans son propre dossier avec son <code>docker-compose.yml</code> et un <code>.env</code>.</p>
+                <p>Ajoute <strong>Portainer</strong> pour piloter tes conteneurs depuis une interface web, et <strong>Diun</strong> pour être <em>averti</em> des nouvelles versions d'images. Méfiance avec les outils qui mettent à jour <em>automatiquement</em> : <strong>Watchtower</strong>, le plus connu, n'est plus maintenu (dépôt archivé en décembre 2025), et une mise à jour majeure appliquée la nuit peut casser un service sans que tu le saches. Garde chaque service dans son propre dossier avec son <code>docker-compose.yml</code> et un <code>.env</code>.</p>
             </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Docker Compose = ta stack décrite dans un fichier <code>.yml</code> versionnable. <strong>Volumes</strong> pour les données persistantes, <code>restart: unless-stopped</code> pour la résilience, un dossier par service. C'est reproductible et propre.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu fais <code>docker compose pull</code> puis <code>docker compose down</code> et <code>up -d</code> sur ta stack Nextcloud. Qu'est-ce qui garantit que tes fichiers sont toujours là ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Ils sont dans un volume (ou un dossier monté) déclaré dans le fichier Compose</button>
+                        <button class="scenario__opt" data-why="restart relance le conteneur après un arrêt ou un redémarrage ; il ne conserve aucune donnée.">La politique restart: unless-stopped</button>
+                        <button class="scenario__opt" data-why="down supprime les conteneurs, comme rm : sans volume, la couche d&#x27;écriture et ses données partent avec eux.">Le fait d&#x27;utiliser docker compose down plutôt que docker rm</button>
+                    </div>
+                    <div class="scenario__why"><p>Mettre à jour un service Docker, c'est <strong>jeter le conteneur</strong> et en recréer un depuis la nouvelle image. Seul ce qui est dans un <strong>volume</strong> ou un <strong>bind mount</strong> survit — c'est aussi ce qu'il faut sauvegarder.</p></div>
+                </div>
             </div>
         </section>
 
@@ -162,7 +174,7 @@
             <p class="chapter__intro">Sans reverse proxy, chaque service vit sur un port différent (<code>:8080</code>, <code>:9000</code>…) et sans chiffrement. Un reverse proxy met tout derrière de jolis noms en <strong>https://</strong> et gère les certificats automatiquement.</p>
 
             <div class="net">
-                <div class="node"><b>Navigateur</b><span class="ip">https://jelly.homelab.lan</span><span>Un nom, un cadenas</span></div>
+                <div class="node"><b>Navigateur</b><span class="ip">https://jelly.lab.exemple.be</span><span>Un nom, un cadenas</span></div>
                 <div class="node"><b>Reverse proxy</b><span class="ip">:443</span><span>Aiguille selon le nom + termine le TLS</span></div>
                 <div class="node"><b>Jellyfin</b><span class="ip">:8096</span><span>Service réel, en HTTP interne</span></div>
                 <div class="node"><b>Nextcloud</b><span class="ip">:8080</span><span>Autre service derrière le même proxy</span></div>
@@ -176,10 +188,26 @@
             </ul>
 
             <p>Pour un certificat <em>valide</em> (cadenas vert) sans exposer le service, on utilise un domaine réel et le <strong>challenge DNS</strong> de Let's Encrypt : le certificat est émis sans ouvrir de port entrant. C'est le prolongement du module <a href="exchange-securite.html">PKI &amp; certificats</a>.</p>
+            <div class="tip">
+                <p class="tip__label">Quel nom de domaine pour la maison ?</p>
+                <p>Let's Encrypt ne délivre de certificat que pour un domaine public qui t'appartient (ex. <code>lab.exemple.be</code>, des sous-domaines servis seulement par ton DNS local). Pour un nom purement interne, sans certificat public, utilise un suffixe réservé : <code>home.arpa</code> (RFC 8375) ou <code>.internal</code> (réservé par l'ICANN en 2024). <code>.lan</code> ou <code>.local</code> ne sont pas faits pour ça : <code>.local</code> est réservé au mDNS.</p>
+            </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Un reverse proxy = <strong>un point d'entrée unique</strong> qui aiguille par nom de domaine et gère le HTTPS. Débute avec <strong>Nginx Proxy Manager</strong> ; passe à Traefik quand tu veux l'auto-découverte. Certificats via Let's Encrypt (challenge DNS = pas de port à ouvrir).</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Ton Nginx Proxy Manager doit obtenir un certificat Let&#x27;s Encrypt pour <code>jellyfin.home.arpa</code>. La demande échoue. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Let&#x27;s Encrypt ne certifie que des domaines publics, et home.arpa ne l&#x27;est pas</button>
+                        <button class="scenario__opt" data-why="Même avec un port ouvert, aucune autorité publique ne peut prouver que tu possèdes home.arpa : il est réservé aux réseaux privés.">Il faut ouvrir le port 443 sur la box</button>
+                        <button class="scenario__opt" data-why="NPM sait faire le challenge DNS ; le blocage vient du nom, pas de l&#x27;outil.">Le challenge DNS ne marche qu&#x27;avec Traefik</button>
+                    </div>
+                    <div class="scenario__why"><p>Une autorité publique vérifie que tu contrôles le domaine. Pour <code>home.arpa</code>, personne ne le contrôle publiquement. Solution : un vrai domaine (ex. <code>lab.exemple.be</code>) avec le challenge DNS, ou une petite autorité de certification interne dont tu installes la racine sur tes appareils.</p></div>
+                </div>
             </div>
         </section>
 
@@ -190,21 +218,21 @@
             <p class="chapter__intro">Pi-hole est un serveur DNS pour tout ton réseau qui bloque pubs et traceurs à la source. Bonus : il sert de DNS local pour donner des noms à tes machines (au lieu de retenir des IP).</p>
 
             <h3>Comment ça marche</h3>
-            <p>On déclare le Pi-hole comme <strong>serveur DNS</strong> du réseau (dans le DHCP de la box/routeur). Chaque requête DNS passe par lui : il répond « adresse inexistante » pour les domaines publicitaires, et transmet le reste à un DNS amont (ou à <em>Unbound</em> pour de la résolution récursive privée).</p>
+            <p>On déclare le Pi-hole comme <strong>serveur DNS</strong> du réseau (dans le DHCP de la box/routeur). Chaque requête DNS passe par lui : il répond <code>0.0.0.0</code> (mode de blocage par défaut, <em>NULL</em>) pour les domaines publicitaires, et transmet le reste à un DNS amont (ou à <em>Unbound</em> pour de la résolution récursive privée).</p>
 
             <div class="cards">
                 <div class="card">
                     <h4>Ce que Pi-hole apporte</h4>
                     <ul>
                         <li>Blocage pubs/traceurs sur tous les appareils</li>
-                        <li>DNS local : <code>nas.homelab.lan → 192.168.1.20</code></li>
+                        <li>DNS local : <code>nas.home.arpa → 192.168.1.20</code></li>
                         <li>Statistiques de requêtes du réseau</li>
                     </ul>
                 </div>
                 <div class="card">
                     <h4>Bonnes pratiques</h4>
                     <ul>
-                        <li>Prévoir un DNS de secours (sinon plus d'Internet si le Pi-hole tombe)</li>
+                        <li>Prévoir un DNS de secours (sinon plus d'Internet si le Pi-hole tombe) — idéalement un <strong>second Pi-hole</strong> : un DNS public en secondaire laisse passer les pubs, car les clients l'interrogent aussi</li>
                         <li>Le mettre sur une IP fixe</li>
                         <li>Alternative équivalente : AdGuard Home</li>
                     </ul>
@@ -214,6 +242,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Pi-hole = <strong>DNS + bloqueur de pub</strong> pour tout le réseau, et un annuaire local pour nommer tes services. Point de vigilance : c'est un point unique de défaillance — prévois un DNS de secours et une IP fixe.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu as mis dans le DHCP de la box le Pi-hole en DNS 1 et <code>1.1.1.1</code> en DNS 2, « au cas où ». Des pubs réapparaissent par moments. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Les appareils interrogent aussi le DNS 2, qui ne filtre rien</button>
+                        <button class="scenario__opt" data-why="Des listes périmées laisseraient passer toujours les mêmes pubs, pas « par moments » selon l&#x27;appareil.">Le Pi-hole n&#x27;a pas mis à jour ses listes</button>
+                        <button class="scenario__opt" data-why="Un DNS public ne connaît pas tes listes : il répond à tout, pubs comprises.">1.1.1.1 copie la liste de blocage du Pi-hole</button>
+                    </div>
+                    <div class="scenario__why"><p>Un client n'utilise pas le second DNS seulement en cas de panne : il peut l'interroger quand il veut. Pour garder le filtrage <em>et</em> la redondance, le DNS 2 doit être un <strong>second Pi-hole</strong> (ou AdGuard Home) sur une autre machine.</p></div>
+                </div>
             </div>
         </section>
 
@@ -232,7 +272,7 @@
                         <tr><td>Mots de passe</td><td>Vaultwarden</td><td>LastPass (cf. module <a href="securite.html">Sécurité</a>)</td></tr>
                         <tr><td>Tableau de bord</td><td>Homepage / Homarr</td><td>Un point d'entrée vers tous tes services</td></tr>
                         <tr><td>Domotique</td><td>Home Assistant</td><td>Les apps propriétaires des objets connectés</td></tr>
-                        <tr><td>Notes / wiki</td><td>Obsidian sync / Wiki.js</td><td>Notion</td></tr>
+                        <tr><td>Notes / wiki</td><td>Wiki.js / BookStack</td><td>Notion, Confluence</td></tr>
                         <tr><td>Photos</td><td>Immich</td><td>Google Photos</td></tr>
                     </tbody>
                 </table>
@@ -276,6 +316,18 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Un NAS centralise le stockage et le partage (SMB pour les postes, NFS entre serveurs). TrueNAS/Unraid/OMV clé en main, ou ZFS sur Proxmox. <strong>RAID = disponibilité, pas sauvegarde.</strong></p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Ton NAS ZFS en miroir est chiffré par un rançongiciel arrivé depuis un PC de la maison via le partage SMB. Que t&#x27;apporte le miroir ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Rien : il a fidèlement écrit les fichiers chiffrés sur les deux disques</button>
+                        <button class="scenario__opt" data-why="Le miroir recopie chaque écriture en temps réel : le second disque contient la même version chiffrée.">Il permet de reprendre les fichiers sur le second disque</button>
+                        <button class="scenario__opt" data-why="Les sommes de contrôle détectent une corruption du disque, pas une écriture légitime faite par un utilisateur, même malveillante.">Il bloque l&#x27;attaque, car ZFS vérifie les sommes de contrôle</button>
+                    </div>
+                    <div class="scenario__why"><p>Le RAID protège d'une <strong>panne de disque</strong>. Contre la suppression, l'erreur humaine ou le rançongiciel, il faut des <strong>versions anciennes</strong> hors d'atteinte : snapshots ZFS non accessibles en écriture depuis le partage, et une sauvegarde sur une autre machine, dont une copie hors ligne ou hors site.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 07 -->
@@ -316,7 +368,7 @@
                     <h4>VPN — WireGuard</h4>
                     <ul>
                         <li>Un tunnel chiffré vers ton réseau maison</li>
-                        <li>Un seul port UDP à ouvrir (ou zéro avec un relais)</li>
+                        <li>Un seul port UDP à rediriger sur la box (par convention <strong>51820/UDP</strong>), ou zéro avec un relais</li>
                         <li>Moderne, rapide, simple à configurer</li>
                     </ul>
                 </div>
@@ -332,7 +384,7 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Ne fais surtout pas ça</p>
-                <p>Ouvrir un <em>port forwarding</em> direct vers un service (RDP, une appli web, un NAS) est la cause n°1 de compromission de homelab. Passe <strong>toujours</strong> par un VPN (WireGuard/Tailscale). Si un service doit vraiment être public, mets-le derrière un reverse proxy durci, avec authentification et à jour.</p>
+                <p>Ouvrir un <em>port forwarding</em> direct vers un service (RDP, une appli web, un NAS) est l'une des causes de compromission les plus fréquentes : des robots balaient en permanence tout Internet à la recherche de ces ports. Passe <strong>toujours</strong> par un VPN (WireGuard/Tailscale). Si un service doit vraiment être public, mets-le derrière un reverse proxy durci, avec authentification et à jour.</p>
             </div>
 
             <div class="tip">
@@ -344,9 +396,20 @@
                 <p class="takeaway__label">À retenir</p>
                 <p>Accès distant = <strong>VPN uniquement</strong> (WireGuard, ou Tailscale pour le zéro-config). Jamais de port forwarding direct vers un service. Un homelab bien fait est invisible depuis Internet.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu veux consulter ton Jellyfin depuis l&#x27;hôtel. Quelle solution n&#x27;expose aucun service du homelab à Internet ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Un VPN WireGuard (ou Tailscale) vers la maison, puis l&#x27;adresse interne</button>
+                        <button class="scenario__opt" data-why="C&#x27;est exactement l&#x27;exposition directe à éviter : le service répond à n&#x27;importe qui sur Internet.">Rediriger le port 8096 de la box vers Jellyfin</button>
+                        <button class="scenario__opt" data-why="Mieux qu&#x27;un port applicatif brut, mais tous les services derrière le proxy deviennent joignables depuis Internet.">Rediriger le port 443 vers le reverse proxy</button>
+                    </div>
+                    <div class="scenario__why"><p>Avec WireGuard, seul le port du VPN est ouvert, et il ne répond <strong>rien</strong> à un paquet qui ne porte pas une clé connue : un scanner ne voit même pas qu'il existe. Tailscale n'ouvre aucun port. Une fois dans le tunnel, on joint Jellyfin comme à la maison.</p></div>
+                </div>
+            </div>
         </section>
 
-        <!-- Test de fin de module — rendu par assets/quiz.js -->
         <!-- 09 -->
         <section class="chapter" id="pratique">
             <p class="chapter__num">09</p>
@@ -364,6 +427,7 @@
                 <p class="verify__sub">Sortie attendue</p>
             <pre class="verify__out">151.101.2.132
 0.0.0.0</pre>
+                <p>La première adresse varie (c'est celle que renvoie le DNS amont) ; la seconde, <code>0.0.0.0</code>, est la réponse de blocage par défaut de Pi-hole.</p>
                 <p class="verify__fail">Aucune réponse : le conteneur est arrêté ou le port 53 n'est pas publié. Tout le réseau perd Internet quand le DNS local tombe : c'est le point unique de défaillance du chapitre 04 — d'où un second DNS sur une autre machine.</p>
             </div>
             <div class="scenario">
@@ -403,10 +467,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a> · <a href="https://www.youtube.com/@TechHut" target="_blank" rel="noopener">TechHut</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

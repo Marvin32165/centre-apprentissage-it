@@ -1206,6 +1206,49 @@ footer a:hover { color: var(--accent-2); border-bottom-color: var(--accent); }
 .theory { margin: 0 0 24px; padding: 13px 18px; border: 1px dashed var(--warn-line); background: var(--warn-soft); font-size: .89rem; color: var(--warn-ink); }
 .theory b { color: var(--warn-ink); }
 
+/* ── Pas à pas (.walk) : un échange réseau, une étape à la fois ── */
+.walk { margin: 26px 0; padding: 22px 24px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow-1); }
+.walk__label { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; color: var(--accent-2); margin-bottom: 4px; }
+.walk__label::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.content p.walk__title, .walk__title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 600; margin: 0 0 6px; }
+.content .walk__steps { list-style: none; margin: 14px 0 0; padding: 0; }
+.content .walk__step { margin: 0 0 18px; padding-top: 14px; border-top: 1px solid var(--border); }
+.walk.is-js .walk__step { border-top: none; padding-top: 0; margin: 0; min-height: 230px; }
+.walk__where { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .04em; color: var(--ink-faint); margin-bottom: 4px !important; }
+.walk__where b { color: var(--accent-2); font-weight: 500; }
+.walk__head { font-weight: 600; font-size: 1rem; margin-bottom: 10px !important; }
+.walk__change { font-size: .9rem; color: var(--ink-soft); }
+.walk__change b { color: var(--accent-2); }
+.walk__nav { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+.walk__dots { display: inline-flex; flex-wrap: wrap; gap: 5px; flex: 1; justify-content: center; }
+.walk__dot { width: 9px; height: 9px; padding: 0; border-radius: 50%; border: 1px solid var(--border-md); background: var(--surface-3); cursor: pointer; }
+.walk__dot.is-seen { background: var(--accent-line); border-color: var(--accent-line); }
+.walk__dot.is-on { background: var(--accent); border-color: var(--accent); transform: scale(1.25); }
+.walk__pos { font-family: var(--font-mono); font-size: .68rem; color: var(--ink-faint); }
+.walk .cmdex__btn:disabled { opacity: .4; cursor: default; }
+
+/* ── Trame décortiquée (.frame) : les en-têtes imbriqués, couche par couche ── */
+.frame { display: flex; flex-wrap: wrap; gap: 4px; margin: 10px 0 12px; font-family: var(--font-mono); font-size: .74rem; line-height: 1.5; }
+.hdr { flex: 1 1 140px; min-width: 0; padding: 8px 10px; border-radius: 10px; border: 1px solid; overflow-wrap: anywhere; }
+.hdr b { display: block; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+.hdr i { font-style: normal; font-weight: 600; }
+.hdr--l2 { background: var(--brown-soft); border-color: var(--border-md); color: var(--ink); }
+.hdr--l2 b { color: var(--brown); }
+.hdr--l3 { background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent-ink); }
+.hdr--l3 b { color: var(--accent-2); }
+.hdr--l4 { background: var(--warn-soft); border-color: var(--warn-line); color: var(--warn-ink); }
+.hdr--l4 b { color: var(--warn); }
+.hdr--data { background: var(--yes-soft); border-color: var(--yes-line); color: var(--yes-ink); flex-grow: 2; }
+.hdr--data b { color: var(--yes); }
+.hdr--fcs { flex: 0 0 auto; background: var(--brown-soft); border-color: var(--border-md); color: var(--ink-faint); }
+.hdr.is-changed { box-shadow: 0 0 0 2px var(--accent); }
+.frame__legend { font-size: .78rem; color: var(--ink-faint); margin-top: -4px; }
+
+/* ── Question éclair : un rappel d'une question en fin de chapitre ── */
+.scenario--quick { padding: 16px 20px; box-shadow: none; background: var(--surface-2); border-style: dashed; }
+.scenario--quick .scenario__step { margin-top: 6px; padding-top: 0; border-top: none; }
+.scenario > p.scenario__label.scenario__label--quick { color: var(--accent-2); }
+
 /* ── Page de révision ── */
 .srs { max-width: 780px; margin: 0 auto; padding: 40px 28px 80px; }
 .srs__filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0 20px; }

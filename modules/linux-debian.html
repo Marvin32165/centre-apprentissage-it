@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -112,18 +112,18 @@
 
             <h3>Les versions de Debian</h3>
             <div class="table-wrap"><table>
-                <thead><tr><th>Nom de code</th><th>Version</th></tr></thead>
+                <thead><tr><th>Nom de code</th><th>Version</th><th>Sortie</th><th>Support (sécurité)</th></tr></thead>
                 <tbody>
-                    <tr><td>bullseye</td><td>Debian 11</td></tr>
-                    <tr><td>bookworm</td><td>Debian 12</td></tr>
-                    <tr><td>trixie</td><td>Debian 13</td></tr>
-                    <tr><td>stable / testing / unstable</td><td>stable actuelle / future / à éviter en production</td></tr>
+                    <tr><td>bullseye</td><td>Debian 11</td><td>août 2021</td><td>terminé : LTS arrêté fin août 2026</td></tr>
+                    <tr><td>bookworm</td><td>Debian 12</td><td>juin 2023</td><td>régulier jusqu'en juin 2026, puis LTS jusqu'au 30 juin 2028</td></tr>
+                    <tr><td>trixie</td><td>Debian 13</td><td>9 août 2025</td><td>la <strong>stable</strong> actuelle</td></tr>
+                    <tr><td>stable / testing / unstable</td><td colspan="3">stable actuelle / future version en préparation / développement permanent (sid) : testing et unstable sont à éviter en production</td></tr>
                 </tbody>
             </table></div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Pour connaître sa version : <code>lsb_release -a</code> ou <code>cat /etc/os-release</code>. Le nom de code (ex. <strong>trixie</strong>) sert partout, notamment dans la configuration des dépôts APT.</p>
+                <p>Pour connaître sa version : <code>cat /etc/os-release</code> (toujours présent) ou <code>lsb_release -a</code> (paquet <code>lsb-release</code>, absent d'une installation minimale). Une Debian a environ <strong>3 ans</strong> de support régulier puis <strong>2 ans</strong> de LTS. Le nom de code (ex. <strong>trixie</strong>) sert partout, notamment dans la configuration des dépôts APT.</p>
             </div>
         </section>
 
@@ -152,6 +152,7 @@
             </div>
 
             <h3>Pourquoi ça marche</h3>
+            <p class="note">Si tu as laissé le mot de passe root <strong>vide</strong> pendant l'installation, l'installeur a déjà installé <code>sudo</code> et mis ton premier utilisateur dans le groupe <code>sudo</code> : le compte root est alors verrouillé, et ces étapes sont inutiles.</p>
             <p>On ne « donne » pas les droits d'admin à l'utilisateur directement : on le fait <strong>entrer dans le groupe <code>sudo</code></strong>. Debian a configuré à l'avance (dans le fichier <code>/etc/sudoers</code>) que <em>tout membre du groupe <code>sudo</code></em> peut exécuter des commandes en administrateur. Devenir admin, c'est donc simplement rejoindre ce groupe — c'est pour ça qu'on vérifie l'appartenance avec <code>groups</code>.</p>
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Le piège du -a dans usermod -aG</p>
@@ -239,6 +240,7 @@
                 <p class="takeaway__label">Attention</p>
                 <p>Linux est sensible à la casse : <code>/Home</code> et <code>/home</code> sont différents. Le séparateur est <code>/</code> (pas <code>\</code>).</p>
             </div>
+            <p class="note">Depuis Debian 12, <code>/bin</code>, <code>/sbin</code> et <code>/lib</code> ne sont plus que des <strong>liens symboliques</strong> vers <code>/usr/bin</code>, <code>/usr/sbin</code> et <code>/usr/lib</code> (fusion de <code>/usr</code>) : <code>ls /bin</code> et <code>ls /usr/bin</code> montrent la même chose.</p>
             <div class="tip">
                 <p class="tip__label">Où chercher quoi ?</p>
                 <p>Config système → <code>/etc</code> · Journaux → <code>/var/log</code> · Programmes → <code>/usr/bin</code>, <code>/opt</code> · Vos fichiers → <code>/home/votre_nom</code></p>
@@ -338,8 +340,8 @@
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">less</span> <span class="p">-N</span> <span class="s">/etc/passwd</span>            <span class="c"># explorer avec numéros de ligne</span>
-<span class="k">less</span> <span class="p">-S -N</span> <span class="s">/var/log/syslog</span>     <span class="c"># log avec lignes longues, sans retour auto</span>
-<span class="k">dmesg</span> | <span class="k">less</span>                   <span class="c"># parcourir les messages du noyau</span></pre>
+<span class="k">less</span> <span class="p">-S -N</span> <span class="s">/var/log/dpkg.log</span>   <span class="c"># log avec lignes longues, sans retour auto</span>
+<span class="k">sudo dmesg</span> | <span class="k">less</span>              <span class="c"># parcourir les messages du noyau (root requis sur Debian)</span></pre>
             </div>
 
             <h3>grep : options utiles</h3>
@@ -526,7 +528,7 @@
             </table></div>
             <div class="takeaway">
                 <p class="takeaway__label">Le fichier /etc/passwd</p>
-                <p><code>cat /etc/passwd</code> liste tous les utilisateurs du système (les mots de passe, eux, sont chiffrés ailleurs, dans <code>/etc/shadow</code>).</p>
+                <p><code>cat /etc/passwd</code> liste tous les utilisateurs du système (les mots de passe, eux, sont stockés ailleurs sous forme d'<strong>empreintes</strong> — hachés, pas chiffrés : on ne peut pas les « déchiffrer » — dans <code>/etc/shadow</code>, lisible par root seulement).</p>
             </div>
 
             <h3>Les autres colonnes de ls -l</h3>
@@ -569,14 +571,14 @@
                 <thead><tr><th>Droit</th><th>Sur un fichier exécutable</th><th>Octal</th><th>Exemple</th></tr></thead>
                 <tbody>
                     <tr><td>SetUID (<code>s</code> sur le propriétaire)</td><td>s'exécute avec les droits du <strong>propriétaire</strong> du fichier, pas de qui le lance</td><td>4xxx</td><td><code>/usr/bin/passwd</code> (rws) permet d'écrire dans <code>/etc/shadow</code></td></tr>
-                    <tr><td>SetGID</td><td>s'exécute avec les droits du <strong>groupe</strong> propriétaire</td><td>2xxx</td><td><code>chmod 2754 fichier</code></td></tr>
+                    <tr><td>SetGID (<code>s</code> sur le groupe)</td><td>s'exécute avec les droits du <strong>groupe</strong> propriétaire ; <strong>sur un dossier</strong>, les fichiers créés dedans héritent du groupe du dossier — l'usage le plus courant</td><td>2xxx</td><td><code>chmod 2775 /srv/partage</code></td></tr>
                     <tr><td>Sticky Bit (<code>t</code> sur les autres)</td><td>dans un dossier partagé, seuls le propriétaire du fichier et root peuvent le supprimer</td><td>1xxx</td><td><code>/tmp</code> et <code>/var/tmp</code></td></tr>
                 </tbody>
             </table></div>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">chmod</span> <span class="p">4754</span> fichier   <span class="c"># pose le SetUID (apparaît comme un "s" à la place du x propriétaire)</span>
-<span class="k">chmod</span> <span class="p">1744</span> fichier   <span class="c"># pose le Sticky Bit (apparaît comme un "t")</span></pre>
+<span class="k">chmod</span> <span class="p">1777</span> /srv/depot   <span class="c"># Sticky Bit sur un dossier (« t » à la place du x des autres) ; sans effet sur un fichier</span></pre>
             </div>
 
             <h3>umask — les droits par défaut, et pourquoi</h3>
@@ -609,6 +611,28 @@
                 <pre class="terminal__code"><span class="k">sudo apt</span> install acl
 <span class="k">getfacl</span> dossier                    <span class="c"># afficher les ACL en place</span>
 <span class="k">setfacl</span> <span class="p">-m</span> g:sav:rwx dossier       <span class="c"># donner rwx au groupe "sav" sur ce dossier</span></pre>
+            </div>
+            <p>Un <code>+</code> à la fin du bloc de droits dans <code>ls -l</code> (<code>drwxrwxr-x+</code>) signale qu'une ACL est posée : seul <code>getfacl</code> montre alors les droits complets.</p>
+            <div class="cmdex" data-accept="(sudo )?chmod 640 rapport\.txt;;(sudo )?chmod u=rw,g=r,o= rapport\.txt;;(sudo )?chmod u=rw,g=r,o=- rapport\.txt" data-hint="r=4, w=2, x=1 : additionne pour chacun des trois publics.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Le fichier <code>rapport.txt</code> doit être lisible et modifiable par son propriétaire, lisible par son groupe, et inaccessible aux autres. Pose ces droits en notation octale.</p>
+                <details class="reveal"><summary>Voir la réponse</summary><div class="reveal__body"><p><code>chmod 640 rapport.txt</code> — <code>rw-</code> = 4+2 = 6, <code>r--</code> = 4, <code>---</code> = 0. Vérifier avec <code>ls -l rapport.txt</code> : <code>-rw-r-----</code>.</p></div></details>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p>Trois publics (u, g, o) × trois droits (r=4, w=2, x=1). Sur un <strong>dossier</strong>, <code>x</code> = pouvoir y entrer, <code>w</code> = créer et supprimer des fichiers dedans. Les nouveaux fichiers naissent avec <code>666 − umask</code>, les dossiers avec <code>777 − umask</code>.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Avec <code>umask 0027</code>, tu crées un fichier avec <code>touch notes.txt</code>. Quels droits obtient-il ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>640 (rw-r-----)</button>
+                        <button class="scenario__opt" data-why="C&#x27;est le résultat pour un dossier (777 − 027). Un fichier part de 666 : il ne reçoit jamais le droit x à la création.">750 (rwxr-x---)</button>
+                        <button class="scenario__opt" data-why="C&#x27;est le résultat avec le umask courant 022. Avec 027, les « autres » perdent aussi la lecture.">644 (rw-r--r--)</button>
+                    </div>
+                    <div class="scenario__why"><p>Un fichier part de <code>666</code>. Le umask <code>027</code> retire <code>w</code> au groupe et tout aux autres : <code>666</code> → <code>640</code>, soit <code>rw-r-----</code>. Vérifier : <code>ls -l notes.txt</code>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -655,7 +679,9 @@
                 <thead><tr><th>Symbole</th><th>Nom</th><th>Exemple</th></tr></thead>
                 <tbody>
                     <tr><td><code>2&gt;</code> / <code>2&gt;&gt;</code></td><td>erreurs (écrase / ajoute)</td><td><code>ls /inexistant 2&gt; erreurs.txt</code></td></tr>
-                    <tr><td><code>&amp;&gt;</code></td><td>sortie ET erreurs ensemble</td><td><code>ls /ok /inexistant &amp;&gt; tout.txt</code></td></tr>
+                    <tr><td><code>&amp;&gt;</code></td><td>sortie ET erreurs ensemble (bash)</td><td><code>ls /ok /inexistant &amp;&gt; tout.txt</code></td></tr>
+                    <tr><td><code>2&gt;&amp;1</code></td><td>envoie les erreurs là où va déjà la sortie — à placer <strong>après</strong> la redirection de la sortie</td><td><code>ls /ok /inexistant &gt; tout.txt 2&gt;&amp;1</code></td></tr>
+                    <tr><td><code>2&gt; /dev/null</code></td><td>jeter les erreurs</td><td><code>find / -name passwd 2&gt; /dev/null</code></td></tr>
                     <tr><td><code>&lt;&lt;</code></td><td>here document : un bloc de texte comme entrée</td><td>voir ci-dessous</td></tr>
                     <tr><td><code>&lt;&lt;&lt;</code></td><td>here string : une chaîne comme entrée</td><td><code>grep "mot" &lt;&lt;&lt; "texte à chercher"</code></td></tr>
                 </tbody>
@@ -671,6 +697,18 @@ Ligne 3
 EOF</pre>
             </div>
             <p>Tout ce qui est tapé entre <code>&lt;&lt; EOF</code> et la ligne <code>EOF</code> est envoyé comme entrée à la commande — pratique pour générer un fichier de plusieurs lignes directement dans un script.</p>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu lances <code>find / -name &quot;*.conf&quot; &gt; resultats.txt</code> en utilisateur normal. L&#x27;écran se remplit de « Permission non accordée ». Où sont passés ces messages, et où sont les fichiers trouvés ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Les erreurs (canal 2) à l&#x27;écran, les fichiers trouvés (canal 1) dans resultats.txt</button>
+                        <button class="scenario__opt" data-why="&gt; ne redirige que le canal 1 (stdout) : les erreurs, sur le canal 2, continuent d&#x27;aller à l&#x27;écran.">Tout est dans resultats.txt, l&#x27;écran n&#x27;est qu&#x27;un écho</button>
+                        <button class="scenario__opt" data-why="Les erreurs ne concernent que les dossiers illisibles ; find continue et écrit ce qu&#x27;il trouve sur stdout, donc dans le fichier.">Rien n&#x27;a été écrit à cause des erreurs</button>
+                    </div>
+                    <div class="scenario__why"><p><code>&gt;</code> = <code>1&gt;</code>. Pour un résultat propre : <code>find / -name &quot;*.conf&quot; &gt; resultats.txt 2&gt; /dev/null</code>, ou tout garder avec <code>&gt; resultats.txt 2&gt;&amp;1</code>.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 09 -->
@@ -742,9 +780,9 @@ EOF</pre>
                 <thead><tr><th>Symbole</th><th>Signification</th><th>Exemple</th></tr></thead>
                 <tbody>
                     <tr><td><code>.</code></td><td>n'importe quel caractère</td><td><code>S.B</code> → SEB, SAB, SSB…</td></tr>
-                    <tr><td><code>?</code></td><td>0 ou 1 fois</td><td><code>S.?B</code> → SB ou SEB</td></tr>
+                    <tr><td><code>?</code></td><td>0 ou 1 fois (regex <strong>étendue</strong> : <code>grep -E</code>, <code>sed -E</code>)</td><td><code>S.?B</code> → SB, SEB, SAB…</td></tr>
                     <tr><td><code>*</code></td><td>0 ou n fois</td><td><code>S.*B</code> → SB, SEB, SAEIOUB…</td></tr>
-                    <tr><td><code>+</code></td><td>1 ou n fois</td><td></td></tr>
+                    <tr><td><code>+</code></td><td>1 ou n fois (regex étendue, comme <code>?</code> et <code>|</code>)</td><td><code>grep -E "[0-9]+"</code> → au moins un chiffre</td></tr>
                     <tr><td><code>^</code> / <code>$</code></td><td>début / fin de ligne</td><td></td></tr>
                     <tr><td><code>[a-z]</code></td><td>un caractère parmi cet ensemble</td><td><code>[^abc]</code> = tout SAUF a, b, c</td></tr>
                 </tbody>
@@ -936,7 +974,7 @@ iface ens33 inet <span class="k">static</span>
     <span class="p">address</span> <span class="s">192.168.1.10</span>
     <span class="p">netmask</span> <span class="s">255.255.255.0</span>
     <span class="p">gateway</span> <span class="s">192.168.1.2</span>
-    <span class="p">dns-nameservers</span> <span class="s">8.8.8.8</span></pre>
+    <span class="p">dns-nameservers</span> <span class="s">8.8.8.8</span>   <span class="c"># lu seulement si le paquet resolvconf est installé</span></pre>
             </div>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
@@ -946,14 +984,14 @@ iface ens33 inet <span class="k">static</span>
             </div>
 
             <h3>DNS — /etc/resolv.conf</h3>
-            <p>Le DNS traduit <code>www.google.fr</code> en adresse IP. S'il manque, on ajoute <code>nameserver 8.8.8.8</code> dans <code>/etc/resolv.conf</code>, puis on teste avec <code>ping www.google.fr</code>.</p>
+            <p>Le DNS traduit <code>www.google.fr</code> en adresse IP. S'il manque, on ajoute <code>nameserver 8.8.8.8</code> dans <code>/etc/resolv.conf</code>, puis on teste avec <code>ping www.google.fr</code>. La ligne <code>dns-nameservers</code> du fichier <code>interfaces</code> n'est prise en compte que si le paquet <code>resolvconf</code> est installé ; sans lui, c'est <code>/etc/resolv.conf</code> qui compte.</p>
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Diagnostic express</p>
                 <p>Si <code>ping 8.8.8.8</code> fonctionne mais pas <code>ping www.google.fr</code>, le réseau est bon : c'est le <strong>DNS</strong> qui est en cause → vérifier <code>/etc/resolv.conf</code>.</p>
             </div>
 
             <h3>Gérer les interfaces à chaud avec la commande ip</h3>
-            <p>Le paquet <code>iproute2</code> (commande <code>ip</code>) remplace l'ancien <code>net-tools</code> (<code>ifconfig</code>, non maintenu depuis 2009). Les changements faits avec <code>ip</code> sont <strong>temporaires</strong> : perdus au redémarrage si non écrits dans <code>/etc/network/interfaces</code>. Ils servent surtout à tester une configuration avant de la rendre permanente.</p>
+            <p>Le paquet <code>iproute2</code> (commande <code>ip</code>) remplace l'ancien <code>net-tools</code> (<code>ifconfig</code>, <code>route</code>), déprécié et absent d'une installation Debian par défaut. Les changements faits avec <code>ip</code> sont <strong>temporaires</strong> : perdus au redémarrage si non écrits dans <code>/etc/network/interfaces</code>. Ils servent surtout à tester une configuration avant de la rendre permanente.</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">ip</span> link show                                   <span class="c"># liste les interfaces (up/down, MAC)</span>
@@ -968,10 +1006,37 @@ iface ens33 inet <span class="k">static</span>
                 <thead><tr><th>Fichier</th><th>Rôle</th></tr></thead>
                 <tbody>
                     <tr><td><code>/etc/nsswitch.conf</code></td><td>définit l'ordre de résolution (ligne <code>hosts: files dns</code> → fichier local avant DNS)</td></tr>
-                    <tr><td><code>/etc/hosts</code></td><td>dictionnaire de résolution local (ex : <code>192.168.1.31 Facir</code>)</td></tr>
+                    <tr><td><code>/etc/hosts</code></td><td>dictionnaire de résolution local (ex : <code>192.168.1.31 srv-web</code>)</td></tr>
                     <tr><td><code>/etc/resolv.conf</code></td><td>liste des serveurs DNS interrogés (<code>nameserver ...</code>)</td></tr>
                 </tbody>
             </table></div>
+
+            <h3>Et si c'est NetworkManager qui gère la carte ?</h3>
+            <p>Une Debian installée <strong>avec un bureau</strong> confie souvent le réseau à NetworkManager plutôt qu'à <code>/etc/network/interfaces</code>. Dans ce cas, on passe par <code>nmcli</code> (le nom de la connexion se lit avec <code>nmcli con show</code>) :</p>
+            <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — NetworkManager</span></div>
+                <pre class="terminal__code"><span class="k">nmcli</span> con show                                          <span class="c"># nom des connexions</span>
+<span class="k">sudo nmcli</span> con mod <span class="s">"Wired connection 1"</span> ipv4.method manual \
+  ipv4.addresses 192.168.1.10/24 ipv4.gateway 192.168.1.2 ipv4.dns 192.168.1.2
+<span class="k">sudo nmcli</span> con up <span class="s">"Wired connection 1"</span>                  <span class="c"># appliquer</span></pre>
+            </div>
+            <p>Règle : <strong>un seul</strong> gestionnaire par interface. Une carte déclarée dans <code>/etc/network/interfaces</code> est ignorée par NetworkManager.</p>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>ip</code> pour voir et tester (temporaire), <code>/etc/network/interfaces</code> (ou <code>nmcli</code> sur un poste avec bureau) pour rendre permanent, <code>/etc/resolv.conf</code> pour le DNS. Diagnostic dans l'ordre : adresse (<code>ip a</code>), passerelle (<code>ip r</code>), IP publique (<code>ping 8.8.8.8</code>), puis nom (<code>ping debian.org</code>).</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu as attribué une adresse au serveur avec <code>sudo ip addr add 192.168.1.10/24 dev ens33</code> : tout fonctionne. Après un redémarrage, le serveur n&#x27;a plus d&#x27;adresse. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>La commande ip ne modifie que la configuration en mémoire, jamais les fichiers</button>
+                        <button class="scenario__opt" data-why="Le DHCP ne « reprend » pas une adresse fixe : simplement, rien dans la configuration ne demande de la remettre.">Le DHCP a repris l&#x27;adresse au démarrage</button>
+                        <button class="scenario__opt" data-why="Ce service relit /etc/network/interfaces, où l&#x27;adresse n&#x27;a jamais été écrite : il ne l&#x27;aurait pas reposée.">Il fallait lancer systemctl restart networking après la commande ip</button>
+                    </div>
+                    <div class="scenario__why"><p>Les changements faits avec <code>ip</code> sont <strong>immédiats mais temporaires</strong>. Pour qu'ils survivent, on écrit le bloc <code>iface ens33 inet static</code> dans <code>/etc/network/interfaces</code>, puis <code>sudo systemctl restart networking</code> (attention : en SSH, une erreur dans le fichier coupe la session).</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 15 -->
@@ -1002,19 +1067,20 @@ iface ens33 inet <span class="k">static</span>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Depuis une autre machine (Windows, Mac, Linux)</span></div>
                 <pre class="terminal__code"><span class="k">ssh</span> apprenant@192.168.1.10                <span class="c"># ouvrir une session distante</span>
-<span class="k">scp</span> fichier apprenant@192.168.1.10:/home  <span class="c"># copier un fichier via SSH</span></pre>
+<span class="k">scp</span> fichier apprenant@192.168.1.10:~/     <span class="c"># copier un fichier via SSH, dans le dossier perso distant</span></pre>
             </div>
 
             <h3>Se connecter sans mot de passe (authentification par clé)</h3>
-            <p>SSH combine deux types de cryptographie : <strong>asymétrique</strong> (clé publique/privée) pour établir la connexion de façon sûre, puis <strong>symétrique</strong> (plus rapide) pour le reste de la session. On génère une paire de clés côté client et on diffuse la clé publique sur le serveur :</p>
+            <p>SSH combine deux types de cryptographie : <strong>asymétrique</strong> (clé publique/privée) pour authentifier le serveur et l'utilisateur et convenir d'une clé de session (échange Diffie-Hellman), puis <strong>symétrique</strong> (plus rapide) avec cette clé pour chiffrer le reste de la session. On génère une paire de clés côté client et on diffuse la clé publique sur le serveur :</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — côté client</span></div>
-                <pre class="terminal__code"><span class="k">ssh-keygen</span> <span class="p">-t</span> rsa <span class="p">-b</span> 4096 <span class="p">-f</span> ~/.ssh/id_rsa   <span class="c"># génère la paire (privée + .pub)</span>
-<span class="k">ssh-copy-id</span> <span class="p">-i</span> ~/.ssh/id_rsa.pub user@serveur <span class="c"># diffuse la clé publique</span></pre>
+                <pre class="terminal__code"><span class="k">ssh-keygen</span> <span class="p">-t</span> rsa <span class="p">-b</span> 4096 <span class="p">-f</span> ~/.ssh/id_rsa   <span class="c"># génère la paire (privée + .pub) — version du cours</span>
+<span class="k">ssh-keygen</span> <span class="p">-t</span> ed25519                       <span class="c"># le choix recommandé aujourd'hui : clé courte, rapide et sûre</span>
+<span class="k">ssh-copy-id</span> <span class="p">-i</span> ~/.ssh/id_rsa.pub user@serveur <span class="c"># diffuse la clé publique (dans ~/.ssh/authorized_keys du serveur)</span></pre>
             </div>
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Permissions du dossier .ssh</p>
-                <p>Le dossier <code>~/.ssh</code> doit être en <code>700</code> (accès au seul propriétaire) sinon SSH refuse de l'utiliser : <code>chmod 700 ~/.ssh</code>.</p>
+                <p>Le dossier <code>~/.ssh</code> doit être en <code>700</code> (accès au seul propriétaire) sinon SSH refuse de l'utiliser : <code>chmod 700 ~/.ssh</code>. Même règle pour <code>~/.ssh/authorized_keys</code> (<code>chmod 600</code>) et pour la clé privée côté client. La clé <strong>privée</strong> ne quitte jamais ton poste ; seule la <code>.pub</code> va sur les serveurs.</p>
             </div>
             <div class="tip">
                 <p class="tip__label">Transfert de fichiers</p>
@@ -1029,7 +1095,7 @@ iface ens33 inet <span class="k">static</span>
             <p class="chapter__intro">APT est le « magasin d'applications » de Debian, en ligne de commande. Les logiciels viennent de serveurs appelés dépôts (ou miroirs).</p>
 
             <h3>sources.list — d'où viennent les paquets</h3>
-            <p>Les dépôts sont listés dans <code>/etc/apt/sources.list</code>. Exemple pour Debian 13 avec un miroir français :</p>
+            <p>Les dépôts sont listés dans <code>/etc/apt/sources.list</code> (format « une ligne ») ou dans des fichiers <code>.sources</code> sous <code>/etc/apt/sources.list.d/</code> (format <strong>deb822</strong>, en blocs <code>Types:</code> / <code>URIs:</code> / <code>Suites:</code> / <code>Components:</code>, encouragé depuis Debian 13 ; <code>sudo apt modernize-sources</code> convertit l'ancien). Exemple au format classique pour Debian 13 :</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">sudo nano /etc/apt/sources.list</span></div>
                 <pre class="terminal__code"><span class="k">deb</span> <span class="s">http://ftp.fr.debian.org/debian</span> trixie <span class="p">main contrib non-free non-free-firmware</span>
@@ -1068,13 +1134,13 @@ iface ens33 inet <span class="k">static</span>
                     <tr><td><code>Unable to locate package</code></td><td>paquet absent des dépôts</td><td>vérifier version et composants dans sources.list</td></tr>
                     <tr><td><code>index files failed to download</code></td><td>miroir inaccessible</td><td>changer de miroir</td></tr>
                     <tr><td><code>Could not resolve</code></td><td>problème DNS</td><td>vérifier <code>/etc/resolv.conf</code></td></tr>
-                    <tr><td><code>Release file ... not valid yet</code></td><td>date/heure incorrecte</td><td><code>date -s "YYYY-MM-DD HH:MM:SS"</code></td></tr>
+                    <tr><td><code>Release file ... not valid yet</code></td><td>date/heure incorrecte</td><td>vérifier l'heure avec <code>timedatectl</code> (synchronisation NTP active ?), à défaut <code>sudo date -s "YYYY-MM-DD HH:MM:SS"</code></td></tr>
                     <tr><td><code>does not have a Release file</code></td><td>mauvais nom de code</td><td>vérifier avec <code>lsb_release -a</code></td></tr>
                 </tbody>
             </table></div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Utiliser un miroir proche (France : <strong>ftp.fr.debian.org</strong> ou <strong>mirror.ovh.net</strong>), ne jamais omettre le dépôt <strong>security</strong>, et toujours faire <code>apt update</code> après avoir modifié <code>sources.list</code>.</p>
+                <p>Utiliser un miroir proche (<strong>deb.debian.org</strong> redirige vers le plus proche ; ou un miroir national comme <strong>ftp.fr.debian.org</strong>, <strong>ftp.be.debian.org</strong>), ne jamais omettre le dépôt <strong>security</strong>, et toujours faire <code>apt update</code> après avoir modifié <code>sources.list</code>.</p>
             </div>
         </section>
 
@@ -1088,9 +1154,9 @@ iface ens33 inet <span class="k">static</span>
             <div class="table-wrap"><table>
                 <thead><tr><th>Commande</th><th>Action</th></tr></thead>
                 <tbody>
-                    <tr><td><code>ps aux</code> / <code>ps -ef</code></td><td>lister tous les processus (hiérarchie complète avec PPID)</td></tr>
+                    <tr><td><code>ps aux</code> / <code>ps -ef</code></td><td>lister tous les processus (<code>ps -ef</code> montre le PPID, le parent ; <code>ps aux</code> la consommation CPU/RAM)</td></tr>
                     <tr><td><code>top</code> / <code>htop</code></td><td>moniteur interactif (CPU, RAM, en direct)</td></tr>
-                    <tr><td><code>kill PID</code> / <code>kill -9 PID</code></td><td>arrêter / forcer l'arrêt</td></tr>
+                    <tr><td><code>kill PID</code> / <code>kill -9 PID</code></td><td>demander l'arrêt (signal SIGTERM, le programme peut se terminer proprement) / tuer sans discussion (SIGKILL, en dernier recours)</td></tr>
                     <tr><td><code>killall nom</code></td><td>arrêter tous les processus de ce nom</td></tr>
                     <tr><td><code>commande &amp;</code> / <code>jobs</code> / <code>fg</code> / <code>bg</code></td><td>lancer en fond / voir / ramener au 1er plan / reprendre en fond</td></tr>
                 </tbody>
@@ -1107,7 +1173,7 @@ iface ens33 inet <span class="k">static</span>
             </div>
             <div class="tip">
                 <p class="tip__label">Raccourcis dans top</p>
-                <p><code>t</code> bascule l'affichage CPU, <code>m</code> l'affichage RAM, <code>h</code> l'aide, <code>q</code> quitte. Le « load average » en haut indique le nombre de processus en attente de CPU sur 1/5/15 minutes.</p>
+                <p><code>t</code> bascule l'affichage CPU, <code>m</code> l'affichage RAM, <code>h</code> l'aide, <code>q</code> quitte. Le « load average » en haut donne la charge moyenne sur 1/5/15 minutes : le nombre de processus qui tournent ou attendent le CPU (sous Linux, aussi ceux bloqués en attente du disque). À comparer au nombre de cœurs (<code>nproc</code>).</p>
             </div>
 
             <h3>Les services (systemd)</h3>
@@ -1123,7 +1189,24 @@ iface ens33 inet <span class="k">static</span>
             </table></div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p><code>start</code> agit maintenant, <code>enable</code> agit au prochain démarrage. Pour un service qui doit toujours tourner (comme SSH), il faut les <strong>deux</strong>.</p>
+                <p><code>start</code> agit maintenant, <code>enable</code> agit au prochain démarrage. Pour un service qui doit toujours tourner (comme SSH), il faut les <strong>deux</strong> — ou <code>enable --now</code>, qui fait les deux d'un coup.</p>
+            </div>
+            <div class="cmdex" data-accept="(sudo )?systemctl enable --now ssh(\.service)?;;(sudo )?systemctl --now enable ssh(\.service)?" data-hint="Une seule commande systemctl, avec l&#x27;option qui démarre aussi tout de suite.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>En une seule commande, active le service <code>ssh</code> au démarrage <strong>et</strong> démarre-le immédiatement.</p>
+                <details class="reveal"><summary>Voir la réponse</summary><div class="reveal__body"><p><code>sudo systemctl enable --now ssh</code>. Vérifier : <code>systemctl is-enabled ssh</code> répond <code>enabled</code>, <code>systemctl is-active ssh</code> répond <code>active</code>.</p></div></details>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Tu as installé un serveur web et lancé <code>sudo systemctl start nginx</code> : le site répond. Après le redémarrage de la VM, plus rien. <code>systemctl status nginx</code> affiche <code>inactive (dead)</code> et <code>disabled</code>. Que s&#x27;est-il passé ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le service a été démarré mais jamais activé au démarrage (enable)</button>
+                        <button class="scenario__opt" data-why="Un plantage donnerait l&#x27;état failed, avec une erreur dans journalctl -u nginx. Ici il est simplement inactif : personne ne l&#x27;a lancé.">nginx a planté au démarrage</button>
+                        <button class="scenario__opt" data-why="Un redémarrage ne désinstalle rien : systemctl connaît encore le service, puisqu&#x27;il affiche son état.">Le redémarrage a désinstallé le paquet</button>
+                    </div>
+                    <div class="scenario__why"><p><code>start</code> = maintenant, <code>enable</code> = à chaque démarrage. <code>disabled</code> dans le statut le dit clairement. Correction : <code>sudo systemctl enable --now nginx</code>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -1166,27 +1249,52 @@ iface ens33 inet <span class="k">static</span>
             <h2 class="chapter__title">Logs système &amp; audit</h2>
             <p class="chapter__intro">Où regarder quand quelque chose s'est mal passé, ou pour savoir qui a fait quoi.</p>
 
-            <p>La plupart des processus envoient leurs traces au service <code>rsyslog</code> (config dans <code>/etc/rsyslog.conf</code>). Sur les systèmes récents (systemd), <code>journalctl</code> centralise aussi les logs.</p>
+            <p>Sur Debian, <strong>systemd-journald</strong> recueille les journaux de tout le système ; on les lit avec <code>journalctl</code>. Les fichiers texte classiques (<code>/var/log/syslog</code>, <code>auth.log</code>, <code>kern.log</code>) sont écrits par un autre service, <code>rsyslog</code> (config dans <code>/etc/rsyslog.conf</code>)… qui <strong>n'est plus installé par défaut depuis Debian 12</strong>. Sur une Debian 12 ou 13 neuve, ces fichiers n'existent donc pas : on utilise <code>journalctl</code>, ou on installe <code>rsyslog</code> si l'on tient aux fichiers texte.</p>
+            <div class="table-wrap"><table>
+                <thead><tr><th>Avec rsyslog (fichier)</th><th>Équivalent journalctl (toujours disponible)</th></tr></thead>
+                <tbody>
+                    <tr><td><code>/var/log/syslog</code></td><td><code>journalctl</code> · <code>journalctl -b</code> (depuis le dernier démarrage) · <code>journalctl -p err</code> (erreurs)</td></tr>
+                    <tr><td><code>/var/log/auth.log</code></td><td><code>journalctl -u ssh</code> (connexions SSH) · <code>journalctl _COMM=sudo</code> (usages de sudo)</td></tr>
+                    <tr><td><code>/var/log/kern.log</code></td><td><code>journalctl -k</code> (messages du noyau)</td></tr>
+                    <tr><td><code>tail -f</code> d'un fichier</td><td><code>journalctl -f</code> · <code>journalctl --since "1 hour ago"</code></td></tr>
+                </tbody>
+            </table></div>
             <div class="table-wrap"><table>
                 <thead><tr><th>Fichier / commande</th><th>Contenu</th></tr></thead>
                 <tbody>
                     <tr><td><code>/var/log/auth.log</code></td><td>authentifications, connexions SSH, élévations de privilèges (Debian)</td></tr>
                     <tr><td><code>/var/log/syslog</code></td><td>journal général du système</td></tr>
                     <tr><td><code>/var/log/kern.log</code></td><td>messages du noyau (détection matérielle, cartes réseau…)</td></tr>
-                    <tr><td><code>/var/log/wtmp</code></td><td>historique des connexions/redémarrages (binaire, lire avec <code>last</code>)</td></tr>
+                    <tr><td><code>/var/log/wtmp</code></td><td>historique des connexions/redémarrages (binaire, lire avec <code>last</code>) ; sur Debian 13, remplacé par une base <code>/var/lib/wtmpdb/</code>, que lit le nouveau <code>last</code></td></tr>
                     <tr><td><code>journalctl -u service</code> / <code>-f</code></td><td>logs d'un service précis / suivre en direct</td></tr>
                 </tbody>
             </table></div>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash — qui a fait quoi ?</span></div>
-                <pre class="terminal__code"><span class="k">last</span>                     <span class="c"># historique des connexions (lit /var/log/wtmp)</span>
+                <pre class="terminal__code"><span class="k">last</span>                     <span class="c"># historique des connexions (wtmp, ou wtmpdb sur Debian 13)</span>
 <span class="k">last</span> | <span class="k">grep</span> reboot       <span class="c"># uniquement les redémarrages du système</span>
 <span class="k">who</span>                      <span class="c"># qui est connecté en ce moment</span>
 <span class="k">w</span>                        <span class="c"># qui est connecté + ce qu'il fait + temps d'inactivité</span></pre>
             </div>
             <div class="tip">
                 <p class="tip__label">Pourquoi wtmp est en binaire</p>
-                <p>Contrairement aux logs texte, <code>/var/log/wtmp</code> est stocké en binaire par le noyau : plus difficile à trafiquer pour effacer ses traces qu'un simple fichier texte.</p>
+                <p><code>/var/log/wtmp</code> est un fichier d'enregistrements de taille fixe, écrit par les programmes de connexion (<code>login</code>, <code>sshd</code>…), pas un texte : on le lit avec <code>last</code>, pas avec <code>cat</code>. Le binaire ne le protège pas : root peut le modifier, d'où l'intérêt d'envoyer les journaux vers un autre serveur. Son format n'irait pas au-delà de 2038, raison de son remplacement par <code>wtmpdb</code> sur Debian 13.</p>
+            </div>
+            <div class="takeaway">
+                <p class="takeaway__label">À retenir</p>
+                <p><code>journalctl</code> marche sur toute Debian récente : <code>-u service</code>, <code>-k</code>, <code>-b</code>, <code>-p err</code>, <code>-f</code>. Les fichiers texte de <code>/var/log</code> n'existent que si <code>rsyslog</code> est installé. <code>last</code> pour les connexions passées, <code>who</code> / <code>w</code> pour les connexions en cours.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur une Debian 13 fraîchement installée, tu veux voir les tentatives de connexion SSH de la nuit. <code>cat /var/log/auth.log</code> répond « Aucun fichier ou dossier de ce nom ». Que fais-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>journalctl -u ssh --since yesterday</button>
+                        <button class="scenario__opt" data-why="Le fichier n&#x27;est pas créé par ssh mais par rsyslog, absent par défaut depuis Debian 12 : redémarrer ssh n&#x27;y change rien.">Tu redémarres le service ssh pour recréer le fichier</button>
+                        <button class="scenario__opt" data-why="L&#x27;absence du fichier ne prouve rien : les événements sont bien enregistrés, dans le journal de systemd.">Tu conclus que personne n&#x27;a tenté de se connecter</button>
+                    </div>
+                    <div class="scenario__why"><p>Les événements sont dans le <strong>journal systemd</strong> : <code>sudo journalctl -u ssh --since yesterday</code> (ajouter <code>| grep -i failed</code> pour les échecs). Si tu veux retrouver <code>auth.log</code> : <code>sudo apt install rsyslog</code> — les traces n'y apparaîtront qu'à partir de là.</p></div>
+                </div>
             </div>
         </section>
 
@@ -1215,7 +1323,55 @@ iface ens33 inet <span class="k">static</span>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Bash</span></div>
                 <pre class="terminal__code"><span class="k">sudo update-grub</span>              <span class="c"># régénère grub.cfg après modif de /etc/default/grub</span>
-<span class="k">sudo grub-install</span> <span class="s">/dev/sda</span>    <span class="c"># réinstalle GRUB (problème de boot)</span></pre>
+<span class="k">sudo grub-install</span> <span class="s">/dev/sda</span>    <span class="c"># réinstalle GRUB sur un disque en mode BIOS (en UEFI : sudo grub-install, sans disque)</span></pre>
+            </div>
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">Du bouton d'alimentation au prompt de connexion</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · UEFI (ou BIOS)</p>
+                        <p class="walk__head">Le microprogramme teste le matériel et choisit le disque</p>
+                        <p>Le firmware de la carte mère (ou de la VM) fait son autotest, puis suit son <strong>ordre de démarrage</strong>. En UEFI, il lit la partition système EFI (FAT32, montée sous <code>/boot/efi</code>) et lance le chargeur qui y est enregistré. Avec le démarrage sécurisé, il vérifie d'abord sa signature.</p>
+                        <p class="walk__change">Firmware → <b>partition EFI</b> → chargeur signé (<b>shim</b> puis GRUB).</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · GRUB</p>
+                        <p class="walk__head">Le chargeur affiche son menu</p>
+                        <p>GRUB lit sa configuration <code>/boot/grub/grub.cfg</code> et propose les entrées : le noyau courant, les anciens, le mode <em>recovery</em>. C'est ici qu'on peut ajouter un paramètre au noyau (touche <kbd>e</kbd>).</p>
+                        <p class="walk__change"><b>grub.cfg</b> est généré par <code>update-grub</code> depuis <code>/etc/default/grub</code>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · GRUB → mémoire</p>
+                        <p class="walk__head">Noyau et initramfs sont chargés</p>
+                        <p>GRUB charge en mémoire le noyau (<code>/boot/vmlinuz-…</code>) et l'<strong>initramfs</strong> (<code>/boot/initrd.img-…</code>), un petit système de fichiers temporaire qui contient les pilotes nécessaires pour trouver la vraie racine.</p>
+                        <p class="walk__change"><b>vmlinuz</b> + <b>initrd.img</b>, versions appariées.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · noyau + initramfs</p>
+                        <p class="walk__head">La vraie racine est trouvée et montée</p>
+                        <p>Le noyau détecte le matériel ; l'initramfs charge les pilotes de disque, assemble un RAID (<code>mdadm</code>) ou active LVM si besoin, puis monte <code>/</code>. D'où le <code>update-initramfs -u</code> après une modification de <code>mdadm.conf</code>.</p>
+                        <p class="walk__change">Une racine introuvable ici = shell <b>(initramfs)</b>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · noyau → systemd</p>
+                        <p class="walk__head">systemd devient le PID 1</p>
+                        <p>Le noyau lance <code>/sbin/init</code>, qui est <strong>systemd</strong> : le processus n° 1, parent de tous les autres.</p>
+                        <p class="walk__change"><b>PID 1</b> = systemd (<code>ps -p 1</code>).</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · systemd</p>
+                        <p class="walk__head">Montages et services, en parallèle</p>
+                        <p>systemd lit <code>/etc/fstab</code> et monte les systèmes de fichiers, puis démarre les services <em>enabled</em> (réseau, SSH, journald…) jusqu'à la cible par défaut (<code>multi-user.target</code> sur un serveur, <code>graphical.target</code> avec un bureau). Une ligne fautive de <code>fstab</code> fait tomber ici en <em>emergency mode</em>.</p>
+                        <p class="walk__change">Cible par défaut : <code>systemctl get-default</code>.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · getty / gestionnaire de session</p>
+                        <p class="walk__head">L'invite de connexion apparaît</p>
+                        <p>Sur la console, <code>getty</code> affiche <code>login:</code> ; à distance, <code>sshd</code> attend déjà. Le temps de chaque étape se mesure avec <code>systemd-analyze</code> et <code>systemd-analyze blame</code>.</p>
+                        <p class="walk__change">Démarrage lent ? <b>systemd-analyze blame</b> montre le coupable.</p>
+                    </li>
+                </ol>
             </div>
             <div class="tip">
                 <p class="tip__label">Mode recovery</p>
@@ -1257,7 +1413,7 @@ iface ens33 inet <span class="k">static</span>
             </div>
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Ce que le TP a montré</p>
-                <p>Les lettres <code>sda</code>, <code>sdb</code>… <strong>changent</strong> d'un démarrage à l'autre : c'est arrivé plusieurs fois sur la VM du cours, après un ajout de disque ou un simple redémarrage. Dans <code>fstab</code>, toujours l'UUID. Et toujours <code>sudo mount -a</code> avant de redémarrer : une erreur dans <code>fstab</code> peut bloquer le démarrage en mode de secours.</p>
+                <p>Les lettres <code>sda</code>, <code>sdb</code>… <strong>changent</strong> d'un démarrage à l'autre : c'est arrivé plusieurs fois sur la VM du cours, après un ajout de disque ou un simple redémarrage. Dans <code>fstab</code>, toujours l'UUID. Et toujours <code>sudo mount -a</code> avant de redémarrer : une erreur dans <code>fstab</code> peut bloquer le démarrage en mode de secours. Pour un disque de données qui peut être absent (disque USB de sauvegarde), l'option <code>nofail</code> (<code>defaults,nofail</code>) laisse le système démarrer sans lui.</p>
             </div>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
@@ -1286,6 +1442,18 @@ TARGET      SOURCE    FSTYPE OPTIONS
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Repérer (<code>lsblk</code>), partitionner (<code>fdisk</code>), formater (<code>mkfs</code>), monter, puis <code>fstab</code> par UUID et <code>mount -a</code> pour tester. Sauvegarder la table avant de toucher à un disque : <code>sudo sfdisk -d /dev/sdb &gt; table.sfdisk</code>.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Ta ligne de <code>fstab</code> monte <code>/dev/sdb1</code> sur <code>/mnt/backup</code>. Tu ajoutes un disque à la VM, et au redémarrage, <code>/mnt/backup</code> contient les fichiers d&#x27;un autre disque. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Les noms sdX ont changé : sdb désigne désormais un autre disque</button>
+                        <button class="scenario__opt" data-why="Rien n&#x27;a été écrasé : l&#x27;ancien disque est intact, il porte simplement un autre nom (sdc par exemple).">Le nouveau disque a écrasé le contenu de l&#x27;ancien</button>
+                        <button class="scenario__opt" data-why="fstab n&#x27;a pas bougé : c&#x27;est le noyau qui a nommé les disques dans un autre ordre en les détectant.">L&#x27;ordre des lignes de fstab s&#x27;est inversé</button>
+                    </div>
+                    <div class="scenario__why"><p>Les noms <code>sda</code>, <code>sdb</code>… suivent l'<strong>ordre de détection</strong>, qui peut changer. L'<strong>UUID</strong> appartient au système de fichiers et le suit partout : <code>sudo blkid</code>, puis <code>UUID=…</code> dans <code>fstab</code>, et <code>sudo mount -a</code> pour tester.</p></div>
+                </div>
             </div>
         </section>
 
@@ -1428,6 +1596,10 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Ce que le TP a montré</p>
                 <p>Trois erreurs rencontrées en TP : <code>$(date+%Y%m%d)</code> sans espace cherche une commande « date+%Y%m%d » qui n'existe pas — il faut <code>$(date +%Y%m%d)</code> ; le fichier de suivi <code>-g</code> ne s'édite <strong>jamais</strong> à la main (tar refuse un horodatage invalide) ; et une faute de frappe dans <code>{full,…}</code> a créé un dossier de trop puis un <em>fichier</em> <code>full</code> qui bloquait tout. Relire avant Entrée.</p>
+            </div>
+            <div class="tip">
+                <p class="tip__label">Une nouvelle complète = un nouveau fichier de suivi</p>
+                <p><code>tar -g</code> met à jour le fichier de suivi à chaque passage, et n'archive que ce qui a changé <strong>depuis la dernière archive</strong>. Pour refaire une vraie complète (le dimanche du cron ci-dessous), le script doit d'abord supprimer ou remplacer <code>snapshot_file</code> : sinon, la « complète » n'est qu'une incrémentielle de plus.</p>
             </div>
             <h3>rsync : une copie qui ne transfère que les différences</h3>
             <div class="terminal">
@@ -1741,7 +1913,7 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
             </table></div>
             <div class="tip">
                 <p class="tip__label">Centraliser les logs (rsyslog)</p>
-                <p>Le service <code>rsyslog</code> (config <code>/etc/rsyslog.conf</code>) collecte les traces de la plupart des processus. Pour centraliser sur un serveur : décommenter la réception UDP/TCP côté serveur (<code>systemctl restart rsyslog</code>), et ajouter une ligne <code>*.* @IP:514</code> (UDP, une arobase) ou <code>@@IP:514</code> (TCP, deux arobases) côté client à envoyer.</p>
+                <p>Rappel : depuis Debian 12, <code>rsyslog</code> et les fichiers <code>/var/log/syslog</code>, <code>auth.log</code>, <code>kern.log</code> ne sont présents qu'après <code>apt install rsyslog</code> ; sinon, <code>journalctl</code>. Le service <code>rsyslog</code> (config <code>/etc/rsyslog.conf</code>) collecte les traces de la plupart des processus. Pour centraliser sur un serveur : décommenter la réception UDP/TCP côté serveur (<code>systemctl restart rsyslog</code>), et ajouter une ligne <code>*.* @IP:514</code> (UDP, une arobase) ou <code>@@IP:514</code> (TCP, deux arobases) côté client à envoyer.</p>
             </div>
 
             <h3>Raccourcis clavier</h3>
@@ -1759,7 +1931,6 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
             </table></div>
         </section>
 
-        <!-- Test de fin de module — rendu par assets/quiz.js -->
         <section class="test" id="test" data-test="linux-debian">
             <noscript><p class="note">Le test de fin de module a besoin de JavaScript pour s'afficher.</p></noscript>
         </section>
@@ -1776,10 +1947,10 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>

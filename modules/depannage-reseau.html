@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=12">
+    <link rel="stylesheet" href="../assets/theme.css?v=14">
 </head>
 <body>
 
@@ -100,9 +100,91 @@
                     </tbody>
                 </table>
             </div>
+            <div class="walk">
+                <p class="walk__label">Pas à pas</p>
+                <p class="walk__title">« Plus d'Internet » sur un poste Windows : la méthode, couche par couche</p>
+                <ol class="walk__steps">
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 1</b> · couche 1 · la carte</p>
+                        <p class="walk__head">Le lien est-il monté ?</p>
+                        <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell</span></div>
+                <pre class="terminal__code"><span class="k">Get-NetAdapter</span><span class="c">        # Status : Up, LinkSpeed : 1 Gbps</span></pre>
+            </div>
+                        <p class="walk__change"><code>Disconnected</code> : câble, prise, port du switch ou Wi-Fi coupé. On ne va <b>pas plus haut</b> tant que le lien n'est pas là.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 2</b> · couche 3 · la configuration</p>
+                        <p class="walk__head">Ai-je une adresse, un masque, une passerelle, un DNS ?</p>
+                        <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Invite de commandes</span></div>
+                <pre class="terminal__code"><span class="k">ipconfig</span> /all</pre>
+            </div>
+                        <p class="walk__change">Une adresse en <b>169.254</b> : le DHCP n'a pas répondu (VLAN, câble, serveur). Une passerelle vide ou hors du réseau : rien ne sortira.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 3</b> · couches 2 et 3 · le réseau local</p>
+                        <p class="walk__head">La passerelle répond-elle ?</p>
+                        <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Invite de commandes</span></div>
+                <pre class="terminal__code"><span class="k">ping</span> <span class="p">-n</span> 2 172.16.50.1
+<span class="k">arp</span> <span class="p">-a</span><span class="c">                  # la MAC de la passerelle doit apparaître</span></pre>
+            </div>
+                        <p class="walk__change">Pas d'entrée ARP pour la passerelle : la <b>couche 2</b> ne passe pas. Une entrée ARP mais pas de réponse au ping : la passerelle filtre peut-être ICMP, on continue.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 4</b> · couche 3 · au-delà du réseau</p>
+                        <p class="walk__head">Une adresse IP sur Internet répond-elle ?</p>
+                        <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Invite de commandes</span></div>
+                <pre class="terminal__code"><span class="k">ping</span> <span class="p">-n</span> 2 1.1.1.1
+<span class="k">tracert</span> <span class="p">-d</span> 1.1.1.1<span class="c">        # si le ping échoue : où ça s'arrête</span></pre>
+            </div>
+                        <p class="walk__change">La passerelle répond mais pas 1.1.1.1 : le problème est <b>après</b> le poste (routeur, NAT, lien opérateur). Le poste est hors de cause.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 5</b> · couche 7 · les noms</p>
+                        <p class="walk__head">Le nom se résout-il ?</p>
+                        <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell</span></div>
+                <pre class="terminal__code"><span class="k">Resolve-DnsName</span> www.example.com
+<span class="k">Resolve-DnsName</span> www.example.com <span class="p">-Server</span> 1.1.1.1<span class="c">   # comparer</span></pre>
+            </div>
+                        <p class="walk__change">L'IP répond, le nom non : <b>DNS</b>. Si un autre serveur DNS répond, c'est celui du poste qui est en cause.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 6</b> · couches 4 et 7 · le service</p>
+                        <p class="walk__head">Le port répond-il, et le service ?</p>
+                        <div class="terminal">
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell</span></div>
+                <pre class="terminal__code"><span class="k">Test-NetConnection</span> www.example.com <span class="p">-Port</span> 443
+<span class="k">curl.exe</span> <span class="p">-I</span> https://www.example.com</pre>
+            </div>
+                        <p class="walk__change">Port fermé ou filtré : pare-feu, proxy. Port ouvert mais erreur HTTP ou de certificat : la panne est dans l'<b>application</b>, plus dans le réseau.</p>
+                    </li>
+                    <li class="walk__step">
+                        <p class="walk__where"><b>Étape 7</b> · conclure</p>
+                        <p class="walk__head">La première étape qui échoue désigne la couche</p>
+                        <p>Tout ce qui est en dessous a été prouvé bon : on ne le retouche pas. On note les commandes et leurs sorties dans le ticket (chapitre 08), puis on corrige <strong>une seule chose</strong> et on relance la même commande.</p>
+                        <p class="walk__change">Méthode <b>bottom-up</b> : chaque étape réussie élimine une couche entière.</p>
+                    </li>
+                </ol>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Délimiter avant de toucher, <strong>une seule modification à la fois</strong>, vérifier avec la commande qui montrait la panne, et écrire ce qu'on a trouvé. La méthode par couches transforme un problème vague en une question précise.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Depuis ce matin, les postes du 2<sup>e</sup> étage n'ouvrent plus l'intranet ; leurs mails et Internet marchent, et les autres étages n'ont aucun souci. Par où commences-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Par le haut : le nom et le service de l'intranet, depuis un poste du 2<sup>e</sup></button>
+                        <button class="scenario__opt" data-why="Mails et Internet passent : les couches 1 à 3 fonctionnent. Repartir du câble ferait perdre du temps.">Par le câble et la carte réseau d&#x27;un poste</button>
+                        <button class="scenario__opt" data-why="Les autres étages y accèdent : le serveur répond. Et on n&#x27;agit pas avant d&#x27;avoir observé.">Par le redémarrage du serveur intranet</button>
+                    </div>
+                    <div class="scenario__why"><p>Un seul service touché, réseau de base fonctionnel : on teste <strong>de haut en bas</strong> (<code>nslookup</code>, <code>Test-NetConnection -Port 443</code>). Et ce qui distingue le 2<sup>e</sup> étage (VLAN, switch, règle de pare-feu) est la piste principale.</p></div>
+                </div>
             </div>
         </section>
 
@@ -140,7 +222,7 @@
             </div>
             <div class="tip">
                 <p class="tip__label">Capturer sans installer Wireshark</p>
-                <p>Windows embarque <strong>pktmon</strong> : <code>pktmon start --capture</code>, reproduire la panne, <code>pktmon stop</code>, puis <code>pktmon etl2pcap PktMon.etl --out panne.pcapng</code> produit un fichier que Wireshark ouvre sur un autre poste. Pratique sur un serveur où l'on n'installe rien.</p>
+                <p>Windows 10 (2004 et plus) et Windows Server 2022 embarquent <strong>pktmon</strong> : dans une console administrateur, <code>pktmon start --capture</code>, reproduire la panne, <code>pktmon stop</code>, puis <code>pktmon etl2pcap PktMon.etl --out panne.pcapng</code> produit un fichier que Wireshark ouvre sur un autre poste. Pratique sur un serveur où l'on n'installe rien.</p>
             </div>
             <div class="cmdex" data-accept="Get-NetTCPConnection -State Listen( \|.*)?;;netstat -a(no|n|on)?( \| findstr (/i )?listen(ing)?)?" data-hint="Get-NetTCPConnection, avec un paramètre -State.">
                 <p class="cmdex__label">À toi de taper</p>
@@ -153,6 +235,18 @@
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Sous Windows : <code>ipconfig /all</code> pour la configuration, <code>Test-NetConnection</code> pour la joignabilité et les ports, <code>Resolve-DnsName</code> pour le DNS, <code>Get-NetFirewallProfile</code> pour le pare-feu, <code>nltest /dsgetdc</code> pour le domaine.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q"><code>Get-NetConnectionProfile</code> montre <code>NetworkCategory : Public</code> sur un serveur du domaine. Plus rien ne répond au ping, ni aux partages. Que soupçonnes-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le pare-feu applique le profil Public, plus strict que le profil Domaine</button>
+                        <button class="scenario__opt" data-why="Get-NetConnectionProfile n&#x27;affiche une connexion que si la carte est connectée : le lien est là.">La carte réseau est déconnectée</button>
+                        <button class="scenario__opt" data-why="Le profil réseau concerne le pare-feu local, pas la résolution de noms.">Le DNS ne résout plus le nom du serveur</button>
+                    </div>
+                    <div class="scenario__why"><p>Un serveur du domaine doit être en <code>DomainAuthenticated</code>. En <code>Public</code>, les règles de partage et de ping sont fermées. Cause fréquente : le serveur n'a pas joint de DC au démarrage (DNS faux, DC injoignable). Vérifier avec <code>nltest /dsgetdc:orion.local</code>.</p></div>
+                </div>
             </div>
         </section>
 
@@ -190,7 +284,7 @@
             </div>
                 <p class="verify__sub">Sortie attendue</p>
             <pre class="verify__out">8.8.8.8 via 192.168.1.1 dev ens33 src 192.168.1.50 uid 1000
-cache</pre>
+    cache</pre>
                 <p class="verify__fail"><code>RTNETLINK answers: Network is unreachable</code> : aucune route ne correspond, il manque la route par défaut (<code>gateway</code> dans <code>/etc/network/interfaces</code>).</p>
             </div>
             <div class="cmdex" data-accept="(sudo )?ss -[tulpn]{5};;(sudo )?ss -[tulpn]{4}( -[tulpn])?;;(sudo )?netstat -[tulpn]{5}" data-hint="ss suivi de cinq lettres d&#x27;options : tcp, udp, listening, process, numeric.">
@@ -204,6 +298,18 @@ cache</pre>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Sous Linux : <code>ip -br a</code>, <code>ip route get</code>, <code>ip neigh</code>, <code>ss -tulpn</code>, <code>dig</code>, <code>curl -v</code> et <code>tcpdump</code> couvrent l'immense majorité des diagnostics.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Sur une Debian, <code>ss -tlnp</code> affiche <code>LISTEN 0 4096 127.0.0.1:8080 0.0.0.0:*</code> pour ton application. Depuis un autre poste, le port 8080 ne répond pas. Pourquoi ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Elle n'écoute que sur la boucle locale : seule la machine elle-même peut la joindre</button>
+                        <button class="scenario__opt" data-why="Il est bien en écoute (LISTEN) : le service tourne, mais sur la mauvaise adresse.">Le service est arrêté</button>
+                        <button class="scenario__opt" data-why="Le problème se voit dans l&#x27;adresse d&#x27;écoute, avant toute question de routage.">Il manque une route par défaut sur le serveur</button>
+                    </div>
+                    <div class="scenario__why"><p><code>127.0.0.1:8080</code> = écoute sur la <strong>boucle locale</strong> uniquement. Pour être joignable, le service doit écouter sur <code>0.0.0.0:8080</code> (toutes les cartes) ou sur l'IP de la carte : c'est un réglage de l'application, pas du réseau.</p></div>
+                </div>
             </div>
         </section>
 
@@ -263,6 +369,18 @@ GigabitEthernet0/0/2   unassigned      YES unset  administratively down down</pr
                 <p class="takeaway__label">À retenir</p>
                 <p>Sur Cisco, on commence presque toujours par <code>show ip interface brief</code> (ou <code>show interfaces status</code> sur un switch), puis <code>show vlan brief</code> et <code>show interfaces trunk</code> pour la couche 2, <code>show ip route</code> pour la couche 3.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q"><code>show ip interface brief</code> sur un routeur affiche <code>GigabitEthernet0/0/1 … up down</code>. Qu'en déduis-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le signal physique est là, mais la couche 2 ne s'établit pas</button>
+                        <button class="scenario__opt" data-why="Dans ce cas on lirait « administratively down » dans la colonne Status.">L&#x27;interface a été éteinte par un shutdown</button>
+                        <button class="scenario__opt" data-why="Il faut up/up : Protocol à down veut dire qu&#x27;aucun trafic ne passe.">Tout va bien : seule la première colonne compte</button>
+                    </div>
+                    <div class="scenario__why"><p><strong>Status</strong> = couche 1, <strong>Protocol</strong> = couche 2. <code>up/down</code> : câble présent mais désaccord de couche 2 (encapsulation, problème côté voisin, keepalives). On poursuit avec <code>show interfaces g0/0/1</code> des deux côtés.</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 05 -->
@@ -302,15 +420,35 @@ GigabitEthernet0/0/2   unassigned      YES unset  administratively down down</pr
             </div>
             <h3>Les signatures à reconnaître</h3>
             <ul>
-                <li>Des <strong>SYN répétés</strong> sans réponse, espacés de 1, 2, 4 secondes : le paquet est filtré quelque part.</li>
+                <li>Des <strong>SYN répétés</strong> sans réponse, à intervalle qui double (≈ 1, 2, 4 secondes) : le paquet, ou sa réponse, est jeté quelque part.</li>
                 <li><strong>SYN</strong> puis <strong>RST, ACK</strong> immédiat : port fermé, rien n'écoute.</li>
                 <li>Une requête DNS et une réponse <strong>No such name</strong> : faute de nom ou mauvaise zone.</li>
                 <li>Des <strong>DHCP Discover</strong> en boucle sans <em>Offer</em> : aucun serveur ne répond dans ce domaine de broadcast.</li>
                 <li>Beaucoup de <strong>retransmissions</strong> et de <em>Dup ACK</em> : pertes sur le chemin (Wi-Fi saturé, câble, duplex).</li>
             </ul>
+            <div class="cmdex" data-accept="(sudo )?tcpdump -i ens33 -n (udp )?port 53;;(sudo )?tcpdump -n -i ens33 (udp )?port 53;;(sudo )?tcpdump -ni ens33 (udp )?port 53" data-hint="tcpdump, l&#x27;interface avec -i, -n pour ne rien résoudre, puis un filtre BPF sur le port.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Sur un serveur Debian, capture à l'écran le trafic <strong>DNS</strong> (port 53) qui passe sur <code>ens33</code>, sans résolution des noms ni des ports.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>sudo tcpdump -i ens33 -n port 53</code> : <code>-i</code> choisit l'interface, <code>-n</code> évite que tcpdump fasse lui-même des requêtes DNS (qui pollueraient la capture), <code>port 53</code> est un filtre de <strong>capture</strong> (BPF). <code>Ctrl+C</code> pour arrêter.</p></div>
+                </details>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Filtre de <strong>capture</strong> pour réduire ce qu'on enregistre, filtre d'<strong>affichage</strong> pour lire. Un SYN sans réponse = filtré ; SYN puis RST = refusé ; Discover sans Offer = pas de DHCP joignable.</p>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Dans une capture, chaque <strong>SYN</strong> du client vers le port 1433 reçoit aussitôt un <strong>RST, ACK</strong> du serveur. Que conclus-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Le serveur est joignable, mais rien n'écoute sur 1433</button>
+                        <button class="scenario__opt" data-why="Un filtrage silencieux ne renvoie rien : on verrait des SYN répétés sans réponse.">Un pare-feu jette les paquets en silence</button>
+                        <button class="scenario__opt" data-why="Des pertes donneraient des retransmissions, pas une réponse immédiate et systématique.">Le réseau perd des paquets en route</button>
+                    </div>
+                    <div class="scenario__why"><p><code>RST</code> immédiat = <strong>port fermé</strong> sur une machine qui répond. On regarde sur le serveur si le service tourne et sur quel port (<code>netstat -ano</code>, <code>ss -tlnp</code>). Attention : certains pare-feu renvoient eux-mêmes un RST, l'adresse source du RST le trahit.</p></div>
+                </div>
             </div>
         </section>
 
@@ -351,6 +489,18 @@ GigabitEthernet0/0/2   unassigned      YES unset  administratively down down</pr
                 <p class="takeaway__label">À retenir</p>
                 <p>169.254 = DHCP ; IP oui / nom non = DNS ; local oui / distant non = passerelle ; « délai expiré » = filtré ; « refusé » = service ; CRC et half-duplex = câble ou duplex ; err-disabled = sécurité de port.</p>
             </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un utilisateur en VPN ouvre les pages légères de l'intranet, mais les gros téléchargements restent bloqués à 0 %. Le ping marche. Quel test lances-tu ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok><code>ping -f -l 1472</code> vers le serveur, puis des tailles plus petites</button>
+                        <button class="scenario__opt" data-why="Les petites pages s&#x27;ouvrent : le nom se résout déjà. Le DNS n&#x27;est pas en cause."><code>nslookup</code> du nom de l&#x27;intranet</button>
+                        <button class="scenario__opt" data-why="Le poste a une adresse valide puisque le ping et les petites pages passent."><code>ipconfig /renew</code> sur le poste</button>
+                    </div>
+                    <div class="scenario__why"><p>Petits paquets OK, gros paquets bloqués, tunnel VPN : signature d'un problème de <strong>MTU</strong>. Avec le bit DF, on cherche la plus grande taille qui passe ; la correction se fait sur le MTU ou le MSS du tunnel, et en laissant passer ICMP « fragmentation nécessaire ».</p></div>
+                </div>
+            </div>
         </section>
 
         <!-- 07 -->
@@ -370,9 +520,9 @@ GigabitEthernet0/0/2   unassigned      YES unset  administratively down down</pr
                         <button class="scenario__opt" data-why="Les collègues fonctionnent : la box n&#x27;est pas en cause. On délimite avant de toucher à l&#x27;infrastructure.">Redémarrer la box</button>
                         <button class="scenario__opt" data-why="Trop tôt : on n&#x27;a encore rien observé.">Réinstaller le pilote de la carte réseau</button>
                     </div>
-                    <div class="scenario__why"><p>Un seul poste touché : on commence par lui. Résultat :</p><pre class="verify__out">Adresse IPv4 d'autoconfiguration : 169.254.88.12
-Masque de sous-réseau : 255.255.0.0
-Passerelle par défaut :</pre>
+                    <div class="scenario__why"><p>Un seul poste touché : on commence par lui. Résultat :</p><pre class="verify__out">   Adresse IPv4 d'autoconfiguration . . . : 169.254.88.12(préféré)
+   Masque de sous-réseau. . . . . . . . . : 255.255.0.0
+   Passerelle par défaut. . . . . . . . . :</pre>
             </div>
                 </div>
                 <div class="scenario__step">
@@ -382,9 +532,9 @@ Passerelle par défaut :</pre>
                         <button class="scenario__opt" data-why="Sans adresse valide, le DNS n&#x27;est pas encore la question : le poste n&#x27;a pas parlé au DHCP.">Le serveur DNS</button>
                         <button class="scenario__opt" data-why="Le pare-feu Windows ne bloque pas le DHCP client.">Le pare-feu Windows</button>
                     </div>
-                    <div class="scenario__why"><p>La carte est <code>Up</code> en 1 Gb/s. Sur le switch, <code>show interfaces status</code> montre que le port <code>Fa0/7</code> du poste est dans le <strong>VLAN 99</strong> (gestion), pas le VLAN 10 des postes : quelqu'un a déplacé le câble, ou mal reconfiguré le port. Le serveur DHCP n'a pas d'étendue sur ce VLAN.</p></div>
+                    <div class="scenario__why"><p>La carte est <code>Up</code> en 1 Gb/s. Sur le switch, <code>show interfaces status</code> montre que le port <code>Gi1/0/7</code> du poste est dans le <strong>VLAN 99</strong> (gestion), pas le VLAN 10 des postes : quelqu'un a déplacé le câble, ou mal reconfiguré le port. Le serveur DHCP n'a pas d'étendue sur ce VLAN.</p></div>
                 </div>
-                <div class="scenario__end"><strong>Cause :</strong> port dans le mauvais VLAN. <strong>Correction :</strong> <code>interface fa0/7</code>, <code>switchport access vlan 10</code>, puis <code>ipconfig /renew</code> sur le poste. <strong>À noter dans le ticket :</strong> le port, l'ancien et le nouveau VLAN, et qui a fait le changement si on le sait.</div>
+                <div class="scenario__end"><strong>Cause :</strong> port dans le mauvais VLAN. <strong>Correction :</strong> <code>interface gi1/0/7</code>, <code>switchport access vlan 10</code>, puis <code>ipconfig /renew</code> sur le poste. <strong>À noter dans le ticket :</strong> le port, l'ancien et le nouveau VLAN, et qui a fait le changement si on le sait.</div>
             </div>
             <div class="scenario">
                 <p class="scenario__label">Scénario de panne</p>
@@ -425,11 +575,16 @@ Address:  172.16.50.10
                         <button class="scenario__opt" data-why="Le ping dira que la machine est là — on le sait déjà, les partages marchent. Il faut tester le port RDP."><code>ping srv-file01</code> seulement</button>
                         <button class="scenario__opt" data-why="On n&#x27;a même pas encore d&#x27;écran de connexion : ce n&#x27;est pas un problème d&#x27;identifiants.">Réinitialiser le mot de passe de l'administrateur</button>
                     </div>
-                    <div class="scenario__why"><pre class="verify__out">ComputerName     : srv-file01
-RemoteAddress    : 172.16.50.20
-RemotePort       : 3389
-PingSucceeded    : True
-TcpTestSucceeded : False</pre>
+                    <div class="scenario__why"><pre class="verify__out">AVERTISSEMENT : TCP connect to (172.16.50.20 : 3389) failed
+
+ComputerName           : srv-file01
+RemoteAddress          : 172.16.50.20
+RemotePort             : 3389
+InterfaceAlias         : Ethernet
+SourceAddress          : 172.16.50.120
+PingSucceeded          : True
+PingReplyDetails (RTT) : 0 ms
+TcpTestSucceeded       : False</pre>
             </div>
                 </div>
                 <div class="scenario__step">
@@ -439,7 +594,7 @@ TcpTestSucceeded : False</pre>
                         <button class="scenario__opt" data-why="On ne désarme pas un serveur pour tester : on regarde d&#x27;abord si le service écoute, puis la règle précise.">Désactiver complètement le pare-feu</button>
                         <button class="scenario__opt" data-why="Ça ne corrige rien et ajoute de la confusion.">Changer le port RDP</button>
                     </div>
-                    <div class="scenario__why"><p>Rien n'écoute sur 3389 : le Bureau à distance n'est pas activé (paramètre réinitialisé après un Sysprep). Une fois activé, <code>netstat</code> montre <code>0.0.0.0:3389 LISTENING</code> et la règle de pare-feu « Bureau à distance » s'active avec.</p></div>
+                    <div class="scenario__why"><p>Rien n'écoute sur 3389 : le Bureau à distance n'est pas activé. Il est désactivé par défaut sur une installation neuve de Windows Server, et ce serveur récemment déployé n'a jamais été configuré pour. Une fois activé, <code>netstat</code> montre <code>0.0.0.0:3389 LISTENING</code> et la règle de pare-feu « Bureau à distance » s'active avec.</p></div>
                 </div>
                 <div class="scenario__end"><strong>Correction :</strong> <em>Paramètres → Système → Bureau à distance</em> (ou <code>sconfig</code> sur un Server Core), puis refaire <code>Test-NetConnection</code> : <code>TcpTestSucceeded : True</code>.</div>
             </div>
@@ -454,27 +609,29 @@ TcpTestSucceeded : False</pre>
                         <button class="scenario__opt" data-why="Le reste du bâtiment utilise le même serveur sans problème.">Le serveur de fichiers</button>
                         <button class="scenario__opt" data-why="Les postes filaires sont touchés aussi.">Le Wi-Fi de l'étage</button>
                     </div>
-                    <div class="scenario__why"><pre class="verify__out">GigabitEthernet1/0/48 is up, line protocol is up
-Half-duplex, 100Mb/s, media type is 10/100/1000BaseTX
-   1843 input errors, 1790 CRC, 0 frame
-   612 late collision</pre>
+                    <div class="scenario__why"><p>Côté cœur de réseau :</p><pre class="verify__out">GigabitEthernet1/0/48 is up, line protocol is up (connected)
+  Half-duplex, 100Mb/s, media type is 10/100/1000BaseTX
+  …
+     0 input errors, 0 CRC, 0 frame, 0 overrun, 0 ignored
+  …
+     612 late collision, 0 deferred</pre><p>Côté switch d'étage, sur le même lien : <code>Full-duplex, 100Mb/s</code>, et ce sont les <code>CRC</code> et les <code>runts</code> qui montent.</p>
             </div>
                 </div>
                 <div class="scenario__step">
-                    <p class="scenario__q">Half-duplex en 100 Mb/s, CRC et collisions tardives. Diagnostic ?</p>
+                    <p class="scenario__q">Half-duplex d'un côté avec des collisions tardives, full-duplex de l'autre avec des CRC. Diagnostic ?</p>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>Duplex mismatch : un côté forcé, l'autre en auto</button>
                         <button class="scenario__opt" data-why="Les compteurs d&#x27;erreurs et les collisions tardives pointent vers la couche 1-2, pas vers un volume de trafic.">Une attaque par déni de service</button>
                         <button class="scenario__opt" data-why="Dans ce cas rien ne passerait du tout.">Le VLAN de l'étage n'est pas sur le trunk</button>
                     </div>
-                    <div class="scenario__why"><p>Le nouveau switch d'étage a son port forcé en <code>speed 100</code> / <code>duplex full</code> ; le cœur de réseau, en auto, ne reçoit pas de négociation et retombe en half-duplex. Résultat : collisions tardives et retransmissions.</p></div>
+                    <div class="scenario__why"><p>Le nouveau switch d'étage a son port forcé en <code>speed 100</code> / <code>duplex full</code> ; le cœur de réseau, en auto, ne reçoit pas de négociation : il détecte la vitesse (100 Mb/s) mais retombe en <strong>half-duplex</strong>. Le côté half voit des collisions tardives, le côté full des trames abîmées (CRC, runts) ; les deux retransmettent.</p></div>
                 </div>
                 <div class="scenario__end"><strong>Correction :</strong> <code>speed auto</code> et <code>duplex auto</code> des deux côtés (ou les deux forcés à l'identique), puis <code>clear counters</code> et vérifier que les erreurs ne remontent plus.</div>
             </div>
             <div class="scenario">
                 <p class="scenario__label">Scénario de panne</p>
                 <p class="scenario__title">Ouverture de session impossible sur le domaine</p>
-                <p>Un nouveau poste vient d'être joint au domaine <code>orion.local</code>. À l'ouverture de session : « Il n'y a actuellement aucun serveur d'ouverture de session disponible ». Internet fonctionne sur ce poste.</p>
+                <p>Sur un poste du domaine <code>orion.local</code>, un technicien a remplacé la veille le DNS par <code>8.8.8.8</code> « pour accélérer Internet ». Ce matin, un nouvel employé ouvre sa <strong>première</strong> session sur ce poste : « Il n'y a actuellement aucun serveur d'accès disponible pour traiter la demande d'ouverture de session. » Internet fonctionne sur ce poste.</p>
                 <div class="scenario__step">
                     <p class="scenario__q">Ta première vérification ?</p>
                     <div class="scenario__opts">
@@ -492,14 +649,14 @@ Half-duplex, 100Mb/s, media type is 10/100/1000BaseTX
                         <button class="scenario__opt" data-why="Ça prouve qu&#x27;Internet marche, pas que le domaine est joignable."><code>ping 8.8.8.8</code></button>
                         <button class="scenario__opt" data-why="Sans DC trouvé, les GPO ne s&#x27;appliqueront pas non plus."><code>gpupdate /force</code></button>
                     </div>
-                    <div class="scenario__why"><p>Le DNS public ne connaît pas la zone <code>orion.local</code> ni ses enregistrements SRV : le poste ne trouve aucun contrôleur de domaine.</p></div>
+                    <div class="scenario__why"><p>Le DNS public ne connaît pas la zone <code>orion.local</code> ni ses enregistrements SRV : le poste ne trouve aucun contrôleur de domaine. Les habitués du poste, eux, ouvrent encore leur session grâce aux identifiants <strong>mis en cache</strong> : c'est pourquoi la panne n'apparaît qu'avec un nouvel utilisateur.</p></div>
                 </div>
                 <div class="scenario__end"><strong>Correction :</strong> DNS du poste = <code>172.16.50.10</code> et <code>172.16.50.11</code> (les deux DC), idéalement par l'option 6 de l'étendue DHCP plutôt qu'à la main. Puis <code>nltest /dsgetdc:orion.local</code> répond avec le nom du DC.</div>
             </div>
             <div class="scenario">
                 <p class="scenario__label">Scénario de panne</p>
                 <p class="scenario__title">Un port de switch s'est éteint tout seul</p>
-                <p>Un stagiaire a branché un petit switch de bureau sur une prise murale pour brancher deux PC. Depuis, plus rien ne marche sur cette prise, même en rebranchant un seul PC.</p>
+                <p>Un stagiaire a branché un vieux switch administrable, récupéré au labo, sur une prise murale pour brancher deux PC. Depuis, plus rien ne marche sur cette prise, même en rebranchant un seul PC.</p>
                 <div class="scenario__step">
                     <p class="scenario__q">Sur le switch d'étage, quelle commande ?</p>
                     <div class="scenario__opts">
@@ -518,7 +675,7 @@ Fa0/12           err-disabled bpduguard</pre>
                         <button class="scenario__opt" data-why="BPDU Guard a fait son travail : il a protégé le spanning tree contre un switch non prévu. On retire la cause, on ne retire pas la protection.">Désactiver BPDU Guard sur le port</button>
                         <button class="scenario__opt" data-why="Tant que le petit switch est branché, le port se recoupera aussitôt.">Faire seulement <code>no shutdown</code></button>
                     </div>
-                    <div class="scenario__why"><p>Le petit switch a émis des BPDU sur un port PortFast protégé par BPDU Guard : le switch d'étage a coupé le port. C'est le comportement voulu (module <a href="cisco-securite.html">Cisco sécurité</a>, chapitre spanning tree).</p></div>
+                    <div class="scenario__why"><p>Le switch du labo, qui fait tourner le spanning tree, a émis des BPDU sur un port PortFast protégé par BPDU Guard : le switch d'étage a coupé le port. C'est le comportement voulu (module <a href="cisco-securite.html">Cisco sécurité</a>, chapitre spanning tree).</p></div>
                 </div>
                 <div class="scenario__end"><strong>Correction :</strong> retirer l'équipement, réactiver le port (<code>shutdown</code> / <code>no shutdown</code>), et si deux prises sont vraiment nécessaires, en câbler une seconde. On peut aussi activer la réactivation automatique (<code>errdisable recovery cause bpduguard</code>), mais elle masque le problème.</div>
             </div>
@@ -590,10 +747,10 @@ Fa0/12           err-disabled bpduguard</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=12"></script>
-<script src="../assets/app.js?v=12"></script>
-<script src="../assets/quiz-data.js?v=12"></script>
-<script src="../assets/quiz.js?v=12"></script>
-<script src="../assets/pratique.js?v=12"></script>
+<script src="../assets/catalogue.js?v=14"></script>
+<script src="../assets/app.js?v=14"></script>
+<script src="../assets/quiz-data.js?v=14"></script>
+<script src="../assets/quiz.js?v=14"></script>
+<script src="../assets/pratique.js?v=14"></script>
 </body>
 </html>
