@@ -212,5 +212,20 @@ window.CARTES = [
 { m: "zabbix-windows", f: "Un <code>UserParameter</code> posé dans <code>zabbix_agent2.d\\</code> est ignoré : pourquoi ?", b: "Le <code>zabbix_agent2.conf</code> d'exemple n'inclut que <code>zabbix_agent2.d\\plugins.d\\*.conf</code> : ajouter <code>Include=.\\zabbix_agent2.d\\*.conf</code>, puis redémarrer l'agent" },
 { m: "azure", f: "Responsabilité partagée : en SaaS, à qui reviennent les applications ?", b: "Partagé : Microsoft fait tourner l'application, le client garde sa configuration, ses accès et ses données" },
 { m: "redmine", f: "Une variable du <code>.env</code> est mal orthographiée dans le Compose : que se passe-t-il ?", b: "Compose avertit et met une chaîne vide, sans bloquer ; l'image Redmine retombe alors sur <code>root</code>. Contrôle : <code>docker compose config</code>" },
-{ m: "securite", f: "<code>sshd_config</code> : quelle valeur gagne si un mot-clé apparaît deux fois ?", b: "La première lue — et l'<code>Include</code> de <code>sshd_config.d/*.conf</code> est en tête du fichier. Contrôle : <code>sudo sshd -T</code>" }
+{ m: "securite", f: "<code>sshd_config</code> : quelle valeur gagne si un mot-clé apparaît deux fois ?", b: "La première lue — et l'<code>Include</code> de <code>sshd_config.d/*.conf</code> est en tête du fichier. Contrôle : <code>sudo sshd -T</code>" },
+/* ── Entretien de recrutement — chapitre 01 : se préparer ── */
+{ m: "entretien-recrutement", f: "Que préparer avant un entretien ?", b: "Ses histoires STARR ; les questions qui te concernent (valeurs, choix de candidature, pourquoi cette entreprise) ; ce qui pourrait bloquer ta candidature, et ta solution ; tes désirs salariaux (brut mensuel et annuel, et ta limite). Puis relire l'offre et le CV, et arriver 10 à 15 minutes en avance." },
+
+/* ── Entretien de recrutement — chapitre 02 : la méthode STARR ── */
+{ m: "entretien-recrutement", f: "« Je suis organisé·e » suffit-il à prouver une soft skill ?", b: "Non : tout le monde le dit. Une histoire STARR le prouve (situation, tâche, actions, résultats, réflexion)." },
+
+/* ── Entretien de recrutement — chapitre 05 : cinq réflexes ── */
+{ m: "entretien-recrutement", f: "Que dit-on de son ancien employeur, en entretien ?", b: "Rien de négatif, jamais : le recruteur se demande aussitôt ce que tu diras de lui. On parle du positif, ou d'une raison vraie tournée vers l'avant." },
+
+/* ── Entretien de recrutement — chapitre 07 : comprendre son stress ── */
+{ m: "entretien-recrutement", f: "Les trois réponses instinctives au danger ?", b: "<strong>Flight</strong> (fuir), <strong>Fight</strong> (combattre), <strong>Freeze</strong> (se figer). En entretien, on ne peut ni fuir, ni se battre, ni s'immobiliser : le stress ne trouve pas de sortie." },
+
+/* ── Entretien de recrutement — chapitre 08 : agir sur le stress ── */
+{ m: "entretien-recrutement", f: "Un peu de stress est-il utile en entretien ?", b: "Oui : un stress <strong>modéré</strong> augmente la concentration et la ténacité ; c'est l'excès qui fait perdre ses moyens." },
+{ m: "entretien-recrutement", f: "Respiration abdominale : comment la faire ?", b: "Assis, mains sur le ventre : inspirer en gonflant le ventre, retenir, expirer lentement par la bouche. Elle ralentit la respiration et le cœur, et détend les muscles." }
 ];

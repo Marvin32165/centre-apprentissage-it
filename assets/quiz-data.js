@@ -595,7 +595,7 @@ window.QUIZ_BANK = {
     name: "Stockage & Clustering",
     file: "storage-clustering.html",
     title: "Test — Stockage & Clustering",
-    intro: "Du disque au cluster de basculement : douze chapitres, huit questions. Beaucoup de pièges classiques de production.",
+    intro: "Du disque au cluster de basculement : douze chapitres, dix questions. Beaucoup de pièges classiques de production.",
     pass: 70,
     questions: [
     {
@@ -653,6 +653,20 @@ window.QUIZ_BANK = {
         a: 0,
         why: "La réplication est un miroir, pas une machine à remonter le temps : ce qui est détruit d'un côté disparaît de l'autre, rapidement et fidèlement.",
         ref: "Chapitre 05"
+    },
+    {
+        q: "Un disque du cluster est promu en <strong>Cluster Shared Volume</strong>. Où les nœuds le trouvent-ils, et combien peuvent y écrire en même temps ?",
+        c: ["Sous <code>C:\\ClusterStorage\\Volume1</code>, même chemin sur tous les nœuds : tous lisent et écrivent", "Sous une lettre de lecteur propre à chaque nœud : un seul nœud écrit à la fois sur le volume", "Sous <code>C:\\ClusterStorage</code>, mais seul le nœud propriétaire peut voir son contenu", "Sur un partage SMB <code>\\\\CLUSTER\\DATA</code>, en lecture seule sauf pour le nœud principal"],
+        a: 0,
+        why: "Un CSV permet à plusieurs nœuds d'avoir <strong>simultanément</strong> un accès lecture-écriture au même LUN. Il apparaît sous un dossier du lecteur système (<code>C:\\ClusterStorage\\Volume1</code> ici), au <strong>même chemin sur tous les nœuds</strong>. Un seul nœud, le <em>coordinateur</em>, « possède » la ressource disque (colonne <em>Owner Node</em>) : ce n'est pas un droit d'écriture exclusif. Les autres réponses supposent une lettre par nœud, une écriture à tour de rôle, un chemin visible d'un seul nœud ou un partage : la documentation ne décrit aucune de ces situations pour un CSV, qui s'utilise par ce chemin de dossier.",
+        ref: "Chapitre 09"
+    },
+    {
+        q: "Dans <code>Get-IscsiSession</code>, une session affiche <code>IsPersistent : False</code>. Que se passe-t-il au prochain redémarrage du nœud ?",
+        c: ["La session ne revient pas seule : elle n'a pas été enregistrée comme persistante", "La session revient seule : toute session iSCSI est rétablie au démarrage", "La session est supprimée de la cible, qui refuse la reconnexion au démarrage", "Rien ne change : <code>IsPersistent</code> ne décrit que la connexion en cours"],
+        a: 0,
+        why: "<code>Register-IscsiSession</code> rend une session <strong>persistante</strong> : une fois enregistrée, elle tente de se reconnecter à chaque redémarrage. Une session non enregistrée (<code>IsPersistent : False</code>) ne revient donc pas seule ; il faut la reconnecter. C'est ce que la vérification du module montre. Les autres réponses sont fausses : « toute session » est trop large (seules les sessions enregistrées sont rétablies), la documentation ne décrit aucune suppression de la session par la cible, et <code>IsPersistent</code> porte précisément sur le redémarrage.",
+        ref: "Chapitre 12"
     }]
 },
 
@@ -660,7 +674,7 @@ window.QUIZ_BANK = {
     name: "Bureau à distance (RDS)",
     file: "rds.html",
     title: "Test — Bureau à distance (RDS)",
-    intro: "Sept chapitres, huit questions : les rôles, le déploiement, et ce qui le fait tenir dans la durée.",
+    intro: "Sept chapitres, dix questions : les rôles, le déploiement, et ce qui le fait tenir dans la durée.",
     pass: 70,
     questions: [
     {
@@ -718,6 +732,20 @@ window.QUIZ_BANK = {
         a: 0,
         why: "3389 exposé sur Internet est scanné et attaqué en permanence. La passerelle encapsule RDP dans HTTPS et filtre par CAP/RAP.",
         ref: "Chapitre 07"
+    },
+    {
+        q: "En mode <em>Per Device</em> (CAL par périphérique), un appareil se connecte pour la première fois à un hôte de session. Combien de jours vaut la CAL temporaire qui lui est délivrée ?",
+        c: ["90 jours", "30 jours", "60 jours", "120 jours"],
+        a: 0,
+        why: "Une CAL temporaire par périphérique est valable <strong>90 jours</strong>, et elle continue de fonctionner 90 jours si aucune CAL permanente n'est disponible. Les 120 jours sont la période de grâce, pendant laquelle aucun serveur de licences n'est requis ; les 60 jours sont l'échéance affichée d'une CAL <em>Per User</em>.",
+        ref: "Chapitre 05"
+    },
+    {
+        q: "Quelle commande liste tous les serveurs d'un déploiement RDS, avec les rôles installés sur chacun ?",
+        c: ["<code>Get-RDServer</code>", "<code>Get-RDUserSession</code>", "<code>Get-RDCertificate</code>", "<code>Get-RDLicenseConfiguration</code>"],
+        a: 0,
+        why: "<code>Get-RDServer</code> renvoie les serveurs du déploiement et leurs rôles ; avec <code>-ConnectionBroker</code>, la liste porte sur le déploiement de ce broker. <code>Get-RDUserSession</code> liste les sessions ouvertes, <code>Get-RDCertificate</code> les certificats associés aux rôles, et <code>Get-RDLicenseConfiguration</code> le mode de licence et le serveur de licences.",
+        ref: "Chapitre 03"
     }
     ]
 },
@@ -777,6 +805,27 @@ window.QUIZ_BANK = {
         a: 0,
         why: "Signer prouve qui a écrit et que rien n'a été modifié. Le contenu reste lisible par tous : pour le cacher, il faut chiffrer en plus, avec la clé publique du destinataire.",
         ref: "Chapitre 03"
+    },
+    {
+        q: "Dans un certificat, quelle extension donne au client l'adresse où télécharger la <strong>liste des certificats révoqués</strong> (CRL) ?",
+        c: ["L'extension <code>CDP</code> (CRL Distribution Point)", "L'extension <code>AIA</code> (Authority Information Access)", "L'extension <code>SAN</code> (noms alternatifs du certificat)", "La date d'expiration du certificat (<code>NotAfter</code>)"],
+        a: 0,
+        why: "Le <strong>CDP</strong> indique où récupérer la CRL, la liste signée par la CA qui recense les certificats retirés avant leur expiration. L'<strong>AIA</strong> pointe vers le certificat de la CA émettrice (et, le cas échéant, vers un répondeur OCSP) : ce n'est pas la CRL. Le <strong>SAN</strong> liste les noms que le certificat couvre (chapitre 06). La date de fin dit jusqu'à quand le certificat est valable, pas où vérifier sa révocation. Si aucune adresse du CDP n'est joignable, la vérification de révocation reste <strong>non concluante</strong> : c'est le piège du poste hors domaine.",
+        ref: "Chapitre 04"
+    },
+    {
+        q: "Une boîte a été <strong>déconnectée</strong> et son utilisateur n'a plus de boîte. Quelle cmdlet la <strong>rattache</strong> de nouveau à son compte ?",
+        c: ["<code>Connect-Mailbox</code>", "<code>Enable-Mailbox</code>", "<code>Disable-Mailbox</code>", "<code>New-Mailbox</code>"],
+        a: 0,
+        why: "<code>Connect-Mailbox</code> relie une boîte déconnectée à un utilisateur qui n'a pas de boîte, tant que la boîte n'a pas été purgée. <code>Disable-Mailbox</code> fait l'inverse : il déconnecte la boîte du compte. <code>Enable-Mailbox</code> crée une nouvelle boîte pour un compte qui n'en a pas : ce n'est pas une reconnexion. <code>New-Mailbox</code> crée un compte AD et sa boîte en même temps. Une boîte déconnectée reste conservée pendant la rétention de la base, <strong>30 jours</strong> par défaut.",
+        ref: "Chapitre 02"
+    },
+    {
+        q: "Dans une PKI d'entreprise à deux niveaux, <strong>pourquoi la racine reste-t-elle hors ligne</strong>, alors que la CA émettrice tourne en permanence ?",
+        c: ["Pour protéger sa clé : si elle est compromise, toute la hiérarchie l'est", "Pour qu'elle signe les certificats des serveurs à la place de l'émettrice", "Pour accélérer la signature : une CA déconnectée répond plus vite", "Pour que les clients hors domaine la contactent directement sur le réseau"],
+        a: 0,
+        why: "Une racine <strong>hors ligne</strong>, déconnectée du réseau, sert à signer les CA subordonnées, comme l'émettrice. Si elle est compromise, toutes les CA de la hiérarchie et tous les certificats émis sont considérés comme compromis : d'où la protection maximale. C'est la CA émettrice, en ligne, qui signe les certificats au quotidien. Les autres réponses sont fausses : la racine signe les CA subordonnées, pas les certificats des serveurs ; la mise hors ligne vise la sécurité, pas la vitesse ; et une racine déconnectée du réseau n'est joignable par aucun client.",
+        ref: "Chapitre 05"
     }]
 },
 
@@ -921,6 +970,20 @@ window.QUIZ_BANK = {
         a: 0,
         why: "Cinq couches, de l'interface à l'infrastructure. En Online, Microsoft prend le bas de la pile ; en Server, vous en restez responsable — d'où le besoin d'une équipe IT.",
         ref: "Chapitre 05"
+    },
+    {
+        q: "Dans <code>Backup-SPFarm</code>, que sauvegarde l'option <code>-BackupMethod Differential</code> ?",
+        c: ["Toute la sélection, comme une sauvegarde complète de la ferme", "Seulement la configuration de la ferme, sans les bases de contenu", "Les données modifiées depuis la dernière sauvegarde complète", "Les seuls journaux de transactions SQL, sans les données des bases"],
+        a: 2,
+        why: "<code>Full</code> sauvegarde toute la sélection, ce que décrit la première option. <code>Differential</code> ne prend que les données qui ont changé depuis la <strong>dernière sauvegarde complète</strong> : elle ne contient que ce qui a bougé. Si un élément ne supporte pas la différentielle, SharePoint fait une complète pour lui. La configuration seule relève du commutateur <code>-ConfigurationOnly</code>. Enfin, le cmdlet sauvegarde une base, une application web ou la ferme entière, jamais une catégorie de journaux SQL.",
+        ref: "Chapitre P08"
+    },
+    {
+        q: "Depuis SRV-SP01 lui-même, <code>http://intranet</code> redemande les identifiants sans fin. Quelle est la cause la plus probable, et quel est le correctif sur le serveur ?",
+        c: ["Le DNS ne résout pas intranet : ajouter une entrée dans le fichier hosts", "Vérification de bouclage (loopback check) : nom dans BackConnectionHostNames", "Le mot de passe du compte sp_setup a expiré : le réinitialiser", "Conflit sur le port 80 : arrêter le Default Web Site d'IIS, puis relancer"],
+        a: 1,
+        why: "Windows applique une <strong>vérification de bouclage</strong> (<em>loopback check</em>) : il refuse l'authentification Windows (NTLM) quand le nom, FQDN ou alias, désigne la machine locale, et les fenêtres d'ouverture de session reviennent en boucle. Le correctif recommandé par Microsoft est d'écrire le nom dans la valeur <code>BackConnectionHostNames</code> (clé <code>MSV1_0</code>), puis de redémarrer. Désactiver la vérification (<code>DisableLoopbackCheck</code> à 1) marche aussi, mais affaiblit la sécurité. Les autres pistes sont écartées : l'enregistrement A <code>intranet</code> pointe bien vers SRV-SP01, donc le nom se résout ; un mot de passe expiré ne produit pas une boucle propre à la machine locale ; et arrêter IIS casserait SharePoint, qui tourne sur IIS, alors que le conflit de port se règle par un nom d'hôte.",
+        ref: "Chapitre P04"
     }]
 },
 
@@ -1007,7 +1070,7 @@ window.QUIZ_BANK = {
     name: "IIS — Serveur web Windows",
     file: "iis.html",
     title: "Test — IIS, serveur web Windows",
-    intro: "Neuf chapitres, huit questions. L'objectif : savoir publier plusieurs sites sur un même serveur sans les mélanger, et comprendre ce qui se passe entre le binding et le DNS.",
+    intro: "Neuf chapitres, dix questions. L'objectif : savoir publier plusieurs sites sur un même serveur sans les mélanger, et comprendre ce qui se passe entre le binding et le DNS.",
     pass: 70,
     questions: [
     {
@@ -1065,6 +1128,20 @@ window.QUIZ_BANK = {
         a: 0,
         why: "Sans SSL, identifiants et fichiers passent en clair. Et <code>Domain Users</code> contient tout le monde : en production, FTPS, un groupe dédié, et l'écriture limitée au strict nécessaire.",
         ref: "Chapitre 08"
+    },
+    {
+        q: "Le serveur web doit aussi envoyer des courriels d'alerte. Sur <strong>Windows Server 2025</strong>, peut-on obtenir un relais SMTP en ajoutant un service au rôle IIS ?",
+        c: ["Non : <em>SMTP Server</em> est retiré de Windows Server 2025 ; on passe par Exchange ou un SMTP tiers", "Oui : il suffit d'ajouter le service de rôle <em>SMTP Server</em> à IIS, comme on ajoute le FTP", "Oui : il suffit d'activer SMTP dans les <em>Bindings</em> du site par défaut, sans rien installer de plus", "Oui, mais seulement en réinstallant le rôle Web Server avec l'ancienne console IIS 6 cochée"],
+        a: 0,
+        why: "<em>SMTP Server</em> n'est pas un service du rôle IIS : le module le range à part (chapitre 01), et il est <strong>retiré de Windows Server 2025</strong>. Microsoft ne lui donne aucun remplaçant dans le système : pour du courrier, il faut Exchange ou un serveur SMTP non Microsoft. Les autres réponses supposent qu'on peut l'ajouter, l'activer ou le réinstaller, ce que cette version ne permet plus. Le FTP, lui, reste un service de rôle IIS : c'est ce qui rend la confusion facile.",
+        ref: "Chapitre 01"
+    },
+    {
+        q: "Un site répond <strong>503</strong>. Quelle est la cause la plus directe ?",
+        c: ["Le pool d'applications du site est arrêté ou désactivé : aucun processus ne peut répondre", "Une ACL NTFS refuse au compte qui lit le contenu l'accès au dossier du site", "Le document par défaut du site est absent et le listage de dossier est désactivé", "Le nom du site n'est pas déclaré dans le DNS, si bien que la requête n'atteint jamais IIS"],
+        a: 0,
+        why: "<strong>503</strong> signifie « service indisponible ». Ici IIS a reçu la requête et l'a aiguillée vers le pool du site, mais ce pool est arrêté ou désactivé : aucun processus <code>w3wp.exe</code> ne répond. Le sous-code <strong>503.0</strong> le confirme ; le journal d'événements peut dire pourquoi le pool s'est arrêté. Les autres réponses donnent d'autres codes : une ACL refusée donne <strong>401.3</strong>, un document par défaut absent avec listage désactivé donne <strong>403.14</strong>, et un nom absent du DNS empêche la requête d'atteindre IIS, qui ne peut donc rien renvoyer.",
+        ref: "Chapitre 09"
     }]
 },
 
@@ -1372,6 +1449,20 @@ window.QUIZ_BANK = {
         a: [0, 1],
         why: "Jamais root pour l'automatisation, et un pool ZFS qui sature se comporte très mal — d'où la surveillance et les scrubs. Un script communautaire se relit <em>avant</em> d'être lancé sur l'hyperviseur.",
         ref: "Chapitre 09"
+    },
+    {
+        q: "Tu veux la sauvegarde <code>vzdump</code> la plus cohérente possible d'une VM, et tu acceptes une courte coupure. Quel mode choisis-tu ?",
+        c: ["<code>snapshot</code> : aucune coupure, mais un petit risque d'incohérence", "<code>suspend</code> : pause plus longue, gardée pour la compatibilité", "<code>stop</code> : arrêt ordonné, sauvegarde, puis redémarrage", "Aucun mode : la cohérence dépend seulement du type de stockage"],
+        a: 2,
+        why: "<code>stop</code> arrête la VM proprement, lance la sauvegarde, puis la relance si elle tournait : c'est le mode de <strong>cohérence maximale</strong>, au prix d'une courte coupure. <code>snapshot</code> ne coupe presque rien, mais garde un petit risque d'incohérence ; l'agent invité, s'il tourne, aide à figer le système de fichiers. <code>suspend</code> coupe plus longtemps et ne garantit pas mieux la cohérence : il ne sert qu'à la compatibilité. Enfin, aucun mode ne dépend du stockage : la sauvegarde <em>live</em> de vzdump fonctionne sur tout type de stockage.",
+        ref: "Chapitre 07"
+    },
+    {
+        q: "Sur un nœud sans abonnement, le dépôt <code>pve-enterprise</code> est actif par défaut et provoque des erreurs à chaque mise à jour. Que fais-tu pour mettre à jour en labo ?",
+        c: ["Entrer une clé d'abonnement inventée pour débloquer le dépôt", "Ajouter <code>pve-no-subscription</code> en plus, sans toucher au premier", "Réinstaller Proxmox pour obtenir un dépôt sans abonnement", "Désactiver <code>pve-enterprise</code> et configurer <code>pve-no-subscription</code>"],
+        a: 3,
+        why: "Le dépôt <code>pve-enterprise</code> exige une clé d'abonnement <strong>valide</strong> : une clé inventée ne le débloque pas. Le garder actif, même à côté d'un autre dépôt, laisse les messages d'erreur. Réinstaller est inutile : le dépôt se configure sur un nœud déjà installé. La bonne méthode : désactiver <code>pve-enterprise</code> (ligne <code>Enabled: no</code> dans son fichier, ce qui supprime les erreurs) puis configurer <code>pve-no-subscription</code>, qui n'exige aucune clé. Ce dépôt sert aux tests : il est moins testé et n'est pas recommandé en production.",
+        ref: "Chapitre 02"
     }]
 },
 
@@ -1379,7 +1470,7 @@ window.QUIZ_BANK = {
     name: "Docker & conteneurs",
     file: "docker.html",
     title: "Test — Docker & conteneurs",
-    intro: "Neuf chapitres, huit questions : ce qu'est un conteneur, et les erreurs qui font perdre des données ou arrêter un service sans le vouloir.",
+    intro: "Neuf chapitres, dix questions : ce qu'est un conteneur, et les erreurs qui font perdre des données ou arrêter un service sans le vouloir.",
     pass: 70,
     questions: [
     {
@@ -1436,6 +1527,20 @@ window.QUIZ_BANK = {
         c: ["Il supprime conteneurs et réseau, mais garde les volumes", "Il supprime aussi les volumes et donc les données", "Il met seulement les conteneurs en pause", "Il reconstruit les images"],
         a: 0,
         why: "Les volumes survivent à <code>down</code> : la base est intacte au <code>up</code> suivant. <code>down -v</code> les supprime.",
+        ref: "Chapitre 08"
+    },
+    {
+        q: "Tu veux que le conteneur <code>nginx</code> serve les fichiers du dossier <code>/srv/site</code> de l'hôte, que tu modifies depuis l'hôte, sans reconstruire l'image. Quelle option utiliser ?",
+        c: ["<code>-v /srv/site:/usr/share/nginx/html</code> : un bind mount, le dossier de l'hôte est monté", "<code>-v site:/usr/share/nginx/html</code> : un volume nommé, stocké par Docker", "<code>-p /srv/site:/usr/share/nginx/html</code> : publie un port vers l'hôte", "<code>COPY /srv/site /usr/share/nginx/html</code> : copie figée dans l'image"],
+        a: 0,
+        why: "Un <strong>bind mount</strong> monte un fichier ou un dossier choisi de l'hôte : le chemin de gauche est un chemin de l'hôte, monté tel quel dans le conteneur. Rien n'est figé dans l'image, donc pas de reconstruction. Le volume nommé <code>site</code> n'est pas un dossier de l'hôte : son stockage est géré par Docker sous <code>/var/lib/docker/volumes/</code>. <code>-p</code> ne publie que des ports et ne monte aucun dossier. Et <code>COPY</code> copie les fichiers pendant le build : une modification faite sur l'hôte n'arrive dans l'image qu'après un nouveau <code>docker build</code>.",
+        ref: "Chapitre 02"
+    },
+    {
+        q: "Un service doit repartir tout seul après un redémarrage du démon Docker, mais rester arrêté si tu l'as arrêté toi-même. Quelle politique de redémarrage ?",
+        c: ["<code>restart: unless-stopped</code> : repart au redémarrage du démon, sauf arrêt manuel", "<code>restart: always</code> : ne repart jamais après un arrêt manuel, même au redémarrage", "<code>restart: on-failure</code> : repart après une erreur, et aussi au redémarrage du démon", "<code>restart: no</code> : ne repart jamais, ni après une erreur, ni au redémarrage"],
+        a: 0,
+        why: "<code>unless-stopped</code> relance le conteneur s'il s'arrête et au redémarrage du démon, mais pas s'il a été arrêté à la main : il reste alors arrêté. <code>always</code> relance aussi au redémarrage du démon, même arrêté à la main : c'est la différence à retenir. <code>on-failure</code> ne relance qu'après une sortie en erreur, et pas au redémarrage du démon. <code>no</code>, la valeur par défaut, ne relance jamais. Dans Compose, la clé est <code>restart:</code>, comme sur le service <code>app</code> du chapitre 08.",
         ref: "Chapitre 08"
     }]
 },
@@ -1502,6 +1607,20 @@ window.QUIZ_BANK = {
         a: 0,
         why: "Un mini-PC ou un vieux PC sous Proxmox suffit. On commence petit, chaque service ayant son dossier, son <code>docker-compose.yml</code> et son volume à sauvegarder.",
         ref: "Chapitre 01"
+    },
+    {
+        q: "Avec Traefik, comment un conteneur Docker est-il découvert et routé vers son nom de domaine ?",
+        c: ["Par des labels posés sur le conteneur (dans le compose), lus via l'API Docker", "Par une case à cocher dans une interface web, à côté de chaque conteneur", "Par un balayage des ports ouverts de la machine, relancé toutes les minutes", "Par un port publié directement sur la box, sans passer par le proxy"],
+        a: 0,
+        why: "Avec le <em>provider</em> Docker, Traefik interroge l'API Docker et lit les <strong>labels</strong> posés sur chaque conteneur, par exemple <code>traefik.http.routers.mon-web.rule=Host(…)</code>. Il surveille aussi les événements Docker : la route suit le conteneur quand il apparaît ou disparaît. Rien à maintenir à la main pour chaque service.",
+        ref: "Chapitre 03"
+    },
+    {
+        q: "Par défaut, que répond Pi-hole à un appareil qui demande un domaine publicitaire bloqué ?",
+        c: ["0.0.0.0, l'adresse non spécifiée (mode NULL, le mode par défaut)", "L'adresse IP du Pi-hole lui-même, dans le réseau local (mode IP)", "Une réponse NXDOMAIN : le domaine est signalé comme inexistant", "Rien : l'appareil attend, puis la requête expire sans aucune réponse"],
+        a: 0,
+        why: "En mode <strong>NULL</strong>, défaut et mode recommandé, une requête bloquée reçoit l'<strong>adresse non spécifiée</strong> <code>0.0.0.0</code> (ou <code>::</code> en IPv6) : le navigateur n'essaie même pas de se connecter. Le mode IP renvoie l'adresse du Pi-hole, NXDOMAIN est un autre mode, et aucun des deux n'est celui par défaut.",
+        ref: "Chapitre 04"
     }]
 },
 

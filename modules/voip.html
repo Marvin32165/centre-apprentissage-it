@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=16">
+    <link rel="stylesheet" href="../assets/theme.css?v=17">
 </head>
 <body>
 
@@ -542,6 +542,17 @@
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Voir les appels</strong><p>Menu <em>Téléphonie → Appels VoIP</em> : chaque appel avec ses messages SIP, et un <strong>diagramme de flux</strong> INVITE → 180 → 200 → ACK → BYE.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Analyser l'audio</strong><p><em>Téléphonie → RTP → Flux RTP</em> : gigue maximale et moyenne, pourcentage de paquets perdus, dans chaque sens. On peut même réécouter la conversation (en labo).</p></div></div>
             </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>L'appel de test est-il capturé avec sa signalisation et sa voix ?</p>
+                <p>Où regarder : dans Wireshark, le menu <em>Téléphonie → Appels VoIP</em>, puis <em>Téléphonie → RTP → Flux RTP</em>.</p>
+                <p class="verify__sub">Sortie attendue</p>
+                <pre class="verify__out">Appels VoIP : un appel du poste 101 vers le poste 102
+Diagramme de flux : INVITE → 180 → 200 → ACK → BYE
+Flux RTP : un flux de 101 vers 102, un flux de 102 vers 101
+Paquets perdus : moins de 1 % dans chaque sens</pre>
+                <p class="verify__fail">Pas de diagramme SIP : la capture ne contient pas la signalisation. Refais l'étape 1, avec la capture sur le poste ou sur un port en miroir, pendant l'appel. Un seul sens de flux RTP : c'est la ligne « Son dans un seul sens » du tableau ci-dessus. Plus de 1 % de perte : la voix est hachée, voir la ligne « Voix hachée, robotique ».</p>
+            </div>
             <p>Les ports à ouvrir pour un 3CX : SIP en <strong>5060</strong> (UDP/TCP, 5061 en TLS) et une plage RTP, <strong>9000–10999</strong> UDP par défaut ; <strong>5090</strong> (UDP/TCP) en plus pour le tunnel des postes distants et du SBC. Un pare-feu qui n'ouvre que 5060 donne exactement le symptôme « ça sonne mais pas de son ».</p>
             <div class="scenario">
                 <p class="scenario__label">Scénario de panne</p>
@@ -604,6 +615,15 @@
                 <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Choisir le type d'instance</strong><p>Ici : 3CX <em>dédié</em>, formule <em>basique</em>.</p></div></div>
                 <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Créer les extensions</strong><p>Une extension = un poste. Créer-en quelques-unes, puis tester un appel interne entre deux d'entre elles.</p></div></div>
             </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Deux extensions que tu as créées se joignent-elles, et la voix passe-t-elle dans les deux sens ?</p>
+                <p>Où regarder : depuis le poste de l'extension A (par exemple 101), appelle l'extension B (par exemple 102), puis décroche sur le poste B.</p>
+                <p class="verify__sub">Sortie attendue</p>
+                <pre class="verify__out">Le poste B sonne ; le poste A entend la tonalité de retour d'appel.
+Une fois décroché, chacun entend l'autre.</pre>
+                <p class="verify__fail">Pas de sonnerie : le poste n'est pas enregistré (mauvais identifiants SIP, mauvais VLAN ou pas d'adresse, voir le tableau du chapitre 09). Ça sonne sans voix : le flux RTP ne passe pas, voir la ligne « Ça sonne, on décroche, personne n'entend » du même tableau.</p>
+            </div>
 
             <h3>Réglages à connaître</h3>
             <div class="table-wrap">
@@ -621,6 +641,15 @@
             <div class="tip">
                 <p class="tip__label">Trunk SIP OVH</p>
                 <p>Dans la configuration du trunk, choisir le pays <strong>France</strong> puis le fournisseur <strong>OVH</strong>. Pour une ligne belge, le modèle reste le même : il a suffi, en TP, de remplacer le suffixe du champ <em>serveur</em> par <code>.be</code>. Vérifier ensuite l'état du trunk dans la console 3CX (enregistré) et passer un appel sortant de test.</p>
+            </div>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le trunk OVH est-il enregistré, et un appel sortant passe-t-il ?</p>
+                <p>Où regarder : dans la console 3CX, sur la configuration du trunk OVH, l'état doit être <em>enregistré</em>. Passe ensuite un appel sortant de test vers un numéro extérieur que tu peux joindre, par exemple ton mobile.</p>
+                <p class="verify__sub">Sortie attendue</p>
+                <pre class="verify__out">Trunk OVH : enregistré
+Appel sortant : le correspondant décroche et entend la voix</pre>
+                <p class="verify__fail">Trunk non enregistré : identifiants SIP ou serveur mal recopiés (voir la ligne « non enregistré » du tableau du chapitre 09). Le correspondant décroche sans rien entendre : c'est le scénario de panne du chapitre 09, les appels sortants sans son.</p>
             </div>
         </section>
 
@@ -693,10 +722,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=16"></script>
-<script src="../assets/app.js?v=16"></script>
-<script src="../assets/quiz-data.js?v=16"></script>
-<script src="../assets/quiz.js?v=16"></script>
-<script src="../assets/pratique.js?v=16"></script>
+<script src="../assets/catalogue.js?v=17"></script>
+<script src="../assets/app.js?v=17"></script>
+<script src="../assets/quiz-data.js?v=17"></script>
+<script src="../assets/quiz.js?v=17"></script>
+<script src="../assets/pratique.js?v=17"></script>
 </body>
 </html>

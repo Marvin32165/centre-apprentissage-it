@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=16">
+    <link rel="stylesheet" href="../assets/theme.css?v=17">
 </head>
 <body>
 
@@ -323,7 +323,7 @@ LABOPS-NAT  172.16.50.0/24                     True</pre>
                 <table>
                     <thead><tr><th>Fichier</th><th>Ligne à poser</th><th>Pourquoi</th></tr></thead>
                     <tbody>
-                        <tr><td><code>/etc/zabbix/zabbix_server.conf</code></td><td><code>DBPassword=…</code></td><td>Doit être <strong>identique</strong> au mot de passe de l'utilisateur <code>zabbix</code> — sinon le serveur démarre mais ne se connecte jamais à la base</td></tr>
+                        <tr><td><code>/etc/zabbix/zabbix_server.conf</code></td><td><code>DBPassword=…</code></td><td>Doit être <strong>identique</strong> au mot de passe de l'utilisateur <code>zabbix</code> — sinon le serveur reste en vie sans jamais se connecter à la base : il réessaie toutes les 10 secondes, et son journal le dit</td></tr>
                         <tr><td><code>/etc/zabbix/nginx.conf</code></td><td><code>listen 8080;</code> et <code>server_name …;</code> (décommentés)</td><td>C'est ce <code>listen</code> qui fixe le port de l'interface web</td></tr>
                     </tbody>
                 </table>
@@ -349,7 +349,7 @@ LABOPS-NAT  172.16.50.0/24                     True</pre>
 active
 LISTEN 0  4096   0.0.0.0:10051  0.0.0.0:*  users:(("zabbix_server",…))
 LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
-                <p class="verify__fail">Pas de 10051 : le serveur ne tourne pas — lire <code>/var/log/zabbix/zabbix_server.log</code> (le plus souvent <code>DBPassword</code> faux ou schéma non importé). Pas de 8080 : la ligne <code>listen</code> de <code>/etc/zabbix/nginx.conf</code> est restée commentée.</p>
+                <p class="verify__fail">Pas de 10051 : le serveur n'est pas prêt. Avec un <code>DBPassword</code> faux, il peut rester <em>active (running)</em> à réessayer la base toutes les 10 secondes ; avec un schéma non importé, il s'arrête. Dans les deux cas, lire <code>/var/log/zabbix/zabbix_server.log</code>, qui dit pourquoi. Pas de 8080 : la ligne <code>listen</code> de <code>/etc/zabbix/nginx.conf</code> est restée commentée.</p>
             </div>
 
             <h3>Terminer dans le navigateur</h3>
@@ -606,7 +606,7 @@ LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 6</b> · serveur → destinataire ou agent</p>
                         <p class="walk__head">Les opérations s'exécutent</p>
-                        <p>Envoyer un message à un utilisateur ou à un groupe par un <strong>type de média</strong> (e-mail, Teams, SMS…), ou lancer un <strong>script</strong> sur l'agent ou le serveur. Les macros comme <code>{HOST.NAME}</code> ou <code>{TRIGGER.NAME}</code> sont remplacées par leurs valeurs. Le résultat se lit dans <em>Reports → Action log</em>.</p>
+                        <p>Envoyer un message à un utilisateur ou à un groupe par un <strong>type de média</strong> (e-mail, Teams, SMS…), ou lancer un <strong>script</strong> sur l'agent ou le serveur. Les macros comme <code>{HOST.NAME}</code> ou <code>{EVENT.NAME}</code> (le nom du problème) sont remplacées par leurs valeurs. <code>{TRIGGER.NAME}</code> est l'ancien nom : les modèles de message par défaut utilisent <code>{EVENT.NAME}</code>. Le résultat se lit dans <em>Reports → Action log</em>.</p>
                         <p class="walk__change">Une notification n'arrive que si l'utilisateur a un <b>média</b> configuré et les <b>droits</b> sur l'hôte.</p>
                     </li>
                     <li class="walk__step">
@@ -797,10 +797,10 @@ LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du labo monitoring</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=16"></script>
-<script src="../assets/app.js?v=16"></script>
-<script src="../assets/quiz-data.js?v=16"></script>
-<script src="../assets/quiz.js?v=16"></script>
-<script src="../assets/pratique.js?v=16"></script>
+<script src="../assets/catalogue.js?v=17"></script>
+<script src="../assets/app.js?v=17"></script>
+<script src="../assets/quiz-data.js?v=17"></script>
+<script src="../assets/quiz.js?v=17"></script>
+<script src="../assets/pratique.js?v=17"></script>
 </body>
 </html>

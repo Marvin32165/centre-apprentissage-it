@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=16">
+    <link rel="stylesheet" href="../assets/theme.css?v=17">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
             <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
             <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
             <span class="fact"><b>Chapitres</b> 9</span>
-            <span class="fact"><b>Test</b> 8 questions</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a> · <a href="proxmox.html">Proxmox</a> · <a href="docker.html">Docker</a> (utiles)</span>
         </div>
     </div>
@@ -134,6 +134,14 @@
 <span class="k">docker</span> compose logs <span class="p">-f</span>    <span class="c"># suivre les journaux</span>
 <span class="k">docker</span> compose pull &amp;&amp; <span class="k">docker</span> compose up <span class="p">-d</span>  <span class="c"># mettre à jour</span>
 <span class="k">docker</span> compose down       <span class="c"># tout arrêter proprement</span></pre>
+            </div>
+            <div class="cmdex" data-accept="docker compose( -f \S+)? up (-d|--detach)" data-hint="il manque l'option qui détache les conteneurs du terminal : -d.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Dans le dossier du <code>docker-compose.yml</code>, lance toute la stack <strong>en arrière-plan</strong>, pour récupérer ton terminal.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>docker compose up -d</code> (ou <code>--detach</code>). Avec <code>-d</code>, les conteneurs tournent en arrière-plan et le terminal est rendu. Sans <code>-d</code>, <code>up</code> reste attaché et affiche les journaux de tous les conteneurs : <code>Ctrl+C</code> arrête alors la stack.</p></div>
+                </details>
             </div>
 
             <div class="tip">
@@ -422,6 +430,14 @@
                 <p>La première adresse varie (c'est celle que renvoie le DNS amont) ; la seconde, <code>0.0.0.0</code>, est la réponse de blocage par défaut de Pi-hole.</p>
                 <p class="verify__fail">Aucune réponse : le conteneur est arrêté ou le port 53 n'est pas publié. Tout le réseau perd Internet quand le DNS local tombe : c'est le point unique de défaillance du chapitre 04 — d'où un second DNS sur une autre machine.</p>
             </div>
+            <div class="cmdex" data-accept="dig @192\.168\.1\.53 example\.com( A)? \+short;;dig \+short @192\.168\.1\.53 example\.com( A)?" data-hint="le serveur se donne avec @, juste après dig ; +short demande la réponse courte.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Demande à ton Pi-hole (<code>192.168.1.53</code>) l'adresse IPv4 de <code>example.com</code>, en réponse courte.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>dig @192.168.1.53 example.com +short</code>. <code>@192.168.1.53</code> désigne le serveur à interroger : sans lui, <code>dig</code> s'adresse aux serveurs listés dans <code>/etc/resolv.conf</code>, pas forcément au Pi-hole, et le test ne prouverait rien. <code>+short</code> ne garde que la réponse, et sans type indiqué, <code>dig</code> cherche un enregistrement <code>A</code>.</p></div>
+                </details>
+            </div>
             <div class="scenario">
                 <p class="scenario__label">Scénario de panne</p>
                 <p class="scenario__title">Plus rien ne marche à la maison</p>
@@ -493,10 +509,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a> · <a href="https://www.youtube.com/@TechHut" target="_blank" rel="noopener">TechHut</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=16"></script>
-<script src="../assets/app.js?v=16"></script>
-<script src="../assets/quiz-data.js?v=16"></script>
-<script src="../assets/quiz.js?v=16"></script>
-<script src="../assets/pratique.js?v=16"></script>
+<script src="../assets/catalogue.js?v=17"></script>
+<script src="../assets/app.js?v=17"></script>
+<script src="../assets/quiz-data.js?v=17"></script>
+<script src="../assets/quiz.js?v=17"></script>
+<script src="../assets/pratique.js?v=17"></script>
 </body>
 </html>

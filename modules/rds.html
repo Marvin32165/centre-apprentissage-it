@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=16">
+    <link rel="stylesheet" href="../assets/theme.css?v=17">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 2 h 30</span>
             <span class="fact"><b>Chapitres</b> 7</span>
-            <span class="fact"><b>Test</b> 8 questions</span>
+            <span class="fact"><b>Test</b> 10 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="windows-server.html">Windows Server</a></span>
         </div>
     </div>
@@ -165,6 +165,14 @@ srv-rdsh1.orion.local  {RDS-RD-SERVER}
 srv-rdsh2.orion.local  {RDS-RD-SERVER}</pre>
                 <p class="verify__fail">Le déploiement échoue sur un serveur : il n'est pas joignable par WinRM depuis SRV-AD01, ou pas dans le pool. Les serveurs doivent être membres du domaine et visibles dans le Server Manager <strong>avant</strong> de lancer l'assistant.</p>
             </div>
+            <div class="cmdex" data-accept="New-RDSessionDeployment(?= )(?!.* -(?!(?:ConnectionBroker|WebAccessServer|SessionHost)(?: |$))\w+)(?=.*-ConnectionBroker ['&quot;]?srv-rdcb\.orion\.local['&quot;]?(?![\w.-]))(?=.*-WebAccessServer ['&quot;]?srv-rdwa\.orion\.local['&quot;]?(?![\w.-]))(?=.*-SessionHost (?:@\( ?(?:['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-])|['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-])) ?\)|(?:['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-])|['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-])))).*;;New-RDSessionDeployment ['&quot;]?srv-rdcb\.orion\.local['&quot;]?(?![\w.-]) (?:@\( ?(?:['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-])|['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-])) ?\)|(?:['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-])|['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]))) ['&quot;]?srv-rdwa\.orion\.local['&quot;]?(?![\w.-])" data-hint="-ConnectionBroker, -WebAccessServer et -SessionHost. Une virgule sépare deux hôtes de session.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Écris la commande qui déploie le RDS session-based du lab, <strong>en une seule ligne</strong> : broker <strong>srv-rdcb.orion.local</strong>, Web Access <strong>srv-rdwa.orion.local</strong>, hôtes de session <strong>srv-rdsh1.orion.local</strong> et <strong>srv-rdsh2.orion.local</strong>. Les noms complets (FQDN) sont exigés.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>New-RDSessionDeployment -ConnectionBroker srv-rdcb.orion.local -WebAccessServer srv-rdwa.orion.local -SessionHost srv-rdsh1.orion.local,srv-rdsh2.orion.local</code>. Les trois paramètres sont nommés : ils peuvent venir dans n'importe quel ordre. Sans noms, les valeurs se lisent par position : broker, hôtes de session, Web Access. Les trois attendent des noms complets (FQDN) ; <code>-SessionHost</code> accepte une liste, séparée par des virgules ou écrite <code>@("…","…")</code>.</p></div>
+                </details>
+            </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Un seul point de pilotage, quatre rôles sur quatre serveurs, et <code>Get-RDServer</code> pour vérifier qui fait quoi. La plupart des commandes <code>*-RD*</code> visent le broker (<code>-ConnectionBroker</code>) : c'est lui qui détient la configuration.</p>
@@ -205,6 +213,14 @@ srv-rdsh2.orion.local  {RDS-RD-SERVER}</pre>
 --------------  ----------  --------  ----------             ------------
 Collection1     ORION       sso       srv-rdsh1.orion.local  STATE_ACTIVE</pre>
                 <p class="verify__fail">Un utilisateur ne voit rien dans le portail : il n'est pas dans le groupe autorisé de la collection. Une RemoteApp ne s'ouvre pas : le programme n'existe pas au même chemin sur <strong>tous</strong> les hôtes de la collection.</p>
+            </div>
+            <div class="cmdex" data-accept="New-RDSessionCollection(?= )(?!.* -(?!(?:CollectionName|SessionHost|ConnectionBroker)(?: |$))\w+)(?=.*-CollectionName ['&quot;]?Collection1['&quot;]?(?![\w.-]))(?=.*-SessionHost (?:@\( ?(?:['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-])|['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-])) ?\)|(?:['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-])|['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]))))(?=.*-ConnectionBroker ['&quot;]?srv-rdcb\.orion\.local['&quot;]?(?![\w.-])).*;;New-RDSessionCollection ['&quot;]?Collection1['&quot;]?(?![\w.-])(?=.*-SessionHost (?:@\( ?(?:['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-])|['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-])) ?\)|(?:['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-])|['&quot;]?srv-rdsh2\.orion\.local['&quot;]?(?![\w.-]) ?, ?['&quot;]?srv-rdsh1\.orion\.local['&quot;]?(?![\w.-]))))(?=.*-ConnectionBroker ['&quot;]?srv-rdcb\.orion\.local['&quot;]?(?![\w.-])).*" data-hint="-CollectionName, -SessionHost et -ConnectionBroker. Le nom peut aussi venir juste après New-RDSessionCollection, sans -CollectionName.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Écris la commande qui crée la collection <strong>Collection1</strong>, <strong>en une seule ligne</strong>, avec les hôtes de session <strong>srv-rdsh1.orion.local</strong> et <strong>srv-rdsh2.orion.local</strong>, et le broker <strong>srv-rdcb.orion.local</strong>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>New-RDSessionCollection -CollectionName "Collection1" -SessionHost srv-rdsh1.orion.local,srv-rdsh2.orion.local -ConnectionBroker srv-rdcb.orion.local</code>. <code>-SessionHost</code> n'a pas de position : il se nomme toujours. Le nom de la collection, lui, est le premier paramètre positionnel : <code>New-RDSessionCollection "Collection1" -SessionHost …</code> est donc équivalent.</p></div>
+                </details>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -482,10 +498,10 @@ RDGateway     NotConfigured</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=16"></script>
-<script src="../assets/app.js?v=16"></script>
-<script src="../assets/quiz-data.js?v=16"></script>
-<script src="../assets/quiz.js?v=16"></script>
-<script src="../assets/pratique.js?v=16"></script>
+<script src="../assets/catalogue.js?v=17"></script>
+<script src="../assets/app.js?v=17"></script>
+<script src="../assets/quiz-data.js?v=17"></script>
+<script src="../assets/quiz.js?v=17"></script>
+<script src="../assets/pratique.js?v=17"></script>
 </body>
 </html>

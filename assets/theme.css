@@ -933,7 +933,7 @@ tbody td:first-child { font-weight: 600; color: var(--ink); }
 .opt:hover { border-color: var(--accent-line); background: var(--surface); }
 .opt input { accent-color: var(--accent); margin-top: 4px; flex-shrink: 0; cursor: pointer; }
 .opt__key { font-family: var(--font-mono); font-size: .68rem; color: var(--ink-faint); flex-shrink: 0; padding-top: 2px; min-width: 14px; }
-.opt__txt { flex: 1; min-width: 0; }
+.opt__txt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .opt.is-picked { border-color: var(--accent); background: var(--accent-soft); }
 .test.is-marked .opt { cursor: default; }
 .test.is-marked .opt:hover { border-color: var(--border); background: var(--paper); }

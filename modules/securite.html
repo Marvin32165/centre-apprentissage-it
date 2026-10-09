@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=16">
+    <link rel="stylesheet" href="../assets/theme.css?v=17">
 </head>
 <body>
 
@@ -135,6 +135,26 @@
             </div>
 
             <p>Sur Proxmox (cf. module <a href="proxmox.html">Proxmox &amp; Virtualisation</a>), on crée un pont dédié sans <code>bridge-ports</code>, puis on y branche Kali et les cibles. Elles se voient entre elles, et nulle part ailleurs.</p>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le labo est-il isolé : aucune route vers l'extérieur sur Kali, et un pont sans carte physique ?</p>
+                <div class="terminal">
+                    <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Kali, puis nœud Proxmox</span></div>
+                    <pre class="terminal__code"><span class="c"># sur Kali : la table de routage</span>
+<span class="k">ip</span> route
+<span class="c"># sur le nœud Proxmox : le pont du labo (vmbr1 ici)</span>
+<span class="k">cat</span> <span class="s">/etc/network/interfaces</span></pre>
+                </div>
+                <p class="verify__sub">Sortie attendue</p>
+                <pre class="verify__out">10.10.10.0/24 dev eth0 proto kernel scope link src 10.10.10.10
+
+auto vmbr1
+iface vmbr1 inet manual
+        bridge-ports none
+        bridge-stp off
+        bridge-fd 0</pre>
+                <p class="verify__fail">Une ligne <code>default</code> dans la table de Kali : la VM a une passerelle, donc une sortie possible. Supprime-la. Sur le pont, <code>bridge-ports</code> désigne une carte physique au lieu de <code>none</code> : le labo touche alors le vrai réseau. Corrige avant tout test.</p>
+            </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -233,6 +253,23 @@
 <span class="k">nmap</span> <span class="p">-A</span> <span class="s">10.10.10.20</span></pre>
             </div>
             <p class="note">Lecture d'un résultat : un port <code>open</code> avec un service et sa <em>version</em> permet de chercher des vulnérabilités connues (<strong>CVE</strong> = identifiant public d'une faille, ex. <code>CVE-2024-3094</code>) associées à cette version. Chaque CVE porte une note <strong>CVSS</strong> de 0 à 10 (version 4.0 depuis novembre 2023, la 3.1 reste très répandue) : 0,1–3,9 faible, 4,0–6,9 moyenne, 7,0–8,9 élevée, 9,0–10 critique. La note mesure la gravité technique, pas le risque <em>chez toi</em> : une faille critique sur un service non exposé peut passer après une faille moyenne sur Internet.</p>
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>Le scan voit-il les ports ouverts, avec leur service et leur version ?</p>
+                <div class="terminal">
+                    <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Kali — nmap (cible du labo)</span></div>
+                    <pre class="terminal__code"><span class="c"># la cible du labo</span>
+<span class="k">nmap</span> <span class="p">-sV</span> <span class="p">-p-</span> <span class="s">10.10.10.20</span></pre>
+                </div>
+                <p class="verify__sub">Sortie attendue</p>
+                <pre class="verify__out">Nmap scan report for 10.10.10.20
+Host is up (0.0012s latency).
+Not shown: 65533 closed ports
+PORT     STATE    SERVICE     VERSION
+21/tcp   open     ftp         vsftpd 2.3.4
+23/tcp   filtered telnet</pre>
+                <p class="verify__fail">Aucun port <code>open</code>, ou seulement des <code>filtered</code> : la cible ne répond pas, ou un pare-feu bloque le sondage. Vérifie d'abord qu'elle répond à <code>nmap -sn</code> (ping scan, sans scan de ports). Et si l'adresse n'est pas celle de ton labo, arrête-toi : sans autorisation, pas de scan.</p>
+            </div>
 
             <h3>Côté défense : ce que ça t'apprend</h3>
             <ul>
@@ -329,6 +366,19 @@
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Ne pas se fermer la porte</p>
                 <p>Avant <code>PasswordAuthentication no</code>, <strong>vérifier que la connexion par clé marche</strong> (<code>ssh -i ~/.ssh/id_ed25519 user@serveur</code> depuis un second terminal) et garder la session actuelle ouverte pendant le redémarrage de SSH. Si la clé n'est pas reconnue, on n'a plus d'accès à distance — sur un serveur loué, cela veut dire passer par la console de secours. Autre piège : sur Debian, <code>sshd_config</code> commence par <code>Include /etc/ssh/sshd_config.d/*.conf</code>, et pour chaque réglage <strong>la première valeur lue l'emporte</strong>. Un fichier déposé là (par cloud-init, par exemple) avec <code>PasswordAuthentication yes</code> annule ta ligne. Contrôle la configuration réellement appliquée avec <code>sudo sshd -T | grep -i passwordauthentication</code>.</p>
+            </div>
+
+            <div class="verify">
+                <p class="verify__label">Vérifier</p>
+                <p>La configuration SSH est-elle valide, et la valeur réellement appliquée est-elle <code>no</code> ?</p>
+                <div class="terminal">
+                    <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — serveur</span></div>
+                    <pre class="terminal__code"><span class="k">sudo</span> <span class="k">sshd</span> <span class="p">-t</span>      <span class="c"># syntaxe : aucune erreur signalée</span>
+<span class="k">sudo</span> <span class="k">sshd</span> <span class="p">-T</span> | <span class="k">grep</span> <span class="p">-i</span> passwordauthentication   <span class="c"># valeur effective</span></pre>
+                </div>
+                <p class="verify__sub">Sortie attendue</p>
+                <pre class="verify__out">passwordauthentication no</pre>
+                <p class="verify__fail"><code>passwordauthentication yes</code> : une autre valeur, lue avant la tienne, l'emporte (la première valeur lue est retenue). Cherche dans <code>/etc/ssh/sshd_config.d/</code>. Une erreur affichée par <code>sshd -t</code> : corrige la ligne indiquée avant tout redémarrage, et garde la session ouverte.</p>
             </div>
 
             <p>Pour aller plus loin, des <strong>guides de référence</strong> existent : les <em>CIS Benchmarks</em> et les <em>STIG</em> listent, système par système, les réglages à appliquer. On les suit comme des checklists.</p>
@@ -461,10 +511,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@zSecurity" target="_blank" rel="noopener">zSecurity</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=16"></script>
-<script src="../assets/app.js?v=16"></script>
-<script src="../assets/quiz-data.js?v=16"></script>
-<script src="../assets/quiz.js?v=16"></script>
-<script src="../assets/pratique.js?v=16"></script>
+<script src="../assets/catalogue.js?v=17"></script>
+<script src="../assets/app.js?v=17"></script>
+<script src="../assets/quiz-data.js?v=17"></script>
+<script src="../assets/quiz.js?v=17"></script>
+<script src="../assets/pratique.js?v=17"></script>
 </body>
 </html>

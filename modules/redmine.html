@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=16">
+    <link rel="stylesheet" href="../assets/theme.css?v=17">
 </head>
 <body>
 
@@ -139,6 +139,15 @@
 <span class="k">sudo</span> docker ps                <span class="c"># redmine-app et redmine-db : Up</span></pre>
             </div>
             <p>Au premier démarrage, Redmine crée lui-même ses tables.</p>
+
+            <div class="cmdex" data-accept="(sudo )?docker compose up (-d|--detach)" data-hint="up, puis -d (ou --detach) : sans lui, la commande reste attachée à ton terminal.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Depuis <code>~/redmine</code>, démarre la pile Compose <strong>en arrière-plan</strong>, pour que la commande rende la main à ton terminal.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>sudo docker compose up -d</code>. Sans <code>-d</code>, Compose reste attaché au terminal et affiche la sortie de tous les conteneurs : quand la commande s'arrête, les conteneurs s'arrêtent aussi. Avec <code>-d</code> (ou <code>--detach</code>), ils tournent en arrière-plan.</p></div>
+                </details>
+            </div>
 
             <h3>Premier accès</h3>
             <ol class="steps">
@@ -288,17 +297,22 @@
 <span class="p">REDMINE_SECRET_KEY_BASE</span>=<span class="s">une-longue-chaine-aleatoire</span></pre>
             </div>
             <div class="terminal">
-                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">docker-compose.yml (extrait)</span></div>
-                <pre class="terminal__code">  <span class="k">db</span>:
+                <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">docker-compose.yml (extrait : environment)</span></div>
+                <pre class="terminal__code"><span class="k">services</span>:
+  <span class="k">db</span>:
     <span class="p">environment</span>:
       <span class="p">MARIADB_DATABASE</span>: ${MYSQL_DATABASE}
+      <span class="p">MARIADB_USER</span>: ${MYSQL_USER}
       <span class="p">MARIADB_PASSWORD</span>: ${MYSQL_PASSWORD}
+      <span class="p">MARIADB_ROOT_PASSWORD</span>: ${MYSQL_ROOT_PASSWORD}
   <span class="k">redmine</span>:
     <span class="p">environment</span>:
       <span class="p">REDMINE_DB_MYSQL</span>: db
+      <span class="p">REDMINE_DB_USERNAME</span>: ${MYSQL_USER}
       <span class="p">REDMINE_DB_PASSWORD</span>: ${MYSQL_PASSWORD}
       <span class="p">SECRET_KEY_BASE</span>: ${REDMINE_SECRET_KEY_BASE}</pre>
             </div>
+            <p><em>Extrait</em> : seule la section <code>environment</code> est montrée ; <code>image</code>, <code>volumes</code> et <code>restart</code> complètent chaque service (chapitre 02). <code>MARIADB_USER</code> et <code>MARIADB_PASSWORD</code> créent le compte de l'application dans la base ; <code>REDMINE_DB_USERNAME</code> dit à Redmine de s'y connecter avec ce même compte. Sans cette ligne, l'image prend <code>root</code> par défaut pour MySQL.</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash — serveur Redmine</span></div>
                 <pre class="terminal__code"><span class="k">sudo</span> chmod 600 .env                              <span class="c"># -rw------- : propriétaire seul</span>
@@ -510,6 +524,15 @@ redmine-nginx   nginx     Up 3 hours
 200</pre>
                 <p class="verify__fail"><code>502 Bad Gateway</code> : nginx tourne mais ne joint pas <code>redmine-app</code> (conteneur arrêté, ou mauvais nom de service dans <code>proxy_pass</code>). <code>redmine-app</code> qui redémarre en boucle : <code>sudo docker compose logs redmine</code> (le nom du <strong>service</strong>, pas celui du conteneur) — souvent la base pas prête ou un mot de passe du <code>.env</code> changé après coup.</p>
             </div>
+
+            <div class="cmdex" data-accept="(sudo )?docker compose logs (-f|--follow) (-n|--tail) 50 redmine;;(sudo )?docker compose logs (-n|--tail) 50 (-f|--follow) redmine" data-hint="logs, puis -f (suivre) et --tail 50, puis le nom du service : redmine, pas redmine-app.">
+                <p class="cmdex__label">À toi de taper</p>
+                <p>Suis en direct le journal du service <strong>redmine</strong> (le nom du service dans le Compose, pas celui du conteneur), en partant des <strong>50 dernières lignes</strong>.</p>
+                <details class="reveal">
+                    <summary>Voir la solution</summary>
+                    <div class="reveal__body"><p><code>sudo docker compose logs -f --tail 50 redmine</code>. <code>-f</code> suit le flux en continu ; <kbd>Ctrl</kbd>+<kbd>C</kbd> arrête l'affichage, pas les conteneurs. Sans <code>--tail</code>, tout le journal s'affiche (valeur par défaut <code>all</code>).</p></div>
+                </details>
+            </div>
             <div class="lab" data-lab="redmine-restauration">
                 <p class="lab__label">Lab guidé</p>
                 <p class="lab__title">Restaurer la sauvegarde sur une base de test</p>
@@ -530,7 +553,7 @@ redmine-nginx   nginx     Up 3 hours
                 <li><p>Supprimer la base de test (<code>DROP DATABASE redmine_test</code>) et noter le temps total : c'est le temps de restauration réel de la base. Les pièces jointes (<code>files/</code>) se vérifient de la même façon, en comparant une archive extraite au dossier réel.</p></li>
                 </ol>
             </div>
-            <p>Les commandes de ce lab supposent que le mot de passe root de MariaDB est passé au conteneur par la variable <code>MARIADB_ROOT_PASSWORD</code> du <code>.env</code> (chapitre 05) ; si ton compose la nomme autrement, adapte le nom.</p>
+            <p>Les commandes de ce lab supposent que le mot de passe root de MariaDB est passé au conteneur par la variable <code>MARIADB_ROOT_PASSWORD</code>, qui reçoit <code>MYSQL_ROOT_PASSWORD</code> du <code>.env</code> (chapitre 05) ; si ton compose la nomme autrement, adapte le nom.</p>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
                 <p>Vérifier une pile Compose : <code>ps</code>, <code>logs</code>, puis le service de bout en bout (<code>curl</code>). Vérifier une sauvegarde : la restaurer ailleurs et compter. Un fichier <code>.sql</code> présent ne prouve rien.</p>
@@ -548,7 +571,7 @@ redmine-nginx   nginx     Up 3 hours
         <div class="sources">
             <p class="sources__label">Pour aller plus loin — sources</p>
                 <details class="sources__verif">
-                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (35)</summary>
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (38)</summary>
                     <ul>
                     <li><a href="https://github.com/redmine/redmine/blob/7.0.2/doc/COPYING" rel="noopener">Redmine — Licence GPL v2</a></li>
                     <li><a href="https://github.com/redmine/redmine/blob/7.0.2/doc/INSTALL" rel="noopener">Redmine — Bases supportées, admin/admin, configuration par défaut</a></li>
@@ -577,6 +600,9 @@ redmine-nginx   nginx     Up 3 hours
                     <li><a href="https://github.com/docker/docs/blob/main/content/manuals/compose/intro/compose-application-model.md" rel="noopener">Docker Docs — Colonnes de compose ps</a></li>
                     <li><a href="https://github.com/docker/compose/blob/main/docs/reference/compose_up.md" rel="noopener">Docker Docs — up : recréation, volumes conservés</a></li>
                     <li><a href="https://github.com/docker/compose/blob/main/docs/reference/compose_exec.md" rel="noopener">Docker Docs — exec -T</a></li>
+                    <li><a href="https://github.com/docker/compose/blob/main/docs/reference/compose_logs.md" rel="noopener">Docker Compose — logs : -f, -n / --tail, all par défaut</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/compose/gettingstarted.md" rel="noopener">Docker Docs — Suivre les journaux d&#x27;un service (logs -f web)</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/reference/compose-file/services.md" rel="noopener">Docker Docs — Compose : services, environment en syntaxe map</a></li>
                     <li><a href="https://github.com/MariaDB/server/blob/11.8/client/mysqldump.cc" rel="noopener">MariaDB — --single-transaction (InnoDB), mariadb-dump</a></li>
                     <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/ldap-signing.md" rel="noopener">Microsoft Learn — Signature LDAP WS2025, ports 389/636</a></li>
                     <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/manage-ldap-signing-group-policy.md" rel="noopener">Microsoft Learn — GPO : Enforcement, Disabled, gpupdate</a></li>
@@ -598,10 +624,10 @@ redmine-nginx   nginx     Up 3 hours
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Redmine en remplacement de SCSM »</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=16"></script>
-<script src="../assets/app.js?v=16"></script>
-<script src="../assets/quiz-data.js?v=16"></script>
-<script src="../assets/quiz.js?v=16"></script>
-<script src="../assets/pratique.js?v=16"></script>
+<script src="../assets/catalogue.js?v=17"></script>
+<script src="../assets/app.js?v=17"></script>
+<script src="../assets/quiz-data.js?v=17"></script>
+<script src="../assets/quiz.js?v=17"></script>
+<script src="../assets/pratique.js?v=17"></script>
 </body>
 </html>
