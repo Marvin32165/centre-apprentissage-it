@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -363,7 +363,7 @@
                         <button class="scenario__opt" data-why="Un /25 doit commencer sur un multiple de 128 : .64 n&#x27;en est pas un. Ce bloc serait en réalité 192.168.1.0/25 et chevaucherait Ventes.">En <code>192.168.1.64/25</code>, juste après Ventes</button>
                         <button class="scenario__opt" data-why="Le /25 du haut (.128 → .255) est encore libre et bien aligné : il tient.">Nulle part : il faut tout replanifier</button>
                     </div>
-                    <div class="scenario__why"><p>Un bloc de taille 128 commence sur <code>.0</code> ou <code>.128</code>. Le premier est occupé par Ventes, reste <strong>.128/25</strong>. Les adresses <code>.64 → .127</code> restent libres pour des blocs plus petits (/27, /28, /30). Si Ventes avait été posé en <code>.64/26</code>, plus aucun /25 n'aurait tenu : d'où la règle « du plus grand au plus petit ».</p></div>
+                    <div class="scenario__why"><p>Un bloc de taille 128 commence sur <code>.0</code> ou <code>.128</code>. Le premier est occupé par Ventes, reste <strong>.128/25</strong>. Les adresses <code>.64 → .127</code> restent libres pour des blocs plus petits (/27, /28, /30). Si Ventes avait été posé en <code>.64/26</code>, il ne resterait que <code>.128/25</code> : un seul petit bloc posé dedans, et plus aucun /25 ne tiendrait. D'où la règle « du plus grand au plus petit ».</p></div>
                 </div>
             </div>
         </section>
@@ -415,7 +415,7 @@
                 <p>Depuis <code>172.20.0.0/22</code>, prépare un plan pour quatre VLAN : Postes 400 hôtes, Serveurs 120, Wi-Fi 200, Management 25. Donne le masque et le bloc de chacun.</p>
                 <details class="reveal">
                     <summary>Afficher la correction</summary>
-                    <div class="reveal__body"><p>On sert du plus gros au plus petit. <strong>Postes 400</strong> → /23 (510 hôtes) : <code>172.20.0.0 → 172.20.1.255</code>. <strong>Wi-Fi 200</strong> → /24 (254) : <code>172.20.2.0 → .2.255</code>. <strong>Serveurs 120</strong> → /25 (126) : <code>172.20.3.0 → .3.127</code>. <strong>Management 25</strong> → /27 (30) : <code>172.20.3.128 → .3.159</code>. Il reste <code>172.20.3.160 → .3.255</code> de libre. Pourquoi du plus gros au plus petit ? Un bloc doit <strong>commencer sur un multiple de sa taille</strong> (un /23 démarre sur .0.0, .2.0, .4.0…). En servant les gros d'abord, chaque bloc suivant tombe naturellement aligné, sans trou. En commençant par Management (<code>172.20.0.0/27</code>), le /23 des Postes ne pourrait plus démarrer qu'en <code>172.20.2.0</code> : ça tient encore ici en recasant les autres dans les trous, mais le plan devient fragmenté et il ne reste plus de bloc contigu pour grandir.</p></div>
+                    <div class="reveal__body"><p>On sert du plus gros au plus petit. <strong>Postes 400</strong> → /23 (510 hôtes) : <code>172.20.0.0 → 172.20.1.255</code>. <strong>Wi-Fi 200</strong> → /24 (254) : <code>172.20.2.0 → .2.255</code>. <strong>Serveurs 120</strong> → /25 (126) : <code>172.20.3.0 → .3.127</code>. <strong>Management 25</strong> → /27 (30) : <code>172.20.3.128 → .3.159</code>. Il reste <code>172.20.3.160 → .3.255</code> de libre. Pourquoi du plus gros au plus petit ? Un bloc doit <strong>commencer sur un multiple de sa taille</strong> (un /23 démarre sur .0.0, .2.0, .4.0…). En servant les gros d'abord, chaque bloc suivant tombe naturellement aligné, sans trou. En commençant par Management (<code>172.20.0.0/27</code>), le /23 des Postes ne pourrait plus démarrer qu'en <code>172.20.2.0</code> : ça tient encore ici en recasant les autres dans les trous, mais le /23 n'a plus qu'un seul emplacement possible : un seul petit bloc posé dans <code>172.20.2.0/23</code>, et les Postes ne rentrent plus.</p></div>
                 </details>
             </div>
 
@@ -602,6 +602,22 @@ Hosts/Net: 62                    Class C, Private Internet</pre>
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (6)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/core-network-guide/Core-Network-Guide.md" rel="noopener">Microsoft Learn — Core Network Guide : plages privées et masques par classe</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-client/networking/tcpip-addressing-and-subnetting.md" rel="noopener">Microsoft Learn — Dépannage TCP/IP : classes, première et dernière adresse non attribuables</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/firewall/snat-private-range.md" rel="noopener">Microsoft Learn — Azure Firewall : plages privées IANA RFC 1918</a></li>
+                    <li><a href="https://github.com/iproute2/iproute2/blob/main/man/man8/ip-address.8.in" rel="noopener">iproute2 — ip-address(8) : préfixe de 64 bits, autoconfiguration sans état</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/networking/design-guide/ip-planning.md" rel="noopener">Microsoft Learn — Azure : sous-réseaux IPv6 exactement /64</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/virtual-network/ip-services/ipv6-overview.md" rel="noopener">Microsoft Learn — Azure : IPv6, sous-réseaux /64 pour le routage</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -610,11 +626,11 @@ Hosts/Net: 62                    Class C, Private Internet</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/watch?v=5WfiTHiU4x8&list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF" target="_blank" rel="noopener">Subnetting — NetworkChuck</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
-<script src="../assets/atelier.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
+<script src="../assets/atelier.js?v=16"></script>
 </body>
 </html>

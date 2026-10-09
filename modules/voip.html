@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -77,7 +77,7 @@
 
             <div class="cards">
                 <div class="card">
-                    <h4>VoIP — Voice over Internet Protocol</h4>
+                    <h3>VoIP — Voice over Internet Protocol</h3>
                     <ul>
                         <li>Technologie de <strong>transport</strong> de la voix via IP.</li>
                         <li>Convertit la voix en paquets de données.</li>
@@ -86,7 +86,7 @@
                     </ul>
                 </div>
                 <div class="card">
-                    <h4>ToIP — Telephony over Internet Protocol</h4>
+                    <h3>ToIP — Telephony over Internet Protocol</h3>
                     <ul>
                         <li><strong>Système téléphonique complet</strong> basé sur la VoIP.</li>
                         <li>Comprend le PBX, la gestion des appels, la messagerie vocale…</li>
@@ -218,14 +218,14 @@
 
             <div class="cards">
                 <div class="card">
-                    <h4>Transport de l'audio/vidéo</h4>
+                    <h3>Transport de l'audio/vidéo</h3>
                     <ul>
                         <li><strong>RTP</strong> (Real-time Transport Protocol) — transporte les flux audio/vidéo en temps réel.</li>
                         <li><strong>RTCP</strong> (RTP Control Protocol, défini avec RTP dans la RFC 3550) — contrôle du flux et remontée de la qualité de service.</li>
                     </ul>
                 </div>
                 <div class="card">
-                    <h4>Signalisation</h4>
+                    <h3>Signalisation</h3>
                     <ul>
                         <li><strong>H.323</strong> — protocole historique, encore présent en visioconférence.</li>
                         <li><strong>SIP</strong> (Session Initiation Protocol) — le standard actuel : voix, vidéo, messagerie instantanée.</li>
@@ -477,7 +477,7 @@
                 <p>Une PME veut 20 appels simultanés vers l'extérieur en G.711, sur un lien fibre de 100/20 Mb/s (descendant/montant). Le lien suffit-il ?</p>
                 <details class="reveal">
                     <summary>Afficher la correction</summary>
-                    <div class="reveal__body"><p>20 × 87 kb/s ≈ <strong>1,75 Mb/s dans chaque sens</strong>. Même le sens montant (20 Mb/s) suffit largement. Le vrai risque n'est pas la capacité mais la <strong>congestion</strong> : une sauvegarde vers le cloud qui sature le sens montant fait exploser la gigue. D'où la QoS sur le routeur de sortie, qui donne la priorité à la voix.</p></div>
+                    <div class="reveal__body"><p>20 × 87 kb/s ≈ <strong>1,74 Mb/s dans chaque sens</strong>. Même le sens montant (20 Mb/s) suffit largement. Le vrai risque n'est pas la capacité mais la <strong>congestion</strong> : une sauvegarde vers le cloud qui sature le sens montant fait exploser la gigue. D'où la QoS sur le routeur de sortie, qui donne la priorité à la voix.</p></div>
                 </details>
             </div>
             <h3>Le port de switch d'un téléphone</h3>
@@ -666,6 +666,23 @@
                 <li><a href="https://www.itu.int/rec/T-REC-G.114" rel="noopener">ITU-T G.114 — délai de transmission unidirectionnel</a></li>
                 <li><a href="https://wiki.wireshark.org/VoIP_calls" rel="noopener">Wireshark — analyser des appels VoIP</a></li>
             </ul>
+                        <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (11)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/technologies/qos/qos-policy-top.md" rel="noopener">Microsoft Learn — QoS : DSCP 46 pour une application VoIP, file à faible latence</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/communication-services/concepts/interop/tpe/teams-phone-extensibility-optimize-latency.md" rel="noopener">Microsoft Learn — Teams : audio DSCP 46 EF, signalisation CS5, transcodage et délai</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/enterprise/office-365-network-mac-perf-onboarding-tool.md" rel="noopener">Microsoft Learn — Seuils Teams : perte inférieure à 1 %, gigue inférieure à 30 ms</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/communication-services/concepts/telephony/direct-routing-sip-specification.md" rel="noopener">Microsoft Learn — Direct routing : SIP sur TLS 5061, « 100 Trying »</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/communication-services/concepts/telephony/direct-routing-infrastructure.md" rel="noopener">Microsoft Learn — Direct routing : média séparé de la signalisation, UDP/SRTP, codecs SILK, G.711, G.722, G.729</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/office-docs-powershell/blob/main/exchange/exchange-ps/ExchangePowerShell/Test-UMConnectivity.md" rel="noopener">Microsoft Learn — Exchange UM : ports SIP par défaut, 5060 TCP et 5061 TLS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/office-docs-powershell/blob/main/exchange/exchange-ps/ExchangePowerShell/Set-UMIPGateway.md" rel="noopener">Microsoft Learn — Exchange UM : port 5060 par défaut d&#x27;un PBX IP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/communication-services/resources/troubleshooting/voice-video-calling/includes/codes/call-automation-sdk.md" rel="noopener">Microsoft Learn — Code SIP 486 « Busy Here »</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/enterprise/essentials-security.md" rel="noopener">Microsoft Learn — Teams : flux audio chiffrés en SRTP (RTP sécurisé)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/office-docs-powershell/blob/main/exchange/exchange-ps/ExchangePowerShell/Get-UMCallDataRecord.md" rel="noopener">Microsoft Learn — Statistiques RTCP : temps aller-retour</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/core-network-guide/cncg/wireless/a-deploy-8021X-wireless-access.md" rel="noopener">Microsoft Learn — WPA créé à cause des failles de WEP ; WPA2 plus robuste</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
         </div>
 
     </main>
@@ -676,10 +693,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

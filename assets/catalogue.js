@@ -75,6 +75,87 @@ window.CATALOGUE = {
       ]
     }
   ],
+  "paliers": [
+    {
+      "id": "p1",
+      "num": "01",
+      "title": "Les fondations",
+      "poste": "Technicien·ne support (N1)",
+      "promesse": "Je comprends ce qui se passe sur un réseau et dans un terminal.",
+      "mission": {
+        "titre": "Le labo de la petite entreprise",
+        "etapes": 6
+      },
+      "modules": [
+        "reseau-bases",
+        "subnetting",
+        "hyperv",
+        "linux-debian",
+        "depannage-reseau"
+      ]
+    },
+    {
+      "id": "p2",
+      "num": "02",
+      "title": "Mettre en service",
+      "poste": "Technicien·ne systèmes et réseaux (N2)",
+      "promesse": "J'installe un domaine, un réseau et des services, et je les surveille.",
+      "mission": {
+        "titre": "Le domaine Orion, du premier contrôleur au ticket",
+        "etapes": 7
+      },
+      "modules": [
+        "windows-server",
+        "powershell",
+        "ccna-reseau",
+        "docker",
+        "monitoring-zabbix",
+        "redmine",
+        "entretien-recrutement"
+      ]
+    },
+    {
+      "id": "p3",
+      "num": "03",
+      "title": "Faire tenir la production",
+      "poste": "Administrateur·rice systèmes et réseaux",
+      "promesse": "Je publie, je sécurise, je sauvegarde, et ça tient quand une machine tombe.",
+      "mission": {
+        "titre": "La panne qui ne doit rien coûter",
+        "etapes": 7
+      },
+      "modules": [
+        "storage-clustering",
+        "rds",
+        "iis",
+        "sql-server",
+        "exchange-securite",
+        "sharepoint",
+        "dpm",
+        "cisco-securite",
+        "voip",
+        "proxmox",
+        "zabbix-windows"
+      ]
+    },
+    {
+      "id": "p4",
+      "num": "04",
+      "title": "Concevoir et piloter",
+      "poste": "Ingénieur·e systèmes, cloud ou sécurité",
+      "promesse": "Je conçois une architecture, je la défends et je mène le travail d'une équipe.",
+      "mission": {
+        "titre": "Ton portfolio d'ingénieur",
+        "etapes": 5
+      },
+      "modules": [
+        "azure",
+        "securite",
+        "homelab",
+        "scrum"
+      ]
+    }
+  ],
   "modules": {
     "reseau-bases": {
       "title": "Réseau : les bases",

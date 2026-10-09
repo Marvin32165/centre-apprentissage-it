@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Module Proxmox VE : hyperviseur de type 1, VM KVM et conteneurs LXC, installation et dépôts, stockage et ZFS, réseau bridges et VLAN, snapshots et sauvegardes vzdump, cluster, quorum et haute disponibilité.">
     <title>Proxmox &amp; Virtualisation — Module</title>
-    <meta name="description" content="Proxmox VE de A à Z : hyperviseur type 1, VM KVM vs conteneurs LXC, stockage ZFS, snapshots et sauvegardes, réseau bridges/VLAN, cluster et haute disponibilité.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -451,7 +450,7 @@ EOF
             </div>
 
             <h3>Quorum : la règle du nombre impair</h3>
-            <p>Le cluster ne prend de décision que s'il a le <strong>quorum</strong> (majorité des votes), via Corosync. D'où la règle : un nombre <strong>impair</strong> de nœuds (3 minimum pour une vraie HA). Avec 2 nœuds, si l'un tombe, le survivant n'a plus que 1 vote sur 2 : il perd le quorum. Ses VM continuent de tourner, mais on ne peut plus en démarrer ni modifier la configuration. On ajoute alors un <em>QDevice</em> (un petit service sur une troisième machine) comme 3ᵉ votant.</p>
+            <p>Le cluster ne prend de décision que s'il a le <strong>quorum</strong> (majorité des votes), via Corosync. D'où la règle : un nombre <strong>impair</strong> de nœuds (3 minimum pour une vraie HA). Avec 2 nœuds, si l'un tombe, le survivant n'a plus que 1 vote sur 2 : il perd le quorum. Le cluster passe en lecture seule : ses VM continuent de tourner, mais on ne peut plus en démarrer ni modifier la configuration — sauf si des VM y sont gérées en HA : faute de quorum, le nœud se redémarre de lui-même au bout de 60 s (<em>watchdog</em>). On ajoute alors un <em>QDevice</em> (un petit service sur une troisième machine) comme 3ᵉ votant.</p>
 
             <h3>Migration &amp; haute disponibilité</h3>
             <ul>
@@ -557,6 +556,45 @@ EOF
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab & sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (29)</summary>
+                    <ul>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pve-intro.adoc" rel="noopener">Proxmox VE — PVE basé sur Debian, open source, KVM et LXC</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pve-installation.adoc" rel="noopener">Proxmox VE — Installeur : ext4 par défaut, ZFS (RAID1, RAID-Z), port 8006, notifications vers l&#x27;adresse admin</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pve-gui.adoc" rel="noopener">Proxmox VE — Interface web https://IP:8006</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pve-faq.adoc" rel="noopener">Proxmox VE — PVE 9 sorti en 2025-08 sur Debian 13 ; PVE 8 : Debian 12, fin 2026-08</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pve-package-repos.adoc" rel="noopener">Proxmox VE — Dépôts enterprise (activé par défaut, abonnement), no-subscription, fichiers .sources, ceph.sources (lignes PVE 8 : section wiki, l. 395-412)</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/certificate-management.adoc" rel="noopener">Proxmox VE — Certificat auto-signé par défaut</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pveum.adoc" rel="noopener">Proxmox VE — Realm Linux PAM (root), realm PVE, API tokens, rôle PVEVMUser, Datacenter → Permissions</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/qm.adoc" rel="noopener">Proxmox VE — Options VM : virtio-win pour Windows, Q35/OVMF, VirtIO SCSI single, QEMU Agent, cache No cache, Discard, CPU host, ballooning, VirtIO, snapshot avec RAM, migration disques locaux</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/qm-cloud-init.adoc" rel="noopener">Proxmox VE — Cloud-init, template puis clone</a></li>
+                    <li><a href="https://raw.githubusercontent.com/proxmox/qemu-server/master/src/PVE/CLI/qm.pm" rel="noopener">Proxmox VE — qm list (vmlist), qm start, qm shutdown</a></li>
+                    <li><a href="https://raw.githubusercontent.com/proxmox/qemu-server/master/src/PVE/QemuServer.pm" rel="noopener">Proxmox VE — scsihw : virtio-scsi-single figure dans l&#x27;énumération</a></li>
+                    <li><a href="https://raw.githubusercontent.com/proxmox/qemu-server/master/src/PVE/QemuServer/Drive.pm" rel="noopener">Proxmox VE — media=cdrom ; discard=on ; taille en GiB (STORAGE:SIZE)</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pct.adoc" rel="noopener">Proxmox VE — Conteneur = noyau de l&#x27;hôte ; unprivileged par défaut à la création ; privileged moins sûr ; VM recommandée pour l&#x27;imbrication (Docker) ; pveam ; pct enter</a></li>
+                    <li><a href="https://raw.githubusercontent.com/proxmox/pve-container/master/src/PVE/CLI/pct.pm" rel="noopener">Proxmox VE — pct list (vmlist LXC), pct enter (lxc-attach)</a></li>
+                    <li><a href="https://raw.githubusercontent.com/proxmox/pve-container/master/src/PVE/API2/LXC.pm" rel="noopener">Proxmox VE — unprivileged forcé à 1 à la création si absent</a></li>
+                    <li><a href="https://raw.githubusercontent.com/proxmox/pve-container/master/src/PVE/LXC/Config.pm" rel="noopener">Proxmox VE — net0 : name, bridge, ip=dhcp ; rootfs : volume storage:taille</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pvesm.adoc" rel="noopener">Proxmox VE — Types de stockage et snapshots ; contenus par défaut : local (iso, vztmpl, backup), local-lvm (rootdir, images), local-zfs</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pve-storage-rbd.adoc" rel="noopener">Proxmox VE — Ceph RBD : contenu images et rootdir uniquement</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/local-zfs.adoc" rel="noopener">Proxmox VE — ZFS : ashift=12 (blocs 4 k), zpool create mirror, compression lz4, nom local-zfs, pvesm zfspool</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pve-network.adoc" rel="noopener">Proxmox VE — vmbr0 = pont logiciel (switch) ; VLAN tag par VM</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/vzdump.adoc" rel="noopener">Proxmox VE — Modes stop / suspend / snapshot ; fsfreeze via agent ; compression zstd ; jobs Datacenter → Backup ; rétention</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pve-storage-dir.adoc" rel="noopener">Proxmox VE — Fichiers de sauvegarde dans dump/</a></li>
+                    <li><a href="https://raw.githubusercontent.com/proxmox/pve-manager/master/PVE/VZDump.pm" rel="noopener">Proxmox VE — option compress : zstd</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/qmrestore.adoc" rel="noopener">Proxmox VE — qmrestore : restauration des archives vzdump (exemple vzdump.adoc l. 676)</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pvecm.adoc" rel="noopener">Proxmox VE — pvecm create / add / status ; Quorate: Yes ; majorité ; QDevice ; démarrage attendant le quorum</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pvesr.adoc" rel="noopener">Proxmox VE — HA combinable avec la réplication (perte depuis la dernière synchro)</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/ha-manager.adoc" rel="noopener">Proxmox VE — HA : au moins trois nœuds, stockage partagé, watchdog 60 s, fencing</a></li>
+                    <li><a href="https://raw.githubusercontent.com/openzfs/zfs/master/man/man8/zpool-scrub.8" rel="noopener">OpenZFS — zpool scrub ; scrub périodique par timers (OpenZFS)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/virtualization/windowscontainers/manage-containers/hyperv-container.md" rel="noopener">Microsoft Learn — Hyper-V disponible sur Windows 10 Pro (isolation Hyper-V)</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -565,10 +603,10 @@ EOF
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@VirtualizationHowto" target="_blank" rel="noopener">Virtualization HowTo</a> · <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -602,11 +602,11 @@ R1# <span class="k">show</span> ip interface g0/0 | include access list</pre>
             <p class="theory"><b>Complément hors TP</b> — rédigé d'après la documentation Cisco, pas pratiqué en séance. À tester dans Packet Tracer avant de s'y fier.</p>
             <div class="cards">
                 <div class="card">
-                    <h4>DHCP snooping</h4>
+                    <h3>DHCP snooping</h3>
                     <p>Le switch classe ses ports en <strong>trusted</strong> (vers le vrai serveur DHCP ou le routeur) et <strong>untrusted</strong> (les postes). Une réponse DHCP qui arrive sur un port non fiable est jetée : un PC ou une box branchée par erreur ne peut plus distribuer de fausses adresses. Au passage, le switch construit une table <em>IP ↔ MAC ↔ port</em>.</p>
                 </div>
                 <div class="card">
-                    <h4>Dynamic ARP Inspection</h4>
+                    <h3>Dynamic ARP Inspection</h3>
                     <p>S'appuie sur cette table : une réponse ARP qui ne correspond pas à un bail connu est jetée. Un attaquant ne peut plus se faire passer pour la passerelle (<em>ARP spoofing</em>, chapitre ARP de <a href="reseau-bases.html#arp">Réseau : les bases</a>).</p>
                 </div>
             </div>
@@ -763,6 +763,19 @@ SW2(config)# <span class="k">spanning-tree</span> vlan 20 root primary</pre>
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#reseau">examen du Parcours 03 · Réseau &amp; téléphonie</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (3)</summary>
+                    <ul>
+                    <li><a href="https://github.com/openssh/openssh-portable/blob/master/sshd_config.5" rel="noopener">OpenSSH — Port SSH par défaut : 22</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/deploy/configure-virtual-local-area-networks-for-hyper-v.md" rel="noopener">Microsoft Learn — VLAN : switches et routeurs qui supportent 802.1q</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/manage/configuring-security/how-to-set-up-ssl-on-iis.md" rel="noopener">Microsoft Learn — Liaison HTTP par défaut sur le port 80</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -771,10 +784,10 @@ SW2(config)# <span class="k">spanning-tree</span> vlan 20 root primary</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

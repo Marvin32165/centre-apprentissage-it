@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -451,11 +451,11 @@ Adresse Internet      Adresse physique      Type
 
             <div class="cards">
                 <div class="card">
-                    <h4>TCP — RFC 9293</h4>
+                    <h3>TCP — RFC 9293</h3>
                     <ul><li>Connexion établie avant d'échanger (<strong>poignée de main en 3 temps</strong>).</li><li>Accusés de réception, retransmission des pertes, remise dans l'ordre.</li><li>Contrôle de flux (fenêtre) et de congestion.</li><li>Pour : web, SSH, mail, SMB, bases de données.</li></ul>
                 </div>
                 <div class="card">
-                    <h4>UDP — RFC 768</h4>
+                    <h3>UDP — RFC 768</h3>
                     <ul><li>Pas de connexion : on envoie, c'est tout.</li><li>Pas de retransmission ni d'ordre : l'application s'en charge si besoin.</li><li>En-tête de 8 octets, latence minimale.</li><li>Pour : DNS, DHCP, voix (RTP), vidéo, NTP, SNMP, QUIC.</li></ul>
                 </div>
             </div>
@@ -836,7 +836,7 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
                 <p>Écris la forme <strong>la plus courte</strong> de <code>2001:0db8:0000:0000:0000:0000:0000:0010</code>.</p>
                 <details class="reveal">
                     <summary>Voir la solution</summary>
-                    <div class="reveal__body"><p><code>2001:db8::10</code> : zéros de tête retirés (<code>0db8</code> → <code>db8</code>, <code>0010</code> → <code>10</code>), puis les six groupes nuls remplacés par <code>::</code>.</p></div>
+                    <div class="reveal__body"><p><code>2001:db8::10</code> : zéros de tête retirés (<code>0db8</code> → <code>db8</code>, <code>0010</code> → <code>10</code>), puis les cinq groupes nuls remplacés par <code>::</code>.</p></div>
                 </details>
             </div>
             <div class="takeaway">
@@ -1076,6 +1076,78 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
                 <li><a href="https://www.practicalnetworking.net/series/packet-traveling/packet-traveling/" rel="noopener">Practical Networking — « Packet Traveling », le voyage d'un paquet expliqué pas à pas (anglais)</a></li>
                 <li><a href="https://skillsforall.com/course/networking-basics" rel="noopener">Cisco Skills for All — cours gratuit « Networking Basics »</a></li>
             </ul>
+                        <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (66)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/arp.md" rel="noopener">Microsoft Learn — arp : -a, -d et joker *, adresse MAC en six octets</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/ipconfig.md" rel="noopener">Microsoft Learn — ipconfig /all</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/ping.md" rel="noopener">Microsoft Learn — ping /n (nombre d&#x27;envois)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/netstat.md" rel="noopener">Microsoft Learn — netstat -a, -n, -o ; états TCP (LISTEN)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/getmac.md" rel="noopener">Microsoft Learn — getmac /v</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/netsh-interface.md" rel="noopener">Microsoft Learn — netsh interface ipv4 delete arpcache</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/netsh.md" rel="noopener">Microsoft Learn — forme abrégée « netsh interface ip … » (exemples)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/tracert.md" rel="noopener">Microsoft Learn — le routeur décrémente le TTL</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/route_ws2008.md" rel="noopener">Microsoft Learn — 0.0.0.0 route par défaut ; loopback 127.0.0.0/255.0.0.0 ; multicast 224.0.0.0/240.0.0.0</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/core-network-guide/Core-Network-Guide.md" rel="noopener">Microsoft Learn — plages privées RFC 1918 ; routeur dans la plage de son sous-réseau</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/technologies/dhcp/dhcp-top.md" rel="noopener">Microsoft Learn — options DHCP : Router (passerelle par défaut)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DhcpServer/Set-DhcpServerv4OptionValue.md" rel="noopener">Microsoft Learn — paramètre -Router de Set-DhcpServerv4OptionValue</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Test-NetConnection.md" rel="noopener">Microsoft Learn — -ComputerName, -Port, -CommonTCPPort (HTTP, RDP, SMB, WINRM), TcpTestSucceeded</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Get-NetNeighbor.md" rel="noopener">Microsoft Learn — Get-NetNeighbor -AddressFamily IPv4</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Get-NetTCPConnection.md" rel="noopener">Microsoft Learn — -State Listen</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Get-NetIPConfiguration.md" rel="noopener">Microsoft Learn — existence de la cmdlet de configuration IP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Remove-NetNeighbor.md" rel="noopener">Microsoft Learn — existence de Remove-NetNeighbor (regex de l&#x27;exercice)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-client/networking/tcpip-addressing-and-subnetting.md" rel="noopener">Microsoft Learn — 32 bits ; masque ; décision locale ou passerelle ; masque incorrect ; routeur entre réseaux IP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/networking/address-resolution-protocol-arp-caching-behavior.md" rel="noopener">Microsoft Learn — cache ARP : Reachable 15-45 s, puis Stale</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/networking/three-way-handshake-via-tcpip.md" rel="noopener">Microsoft Learn — poignée de main TCP (SYN, ACK, indicateurs)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/networking/disable-stealth-mode.md" rel="noopener">Microsoft Learn — stealth mode : pas de RST sur un port sans écoute (faux ligne 47)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/networking/service-overview-and-network-port-requirements.md" rel="noopener">Microsoft Learn — ports des services ; plage éphémère 49152-65535</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/networking/event-4199-windows-client-cannot-get-ip-address-dhcp-server.md" rel="noopener">Microsoft Learn — ARP gratuit lors de l&#x27;obtention d&#x27;une adresse DHCP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/azure/expressroute/expressroute-troubleshooting-arp-resource-manager.md" rel="noopener">Microsoft Learn — ARP : couche 2, RFC 826</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/azure/azure-kubernetes/connectivity/snat-port-exhaustion.md" rel="noopener">Microsoft Learn — 127.0.0.0/8 (localhost) ; 169.254.0.0/16 (link-local)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/networking/design-guide/ip-planning.md" rel="noopener">Microsoft Learn — 100.64.0.0/10 : RFC 6598, CGNAT</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/entra-docs/blob/main/docs/global-secure-access/how-to-create-remote-network-cpe-behind-nat.md" rel="noopener">Microsoft Learn — exemples RFC 5737 (198.51.100.20, 203.0.113.10)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/enterprise/external-domain-name-system-records.md" rel="noopener">Microsoft Learn — SIP fédération : TCP 5061</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/office-docs-powershell/blob/main/exchange/exchange-ps/ExchangePowerShell/Set-ReceiveConnector.md" rel="noopener">Microsoft Learn — connexions SMTP authentifiées, TCP 587</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/conf/zabbix_agentd.conf" rel="noopener">Zabbix — ListenPort agent, défaut 10050</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/conf/zabbix_server.conf" rel="noopener">Zabbix — ListenPort trappers, défaut 10051</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix-docker/blob/7.4/Dockerfiles/server-mysql/README.md" rel="noopener">Zabbix — port MySQL par défaut 3306</a></li>
+                    <li><a href="https://github.com/openssh/openssh-portable/blob/master/sshd_config.5" rel="noopener">OpenSSH — port SSH par défaut 22</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/nslookup.md" rel="noopener">Microsoft Learn — Commande nslookup</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/dns/validate-dnssec-responses.md" rel="noopener">Microsoft Learn — Chaîne de requêtes DNS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/dns/queries-lookups.md" rel="noopener">Microsoft Learn — Requêtes et cache DNS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/dns/dns-architecture.md" rel="noopener">Microsoft Learn — Architecture DNS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/dns/network-ports.md" rel="noopener">Microsoft Learn — Ports utilisés par le DNS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/dns/forwarding.md" rel="noopener">Microsoft Learn — Transfert DNS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/dc-locator.md" rel="noopener">Microsoft Learn — Localisation des contrôleurs de domaine</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-fs/deployment/how-to-connect-fed-azure-adfs.md" rel="noopener">Microsoft Learn — Fichier hosts (%systemroot%)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/troubleshoot/dynamic-host-configuration-protocol-basics.md" rel="noopener">Microsoft Learn — Bases DHCP (article de 2020)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/troubleshoot/troubleshoot-dhcp-issue.md" rel="noopener">Microsoft Learn — Dépannage DHCP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/troubleshoot/how-to-use-automatic-tcpip-addressing-without-a-dh.md" rel="noopener">Microsoft Learn — APIPA sans serveur DHCP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/technologies/dhcp/dhcp-failover.md" rel="noopener">Microsoft Learn — Basculement DHCP et relais</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/technologies/dhcp/dhcp-subnet-options.md" rel="noopener">Microsoft Learn — Sélection de sous-réseau DHCP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DhcpServer/Set-DhcpServerv4OptionDefinition.md" rel="noopener">Microsoft Learn — Set-DhcpServerv4OptionDefinition</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsClient/Resolve-DnsName.md" rel="noopener">Microsoft Learn — Resolve-DnsName</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Get-NetRoute.md" rel="noopener">Microsoft Learn — Get-NetRoute</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/Set-VMNetworkAdapterVlan.md" rel="noopener">Microsoft Learn — Set-VMNetworkAdapterVlan</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Utility/Invoke-WebRequest.md" rel="noopener">Microsoft Learn — Invoke-WebRequest, alias curl (5.1)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/windows-time-service/Windows-Time-Service-Tools-and-Settings.md" rel="noopener">Microsoft Learn — Service Temps Windows</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/ldap-signing.md" rel="noopener">Microsoft Learn — Signature LDAP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/Replication-error-1753-There-are-no-more-endpoints-available-from-the-endpoint-mapper.md" rel="noopener">Microsoft Learn — Ports Active Directory (tableau)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/storage/file-server/smb-secure-traffic.md" rel="noopener">Microsoft Learn — Trafic SMB sécurisé</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/storage/file-server/smb-over-quic.md" rel="noopener">Microsoft Learn — SMB over QUIC</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/overview.md" rel="noopener">Microsoft Learn — Bureau à distance, vue d&#x27;ensemble</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/remotepc/change-listening-port.md" rel="noopener">Microsoft Learn — Port d&#x27;écoute RDP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/server-manager/configure-remote-management-in-server-manager.md" rel="noopener">Microsoft Learn — Gestion à distance (WinRM)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/manage/windows-admin-center/azure/manage-azure-vms.md" rel="noopener">Microsoft Learn — Windows Admin Center et VM Azure</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/sql-server-browser-service-database-engine-and-ssas.md" rel="noopener">Microsoft Learn — SQL Server Browser</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/azure/load-balancer/troubleshoot-azure-load-balancer-uneven-traffic-distribution.md" rel="noopener">Microsoft Learn — Répartition de charge Azure (ports syslog)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/technologies/extensible-authentication-protocol/windows-11-changes.md" rel="noopener">Microsoft Learn — Changements EAP sous Windows 11</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/deploy/configure-virtual-local-area-networks-for-hyper-v.md" rel="noopener">Microsoft Learn — VLAN avec Hyper-V</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-access/directaccess/single-server-advanced/da-adv-plan-s1-infrastructure.md" rel="noopener">Microsoft Learn — DirectAccess, plan d&#x27;infrastructure</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/cdn/cdn-standard-rules-engine-match-conditions.md" rel="noopener">Microsoft Learn — Conditions de règles CDN (exemple IPv6)</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
         </div>
         <p>Dans le dépôt, le cours Cisco contient un rappel réseau très détaillé (OSI, Ethernet, IPv4) : section 1 de <code>cisco-securite/Notes MD/Notes-cisco.md</code>.</p>
 
@@ -1087,11 +1159,11 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
-<script src="../assets/atelier.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
+<script src="../assets/atelier.js?v=16"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -408,7 +408,7 @@ LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
 
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th></th><th>Agent 1 — <code>zabbix_agentd</code></th><th>Agent 2 — <code>zabbix_agent2</code></th></tr></thead>
+                    <thead><tr><th><span class="sr-only">Critère</span></th><th>Agent 1 — <code>zabbix_agentd</code></th><th>Agent 2 — <code>zabbix_agent2</code></th></tr></thead>
                     <tbody>
                         <tr><td><strong>Langage</strong></td><td>C</td><td>Go (reprend une partie du code C)</td></tr>
                         <tr><td><strong>Plateformes</strong></td><td>Linux, Windows et les Unix (AIX, BSD, Solaris, macOS…)</td><td><strong>Linux et Windows</strong> seulement</td></tr>
@@ -760,6 +760,35 @@ LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, puis par l'<a href="../examens.html#final">examen final</a>.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (19)</summary>
+                    <ul>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/conf/zabbix_agentd.conf" rel="noopener">Zabbix — Agent 7.4 : Server, ServerActive, Hostname (casse), DenyKey system.run</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/conf/zabbix_server.conf" rel="noopener">Zabbix — Serveur 7.4 : ListenPort 10051, DBName, DBPassword</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/conf/zabbix_agentd.win.conf" rel="noopener">Zabbix — Agent Windows 7.4 : sections passif et actif</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/src/go/conf/zabbix_agent2.conf" rel="noopener">Zabbix — Agent 2 7.4 : EnablePersistentBuffer, UserParameter, DenyKey</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/src/go/conf/zabbix_agent2.d/plugins.d/docker.conf" rel="noopener">Zabbix — Plugin Docker de l&#x27;agent 2</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/conf/zabbix_proxy.conf" rel="noopener">Zabbix — Proxy 7.4 : ProxyOfflineBuffer</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/templates/os/windows_agent/README.md" rel="noopener">Zabbix — Template Windows by Zabbix agent : agent.ping = 1, découverte des services</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/templates/os/windows_agent/template_os_windows_agent.yaml" rel="noopener">Zabbix — Template Windows : groupe, trigger prototype, macros</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/templates/app/certificate_agent2/README.md" rel="noopener">Zabbix — Certificats TLS via l&#x27;agent 2</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/templates/app/certificate_agent2/template_app_certificate_agent2.yaml" rel="noopener">Zabbix — Nommage « by Zabbix agent 2 »</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/ChangeLog" rel="noopener">Zabbix — Journal 7.4 : zabbix_get, system.run nowait, syntaxe 5.4, JIT 6.4, TRIGGER.DESCRIPTION</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix-docker/blob/7.4/compose_databases.yaml" rel="noopener">Zabbix — Compose : collation utf8mb4_bin, log_bin_trust_function_creators=1</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix-docker/blob/7.4/README.md" rel="noopener">Zabbix — Images Zabbix : frontend Nginx et Apache</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetNat/New-NetNat.md" rel="noopener">Microsoft Learn — New-NetNat -Name, -InternalIPInterfaceAddressPrefix</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/virtualization/windowscontainers/container-networking/network-drivers-topologies.md" rel="noopener">Microsoft Learn — WinNAT : un seul préfixe NAT interne</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/virtualization/windowscontainers/kubernetes/common-problems.md" rel="noopener">Microsoft Learn — Nommage vEthernet (…)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Management/Restart-Service.md" rel="noopener">Microsoft Learn — Restart-Service -Name</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/del.md" rel="noopener">Microsoft Learn — del /f /s /q</a></li>
+                    <li><a href="https://github.com/Debian/apt/blob/main/doc/apt-get.8.xml" rel="noopener">Debian APT — apt-get --assume-yes</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -768,10 +797,10 @@ LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du labo monitoring</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -297,7 +297,7 @@
             <p>Chaque modèle apporte un <strong>script PowerShell</strong> et un fichier <strong><code>.conf</code></strong> qui déclare la clé : <code>UserParameter=clé,commande</code>. Sur chaque serveur concerné :</p>
             <ol class="steps">
                 <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Le script</strong>Dans <code>C:\Program Files\Zabbix Agent 2\scripts\</code> (à créer s'il n'existe pas).</div></li>
-                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Le .conf</strong>Dans <code>zabbix_agent2.d\</code>, déjà inclus par la ligne <code>Include=</code> de <code>zabbix_agent2.conf</code>.</div></li>
+                <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Le .conf</strong>Dans <code>zabbix_agent2.d\</code>, à condition qu'une ligne <code>Include=</code> de <code>zabbix_agent2.conf</code> couvre ce dossier : le fichier d'exemple de Zabbix n'inclut que <code>zabbix_agent2.d\plugins.d\*.conf</code>, il faut alors ajouter <code>Include=.\zabbix_agent2.d\*.conf</code>.</div></li>
                 <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Redémarrer l'agent</strong><code>Restart-Service "Zabbix Agent 2"</code></div></li>
                 <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Tester la clé en local</strong>Avec l'option <code>-t</code> de l'agent (ci-dessous).</div></li>
                 <li class="step"><div class="step__num">05</div><div class="step__body"><strong>Côté Zabbix</strong><strong>Data collection &gt; Templates &gt; Import</strong> du <code>.yaml</code>, puis lier le modèle aux hôtes.</div></li>
@@ -312,7 +312,7 @@
                 <p><code>-t</code> relit la configuration <strong>à neuf</strong> et réussit ; mais le service déjà lancé ne connaît pas encore la nouvelle clé. Sans <strong>redémarrage de l'agent</strong>, l'item reste en <em>Unknown metric</em> — vu sur le serveur de fichiers du TP.</p>
             </div>
 
-            <p>Deux réglages communs aux deux modèles : leurs items sont en <strong>Zabbix agent (active)</strong>, comme le reste du labo, avec un <strong>timeout de 10 s</strong> — un script PowerShell dépasse souvent les 3 s par défaut. Et un item actif, c'est l'agent qui l'envoie : le bouton <strong>Execute now</strong> ne s'applique pas aux items actifs (il ne vaut que pour les vérifications que le serveur lance lui-même). Pour forcer une collecte, on redémarre l'agent.</p>
+            <p>Deux réglages communs aux deux modèles : leurs items sont en <strong>Zabbix agent (active)</strong>, comme le reste du labo, avec un <strong>timeout de 10 s</strong> — un script PowerShell dépasse souvent les 3 s par défaut. Et un item actif, c'est l'agent qui l'envoie : le bouton <strong>Execute now</strong> ne s'applique pas aux items actifs (il ne vaut que pour les vérifications que le serveur lance lui-même). Pour relancer la collecte d'un item actif, on redémarre l'agent : il recharge sa configuration et sa liste d'items, mais ne collecte aussitôt que si <code>ForceActiveChecksOnStart=1</code> (défaut : 0).</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -498,6 +498,39 @@
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (23)</summary>
+                    <ul>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/src/go/conf/zabbix_agent2.win.conf" rel="noopener">Zabbix — Configuration Zabbix Agent 2 Windows</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/templates/os/windows_agent_active/template_os_windows_agent_active.yaml" rel="noopener">Zabbix — Modèle officiel « Windows by Zabbix agent active » (type d&#x27;items, system.uptime)</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix/blob/release/7.4/templates/os/windows_agent_active/README.md" rel="noopener">Zabbix — Modèle officiel : « Zabbix agent (active) », « LLD rule »</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix-docker/blob/7.4/Dockerfiles/server-pgsql/README.md" rel="noopener">Zabbix — Image zabbix-server-pgsql 7.4 (tags)</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix-docker/blob/7.4/Dockerfiles/web-nginx-pgsql/README.md" rel="noopener">Zabbix — Image web nginx PostgreSQL : PHP_TZ, DB_SERVER_HOST, ZBX_SERVER_HOST</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix-docker/blob/7.4/Dockerfiles/agent2/README.md" rel="noopener">Zabbix — Image agent 2 : ZBX_HOSTNAME, ZBX_TIMEOUT, ForceActiveChecksOnStart, volume enc, privileged</a></li>
+                    <li><a href="https://github.com/zabbix/zabbix-docker/blob/7.4/compose_zabbix_components.yaml" rel="noopener">Zabbix — Compose : ports serveur 10051, web 8080</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/compose/how-tos/networking.md" rel="noopener">Docker Docs — Réseau internal: true</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/engine/network/_index.md" rel="noopener">Docker Docs — Ports publiés ; loopback du conteneur</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/reference/compose-file/services.md" rel="noopener">Docker Docs — init, privileged</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/compose/trust-model.md" rel="noopener">Docker Docs — pid: host</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/compose/how-tos/environment-variables/variable-interpolation.md" rel="noopener">Docker Docs — Fichier .env du projet</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/docs-conceptual/install/install-powershell-on-windows.md" rel="noopener">Microsoft Learn — Installation de PowerShell 7 par winget</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Management/Restart-Service.md" rel="noopener">Microsoft Learn — Restart-Service (paramètre -Name)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/windows-time-service/windows-server-2016-improvements.md" rel="noopener">Microsoft Learn — VMICTimeProvider, w32tm /config (reliable), /resync /rediscover</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/windows-time-service/Windows-Time-Service-Tools-and-Settings.md" rel="noopener">Microsoft Learn — domhier, PDC source externe, UDP 123, syntaxe w32tm</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/windows-time-service/windows-time-service-top.md" rel="noopener">Microsoft Learn — PDC émulateur, source externe</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/windows-time-service/accurate-time.md" rel="noopener">Microsoft Learn — Kerberos : 5 minutes de précision</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-compute-docs/blob/main/articles/virtual-machines/windows/time-sync.md" rel="noopener">Microsoft Learn — w32tm /query /source, VM IC, Local CMOS Clock</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-compute-docs/blob/main/articles/virtual-machines/windows/external-ntpsource-configuration.md" rel="noopener">Microsoft Learn — PDC source externe ; VMICTimeProvider des membres</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-cs/inspect-certificates-manage-certificate-stores.md" rel="noopener">Microsoft Learn — certmgr.msc (utilisateur) / certlm.msc (ordinateur)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/whats-new-in-iis-8/iis-80-server-name-indication-sni-ssl-scalability.md" rel="noopener">Microsoft Learn — Magasin WebHosting</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/pki/New-SelfSignedCertificate.md" rel="noopener">Microsoft Learn — CertStoreLocation et défaut du magasin</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -506,10 +539,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Zabbix en remplacement de SCOM »</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

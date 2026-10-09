@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -384,11 +384,11 @@ GigabitEthernet0/0/2   unassigned      YES unset  administratively down down</pr
 
             <div class="cards">
                 <div class="card">
-                    <h4>Filtre de capture</h4>
+                    <h3>Filtre de capture</h3>
                     <p>Décide <strong>ce qui est enregistré</strong>. Syntaxe BPF, la même que tcpdump : <code>host 192.168.1.10</code>, <code>port 53</code>, <code>not port 22</code>. Indispensable sur un lien chargé.</p>
                 </div>
                 <div class="card">
-                    <h4>Filtre d'affichage</h4>
+                    <h3>Filtre d'affichage</h3>
                     <p>Décide <strong>ce qui est montré</strong> dans une capture déjà faite. Syntaxe Wireshark : <code>ip.addr == 192.168.1.10</code>, <code>dns</code>, <code>tcp.port == 443</code>. On peut en changer à volonté.</p>
                 </div>
             </div>
@@ -730,6 +730,40 @@ Fa0/12           err-disabled bpduguard</pre>
                 <li><a href="https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/12027-53.html" rel="noopener">Cisco — dépannage des problèmes de ports et d'interfaces des switchs Catalyst</a></li>
                 <li><a href="https://www.cisco.com/c/en/us/support/docs/lan-switching/spanning-tree-protocol/69980-errdisable-recovery.html" rel="noopener">Cisco — err-disable : causes et réactivation</a></li>
             </ul>
+                        <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (28)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/ping.md" rel="noopener">Microsoft Learn — ping : /f (DF), /l (taille des données), /n*</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/ipconfig.md" rel="noopener">Microsoft Learn — ipconfig : /all, /renew, /flushdns (cache négatif)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/netstat.md" rel="noopener">Microsoft Learn — netstat : -a, -n, -o (PID)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/tracert.md" rel="noopener">Microsoft Learn — tracert : /d</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/pathping.md" rel="noopener">Microsoft Learn — pathping : pertes par routeur</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/pktmon-start.md" rel="noopener">Microsoft Learn — pktmon start --capture</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/pktmon-etl2pcap.md" rel="noopener">Microsoft Learn — pktmon etl2pcap --out</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/technologies/pktmon/pktmon-syntax.md" rel="noopener">Microsoft Learn — pktmon : « Windows 10 et Windows Server 2019 (1809 et ultérieure) »*</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/server-core/server-core-sconfig.md" rel="noopener">Microsoft Learn — sconfig : option 7 (Bureau à distance) ; APIPA sans DHCP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-access/ras/manage-remote-clients/install/Step-3-Verify-the-Deployment_2.md" rel="noopener">Microsoft Learn — nltest /dsgetdc (erreur ERROR_NO_SUCH_DOMAIN)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/dc-locator.md" rel="noopener">Microsoft Learn — Enregistrement SRV _ldap._tcp.&lt;domaine&gt;</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/remotepc/change-listening-port.md" rel="noopener">Microsoft Learn — Bureau à distance : port 3389 par défaut</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/ldap-signing.md" rel="noopener">Microsoft Learn — LDAP : port 389</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/dns/queries-lookups.md" rel="noopener">Microsoft Learn — DNS : port 53 (TCP et UDP)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Test-NetConnection.md" rel="noopener">Microsoft Learn — Test-NetConnection : -Port, TcpTestSucceeded</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetConnection/Get-NetConnectionProfile.md" rel="noopener">Microsoft Learn — Profils réseau : Public, Private, DomainAuthenticated</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Get-NetTCPConnection.md" rel="noopener">Microsoft Learn — Get-NetTCPConnection : -State Listen, -OwningProcess</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Get-NetIPConfiguration.md" rel="noopener">Microsoft Learn — Get-NetIPConfiguration -Detailed</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetSecurity/Get-NetFirewallRule.md" rel="noopener">Microsoft Learn — Get-NetFirewallRule -Enabled</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsClient/Resolve-DnsName.md" rel="noopener">Microsoft Learn — Resolve-DnsName : -Server, -Type</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/remote/remote-desktop-cannot-connect-remote-computer.md" rel="noopener">Microsoft Learn — Bureau à distance : LISTENING (sortie netstat), règle « Remote Desktop »</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/active-directory/configure-w32ime-against-huge-time-offset.md" rel="noopener">Microsoft Learn — Kerberos : écart de 5 minutes par défaut*</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/windows-security/kerberos-authentication-troubleshooting-guidance.md" rel="noopener">Microsoft Learn — Kerberos : écart inférieur à cinq minutes</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/active-directory/no-logon-servers-are-available.md" rel="noopener">Microsoft Learn — Message « no logon servers are available »</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-client/user-profiles-and-logon/cached-user-logon-fails-lsasrv-event-45058.md" rel="noopener">Microsoft Learn — Ouverture de session avec identifiants en cache</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/azure/virtual-machines/windows/troubleshoot-windows-update-network-proxy-azure-vm.md" rel="noopener">Microsoft Learn — w32tm /query /status</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/virtual-network/how-to-virtual-machine-mtu.md" rel="noopener">Microsoft Learn — MTU Ethernet 1500 par défaut (Azure)</a></li>
+                    <li><a href="https://github.com/iproute2/iproute2/blob/main/man/man8/ip-route.8.in" rel="noopener">iproute2 — ip route get : route vue par le noyau</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
         </div>
 
     </main>
@@ -740,10 +774,10 @@ Fa0/12           err-disabled bpduguard</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

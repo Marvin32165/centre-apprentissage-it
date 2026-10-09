@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -173,7 +173,7 @@
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>La check-list de SQL : <strong>collation</strong> <code>SQL_Latin1_General_CP1_CI_AS</code>, service sous le <strong>gMSA</strong>, <strong>TCP/IP</strong> activé, <strong>SSRS</strong> configuré, <strong>DPM Support Files</strong> installés, <strong>certificat</strong> approuvé par le serveur DPM. La collation est la seule qui ne se rattrape pas sans réinstaller l'instance.</p>
+                <p>La check-list de SQL : <strong>collation</strong> <code>SQL_Latin1_General_CP1_CI_AS</code>, service sous le <strong>gMSA</strong>, <strong>TCP/IP</strong> activé, <strong>SSRS</strong> configuré, <strong>DPM Support Files</strong> installés, <strong>certificat</strong> approuvé par le serveur DPM. La collation se choisit à l'installation de SQL : la changer ensuite exige de supprimer les bases utilisateur et de reconstruire les bases système.</p>
             </div>
 
             <div class="table-wrap">
@@ -280,7 +280,7 @@
                 <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Méthode</strong><em>Install agents</em> : DPM pousse l'agent lui-même. <em>Attach agents</em> sert à un serveur derrière un pare-feu, ou dont l'agent est déjà installé : DPM se contente de l'enregistrer.</div></li>
                 <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Ordinateurs</strong>Les ordinateurs du domaine sont listés : ici le DC et le serveur SQL, <strong>Add &gt;</strong>. Un ordinateur d'un autre domaine se saisit par son nom complet.</div></li>
                 <li class="step"><div class="step__num">04</div><div class="step__body"><strong>Identifiants</strong>Un compte <strong>administrateur des ordinateurs cibles</strong> ; DPM ne s'en sert que pour installer l'agent.</div></li>
-                <li class="step"><div class="step__num">05</div><div class="step__body"><strong>Redémarrage</strong><em>Yes</em> : DPM redémarre les serveurs si l'installation l'exige. Puis <strong>Install</strong> — <em>Success</em> pour chaque serveur.</div></li>
+                <li class="step"><div class="step__num">05</div><div class="step__body"><strong>Redémarrage</strong><em>Yes</em> : DPM redémarre les serveurs dès que l'agent est installé. Puis <strong>Install</strong> — <em>Success</em> pour chaque serveur.</div></li>
             </ol>
             <p>Les serveurs apparaissent alors dans <em>Unprotected computers with protection agent</em> : ils ont un agent, mais restent <strong>non protégés</strong> tant qu'ils ne sont dans aucun groupe de protection.</p>
 
@@ -556,7 +556,7 @@ Execute the SQL script
             <div class="gl"><b>Point de récupération</b><span>Version figée et restaurable des données — la seule chose qu'on restaure.</span></div>
             <div class="gl"><b>ReFS</b><span>Resilient File System — le système de fichiers dans lequel DPM formate son pool.</span></div>
             <div class="gl"><b>BMR</b><span>Bare Metal Recovery — restauration complète d'un serveur, système compris.</span></div>
-            <div class="gl"><b>ODBC 18</b><span>Pilote client SQL qui chiffre toujours la connexion et exige un certificat de confiance.</span></div>
+            <div class="gl"><b>ODBC 18</b><span>Pilote client SQL qui chiffre la connexion par défaut (<code>Encrypt=yes</code>) et exige alors un certificat de confiance, sauf <code>TrustServerCertificate</code>.</span></div>
         </div>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
@@ -566,7 +566,7 @@ Execute the SQL script
             <h2 class="chapter__title">S'entraîner : prérequis, protection, restauration</h2>
             <p class="chapter__intro">DPM est surtout de la console ; ce qui se rate se rate en amont, dans les prérequis. Ce chapitre les transforme en vérifications, puis propose l'exercice qui compte : une restauration chronométrée.</p>
 
-            <div class="cmdex" data-accept="Test-ADServiceAccount (-Identity )?&quot;?gMSA-SQL&quot;?">
+            <div class="cmdex" data-accept="Test-ADServiceAccount (-Identity )?(&quot;|')?gMSA-SQL(&quot;|')?">
                 <p class="cmdex__label">À toi de taper</p>
                 <p>Sur SRV-SQL01, vérifie que le compte de service managé <code>gMSA-SQL</code> est utilisable par ce serveur.</p>
                 <details class="reveal">
@@ -614,6 +614,41 @@ ORION\Administrator
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (25)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/group-managed-service-accounts/group-managed-service-accounts/create-the-key-distribution-services-kds-root-key.md" rel="noopener">Microsoft Learn — Créer la clé racine KDS (10 h)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/kds/Add-KdsRootKey.md" rel="noopener">Microsoft Learn — Add-KdsRootKey</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/group-managed-service-accounts/group-managed-service-accounts/manage-group-managed-service-accounts.md" rel="noopener">Microsoft Learn — Gérer les gMSA (création, test)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/New-ADServiceAccount.md" rel="noopener">Microsoft Learn — New-ADServiceAccount</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Test-ADServiceAccount.md" rel="noopener">Microsoft Learn — Test-ADServiceAccount (True)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Install-ADServiceAccount.md" rel="noopener">Microsoft Learn — Install-ADServiceAccount</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/klist.md" rel="noopener">Microsoft Learn — klist purge -li</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/gpupdate.md" rel="noopener">Microsoft Learn — gpupdate /target</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/server-core/server-core-roles-and-services.md" rel="noopener">Microsoft Learn — RSAT-AD-PowerShell</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ServerManager/Install-WindowsFeature.md" rel="noopener">Microsoft Learn — Install-WindowsFeature</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/configure-windows-service-accounts-and-permissions.md" rel="noopener">Microsoft Learn — gMSA pour SQL Server</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/enable-or-disable-a-server-network-protocol.md" rel="noopener">Microsoft Learn — Activer TCP/IP et redémarrer le service</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/reporting-services/security/create-the-rsexecrole.md" rel="noopener">Microsoft Learn — ReportServerTempDB</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/reporting-services/report-server/moving-the-report-server-databases-to-another-computer-ssrs-native-mode.md" rel="noopener">Microsoft Learn — Base ReportServer</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/system-center/dpm/vnext-dpm-error-codes.md" rel="noopener">Microsoft Learn — Codes d&#x27;erreur DPM vNext (SQL Prep, FQDN, sync, restauration, 811)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/backup/backup-support-matrix-mabs-dpm.md" rel="noopener">Microsoft Learn — Matrice MABS et DPM : MBS, ReFS, block cloning</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/collations/set-or-change-the-server-collation.md" rel="noopener">Microsoft Learn — Changer la collation de l&#x27;instance</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/functions/serverproperty-transact-sql.md" rel="noopener">Microsoft Learn — SERVERPROPERTY</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/tools/sqlcmd/sqlcmd-utility.md" rel="noopener">Microsoft Learn — Options de sqlcmd (-E, -b, -S, -Q, -i, -d, -r)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/connect/odbc/major-version-differences.md" rel="noopener">Microsoft Learn — ODBC 18 : chiffrement par défaut</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/sql/database-engine/connect/certificate-chain-not-trusted.md" rel="noopener">Microsoft Learn — Erreur de chaîne de certificat (ODBC 17 et 18)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/configure-sql-server-encryption.md" rel="noopener">Microsoft Learn — Certificat SQL, clé privée, certificat auto-signé</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/certificate-requirements.md" rel="noopener">Microsoft Learn — Certificat : CN et SAN</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/manage-certificates.md" rel="noopener">Microsoft Learn — Onglet Certificate des protocoles</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/reporting-services/security/configure-ssl-connections-on-a-native-mode-report-server.md" rel="noopener">Microsoft Learn — Racines de confiance (SSRS)</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -622,10 +657,10 @@ ORION\Administrator
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center DPM 2025</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

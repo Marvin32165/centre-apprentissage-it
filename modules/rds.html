@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -84,11 +84,11 @@
             </div>
             <div class="cards">
                 <div class="card">
-                    <h4>Session-based (RDSH)</h4>
+                    <h3>Session-based (RDSH)</h3>
                     <p>Plusieurs utilisateurs partagent un même serveur Windows Server. Léger, économique : le modèle le plus courant, et celui du lab.</p>
                 </div>
                 <div class="card">
-                    <h4>VDI</h4>
+                    <h3>VDI</h3>
                     <p>Une VM Windows complète par utilisateur. Isolation maximale, coûteux en ressources ; pour des postes très personnalisés.</p>
                 </div>
             </div>
@@ -167,7 +167,7 @@ srv-rdsh2.orion.local  {RDS-RD-SERVER}</pre>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Un seul point de pilotage, quatre rôles sur quatre serveurs, et <code>Get-RDServer</code> pour vérifier qui fait quoi. Toutes les commandes <code>*-RD*</code> visent le broker (<code>-ConnectionBroker</code>) : c'est lui qui détient la configuration.</p>
+                <p>Un seul point de pilotage, quatre rôles sur quatre serveurs, et <code>Get-RDServer</code> pour vérifier qui fait quoi. La plupart des commandes <code>*-RD*</code> visent le broker (<code>-ConnectionBroker</code>) : c'est lui qui détient la configuration.</p>
             </div>
         </section>
 
@@ -233,11 +233,11 @@ Collection1     ORION       sso       srv-rdsh1.orion.local  STATE_ACTIVE</pre>
             <p class="theory"><b>Complément au TP</b> — le TP du cours s'arrête avant les licences ; ce chapitre suit la documentation Microsoft. Dans un lab, la période de grâce suffit, mais il faut savoir que le compteur tourne.</p>
             <div class="cards">
                 <div class="card">
-                    <h4>Par utilisateur (Per User)</h4>
+                    <h3>Par utilisateur (Per User)</h3>
                     <p>Une CAL par personne, quel que soit le nombre d'appareils. Le bon choix quand chacun se connecte depuis plusieurs postes, ou depuis chez lui. Demande un domaine AD ; le serveur de licences compte les CAL attribuées mais ne bloque pas : rester en règle est ta responsabilité.</p>
                 </div>
                 <div class="card">
-                    <h4>Par périphérique (Per Device)</h4>
+                    <h3>Par périphérique (Per Device)</h3>
                     <p>Une CAL par appareil, quel que soit le nombre de personnes. Pour des postes partagés en équipes (accueil, atelier). À la première connexion, l'appareil reçoit une CAL temporaire de 90 jours, remplacée par une permanente s'il en reste ; ce mode-là est réellement contrôlé.</p>
                 </div>
             </div>
@@ -440,6 +440,38 @@ RDGateway     NotConfigured</pre>
                 <li><a href="https://learn.microsoft.com/fr-fr/powershell/module/remotedesktop/get-rdcertificate" rel="noopener">Microsoft Learn — Get-RDCertificate (niveaux Trusted / Untrusted / NotConfigured)</a></li>
                 <li><a href="https://www.it-connect.fr/windows-server-2019-installer-un-serveur-rds-avec-powershell/" rel="noopener">IT-Connect — installer un serveur RDS avec PowerShell (tutoriel en français)</a></li>
             </ul>
+                        <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (26)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/overview.md" rel="noopener">Microsoft Learn — Vue d&#x27;ensemble RDS : rôles et modèles</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/rds-roles.md" rel="noopener">Microsoft Learn — Rôles RDS : broker, CAP/RAP, certificats</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/rds-deploy-infrastructure.md" rel="noopener">Microsoft Learn — Déploiement dans le Server Manager</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/rds-prepare-vms.md" rel="noopener">Microsoft Learn — Préparer les VM : domaine, gestion à distance</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/rds-create-collection.md" rel="noopener">Microsoft Learn — Créer une collection, publier des RemoteApp</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/rds-client-access-license.md" rel="noopener">Microsoft Learn — Licences RDS : grâce, Per User, Per Device, versions</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/remote-desktop-services-certificates.md" rel="noopener">Microsoft Learn — Certificats RDS : Edit Deployment Properties</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/remote-desktop-gateway-role.md" rel="noopener">Microsoft Learn — Passerelle RD : accès sans VPN</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/remote/ports-used-by-rds.md" rel="noopener">Microsoft Learn — Ports RDS : TCP 443, UDP 3391</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/remote/troubleshoot-rds-licensing-guidance.md" rel="noopener">Microsoft Learn — Lire la grâce restante (Win32_TerminalServiceSetting)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/remote/remote-desktop-licensing-mode-not-configured-warning.md" rel="noopener">Microsoft Learn — Grâce de 120 jours par défaut</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/remote/troubleshoot-remote-desktop-disconnected-errors.md" rel="noopener">Microsoft Learn — Deux connexions d&#x27;administration sans CAL</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/change-user.md" rel="noopener">Microsoft Learn — Commande change user /install et /execute</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-cs/distribute-certificates-group-policy.md" rel="noopener">Microsoft Learn — Distribuer les certificats par GPO</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/RemoteDesktop/New-RDSessionDeployment.md" rel="noopener">Microsoft Learn — Syntaxe New-RDSessionDeployment</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/RemoteDesktop/Get-RDServer.md" rel="noopener">Microsoft Learn — Get-RDServer et rôles RDS-*</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/RemoteDesktop/New-RDSessionCollection.md" rel="noopener">Microsoft Learn — Syntaxe New-RDSessionCollection</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/RemoteDesktop/New-RDRemoteApp.md" rel="noopener">Microsoft Learn — Syntaxe New-RDRemoteApp</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/RemoteDesktop/Get-RDUserSession.md" rel="noopener">Microsoft Learn — Syntaxe Get-RDUserSession</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/RemoteDesktop/Add-RDServer.md" rel="noopener">Microsoft Learn — Add-RDServer : RDS-LICENSING, RDS-GATEWAY</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/RemoteDesktop/Set-RDLicenseConfiguration.md" rel="noopener">Microsoft Learn — Set-RDLicenseConfiguration : modes PerUser / PerDevice</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/RemoteDesktop/Get-RDCertificate.md" rel="noopener">Microsoft Learn — Get-RDCertificate : rôles et niveaux</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/RemoteDesktop/Set-RDCertificate.md" rel="noopener">Microsoft Learn — Set-RDCertificate : rôles et paramètres</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/pki/New-SelfSignedCertificate.md" rel="noopener">Microsoft Learn — New-SelfSignedCertificate : paramètres</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/pki/Export-PfxCertificate.md" rel="noopener">Microsoft Learn — Export-PfxCertificate : -Password</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/pki/Export-Certificate.md" rel="noopener">Microsoft Learn — Export-Certificate : -FilePath</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
         </div>
 
     </main>
@@ -450,10 +482,10 @@ RDGateway     NotConfigured</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

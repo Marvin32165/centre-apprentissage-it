@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 01 · Fondations · 1 / 3</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 01 · Fondations · 3 / 5</p>
         <h1 class="hero__title">Hyper-V<br><em>monter son labo</em></h1>
         <p class="hero__lead">Créer des VM Windows Server sur son propre poste, en fabriquer une image Sysprep réutilisable, puis déployer des machines en quelques secondes avec les disques de différenciation.</p>
         <div class="hero__meta">
@@ -79,7 +79,7 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Avant de cocher : deux prérequis</p>
-                <p>Hyper-V n'existe que dans les éditions <strong>Pro, Entreprise et Éducation</strong> de Windows (et dans Windows Server) : pas dans Windows Famille. Et la <strong>virtualisation matérielle</strong> (Intel VT-x / AMD-V) doit être activée dans le BIOS/UEFI du poste : le Gestionnaire des tâches l'indique dans <em>Performances → Processeur → Virtualisation</em>.</p>
+                <p>Hyper-V n'existe que dans les éditions <strong>Pro, Entreprise et Éducation</strong> de Windows 11 (sous Windows 10 : Pro et Entreprise ; et dans Windows Server) : pas dans Windows Famille. Et la <strong>virtualisation matérielle</strong> (Intel VT-x / AMD-V) doit être activée dans le BIOS/UEFI du poste : le Gestionnaire des tâches l'indique dans <em>Performances → Processeur → Virtualisation</em>.</p>
             </div>
 
             <h3>La même chose en PowerShell</h3>
@@ -382,11 +382,11 @@ Differencing C:\PARENT\TEST-SYSPREP.vhdx</pre>
 
             <div class="cards">
                 <div class="card">
-                    <h4>Standard</h4>
+                    <h3>Standard</h3>
                     <p>Capture le disque <strong>et la mémoire</strong> : on revient exactement à l'instant figé, applications ouvertes. Le choix du lab, pour revenir avant une manipulation risquée.</p>
                 </div>
                 <div class="card">
-                    <h4>Production (par défaut)</h4>
+                    <h3>Production (par défaut)</h3>
                     <p>S'appuie sur les sauvegardes internes de l'OS invité (VSS sous Windows) : la VM revient comme après un arrêt propre, sans la mémoire. Plus sûr pour les applications et les bases de données.</p>
                 </div>
             </div>
@@ -427,6 +427,48 @@ Differencing C:\PARENT\TEST-SYSPREP.vhdx</pre>
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (32)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Dism/Enable-WindowsOptionalFeature.md" rel="noopener">Microsoft Learn — Activer la fonctionnalité Hyper-V</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/get-started/Install-Hyper-V.md" rel="noopener">Microsoft Learn — Installer Hyper-V sur Windows</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/get-started/Create-a-virtual-machine-in-Hyper-V.md" rel="noopener">Microsoft Learn — Créer une VM dans Hyper-V</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/New-VM.md" rel="noopener">Microsoft Learn — Paramètres de New-VM</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/plan/Should-I-create-a-generation-1-or-2-virtual-machine-in-Hyper-V.md" rel="noopener">Microsoft Learn — Génération 1 ou 2</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/generation-2-virtual-machine-security-features.md" rel="noopener">Microsoft Learn — Modèles de Secure Boot</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/Supported-Debian-virtual-machines-on-Hyper-V.md" rel="noopener">Microsoft Learn — Debian sur Hyper-V</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/Set-VMFirmware.md" rel="noopener">Microsoft Learn — Set-VMFirmware (-EnableSecureBoot)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/enhanced-session-mode.md" rel="noopener">Microsoft Learn — Session étendue</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/get-started/upgrade-conversion-options.md" rel="noopener">Microsoft Learn — Édition Standard (Desktop Experience)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/get-started/activation-slmgr-vbs-options.md" rel="noopener">Microsoft Learn — slmgr /rearm</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/storage/storage-migration-service/known-issues.md" rel="noopener">Microsoft Learn — Période d&#x27;évaluation de 180 jours</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/get-started/removed-deprecated-features-windows-server.md" rel="noopener">Microsoft Learn — Internet Explorer retiré de Windows Server 2025</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/remote/remote-desktop-services/remotepc/change-listening-port.md" rel="noopener">Microsoft Learn — Port RDP 3389</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/failover-clustering/create-workgroup-cluster.md" rel="noopener">Microsoft Learn — Changement de nom et redémarrage</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/netsh-advfirewall.md" rel="noopener">Microsoft Learn — Syntaxe netsh advfirewall</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-compute-docs/blob/main/articles/virtual-machines/generalize.md" rel="noopener">Microsoft Learn — Généralisation (sysprep /generalize /shutdown)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-compute-docs/blob/main/articles/virtual-machines/windows/prepare-for-upload-vhd-image.md" rel="noopener">Microsoft Learn — Dossier de sysprep.exe</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/checkpoints.md" rel="noopener">Microsoft Learn — Points de contrôle standard et production</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/features-terminology.md" rel="noopener">Microsoft Learn — Disques de différenciation</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/performance-tuning/role/hyper-v-server/storage-io-performance.md" rel="noopener">Microsoft Learn — Chaîne de différenciation et performances</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/merge-vdisk.md" rel="noopener">Microsoft Learn — Parent modifié, enfants invalides</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/plan/plan-hyper-v-networking-in-windows-server.md" rel="noopener">Microsoft Learn — Types de commutateurs virtuels</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/get-started/Create-a-virtual-switch-for-Hyper-V-virtual-machines.md" rel="noopener">Microsoft Learn — Créer un commutateur virtuel, NAT</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/New-VMSwitch.md" rel="noopener">Microsoft Learn — New-VMSwitch</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/New-NetIPAddress.md" rel="noopener">Microsoft Learn — New-NetIPAddress</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetNat/New-NetNat.md" rel="noopener">Microsoft Learn — New-NetNat</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/Checkpoint-VM.md" rel="noopener">Microsoft Learn — Checkpoint-VM</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/Get-VMSnapshot.md" rel="noopener">Microsoft Learn — Get-VMSnapshot</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/Restore-VMSnapshot.md" rel="noopener">Microsoft Learn — Restore-VMSnapshot</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/Remove-VMSnapshot.md" rel="noopener">Microsoft Learn — Remove-VMSnapshot</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/get-started/virtual-dc/virtualized-domain-controllers-hyper-v.md" rel="noopener">Microsoft Learn — Contrôleurs de domaine et snapshots</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -435,10 +477,10 @@ Differencing C:\PARENT\TEST-SYSPREP.vhdx</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

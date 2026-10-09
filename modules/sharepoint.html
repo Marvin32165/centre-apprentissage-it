@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -25,13 +25,13 @@
         <div class="versus">
             <div class="versus__card versus__card--server">
                 <span class="versus__tag">Sur site</span>
-                <h3>SharePoint Server</h3>
+                <h2>SharePoint Server</h2>
                 <p>Vous hébergez, vous contrôlez, vous personnalisez.</p>
             </div>
             <div class="versus__pivot">vs</div>
             <div class="versus__card versus__card--online">
                 <span class="versus__tag">Cloud</span>
-                <h3>SharePoint Online</h3>
+                <h2>SharePoint Online</h2>
                 <p>Microsoft héberge, vous utilisez — partout.</p>
             </div>
         </div>
@@ -291,7 +291,7 @@
             <p>Des services transversaux réutilisables : moteur de <strong>recherche</strong>, <strong>métadonnées gérées</strong>, <strong>profils utilisateurs</strong> et <strong>Business Connectivity Services</strong>. L'accès programmatique passe par l'<strong>API REST</strong> ou <strong>Microsoft Graph</strong>.</p>
 
             <h3>Données</h3>
-            <p><span class="pill pill--server">Server</span> utilise <strong>SQL Server</strong> ; <span class="pill pill--online">Online</span> s'appuie sur <strong>Azure SQL</strong> et le <strong>Blob Storage</strong> pour les gros fichiers.</p>
+            <p><span class="pill pill--server">Server</span> utilise <strong>SQL Server</strong> ; <span class="pill pill--online">Online</span> s'appuie sur <strong>Azure SQL</strong> pour les métadonnées et sur le <strong>Blob Storage</strong> pour le contenu des fichiers.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -521,7 +521,7 @@
                         <button class="scenario__opt" data-why="Réinstaller SQL Server avec la bonne collation">La collation se pose base par base à la création : elle n&#x27;a rien à voir avec ce message, qui nomme le paramètre fautif.</button>
                         <button class="scenario__opt" data-why="Passer de SQL Server 2022 à SQL Server 2019">La version de SQL est bien prise en charge (2019 CU5+ ou 2022) : le message porte sur un réglage, pas sur la version.</button>
                     </div>
-                    <div class="scenario__why"><p>SharePoint exige <code>max degree of parallelism = 1</code> : ses procédures stockées ne sont pas écrites pour le parallélisme. <code>EXEC sp_configure 'max degree of parallelism', 1; RECONFIGURE;</code> (option avancée), ou <em>Server Properties → Advanced</em> dans SSMS. Le compte d'installation pourrait le poser lui-même s'il était <code>sysadmin</code>, ce qu'on évite.</p></div>
+                    <div class="scenario__why"><p>SharePoint exige <code>max degree of parallelism = 1</code> : ses procédures stockées ne sont pas écrites pour le parallélisme. <code>EXEC sp_configure 'show advanced options', 1; RECONFIGURE;</code> puis <code>EXEC sp_configure 'max degree of parallelism', 1; RECONFIGURE;</code> (option avancée, invisible tant que <code>show advanced options</code> vaut 0), ou <em>Server Properties → Advanced</em> dans SSMS. Le compte d'installation pourrait le poser lui-même s'il était <code>sysadmin</code>, ce qu'on évite.</p></div>
                 </div>
             </div>
         </section>
@@ -540,7 +540,7 @@
             <h3>Ce que Microsoft fait — et ne fait pas</h3>
             <ul>
                 <li><strong>Fait</strong> — réplication géographique des datacenters, SLA 99,9 %, corbeille à deux niveaux (93 jours).</li>
-                <li><strong>Ne fait pas</strong> — restauration granulaire après le délai, protection contre suppression malveillante d'une collection entière, backup vers un stockage indépendant.</li>
+                <li><strong>Ne fait pas, par défaut</strong> — restauration granulaire après le délai, protection contre suppression malveillante d'une collection entière, backup vers un stockage indépendant. Le service payant <em>Microsoft 365 Backup</em> (facturé à l'usage) ajoute des points de restauration sur un an, mais les copies restent chez Microsoft.</li>
             </ul>
 
             <h3>Le modèle de responsabilité partagée</h3>
@@ -738,7 +738,7 @@
                     <div class="step__num">01</div>
                     <div class="step__body">
                         <strong>Activer TCP/IP et fixer un port statique</strong>
-                        <p>Ouvrir <strong>SQL Server Configuration Manager</strong> → <em>SQL Server Network Configuration → Protocols for SHAREPOINT</em> → clic droit sur <strong>TCP/IP</strong> → <em>Enable</em> (il est désactivé par défaut). Dans les <em>Properties → onglet IP Addresses → IPAll</em>, vider <em>TCP Dynamic Ports</em> et fixer <strong>TCP Port = 1433</strong> : une instance nommée avec port statique simplifie la connexion de SharePoint et les règles de pare-feu. Redémarrer ensuite le service <em>SQL Server (SHAREPOINT)</em> dans <em>SQL Server Services</em>.</p>
+                        <p>Ouvrir <strong>SQL Server Configuration Manager</strong> → <em>SQL Server Network Configuration → Protocols for SHAREPOINT</em> → clic droit sur <strong>TCP/IP</strong> → <em>Enable</em> (désactivé par défaut avec l'édition Developer ; déjà activé avec Evaluation, Standard ou Enterprise). Dans les <em>Properties → onglet IP Addresses → IPAll</em>, vider <em>TCP Dynamic Ports</em> et fixer <strong>TCP Port = 1433</strong> : une instance nommée avec port statique simplifie la connexion de SharePoint et les règles de pare-feu. Redémarrer ensuite le service <em>SQL Server (SHAREPOINT)</em> dans <em>SQL Server Services</em>.</p>
                     </div>
                 </li>
                 <li class="step">
@@ -1325,6 +1325,52 @@ SharePoint - 80       http://intranet/</pre>
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (36)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/security/fundamentals/shared-responsibility.md" rel="noopener">Microsoft Learn — Modèle de responsabilité partagée (Azure)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/backup/backup-pricing.md" rel="noopener">Microsoft Learn — Microsoft 365 Backup : tarification (corbeilles de premier et second niveau)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/enterprise/microsoft-365-overview.md" rel="noopener">Microsoft Learn — Vue d&#x27;ensemble de Microsoft 365 (plans E3 et E5)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/install-windows/install-sql-server-from-the-installation-wizard-setup.md" rel="noopener">Microsoft Learn — Assistant d&#x27;installation SQL Server : Azure Extension, administrateurs, IFI</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/sql-server/install/instance-configuration.md" rel="noopener">Microsoft Learn — Pages de configuration de l&#x27;instance (authentification, TempDB, MAXDOP)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/sql-server/azure-arc/manage-license-billing.md" rel="noopener">Microsoft Learn — Developer gratuite</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/includes/paragraph-content/sql-server-editions-1.md" rel="noopener">Microsoft Learn — Evaluation 180 jours</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/sql-server-browser-service-database-engine-and-ssas.md" rel="noopener">Microsoft Learn — SQL Server Browser, UDP 1434</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/configure-windows-service-accounts-and-permissions.md" rel="noopener">Microsoft Learn — Comptes de service et Browser en démarrage automatique</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/server-network-configuration.md" rel="noopener">Microsoft Learn — Ports dynamiques des instances nommées</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/configure-a-server-to-listen-on-a-specific-tcp-port.md" rel="noopener">Microsoft Learn — Port TCP fixe, TCP Dynamic Ports</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/windows-collation-name-transact-sql.md" rel="noopener">Microsoft Learn — Options de collation Windows (KS, WS)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/configure-the-max-degree-of-parallelism-server-configuration-option.md" rel="noopener">Microsoft Learn — sp_configure MAXDOP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/alter-server-role-transact-sql.md" rel="noopener">Microsoft Learn — ALTER SERVER ROLE … ADD MEMBER</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/functions/is-srvrolemember-transact-sql.md" rel="noopener">Microsoft Learn — IS_SRVROLEMEMBER</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/availability-groups/windows/availability-group-add-a-database.md" rel="noopener">Microsoft Learn — Exemple Backup-SqlDatabase</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetSecurity/New-NetFirewallRule.md" rel="noopener">Microsoft Learn — New-NetFirewallRule</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Test-NetConnection.md" rel="noopener">Microsoft Learn — Test-NetConnection -Port</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsServer/Add-DnsServerResourceRecordA.md" rel="noopener">Microsoft Learn — Enregistrement DNS A</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/whats-new-in-iis-8/iis-80-using-aspnet-35-and-aspnet-45.md" rel="noopener">Microsoft Learn — Default Web Site sur le port 80</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/networking/accessing-server-locally-with-fqdn-cname-alias-denied.md" rel="noopener">Microsoft Learn — Loopback check et BackConnectionHostNames (KB 926642, article ancien Windows Server 2003 SP1 ; mécanisme repris)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/OfficeDocs-SharePoint-PowerShell/blob/main/sharepoint/sharepoint-server-ps/SharePointServer/Set-SPPassPhrase.md" rel="noopener">Microsoft Learn — Set-SPPassPhrase : changement à l&#x27;échelle de la ferme par défaut</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/OfficeDocs-SharePoint-PowerShell/blob/main/sharepoint/sharepoint-server-ps/SharePointServer/Backup-SPSite.md" rel="noopener">Microsoft Learn — Backup-SPSite (-Identity, -Path, -Force)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/OfficeDocs-SharePoint-PowerShell/blob/main/sharepoint/sharepoint-server-ps/SharePointServer/Restore-SPSite.md" rel="noopener">Microsoft Learn — Restore-SPSite (-Force)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/OfficeDocs-SharePoint-PowerShell/blob/main/sharepoint/sharepoint-server-ps/SharePointServer/Export-SPWeb.md" rel="noopener">Microsoft Learn — Export-SPWeb</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/OfficeDocs-SharePoint-PowerShell/blob/main/sharepoint/sharepoint-server-ps/SharePointServer/Backup-SPFarm.md" rel="noopener">Microsoft Learn — Backup-SPFarm (Full, Differential)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/OfficeDocs-SharePoint-PowerShell/blob/main/sharepoint/sharepoint-server-ps/SharePointServer/Mount-SPContentDatabase.md" rel="noopener">Microsoft Learn — Mount-SPContentDatabase (-MaxSiteCount)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/OfficeDocs-SharePoint-PowerShell/blob/main/sharepoint/sharepoint-server-ps/SharePointServer/New-SPSite.md" rel="noopener">Microsoft Learn — New-SPSite (-OwnerAlias, modèle STS#0 = Team site)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/OfficeDocs-SharePoint-PowerShell/blob/main/sharepoint/sharepoint-server-ps/SharePointServer/Get-SPSite.md" rel="noopener">Microsoft Learn — Get-SPSite -Limit All</a></li>
+                    <li><a href="https://github.com/pnp/powershell/blob/main/README.md" rel="noopener">PnP PowerShell — PnP : SharePoint Online seulement ; legacy non maintenu</a></li>
+                    <li><a href="https://github.com/pnp/powershell/blob/main/documentation/Connect-PnPOnline.md" rel="noopener">PnP PowerShell — ClientId obligatoire depuis le 9 septembre 2024</a></li>
+                    <li><a href="https://github.com/pnp/powershell/blob/main/documentation/Add-PnPGroupMember.md" rel="noopener">PnP PowerShell — Add-PnPGroupMember (-LoginName, -Group)</a></li>
+                    <li><a href="https://github.com/pnp/powershell/blob/main/documentation/Add-PnPFile.md" rel="noopener">PnP PowerShell — Add-PnPFile (-Path, -Folder)</a></li>
+                    <li><a href="https://github.com/pnp/powershell/blob/main/documentation/New-PnPWeb.md" rel="noopener">PnP PowerShell — New-PnPWeb (-Title, -Url, -Template, -Locale)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/enterprise/essentials-compliance.md" rel="noopener">Microsoft Learn — Modèle de responsabilité partagée</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/backup/backup-faq.md" rel="noopener">Microsoft Learn — Responsabilité partagée pour la protection des données M365</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -1333,11 +1379,11 @@ SharePoint - 80       http://intranet/</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · 10 chapitres de théorie + 8 chapitres de pratique</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 
 </body>
 </html>

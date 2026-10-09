@@ -14,6 +14,9 @@
       supports du cours ; au portail, carte interactive, suggestion du
       prochain module, boîte à outils et dossiers des cours
    9. Thème clair / sombre et palette de recherche (Ctrl+K ou « / »)
+  10. De débutant à pro : paliers du catalogue, tableau de bord (portail et
+      feuille de route), fiche du module dans le héro, infobulles du glossaire
+      sur les sigles des chapitres
 
    Les scores des tests sont écrits par assets/quiz.js sous la clé
    cai.scores ; ici on ne fait que les relire pour les afficher.
@@ -98,6 +101,24 @@
         });
     })();
 
+    /* Un bloc qui défile horizontalement (code, tableau) doit pouvoir
+       recevoir le focus, sinon le clavier ne peut pas le faire défiler. */
+    function focusScrollers() {
+        document.querySelectorAll('.terminal__code, .table-wrap').forEach(function (el) {
+            if (el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight) {
+                if (!el.hasAttribute('tabindex')) { el.setAttribute('tabindex', '0'); el.setAttribute('data-scrollfocus', ''); }
+            } else if (el.hasAttribute('data-scrollfocus')) { el.removeAttribute('tabindex'); el.removeAttribute('data-scrollfocus'); }
+        });
+    }
+    window.addEventListener('load', function () {
+        focusScrollers();
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(focusScrollers);
+        setTimeout(focusScrollers, 1500);
+    });
+    // L'atelier réécrit ses tableaux à chaque saisie.
+    document.addEventListener('input', function () { clearTimeout(focusScrollers.u); focusScrollers.u = setTimeout(focusScrollers, 300); });
+    window.addEventListener('resize', function () { clearTimeout(focusScrollers.t); focusScrollers.t = setTimeout(focusScrollers, 200); });
+
     var chapters = Array.prototype.slice.call(document.querySelectorAll('.chapter'));
     var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc__link'));
 
@@ -172,6 +193,7 @@
                 write(KEY_PROGRESS, progress);
                 apply(box.checked);
                 refreshMeter();
+                try { document.dispatchEvent(new CustomEvent('cai:progress')); } catch (e) { /* ignoré */ }
             });
 
             chap.appendChild(label);
@@ -606,6 +628,7 @@
         nav.setAttribute('aria-label', 'Navigation du site');
         var links = [
             ['index.html#parcours', 'Parcours'],
+            ['feuille-de-route.html', 'Débutant → pro'],
             ['atelier.html', 'Atelier'],
             ['glossaire.html', 'Glossaire'],
             ['labo.html', 'Lab Orion'],
@@ -858,5 +881,329 @@
                     return available(id) ? '<a href="' + MODS + id + '.html">' + esc(mod(id).short) + '</a>' : esc(mod(id).short) + ' (à venir)';
                 }).join(' · ') + '</span></li>';
         }).join('');
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       10. DE DÉBUTANT À PRO
+       Les paliers du catalogue (CAT.paliers) relus avec la progression
+       locale : tableau de bord ([data-dash], au portail et sur la
+       feuille de route), fiche du module dans le héro de chaque module,
+       et infobulles du glossaire sur les sigles des chapitres.
+       ══════════════════════════════════════════════════════════════ */
+    var PALIERS = CAT.paliers || [];
+    var labsAll = read('cai.labs', {}) || {};
+    var V = (me && (me.getAttribute('src').match(/\?v=[\w.]+/) || [''])[0]) || '';
+
+    function palierState(p) {
+        var ids = p.modules.filter(available);
+        var passed = ids.filter(function (id) { return state(id).passed; }).length;
+        var pct = ids.length ? Math.round(ids.reduce(function (sum, id) {
+            var st = state(id); return sum + (st.passed ? 100 : st.pct);
+        }, 0) / ids.length) : 0;
+        var etapes = (p.mission && p.mission.etapes) || 0;
+        var faites = Array.isArray(labsAll['mission-' + p.id]) ? labsAll['mission-' + p.id].length : 0;
+        return {
+            ids: ids, passed: passed, total: ids.length, pct: pct,
+            mission: Math.min(faites, etapes), etapes: etapes,
+            atteint: ids.length > 0 && passed === ids.length && etapes > 0 && faites >= etapes
+        };
+    }
+    function palierOf(id) {
+        for (var i = 0; i < PALIERS.length; i++) { if (PALIERS[i].modules.indexOf(id) !== -1) return PALIERS[i]; }
+        return null;
+    }
+    function currentPalier() {
+        for (var i = 0; i < PALIERS.length; i++) { if (!palierState(PALIERS[i]).atteint) return PALIERS[i]; }
+        return PALIERS[PALIERS.length - 1] || null;
+    }
+    /* Un anneau de progression, en variables du thème (couleurs dans theme.css). */
+    function ring(pct, cls) {
+        var c = 2 * Math.PI * 26;
+        return '<svg class="ring' + (cls ? ' ' + cls : '') + '" viewBox="0 0 64 64" aria-hidden="true">' +
+            '<circle class="ring__track" cx="32" cy="32" r="26"/>' +
+            '<circle class="ring__val" cx="32" cy="32" r="26" stroke-dasharray="' + c.toFixed(1) +
+            '" stroke-dashoffset="' + (c * (1 - Math.max(0, Math.min(100, pct)) / 100)).toFixed(1) + '"/></svg>';
+    }
+
+    /* API pour les autres scripts de page (feuille de route). */
+    window.CAI = window.CAI || {};
+    window.CAI.state = state;
+    window.CAI.stateText = stateText;
+    window.CAI.stateClass = stateClass;
+    window.CAI.available = available;
+    window.CAI.suggestion = suggestion;
+    window.CAI.palierState = palierState;
+    window.CAI.currentPalier = currentPalier;
+    window.CAI.ring = ring;
+    window.CAI.esc = esc;
+    window.CAI.site = SITE;
+
+    /* ── L'escalier des paliers ([data-stairs], au portail et sur la feuille de route) ── */
+    function heuresDe(ids) {
+        var min = 0;
+        ids.forEach(function (id) {
+            var d = (mod(id) && mod(id).duree) || '';
+            var h = d.match(/(\d+)\s*h/), m = d.match(/h\s*(\d+)/);
+            min += (h ? +h[1] * 60 : 0) + (m ? +m[1] : 0);
+        });
+        return Math.round(min / 60);
+    }
+    function paintStairs() {
+        labsAll = read('cai.labs', {}) || {};
+        var cur = currentPalier();
+        var F = (pageFile === 'feuille-de-route.html') ? '' : SITE + 'feuille-de-route.html';
+        document.querySelectorAll('[data-stairs]').forEach(function (host) {
+            host.innerHTML = PALIERS.map(function (p) {
+                var st = palierState(p);
+                var cls = st.atteint ? 'is-done' : (cur && cur.id === p.id ? 'is-current' : '');
+                return '<li class="stair ' + cls + '"><a href="' + F + '#palier-' + p.id + '">' +
+                    '<span class="stair__num">Palier ' + p.num + (st.atteint ? ' · atteint' : (cls ? ' · tu es ici' : '')) + '</span>' +
+                    '<span class="stair__title">' + esc(p.title) + '</span>' +
+                    '<span class="stair__job">' + esc(p.poste) + '</span>' +
+                    '<span class="stair__bar"><i style="width:' + st.pct + '%"></i></span>' +
+                    '<span class="stair__meta">' + st.total + ' modules · ≈ ' + heuresDe(st.ids) + ' h</span></a></li>';
+            }).join('');
+        });
+    }
+    if (PALIERS.length) paintStairs();
+    window.CAI.paintStairs = paintStairs;
+
+    /* ── Avancement de chaque parcours, sur ses cartes du portail ── */
+    CAT.parcours.forEach(function (p) {
+        var card = document.getElementById('parcours-' + p.id);
+        if (!card || !card.classList.contains('path')) return;
+        var ids = p.modules.filter(available);
+        var passed = ids.filter(function (id) { return state(id).passed; }).length;
+        var pct = ids.length ? Math.round(ids.reduce(function (sum, id) { var st = state(id); return sum + (st.passed ? 100 : st.pct); }, 0) / ids.length) : 0;
+        if (!pct && !passed) return;
+        var box = document.createElement('div');
+        box.className = 'path__progress';
+        box.innerHTML = '<p>' + pct + ' % parcouru · ' + passed + ' / ' + ids.length + ' tests validés</p><span class="dash__bar"><i style="width:' + pct + '%"></i></span>';
+        var desc = card.querySelector('.path__desc');
+        card.insertBefore(box, desc ? desc.nextSibling : card.firstChild);
+    });
+
+    /* ── Tableau de bord ── */
+    var dashHost = document.querySelector('[data-dash]');
+    if (dashHost && PALIERS.length) {
+        var paintDash = function () {
+            labsAll = read('cai.labs', {}) || {};
+            scoresAll = read(KEY_SCORES, {}) || {};
+            progress = read(KEY_PROGRESS, {}) || {};
+            var avail = ORDER.filter(available);
+            var chTotal = 0, chDone = 0, passedN = 0;
+            avail.forEach(function (id) {
+                var n = mod(id).chapters || 0;
+                chTotal += n;
+                chDone += Math.min(n, doneList(id + '.html').length);
+                if (state(id).passed) passedN++;
+            });
+            var srsMap = read('cai.srs', {}) || {};
+            var due = Object.keys(srsMap).filter(function (k) { return srsMap[k] && srsMap[k].d <= Date.now(); }).length;
+            var diag = read('cai.diag', null);
+            var missions = PALIERS.filter(function (p) { return palierState(p).mission >= ((p.mission && p.mission.etapes) || 1); }).length;
+            var fresh = !chDone && !Object.keys(scoresAll).length && !diag && !Object.keys(labsAll).length && !read(KEY_LAST, null);
+            var F = SITE + 'feuille-de-route.html';
+
+            if (fresh) {
+                dashHost.className = 'dash dash--welcome';
+                dashHost.innerHTML =
+                    '<p class="dash__label">Tu débutes ?</p>' +
+                    '<p class="dash__title">Trois façons de commencer</p>' +
+                    '<ol class="dash__starts">' +
+                        '<li><a href="' + F + '#diagnostic"><b>Faire le test de positionnement</b><span>Douze questions, cinq minutes : il dit par où commencer.</span></a></li>' +
+                        '<li><a href="' + MODS + ORDER[0] + '.html"><b>Partir de zéro</b><span>' + esc(mod(ORDER[0]).title) + ', le premier module du parcours 01.</span></a></li>' +
+                        '<li><a href="' + F + '#paliers"><b>Voir le chemin jusqu’au métier</b><span>Quatre paliers, de technicien·ne support à ingénieur·e.</span></a></li>' +
+                    '</ol>' +
+                    '<p class="dash__note">Ta progression reste dans ce navigateur, nulle part ailleurs.</p>';
+                return;
+            }
+            var pal = currentPalier();
+            var ps = pal ? palierState(pal) : null;
+            var sug = suggestion();
+            var pct = chTotal ? Math.round(chDone / chTotal * 100) : 0;
+            dashHost.className = 'dash';
+            dashHost.innerHTML =
+                '<p class="dash__label">Ta progression</p>' +
+                '<div class="dash__top">' + ring(pct, 'ring--lg') +
+                    '<div><p class="dash__big">' + pct + '<small> %</small></p>' +
+                    '<p class="dash__sub">' + chDone + ' / ' + chTotal + ' chapitres acquis</p></div></div>' +
+                (pal ? '<a class="dash__palier" href="' + F + '#palier-' + pal.id + '">' +
+                    '<span class="dash__palier-num">Palier ' + pal.num + (ps.atteint ? ' · atteint' : ' · en cours') + '</span>' +
+                    '<span class="dash__palier-title">' + esc(pal.title) + '</span>' +
+                    '<span class="dash__palier-job">' + esc(pal.poste) + '</span>' +
+                    '<span class="dash__bar"><i style="width:' + ps.pct + '%"></i></span>' +
+                    '<span class="dash__palier-meta">' + ps.passed + ' / ' + ps.total + ' tests validés · mission ' + ps.mission + ' / ' + ps.etapes + '</span></a>' : '') +
+                (sug ? '<a class="btn btn--primary dash__go" href="' + MODS + sug + '.html">Continuer : ' + esc(mod(sug).short) + ' →</a>' : '') +
+                '<dl class="dash__stats">' +
+                    '<div><dt>Tests validés</dt><dd>' + passedN + ' / ' + avail.length + '</dd></div>' +
+                    '<div><dt>À réviser</dt><dd><a href="' + SITE + 'revision.html">' + due + ' carte' + (due > 1 ? 's' : '') + '</a></dd></div>' +
+                    '<div><dt>Missions</dt><dd>' + missions + ' / ' + PALIERS.length + '</dd></div>' +
+                '</dl>';
+        };
+        paintDash();
+        document.addEventListener('cai:progress', paintDash);
+        window.addEventListener('storage', paintDash);
+        window.CAI.paintDash = paintDash;
+    }
+
+    /* ── Fiche du module, dans le héro ── */
+    if (chapters.length && available(curId)) {
+        var heroInner = document.querySelector('.hero .hero__inner');
+        var trackCh = chapters.filter(function (c) { return c.id && !c.classList.contains('chapter--quiz'); });
+        if (heroInner && trackCh.length) {
+            var card = document.createElement('div');
+            card.className = 'modcard';
+            card.setAttribute('role', 'region');
+            card.setAttribute('aria-label', 'Ton avancement dans ce module');
+            heroInner.classList.add('has-aside');
+            heroInner.appendChild(card);
+            var paintCard = function () {
+                progress = read(KEY_PROGRESS, {}) || {};
+                var done = doneList(pageFile);
+                var n = trackCh.length;
+                var k = trackCh.filter(function (c) { return done.indexOf(c.id) !== -1; }).length;
+                var pct = Math.round(k / n * 100);
+                var nextCh = null;
+                for (var i = 0; i < trackCh.length; i++) { if (done.indexOf(trackCh[i].id) === -1) { nextCh = trackCh[i]; break; } }
+                var h = nextCh && nextCh.querySelector('h2');
+                var rec = (read(KEY_SCORES, {}) || {})['test:' + curId];
+                var pal = palierOf(curId);
+                var hasTest = !!document.querySelector('.test[data-test]');
+                card.innerHTML =
+                    '<div class="modcard__top">' + ring(pct) +
+                        '<div><p class="modcard__pct">' + pct + '<small> %</small></p>' +
+                        '<p class="modcard__sub">' + k + ' / ' + n + ' chapitres acquis</p></div></div>' +
+                    '<p class="modcard__test">' + (rec ? (rec.passed ? '<span class="modcard__ok">Test validé</span> · meilleur score ' + rec.best + ' %' : 'Test : meilleur score ' + rec.best + ' %, pas encore validé') : 'Test pas encore passé') + '</p>' +
+                    (nextCh ? '<a class="btn btn--primary modcard__go" href="#' + nextCh.id + '">' + (k ? 'Reprendre' : 'Commencer') + ' : ' + esc(h ? h.textContent.trim() : 'chapitre suivant') + '</a>'
+                            : (hasTest ? '<a class="btn btn--primary modcard__go" href="#test">Tous les chapitres sont acquis : passer le test</a>' : '')) +
+                    (nextCh && hasTest ? '<a class="modcard__link" href="#test">Aller directement au test →</a>' : '') +
+                    (pal ? '<a class="modcard__palier" href="' + SITE + 'feuille-de-route.html#palier-' + pal.id + '"><b>Palier ' + pal.num + '</b> ' + esc(pal.title) + '<span>' + esc(pal.poste) + '</span></a>' : '');
+            };
+            paintCard();
+            document.addEventListener('cai:progress', paintCard);
+        }
+
+        /* ── Infobulles du glossaire : la première occurrence de chaque sigle
+           dans un chapitre s'explique au survol, au focus ou au toucher.
+           Le glossaire (≈ 100 Ko) n'est chargé qu'une fois la page affichée. ── */
+        var loadGloss = function () {
+            if (window.GLOSSAIRE) { buildTips(); return; }
+            var sc = document.createElement('script');
+            sc.src = SITE + 'assets/glossaire.js' + V;
+            sc.onload = buildTips;
+            document.head.appendChild(sc);
+        };
+        var buildTips = function () {
+            var G = window.GLOSSAIRE;
+            if (!G || !G.termes) return;
+            var byKey = {};
+            var keys = [];
+            G.termes.forEach(function (t) {
+                var w = t.t;
+                // seulement les sigles : au moins deux majuscules, pas d'espace
+                if (!/^[A-Za-z0-9][A-Za-z0-9.+\-\/]{1,9}$/.test(w) || (w.match(/[A-Z]/g) || []).length < 2) return;
+                if (byKey[w]) return;
+                byKey[w] = t; keys.push(w);
+            });
+            if (!keys.length) return;
+            keys.sort(function (a, b) { return b.length - a.length; });
+            var re = new RegExp('(^|[^\\w./\\-])(' + keys.map(function (k) { return k.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&'); }).join('|') + ')(?![\\w\\-\\/])', 'g');
+            var SKIP = 'code, pre, kbd, a, button, label, summary, h1, h2, h3, h4, .terminal, .gloss, .gl, .cmdex, .scenario__opts, .scenario__opt, .lsline, .frame, .hero, .toc, script, style, svg';
+            chapters.forEach(function (chap) {
+                var seen = {}, count = 0;
+                var walker = document.createTreeWalker(chap, NodeFilter.SHOW_TEXT, {
+                    acceptNode: function (n) {
+                        if (!n.nodeValue || !/[A-Z]{2}/.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+                        var el = n.parentElement;
+                        return el && !el.closest(SKIP) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+                    }
+                });
+                var nodes = [];
+                while (walker.nextNode()) nodes.push(walker.currentNode);
+                nodes.forEach(function (node) {
+                    if (count >= 10) return;
+                    var text = node.nodeValue, m, last = 0, frag = null;
+                    re.lastIndex = 0;
+                    while ((m = re.exec(text)) && count < 10) {
+                        var w = m[2];
+                        if (seen[w]) continue;
+                        seen[w] = true; count++;
+                        if (!frag) frag = document.createDocumentFragment();
+                        var start = m.index + m[1].length;
+                        frag.appendChild(document.createTextNode(text.slice(last, start)));
+                        var b = document.createElement('button');
+                        b.type = 'button';
+                        b.className = 'gt';
+                        b.setAttribute('data-g', byKey[w].id);
+                        b.textContent = w;
+                        frag.appendChild(b);
+                        last = start + w.length;
+                    }
+                    if (frag) {
+                        frag.appendChild(document.createTextNode(text.slice(last)));
+                        node.parentNode.replaceChild(frag, node);
+                    }
+                });
+            });
+            var byId = {};
+            G.termes.forEach(function (t) { byId[t.id] = t; });
+            var pop = document.createElement('div');
+            pop.className = 'gt-pop';
+            pop.id = 'gt-pop';
+            pop.setAttribute('role', 'tooltip');
+            pop.hidden = true;
+            document.body.appendChild(pop);
+            var cur = null, timer = null;
+            var show = function (b) {
+                var t = byId[b.getAttribute('data-g')];
+                if (!t) return;
+                clearTimeout(timer);
+                if (cur && cur !== b) cur.removeAttribute('aria-describedby');
+                cur = b;
+                b.setAttribute('aria-describedby', 'gt-pop');
+                pop.innerHTML = '<p class="gt-pop__term"><b>' + esc(t.t) + '</b>' + (t.x ? ' <span>' + esc(t.x) + '</span>' : '') + '</p>' +
+                    '<p class="gt-pop__def">' + esc(t.d) + '</p>' +
+                    '<a class="gt-pop__more" href="' + SITE + 'glossaire.html#t-' + encodeURIComponent(t.id) + '">Dans le glossaire →</a>';
+                pop.hidden = false;
+                var r = b.getBoundingClientRect();
+                var W = document.documentElement.clientWidth;
+                var pw = Math.min(320, W - 24);
+                pop.style.width = pw + 'px';
+                var left = Math.max(12, Math.min(r.left + window.pageXOffset, W - pw - 12 + window.pageXOffset));
+                var top = r.bottom + window.pageYOffset + 8;
+                if (r.bottom + pop.offsetHeight + 16 > window.innerHeight && r.top > pop.offsetHeight + 16) {
+                    top = r.top + window.pageYOffset - pop.offsetHeight - 8;
+                }
+                pop.style.left = left + 'px';
+                pop.style.top = top + 'px';
+            };
+            var hide = function (now) {
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                    pop.hidden = true;
+                    if (cur) { cur.removeAttribute('aria-describedby'); cur = null; }
+                }, now ? 0 : 180);
+            };
+            document.addEventListener('mouseover', function (e) {
+                var b = e.target.closest && e.target.closest('.gt');
+                if (b) { show(b); return; }
+                if (e.target.closest && e.target.closest('.gt-pop')) { clearTimeout(timer); return; }
+                if (!pop.hidden) hide();
+            });
+            document.addEventListener('focusin', function (e) {
+                var b = e.target.closest && e.target.closest('.gt');
+                if (b) show(b); else if (!(e.target.closest && e.target.closest('.gt-pop'))) hide(true);
+            });
+            document.addEventListener('click', function (e) {
+                var b = e.target.closest && e.target.closest('.gt');
+                if (b) { if (cur === b && !pop.hidden) hide(true); else show(b); return; }
+                if (!(e.target.closest && e.target.closest('.gt-pop'))) hide(true);
+            });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pop.hidden) { hide(true); } });
+            window.addEventListener('resize', function () { hide(true); });
+        };
+        if ('requestIdleCallback' in window) { window.requestIdleCallback(loadGloss, { timeout: 2500 }); }
+        else { setTimeout(loadGloss, 1200); }
     }
 })();

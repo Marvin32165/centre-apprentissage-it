@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -87,7 +87,7 @@
             <p>Les cmdlets suivent toutes le motif <strong>Verbe-Nom</strong> (<code>Get-</code>, <code>New-</code>, <code>Set-</code>, <code>Remove-</code>…) : connaître le verbe suffit souvent à deviner la commande. Deux versions cohabitent, et s'installent côte à côte sans se gêner :</p>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th></th><th>Windows PowerShell 5.1</th><th>PowerShell 7</th></tr></thead>
+                    <thead><tr><th><span class="sr-only">Critère</span></th><th>Windows PowerShell 5.1</th><th>PowerShell 7</th></tr></thead>
                     <tbody>
                         <tr><td>Livraison</td><td>Intégré à Windows 10/11 et Windows Server, plus d'évolution (correctifs seulement)</td><td>À installer (winget, MSI), versions régulières</td></tr>
                         <tr><td>Exécutable</td><td><code>powershell.exe</code></td><td><code>pwsh.exe</code></td></tr>
@@ -100,7 +100,7 @@
             <p><code>$PSVersionTable.PSVersion</code> dit dans laquelle tu te trouves. Les scripts de ce module tournent dans les deux.</p>
             <div class="tip">
                 <p class="tip__label">La stratégie d'exécution</p>
-                <p>Par défaut, Windows 11 refuse d'exécuter les scripts <code>.ps1</code> (<em>Restricted</em>) ; Windows Server, lui, est en <em>RemoteSigned</em>. Pour ses propres scripts sur un poste : <code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code> — les scripts écrits localement tournent, ceux téléchargés d'Internet doivent être signés (ou débloqués avec <code>Unblock-File</code> après relecture). <code>Get-ExecutionPolicy -List</code> montre la stratégie de chaque portée. Ce n'est pas une barrière de sécurité, juste un garde-fou contre l'exécution accidentelle.</p>
+                <p>Par défaut, Windows PowerShell 5.1 refuse sur Windows 11 d'exécuter les scripts <code>.ps1</code> (<em>Restricted</em>) ; Windows Server, lui, est en <em>RemoteSigned</em>, comme PowerShell 7 sur tout Windows. Pour ses propres scripts sur un poste : <code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code> — les scripts écrits localement tournent, ceux téléchargés d'Internet doivent être signés (ou débloqués avec <code>Unblock-File</code> après relecture). <code>Get-ExecutionPolicy -List</code> montre la stratégie de chaque portée. Ce n'est pas une barrière de sécurité, juste un garde-fou contre l'exécution accidentelle.</p>
             </div>
             <div class="cmdex" data-accept="Get-Help Get-ChildItem -Ex(amples)?;;help Get-ChildItem -Ex(amples)?;;Get-ChildItem -\?" data-hint="Get-Help, avec le nom de la cmdlet et un paramètre.">
                 <p class="cmdex__label">À toi de taper</p>
@@ -120,7 +120,7 @@
                     <p class="scenario__q">Sur ton poste Windows 11, <code>.\Test-Lab.ps1</code>, que tu viens d'écrire, répond « l'exécution de scripts est désactivée sur ce système ». Que fais-tu ?</p>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok><code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code></button>
-                        <button class="scenario__opt" data-why="Unrestricted pour toute la machine lève aussi l&#x27;avertissement sur les scripts téléchargés : plus large que nécessaire.">Set-ExecutionPolicy Unrestricted -Scope LocalMachine</button>
+                        <button class="scenario__opt" data-why="Unrestricted pour toute la machine laisse aussi passer les scripts téléchargés, avec un simple avertissement : plus large que nécessaire.">Set-ExecutionPolicy Unrestricted -Scope LocalMachine</button>
                         <button class="scenario__opt" data-why="Unblock-File retire la marque « téléchargé d&#x27;Internet ». Ton script écrit en local n&#x27;en a pas : la stratégie Restricted bloque tous les scripts.">Unblock-File .\Test-Lab.ps1</button>
                     </div>
                     <div class="scenario__why"><p>Le poste est en <em>Restricted</em> : aucun script ne passe. <em>RemoteSigned</em> pour ton seul compte suffit — tes scripts tournent, ceux venus d'Internet restent contrôlés. Pas besoin d'être administrateur avec <code>-Scope CurrentUser</code>.</p></div>
@@ -621,6 +621,58 @@ while ($s1 -lt 3 -and $s2 -lt 3) {
                 <li><a href="https://learn.microsoft.com/fr-fr/virtualization/hyper-v-on-windows/user-guide/powershell-direct" rel="noopener">Microsoft Learn — PowerShell Direct pour les VM Hyper-V</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/training/paths/powershell/" rel="noopener">Microsoft Learn — parcours « Automatiser des tâches d'administration avec PowerShell »</a></li>
             </ul>
+                        <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (46)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Execution_Policies.md" rel="noopener">Microsoft Learn — Stratégies d&#x27;exécution, Windows PowerShell 5.1</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/7.5/Microsoft.PowerShell.Core/About/about_Execution_Policies.md" rel="noopener">Microsoft Learn — Stratégies d&#x27;exécution, PowerShell 7.5</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Aliases.md" rel="noopener">Microsoft Learn — Alias (ls vers Get-ChildItem)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/Get-Help.md" rel="noopener">Microsoft Learn — Get-Help -Examples</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/Update-Help.md" rel="noopener">Microsoft Learn — Update-Help, droits administrateur</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/Get-Command.md" rel="noopener">Microsoft Learn — Get-Command -Verb / -Noun</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Windows_PowerShell_5.1.md" rel="noopener">Microsoft Learn — Windows PowerShell 5.1 installé par défaut</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/docs-conceptual/whats-new/differences-from-windows-powershell.md" rel="noopener">Microsoft Learn — Différences Windows PowerShell 5.1 / PowerShell 7</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/docs-conceptual/whats-new/Migrating-from-Windows-PowerShell-51-to-PowerShell-7.md" rel="noopener">Microsoft Learn — Migration 5.1 vers 7 (ternaire, -Parallel, Windows 10/11)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/docs-conceptual/whats-new/module-compatibility.md" rel="noopener">Microsoft Learn — Compatibilité des modules Windows avec PowerShell 7</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/7.5/Microsoft.PowerShell.Core/About/about_Operators.md" rel="noopener">Microsoft Learn — Opérateurs ternaire et ?? (PowerShell 7)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/7.5/Microsoft.PowerShell.Core/About/about_Pipeline_Chain_Operators.md" rel="noopener">Microsoft Learn — de pipeline (PowerShell 7)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/docs-conceptual/install/PowerShell-Support-Lifecycle.md" rel="noopener">Microsoft Learn — Cycle de support, Windows PowerShell 5.1</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Type_Conversion.md" rel="noopener">Microsoft Learn — Conversion de types, opérande de gauche</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Utility/Read-Host.md" rel="noopener">Microsoft Learn — Read-Host renvoie une chaîne</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Operators.md" rel="noopener">Microsoft Learn — Opérateur -f ; StartType dans un pipeline</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Comparison_Operators.md" rel="noopener">Microsoft Learn — Comparaisons, sensibilité à la casse</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Do.md" rel="noopener">Microsoft Learn — do/until, au moins une fois</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_For.md" rel="noopener">Microsoft Learn — Boucle for</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_While.md" rel="noopener">Microsoft Learn — Boucle while</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Utility/Measure-Object.md" rel="noopener">Microsoft Learn — Measure-Object -Average</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_PSCustomObject.md" rel="noopener">Microsoft Learn — [PSCustomObject]</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Utility/Import-Csv.md" rel="noopener">Microsoft Learn — Import-Csv, -Delimiter, virgule par défaut</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Utility/Export-Csv.md" rel="noopener">Microsoft Learn — Export-Csv, -Delimiter, -NoTypeInformation, objets formatés</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Utility/Format-Table.md" rel="noopener">Microsoft Learn — Format-Table renvoie des objets de format</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Search-ADAccount.md" rel="noopener">Microsoft Learn — Search-ADAccount -AccountInactive, -TimeSpan</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Try_Catch_Finally.md" rel="noopener">Microsoft Learn — try / catch / finally</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Error_Handling.md" rel="noopener">Microsoft Learn — Erreurs non bloquantes et -ErrorAction Stop</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Preference_Variables.md" rel="noopener">Microsoft Learn — $ErrorActionPreference = &#x27;Stop&#x27;</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Functions_Advanced_Parameters.md" rel="noopener">Microsoft Learn — Paramètre Mandatory, invite de saisie</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Test-NetConnection.md" rel="noopener">Microsoft Learn — Test-NetConnection, TcpTestSucceeded</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/New-VHD.md" rel="noopener">Microsoft Learn — New-VHD différencié</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/New-VM.md" rel="noopener">Microsoft Learn — New-VM</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/Set-VMMemory.md" rel="noopener">Microsoft Learn — Set-VMMemory</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/Hyper-V/Set-VMProcessor.md" rel="noopener">Microsoft Learn — Set-VMProcessor</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/New-ADUser.md" rel="noopener">Microsoft Learn — New-ADUser</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Add-ADGroupMember.md" rel="noopener">Microsoft Learn — Add-ADGroupMember</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Remote_Output.md" rel="noopener">Microsoft Learn — PSComputerName dans la sortie distante</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/docs-conceptual/security/remoting/WinRM-Security.md" rel="noopener">Microsoft Learn — Ports WinRM 5985/5986, chiffrement, Kerberos</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Remote_Troubleshooting.md" rel="noopener">Microsoft Learn — WinRM activé par défaut, TrustedHosts, HTTPS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/7.5/Microsoft.PowerShell.Core/Enter-PSSession.md" rel="noopener">Microsoft Learn — Invite [ordinateur]: PS&gt;</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.WSMan.Management/Test-WSMan.md" rel="noopener">Microsoft Learn — Test-WSMan</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/Invoke-Command.md" rel="noopener">Microsoft Learn — Invoke-Command -VMName</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/powershell-direct.md" rel="noopener">Microsoft Learn — PowerShell Direct</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/architecture.md" rel="noopener">Microsoft Learn — Architecture Hyper-V, VMBus</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Core/About/about_Arrays.md" rel="noopener">Microsoft Learn — += crée un nouveau tableau</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
         </div>
 
     </main>
@@ -631,10 +683,10 @@ while ($s1 -lt 3 -and $s2 -lt 3) {
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

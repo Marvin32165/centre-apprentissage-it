@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -80,7 +80,7 @@
             <h3>Datacenter traditionnel vs cloud public</h3>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th></th><th>Datacenter traditionnel</th><th>Cloud public</th></tr></thead>
+                    <thead><tr><th><span class="sr-only">Critère</span></th><th>Datacenter traditionnel</th><th>Cloud public</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Acquisition</strong></td><td>Achat de serveurs à l'avance</td><td>Provisionnement via portail, CLI, API ou <strong>IaC</strong></td></tr>
                         <tr><td><strong>Délai</strong></td><td>Cycle de livraison long</td><td>Quelques minutes</td></tr>
@@ -186,7 +186,7 @@
                         <tr><td><strong>Appareils</strong> (postes, mobiles)</td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
                         <tr><td><strong>Comptes et identités</strong></td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
                         <tr><td><strong>Infrastructure d'identité et d'annuaire</strong></td><td>Vous</td><td>Vous</td><td>Partagé</td><td>Partagé</td></tr>
-                        <tr><td><strong>Applications</strong></td><td>Vous</td><td>Vous</td><td>Partagé</td><td>Microsoft</td></tr>
+                        <tr><td><strong>Applications</strong></td><td>Vous</td><td>Vous</td><td>Partagé</td><td>Partagé</td></tr>
                         <tr><td><strong>Système d'exploitation</strong></td><td>Vous</td><td>Vous</td><td>Microsoft</td><td>Microsoft</td></tr>
                         <tr><td><strong>Contrôles réseau</strong></td><td>Vous</td><td>Vous</td><td>Partagé</td><td>Microsoft</td></tr>
                         <tr><td><strong>Infrastructure physique</strong></td><td>Vous</td><td>Microsoft</td><td>Microsoft</td><td>Microsoft</td></tr>
@@ -813,6 +813,59 @@ Scope    : management group, subscription, resource group, ressource</pre>
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, puis par l'<a href="../examens.html#final">examen final</a>.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (43)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/security/fundamentals/shared-responsibility.md" rel="noopener">Microsoft Learn — Responsabilité partagée : matrice</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/security/fundamentals/physical-security.md" rel="noopener">Microsoft Learn — Sécurité physique : définition des zones</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-compute-docs/blob/main/articles/virtual-machines/availability.md" rel="noopener">Microsoft Learn — Zones de disponibilité des VM (trois par région)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/azure-resource-manager/management/manage-resource-groups-portal.md" rel="noopener">Microsoft Learn — Resource groups : métadonnées et régions</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/azure-resource-manager/management/overview.md" rel="noopener">Microsoft Learn — Azure Resource Manager : vue d&#x27;ensemble</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/governance/management-groups/overview.md" rel="noopener">Microsoft Learn — Management groups : scopes</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/azure-functions/consumption-plan.md" rel="noopener">Microsoft Learn — Azure Functions : plan Consommation</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/vpn-gateway/vpn-gateway-about-vpngateways.md" rel="noopener">Microsoft Learn — VPN Gateway</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/expressroute/expressroute-introduction.md" rel="noopener">Microsoft Learn — ExpressRoute : connexion privée</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/virtual-network/network-security-groups-overview.md" rel="noopener">Microsoft Learn — NSG : règles et 5-uplet</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/firewall/overview.md" rel="noopener">Microsoft Learn — Azure Firewall</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/ddos-protection/inline-protection-glb.md" rel="noopener">Microsoft Learn — DDoS : attaques volumétriques</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/load-balancer/load-balancer-overview.md" rel="noopener">Microsoft Learn — Load Balancer : couche 4</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/application-gateway/overview.md" rel="noopener">Microsoft Learn — Application Gateway : couche 7, WAF</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/traffic-manager/traffic-manager-routing-methods.md" rel="noopener">Microsoft Learn — Traffic Manager : méthodes de routage</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/frontdoor/front-door-overview.md" rel="noopener">Microsoft Learn — Azure Front Door</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/storage/blobs/access-tiers-overview.md" rel="noopener">Microsoft Learn — Tiers d&#x27;accès Blob</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/storage/common/storage-redundancy.md" rel="noopener">Microsoft Learn — Redondance LRS, ZRS, GRS, GZRS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/storage/files/redundancy-premium-file-shares.md" rel="noopener">Microsoft Learn — Redondance Azure Files (LRS trois copies)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-compute-docs/blob/main/articles/virtual-machines/disks-types.md" rel="noopener">Microsoft Learn — Types de disques managés</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/storage/files/storage-files-introduction.md" rel="noopener">Microsoft Learn — Azure Files : SMB et NFS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/storage/file-sync/file-sync-introduction.md" rel="noopener">Microsoft Learn — Azure File Sync</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/databox/data-box-overview.md" rel="noopener">Microsoft Learn — Azure Data Box</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/entra-docs/blob/main/docs/fundamentals/new-name.md" rel="noopener">Microsoft Learn — Renommage Azure AD vers Microsoft Entra ID</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/entra-docs/blob/main/docs/identity/managed-identities-azure-resources/managed-identities-glossary.md" rel="noopener">Microsoft Learn — Managed identities : rotation automatique</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/entra-docs/blob/main/docs/identity/conditional-access/overview.md" rel="noopener">Microsoft Learn — Accès conditionnel</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/security/develop/secure-design.md" rel="noopener">Microsoft Learn — Key Vault : clés, secrets, certificats</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/role-based-access-control/overview.md" rel="noopener">Microsoft Learn — RBAC : principal, rôle, scope</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/role-based-access-control/built-in-roles.md" rel="noopener">Microsoft Learn — Rôles intégrés (Owner, Contributor, Reader)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/azure-resource-manager/management/lock-resources.md" rel="noopener">Microsoft Learn — Verrous de ressources</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/governance/policy/overview.md" rel="noopener">Microsoft Learn — Azure Policy : définitions et initiatives</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/governance/policy/concepts/effect-audit.md" rel="noopener">Microsoft Learn — Effet Audit</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/governance/policy/concepts/effect-deny.md" rel="noopener">Microsoft Learn — Effet Deny (requête refusée, 403)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/cost-management-billing/understand/plan-manage-costs.md" rel="noopener">Microsoft Learn — Gestion des coûts : calculateur avant déploiement</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/cost-management-billing/costs/cost-mgt-alerts-monitor-usage-spending.md" rel="noopener">Microsoft Learn — Alertes et budgets Cost Management</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/cost-management-billing/costs/cost-mgt-best-practices.md" rel="noopener">Microsoft Learn — Réservations et Azure Hybrid Benefit</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/migrate/how-to-build-a-business-case.md" rel="noopener">Microsoft Learn — Business case Azure Migrate (TCO)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/networking/includes/azure-application-gateway/preview-http3.md" rel="noopener">Microsoft Learn — Préversion sans SLA</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/cloud-shell/overview.md" rel="noopener">Microsoft Learn — Cloud Shell</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/azure-resource-manager/bicep/overview.md" rel="noopener">Microsoft Learn — Bicep compilé en ARM JSON</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-management-docs/blob/main/articles/azure-arc/overview.md" rel="noopener">Microsoft Learn — Azure Arc : gestion multicloud et sur site</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/azure-resource-manager/management/manage-resource-groups-cli.md" rel="noopener">Microsoft Learn — az group create / list / delete</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/storage/files/artificial-intelligence/retrieval-augmented-generation/azure-native/tutorial-logic-apps-ai-search.md" rel="noopener">Microsoft Learn — az group delete --yes --no-wait</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -821,10 +874,10 @@ Scope    : management group, subscription, resource group, ressource</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du cours Azure Fundamentals</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

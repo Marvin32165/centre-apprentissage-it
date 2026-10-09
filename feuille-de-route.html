@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De débutant à pro — Centre d'apprentissage IT</title>
+    <meta name="description" content="La feuille de route du centre d'apprentissage IT : un test de positionnement pour savoir par où commencer, puis quatre paliers de débutant à ingénieur — ce que tu sauras faire, les modules qui y mènent, la mission qui le prouve et le poste qui va avec. Progression suivie dans ce navigateur.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+    <link rel="stylesheet" href="assets/theme.css?v=16">
+</head>
+<body>
+
+<div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+
+<header class="hero hero--split">
+    <div class="hero__inner">
+        <div class="hero__main">
+            <p class="eyebrow"><a href="index.html">← Portail</a> · De débutant à pro</p>
+            <h1 class="hero__title">De débutant <em>à pro</em>.</h1>
+            <p class="hero__lead">Quatre paliers, du premier câble au poste d'ingénieur. Chacun dit ce que tu sauras <strong>faire</strong>, les modules qui y mènent, la <strong>mission</strong> qui le prouve et le poste qui va avec. Tu ne sais pas par où commencer ? Le test de positionnement te le dit en cinq minutes.</p>
+            <div class="hero__facts">
+                <span class="fact"><b>Paliers</b> 4</span>
+                <span class="fact"><b>Modules</b> 27</span>
+                <span class="fact"><b>Missions</b> 4 projets à garder</span>
+                <span class="fact"><b>Positionnement</b> 12 questions</span>
+            </div>
+            <p class="hero__cta">
+                <a class="btn btn--primary" href="#diagnostic">Faire le test de positionnement</a>
+                <a class="btn" href="#palier-p1">Voir les paliers</a>
+            </p>
+        </div>
+        <div class="dash" data-dash role="region" aria-label="Ta progression"></div>
+    </div>
+</header>
+
+<main class="roadmap-page">
+
+<!-- ════════ POSITIONNEMENT ════════ -->
+<section class="road-section" id="diagnostic">
+    <p class="section-tag">Où en es-tu ?</p>
+    <h2>Le test de positionnement</h2>
+    <p class="road-section__lead">Douze questions tirées des tests des modules, trois par palier, sans chrono. Réponds sans chercher : « je ne sais pas » est une réponse utile. À la fin, le palier par lequel commencer et le premier module à ouvrir.</p>
+    <div class="diag" data-diag>
+        <noscript><p class="note">Le test a besoin de JavaScript. Sans lui, commence par le palier 01.</p></noscript>
+    </div>
+</section>
+
+<!-- ════════ LES QUATRE PALIERS ════════ -->
+<section class="road-section" id="paliers">
+    <p class="section-tag">Le chemin</p>
+    <h2>Quatre paliers, un métier à chaque marche</h2>
+    <p class="road-section__lead">Un palier est atteint quand ses modules ont leur test validé <strong>et</strong> que sa mission est terminée : savoir répondre ne suffit pas, il faut l'avoir fait. Les cases des missions se cochent ici et restent dans ce navigateur.</p>
+
+    <ol class="stairs" data-stairs aria-label="Les quatre paliers"></ol>
+
+    <!-- Palier 01 -->
+    <article class="palier" id="palier-p1" data-palier="p1">
+        <header class="palier__head">
+            <p class="palier__num">Palier 01</p>
+            <h3 class="palier__title">Les fondations</h3>
+            <p class="palier__promise">« Je comprends ce qui se passe sur un réseau et dans un terminal. »</p>
+            <p class="palier__job"><b>Poste visé</b> Technicien·ne support (N1), stage en infrastructure</p>
+        </header>
+        <div class="palier__grid">
+            <div class="palier__col">
+                <p class="palier__label">Ce que tu sauras faire</p>
+                <ul class="palier__skills">
+                    <li>Expliquer ce que devient une requête web, de la trame Ethernet à la page affichée.</li>
+                    <li>Découper un réseau en sous-réseaux de tailles différentes, de tête.</li>
+                    <li>Monter un labo de machines virtuelles et le redéployer à partir d'une image.</li>
+                    <li>Administrer un serveur Debian en ligne de commande : comptes, droits, paquets, services, journaux.</li>
+                    <li>Isoler une panne réseau couche par couche et rédiger un ticket qu'un collègue peut reprendre.</li>
+                </ul>
+                <p class="palier__label">Les modules</p>
+                <div class="palier__mods" data-palier-mods="p1"></div>
+            </div>
+            <div class="palier__col">
+                <div class="lab mission" data-lab="mission-p1">
+                    <p class="lab__label">Mission de validation</p>
+                    <p class="lab__title">Le labo de la petite entreprise</p>
+                    <div class="lab__meta"><span><b>Preuve à garder :</b> le plan d'adressage, les sorties des commandes de vérification, le ticket d'incident</span><span><b>Durée :</b> une demi-journée</span></div>
+                    <ol class="lab__steps">
+                        <li><p>Dessiner le plan d'adressage de quatre services dans un /24, du plus grand besoin au plus petit (module <a href="modules/subnetting.html#vlsm">Subnetting</a>).</p></li>
+                        <li><p>Créer une VM Windows Server et une VM Debian sur un commutateur interne (module <a href="modules/hyperv.html#commutateurs">Hyper-V</a>).</p></li>
+                        <li><p>Donner à chaque VM une adresse fixe de ton plan et prouver qu'elles se joignent (modules <a href="modules/reseau-bases.html#ipv4">Réseau</a> et <a href="modules/linux-debian.html">Linux</a>).</p></li>
+                        <li><p>Sur la Debian : deux utilisateurs, un dossier partagé dont les fichiers héritent du groupe, une connexion SSH par clé.</p></li>
+                        <li><p>Demander à quelqu'un de casser une seule chose (adresse, passerelle, DNS, pare-feu), puis la retrouver avec la méthode par couches (module <a href="modules/depannage-reseau.html">Dépannage</a>).</p></li>
+                        <li><p>Écrire le ticket : symptôme, périmètre, tests faits avec leurs sorties, cause, correction.</p></li>
+                    </ol>
+                </div>
+                <p class="palier__exam" data-palier-exam="p1"></p>
+            </div>
+        </div>
+    </article>
+
+    <!-- Palier 02 -->
+    <article class="palier" id="palier-p2" data-palier="p2">
+        <header class="palier__head">
+            <p class="palier__num">Palier 02</p>
+            <h3 class="palier__title">Mettre en service</h3>
+            <p class="palier__promise">« J'installe un domaine, un réseau et des services, et je les surveille. »</p>
+            <p class="palier__job"><b>Poste visé</b> Technicien·ne systèmes et réseaux, support N2 — le premier poste</p>
+        </header>
+        <div class="palier__grid">
+            <div class="palier__col">
+                <p class="palier__label">Ce que tu sauras faire</p>
+                <ul class="palier__skills">
+                    <li>Créer un domaine Active Directory avec son DNS et son DHCP, ses unités d'organisation, ses groupes et ses stratégies.</li>
+                    <li>Automatiser en PowerShell ce qu'on ferait cent fois à la souris.</li>
+                    <li>Configurer des VLAN, un routage inter-VLAN et un accès SSH sur des équipements Cisco.</li>
+                    <li>Lancer une application en conteneurs et la dépanner à partir de ses journaux.</li>
+                    <li>Superviser un serveur, recevoir l'alerte et suivre la demande dans un outil de tickets.</li>
+                    <li>Raconter une expérience en entretien de façon structurée.</li>
+                </ul>
+                <p class="palier__label">Les modules</p>
+                <div class="palier__mods" data-palier-mods="p2"></div>
+            </div>
+            <div class="palier__col">
+                <div class="lab mission" data-lab="mission-p2">
+                    <p class="lab__label">Mission de validation</p>
+                    <p class="lab__title">Le domaine Orion, du premier contrôleur au ticket</p>
+                    <div class="lab__meta"><span><b>Preuve à garder :</b> le script, les captures de vérification, la configuration des équipements, le ticket fermé</span><span><b>Durée :</b> deux jours</span></div>
+                    <ol class="lab__steps">
+                        <li><p>Monter le domaine du <a href="labo.html">lab Orion</a> : premier contrôleur, DNS, DHCP (module <a href="modules/windows-server.html">Windows Server</a>).</p></li>
+                        <li><p>Créer les comptes d'un service à partir d'un fichier CSV, avec un script relançable sans dégâts (module <a href="modules/powershell.html">PowerShell</a>).</p></li>
+                        <li><p>Publier un partage avec des droits par groupe et une stratégie de groupe qui le connecte.</p></li>
+                        <li><p>Dans Packet Tracer : deux VLAN, le routage entre eux, SSH seul pour administrer (module <a href="modules/ccna-reseau.html">CCNA</a>).</p></li>
+                        <li><p>Mettre un serveur sous supervision et provoquer une alerte (module <a href="modules/monitoring-zabbix.html">Zabbix</a>).</p></li>
+                        <li><p>Traiter l'alerte comme une demande : ticket ouvert, diagnostic, résolution, clôture (module <a href="modules/redmine.html">Redmine</a>).</p></li>
+                        <li><p>Préparer trois récits STARR tirés de cette mission (module <a href="modules/entretien-recrutement.html">Entretien</a>).</p></li>
+                    </ol>
+                </div>
+                <p class="palier__exam" data-palier-exam="p2"></p>
+            </div>
+        </div>
+    </article>
+
+    <!-- Palier 03 -->
+    <article class="palier" id="palier-p3" data-palier="p3">
+        <header class="palier__head">
+            <p class="palier__num">Palier 03</p>
+            <h3 class="palier__title">Faire tenir la production</h3>
+            <p class="palier__promise">« Je publie, je sécurise, je sauvegarde, et ça tient quand une machine tombe. »</p>
+            <p class="palier__job"><b>Poste visé</b> Administrateur·rice systèmes et réseaux</p>
+        </header>
+        <div class="palier__grid">
+            <div class="palier__col">
+                <p class="palier__label">Ce que tu sauras faire</p>
+                <ul class="palier__skills">
+                    <li>Bâtir un stockage partagé et un cluster de basculement, puis prouver qu'il bascule.</li>
+                    <li>Publier des services : bureau à distance, sites web en HTTPS, messagerie, intranet.</li>
+                    <li>Émettre et faire approuver des certificats par une autorité interne.</li>
+                    <li>Installer une base de données, la sauvegarder et la restaurer à un instant précis.</li>
+                    <li>Protéger serveurs et bases avec une solution de sauvegarde, et restaurer pour de vrai.</li>
+                    <li>Durcir les équipements réseau et faire passer la voix sur le réseau.</li>
+                </ul>
+                <p class="palier__label">Les modules</p>
+                <div class="palier__mods" data-palier-mods="p3"></div>
+            </div>
+            <div class="palier__col">
+                <div class="lab mission" data-lab="mission-p3">
+                    <p class="lab__label">Mission de validation</p>
+                    <p class="lab__title">La panne qui ne doit rien coûter</p>
+                    <div class="lab__meta"><span><b>Preuve à garder :</b> un dossier d'exploitation : schéma, procédures, preuves de bascule et de restauration</span><span><b>Durée :</b> trois à cinq jours</span></div>
+                    <ol class="lab__steps">
+                        <li><p>Monter le cluster de fichiers sur un stockage iSCSI et éteindre un nœud en pleine copie (module <a href="modules/storage-clustering.html">Stockage &amp; clustering</a>).</p></li>
+                        <li><p>Publier un site interne en HTTPS avec un certificat de l'autorité du domaine (modules <a href="modules/iis.html">IIS</a> et <a href="modules/exchange-securite.html">Exchange &amp; PKI</a>).</p></li>
+                        <li><p>Créer une base, la sauvegarder, puis la restaurer à l'heure qui précède une erreur volontaire (module <a href="modules/sql-server.html">SQL Server</a>).</p></li>
+                        <li><p>Mettre serveur et base sous protection et restaurer un fichier supprimé (module <a href="modules/dpm.html">DPM</a>).</p></li>
+                        <li><p>Limiter l'administration des équipements réseau à un seul réseau de gestion (module <a href="modules/cisco-securite.html">Cisco sécurité</a>).</p></li>
+                        <li><p>Surveiller les certificats et l'heure du domaine, et recevoir l'alerte avant l'incident (module <a href="modules/zabbix-windows.html">Zabbix &amp; Windows</a>).</p></li>
+                        <li><p>Rédiger la procédure de reprise : qui fait quoi, dans quel ordre, en combien de temps.</p></li>
+                    </ol>
+                </div>
+                <p class="palier__exam" data-palier-exam="p3"></p>
+            </div>
+        </div>
+    </article>
+
+    <!-- Palier 04 -->
+    <article class="palier" id="palier-p4" data-palier="p4">
+        <header class="palier__head">
+            <p class="palier__num">Palier 04</p>
+            <h3 class="palier__title">Concevoir et piloter</h3>
+            <p class="palier__promise">« Je conçois une architecture, je la défends et je mène le travail d'une équipe. »</p>
+            <p class="palier__job"><b>Poste visé</b> Ingénieur·e systèmes, cloud ou sécurité</p>
+        </header>
+        <div class="palier__grid">
+            <div class="palier__col">
+                <p class="palier__label">Ce que tu sauras faire</p>
+                <ul class="palier__skills">
+                    <li>Choisir entre local et cloud, et chiffrer ce choix (coûts, disponibilité, responsabilités).</li>
+                    <li>Mener un test d'intrusion dans un cadre légal, puis durcir ce qu'il a révélé.</li>
+                    <li>Héberger ses propres services derrière un reverse proxy, avec sauvegardes et accès distant sûr.</li>
+                    <li>Découper un projet en sprints et le faire avancer avec une équipe.</li>
+                </ul>
+                <p class="palier__label">Les modules</p>
+                <div class="palier__mods" data-palier-mods="p4"></div>
+            </div>
+            <div class="palier__col">
+                <div class="lab mission" data-lab="mission-p4">
+                    <p class="lab__label">Mission de validation</p>
+                    <p class="lab__title">Ton portfolio d'ingénieur</p>
+                    <div class="lab__meta"><span><b>Preuve à garder :</b> un portfolio en ligne qui montre les quatre missions</span><span><b>Durée :</b> un sprint de deux semaines</span></div>
+                    <ol class="lab__steps">
+                        <li><p>Écrire le backlog du projet et le dérouler en un sprint, revue et rétrospective comprises (module <a href="modules/scrum.html">Scrum</a>).</p></li>
+                        <li><p>Héberger chez toi un service derrière un reverse proxy en HTTPS, avec une sauvegarde restaurée au moins une fois (module <a href="modules/homelab.html">Homelab</a>).</p></li>
+                        <li><p>Auditer ton propre labo avec la méthode du test d'intrusion, puis appliquer la liste de durcissement (module <a href="modules/securite.html">Cybersécurité</a>).</p></li>
+                        <li><p>Proposer l'architecture cloud du lab Orion : services choisis, responsabilités, coût mensuel estimé (module <a href="modules/azure.html">Azure</a>).</p></li>
+                        <li><p>Publier le portfolio : un schéma, un problème résolu et ce qu'il t'a appris, pour chaque mission.</p></li>
+                    </ol>
+                </div>
+                <p class="palier__exam" data-palier-exam="p4"></p>
+            </div>
+        </div>
+    </article>
+</section>
+
+<!-- ════════ MODE D'EMPLOI D'UN MODULE ════════ -->
+<section class="road-section" id="mode-emploi">
+    <p class="section-tag">Mode d'emploi</p>
+    <h2>Comment travailler un module</h2>
+    <p class="road-section__lead">Chaque module suit le même rythme et réutilise les mêmes encadrés. Les reconnaître, c'est savoir quoi faire de chacun : lire, taper, vérifier, se tester. Compte une à deux séances par module, et la révision du jour entre les deux.</p>
+    <ol class="howto">
+        <li class="howto__step"><span class="howto__tag howto__tag--brief">Ce que tu sauras faire</span><p>Lis les objectifs <strong>avant</strong> de commencer : à la fin, tu dois pouvoir les faire, pas seulement les reconnaître.</p></li>
+        <li class="howto__step"><span class="howto__tag howto__tag--walk">Pas à pas</span><p>Un échange ou une panne décortiqués étape par étape. Avance avec les flèches et prédis l'étape suivante avant de la lire.</p></li>
+        <li class="howto__step"><span class="howto__tag howto__tag--cmd">À toi de taper</span><p>Tape la commande toi-même, sans copier : la correction se fait en direct. C'est ce qui fixe la syntaxe.</p></li>
+        <li class="howto__step"><span class="howto__tag howto__tag--verify">Vérifier</span><p>La commande qui prouve que c'est fait, la sortie attendue et quoi faire si elle diffère. Sans elle, une configuration n'est qu'un espoir.</p></li>
+        <li class="howto__step"><span class="howto__tag howto__tag--lab">Lab guidé</span><p>Les étapes du TP à refaire sur ton propre lab, à cocher au fur et à mesure. Le lab Orion sert de fil rouge aux modules Windows.</p></li>
+        <li class="howto__step"><span class="howto__tag howto__tag--quick">Question éclair</span><p>Une question en fin de chapitre : réponds de mémoire, sans remonter la page. Se rappeler fait plus retenir que relire.</p></li>
+        <li class="howto__step"><span class="howto__tag howto__tag--take">À retenir</span><p>Le point clé du chapitre. Si tu ne peux pas le redire avec tes mots, relis le chapitre avant de cocher « acquis ».</p></li>
+        <li class="howto__step"><span class="howto__tag howto__tag--test">Test de fin de module</span><p>Validé à partir de 70 % (75 % pour certains modules, annoncé en tête du test). Chaque mauvaise réponse renvoie au chapitre à relire ; ses questions reviennent ensuite dans la révision du jour.</p></li>
+    </ol>
+</section>
+
+<!-- ════════ LES HABITUDES D'UN PRO ════════ -->
+<section class="road-section" id="habitudes">
+    <p class="section-tag">Ce qui ne s'apprend pas dans un chapitre</p>
+    <h2>Les huit habitudes d'un pro</h2>
+    <p class="road-section__lead">Elles reviennent dans tous les modules. C'est souvent elles, plus que les commandes, qui font la différence en entretien comme en production.</p>
+    <div class="habits">
+        <div class="habit"><p class="habit__n">01</p><h3>Lire avant d'agir</h3><p>Le message d'erreur, le journal, la sortie de la commande : la réponse y est souvent écrite.</p></div>
+        <div class="habit"><p class="habit__n">02</p><h3>Une seule modification à la fois</h3><p>Sinon, quand ça remarche, on ne sait pas pourquoi — et quand ça casse, non plus.</p></div>
+        <div class="habit"><p class="habit__n">03</p><h3>Vérifier, toujours</h3><p>Une configuration n'est faite que lorsqu'une commande prouve qu'elle marche, du point de vue de l'utilisateur.</p></div>
+        <div class="habit"><p class="habit__n">04</p><h3>Sauvegarder avant de toucher</h3><p>Et une sauvegarde n'existe que si on a déjà réussi à la restaurer.</p></div>
+        <div class="habit"><p class="habit__n">05</p><h3>Le moindre privilège</h3><p>Chacun a les droits de son travail, pas plus — toi compris : un compte d'administration à part.</p></div>
+        <div class="habit"><p class="habit__n">06</p><h3>Écrire ce qu'on a fait</h3><p>Le ticket, la procédure, le schéma : le prochain incident identique prendra cinq minutes.</p></div>
+        <div class="habit"><p class="habit__n">07</p><h3>Automatiser la deuxième fois</h3><p>La première fois, on comprend ; la deuxième, on écrit le script ; la troisième, on le lance.</p></div>
+        <div class="habit"><p class="habit__n">08</p><h3>Dire « je ne sais pas, je vérifie »</h3><p>Une réponse inventée coûte plus cher qu'une réponse attendue dix minutes.</p></div>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    <p><strong>De débutant à pro</strong> — Centre d'apprentissage IT · progression, missions et positionnement enregistrés dans ce navigateur uniquement</p>
+    <p><a href="index.html">← Retour au portail</a> · <a href="examens.html">Examens transversaux</a> · <a href="revision.html">Révision du jour</a> · <a href="labo.html">Lab Orion</a></p>
+</footer>
+
+<script src="assets/catalogue.js?v=16"></script>
+<script src="assets/app.js?v=16"></script>
+<script src="assets/quiz-data.js?v=16"></script>
+<script src="assets/pratique.js?v=16"></script>
+<script src="assets/feuille.js?v=16"></script>
+</body>
+</html>

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -102,13 +102,13 @@
 
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th></th><th>Instance par défaut</th><th>Instance nommée</th></tr></thead>
+                    <thead><tr><th><span class="sr-only">Critère</span></th><th>Instance par défaut</th><th>Instance nommée</th></tr></thead>
                     <tbody>
                         <tr><td>Nom</td><td><code>MSSQLSERVER</code></td><td>celui qu'on choisit</td></tr>
                         <tr><td>On s'y connecte par</td><td><code>SERVEUR</code></td><td><code>SERVEUR\INSTANCE</code></td></tr>
                         <tr><td>Service Windows</td><td><code>MSSQLSERVER</code></td><td><code>MSSQL$INSTANCE</code></td></tr>
                         <tr><td>Port</td><td><code>1433</code> par défaut</td><td>port <strong>dynamique</strong> par défaut</td></tr>
-                        <tr><td>Nombre par machine</td><td>une seule</td><td>autant qu'on veut</td></tr>
+                        <tr><td>Nombre par machine</td><td>une seule</td><td>plusieurs (50 instances au plus par machine)</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -130,7 +130,7 @@
                 </table>
             </div>
 
-            <p class="note">Il existe une cinquième base système, cachée : <strong>Resource</strong> (<code>mssqlsystemresource</code>), en lecture seule, qui contient le code des objets système. Elle n'apparaît pas dans SSMS et ne se sauvegarde pas avec <code>BACKUP</code> : elle est remplacée à chaque mise à jour de l'instance.</p>
+            <p class="note">Il existe une cinquième base système, cachée : <strong>Resource</strong> (<code>mssqlsystemresource</code>), en lecture seule, qui contient le code des objets système. Elle n'apparaît pas dans SSMS et ne se sauvegarde pas avec <code>BACKUP</code> : elle est remplacée lors de certaines mises à jour de l'instance (montées de version, service packs).</p>
 
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">La requête à connaître par cœur</span></div>
@@ -191,7 +191,7 @@
 
             <div class="takeaway">
                 <p class="takeaway__label">Pourquoi Developer en labo</p>
-                <p>C'est la seule édition gratuite qui expose l'intégralité des fonctionnalités : on apprend sur le même moteur qu'en production, sans licence. La restriction n'est pas technique mais <strong>juridique</strong> — rien n'empêche de la déployer en production, sauf le contrat.</p>
+                <p>C'est l'édition gratuite qui expose toutes les fonctionnalités de l'Enterprise, sans limite de durée (l'édition Evaluation aussi, mais pour 180 jours) : on apprend sur le même moteur qu'en production, sans licence. La restriction n'est pas technique mais <strong>juridique</strong> — rien n'empêche de la déployer en production, sauf le contrat.</p>
             </div>
 
             <p class="note">Le module s'appuie sur <strong>SQL Server 2022</strong> (version 16). <strong>SQL Server 2025</strong> (version 17) est disponible depuis novembre 2025 : il dédouble l'édition Developer en <em>Standard Developer</em> et <em>Enterprise Developer</em>, pour tester exactement les fonctionnalités de l'édition qui ira en production. Tout ce qui suit s'applique aux deux versions.</p>
@@ -346,7 +346,7 @@
             <p class="chapter__intro">La console MMC qui gère tout ce qui fait <em>fonctionner</em> et <em>communiquer</em> SQL Server sur Windows. C'est par elle qu'on passe, pas par les services Windows.</p>
 
             <h3>Cinq volets</h3>
-            <p>Services · comptes de service · réseau serveur · ports et IP · alias client. Le raccourci est souvent introuvable dans le menu Démarrer : l'outil se lance par son fichier MMC, dont le numéro suit la version du moteur.</p>
+            <p>Services · comptes de service · réseau serveur · ports et IP · alias client (depuis SQL Server 2022, un alias ne se crée plus ici mais avec l'utilitaire <code>cliconfg.exe</code>). Le raccourci est souvent introuvable dans le menu Démarrer : l'outil se lance par son fichier MMC, dont le numéro suit la version du moteur.</p>
 
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Ouvrir l'outil</span></div>
@@ -407,7 +407,7 @@
             <h3>Port fixe ou port dynamique</h3>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th></th><th>Port fixe</th><th>Port dynamique</th></tr></thead>
+                    <thead><tr><th><span class="sr-only">Critère</span></th><th>Port fixe</th><th>Port dynamique</th></tr></thead>
                     <tbody>
                         <tr><td>Attribution</td><td>choisi une fois</td><td>au démarrage du service — <strong>change à chaque redémarrage</strong></td></tr>
                         <tr><td>Par défaut sur</td><td>l'instance par défaut (1433)</td><td>les <strong>instances nommées</strong></td></tr>
@@ -463,7 +463,7 @@
             </div>
 
             <h3>Les alias</h3>
-            <p>Un alias associe un nom court à un couple serveur/port/protocole. Le principe ressemble à du DNS, mais la portée est strictement <strong>locale</strong> : l'alias n'existe que sur la machine où il est défini. L'intérêt est que l'application utilise un nom stable, même si le serveur ou le port changent.</p>
+            <p>Un alias associe un nom court à un couple serveur/port/protocole. Le principe ressemble à du DNS, mais la portée est strictement <strong>locale</strong> : l'alias n'existe que sur la machine où il est défini. L'intérêt est que l'application utilise un nom stable, même si le serveur ou le port changent. Depuis SQL Server 2022, il se crée avec l'utilitaire réseau client (<code>cliconfg.exe</code>) : le Configuration Manager ne le propose plus.</p>
 
             <div class="tip">
                 <p class="tip__label">Le piège 32 / 64 bits</p>
@@ -520,7 +520,7 @@
             </div>
 
             <h3>MaxDOP</h3>
-            <p><em>Maximum Degree Of Parallelism</em> : le nombre maximal de processeurs qu'une <strong>seule</strong> requête peut mobiliser. À <code>0</code>, il n'y a pas de limite — une grosse requête peut occuper tous les cœurs et faire attendre tout le monde. À <code>1</code>, le parallélisme est désactivé. L'assistant d'installation propose désormais une valeur calculée d'après la machine : la laisser est raisonnable tant qu'on n'a pas de raison mesurée d'en changer.</p>
+            <p><em>Maximum Degree Of Parallelism</em> : le nombre maximal de processeurs qu'une <strong>seule</strong> requête peut mobiliser. À <code>0</code>, le moteur peut utiliser tous les processeurs disponibles, jusqu'à 64 — une grosse requête peut occuper tous les cœurs et faire attendre tout le monde. À <code>1</code>, le parallélisme est désactivé. L'assistant d'installation propose désormais une valeur calculée d'après la machine : la laisser est raisonnable tant qu'on n'a pas de raison mesurée d'en changer.</p>
 
             <h3><code>tempdb</code></h3>
             <p>Recréée à chaque démarrage du service, elle repart à la taille <strong>configurée</strong>, pas à celle qu'elle avait atteinte : un dimensionnement trop petit se paie à chaque redémarrage. Plusieurs fichiers de données répartissent la contention — l'assistant d'installation en propose un par cœur logique, <strong>jusqu'à 8</strong>, tous de même taille — et un volume dédié lui évite de concurrencer les données et le journal.</p>
@@ -598,7 +598,7 @@
 
             <h3>Les autres options</h3>
             <ul>
-                <li><strong>Collation</strong> — se fixe à la création. <code>CI</code> = insensible à la casse, <code>AS</code> = sensible aux accents. C'est ce couple qui fait qu'en SQL Server, <code>WHERE nom = 'dupont'</code> ramène aussi <code>DUPONT</code>.</li>
+                <li><strong>Collation</strong> — se choisit à la création ; <code>ALTER DATABASE … COLLATE</code> peut la changer ensuite, sans modifier les colonnes des tables existantes. <code>CI</code> = insensible à la casse, <code>AS</code> = sensible aux accents. C'est ce couple qui fait qu'en SQL Server, <code>WHERE nom = 'dupont'</code> ramène aussi <code>DUPONT</code>.</li>
                 <li><strong>Owner</strong> — mettre <code>sa</code> ou un compte dédié, sinon la base devient orpheline le jour où le compte créateur est supprimé.</li>
                 <li><strong>Auto Close</strong> et <strong>Auto Shrink</strong> — à laisser <code>OFF</code>.</li>
                 <li><strong>Auto Create / Update Statistics</strong> — à laisser <code>ON</code>.</li>
@@ -744,7 +744,7 @@
 
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th></th><th>Fichiers à restaurer</th><th>Le risque</th></tr></thead>
+                    <thead><tr><th><span class="sr-only">Critère</span></th><th>Fichiers à restaurer</th><th>Le risque</th></tr></thead>
                     <tbody>
                         <tr><td>Full</td><td>un seul</td><td>aucun, mais le plus gros et le plus long à écrire</td></tr>
                         <tr><td>Différentiel</td><td>full + <strong>dernier</strong> diff</td><td>les diff intermédiaires ne servent à rien</td></tr>
@@ -790,7 +790,7 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Une sauvegarde non restaurée est une hypothèse</p>
-                <p><code>VERIFYONLY</code> vérifie le média, pas la restaurabilité de bout en bout : il ne dit rien de la chaîne de journaux, ni des droits, ni de la place disponible sur la cible. La seule preuve est une <strong>restauration réellement effectuée — et chronométrée</strong>, puisque c'est elle qui donne le RTO réel.</p>
+                <p><code>VERIFYONLY</code> vérifie le média, pas la restaurabilité de bout en bout : il ne dit rien de la chaîne de journaux ni des droits (il contrôle en revanche la place disponible sur la destination). La seule preuve est une <strong>restauration réellement effectuée — et chronométrée</strong>, puisque c'est elle qui donne le RTO réel.</p>
             </div>
 
             <h3>Restaurer sans écraser la production</h3>
@@ -833,7 +833,8 @@
 <span class="k">RESTORE DATABASE</span> GESTION_Recovery <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_FULL.bak'</span>
 <span class="k">WITH MOVE</span> <span class="s">'GESTION_Data'</span> <span class="k">TO</span> <span class="s">'D:\INSPIRATION\data\GESTION_Recovery.mdf'</span>,
      <span class="k">MOVE</span> <span class="s">'GESTION_Log'</span>  <span class="k">TO</span> <span class="s">'G:\INSPIRATION\data\GESTION_Recovery_log.ldf'</span>, <span class="k">NORECOVERY</span>;
-<span class="k">RESTORE LOG</span> GESTION_Recovery <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_LOG.trn'</span> <span class="k">WITH NORECOVERY</span>;
+<span class="k">RESTORE LOG</span> GESTION_Recovery <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_LOG.trn'</span>
+<span class="k">WITH STOPAT</span> <span class="p">=</span> <span class="s">'2026-09-02T10:29:50'</span>, <span class="k">NORECOVERY</span>;   <span class="c">-- même STOPAT partout : impossible de dépasser l'heure visée</span>
 
 <span class="c">-- 3. Le dernier journal (la fin) rejoue jusqu'a 10:29:50, puis on ouvre la base</span>
 <span class="k">RESTORE LOG</span> GESTION_Recovery <span class="k">FROM DISK</span> <span class="p">=</span> <span class="s">'D:\backup\GESTION_TAIL.trn'</span>
@@ -873,8 +874,8 @@
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 5</b> · GESTION_Recovery</p>
                         <p class="walk__head">Rejouer les journaux dans l'ordre</p>
-                        <p>Le journal de 10:20 en <code>NORECOVERY</code>, puis le tail-log avec <code>STOPAT = '…T10:29:50'</code> et <code>RECOVERY</code>. Le moteur rejoue les transactions jusqu'à 10:29:50, annule celles qui n'étaient pas validées à cet instant, et ouvre la base.</p>
-                        <p class="walk__change"><b>STOPAT</b> sur le dernier journal, <b>RECOVERY</b> une seule fois, à la fin.</p>
+                        <p>Le journal de 10:20 en <code>NORECOVERY</code> (avec le même <code>STOPAT</code>), puis le tail-log avec <code>STOPAT = '…T10:29:50'</code> et <code>RECOVERY</code>. Le moteur rejoue les transactions jusqu'à 10:29:50, annule celles qui n'étaient pas validées à cet instant, et ouvre la base.</p>
+                        <p class="walk__change"><b>STOPAT</b> sur chaque journal restauré, <b>RECOVERY</b> une seule fois, à la fin.</p>
                     </li>
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 6</b> · GESTION_Recovery → GESTION</p>
@@ -1050,7 +1051,7 @@
 
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th></th><th><code>REORGANIZE</code></th><th><code>REBUILD</code></th></tr></thead>
+                    <thead><tr><th><span class="sr-only">Critère</span></th><th><code>REORGANIZE</code></th><th><code>REBUILD</code></th></tr></thead>
                     <tbody>
                         <tr><td>Effet</td><td>réordonne les pages sur place</td><td>reconstruit l'index entièrement</td></tr>
                         <tr><td>Coût</td><td>léger, toujours en ligne, interruptible</td><td>lourd, verrouille la table (sauf <code>ONLINE = ON</code>, Enterprise)</td></tr>
@@ -1171,7 +1172,7 @@
 
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th></th><th>Blocage</th><th>Interblocage</th></tr></thead>
+                    <thead><tr><th><span class="sr-only">Critère</span></th><th>Blocage</th><th>Interblocage</th></tr></thead>
                     <tbody>
                         <tr><td>Nature</td><td>une <strong>attente</strong></td><td>un <strong>cycle</strong></td></tr>
                         <tr><td>Issue</td><td>se résout dès que le verrou est relâché</td><td>insoluble sans victime</td></tr>
@@ -1257,7 +1258,7 @@
 
             <div class="takeaway">
                 <p class="takeaway__label">Les archives sont une information</p>
-                <p>Un nouveau fichier de journal est créé <strong>à chaque redémarrage du service</strong>. Un incident d'hier ne se lit donc pas dans <code>Current</code> mais dans l'archive correspondante — et des archives qui défilent signalent en elles-mêmes un service qui redémarre en boucle. Dans un incident : <strong>lire le journal avant de régler quoi que ce soit</strong>, c'est la seule information que le redémarrage détruit.</p>
+                <p>Un nouveau fichier de journal est créé <strong>à chaque redémarrage du service</strong>. Un incident d'hier ne se lit donc pas dans <code>Current</code> mais dans l'archive correspondante — et des archives qui défilent signalent en elles-mêmes un service qui redémarre en boucle. Dans un incident : <strong>lire le journal avant de régler quoi que ce soit</strong>. Le redémarrage ne l'efface pas — le journal courant passe en archive, six archives sont gardées par défaut — mais il remet à zéro les statistiques d'attente et coupe les requêtes en cours, qui racontaient l'incident.</p>
             </div>
 
             <h3>La checklist quotidienne</h3>
@@ -1321,7 +1322,7 @@
             <h3>Haute disponibilité ≠ reprise d'activité</h3>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th></th><th>Haute disponibilité (HA)</th><th>Reprise d'activité (DR)</th></tr></thead>
+                    <thead><tr><th><span class="sr-only">Critère</span></th><th>Haute disponibilité (HA)</th><th>Reprise d'activité (DR)</th></tr></thead>
                     <tbody>
                         <tr><td>Objectif</td><td><strong>réduire l'interruption</strong></td><td><strong>récupérer après un sinistre</strong></td></tr>
                         <tr><td>Panne visée</td><td>ciblée : un serveur, un disque</td><td>globale : la salle, le site</td></tr>
@@ -1480,6 +1481,132 @@ SRV-SQL01   Microsoft SQL Server 2022 (RTM) …</pre>
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (116)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/sql-server/editions-and-components-of-sql-server-2022.md" rel="noopener">Microsoft Learn — Éditions SQL Server 2022 (Express)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/sql-server/editions-and-components-of-sql-server-2025.md" rel="noopener">Microsoft Learn — Éditions SQL Server 2025</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/includes/paragraph-content/sql-server-editions-1.md" rel="noopener">Microsoft Learn — Définitions des éditions</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/sql-server/azure-arc/manage-license-billing.md" rel="noopener">Microsoft Learn — Developer gratuite</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/sql-server/what-s-new-in-sql-server-2025.md" rel="noopener">Microsoft Learn — Nouveautés 2025 (17.x, Standard Developer)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/install-windows/install-sql-server-from-the-installation-wizard-setup.md" rel="noopener">Microsoft Learn — Pages de l&#x27;assistant d&#x27;installation</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/sql-server/install/instance-configuration.md" rel="noopener">Microsoft Learn — Configuration de l&#x27;instance (tempdb, MaxDOP, mémoire)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/collations/collation-and-unicode-support.md" rel="noopener">Microsoft Learn — Collation serveur</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/change-server-authentication-mode.md" rel="noopener">Microsoft Learn — Changer le mode d&#x27;authentification</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/configure-windows-service-accounts-and-permissions.md" rel="noopener">Microsoft Learn — Comptes et services Windows de SQL Server</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/tools/configuration-manager/sql-server-configuration-manager.md" rel="noopener">Microsoft Learn — Configuration Manager (chemins SQLServerManager)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/start-stop-pause-resume-restart-sql-server-services.md" rel="noopener">Microsoft Learn — Démarrer et arrêter les services (noms)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/enable-or-disable-a-server-network-protocol.md" rel="noopener">Microsoft Learn — Activer ou désactiver un protocole</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/default-sql-server-network-protocol-configuration.md" rel="noopener">Microsoft Learn — Protocoles par défaut après installation</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/configure-a-server-to-listen-on-a-specific-tcp-port.md" rel="noopener">Microsoft Learn — Port TCP fixe</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/sql-server/install/configure-the-windows-firewall-to-allow-sql-server-access.md" rel="noopener">Microsoft Learn — Pare-feu : 1433, UDP 1434, ports dynamiques</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/tools/sqlcmd/sqlcmd-utility.md" rel="noopener">Microsoft Learn — Options sqlcmd -S, -E, -Q</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/reporting-services/troubleshooting/troubleshoot-server-and-database-connection-problems-with-reporting-services.md" rel="noopener">Microsoft Learn — Erreur 26</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/create-or-delete-a-server-alias-for-use-by-a-client.md" rel="noopener">Microsoft Learn — Alias serveur (client, 2022)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/sql/database-engine/connect/consistent-sql-network-connectivity-issue.md" rel="noopener">Microsoft Learn — Aliases 32 et 64 bits</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/dynamics/gp/configuring-data-mart-integration-fails-when-specifying-nondefault-sql-port.md" rel="noopener">Microsoft Learn — cliconfg 32 et 64 bits</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/install-windows/install-sql-server-database-engine.md" rel="noopener">Microsoft Learn — Limite de 50 instances</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/databases/master-database.md" rel="noopener">Microsoft Learn — Base master</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/databases/system-databases.md" rel="noopener">Microsoft Learn — Bases système (msdb, model)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/databases/tempdb-database.md" rel="noopener">Microsoft Learn — Base tempdb</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/databases/database-files-and-filegroups.md" rel="noopener">Microsoft Learn — Fichiers primaires, secondaires et journal</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-catalog-views/sys-database-files-transact-sql.md" rel="noopener">Microsoft Learn — sys.database_files (pages de 8 Ko)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-catalog-views/sys-databases-transact-sql.md" rel="noopener">Microsoft Learn — sys.databases</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/logs/the-transaction-log-sql-server.md" rel="noopener">Microsoft Learn — Journal de transactions</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/server-memory-server-configuration-options.md" rel="noopener">Microsoft Learn — max server memory</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-stored-procedures/sp-configure-transact-sql.md" rel="noopener">Microsoft Learn — sp_configure, options avancées, RECONFIGURE</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/configure-the-max-degree-of-parallelism-server-configuration-option.md" rel="noopener">Microsoft Learn — MaxDOP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/New-ADServiceAccount.md" rel="noopener">Microsoft Learn — New-ADServiceAccount</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Install-ADServiceAccount.md" rel="noopener">Microsoft Learn — Install-ADServiceAccount</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Test-ADServiceAccount.md" rel="noopener">Microsoft Learn — Test-ADServiceAccount (renvoie True)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/group-managed-service-accounts/group-managed-service-accounts/manage-group-managed-service-accounts.md" rel="noopener">Microsoft Learn — Gérer les gMSA (30 jours, Test, Install)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/group-managed-service-accounts/group-managed-service-accounts/create-the-key-distribution-services-kds-root-key.md" rel="noopener">Microsoft Learn — Clé racine KDS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/entra-docs/blob/main/docs/architecture/service-accounts-group-managed.md" rel="noopener">Microsoft Learn — Mots de passe gMSA de 240 octets</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/virtualization/windowscontainers/manage-containers/gmsa-troubleshooting.md" rel="noopener">Microsoft Learn — Dépannage gMSA (Test False, redémarrage, RSAT)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/klist.md" rel="noopener">Microsoft Learn — klist purge -li</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/docs-conceptual/security/remoting/PS-remoting-second-hop.md" rel="noopener">Microsoft Learn — klist purge -li 0x3e7 et redémarrage</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetSecurity/New-NetFirewallRule.md" rel="noopener">Microsoft Learn — New-NetFirewallRule</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/Test-NetConnection.md" rel="noopener">Microsoft Learn — Test-NetConnection -Port</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsClient/Resolve-DnsName.md" rel="noopener">Microsoft Learn — Resolve-DnsName</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Management/Set-Service.md" rel="noopener">Microsoft Learn — Set-Service -StartupType</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/backup-restore/recovery-models-sql-server.md" rel="noopener">Microsoft Learn — Modèles de récupération</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/backup-restore/view-or-change-the-recovery-model-of-a-database-sql-server.md" rel="noopener">Microsoft Learn — Changer le modèle de récupération</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/create-database-transact-sql.md" rel="noopener">Microsoft Learn — CREATE DATABASE : taille de model, MAXSIZE, FILEGROWTH, 2 TB</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/databases/database-properties-files-page.md" rel="noopener">Microsoft Learn — Page Fichiers : valeurs par défaut issues de model</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/databases/database-instant-file-initialization.md" rel="noopener">Microsoft Learn — Instant File Initialization et croissance longue</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/databases/shrink-a-database.md" rel="noopener">Microsoft Learn — Réduire une base : fragmentation des index</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/alter-database-transact-sql-set-options.md" rel="noopener">Microsoft Learn — Options ALTER DATABASE</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/databases/database-states.md" rel="noopener">Microsoft Learn — États d&#x27;une base</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/databases/database-properties-general-page.md" rel="noopener">Microsoft Learn — Page Général : Last Database Backup</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/backup-transact-sql.md" rel="noopener">Microsoft Learn — BACKUP : NOINIT par défaut, COMPRESSION, CHECKSUM</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/backup-restore/copy-only-backups-sql-server.md" rel="noopener">Microsoft Learn — Sauvegardes copy-only</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/backup-restore/differential-backups-sql-server.md" rel="noopener">Microsoft Learn — Sauvegardes différentielles</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/backup-restore/tail-log-backups-sql-server.md" rel="noopener">Microsoft Learn — Sauvegardes de fin de journal</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/backup-restore/restore-a-transaction-log-backup-sql-server.md" rel="noopener">Microsoft Learn — Restaurer une sauvegarde de journal</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/restore-statements-arguments-transact-sql.md" rel="noopener">Microsoft Learn — Arguments de RESTORE</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/backup-restore/restore-a-sql-server-database-to-a-point-in-time-full-recovery-model.md" rel="noopener">Microsoft Learn — Restauration à un instant précis</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/restore-statements-verifyonly-transact-sql.md" rel="noopener">Microsoft Learn — RESTORE VERIFYONLY : complétude, lisibilité</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-tables/backupset-transact-sql.md" rel="noopener">Microsoft Learn — Table backupset : codes de type</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/backup-restore/backup-history-and-header-information-sql-server.md" rel="noopener">Microsoft Learn — Historique des sauvegardes dans msdb</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/alter-user-transact-sql.md" rel="noopener">Microsoft Learn — ALTER USER ... WITH LOGIN</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/create-login-transact-sql.md" rel="noopener">Microsoft Learn — CREATE LOGIN ... FROM WINDOWS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/create-user-transact-sql.md" rel="noopener">Microsoft Learn — CREATE USER ... FOR LOGIN</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/alter-role-transact-sql.md" rel="noopener">Microsoft Learn — ALTER ROLE ... ADD MEMBER</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/grant-transact-sql.md" rel="noopener">Microsoft Learn — GRANT : syntaxe et précédence</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/deny-transact-sql.md" rel="noopener">Microsoft Learn — DENY : précédence, exception sysadmin</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/revoke-transact-sql.md" rel="noopener">Microsoft Learn — REVOKE : retire un GRANT ou un DENY</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/security/authentication-access/server-level-roles.md" rel="noopener">Microsoft Learn — Rôles serveur fixes : sysadmin, securityadmin</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/security/authentication-access/database-level-roles.md" rel="noopener">Microsoft Learn — Rôles de base : db_owner, db_denydatareader</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/security/authentication-access/principals-database-engine.md" rel="noopener">Microsoft Learn — Principaux : public, sa, guest</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/security/contained-database-users-making-your-database-portable.md" rel="noopener">Microsoft Learn — Login dans master, user dans la base</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/security/authentication-access/getting-started-with-database-engine-permissions.md" rel="noopener">Microsoft Learn — Démarrer avec les permissions</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-catalog-views/sys-database-permissions-transact-sql.md" rel="noopener">Microsoft Learn — sys.database_permissions : state_desc</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/sql-server-browser-service-database-engine-and-ssas.md" rel="noopener">Microsoft Learn — SQL Server Browser : UDP 1434</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/errors-events/mssqlserver-18456-database-engine-error.md" rel="noopener">Microsoft Learn — Erreur 18456 : état dans le journal</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/sql/database-engine/connect/network-related-or-instance-specific-error-occurred-while-establishing-connection.md" rel="noopener">Microsoft Learn — Erreur « network-related »</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/indexes/reorganize-and-rebuild-indexes.md" rel="noopener">Microsoft Learn — Maintenance des index : REORGANIZE et REBUILD</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/database-console-commands/dbcc-checkdb-transact-sql.md" rel="noopener">Microsoft Learn — DBCC CHECKDB, options REPAIR en dernier recours</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/update-statistics-transact-sql.md" rel="noopener">Microsoft Learn — UPDATE STATISTICS, syntaxe</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/statements/alter-index-transact-sql.md" rel="noopener">Microsoft Learn — ALTER INDEX, REBUILD et journalisation</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/sql-server-transaction-log-architecture-and-management-guide.md" rel="noopener">Microsoft Learn — Modes de récupération et sauvegardes du journal</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/statistics/statistics.md" rel="noopener">Microsoft Learn — Histogramme : distribution des valeurs</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/includes/sql-server-agent-ownership.md" rel="noopener">Microsoft Learn — Propriétaire du job : contexte d&#x27;exécution</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-tables/dbo-sysjobs-transact-sql.md" rel="noopener">Microsoft Learn — Table sysjobs (msdb), niveaux de notification</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-stored-procedures/sp-add-alert-transact-sql.md" rel="noopener">Microsoft Learn — Alertes : erreur, gravité, condition de performance</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/integration-services/packages/sql-server-agent-jobs-for-packages.md" rel="noopener">Microsoft Learn — View History d&#x27;un job Agent</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/errors-events/mssqlserver-9002-database-engine-error.md" rel="noopener">Microsoft Learn — Erreur 9002 : journal plein</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/database-console-commands/dbcc-sqlperf-transact-sql.md" rel="noopener">Microsoft Learn — DBCC SQLPERF(LOGSPACE)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/database-console-commands/dbcc-opentran-transact-sql.md" rel="noopener">Microsoft Learn — DBCC OPENTRAN</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-dynamic-management-objects/sys-dm-exec-requests-transact-sql.md" rel="noopener">Microsoft Learn — sys.dm_exec_requests : colonnes</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-dynamic-management-objects/sys-dm-exec-sessions-transact-sql.md" rel="noopener">Microsoft Learn — sys.dm_exec_sessions : host_name, program_name</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/t-sql/language-elements/kill-transact-sql.md" rel="noopener">Microsoft Learn — KILL et WITH STATUSONLY</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/sql-server-transaction-locking-and-row-versioning-guide.md" rel="noopener">Microsoft Learn — Verrous tenus jusqu&#x27;à la fin de la transaction</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/sql-server-deadlocks-guide.md" rel="noopener">Microsoft Learn — Interblocage : erreur 1205, system_health</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/logs/open-log-file-viewer.md" rel="noopener">Microsoft Learn — SSMS : Management → SQL Server Logs</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/configure-windows/scm-services-configure-sql-server-error-logs.md" rel="noopener">Microsoft Learn — Journal d&#x27;erreurs : nouveau fichier au démarrage, six archives</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-dynamic-management-objects/sys-dm-os-wait-stats-transact-sql.md" rel="noopener">Microsoft Learn — Statistiques d&#x27;attente non conservées au redémarrage</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ServerManager/Install-WindowsFeature.md" rel="noopener">Microsoft Learn — Install-WindowsFeature</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/failover-clustering/create-failover-cluster.md" rel="noopener">Microsoft Learn — Prérequis : domaine, objet ordinateur du cluster</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/failover-clustering/what-is-quorum-witness.md" rel="noopener">Microsoft Learn — Quorum, témoins, split-brain</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/availability-groups/windows/enable-and-disable-always-on-availability-groups-sql-server.md" rel="noopener">Microsoft Learn — Activer Always On puis redémarrer</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/availability-groups/windows/failover-and-failover-modes-always-on-availability-groups.md" rel="noopener">Microsoft Learn — Modes de bascule, bascule automatique des deux côtés</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/availability-groups/windows/availability-modes-always-on-availability-groups.md" rel="noopener">Microsoft Learn — Modes synchrone et asynchrone</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/availability-groups/windows/availability-group-listener-overview.md" rel="noopener">Microsoft Learn — Listener</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/availability-groups/windows/configure-read-only-routing-for-an-availability-group-sql-server.md" rel="noopener">Microsoft Learn — Read-only routing (ApplicationIntent)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/availability-groups/windows/configure-backup-on-availability-replicas-sql-server.md" rel="noopener">Microsoft Learn — Sauvegardes sur réplica (Prefer Secondary)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/availability-groups/windows/troubleshoot-always-on-availability-groups-configuration-sql-server.md" rel="noopener">Microsoft Learn — Port 5022 par défaut du point de terminaison</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/database-engine/availability-groups/windows/prereqs-restrictions-recommendations-always-on-availability.md" rel="noopener">Microsoft Learn — Prérequis : FULL et sauvegarde complète</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/tools/sqlcmd/sqlcmd-use-utility.md" rel="noopener">Microsoft Learn — sqlcmd : -S, -E, -Q</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/security/authentication-access/create-a-database-user.md" rel="noopener">Microsoft Learn — Logins dans master, users dans la base</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/system-stored-procedures/sp-resetstatus-transact-sql.md" rel="noopener">Microsoft Learn — SUSPECT : consulter le journal d&#x27;erreurs</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/sql-docs/blob/live/docs/relational-databases/errors-events/mssqlserver-926-database-engine-error.md" rel="noopener">Microsoft Learn — Message 926 : « See the SQL Server errorlog »</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -1488,10 +1615,10 @@ SRV-SQL01   Microsoft SQL Server 2022 (RTM) …</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

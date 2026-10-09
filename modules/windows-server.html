@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -79,11 +79,11 @@
 
             <div class="cards">
                 <div class="card">
-                    <h4>Desktop Experience</h4>
+                    <h3>Desktop Experience</h3>
                     <p>Interface graphique complète. Plus simple à apprendre et à administrer localement, mais plus de composants à mettre à jour et une surface d'attaque plus grande. C'est l'édition utilisée dans le lab.</p>
                 </div>
                 <div class="card">
-                    <h4>Server Core</h4>
+                    <h3>Server Core</h3>
                     <p>Pas de bureau : administration en PowerShell, avec <code>sconfig</code> pour les réglages de base, ou à distance (Server Manager, Windows Admin Center). Moins de mises à jour, moins de failles. Le bon choix pour un DC ou un DNS en production.</p>
                 </div>
             </div>
@@ -525,11 +525,11 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
 
             <div class="cards">
                 <div class="card">
-                    <h4>Namespace (DFS-N)</h4>
+                    <h3>Namespace (DFS-N)</h3>
                     <p>Un chemin <strong>logique</strong> unique ; chaque dossier pointe vers un ou plusieurs partages réels (cibles). On peut déplacer un partage sans changer ce que voient les utilisateurs. C'est ce que fait le TP.</p>
                 </div>
                 <div class="card">
-                    <h4>Réplication (DFS-R)</h4>
+                    <h3>Réplication (DFS-R)</h3>
                     <p>Synchronise le <strong>contenu</strong> de dossiers entre serveurs. Combinée à plusieurs cibles, elle donne de la tolérance de panne. Le TP l'exclut volontairement.</p>
                 </div>
             </div>
@@ -860,6 +860,110 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
                 <li><a href="https://learn.microsoft.com/fr-fr/troubleshoot/windows-server/active-directory/fsmo-roles" rel="noopener">Microsoft Learn — les rôles FSMO</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements" rel="noopener">Microsoft Learn — ports utilisés par les services Windows</a></li>
             </ul>
+                        <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (98)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ServerManager/Install-WindowsFeature.md" rel="noopener">Microsoft Learn — Install-WindowsFeature : -IncludeManagementTools, -Restart</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ServerManager/Uninstall-WindowsFeature.md" rel="noopener">Microsoft Learn — Uninstall-WindowsFeature : -Remove supprime les fichiers</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ServerManager/Get-WindowsFeature.md" rel="noopener">Microsoft Learn — Where Installed</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/get-started/install-options-server-core-desktop-experience.md" rel="noopener">Microsoft Learn — Server Core : surface d&#x27;attaque réduite</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Management/Add-Computer.md" rel="noopener">Microsoft Learn — Add-Computer -DomainName, -Restart</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Management/Rename-Computer.md" rel="noopener">Microsoft Learn — Rename-Computer -NewName, -Restart ; identifiants requis pour un domaine</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/New-NetIPAddress.md" rel="noopener">Microsoft Learn — New-NetIPAddress : -InterfaceAlias, -IPAddress, -PrefixLength, -DefaultGateway</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsClient/Set-DnsClientServerAddress.md" rel="noopener">Microsoft Learn — Set-DnsClientServerAddress : -InterfaceAlias, -ServerAddresses</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/active-directory/wizard-not-gain-access-to-domain.md" rel="noopener">Microsoft Learn — Message « domain either does not exist or could not be contacted » ; SRV des DC requis dans le DNS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/dc-locator.md" rel="noopener">Microsoft Learn — Localisation des DC par enregistrements SRV DNS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/deploy/Install-Active-Directory-Domain-Services--Level-100-.md" rel="noopener">Microsoft Learn — Install-WindowsFeature -name AD-Domain-Services -IncludeManagementTools</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ADDSDeployment/Install-ADDSForest.md" rel="noopener">Microsoft Learn — -DomainNetbiosName, -InstallDns, -ForestMode, -DomainMode ; invite DSRM</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/active-directory-functional-levels.md" rel="noopener">Microsoft Learn — Niveaux fonctionnels 2025 ; DC 2025 supporté au niveau 2016</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/deploy/upgrade-domain-controllers.md" rel="noopener">Microsoft Learn — Abaissement du niveau fonctionnel : interdit sauf exceptions</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Get-ADForest.md" rel="noopener">Microsoft Learn — Get-ADForest : ForestMode</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Get-ADDomain.md" rel="noopener">Microsoft Learn — Get-ADDomain : DNSRoot, NetBIOSName, PDCEmulator, DomainMode</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/plan/Appendix-A--Reviewing-Key-AD-DS-Terms.md" rel="noopener">Microsoft Learn — Forêt : frontière de sécurité, schéma commun</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/active-directory/problems-with-dc-ad-integrated-dns-zones.md" rel="noopener">Microsoft Learn — Enregistrements SRV _ldap et _kerberos des DC</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/dcdiag.md" rel="noopener">Microsoft Learn — dcdiag /q : erreurs seulement ; test Advertising</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/active-directory/configure-w32ime-against-huge-time-offset.md" rel="noopener">Microsoft Learn — Kerberos : écart d&#x27;horloge maximal de 5 minutes</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/dns/configure-aging-scavenging.md" rel="noopener">Microsoft Learn — repadmin /replsummary et /showrepl</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/forest-recovery-guide/ad-forest-recovery-restore-additional-dcs.md" rel="noopener">Microsoft Learn — IFM : réduit le trafic de réplication</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ADDSDeployment/Install-ADDSDomainController.md" rel="noopener">Microsoft Learn — -InstallationMediaPath, -InstallDns</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/understand-fsmo-roles.md" rel="noopener">Microsoft Learn — Cinq rôles FSMO, portées, fonctions PDC et RID</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/manage-fsmo-roles.md" rel="noopener">Microsoft Learn — Transfert et saisie des rôles FSMO</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Move-ADDirectoryServerOperationMasterRole.md" rel="noopener">Microsoft Learn — Transfert gracieux, puis saisie avec -Force</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/forest-recovery-guide/ad-forest-recovery-seizing-operations-master-role.md" rel="noopener">Microsoft Learn — netdom query fsmo</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/robocopy.md" rel="noopener">Microsoft Learn — robocopy /E : dossiers vides inclus</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/understand-security-groups.md" rel="noopener">Microsoft Learn — Étendues de groupes : Globale, Domaine local, Universelle</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/New-ADGroup.md" rel="noopener">Microsoft Learn — New-ADGroup : -GroupScope obligatoire</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/New-ADUser.md" rel="noopener">Microsoft Learn — Compte désactivé sans mot de passe valide ; créé même si le mot de passe est refusé</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Set-ADAccountPassword.md" rel="noopener">Microsoft Learn — Set-ADAccountPassword -Reset</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Utility/Read-Host.md" rel="noopener">Microsoft Learn — Read-Host -AsSecureString</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/delegation-control-wizard.md" rel="noopener">Microsoft Learn — Tâche déléguée « Create, delete, and manage user accounts »</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage-user-accounts-in-windows-server.md" rel="noopener">Microsoft Learn — Onglet Account : Logon Hours</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsServer/Add-DnsServerPrimaryZone.md" rel="noopener">Microsoft Learn — Zone inverse (-NetworkId), -ReplicationScope Forest</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsServer/Add-DnsServerResourceRecordA.md" rel="noopener">Microsoft Learn — -CreatePtr</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsServer/Add-DnsServerResourceRecordCName.md" rel="noopener">Microsoft Learn — -HostNameAlias</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsServer/Add-DnsServerForwarder.md" rel="noopener">Microsoft Learn — -IPAddress (redirecteur)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsServer/Clear-DnsServerCache.md" rel="noopener">Microsoft Learn — Clear-DnsServerCache</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsClient/Clear-DnsClientCache.md" rel="noopener">Microsoft Learn — Clear-DnsClientCache</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/dns/queries-lookups.md" rel="noopener">Microsoft Learn — Réponses en cache pendant la durée du TTL</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/dns/dns-architecture.md" rel="noopener">Microsoft Learn — TTL honoré par les résolveurs</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/ipconfig.md" rel="noopener">Microsoft Learn — ipconfig /displaydns, /flushdns, /renew ; cache du client DNS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/nslookup.md" rel="noopener">Microsoft Learn — nslookup en mode commande : serveur DNS interrogé directement</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/group-policy/userenv-errors-occur-events-are-logged.md" rel="noopener">Microsoft Learn — Case « Create associated pointer (PTR) record »</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/technologies/dhcp/quickstart-install-configure-dhcp-server.md" rel="noopener">Microsoft Learn — Installation DHCP, autorisation par Add-DhcpServerInDC, étendue, serveur non autorisé sans bail</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DhcpServer/Add-DhcpServerv4Scope.md" rel="noopener">Microsoft Learn — -State Active / InActive</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DhcpServer/Set-DhcpServerv4OptionValue.md" rel="noopener">Microsoft Learn — -Router, -DnsServer, -DnsDomain ; OptionId 6 = serveurs DNS</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DhcpServer/Set-DhcpServerv4OptionDefinition.md" rel="noopener">Microsoft Learn — OptionId 3 = Default Gateway</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DhcpServer/Add-DhcpServerInDC.md" rel="noopener">Microsoft Learn — -DnsName, -IPAddress</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DhcpServer/Add-DhcpServerv4Reservation.md" rel="noopener">Microsoft Learn — Réservation : -ScopeId, -IPAddress, -ClientId, -Name</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DhcpServer/Get-DhcpServerv4Lease.md" rel="noopener">Microsoft Learn — Baux : -ScopeId</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DhcpServer/Add-DhcpServerSecurityGroup.md" rel="noopener">Microsoft Learn — Groupes DHCP Users et DHCP Administrators (pour la correction 10)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/icacls.md" rel="noopener">Microsoft Learn — icacls : notation (OI)(CI)(IO), droits M/F/RX, ordre des ACE</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/plan/security-best-practices/Appendix-B--Privileged-Accounts-and-Groups-in-Active-Directory.md" rel="noopener">Microsoft Learn — Un ACE Deny l&#x27;emporte généralement sur un Allow</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/understand-security-identifiers.md" rel="noopener">Microsoft Learn — Jeton d&#x27;accès créé à chaque ouverture de session</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/whoami.md" rel="noopener">Microsoft Learn — whoami /groups : groupes de l&#x27;utilisateur courant</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/SmbShare/New-SmbShare.md" rel="noopener">Microsoft Learn — New-SmbShare : -ChangeAccess, -FullAccess, -ReadAccess</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/SmbShare/Get-SmbShareAccess.md" rel="noopener">Microsoft Learn — Get-SmbShareAccess -Name</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/storage/dfs-namespaces/dfs-overview.md" rel="noopener">Microsoft Learn — DFS : rôle FS-DFS-Namespace, espaces de noms</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DFSN/New-DfsnRoot.md" rel="noopener">Microsoft Learn — New-DfsnRoot : types Standalone, DomainV1, DomainV2</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DFSN/New-DfsnFolder.md" rel="noopener">Microsoft Learn — New-DfsnFolder : -Path, -TargetPath</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DFSN/Get-DfsnFolderTarget.md" rel="noopener">Microsoft Learn — Get-DfsnFolderTarget : State Online</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/group-policy/group-policy-processing.md" rel="noopener">Microsoft Learn — Ordre L-S-D-OU, Enforced, blocage, rafraîchissement 90 min + 30 min</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/group-policy/group-policy-scope.md" rel="noopener">Microsoft Learn — Étendue d&#x27;une GPO : liée à un conteneur, Enforced</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/group-policy/cannot-apply-user-gpo-when-computer-objects-dont-have-read-permissions.md" rel="noopener">Microsoft Learn — Authenticated Users : Read et Apply Group Policy par défaut</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/GroupPolicy/New-GPO.md" rel="noopener">Microsoft Learn — New-GPO -Name</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/GroupPolicy/New-GPLink.md" rel="noopener">Microsoft Learn — New-GPLink -Name, -Target</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/GroupPolicy/Set-GPRegistryValue.md" rel="noopener">Microsoft Learn — Set-GPRegistryValue : -Key, -ValueName, -Type, -Value</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-client/group-policy/scenario-guide-wallpaper-gpo-does-not-apply-on-some-client-computers.md" rel="noopener">Microsoft Learn — Chemin console « Desktop Wallpaper »</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/group-policy/group-policy-preferences.md" rel="noopener">Microsoft Learn — Préférences de GPO : extension Drive Maps</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/gpupdate.md" rel="noopener">Microsoft Learn — gpupdate /force</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/gpresult.md" rel="noopener">Microsoft Learn — gpresult /r, /scope, /h</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/laps/laps-overview.md" rel="noopener">Microsoft Learn — Windows LAPS : mot de passe admin local géré et sauvegardé dans AD</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/laps/laps-management-powershell.md" rel="noopener">Microsoft Learn — Update-LapsADSchema</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/windows-security/kerberos-authentication-log-analysis-test-scenario.md" rel="noopener">Microsoft Learn — Événements 4624 et 4625</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/plan/security-best-practices/advanced-audit-policy-configuration.md" rel="noopener">Microsoft Learn — Événements 4720, 4728, 4732, 4740, 4756</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/get-started/adac/fine-grained-password-policies.md" rel="noopener">Microsoft Learn — FGPP : groupes globaux et utilisateurs, New-ADFineGrainedPasswordPolicy</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/networking/service-overview-and-network-port-requirements.md" rel="noopener">Microsoft Learn — Ports des services Windows (AD, DNS, Kerberos, NTP, RPC, SMB, GC)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/forest-recovery-guide/ad-forest-recovery-reset-the-krbtgt-password.md" rel="noopener">Microsoft Learn — Ticket d&#x27;utilisateur (TGT) : 10 heures par défaut</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/windows-security/disable-machine-account-password.md" rel="noopener">Microsoft Learn — Mot de passe du compte machine : 30 jours</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/group-policy/missing-sysvol-and-netlogon-shares.md" rel="noopener">Microsoft Learn — Réplication par défaut : 5 minutes dans un même site</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/mem/configmgr/discovery/resource-domain-changes.md" rel="noopener">Microsoft Learn — Enregistrements SRV dc._msdcs (schéma)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Management/Test-ComputerSecureChannel.md" rel="noopener">Microsoft Learn — Test-ComputerSecureChannel : $true/$false, -Repair, -Credential</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/windows-security/kerberos-authentication-troubleshooting-guidance.md" rel="noopener">Microsoft Learn — nltest /dsgetdc:&lt;domaine&gt;</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/azure/virtual-machines/windows/troubleshoot-windows-update-network-proxy-azure-vm.md" rel="noopener">Microsoft Learn — w32tm /query /status</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/active-directory/replication-error-8524.md" rel="noopener">Microsoft Learn — repadmin /showrepl</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/active-directory/domain-join-networking-errors.md" rel="noopener">Microsoft Learn — repadmin /replsummary</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/windows-security/troubleshoot-domain-controller-location-issues.md" rel="noopener">Microsoft Learn — dcdiag /v</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Get-ADDomainController.md" rel="noopener">Microsoft Learn — Get-ADDomainController -Discover, -DomainName, -Service</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/deploy/AD-DS-Installation-and-Removal-Wizard-Page-Descriptions.md" rel="noopener">Microsoft Learn — IFM : réduire le temps d&#x27;installation</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/plan/Planning-Operations-Master-Role-Placement.md" rel="noopener">Microsoft Learn — Rôles FSMO forêt et domaine</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/active-directory/fsmo-roles.md" rel="noopener">Microsoft Learn — Cinq rôles FSMO</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/netdom-query.md" rel="noopener">Microsoft Learn — netdom query fsmo</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/group-managed-service-accounts/group-managed-service-accounts/create-the-key-distribution-services-kds-root-key.md" rel="noopener">Microsoft Learn — Add-KdsRootKey (clé racine KDS)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ActiveDirectory/Test-ADServiceAccount.md" rel="noopener">Microsoft Learn — Test-ADServiceAccount : True si le compte est prêt</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/networking/best-practices-for-dns-client-settings.md" rel="noopener">Microsoft Learn — DNS d&#x27;un membre : serveur qui héberge la zone du domaine</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
         </div>
 
     </main>
@@ -870,10 +974,10 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

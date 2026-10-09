@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -17,7 +17,7 @@
 
 <header class="hero">
     <div class="hero__inner">
-        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 01 · Fondations · 2 / 3</p>
+        <p class="eyebrow"><a href="../index.html">← Portail</a> · Parcours 01 · Fondations · 4 / 5</p>
         <h1 class="hero__title">Linux <em>Debian</em><br>pour bien démarrer</h1>
         <p class="hero__lead">De la première connexion root jusqu'à la maîtrise du terminal : fichiers, permissions, redirections, filtres texte (grep, sed, awk, find), réseau, APT, SSH, processus et services — tout ce qu'il faut pour administrer un serveur Debian.</p>
         <div class="hero__meta">
@@ -565,7 +565,7 @@
                 <tbody>
                     <tr><td>SetUID (<code>s</code> sur le propriétaire)</td><td>s'exécute avec les droits du <strong>propriétaire</strong> du fichier, pas de qui le lance</td><td>4xxx</td><td><code>/usr/bin/passwd</code> (rws) permet d'écrire dans <code>/etc/shadow</code></td></tr>
                     <tr><td>SetGID (<code>s</code> sur le groupe)</td><td>s'exécute avec les droits du <strong>groupe</strong> propriétaire ; <strong>sur un dossier</strong>, les fichiers créés dedans héritent du groupe du dossier — l'usage le plus courant</td><td>2xxx</td><td><code>chmod 2775 /srv/partage</code></td></tr>
-                    <tr><td>Sticky Bit (<code>t</code> sur les autres)</td><td>dans un dossier partagé, seuls le propriétaire du fichier et root peuvent le supprimer</td><td>1xxx</td><td><code>/tmp</code> et <code>/var/tmp</code></td></tr>
+                    <tr><td>Sticky Bit (<code>t</code> sur les autres)</td><td>dans un dossier partagé, seuls le propriétaire du fichier, le propriétaire du dossier et root peuvent le supprimer ou le renommer</td><td>1xxx</td><td><code>/tmp</code> et <code>/var/tmp</code></td></tr>
                 </tbody>
             </table></div>
             <div class="terminal">
@@ -583,7 +583,7 @@
             </ul>
             <p>Le <code>umask</code> (typiquement <code>0022</code>) est ce qu'on <strong>soustrait</strong> à cette base — en réutilisant <code>r=4 w=2 x=1</code> vus plus haut :</p>
             <div class="table-wrap"><table>
-                <thead><tr><th></th><th>Base</th><th>− umask</th><th>= droits obtenus</th></tr></thead>
+                <thead><tr><th><span class="sr-only">Critère</span></th><th>Base</th><th>− umask</th><th>= droits obtenus</th></tr></thead>
                 <tbody>
                     <tr><td>Fichier</td><td><code>666</code> rw-rw-rw-</td><td><code>022</code></td><td><code>644</code> rw-r--r--</td></tr>
                     <tr><td>Dossier</td><td><code>777</code> rwxrwxrwx</td><td><code>022</code></td><td><code>755</code> rwxr-xr-x</td></tr>
@@ -1076,7 +1076,7 @@ iface ens33 inet <span class="k">static</span>
             </div>
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Permissions du dossier .ssh</p>
-                <p>Le dossier <code>~/.ssh</code> doit être en <code>700</code> (accès au seul propriétaire) sinon SSH refuse de l'utiliser : <code>chmod 700 ~/.ssh</code>. Même règle pour <code>~/.ssh/authorized_keys</code> (<code>chmod 600</code>) et pour la clé privée côté client. La clé <strong>privée</strong> ne quitte jamais ton poste ; seule la <code>.pub</code> va sur les serveurs.</p>
+                <p>Le dossier <code>~/.ssh</code> ne doit être modifiable que par son propriétaire, sinon le serveur SSH ignore tes clés (option <code>StrictModes</code>, active par défaut) : le réglage habituel est <code>chmod 700 ~/.ssh</code>. Même règle pour <code>~/.ssh/authorized_keys</code> (<code>chmod 600</code>) et pour la clé privée côté client. La clé <strong>privée</strong> ne quitte jamais ton poste ; seule la <code>.pub</code> va sur les serveurs.</p>
             </div>
             <div class="tip">
                 <p class="tip__label">Transfert de fichiers</p>
@@ -1400,7 +1400,7 @@ iface ens33 inet <span class="k">static</span>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Partitionner</strong><p><code>sudo fdisk /dev/sdb</code> (<code>n</code> nouvelle partition, <code>w</code> écrire). En MBR : 4 partitions primaires au plus, ou 3 + une étendue qui contient des logiques numérotées à partir de <strong>5</strong>.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Formater</strong><p><code>sudo mkfs.ext4 /dev/sdb1</code> — ext4 par défaut sous Debian ; xfs s'agrandit mais ne se réduit pas.</p></div></div>
                 <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Monter</strong><p><code>sudo mkdir /mnt/donnees</code> puis <code>sudo mount /dev/sdb1 /mnt/donnees</code> : immédiat, mais perdu au redémarrage.</p></div></div>
-                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Rendre permanent</strong><p>Une ligne dans <code>/etc/fstab</code>, par <strong>UUID</strong> (<code>sudo blkid /dev/sdb1</code>), puis <strong>tester</strong> avec <code>sudo mount -a</code> avant tout redémarrage.</p></div></div>
+                <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Rendre permanent</strong><p>Une ligne dans <code>/etc/fstab</code>, par <strong>UUID</strong> (<code>sudo blkid /dev/sdb1</code>), puis <strong>tester</strong> avec <code>sudo findmnt --verify</code> avant tout redémarrage, et monter avec <code>sudo mount -a</code>.</p></div></div>
             </div>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">/etc/fstab — une ligne par montage</span></div>
@@ -1409,7 +1409,7 @@ iface ens33 inet <span class="k">static</span>
             </div>
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Ce que le TP a montré</p>
-                <p>Les lettres <code>sda</code>, <code>sdb</code>… <strong>changent</strong> d'un démarrage à l'autre : c'est arrivé plusieurs fois sur la VM du cours, après un ajout de disque ou un simple redémarrage. Dans <code>fstab</code>, toujours l'UUID. Et toujours <code>sudo mount -a</code> avant de redémarrer : une erreur dans <code>fstab</code> peut bloquer le démarrage en mode de secours. Pour un disque de données qui peut être absent (disque USB de sauvegarde), l'option <code>nofail</code> (<code>defaults,nofail</code>) laisse le système démarrer sans lui.</p>
+                <p>Les lettres <code>sda</code>, <code>sdb</code>… <strong>changent</strong> d'un démarrage à l'autre : c'est arrivé plusieurs fois sur la VM du cours, après un ajout de disque ou un simple redémarrage. Dans <code>fstab</code>, toujours l'UUID. Et toujours <code>sudo findmnt --verify</code> (puis <code>sudo mount -a</code>) avant de redémarrer : une erreur dans <code>fstab</code> peut bloquer le démarrage en mode de secours. Pour un disque de données qui peut être absent (disque USB de sauvegarde), l'option <code>nofail</code> (<code>defaults,nofail</code>) laisse le système démarrer sans lui.</p>
             </div>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
@@ -1417,7 +1417,7 @@ iface ens33 inet <span class="k">static</span>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
                 <pre class="terminal__code"><span class="k">lsblk</span> <span class="p">-f</span>
-<span class="k">sudo</span> <span class="k">mount</span> <span class="p">-a</span> &amp;&amp; findmnt /mnt/backup</pre>
+<span class="k">sudo</span> <span class="k">findmnt</span> <span class="p">--verify</span> &amp;&amp; <span class="k">sudo</span> <span class="k">mount</span> <span class="p">-a</span> &amp;&amp; findmnt /mnt/backup</pre>
             </div>
                 <p class="verify__sub">Sortie attendue</p>
             <pre class="verify__out">NAME   FSTYPE LABEL UUID                                 MOUNTPOINTS
@@ -1425,7 +1425,7 @@ sde
 └─sde1 ext4         dc447407-6ceb-4a36-b677-44016b5efd91 /mnt/backup
 TARGET      SOURCE    FSTYPE OPTIONS
 /mnt/backup /dev/sde1 ext4   rw,relatime</pre>
-                <p class="verify__fail"><code>mount -a</code> affiche une erreur : la ligne de <code>fstab</code> est fausse (UUID mal recopié, point de montage absent, type erroné). La corriger <strong>avant</strong> de redémarrer. Si c'est trop tard, le mode de secours (<em>emergency mode</em>) permet d'éditer <code>/etc/fstab</code>.</p>
+                <p class="verify__fail"><code>findmnt --verify</code> ou <code>mount -a</code> signale une erreur : la ligne de <code>fstab</code> est fausse (UUID mal recopié, point de montage absent, type erroné). La corriger <strong>avant</strong> de redémarrer. Si c'est trop tard, le mode de secours (<em>emergency mode</em>) permet d'éditer <code>/etc/fstab</code>.</p>
             </div>
             <div class="cmdex" data-accept="(sudo )?blkid /dev/sdb1;;lsblk -f /dev/sdb1" data-hint="la commande s&#x27;appelle « block id ».">
                 <p class="cmdex__label">À toi de taper</p>
@@ -1437,7 +1437,7 @@ TARGET      SOURCE    FSTYPE OPTIONS
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Repérer (<code>lsblk</code>), partitionner (<code>fdisk</code>), formater (<code>mkfs</code>), monter, puis <code>fstab</code> par UUID et <code>mount -a</code> pour tester. Sauvegarder la table avant de toucher à un disque : <code>sudo sfdisk -d /dev/sdb &gt; table.sfdisk</code>.</p>
+                <p>Repérer (<code>lsblk</code>), partitionner (<code>fdisk</code>), formater (<code>mkfs</code>), monter, puis <code>fstab</code> par UUID, <code>findmnt --verify</code> pour tester et <code>mount -a</code> pour monter. Sauvegarder la table avant de toucher à un disque : <code>sudo sfdisk -d /dev/sdb &gt; table.sfdisk</code>.</p>
             </div>
             <div class="scenario scenario--quick">
                 <p class="scenario__label scenario__label--quick">Question éclair</p>
@@ -1448,7 +1448,7 @@ TARGET      SOURCE    FSTYPE OPTIONS
                         <button class="scenario__opt" data-why="Rien n&#x27;a été écrasé : l&#x27;ancien disque est intact, il porte simplement un autre nom (sdc par exemple).">Le nouveau disque a écrasé le contenu de l&#x27;ancien</button>
                         <button class="scenario__opt" data-why="fstab n&#x27;a pas bougé : c&#x27;est le noyau qui a nommé les disques dans un autre ordre en les détectant.">L&#x27;ordre des lignes de fstab s&#x27;est inversé</button>
                     </div>
-                    <div class="scenario__why"><p>Les noms <code>sda</code>, <code>sdb</code>… suivent l'<strong>ordre de détection</strong>, qui peut changer. L'<strong>UUID</strong> appartient au système de fichiers et le suit partout : <code>sudo blkid</code>, puis <code>UUID=…</code> dans <code>fstab</code>, et <code>sudo mount -a</code> pour tester.</p></div>
+                    <div class="scenario__why"><p>Les noms <code>sda</code>, <code>sdb</code>… suivent l'<strong>ordre de détection</strong>, qui peut changer. L'<strong>UUID</strong> appartient au système de fichiers et le suit partout : <code>sudo blkid</code>, puis <code>UUID=…</code> dans <code>fstab</code>, et <code>sudo findmnt --verify</code> pour tester.</p></div>
                 </div>
             </div>
         </section>
@@ -1480,7 +1480,7 @@ TARGET      SOURCE    FSTYPE OPTIONS
 <span class="k">sudo</span> <span class="k">mkdir</span> <span class="p">-p</span> /mnt/raid5 &amp;&amp; sudo mount /dev/md0 /mnt/raid5
 <span class="k">sudo</span> <span class="k">mdadm</span> <span class="p">--detail</span> <span class="p">--scan</span> | <span class="k">sudo</span> <span class="k">tee</span> <span class="p">-a</span> /etc/mdadm/mdadm.conf<span class="c">   # réassemblage au démarrage</span>
 <span class="k">sudo</span> <span class="k">update-initramfs</span> <span class="p">-u</span>
-<span class="c"># puis une ligne UUID=… /mnt/raid5 ext4 defaults 0 2 dans /etc/fstab, et sudo mount -a</span></pre>
+<span class="c"># puis une ligne UUID=… /mnt/raid5 ext4 defaults 0 2 dans /etc/fstab, puis sudo findmnt --verify et sudo mount -a</span></pre>
             </div>
             <div class="tip">
                 <p class="tip__label">md0 devenu md127</p>
@@ -1823,7 +1823,7 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
                     <tr><td><code>nslookup domaine</code> / <code>dig domaine</code></td><td>—</td><td>tester la résolution DNS</td></tr>
                     <tr><td><code>curl -I url</code></td><td>—</td><td>afficher uniquement les en-têtes HTTP (test rapide d'un site)</td></tr>
                     <tr><td><code>dmesg</code></td><td><code>| less</code></td><td>messages du noyau (détection matérielle, cartes réseau…)</td></tr>
-                    <tr><td><code>hostnamectl status</code></td><td><code>set-hostname nom</code> pour changer</td><td>voir / modifier le nom de la machine</td></tr>
+                    <tr><td><code>hostnamectl status</code></td><td><code>hostname nom</code> pour changer (avant systemd 249 : <code>set-hostname nom</code>)</td><td>voir / modifier le nom de la machine</td></tr>
                 </tbody>
             </table></div>
             <div class="tip">
@@ -1937,6 +1937,30 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#fondations">examen du Parcours 01 · Fondations</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (14)</summary>
+                    <ul>
+                    <li><a href="https://github.com/coreutils/coreutils/blob/master/doc/coreutils.texi" rel="noopener">GNU coreutils — Manuel GNU coreutils</a></li>
+                    <li><a href="https://github.com/systemd/systemd/blob/main/man/org.freedesktop.systemd1.xml" rel="noopener">systemd — systemd, taint unmerged-usr</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/virtualization/hyper-v/plan/plan-hyper-v-networking-in-windows-server.md" rel="noopener">Microsoft Learn — Hyper-V : types de commutateurs virtuels</a></li>
+                    <li><a href="https://github.com/openssh/openssh-portable/blob/master/sshd_config.5" rel="noopener">OpenSSH — sshd_config(5) : StrictModes, Port 22</a></li>
+                    <li><a href="https://github.com/NetworkManager/NetworkManager/blob/main/man/nmcli.xml" rel="noopener">NetworkManager — nmcli(1) : con mod, ipv4.method manual, con up</a></li>
+                    <li><a href="https://github.com/Debian/apt/blob/main/cmdline/apt.cc" rel="noopener">Debian APT — apt : liste des commandes, modernize-sources</a></li>
+                    <li><a href="https://github.com/Debian/apt/blob/main/apt-pkg/acquire-item.cc" rel="noopener">Debian APT — apt : messages Release file</a></li>
+                    <li><a href="https://github.com/Debian/apt/blob/main/doc/sources.list.5.xml" rel="noopener">Debian APT — sources.list(5) : deb822, composants</a></li>
+                    <li><a href="https://github.com/Debian/apt/blob/main/doc/apt-verbatim.ent" rel="noopener">Debian APT — apt : codename stable trixie</a></li>
+                    <li><a href="https://github.com/thkukuk/wtmpdb/blob/main/README.md" rel="noopener">wtmpdb — wtmpdb : Y2038, /var/lib/wtmpdb/wtmp.db, wtmpdb last</a></li>
+                    <li><a href="https://github.com/util-linux/util-linux/blob/master/disk-utils/fdisk.8.adoc" rel="noopener">util-linux — fdisk : 4 partitions primaires, logiques numérotées à partir de 5</a></li>
+                    <li><a href="https://github.com/md-raid-utilities/mdadm/blob/master/md.4" rel="noopener">mdadm — md(4) : RAID 5 tolère une panne, RAID 6 : N+2 disques pour N de données</a></li>
+                    <li><a href="https://github.com/systemd/systemd/blob/main/man/systemctl.xml" rel="noopener">systemd — systemctl enable : démarrage au boot ; option --now</a></li>
+                    <li><a href="https://raw.githubusercontent.com/openssh/openssh-portable/master/sshd_config.5" rel="noopener">OpenSSH — sshd_config(5) : port par défaut 22 ; StrictModes (world-writable)</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -1945,11 +1969,11 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
-<script src="../assets/atelier.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
+<script src="../assets/atelier.js?v=16"></script>
 </body>
 </html>

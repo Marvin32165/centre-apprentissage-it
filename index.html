@@ -10,14 +10,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="assets/theme.css?v=15">
+    <link rel="stylesheet" href="assets/theme.css?v=16">
 </head>
 <body>
 
 <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
 
-<header class="hero">
+<header class="hero hero--split">
     <div class="hero__inner">
+        <div class="hero__main">
         <p class="eyebrow">Centre d'apprentissage IT · Tous les cours, un seul site · Réseau, systèmes et virtualisation</p>
         <h1 class="hero__title">Mon centre d'apprentissage <em>IT</em>.</h1>
         <p class="hero__lead">Un portail unique qui réunit tous mes cours. Chaque domaine est un module : objectifs annoncés, théorie synthétisée, labs guidés sur le <a href="labo.html">lab Orion</a>, commandes à taper et à vérifier, puis un <strong>test noté</strong> qui dit si c'est acquis — et chaque jour, la <a href="revision.html">révision</a> qui empêche d'oublier. Les modules se relient entre eux — prérequis, suites, voir aussi.</p>
@@ -32,8 +33,13 @@
             <input type="search" id="site-search" class="search__input" placeholder="Chercher une commande, une procédure… (ex. « créer utilisateur »)" autocomplete="off">
             <div id="site-search-results" class="search__results" hidden></div>
         </div>
+        </div>
+        <!-- Tableau de bord — rempli par app.js : « Tu débutes ? » ou ta progression -->
+        <div class="dash" data-dash role="region" aria-label="Ta progression"></div>
     </div>
 </header>
+
+<main id="contenu">
 
 <!-- Bandeau de reprise — rempli par app.js à partir de la progression locale -->
 <section class="resume"></section>
@@ -118,6 +124,22 @@
                 <li><a href="examens.html#cloud">Examen du parcours <em>20 q.</em></a></li>
             </ol>
         </div>
+    </div>
+</section>
+
+<!-- ════════ DE DÉBUTANT À PRO ════════
+     L'escalier est peint par app.js à partir de CATALOGUE.paliers. -->
+<section class="ladder" id="debutant-pro">
+    <div class="paths__head">
+        <p class="section-tag">De débutant à pro</p>
+        <h2>Quatre paliers, un métier à chaque marche</h2>
+        <p>Les mêmes modules, relus par métier : ce que tu sauras faire, la mission qui le prouve et le poste visé, de technicien·ne support à ingénieur·e. Le test de positionnement dit en cinq minutes par où commencer.</p>
+    </div>
+    <ol class="stairs" data-stairs aria-label="Les quatre paliers"></ol>
+    <noscript><p class="note">Les paliers ont besoin de JavaScript : voir la page <a href="feuille-de-route.html">De débutant à pro</a>.</p></noscript>
+    <div class="ladder__foot">
+        <a class="btn btn--primary" href="feuille-de-route.html#diagnostic">Faire le test de positionnement</a>
+        <a class="btn btn--ghost" href="feuille-de-route.html">Voir la feuille de route</a>
     </div>
 </section>
 
@@ -245,26 +267,28 @@
     <p class="section-tag">Méthode</p>
     <h2>Comment j'apprends chaque module en solo</h2>
     <div class="road">
-        <div class="road__step"><div class="road__n">01</div><h4>Se fixer l'objectif</h4><p>Lire les objectifs en tête de module : savoir <em>ce qu'on doit savoir faire</em> à la fin, avant de commencer.</p></div>
-        <div class="road__step"><div class="road__n">02</div><h4>Comprendre</h4><p>La théorie synthétisée : à quoi sert la brique, où elle se place dans l'infrastructure.</p></div>
-        <div class="road__step"><div class="road__n">03</div><h4>Faire et vérifier</h4><p>Les labs guidés sur le <a href="labo.html">lab Orion</a>, les commandes à taper soi-même, et un encadré <em>Vérifier</em> après chaque étape : la commande, la sortie attendue, et quoi faire si ce n'est pas celle-là.</p></div>
-        <div class="road__step"><div class="road__n">04</div><h4>Passer le test</h4><p>Le test de fin de module, noté. Chaque erreur renvoie au chapitre à relire : on refait le test jusqu'au seuil.</p></div>
-        <div class="road__step"><div class="road__n">05</div><h4>Réviser chaque jour</h4><p>Quinze minutes de <a href="revision.html">révision du jour</a> : les questions des tests et les commandes clés reviennent juste avant d'être oubliées.</p></div>
-        <div class="road__step"><div class="road__n">06</div><h4>Croiser et prouver</h4><p>L'examen de parcours, puis la <a href="labo.html#competences">grille de compétences</a> : ce qu'on sait faire, prouvé par une commande sur le lab.</p></div>
+        <div class="road__step"><div class="road__n">01</div><h3>Se fixer l'objectif</h3><p>Lire les objectifs en tête de module : savoir <em>ce qu'on doit savoir faire</em> à la fin, avant de commencer.</p></div>
+        <div class="road__step"><div class="road__n">02</div><h3>Comprendre</h3><p>La théorie synthétisée : à quoi sert la brique, où elle se place dans l'infrastructure.</p></div>
+        <div class="road__step"><div class="road__n">03</div><h3>Faire et vérifier</h3><p>Les labs guidés sur le <a href="labo.html">lab Orion</a>, les commandes à taper soi-même, et un encadré <em>Vérifier</em> après chaque étape : la commande, la sortie attendue, et quoi faire si ce n'est pas celle-là.</p></div>
+        <div class="road__step"><div class="road__n">04</div><h3>Passer le test</h3><p>Le test de fin de module, noté. Chaque erreur renvoie au chapitre à relire : on refait le test jusqu'au seuil.</p></div>
+        <div class="road__step"><div class="road__n">05</div><h3>Réviser chaque jour</h3><p>Quinze minutes de <a href="revision.html">révision du jour</a> : les questions des tests et les commandes clés reviennent juste avant d'être oubliées.</p></div>
+        <div class="road__step"><div class="road__n">06</div><h3>Croiser et prouver</h3><p>L'examen de parcours, puis la <a href="labo.html#competences">grille de compétences</a> : ce qu'on sait faire, prouvé par une commande sur le lab.</p></div>
     </div>
 </section>
+
+</main>
 
 <footer>
     <p><strong>Centre d'apprentissage IT</strong> — portail personnel d'auto-formation de Marvin</p>
     <p>Administration système orientée virtualisation · Proxmox · Docker · Windows Server · Réseau · Sécurité · Linux · Homelab</p>
-    <p><a href="#carte">Carte des modules</a> · <a href="examens.html">Examens transversaux</a> · Progression et résultats enregistrés dans ce navigateur uniquement</p>
+    <p><a href="feuille-de-route.html">De débutant à pro</a> · <a href="#carte">Carte des modules</a> · <a href="examens.html">Examens transversaux</a> · Progression et résultats enregistrés dans ce navigateur uniquement</p>
 </footer>
 
-<script src="assets/catalogue.js?v=15"></script>
-<script src="assets/app.js?v=15"></script>
-<script src="assets/quiz-data.js?v=15"></script>
-<script src="assets/quiz.js?v=15"></script>
-<script src="assets/search-index.js?v=15"></script>
-<script src="assets/search.js?v=15"></script>
+<script src="assets/catalogue.js?v=16"></script>
+<script src="assets/app.js?v=16"></script>
+<script src="assets/quiz-data.js?v=16"></script>
+<script src="assets/quiz.js?v=16"></script>
+<script src="assets/search-index.js?v=16"></script>
+<script src="assets/search.js?v=16"></script>
 </body>
 </html>

@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Module Homelab & Self-hosting : matériel de départ, Docker et Compose, reverse proxy et HTTPS, DNS local Pi-hole, services à héberger, NAS et partages, sauvegardes 3-2-1 et accès distant par VPN.">
     <title>Homelab &amp; Self-hosting — Module</title>
-    <meta name="description" content="Monter son labo maison et héberger ses propres services : Docker & Compose, reverse proxy et HTTPS, DNS local (Pi-hole), services (médias, cloud), stockage/NAS, sauvegardes et accès distant sécurisé.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -225,7 +224,7 @@
                 <div class="card">
                     <h4>Bonnes pratiques</h4>
                     <ul>
-                        <li>Prévoir un DNS de secours (sinon plus d'Internet si le Pi-hole tombe) — idéalement un <strong>second Pi-hole</strong> : un DNS public en secondaire laisse passer les pubs, car les clients l'interrogent aussi</li>
+                        <li>Prévoir un DNS de secours (sinon plus d'Internet si le Pi-hole tombe) — idéalement un <strong>second Pi-hole</strong> : un DNS public en secondaire laisse passer les pubs, car les clients l'interrogent parfois</li>
                         <li>Le mettre sur une IP fixe</li>
                         <li>Alternative équivalente : AdGuard Home</li>
                     </ul>
@@ -241,11 +240,11 @@
                 <div class="scenario__step">
                     <p class="scenario__q">Tu as mis dans le DHCP de la box le Pi-hole en DNS 1 et <code>1.1.1.1</code> en DNS 2, « au cas où ». Des pubs réapparaissent par moments. Pourquoi ?</p>
                     <div class="scenario__opts">
-                        <button class="scenario__opt" data-ok>Les appareils interrogent aussi le DNS 2, qui ne filtre rien</button>
+                        <button class="scenario__opt" data-ok>Les appareils interrogent parfois le DNS 2, qui ne filtre rien</button>
                         <button class="scenario__opt" data-why="Des listes périmées laisseraient passer toujours les mêmes pubs, pas « par moments » selon l&#x27;appareil.">Le Pi-hole n&#x27;a pas mis à jour ses listes</button>
                         <button class="scenario__opt" data-why="Un DNS public ne connaît pas tes listes : il répond à tout, pubs comprises.">1.1.1.1 copie la liste de blocage du Pi-hole</button>
                     </div>
-                    <div class="scenario__why"><p>Un client n'utilise pas le second DNS seulement en cas de panne : il peut l'interroger quand il veut. Pour garder le filtrage <em>et</em> la redondance, le DNS 2 doit être un <strong>second Pi-hole</strong> (ou AdGuard Home) sur une autre machine.</p></div>
+                    <div class="scenario__why"><p>Le DNS 2 ne sert pas seulement quand le Pi-hole est en panne : il suffit que le Pi-hole tarde à répondre pour qu'un appareil passe au suivant, et certains systèmes interrogent leurs serveurs à tour de rôle. Pour garder le filtrage <em>et</em> la redondance, le DNS 2 doit être un <strong>second Pi-hole</strong> (ou AdGuard Home) sur une autre machine.</p></div>
                 </div>
             </div>
         </section>
@@ -452,6 +451,40 @@
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab & sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (24)</summary>
+                    <ul>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/engine/containers/start-containers-automatically.md" rel="noopener">Docker Docs — Politiques de redémarrage Docker (unless-stopped)</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/engine/storage/volumes.md" rel="noopener">Docker Docs — Volumes Docker persistants</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/compose/intro/compose-application-model.md" rel="noopener">Docker Docs — Nom du fichier Compose : compose.yaml (préféré)</a></li>
+                    <li><a href="https://github.com/docker/compose/blob/main/docs/reference/compose.md" rel="noopener">Docker Docs — Compose : compose.yaml ou docker-compose.yaml</a></li>
+                    <li><a href="https://github.com/docker/compose/blob/main/docs/reference/compose_up.md" rel="noopener">Docker Docs — docker compose up -d (détaché, agrège les logs)</a></li>
+                    <li><a href="https://github.com/docker/compose/blob/main/docs/reference/compose_logs.md" rel="noopener">Docker Docs — docker compose logs -f (suivre les journaux)</a></li>
+                    <li><a href="https://github.com/docker/compose/blob/main/docs/reference/compose_down.md" rel="noopener">Docker Docs — docker compose down</a></li>
+                    <li><a href="https://github.com/containrrr/watchtower" rel="noopener">Watchtower (dépôt GitHub) — archivé le 17/12/2025</a></li>
+                    <li><a href="https://github.com/NginxProxyManager/nginx-proxy-manager" rel="noopener">Nginx Proxy Manager — Let&#x27;s Encrypt</a></li>
+                    <li><a href="https://github.com/traefik/traefik/blob/master/docs/content/reference/install-configuration/providers/docker.md" rel="noopener">Traefik — Traefik : labels Docker, découverte</a></li>
+                    <li><a href="https://github.com/traefik/traefik/blob/master/docs/content/reference/install-configuration/tls/certificate-resolvers/acme.md" rel="noopener">Traefik — Traefik ACME : ports HTTP-01 et TLS-ALPN, DNS-01</a></li>
+                    <li><a href="https://github.com/caddyserver/caddy" rel="noopener">Caddy — HTTPS automatique par défaut</a></li>
+                    <li><a href="https://github.com/pi-hole/docs/blob/master/docs/ftldns/blockingmode.md" rel="noopener">Pi-hole — Pi-hole : mode NULL par défaut, 0.0.0.0</a></li>
+                    <li><a href="https://github.com/openmediavault/openmediavault" rel="noopener">OpenMediaVault — basé sur Debian</a></li>
+                    <li><a href="https://github.com/openzfs/zfs/blob/master/man/man7/zfsconcepts.7" rel="noopener">OpenZFS — ZFS : snapshot en lecture seule</a></li>
+                    <li><a href="https://github.com/openzfs/zfs/blob/master/man/man7/zpoolconcepts.7" rel="noopener">OpenZFS — ZFS : miroir et RAIDZ</a></li>
+                    <li><a href="https://github.com/openzfs/zfs/blob/master/man/man7/zfsprops.7" rel="noopener">OpenZFS — ZFS : propriété checksum (intégrité)</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/vzdump.adoc" rel="noopener">Proxmox VE — vzdump et Proxmox Backup Server</a></li>
+                    <li><a href="https://github.com/restic/restic" rel="noopener">restic — chiffrement et déduplication</a></li>
+                    <li><a href="https://github.com/borgbackup/borg" rel="noopener">Borg — chiffrement, déduplication, compression</a></li>
+                    <li><a href="https://github.com/kopia/kopia" rel="noopener">Kopia — sauvegardes incrémentales, chiffrées, dédupliquées</a></li>
+                    <li><a href="https://github.com/wireguard/wireguard-tools/blob/master/src/man/wg.8" rel="noopener">WireGuard — wg : ListenPort optionnel</a></li>
+                    <li><a href="https://github.com/wireguard/wireguard-tools/blob/master/src/man/wg-quick.8" rel="noopener">WireGuard — wg-quick : exemples ListenPort 51820</a></li>
+                    <li><a href="https://github.com/tailscale/tailscale" rel="noopener">Tailscale — réseaux privés WireGuard</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -460,10 +493,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a> · <a href="https://www.youtube.com/@TechHut" target="_blank" rel="noopener">TechHut</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

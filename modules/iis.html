@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -199,7 +199,7 @@ Running  WAS     Windows Process Activation Service
 
             <div class="cards">
                 <div class="card">
-                    <h4>À gauche — Connections</h4>
+                    <h3>À gauche — Connections</h3>
                     <ul>
                         <li>L'arborescence : le serveur, puis <strong>Application Pools</strong> et <strong>Sites</strong>.</li>
                         <li>Le <strong>niveau sélectionné</strong> détermine ce qu'affiche le centre.</li>
@@ -207,7 +207,7 @@ Running  WAS     Windows Process Activation Service
                     </ul>
                 </div>
                 <div class="card">
-                    <h4>À droite — Actions</h4>
+                    <h3>À droite — Actions</h3>
                     <ul>
                         <li><strong>Edit Site → Bindings…</strong> : protocole + IP + port + nom d'hôte.</li>
                         <li><strong>Basic Settings…</strong> : nom, pool et chemin physique.</li>
@@ -365,7 +365,7 @@ Running  WAS     Windows Process Activation Service
             <p>En HTTPS, le serveur doit présenter son <strong>certificat</strong> pendant la poignée de main TLS, donc <em>avant</em> d'avoir lu l'en-tête <code>Host</code>, qui voyage chiffré. Sans aide, IIS ne sait pas quel certificat envoyer : historiquement, il fallait une IP par site HTTPS. <strong>SNI</strong> (<em>Server Name Indication</em>, extension TLS gérée depuis IIS 8) règle le problème : le client annonce le nom voulu dès son premier message.</p>
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th></th><th>Binding HTTP</th><th>Binding HTTPS</th></tr></thead>
+                    <thead><tr><th><span class="sr-only">Critère</span></th><th>Binding HTTP</th><th>Binding HTTPS</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Port par défaut</strong></td><td>80</td><td>443</td></tr>
                         <tr><td><strong>Ce qui distingue les sites</strong></td><td>L'en-tête <code>Host</code></td><td>Le nom annoncé par <strong>SNI</strong>, puis l'en-tête <code>Host</code></td></tr>
@@ -642,6 +642,65 @@ IP4Address : 172.16.50.25
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#windows">examen du Parcours 02 · Infrastructure Windows</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a>.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (49)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/get-started/removed-deprecated-features-windows-server.md" rel="noopener">Microsoft Learn — Fonctionnalités retirées de WS2025 (SMTP Server)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/whats-new-in-iis-10-version-1809/new-features-introduced-in-iis-10-1809.md" rel="noopener">Microsoft Learn — IIS 10.0 livré avec Windows Server 2019</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/whats-new-in-iis-10/new-features-introduced-in-iis-10.md" rel="noopener">Microsoft Learn — IIS 10.0 livré avec Windows Server 2016</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/core-network-guide/cncg/server-certs/Install-the-Web-Server-WEB1.md" rel="noopener">Microsoft Learn — Install-WindowsFeature Web-Server -IncludeManagementTools</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ServerManager/Install-WindowsFeature.md" rel="noopener">Microsoft Learn — Install-WindowsFeature (syntaxe)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/WebAdministration/WebAdministration.md" rel="noopener">Microsoft Learn — Module WebAdministration (cmdlets)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/IISAdministration/IISAdministration.md" rel="noopener">Microsoft Learn — Module IISAdministration (Get-IISSite)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/IISAdministration/New-IISSite.md" rel="noopener">Microsoft Learn — New-IISSite</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/whats-new-in-iis-10/iisadministration-powershell-cmdlets.md" rel="noopener">Microsoft Learn — IISAdministration : scripts longs, pipeline</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/whats-new-in-iis-10/introducing-iis-on-nano-server.md" rel="noopener">Microsoft Learn — IISAdministration remplace WebAdministration sur Nano ; appcmd possible</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/manage/creating-websites/scenario-build-a-static-website-on-iis.md" rel="noopener">Microsoft Learn — Ajouter un site : Host Header, appcmd, format de liaison</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetAdapter/Disable-NetAdapterBinding.md" rel="noopener">Microsoft Learn — Disable-NetAdapterBinding -ComponentID</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/windows-server/networking/configure-ipv6-in-windows.md" rel="noopener">Microsoft Learn — ms_tcpip6 ; désactivation d&#x27;IPv6 déconseillée</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/NetTCPIP/New-NetIPAddress.md" rel="noopener">Microsoft Learn — New-NetIPAddress -PrefixLength</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsClient/Set-DnsClientServerAddress.md" rel="noopener">Microsoft Learn — Set-DnsClientServerAddress</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/7.5/Microsoft.PowerShell.Management/Rename-Computer.md" rel="noopener">Microsoft Learn — Rename-Computer -NewName -Restart</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/5.1/Microsoft.PowerShell.Management/Add-Computer.md" rel="noopener">Microsoft Learn — Add-Computer -DomainName -Restart</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/server-core/server-core-roles-and-services.md" rel="noopener">Microsoft Learn — Rôles et services : Web-Server, Web-Ftp-Server (non installés par défaut)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/ServerManager/Get-WindowsFeature.md" rel="noopener">Microsoft Learn — Get-WindowsFeature</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/introduction-to-iis/introduction-to-iis-architecture.md" rel="noopener">Microsoft Learn — Architecture : HTTP.sys, W3SVC, WAS, applicationHost.config</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/netstat.md" rel="noopener">Microsoft Learn — netstat -a -n -o</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/getting-started-with-iis/getting-started-with-the-iis-manager-in-iis-7-and-iis-8.md" rel="noopener">Microsoft Learn — Content View</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/manage/configuring-security/application-pool-identities.md" rel="noopener">Microsoft Learn — Identité ApplicationPoolIdentity, IIS AppPool\&lt;nom&gt;, compte machine</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/planning-for-security/understanding-built-in-user-and-group-accounts-in-iis.md" rel="noopener">Microsoft Learn — IUSR, compte intégré</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/configuration/system.webServer/security/authentication/anonymousAuthentication.md" rel="noopener">Microsoft Learn — Anonyme : IUSR ou identité du pool</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/developer/webapps/iis/health-diagnostic-performance/http-status-code.md" rel="noopener">Microsoft Learn — Codes HTTP (401.3, 403.x, 404.x, 500.19, 503.0)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/SupportArticles-docs/blob/main/support/developer/webapps/iis/site-behavior-performance/http-error-500-19-webpage.md" rel="noopener">Microsoft Learn — 500.19 : causes, section verrouillée, journal</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/configuration/system.applicationHost/applicationPools/add/processModel.md" rel="noopener">Microsoft Learn — idleTimeout 20 min ; maxProcesses 1 ; manualGroupMembership</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/configuration/system.applicationHost/applicationPools/add/index.md" rel="noopener">Microsoft Learn — queueLength : file HTTP.sys par pool</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/configuration/system.applicationHost/applicationPools/add/failure.md" rel="noopener">Microsoft Learn — loadBalancerCapabilities : 503</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/understand-service-accounts.md" rel="noopener">Microsoft Learn — gMSA : mot de passe géré automatiquement</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/getting-started-with-iis/create-a-web-site.md" rel="noopener">Microsoft Learn — Default Web Site dans \Inetpub\Wwwroot</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/configuration/system.applicationHost/sites/site/bindings/binding.md" rel="noopener">Microsoft Learn — Exemples de liaisons HTTP 80 et HTTPS 443</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/manage/provisioning-and-managing-iis/provisioning-sample-in-c.md" rel="noopener">Microsoft Learn — Plusieurs sites par host header sur une même IP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/get-started/whats-new-in-iis-8/iis-80-server-name-indication-sni-ssl-scalability.md" rel="noopener">Microsoft Learn — SNI, IIS 8.0 ; une IP par site HTTPS auparavant</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/application-frameworks/scenario-build-an-aspnet-website-on-iis/configuring-step-4-configure-application-security.md" rel="noopener">Microsoft Learn — Case Require Server Name Indication</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/DnsServer/Add-DnsServerResourceRecordCName.md" rel="noopener">Microsoft Learn — Add-DnsServerResourceRecordCName</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/icacls.md" rel="noopener">Microsoft Learn — icacls /grant, RX, (OI)(CI), /T</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/configuration/system.applicationHost/sites/site/logFile/index.md" rel="noopener">Microsoft Learn — Dossier des journaux %SystemDrive%\inetpub\logs\LogFiles</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/configuration/system.applicationHost/sites/applicationDefaults.md" rel="noopener">Microsoft Learn — Application pool par défaut (exemple DefaultAppPool)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/manage/provisioning-and-managing-iis/configure-logging-in-iis.md" rel="noopener">Microsoft Learn — Champ sc-substatus du journal</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/WebAdministration/New-Website.md" rel="noopener">Microsoft Learn — New-Website (paramètres)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/WebAdministration/New-WebAppPool.md" rel="noopener">Microsoft Learn — New-WebAppPool -Name</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/WebAdministration/Get-WebBinding.md" rel="noopener">Microsoft Learn — Get-WebBinding -Name</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/WebAdministration/Restart-WebAppPool.md" rel="noopener">Microsoft Learn — Restart-WebAppPool -Name</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windows-powershell-docs/blob/main/docset/winserver2025-ps/WebAdministration/Start-WebAppPool.md" rel="noopener">Microsoft Learn — Start-WebAppPool -Name</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/publish/using-the-ftp-service/scenario-build-an-ftp-site-on-iis.md" rel="noopener">Microsoft Learn — Assistant FTP : Basic, Anonymous, rôles, Read/Write, No SSL</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/publish/using-the-ftp-service/using-ftp-virtual-host-names-in-iis-7.md" rel="noopener">Microsoft Learn — utilisateur</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/iis-docs/blob/main/iis/publish/using-the-ftp-service/adding-ftp-publishing-to-a-web-site-in-iis-7.md" rel="noopener">Microsoft Learn — Add FTP Publishing (volet Actions)</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -650,10 +709,10 @@ IP4Address : 172.16.50.25
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du labo IIS</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

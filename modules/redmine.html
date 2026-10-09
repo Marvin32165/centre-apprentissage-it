@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -144,7 +144,7 @@
             <ol class="steps">
                 <li class="step"><div class="step__num">01</div><div class="step__body"><strong>Sign in</strong>Avec le compte par défaut de Redmine, <code>admin</code> / <code>admin</code> : Redmine oblige à changer le mot de passe tout de suite.</div></li>
                 <li class="step"><div class="step__num">02</div><div class="step__body"><strong>Load the default configuration</strong>Un bandeau d'<strong>Administration</strong> signale que rôles, trackers, statuts et workflow ne sont pas configurés. Le bouton charge les trackers <em>Bug</em>, <em>Feature</em>, <em>Support</em>, les rôles <em>Manager</em>, <em>Developer</em>, <em>Reporter</em> et 6 statuts.</div></li>
-                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Ouvrir l'API</strong><strong>Administration &gt; Settings</strong>, onglet <strong>Integration</strong> : <em>Enable REST web service</em> (un script ou un autre outil peut lire et créer des tickets), <em>Enable JSONP support</em>, <em>Enable webhooks</em> (Redmine prévient une autre application quand un ticket change).</div></li>
+                <li class="step"><div class="step__num">03</div><div class="step__body"><strong>Ouvrir l'API</strong><strong>Administration &gt; Settings</strong>, onglet <strong>Integrations</strong> : <em>Enable REST web service</em> (un script ou un autre outil peut lire et créer des tickets), <em>Enable JSONP support</em>, <em>Enable webhooks</em> (Redmine prévient une autre application quand un ticket change).</div></li>
             </ol>
             <p>La clé API d'un compte se lit dans <strong>My account</strong> &gt; <em>API access key</em> ; elle voyage dans l'en-tête <code>X-Redmine-API-Key</code> d'une requête.</p>
 
@@ -306,7 +306,7 @@
 <span class="k">sudo</span> docker compose up <span class="p">-d</span>                       <span class="c"># recrée les conteneurs ; volumes conservés</span></pre>
             </div>
             <ul>
-                <li>Syntaxe d'un <code>.env</code> : <code>NOM=valeur</code>, sans espace autour du <code>=</code> — pas <code>NOM: valeur</code> comme dans le Compose. Et il ne va <strong>jamais</strong> dans un dépôt Git (<code>.gitignore</code>).</li>
+                <li>Syntaxe d'un <code>.env</code> : <code>NOM=valeur</code>, la forme usuelle ; Compose accepte aussi <code>NOM: valeur</code> et ignore les espaces autour de la valeur. Et il ne va <strong>jamais</strong> dans un dépôt Git (<code>.gitignore</code>).</li>
                 <li>Au démarrage, un <code>Can't connect to server on 'db'</code> dans les logs est normal : <code>depends_on</code> attend que MariaDB <strong>démarre</strong>, pas qu'elle soit <strong>prête</strong>. Redmine réessaie et se connecte.</li>
             </ul>
 
@@ -417,7 +417,7 @@
   <span class="p">-subj</span> <span class="s">"/C=BE/O=LAB/OU=IT/CN=helpdesk.orion.local"</span> \
   <span class="p">-addext</span> <span class="s">"subjectAltName=DNS:helpdesk.orion.local"</span></pre>
             </div>
-            <p><code>-x509</code> produit directement un certificat ; <code>-nodes</code> laisse la clé non chiffrée, pour que nginx la lise sans phrase secrète ; le <strong>subjectAltName</strong> est indispensable — le CN seul ne suffit plus aux navigateurs. Auto-signé : le chiffrement fonctionne, mais le navigateur avertit, faute d'autorité qu'il connaisse.</p>
+            <p><code>-x509</code> produit directement un certificat ; <code>-nodes</code> (<code>-noenc</code> depuis OpenSSL 3.0, l'ancien nom reste accepté) laisse la clé non chiffrée, pour que nginx la lise sans phrase secrète ; le <strong>subjectAltName</strong> est indispensable — le CN seul ne suffit plus aux navigateurs. Auto-signé : le chiffrement fonctionne, mais le navigateur avertit, faute d'autorité qu'il connaisse.</p>
 
             <h3>La configuration de nginx</h3>
             <div class="terminal">
@@ -545,6 +545,51 @@ redmine-nginx   nginx     Up 3 hours
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#cloud">examen du Parcours 05 · Cloud, supervision &amp; méthode</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (35)</summary>
+                    <ul>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/doc/COPYING" rel="noopener">Redmine — Licence GPL v2</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/doc/INSTALL" rel="noopener">Redmine — Bases supportées, admin/admin, configuration par défaut</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/doc/CHANGELOG" rel="noopener">Redmine — Rails 8.1.4, webhooks v7.0.0, mot de passe admin v3.3.0</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/lib/redmine/version.rb" rel="noopener">Redmine — Version 7.0.2</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/lib/redmine/default_data/loader.rb" rel="noopener">Redmine — Trackers, rôles, statuts, priorités par défaut</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/config/locales/en.yml" rel="noopener">Redmine — Libellés d&#x27;interface (anglais)</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/app/helpers/settings_helper.rb" rel="noopener">Redmine — Onglets d&#x27;administration</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/app/views/settings/_api.html.erb" rel="noopener">Redmine — Réglages REST, JSONP, webhooks</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/app/views/settings/_general.html.erb" rel="noopener">Redmine — Host name et Protocol</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/app/controllers/application_controller.rb" rel="noopener">Redmine — En-tête X-Redmine-API-Key</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/app/models/auth_source_ldap.rb" rel="noopener">Redmine — Test, recherche, bind LDAP</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/app/models/user.rb" rel="noopener">Redmine — Authentification et création à la volée</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/app/controllers/account_controller.rb" rel="noopener">Redmine — Profil à compléter</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/app/views/auth_sources/_form.html.erb" rel="noopener">Redmine — Case On-the-fly user creation</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/app/models/mailer.rb" rel="noopener">Redmine — URL absolues des e-mails</a></li>
+                    <li><a href="https://github.com/redmine/redmine/blob/7.0.2/db/migrate/001_setup.rb" rel="noopener">Redmine — Schéma : workflows, membres, projets publics, compte admin</a></li>
+                    <li><a href="https://github.com/docker-library/docs/blob/master/redmine/README.md" rel="noopener">Docker Official Images — Image Redmine : variables, port 3000, migrations</a></li>
+                    <li><a href="https://github.com/docker-library/docs/blob/master/mariadb/README.md" rel="noopener">Docker Official Images — Image MariaDB : variables à l&#x27;initialisation, root requis</a></li>
+                    <li><a href="https://github.com/docker-library/redmine/blob/master/docker-entrypoint.sh" rel="noopener">Docker Official Images — Script d&#x27;entrée Redmine (branche master)</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/engine/containers/start-containers-automatically.md" rel="noopener">Docker Docs — Politique unless-stopped</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/compose/how-tos/startup-order.md" rel="noopener">Docker Docs — depends_on et démarrage</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/compose/how-tos/environment-variables/variable-interpolation.md" rel="noopener">Docker Docs — Syntaxe .env, variable absente</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/compose/how-tos/environment-variables/set-environment-variables.md" rel="noopener">Docker Docs — Avertissement de variable absente</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/engine/storage/volumes.md" rel="noopener">Docker Docs — --volumes-from</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/compose/intro/compose-application-model.md" rel="noopener">Docker Docs — Colonnes de compose ps</a></li>
+                    <li><a href="https://github.com/docker/compose/blob/main/docs/reference/compose_up.md" rel="noopener">Docker Docs — up : recréation, volumes conservés</a></li>
+                    <li><a href="https://github.com/docker/compose/blob/main/docs/reference/compose_exec.md" rel="noopener">Docker Docs — exec -T</a></li>
+                    <li><a href="https://github.com/MariaDB/server/blob/11.8/client/mysqldump.cc" rel="noopener">MariaDB — --single-transaction (InnoDB), mariadb-dump</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/ldap-signing.md" rel="noopener">Microsoft Learn — Signature LDAP WS2025, ports 389/636</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/manage-ldap-signing-group-policy.md" rel="noopener">Microsoft Learn — GPO : Enforcement, Disabled, gpupdate</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage-user-accounts-in-windows-server.md" rel="noopener">Microsoft Learn — Logon name Pre-Windows 2000 (sAMAccountName)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-ds/manage/active-directory-domain-join-permissions.md" rel="noopener">Microsoft Learn — Attribut SamAccountName</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/identity/ad-fs/operations/Configure-AD-FS-to-authenticate-users-stored-in-LDAP-directories.md" rel="noopener">Microsoft Learn — Attributs LDAP givenName, sn, mail</a></li>
+                    <li><a href="https://github.com/ruby-ldap/ruby-net-ldap/blob/master/lib/net/ldap.rb" rel="noopener">ruby-net-ldap — Portée sous-arbre par défaut (branche master)</a></li>
+                    <li><a href="https://github.com/cabforum/servercert/blob/main/docs/BR.md" rel="noopener">CA/Browser Forum — SAN obligatoire, certificats publics (appui partiel)</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -553,10 +598,10 @@ redmine-nginx   nginx     Up 3 hours
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Redmine en remplacement de SCSM »</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

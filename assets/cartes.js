@@ -98,10 +98,10 @@ window.CARTES = [
 { m: "powershell", f: "Pourquoi un <code>catch</code> n'attrape-t-il rien ?", b: "L'erreur est non bloquante : ajouter <code>-ErrorAction Stop</code>" },
 
 /* ── Linux ── */
-{ m: "linux-debian", f: "Tester <code>/etc/fstab</code> sans redémarrer ?", b: "<code>sudo mount -a</code>" },
+{ m: "linux-debian", f: "Tester <code>/etc/fstab</code> sans redémarrer ?", b: "<code>sudo findmnt --verify</code> (la page de manuel de <code>mount</code> déconseille <code>mount -a</code> pour ce contrôle)" },
 { m: "linux-debian", f: "Agrandir un LV et son ext4 de 5 Go en une commande ?", b: "<code>sudo lvextend -r -L +5G /dev/vg/lv</code>" },
 { m: "linux-debian", f: "État d'un RAID logiciel en un coup d'œil ?", b: "<code>cat /proc/mdstat</code> — <code>[UUU]</code> sain, un <code>_</code> = dégradé" },
-{ m: "linux-debian", f: "Rendre un RAID mdadm persistant au démarrage : les trois étapes ?", b: "Ligne ARRAY (<code>mdadm --detail --scan &gt;&gt; mdadm.conf</code>), <code>update-initramfs -u</code>, entrée fstab par UUID" },
+{ m: "linux-debian", f: "Rendre un RAID mdadm persistant au démarrage : les trois étapes ?", b: "Ligne ARRAY (<code>sudo mdadm --detail --scan | sudo tee -a /etc/mdadm/mdadm.conf</code>), <code>sudo update-initramfs -u</code>, entrée fstab par UUID" },
 { m: "linux-debian", f: "Champs d'une ligne crontab, dans l'ordre ?", b: "minute, heure, jour du mois, mois, jour de la semaine, commande" },
 { m: "linux-debian", f: "rsync : différence entre <code>/home/</code> et <code>/home</code> en source ?", b: "Avec la barre finale : le contenu ; sans : le dossier lui-même" },
 
@@ -130,7 +130,7 @@ window.CARTES = [
 
 /* ── IIS ── */
 { m: "iis", f: "Quel processus exécute un pool d'applications IIS ?", b: "<code>w3wp.exe</code> (un par pool actif)" },
-{ m: "iis", f: "Quel compte autoriser en NTFS pour le pool <code>cafe</code> ?", b: "<code>IIS AppPool\\cafe</code>" },
+{ m: "iis", f: "Quel compte autoriser en NTFS pour le pool <code>cafe</code> ?", b: "<code>IIS AppPool\\cafe</code> (si l'authentification anonyme utilise l'identité du pool ; sinon <code>IUSR</code>)" },
 { m: "iis", f: "Codes HTTP et couche en cause : 404, 401.3, 403, 500, 503 ?", b: "404 contenu absent, 401.3 droit NTFS manquant (ACL), 403 refus d'IIS lui-même (ex. 403.14 : pas de document par défaut), 500 application ou configuration, 503 pool arrêté" },
 
 /* ── Exchange & PKI ── */
@@ -176,7 +176,7 @@ window.CARTES = [
 { m: "monitoring-zabbix", f: "Ce qui doit être identique, casse comprise, entre l'agent et l'hôte ?", b: "Le <code>Hostname=</code> de l'agent et le <em>Host name</em> de l'hôte" },
 { m: "zabbix-windows", f: "Les quatre paramètres PSK d'un agent ?", b: "<code>TLSConnect=psk</code>, <code>TLSAccept=psk</code>, <code>TLSPSKIdentity</code>, <code>TLSPSKFile</code>" },
 { m: "zabbix-windows", f: "Ajouter une métrique maison à l'agent ?", b: "<code>UserParameter=clé,commande</code> dans un .conf, puis redémarrer l'agent" },
-{ m: "zabbix-windows", f: "<em>Execute now</em> fonctionne-t-il sur un item actif ?", b: "Non : il ne vaut que pour les vérifications passives. Redémarrer l'agent force la collecte" },
+{ m: "zabbix-windows", f: "<em>Execute now</em> fonctionne-t-il sur un item actif ?", b: "Non : il ne vaut que pour les vérifications passives. Redémarrer l'agent recharge sa liste d'items ; la collecte immédiate exige <code>ForceActiveChecksOnStart=1</code> (défaut : 0)" },
 
 /* ── Azure ── */
 { m: "azure", f: "LRS, ZRS, GRS, RA-GRS ?", b: "Un datacenter · plusieurs zones d'une région · une région secondaire · GRS avec lecture secondaire" },
@@ -192,5 +192,25 @@ window.CARTES = [
 { m: "scrum", f: "Les trois responsabilités de l'équipe Scrum ?", b: "Product Owner, Scrum Master, Developers" },
 { m: "scrum", f: "Durée maximale d'un sprint ?", b: "Un mois (souvent deux semaines)" },
 { m: "scrum", f: "Timebox des événements pour un sprint d'un mois (Scrum Guide 2020) ?", b: "Planning 8 h, Daily 15 min, Review 4 h, Rétrospective 3 h (moins pour un sprint plus court)" },
-{ m: "scrum", f: "Les trois artefacts et leur engagement ?", b: "Product Backlog → Product Goal ; Sprint Backlog → Sprint Goal ; Incrément → Definition of Done" }
+{ m: "scrum", f: "Les trois artefacts et leur engagement ?", b: "Product Backlog → Product Goal ; Sprint Backlog → Sprint Goal ; Incrément → Definition of Done" },
+
+/* ── Pièges révélés par la vérification des faits (octobre 2026) ── */
+{ m: "linux-debian", f: "Sticky bit sur un dossier partagé (<code>/tmp</code>) : qui peut supprimer un fichier ?", b: "Son propriétaire, le propriétaire du dossier et root" },
+{ m: "subnetting", f: "Où peut commencer un <code>/25</code> dans un <code>/24</code> ?", b: "En <code>.0</code> ou en <code>.128</code> : un bloc de 128 adresses commence sur un multiple de 128" },
+{ m: "powershell", f: "Stratégie d'exécution par défaut sur Windows ?", b: "Windows PowerShell 5.1 : <em>Restricted</em> sur un poste client, <em>RemoteSigned</em> sur un serveur. PowerShell 7 : <em>RemoteSigned</em>" },
+{ m: "storage-clustering", f: "Disque témoin d'un cluster : taille et format ?", b: "Plus de 512 Mo, disque de base (pas dynamique), NTFS ou ReFS, sans lettre de lecteur" },
+{ m: "storage-clustering", f: "Serveur cible iSCSI et DFS : des rôles à part entière ?", b: "Non : des services de rôle du rôle <em>File and Storage Services</em>" },
+{ m: "sql-server", f: "Le redémarrage du service SQL efface-t-il le journal d'erreurs ?", b: "Non : il passe en archive (<code>ERRORLOG.1</code>…), six archives gardées par défaut. Lire celle de l'incident" },
+{ m: "sql-server", f: "Créer un alias client pour SQL Server 2022 ?", b: "Avec <code>cliconfg.exe</code> (versions 32 et 64 bits distinctes) : le Configuration Manager ne crée plus d'alias" },
+{ m: "sharepoint", f: "<code>sp_configure 'max degree of parallelism', 1</code> échoue : pourquoi ?", b: "C'est une option avancée : <code>sp_configure 'show advanced options', 1; RECONFIGURE;</code> d'abord" },
+{ m: "sharepoint", f: "SQL Server Developer tout juste installé, injoignable depuis la ferme : premier réflexe ?", b: "Activer TCP/IP (désactivé par défaut avec Developer) dans SQL Server Configuration Manager, puis redémarrer le service" },
+{ m: "dpm", f: "Changer la collation d'une instance SQL déjà installée ?", b: "Sans réinstaller : supprimer les bases utilisateur, puis reconstruire les bases système (<code>setup /ACTION=REBUILDDATABASE</code> avec la nouvelle <code>/SQLCOLLATION</code>)" },
+{ m: "dpm", f: "Pourquoi <code>sqlcmd</code> (ODBC 18) refuse-t-il un SQL Server tout juste installé ?", b: "ODBC 18 chiffre par défaut et exige un certificat de confiance ; SQL présente un certificat auto-généré" },
+{ m: "proxmox", f: "Cluster Proxmox de deux nœuds avec HA : l'un tombe. Que fait l'autre ?", b: "Il perd le quorum et, s'il porte des VM en HA, se redémarre au bout de 60 s (<em>watchdog</em>) : d'où le QDevice, 3ᵉ vote" },
+{ m: "homelab", f: "Pi-hole en DNS 1, <code>1.1.1.1</code> en DNS 2 : pourquoi des pubs passent-elles ?", b: "Un appareil passe au DNS 2 dès que le Pi-hole tarde, ou alterne entre les deux : le secours doit être un second Pi-hole" },
+{ m: "docker", f: "Docker Engine 29, installation neuve : où sont les images, et <code>data-root</code> les déplace-t-il ?", b: "Dans <code>/var/lib/containerd</code> (store containerd) : <code>data-root</code> ne déplace que <code>/var/lib/docker</code> (volumes, configuration)" },
+{ m: "zabbix-windows", f: "Un <code>UserParameter</code> posé dans <code>zabbix_agent2.d\\</code> est ignoré : pourquoi ?", b: "Le <code>zabbix_agent2.conf</code> d'exemple n'inclut que <code>zabbix_agent2.d\\plugins.d\\*.conf</code> : ajouter <code>Include=.\\zabbix_agent2.d\\*.conf</code>, puis redémarrer l'agent" },
+{ m: "azure", f: "Responsabilité partagée : en SaaS, à qui reviennent les applications ?", b: "Partagé : Microsoft fait tourner l'application, le client garde sa configuration, ses accès et ses données" },
+{ m: "redmine", f: "Une variable du <code>.env</code> est mal orthographiée dans le Compose : que se passe-t-il ?", b: "Compose avertit et met une chaîne vide, sans bloquer ; l'image Redmine retombe alors sur <code>root</code>. Contrôle : <code>docker compose config</code>" },
+{ m: "securite", f: "<code>sshd_config</code> : quelle valeur gagne si un mot-clé apparaît deux fois ?", b: "La première lue — et l'<code>Include</code> de <code>sshd_config.d/*.conf</code> est en tête du fichier. Contrôle : <code>sudo sshd -T</code>" }
 ];

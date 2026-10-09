@@ -189,7 +189,7 @@ window.QUIZ_BANK = {
     name: "Hyper-V & labo virtuel",
     file: "hyperv.html",
     title: "Test — Hyper-V & labo virtuel",
-    intro: "Sept chapitres, huit questions. L'objectif : savoir monter un labo Hyper-V propre et le redéployer sans tout refaire à la main.",
+    intro: "Huit chapitres, neuf questions. L'objectif : savoir monter un labo Hyper-V propre et le redéployer sans tout refaire à la main.",
     pass: 70,
     questions: [
     {
@@ -791,7 +791,7 @@ window.QUIZ_BANK = {
         q: "Le fichier <code>.ldf</code> d'une base grossit. Que ne faut-il surtout pas faire ?",
         c: ["Le supprimer à la main : la base devient irrécupérable", "Sauvegarder le journal des transactions", "Vérifier le mode de récupération de la base", "Regarder si des transactions restent ouvertes"],
         a: 0,
-        why: "Le <code>.ldf</code> n'est pas un log Windows qu'on efface quand il gêne : c'est ce qui permet au moteur d'annuler et de rejouer. La bonne réponse est de sauvegarder le journal, ou de revoir le mode de récupération.",
+        why: "Le <code>.ldf</code> n'est pas un log Windows qu'on efface quand il gêne : c'est ce qui permet au moteur d'annuler et de rejouer. Ce qu'il faut faire à la place : sauvegarder le journal, ou revoir le mode de récupération.",
         ref: "Chapitre 01"
     },
     {
@@ -854,7 +854,7 @@ window.QUIZ_BANK = {
         q: "Une base passe en <code>SUSPECT</code>. Quel est le premier réflexe ?",
         c: ["Lire le journal d'erreurs du moteur", "Redémarrer le service SQL Server", "Lancer <code>DBCC CHECKDB ... REPAIR_ALLOW_DATA_LOSS</code>", "Détacher puis rattacher la base"],
         a: 0,
-        why: "<code>RECOVERY_PENDING</code> et <code>SUSPECT</code> sont des symptômes de problèmes <em>sous</em> SQL Server : disque plein, volume démonté, fichier supprimé. Redémarrer efface justement les informations qui permettaient de comprendre.",
+        why: "<code>RECOVERY_PENDING</code> et <code>SUSPECT</code> sont des symptômes de problèmes <em>sous</em> SQL Server : disque plein, volume démonté, fichier supprimé. Redémarrer ne règle rien : la base reste dans cet état tant que la cause n'est pas corrigée, et le journal d'erreurs, lui, est seulement archivé — c'est là qu'on lit la cause.",
         ref: "Chapitre 12"
     }]
 },
@@ -928,7 +928,7 @@ window.QUIZ_BANK = {
     name: "System Center DPM",
     file: "dpm.html",
     title: "Test — System Center DPM",
-    intro: "Huit chapitres, dix questions. Elles portent sur ce qui fait échouer une installation DPM et sur la distinction qui décide de ce qu'on pourra restaurer : synchronisation ou point de récupération.",
+    intro: "Neuf chapitres, dix questions. Elles portent sur ce qui fait échouer une installation DPM et sur la distinction qui décide de ce qu'on pourra restaurer : synchronisation ou point de récupération.",
     pass: 70,
     questions: [
     {
@@ -949,7 +949,7 @@ window.QUIZ_BANK = {
         q: "Quelle collation DPM exige-t-il pour l'instance SQL qui porte sa base ?",
         c: ["<code>SQL_Latin1_General_CP1_CI_AS</code>", "<code>French_CI_AS</code>", "<code>Latin1_General_100_CI_AS_SC_UTF8</code>", "N'importe laquelle, tant qu'elle est insensible à la casse"],
         a: 0,
-        why: "DPM n'en accepte pas d'autre. Et c'est le seul point de la préparation qui ne se rattrape pas sans réinstaller l'instance : il se choisit à l'installation de SQL.",
+        why: "DPM n'en accepte pas d'autre. Et elle se choisit à l'installation de SQL : la changer ensuite exige de supprimer les bases utilisateur et de reconstruire les bases système.",
         ref: "Chapitre 03"
     },
     {
@@ -967,7 +967,7 @@ window.QUIZ_BANK = {
         ref: "Chapitre 05 · ch. 06"
     },
     {
-        q: "Un groupe synchronise toutes les 15 minutes et crée un point de récupération chaque vendredi à 19 h. Que peut-on restaurer un mercredi ?",
+        q: "Un groupe synchronise toutes les 15 minutes, crée un point de récupération chaque vendredi à 19 h et garde ses points 14 jours. Que peut-on restaurer un mercredi ?",
         c: ["L'état du vendredi précédent à 19 h : on ne restaure que des points de récupération", "L'état d'il y a au plus 15 minutes, grâce à la synchronisation", "L'état de la veille, la synchronisation créant un point par jour", "Rien avant le vendredi suivant"],
         a: 0,
         why: "La synchronisation tient le réplica à jour, mais ne crée rien de restaurable. Seuls les points de récupération figent une version qu'on peut rendre.",
@@ -1007,7 +1007,7 @@ window.QUIZ_BANK = {
     name: "IIS — Serveur web Windows",
     file: "iis.html",
     title: "Test — IIS, serveur web Windows",
-    intro: "Huit chapitres, huit questions. L'objectif : savoir publier plusieurs sites sur un même serveur sans les mélanger, et comprendre ce qui se passe entre le binding et le DNS.",
+    intro: "Neuf chapitres, huit questions. L'objectif : savoir publier plusieurs sites sur un même serveur sans les mélanger, et comprendre ce qui se passe entre le binding et le DNS.",
     pass: 70,
     questions: [
     {
@@ -1314,7 +1314,7 @@ window.QUIZ_BANK = {
     name: "Proxmox & Virtualisation",
     file: "proxmox.html",
     title: "Test — Proxmox & Virtualisation",
-    intro: "Neuf chapitres sur l'hyperviseur du homelab : VM contre conteneurs, ZFS, réseau, sauvegardes et cluster.",
+    intro: "Dix chapitres sur l'hyperviseur du homelab : VM contre conteneurs, ZFS, réseau, sauvegardes et cluster.",
     pass: 70,
     questions: [
     {
@@ -1379,7 +1379,7 @@ window.QUIZ_BANK = {
     name: "Docker & conteneurs",
     file: "docker.html",
     title: "Test — Docker & conteneurs",
-    intro: "Huit chapitres, huit questions : ce qu'est un conteneur, et les erreurs qui font perdre des données ou arrêter un service sans le vouloir.",
+    intro: "Neuf chapitres, huit questions : ce qu'est un conteneur, et les erreurs qui font perdre des données ou arrêter un service sans le vouloir.",
     pass: 70,
     questions: [
     {
@@ -1583,7 +1583,7 @@ window.QUIZ_BANK = {
     name: "Supervision — Zabbix",
     file: "monitoring-zabbix.html",
     title: "Test — Supervision avec Zabbix",
-    intro: "Neuf chapitres, neuf questions. L'objectif : savoir monter une supervision qui remonte vraiment des données, et comprendre ce qui se passe quand elle n'en remonte pas.",
+    intro: "Dix chapitres, neuf questions. L'objectif : savoir monter une supervision qui remonte vraiment des données, et comprendre ce qui se passe quand elle n'en remonte pas.",
     pass: 70,
     questions: [
     {
@@ -1639,7 +1639,7 @@ window.QUIZ_BANK = {
         q: "Pourquoi mapper des <strong>groupes</strong> AD plutôt que des comptes un par un dans les réglages LDAP ?",
         c: ["Les droits se gèrent par groupe, et un nouvel arrivant est couvert d'office", "Zabbix ne sait pas authentifier des comptes individuels", "Le mapping par groupe est le seul à chiffrer les échanges LDAP", "Cela évite de créer le compte local Admin"],
         a: 0,
-        why: "Sinon l'outil devient un annuaire parallèle : comptes d'anciens collègues toujours actifs, droits jamais revus. C'est la même logique de gestion par groupe que dans Active Directory.",
+        why: "Sinon l'outil devient un annuaire parallèle : comptes d'anciens collègues toujours actifs, droits jamais revus. C'est la même logique de gestion par groupe que dans Active Directory — et, avec le provisionnement JIT activé, le compte du nouvel arrivant est créé à sa première connexion.",
         ref: "Chapitre 08"
     },
     {
@@ -1655,7 +1655,7 @@ window.QUIZ_BANK = {
     name: "Zabbix & serveurs Windows",
     file: "zabbix-windows.html",
     title: "Test — Zabbix & serveurs Windows",
-    intro: "Sept chapitres, dix questions. Elles portent sur ce qui casse quand on change de sens ou de réseau : vérifications actives, PSK, noms de services Docker, et les modèles maison.",
+    intro: "Huit chapitres, dix questions. Elles portent sur ce qui casse quand on change de sens ou de réseau : vérifications actives, PSK, noms de services Docker, et les modèles maison.",
     pass: 70,
     questions: [
     {
@@ -1711,7 +1711,7 @@ window.QUIZ_BANK = {
         q: "Sur un item <strong>actif</strong>, le bouton <em>Execute now</em> ne fait rien. Comment forcer une collecte ?",
         c: ["Redémarrer l'agent", "Passer l'item en passif le temps du test", "Augmenter le timeout à 10 s", "Relancer le conteneur <code>zabbix-server</code>"],
         a: 0,
-        why: "Un item actif, c'est l'agent qui l'envoie : <em>Execute now</em> ne s'applique qu'aux vérifications passives (doc Zabbix 7.0), le serveur ne peut pas déclencher un item actif. Au redémarrage, l'agent récupère sa liste d'items et collecte aussitôt.",
+        why: "Un item actif, c'est l'agent qui l'envoie : <em>Execute now</em> ne s'applique qu'aux vérifications passives (doc Zabbix 7.0), le serveur ne peut pas déclencher un item actif. Au redémarrage, l'agent recharge sa configuration et récupère sa liste d'items ; il ne collecte aussitôt que si ForceActiveChecksOnStart=1 (défaut : 0).",
         ref: "Chapitre 05"
     },
     {
@@ -1734,7 +1734,7 @@ window.QUIZ_BANK = {
     name: "Azure — AZ-900",
     file: "azure.html",
     title: "Test — Azure AZ-900",
-    intro: "Onze chapitres, dix questions posées comme à l'examen : un scénario, un mot-clé, et des propositions plausibles. L'objectif n'est pas de réciter une définition, mais de choisir le service le plus simple qui répond au besoin.",
+    intro: "Douze chapitres, dix questions posées comme à l'examen : un scénario, un mot-clé, et des propositions plausibles. L'objectif n'est pas de réciter une définition, mais de choisir le service le plus simple qui répond au besoin.",
     pass: 70,
     questions: [
     {
@@ -1813,7 +1813,7 @@ window.QUIZ_BANK = {
     name: "Agile & Scrum",
     file: "scrum.html",
     title: "Test — Agile & Scrum",
-    intro: "Neuf chapitres, dix questions. Elles portent surtout sur les distinctions que tout le monde confond : Review et Rétrospective, les deux backlogs, critères d'acceptation et Definition of Done.",
+    intro: "Dix chapitres, dix questions. Elles portent surtout sur les distinctions que tout le monde confond : Review et Rétrospective, les deux backlogs, critères d'acceptation et Definition of Done.",
     pass: 70,
     questions: [
     {
@@ -1892,7 +1892,7 @@ window.QUIZ_BANK = {
     name: "Redmine — helpdesk",
     file: "redmine.html",
     title: "Test — Redmine",
-    intro: "Sept chapitres, dix questions. Elles portent sur le modèle de Redmine, sur le piège LDAP de Windows Server 2025, et sur ce qui rend une application en conteneurs exploitable : secrets, sauvegarde, HTTPS.",
+    intro: "Huit chapitres, dix questions. Elles portent sur le modèle de Redmine, sur le piège LDAP de Windows Server 2025, et sur ce qui rend une application en conteneurs exploitable : secrets, sauvegarde, HTTPS.",
     pass: 70,
     questions: [
     {
@@ -1934,7 +1934,7 @@ window.QUIZ_BANK = {
         q: "Dans le Compose, <code>${MSQL_USER}</code> est écrit au lieu de <code>${MYSQL_USER}</code>. Que se passe-t-il ?",
         c: ["La variable devient une chaîne vide, avec un simple avertissement", "Compose refuse de démarrer et signale une erreur de syntaxe", "Compose garde le texte <code>${MSQL_USER}</code> tel quel", "Docker demande la valeur manquante au démarrage"],
         a: 0,
-        why: "Compose affiche seulement « The \"MSQL_USER\" variable is not set. Defaulting to a blank string » : aucune erreur bloquante, et Redmine tente alors de se connecter sans nom d'utilisateur. <code>docker compose config</code> affiche le résultat du remplacement avant de relancer.",
+        why: "Compose affiche seulement « The \"MSQL_USER\" variable is not set. Defaulting to a blank string » : aucune erreur bloquante, et Redmine retombe alors sur l'utilisateur par défaut de son image, <code>root</code>, au lieu de celui du <code>.env</code>. <code>docker compose config</code> affiche le résultat du remplacement avant de relancer.",
         ref: "Chapitre 05"
     },
     {

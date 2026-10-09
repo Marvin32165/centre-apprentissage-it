@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -223,11 +223,11 @@ Authentication timeout: 120 secs; Authentication retries: 3</pre>
             </div>
             <div class="cards">
                 <div class="card">
-                    <h4>Le VLAN natif</h4>
+                    <h3>Le VLAN natif</h3>
                     <p>Sur un trunk 802.1Q, les trames du VLAN natif passent <strong>sans étiquette</strong>. Par défaut c'est le VLAN 1. On le déplace vers un VLAN vide (ici 999), identique des deux côtés : un désaccord est signalé par CDP (<code>NATIVE_VLAN_MISMATCH</code>) et mélange deux VLAN.</p>
                 </div>
                 <div class="card">
-                    <h4>La liste autorisée</h4>
+                    <h3>La liste autorisée</h3>
                     <code>allowed vlan</code> limite ce qui traverse le trunk. Attention : <code>switchport trunk allowed vlan 30</code> <strong>remplace</strong> la liste ; pour ajouter, c'est <code>allowed vlan add 30</code>. Une erreur classique qui coupe tous les autres VLAN.
                 </div>
             </div>
@@ -249,7 +249,7 @@ Gi0/1       10,20,30,40,50,60,70,80,90,99,100,110,120</pre>
             </div>
             <div class="cmdex" data-accept="sw(itchport)? tr(unk)? al(lowed)? vlan add 30" data-hint="le mot qui compte est entre « vlan » et « 30 ».">
                 <p class="cmdex__label">À toi de taper</p>
-                <p>Le trunk <code>gi0/1</code> transporte déjà les VLAN 10 et 20. Ajoute le VLAN <strong>30</strong> sans retirer les autres (tu es dans <code>interface gi0/1</code>).</p>
+                <p>Sur un switch de test, le trunk <code>gi0/1</code> ne transporte que les VLAN 10 et 20. Ajoute le VLAN <strong>30</strong> sans retirer les autres (tu es dans <code>interface gi0/1</code>).</p>
                 <details class="reveal">
                     <summary>Voir la solution</summary>
                     <div class="reveal__body"><p><code>switchport trunk allowed vlan add 30</code>. Sans <code>add</code>, la liste deviendrait « 30 » seul, et les VLAN 10 et 20 seraient coupés sur ce lien.</p></div>
@@ -307,11 +307,11 @@ Gi0/1       10,20,30,40,50,60,70,80,90,99,100,110,120</pre>
             </div>
             <div class="cards">
                 <div class="card">
-                    <h4>Router-on-a-stick</h4>
+                    <h3>Router-on-a-stick</h3>
                     <p>Simple, un seul lien suffit. Mais tout le trafic entre VLAN monte et redescend par ce lien : il devient le goulot. Idéal en labo et en petite agence.</p>
                 </div>
                 <div class="card">
-                    <h4>Switch de niveau 3</h4>
+                    <h3>Switch de niveau 3</h3>
                     <p>Le routage se fait dans le switch, à la vitesse du matériel. C'est la norme en entreprise. Une SVI n'est <em>up</em> que si son VLAN existe et a au moins un port actif.</p>
                 </div>
             </div>
@@ -822,7 +822,7 @@ tcp  203.0.113.2:443     10.2.126.10:443     ---                ---</pre>
                     </li>
                 </ol>
             </div>
-            <div class="cmdex" data-accept="ip nat inside source list ACL-NAT interface g(igabitethernet)?0/2 overload" data-hint="ip nat inside source list … interface … overload">
+            <div class="cmdex" data-accept="ip nat inside source list ACL-NAT interface g(i(gabitethernet)?)? ?0/2 overload" data-hint="ip nat inside source list … interface … overload">
                 <p class="cmdex__label">À toi de taper</p>
                 <p>Écris la ligne de PAT qui traduit tout ce qu'autorise l'ACL <code>ACL-NAT</code> derrière l'adresse de <code>g0/2</code>.</p>
                 <details class="reveal">
@@ -856,11 +856,11 @@ tcp  203.0.113.2:443     10.2.126.10:443     ---                ---</pre>
 
             <div class="cards">
                 <div class="card">
-                    <h4>Standard (1–99, 1300–1999, ou nommée)</h4>
+                    <h3>Standard (1–99, 1300–1999, ou nommée)</h3>
                     <p>Ne regarde que l'<strong>adresse source</strong>. Se place <strong>près de la destination</strong> (sinon elle bloque trop large). Usage type : qui peut se connecter en SSH (<code>access-class</code>).</p>
                 </div>
                 <div class="card">
-                    <h4>Étendue (100–199, 2000–2699, ou nommée)</h4>
+                    <h3>Étendue (100–199, 2000–2699, ou nommée)</h3>
                     <p>Regarde source, destination, protocole et ports. Se place <strong>près de la source</strong>, pour jeter le trafic avant qu'il traverse le réseau.</p>
                 </div>
             </div>
@@ -1113,6 +1113,23 @@ FE80::2D0:97FF:FE2B:1A01
                 <li><a href="https://www.youtube.com/playlist?list=PLxbwE86jKRgMpuZuLBivzlM8s2Dk5lXBQ" rel="noopener">Jeremy's IT Lab — cours CCNA 200-301 complet et gratuit (vidéos en anglais, labs Packet Tracer)</a></li>
                 <li><a href="https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301_CCNA_v2.0_Exam_Topics_PDF.pdf" rel="noopener">Cisco — programme officiel de l'examen CCNA 200-301 v2.0 (PDF)</a></li>
             </ul>
+                        <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (11)</summary>
+                    <ul>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/technologies/dhcp/dhcp-deploy-relay-agent.md" rel="noopener">Microsoft Learn — Agent de relais DHCP : relaie les broadcasts des clients vers un serveur distant</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/technologies/dhcp/dhcp-subnet-options.md" rel="noopener">Microsoft Learn — Options de sous-réseau DHCP : GIADDR doit être dans une étendue active</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/ipconfig.md" rel="noopener">Microsoft Learn — Commande ipconfig : /renew</a></li>
+                    <li><a href="https://github.com/openssh/openssh-portable/blob/master/sshd.8" rel="noopener">OpenSSH — sshd : protocole SSH 2 uniquement (OpenSSH, pas Cisco)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/windows-time-service/accurate-time.md" rel="noopener">Microsoft Learn — Kerberos : 5 minutes de précision</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/windows-time-service/Windows-Time-Service-Tools-and-Settings.md" rel="noopener">Microsoft Learn — W32Time : NTP en UDP 123</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/networking/dns/network-ports.md" rel="noopener">Microsoft Learn — DNS : port 53 UDP/TCP</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/telnet-open.md" rel="noopener">Microsoft Learn — Telnet : TCP 23 par défaut</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/windows-commands/ftp-open_1.md" rel="noopener">Microsoft Learn — FTP : TCP 21 par défaut</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/windowsserverdocs/blob/main/WindowsServerDocs/administration/OpenSSH/OpenSSH_Install_FirstUse.md" rel="noopener">Microsoft Learn — OpenSSH : port 22</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/azure-docs/blob/main/articles/networking/design-guide/ip-planning.md" rel="noopener">Microsoft Learn — Plages RFC 1918 : 10/8, 172.16/12, 192.168/16</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
         </div>
 
     </main>
@@ -1123,10 +1140,10 @@ FE80::2D0:97FF:FE2B:1A01
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>

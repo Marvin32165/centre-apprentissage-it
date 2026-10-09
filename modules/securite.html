@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Module Cybersécurité & hacking éthique : cadre légal, labo isolé, méthodologie de pentest, reconnaissance et scan Nmap, OWASP Top 10, durcissement des systèmes, défense réseau et hygiène numérique.">
     <title>Cybersécurité &amp; Hacking éthique — Module</title>
-    <meta name="description" content="Fondamentaux de cybersécurité offensive et défensive, en labo isolé et usage légal : éthique, méthodologie de pentest, reconnaissance, OWASP, hardening, pare-feu/VPN et hygiène numérique.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=15">
+    <link rel="stylesheet" href="../assets/theme.css?v=16">
 </head>
 <body>
 
@@ -28,7 +27,7 @@
             <span class="fact fact--n1"><b>Niveau</b> Débutant</span>
             <span class="fact"><b>Durée</b> ≈ 1 h 30</span>
             <span class="fact"><b>Chapitres</b> 8</span>
-            <span class="fact"><b>Test</b> 8 questions</span>
+            <span class="fact"><b>Test</b> 9 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="linux-debian.html">Linux Debian</a> · <a href="subnetting.html">Subnetting</a></span>
         </div>
     </div>
@@ -345,7 +344,7 @@
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>Un fichier de sshd_config.d qui fixe la valeur avant ta ligne</button>
                         <button class="scenario__opt" data-why="Sur Debian, le service s&#x27;appelle ssh ; s&#x27;il n&#x27;avait pas redémarré, systemctl l&#x27;aurait signalé. Le comportement vient de la configuration lue.">Que le service s&#x27;appelle bien sshd et pas ssh</button>
-                        <button class="scenario__opt" data-why="Les valeurs yes / no ne sont pas sensibles à la casse : le problème est ailleurs.">Qu&#x27;il faut écrire « No » avec une majuscule</button>
+                        <button class="scenario__opt" data-why="Ta valeur no est déjà en minuscules, la forme documentée (dans sshd_config, les mots-clés ignorent la casse, pas leurs arguments) : le problème est ailleurs.">Qu&#x27;il faut écrire « No » avec une majuscule</button>
                     </div>
                     <div class="scenario__why"><p>Pour sshd, la <strong>première</strong> occurrence d'un mot-clé gagne. Or l'<code>Include</code> de <code>sshd_config.d/*.conf</code> est en tête du fichier. <code>sudo sshd -T</code> affiche la configuration effective ; on corrige le fichier fautif, ou on place son réglage dans un fichier de ce dossier au nom qui passe en premier.</p></div>
                 </div>
@@ -433,6 +432,27 @@
             <p class="brief__label">Une fois le test validé</p>
             <p class="brief__foot">Ce module est aussi couvert par l'<a href="../examens.html#virtualisation">examen du Parcours 04 · Virtualisation, homelab & sécurité</a>, qui le croise avec les autres modules du parcours, puis par l'<a href="../examens.html#final">examen final</a> sur les vingt-sept modules.</p>
         </section>
+        <div class="sources">
+            <p class="sources__label">Pour aller plus loin — sources</p>
+                <details class="sources__verif">
+                    <summary>Sources officielles relues pour la vérification des faits du 08/10/2026 (11)</summary>
+                    <ul>
+                    <li><a href="https://github.com/OWASP/Top10/blob/master/2025/docs/en/index.md" rel="noopener">OWASP — OWASP Top 10:2025, liste des dix catégories</a></li>
+                    <li><a href="https://github.com/OWASP/Top10/blob/master/2025/docs/en/0x00_2025-Introduction.md" rel="noopener">OWASP — OWASP 2025, SSRF intégré à A01</a></li>
+                    <li><a href="https://github.com/OWASP/Top10/blob/master/2025/docs/en/A01_2025-Broken_Access_Control.md" rel="noopener">OWASP — OWASP A01:2025, IDOR et deny by default</a></li>
+                    <li><a href="https://github.com/OWASP/Top10/blob/master/2025/docs/en/A05_2025-Injection.md" rel="noopener">OWASP — OWASP A05:2025, requêtes paramétrées</a></li>
+                    <li><a href="https://github.com/OWASP/Top10/blob/master/2025/docs/en/A07_2025-Authentication_Failures.md" rel="noopener">OWASP — OWASP A07:2025, MFA et complexité déconseillée</a></li>
+                    <li><a href="https://github.com/OWASP/Top10/blob/master/2025/docs/en/A04_2025-Cryptographic_Failures.md" rel="noopener">OWASP — OWASP A04:2025, TLS et hachage des mots de passe</a></li>
+                    <li><a href="https://github.com/docker/docs/blob/main/content/manuals/engine/network/packet-filtering-firewalls.md" rel="noopener">Docker Docs — Docker : ports publiés et ufw</a></li>
+                    <li><a href="https://github.com/openssh/openssh-portable/blob/master/sshd_config.5" rel="noopener">OpenSSH — sshd_config(5) amont : mots-clés insensibles, arguments sensibles, directive Include</a></li>
+                    <li><a href="https://github.com/openssh/openssh-portable/blob/master/sshd.8" rel="noopener">OpenSSH — sshd(8) : -t (validité), -T (configuration effective)</a></li>
+                    <li><a href="https://github.com/proxmox/pve-docs/blob/master/pve-network.adoc" rel="noopener">Proxmox VE — Proxmox : pont privé sans port (bridge-ports none)</a></li>
+                    <li><a href="https://github.com/MicrosoftDocs/entra-docs/blob/main/docs/identity/conditional-access/policy-all-users-mfa-strength.md" rel="noopener">Microsoft Learn — Entra : MFA réduit de plus de 99,9 % le risque de compromission</a></li>
+                    </ul>
+                    <p class="sources__note">Liens vers les dépôts publics de la documentation (le texte source des pages officielles).</p>
+                </details>
+        </div>
+
     </main>
 </div>
 
@@ -441,10 +461,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@zSecurity" target="_blank" rel="noopener">zSecurity</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=15"></script>
-<script src="../assets/app.js?v=15"></script>
-<script src="../assets/quiz-data.js?v=15"></script>
-<script src="../assets/quiz.js?v=15"></script>
-<script src="../assets/pratique.js?v=15"></script>
+<script src="../assets/catalogue.js?v=16"></script>
+<script src="../assets/app.js?v=16"></script>
+<script src="../assets/quiz-data.js?v=16"></script>
+<script src="../assets/quiz.js?v=16"></script>
+<script src="../assets/pratique.js?v=16"></script>
 </body>
 </html>
