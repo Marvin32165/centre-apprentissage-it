@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -107,7 +107,7 @@
 <span class="k">reload</span>                              <span class="c">! redémarrer</span></pre>
             </div>
 
-            <p><code>exit</code> redescend d'un niveau, <code>end</code> (ou Ctrl+Z) remonte directement au mode privilégié, et <code>?</code> liste partout les commandes possibles. Les exercices se font dans <strong>Packet Tracer</strong>, qui n'émule pas tout : très peu de commandes <code>debug</code> (aucune de celles du cours), et certaines <code>show</code> complexes n'y répondent pas.</p>
+            <p><code>exit</code> redescend d'un niveau, <code>end</code> (ou Ctrl+Z) remonte directement au mode privilégié, et <code>?</code> liste partout les commandes possibles. Les exercices se font dans <strong>Packet Tracer</strong>, qui n'émule pas tout : certaines <code>show</code> complexes n'y répondent pas.</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -174,7 +174,7 @@
         <section class="chapter" id="ssh-ports">
             <p class="chapter__num">03</p>
             <h2 class="chapter__title">SSH &amp; protection des ports</h2>
-            <p class="chapter__intro">Telnet transporte mots de passe et commandes en clair : on administre en SSH, inactif par défaut. Et on empêche qu'un appareil inconnu se branche à la place d'un poste.</p>
+            <p class="chapter__intro">Telnet transporte mots de passe et commandes sans chiffrement : on administre en SSH, inactif par défaut. Et on empêche qu'un appareil inconnu se branche à la place d'un poste.</p>
 
             <h3>SSH, dans l'ordre des dépendances</h3>
             <div class="terminal">
@@ -182,7 +182,7 @@
                 <pre class="terminal__code"><span class="k">hostname</span> SW1      <span class="c">! nom d'hôte + domaine = nom de la paire de clés</span>
 <span class="k">ip domain-name</span> <span class="s">cisco.com</span>
 <span class="k">username</span> <span class="s">NOM</span> <span class="p">secret</span> <span class="s">MOT_DE_PASSE</span>
-<span class="k">crypto key generate rsa</span>  <span class="c">! IOS demande la taille : 2048 (au moins 768 pour SSHv2)</span>
+<span class="k">crypto key generate rsa</span>  <span class="c">! IOS demande la taille (défaut 512) : 2048 recommandé, 768 au minimum pour SSHv2</span>
 <span class="k">line vty</span> 0 15
  <span class="p">login local</span>
  <span class="p">transport input ssh</span>
@@ -194,7 +194,7 @@
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — configuration d'interface</span></div>
                 <pre class="terminal__code"><span class="k">interface</span> fa0/2
- <span class="p">switchport mode access</span>  <span class="c">! prérequis : refusé sur un port non « access »</span>
+ <span class="p">switchport mode access</span>  <span class="c">! prérequis : port statique, en mode access ou trunk (le mode dynamique par défaut est refusé)</span>
  <span class="p">switchport port-security</span>  <span class="c">! l'active : sans elle, les lignes suivantes n'agissent pas</span>
  <span class="p">switchport port-security maximum</span> 1
  <span class="p">switchport port-security mac-address sticky</span>
@@ -219,7 +219,7 @@
                     <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS</span></div>
                     <pre class="terminal__code">S1# <span class="k">show</span> port-security interface fa0/2</pre>
                 </div>
-                <p class="verify__sub">Sortie attendue (extrait)</p>
+                <p class="verify__sub">Sortie attendue (extrait ; libellés de Packet Tracer, l'IOS écrit « SecureUp »)</p>
                 <pre class="verify__out">Port Security              : Enabled
 Port Status                : Secure-up
 Violation Mode             : Shutdown
@@ -274,7 +274,7 @@ Security Violation Count   : 0</pre>
                 <li>Le trunk <strong>n'appartient à aucun VLAN</strong> : il en transporte plusieurs, marqués selon la norme ouverte <strong>IEEE 802.1Q</strong> (<code>dot1q</code>).</li>
                 <li>Par défaut il laisse passer <strong>tous</strong> les VLAN : on restreint la liste.</li>
                 <li><strong>DTP</strong> négocie un trunk tout seul — donc en offre un à qui se fait passer pour un commutateur.</li>
-                <li>Un port assigné à un VLAN <strong>non déclaré</strong> devient inactif. Des listes autorisées différentes aux deux bouts coupent simplement les VLAN absents d'un côté ; un <strong>VLAN natif</strong> différent, lui, fait passer les trames non étiquetées d'un VLAN dans l'autre (CDP signale <code>NATIVE_VLAN_MISMATCH</code>).</li>
+                <li>Un port assigné à un VLAN <strong>non déclaré</strong> devient inactif. Des listes autorisées différentes aux deux bouts coupent simplement les VLAN absents d'un côté ; un <strong>VLAN natif</strong> différent, lui, fait passer les trames non étiquetées d'un VLAN dans l'autre (CDP signale un « VLAN mismatch »).</li>
             </ul>
 
             <div class="table-wrap">
@@ -298,11 +298,11 @@ Security Violation Count   : 0</pre>
                 <div class="scenario__step">
                     <p class="scenario__q">Sur le trunk entre SW1 et SW2, SW1 a <code>native vlan 99</code> et SW2 est resté en VLAN natif 1. Que constates-tu ?</p>
                     <div class="scenario__opts">
-                        <button class="scenario__opt" data-ok>Le trunk monte, mais le trafic non étiqueté passe du VLAN 99 au VLAN 1, et CDP le signale</button>
-                        <button class="scenario__opt" data-why="Le trunk monte bien : les VLAN étiquetés (10, 20) passent normalement. C&#x27;est justement ce qui rend l&#x27;erreur sournoise.">Le trunk refuse de monter tant que les VLAN natifs diffèrent</button>
+                        <button class="scenario__opt" data-ok>Le trafic non étiqueté passe du VLAN 99 au VLAN 1, et CDP le signale</button>
+                        <button class="scenario__opt" data-why="Le VLAN natif ne s&#x27;applique qu&#x27;aux trames non étiquetées : les VLAN étiquetés (10, 20) ne sont pas touchés. C&#x27;est justement ce qui rend l&#x27;erreur sournoise.">Le trunk refuse de monter tant que les VLAN natifs diffèrent</button>
                         <button class="scenario__opt" data-why="Seules les trames non étiquetées sont concernées ; les VLAN étiquetés traversent sans problème.">Tous les VLAN sont coupés sur ce lien</button>
                     </div>
-                    <div class="scenario__why"><p>Chaque côté considère les trames sans étiquette comme les siennes : SW1 les range en VLAN 99, SW2 en VLAN 1. Deux VLAN sont mélangés. <code>show interfaces trunk</code> des deux côtés, colonne <em>Native vlan</em>, et le message <code>%CDP-4-NATIVE_VLAN_MISMATCH</code>.</p></div>
+                    <div class="scenario__why"><p>Chaque côté considère les trames sans étiquette comme les siennes : SW1 les range en VLAN 99, SW2 en VLAN 1. Deux VLAN sont mélangés. <code>show interfaces trunk</code> des deux côtés, colonne <em>Native vlan</em>, et le message « VLAN mismatch » du CDP.</p></div>
                 </div>
             </div>
         </section>
@@ -369,7 +369,7 @@ Security Violation Count   : 0</pre>
                     <tbody>
                         <tr><td>STP</td><td>802.1D</td><td>l'original, lent à reconverger (≈ 30 s avant qu'un port transmette)</td></tr>
                         <tr><td>RSTP</td><td>802.1w</td><td>même algorithme, bien plus réactif</td></tr>
-                        <tr><td>PVST+</td><td>Cisco</td><td>une instance par VLAN — <strong>actif par défaut</strong> sur les Catalyst 2960 et dans Packet Tracer : on peut répartir les racines (Rapid PVST+ = la même chose avec RSTP)</td></tr>
+                        <tr><td>PVST+</td><td>Cisco</td><td>une instance par VLAN — <strong>actif par défaut</strong> sur les Catalyst 2960 (les 2960-X passent en Rapid PVST+ à partir de 15.2(4)E) et dans Packet Tracer : on peut répartir les racines (Rapid PVST+ = la même chose avec RSTP)</td></tr>
                         <tr><td>MST</td><td>802.1s</td><td>une instance pour plusieurs VLAN</td></tr>
                     </tbody>
                 </table>
@@ -433,7 +433,7 @@ Security Violation Count   : 0</pre>
                 </ol>
             </div>
             <div class="tip">
-                <p class="tip__label">Jamais sur un trunk</p>
+                <p class="tip__label">Jamais vers un commutateur</p>
                 <p>PortFast fait sauter au port les 30 s d'écoute qui protègent d'une boucle au branchement : il ne va que sur un port relié à un périphérique terminal (la variante <code>portfast trunk</code>, pour un serveur ou un hyperviseur en trunk, est hors programme). BPDU Guard l'accompagne, parce qu'un port de poste qui reçoit un BPDU signifie qu'un commutateur a pris la place du poste.</p>
             </div>
 
@@ -447,7 +447,7 @@ Security Violation Count   : 0</pre>
                     <p class="scenario__q">Pour faire de SW2 la racine du VLAN 10, tu tapes <code>spanning-tree vlan 10 priority 30000</code>. Que répond IOS ?</p>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>Il refuse : la priorité doit être un multiple de 4096</button>
-                        <button class="scenario__opt" data-why="IOS n&#x27;arrondit pas : il refuse et liste les valeurs permises (0, 4096, 8192… 61440).">Il accepte et arrondit à 28672</button>
+                        <button class="scenario__opt" data-why="IOS n&#x27;arrondit pas : il refuse. Les valeurs permises vont de 0 à 61440 par pas de 4096.">Il accepte et arrondit à 28672</button>
                         <button class="scenario__opt" data-why="Les 12 bits de poids faible de la priorité portent le numéro de VLAN : seuls les multiples de 4096 restent possibles.">Il accepte 30000 telle quelle</button>
                     </div>
                     <div class="scenario__why"><p>La priorité occupe 4 bits du BID, le numéro de VLAN les 12 autres : d'où les pas de 4096. Taper <code>priority 28672</code> ou <code>24576</code>, ou simplement <code>root primary</code>. Vérifier : <code>show spanning-tree vlan 10</code>, <em>This bridge is the root</em>.</p></div>
@@ -479,7 +479,7 @@ Security Violation Count   : 0</pre>
 <span class="k">ip access-list standard</span> ADMIN-MGT
  <span class="p">permit</span> 192.168.0.0 0.0.0.255
 <span class="k">line vty</span> 0 15
- <span class="p">access-class</span> ADMIN-MGT <span class="p">in</span>         <span class="c">! sur une ligne : access-class</span>
+ <span class="p">access-class</span> ADMIN-MGT <span class="p">in</span>         <span class="c">! sur une ligne : access-class (ACL nommée sur IOS XE récent ; numérotée sur les 15-mt)</span>
 
 <span class="c">! étendue numérotée : pas de SSH d'un réseau vers l'autre</span>
 <span class="k">access-list</span> 100 <span class="p">deny</span> tcp 192.168.1.0 0.0.0.255 192.168.2.0 0.0.0.255 <span class="p">eq</span> 22
@@ -614,7 +614,7 @@ R1# <span class="k">show</span> ip interface g0/0 | include access list</pre>
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS — SW1, VLAN 10</span></div>
                 <pre class="terminal__code"><span class="k">ip</span> dhcp snooping
 <span class="k">ip</span> dhcp snooping vlan 10
-<span class="k">no</span> ip dhcp snooping information option<span class="c">     ! souvent nécessaire avec un serveur DHCP sur routeur Cisco</span>
+<span class="k">no</span> ip dhcp snooping information option<span class="c">     ! présent dans l'exemple Cisco d'un serveur DHCP sur routeur (Cat8300)</span>
 <span class="k">interface</span> gi0/1
  <span class="k">ip</span> dhcp snooping trust<span class="c">                     ! le lien montant, vers le serveur DHCP</span>
  <span class="k">ip</span> arp inspection trust
@@ -685,7 +685,7 @@ S1# <span class="k">show</span> port-security interface fa0/5</pre>
 SW2(config)# <span class="k">spanning-tree</span> vlan 20 root primary</pre>
             </div>
             </li>
-                <li><p>Débrancher puis rebrancher un PC : ~30 s avant de transmettre (listening puis learning). Avec <code>spanning-tree portfast</code> : moins d'une seconde.</p></li>
+                <li><p>Débrancher puis rebrancher un PC : le port passe par listening puis learning avant de transmettre. Avec <code>spanning-tree portfast</code>, il transmet tout de suite.</p></li>
                 <li><p>Ajouter <code>spanning-tree bpduguard enable</code>, brancher un switch sur ce port : il passe en <code>err-disabled</code>. Retirer le switch ne suffit pas : <code>shutdown</code> / <code>no shutdown</code>.</p></li>
                 </ol>
             </div>
@@ -738,7 +738,7 @@ SW2(config)# <span class="k">spanning-tree</span> vlan 20 root primary</pre>
                 <p>Applique l'ACL standard nommée <code>ADMIN-MGT</code> aux lignes d'administration (tu es dans <code>line vty 0 15</code>).</p>
                 <details class="reveal">
                     <summary>Voir la solution</summary>
-                    <div class="reveal__body"><p><code>access-class ADMIN-MGT in</code> — sur des lignes, c'est <code>access-class</code> ; <code>ip access-group</code> est réservé aux interfaces. Et sur un switch, il y a 16 lignes (<code>0 15</code>) : filtrer <code>0 4</code> en laisserait onze ouvertes.</p></div>
+                    <div class="reveal__body"><p><code>access-class ADMIN-MGT in</code> (ACL nommée sur IOS XE récent ; numérotée sur les 15-mt) — sur des lignes, c'est <code>access-class</code> ; <code>ip access-group</code> est réservé aux interfaces. Et sur un switch, il y a 16 lignes (<code>0 15</code>) : filtrer <code>0 4</code> en laisserait onze ouvertes.</p></div>
                 </details>
             </div>
             <div class="cmdex" data-accept="(\d+ )?deny tcp host 10\.1\.1\.101 host 172\.16\.1\.100 eq (23|telnet);;(\d+ )?deny tcp 10\.1\.1\.101 0\.0\.0\.0 172\.16\.1\.100 0\.0\.0\.0 eq (23|telnet)">
@@ -784,10 +784,10 @@ SW2(config)# <span class="k">spanning-tree</span> vlan 20 root primary</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

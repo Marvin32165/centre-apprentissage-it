@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -130,7 +130,7 @@
                 </table>
             </div>
 
-            <p class="note">Il existe une cinquième base système, cachée : <strong>Resource</strong> (<code>mssqlsystemresource</code>), en lecture seule, qui contient le code des objets système. Elle n'apparaît pas dans SSMS et ne se sauvegarde pas avec <code>BACKUP</code> : elle est remplacée lors de certaines mises à jour de l'instance (montées de version, service packs).</p>
+            <p class="note">Il existe une cinquième base système : <strong>Resource</strong> (<code>mssqlsystemresource</code>), en lecture seule, qui contient le code des objets système. Elle ne se sauvegarde pas avec <code>BACKUP</code> : elle est remplacée lors de certaines mises à jour de l'instance (montées de version, service packs).</p>
 
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">La requête à connaître par cœur</span></div>
@@ -167,7 +167,7 @@
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Le <code>.ldf</code> n'est <strong>pas</strong> un fichier de log au sens Windows : ce n'est pas un historique lisible qu'on peut effacer quand il gêne. C'est ce qui permet au moteur d'annuler et de rejouer — le supprimer à la main rend la base irrécupérable.</p>
+                <p>Le <code>.ldf</code> n'est <strong>pas</strong> un fichier de log au sens Windows : ce n'est pas un historique lisible qu'on peut effacer quand il gêne. C'est ce qui permet au moteur d'annuler et de rejouer — le supprimer à la main peut rendre la base irrécupérable : sa reconstruction échoue (erreur 5113) si des transactions étaient ouvertes à l'arrêt, s'il n'y a pas eu de point de contrôle, ou si la base était en lecture seule.</p>
             </div>
         </section>
 
@@ -317,7 +317,7 @@
 
             <div class="tip">
                 <p class="tip__label">Deux détails qui font perdre une heure</p>
-                <p>Le compte apparaît partout avec un <strong><code>$</code> final</strong> (<code>ORION\GMSA_SQL$</code>) : c'est un compte d'ordinateur, pas d'utilisateur. Et dans le sélecteur Active Directory, il faut cocher <strong>« Ordinateurs »</strong> pour voir le compte machine du serveur SQL — sans quoi la recherche ne renvoie rien.</p>
+                <p>Le compte apparaît partout avec un <strong><code>$</code> final</strong> (<code>ORION\GMSA_SQL$</code>) : c'est un compte de domaine (gMSA), pas un compte d'utilisateur. Et dans le sélecteur Active Directory, il faut cocher <strong>« Ordinateurs »</strong> pour voir le compte machine du serveur SQL — sans quoi la recherche ne renvoie rien.</p>
             </div>
 
             <div class="takeaway">
@@ -346,7 +346,7 @@
             <p class="chapter__intro">La console MMC qui gère tout ce qui fait <em>fonctionner</em> et <em>communiquer</em> SQL Server sur Windows. C'est par elle qu'on passe, pas par les services Windows.</p>
 
             <h3>Cinq volets</h3>
-            <p>Services · comptes de service · réseau serveur · ports et IP · alias client (depuis SQL Server 2022, un alias ne se crée plus ici mais avec l'utilitaire <code>cliconfg.exe</code>). Le raccourci est souvent introuvable dans le menu Démarrer : l'outil se lance par son fichier MMC, dont le numéro suit la version du moteur.</p>
+            <p>Services · comptes de service · réseau serveur · ports et IP · alias client (depuis SQL Server 2022, un alias ne se crée plus ici mais avec l'utilitaire <code>cliconfg.exe</code>). Selon la version installée, le raccourci est introuvable dans le menu Démarrer : l'outil se lance par son fichier MMC, dont le numéro suit la version du moteur.</p>
 
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Ouvrir l'outil</span></div>
@@ -374,7 +374,7 @@
 
             <div class="tip">
                 <p class="tip__label">Deux pièges de lecture</p>
-                <p>Dans l'arbre du Configuration Manager, les entrées marquées <strong><code>(32bit)</code></strong> sont des vestiges : les ignorer. Et l'<strong>Agent reste souvent en démarrage <code>Manual</code></strong> après une installation — à passer en <code>Automatic</code>, sinon aucune sauvegarde planifiée ne repart après un redémarrage.</p>
+                <p>Dans l'arbre du Configuration Manager, les entrées marquées <strong><code>(32bit)</code></strong> sont les configurations réseau 32 bits, sans rapport avec l'instance 64 bits : les ignorer. Et l'<strong>Agent peut rester en démarrage <code>Manual</code></strong> après une installation — à passer en <code>Automatic</code>, sinon aucune sauvegarde planifiée ne repart après un redémarrage.</p>
             </div>
 
             <h3>Activer TCP/IP</h3>
@@ -903,7 +903,7 @@
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>La full de dimanche, la diff de mercredi, puis les journaux de 22 h à 15 h</button>
                         <button class="scenario__opt" data-why="Les diff de lundi et mardi sont inutiles : chaque différentielle contient tout depuis la full, la dernière suffit.">La full, les diff de lundi, mardi et mercredi, puis les journaux</button>
-                        <button class="scenario__opt" data-why="C&#x27;est possible mais beaucoup plus long : rejouer près de 90 journaux au lieu d&#x27;une diff et de 17 journaux.">La full de dimanche, puis tous les journaux depuis dimanche</button>
+                        <button class="scenario__opt" data-why="C&#x27;est possible mais beaucoup plus long : rejouer près de 90 journaux (si la full a eu lieu dimanche à 22 h) au lieu d&#x27;une diff et de 17 journaux.">La full de dimanche, puis tous les journaux depuis dimanche</button>
                     </div>
                     <div class="scenario__why"><p>Différentielle = tout depuis la <strong>dernière full</strong> : on ne garde que la plus récente (mercredi 22 h). Ensuite, les journaux postérieurs à cette diff, dans l'ordre, tous en <code>NORECOVERY</code> sauf le dernier — et, si la base est encore accessible, le tail-log pour ne rien perdre après 15 h.</p></div>
                 </div>
@@ -1001,7 +1001,7 @@
                     <tbody>
                         <tr><td><em>network-related…</em></td><td><strong>Rien n'a répondu</strong> : on est encore sur la couche réseau, SQL n'a jamais été atteint.</td></tr>
                         <tr><td><code>18456</code></td><td>SQL a répondu et a <strong>refusé</strong>. Le détail (le <em>State</em>) n'est que dans le journal serveur, jamais chez le client.</td></tr>
-                        <tr><td><code>4060</code></td><td>Base par défaut inaccessible, ou utilisateur orphelin.</td></tr>
+                        <tr><td><code>4060</code></td><td>Base par défaut inaccessible : hors ligne, ou permissions insuffisantes (par exemple un utilisateur orphelin).</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1055,7 +1055,7 @@
                     <tbody>
                         <tr><td>Effet</td><td>réordonne les pages sur place</td><td>reconstruit l'index entièrement</td></tr>
                         <tr><td>Coût</td><td>léger, toujours en ligne, interruptible</td><td>lourd, verrouille la table (sauf <code>ONLINE = ON</code>, Enterprise)</td></tr>
-                        <tr><td>Journal</td><td>écrit peu</td><td>écrit beaucoup — le journal gonfle d'autant</td></tr>
+                        <tr><td>Journal</td><td>—</td><td>écrit beaucoup en recovery FULL (minimal seulement en BULK_LOGGED ou SIMPLE) — le journal gonfle d'autant</td></tr>
                         <tr><td>Statistiques</td><td>inchangées</td><td>mises à jour au passage</td></tr>
                     </tbody>
                 </table>
@@ -1133,13 +1133,13 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Le mauvais réflexe</p>
-                <p>Redémarrer SQL Server sans diagnostic <strong>efface les informations</strong> qui auraient permis de comprendre — sessions en cours, compteurs, cache — et allonge l'interruption au lieu de la réduire. Le symptôme disparaît parfois ; la cause revient. Ce n'est pas interdit pour autant : c'est une action de <strong>dernier recours</strong>, à prendre après avoir relevé ce qui peut l'être, et suivie d'une analyse à froid.</p>
+                <p>Redémarrer SQL Server sans diagnostic <strong>efface les informations</strong> qui auraient permis de comprendre — les compteurs d'attente — et allonge l'interruption au lieu de la réduire. Le symptôme disparaît parfois ; la cause revient. Ce n'est pas interdit pour autant : c'est une action de <strong>dernier recours</strong>, à prendre après avoir relevé ce qui peut l'être, et suivie d'une analyse à froid.</p>
             </div>
 
             <h3>Identifier qui fait quoi</h3>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Du réflexe rapide aux DMV</span></div>
-                <pre class="terminal__code"><span class="k">EXEC</span> sp_who2;   <span class="c">-- colonne BlkBy = le SPID de la session BLOQUANTE</span>
+                <pre class="terminal__code"><span class="k">EXEC</span> sp_who;    <span class="c">-- colonne blk = le SPID de la session BLOQUANTE</span>
 
 <span class="c">-- ce qui tourne maintenant, avec le texte de la requete</span>
 <span class="k">SELECT</span> r.session_id, r.status, r.cpu_time, r.total_elapsed_time,
@@ -1213,7 +1213,7 @@
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Deux erreurs à ne jamais commettre</p>
                 <p>La <strong>taille physique du <code>.ldf</code> ne diminue pas</strong> quand le journal est tronqué : l'espace redevient réutilisable <em>à l'intérieur</em> du fichier, c'est tout. Voir un <code>.ldf</code> toujours aussi gros après une sauvegarde de journal est donc normal.<br>
-                Et <strong>supprimer un <code>.ldf</code> à la main</strong> rend la base irrécupérable : il contient les transactions pas encore écrites dans le <code>.mdf</code>. C'est l'une des rares manipulations vraiment sans retour.</p>
+                Et <strong>supprimer un <code>.ldf</code> à la main</strong> peut rendre la base irrécupérable (la reconstruction du journal, <code>ATTACH_REBUILD_LOG</code>, exige un arrêt propre) : il contient les transactions pas encore écrites dans le <code>.mdf</code>. C'est l'une des rares manipulations vraiment sans retour.</p>
             </div>
         </section>
 
@@ -1242,7 +1242,7 @@
             </div>
 
             <h3>Le SQL Error Log</h3>
-            <p>Le journal du moteur : ce que SQL Server raconte de lui-même. Dans SSMS, <em>Management → SQL Server Logs</em>, ou <code>EXEC xp_readerrorlog;</code>. On y trouve le démarrage et la <em>recovery</em> de chaque base, les erreurs d'I/O, les erreurs réseau et d'authentification (dont le <em>State</em> de l'erreur 18456 que le client ne voit jamais), les messages de sauvegarde et les problèmes de configuration.</p>
+            <p>Le journal du moteur : ce que SQL Server raconte de lui-même. Dans SSMS, <em>Management → SQL Server Logs</em>, ou <code>EXEC sp_readerrorlog;</code>. On y trouve le démarrage et la <em>recovery</em> de chaque base, les erreurs d'I/O, les erreurs réseau et d'authentification (dont le <em>State</em> de l'erreur 18456 que le client ne voit jamais), les messages de sauvegarde et les problèmes de configuration.</p>
 
             <div class="table-wrap">
                 <table>
@@ -1282,7 +1282,7 @@
 
 <span class="k">EXEC</span> sp_who2;             <span class="c">-- qui bloque qui</span>
 <span class="k">DBCC SQLPERF</span>(LOGSPACE);   <span class="c">-- occupation des journaux</span>
-<span class="k">EXEC</span> xp_readerrorlog;     <span class="c">-- le journal du moteur</span></pre>
+<span class="k">EXEC</span> sp_readerrorlog;     <span class="c">-- le journal du moteur</span></pre>
             </div>
 
             <p>L'ordre n'est pas décoratif : <strong>où suis-je</strong> → état des <strong>bases</strong> → <strong>activité</strong> → <strong>ressources</strong> → <strong>journal</strong>. Les deux premières lignes évitent de diagnostiquer la mauvaise instance, l'erreur classique quand on jongle entre deux nœuds.</p>
@@ -1463,7 +1463,7 @@ SRV-SQL01   Microsoft SQL Server 2022 (RTM) …</pre>
                         <button class="scenario__opt" data-why="Un journal plein ne ferme pas le port.">La taille du journal</button>
                         <button class="scenario__opt" data-why="Sans rapport avec la connexion réseau.">Le niveau de compatibilité de la base</button>
                     </div>
-                    <div class="scenario__why"><p>L'instance est nommée et écoute sur un <strong>port dynamique</strong> qui a changé au redémarrage ; le pare-feu n'autorise que 1433. En local, SSMS passe par la mémoire partagée et ne voit rien.</p></div>
+                    <div class="scenario__why"><p>L'instance est nommée et écoute sur un <strong>port dynamique</strong> qui a changé au redémarrage ; le pare-feu n'autorise que 1433. En local, SSMS passe par la mémoire partagée (protocole activé sur toutes les installations pour les connexions locales) et ne dépend pas du port TCP.</p></div>
                 </div>
                 <div class="scenario__end"><strong>Correction :</strong> fixer le port TCP de l'instance à 1433 (<em>IPAll → TCP Port</em>, vider <em>TCP Dynamic Ports</em>), redémarrer le service, puis refaire <code>Test-NetConnection</code>. C'est l'objet du chapitre réseau du module.</div>
             </div>
@@ -1615,10 +1615,10 @@ SRV-SQL01   Microsoft SQL Server 2022 (RTM) …</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

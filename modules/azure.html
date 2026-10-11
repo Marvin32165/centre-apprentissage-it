@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -111,7 +111,7 @@
 
             <div class="tip">
                 <p class="tip__label">Le piège du vocabulaire</p>
-                <p><strong>Scalabilité</strong> = <em>pouvoir</em> ajuster la capacité, verticalement (une VM plus grosse) ou horizontalement (plus de VM), à la main ou non. <strong>Élasticité</strong> = <em>ça</em> s'ajuste tout seul, à la hausse comme à la baisse, selon la charge. Une boutique en ligne pendant le Black Friday illustre l'élasticité : la capacité monte pendant le pic, puis redescend — on ne paie pas toute l'année pour la charge maximale.</p>
+                <p><strong>Scalabilité</strong> = <em>pouvoir</em> ajuster la capacité, verticalement (une VM plus grosse) ou horizontalement (plus de VM), à la main ou non. <strong>Élasticité</strong> = <em>ça</em> suit la charge à la hausse comme à la baisse, et s'ajuste seul si une mise à l'échelle automatique est configurée. Une boutique en ligne pendant le Black Friday illustre l'élasticité : la capacité monte pendant le pic, puis redescend — on ne paie pas toute l'année pour la charge maximale.</p>
             </div>
 
             <h3>CapEx vs OpEx</h3>
@@ -183,9 +183,8 @@
                     <thead><tr><th>Couche</th><th>On-premise</th><th>IaaS</th><th>PaaS</th><th>SaaS</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Données</strong></td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
-                        <tr><td><strong>Appareils</strong> (postes, mobiles)</td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
+                        <tr><td><strong>Appareils</strong> (postes, mobiles)</td><td>Vous</td><td>Vous</td><td>Vous</td><td>Partagé</td></tr>
                         <tr><td><strong>Comptes et identités</strong></td><td>Vous</td><td>Vous</td><td>Vous</td><td>Vous</td></tr>
-                        <tr><td><strong>Infrastructure d'identité et d'annuaire</strong></td><td>Vous</td><td>Vous</td><td>Partagé</td><td>Partagé</td></tr>
                         <tr><td><strong>Applications</strong></td><td>Vous</td><td>Vous</td><td>Partagé</td><td>Partagé</td></tr>
                         <tr><td><strong>Système d'exploitation</strong></td><td>Vous</td><td>Vous</td><td>Microsoft</td><td>Microsoft</td></tr>
                         <tr><td><strong>Contrôles réseau</strong></td><td>Vous</td><td>Vous</td><td>Partagé</td><td>Microsoft</td></tr>
@@ -343,7 +342,7 @@ Besoin de conteneurs ?
                     <h4>ExpressRoute</h4>
                     <ul>
                         <li>Connexion <strong>privée</strong> via un opérateur.</li>
-                        <li>Performance et latence <strong>prévisibles</strong>.</li>
+                        <li>Latence <strong>constante</strong> et débits plus élevés qu'Internet.</li>
                         <li>Pour les besoins entreprise critiques.</li>
                     </ul>
                 </div>
@@ -586,9 +585,9 @@ Scope    : management group, subscription, resource group, ressource</pre>
                     <thead><tr><th>Outil</th><th>Rôle</th><th>Quand</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Pricing Calculator</strong></td><td>Estimer un coût</td><td><strong>Avant</strong> déploiement</td></tr>
-                        <tr><td><strong>TCO</strong> (coût total de possession)</td><td>Comparer local <em>vs</em> Azure — l'ancien <em>TCO Calculator</em> a été retiré ; Microsoft oriente vers le <em>business case</em> d'<strong>Azure Migrate</strong></td><td>Avant décision de migration</td></tr>
+                        <tr><td><strong>TCO</strong> (coût total de possession)</td><td>Comparer local <em>vs</em> Azure — Microsoft oriente vers le <em>business case</em> d'<strong>Azure Migrate</strong></td><td>Avant décision de migration</td></tr>
                         <tr><td><strong>Microsoft Cost Management</strong></td><td>Suivre les dépenses réelles, budgets, alertes</td><td><strong>Après</strong> déploiement</td></tr>
-                        <tr><td><strong>Azure Advisor</strong></td><td>Recommandations coût, performance, fiabilité, sécurité</td><td>En continu</td></tr>
+                        <tr><td><strong>Azure Advisor</strong></td><td>Recommandations coût, performance, fiabilité, sécurité, excellence opérationnelle</td><td>En continu</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -770,7 +769,7 @@ Scope    : management group, subscription, resource group, ressource</pre>
 
             <div class="exo">
                 <p class="exo__label">Exercice — un SLA composé</p>
-                <p>Une application dépend d'une App Service (SLA 99,95 %) et d'une base Azure SQL (99,99 %). Quel est le SLA de l'ensemble, et combien de minutes d'indisponibilité par mois (30 jours) cela autorise-t-il ?</p>
+                <p>Une application dépend d'une App Service (SLA 99,95 %, sans zones de disponibilité) et d'une base Azure SQL (99,99 %, sans redondance de zone). Quel est le SLA de l'ensemble, et combien de minutes d'indisponibilité par mois (30 jours) cela autorise-t-il ?</p>
                 <details class="reveal">
                     <summary>Afficher la correction</summary>
                     <div class="reveal__body"><p>Les SLA se <strong>multiplient</strong> quand les services sont en série : 0,9995 × 0,9999 ≈ <strong>0,9994</strong>, soit 99,94 %. Indisponibilité permise : 0,06 % de 43 200 minutes ≈ <strong>26 minutes</strong> par mois. Le composite est toujours moins bon que le plus faible des services.</p></div>
@@ -874,10 +873,10 @@ Scope    : management group, subscription, resource group, ressource</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du cours Azure Fundamentals</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

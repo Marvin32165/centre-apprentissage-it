@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -124,7 +124,7 @@
                 <p>Les éléments de droite ne sont <strong>pas inutiles</strong> : le manifeste dit explicitement qu'ils gardent de la valeur, mais que ceux de gauche priment. Être Agile ne veut dire ni « ne plus rien documenter », ni « travailler sans plan ».</p>
             </div>
 
-            <p>Les douze principes se regroupent en quatre familles : la <strong>livraison</strong> (livrer tôt, souvent, et mesurer l'avancement à ce qui fonctionne), le <strong>changement</strong> (l'accueillir même tard, il devient un avantage compétitif), les <strong>personnes</strong> (utilisateurs et développeurs au quotidien, confiance, face à face, rythme soutenable, équipes auto-organisées) et la <strong>qualité</strong> (excellence technique, simplicité, ajustement régulier de la façon de travailler).</p>
+            <p>Les douze principes se regroupent en quatre familles (regroupement du cours ; le Manifeste ne les classe pas) : la <strong>livraison</strong> (livrer tôt, souvent, et mesurer l'avancement à ce qui fonctionne), le <strong>changement</strong> (l'accueillir même tard, il devient un avantage compétitif), les <strong>personnes</strong> (utilisateurs et développeurs au quotidien, confiance, face à face, rythme soutenable, équipes auto-organisées) et la <strong>qualité</strong> (excellence technique, simplicité, ajustement régulier de la façon de travailler).</p>
 
             <p>L'Agile a aussi un prix : il exige que le <strong>client s'implique fortement et en continu</strong>, il est plus difficile à appréhender qu'un planning classique, il demande des outils de suivi — et surtout il rend <strong>impossible de s'engager d'avance simultanément sur le budget, les délais et le contenu exact</strong>. On retrouve le triangle d'or : ce que l'Agile refuse de promettre, c'est précisément le troisième côté.</p>
 
@@ -213,7 +213,7 @@
 
             <div class="table-wrap">
                 <table>
-                    <thead><tr><th>Cérémonie</th><th>Timebox (1 mois · 2 semaines)</th><th>Objet</th><th>Qui</th></tr></thead>
+                    <thead><tr><th>Cérémonie</th><th>Timebox (1 mois · 2 semaines, règle de proportion)</th><th>Objet</th><th>Qui</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Sprint Planning</strong></td><td>8 h · 4 h</td><td>Choisir le travail et fixer l'objectif du sprint</td><td>Toute l'équipe Scrum</td></tr>
                         <tr><td><strong>Daily Scrum</strong></td><td>15 min, chaque jour</td><td>Inspecter l'avancement vers l'objectif du sprint, ajuster le plan du jour</td><td>Les développeurs (l'équipe technique)</td></tr>
@@ -227,7 +227,7 @@
 
             <p>Le <strong>Sprint Planning</strong> répond à trois questions, dans cet ordre : <em>pourquoi ce sprint a-t-il de la valeur ? qu'est-il possible d'accomplir ? comment le travail va-t-il être accompli ?</em> Pour notre portail, l'objectif du premier sprint serait : « <em>permettre à un employé de réinitialiser seul son mot de passe</em> ».</p>
 
-            <p>Le <strong>Daily Scrum</strong> n'est pas un compte rendu à un chef : c'est un point sur l'avancement vers l'objectif du sprint, souvent debout pour que ça reste court. Beaucoup d'équipes utilisent les trois questions classiques — <em>qu'ai-je fait hier ? que vais-je faire aujourd'hui ? qu'est-ce qui me bloque ?</em> — mais le Guide 2020 ne les impose plus : les développeurs choisissent la forme, tant que le point porte sur l'objectif du sprint.</p>
+            <p>Le <strong>Daily Scrum</strong> n'est pas un compte rendu à un chef : c'est un point sur l'avancement vers l'objectif du sprint, souvent debout pour que ça reste court. Beaucoup d'équipes utilisent les trois questions classiques — <em>qu'ai-je fait hier ? que vais-je faire aujourd'hui ? qu'est-ce qui me bloque ?</em> — mais le Guide 2020 ne les impose plus (la version 2017 ne les donnait que comme exemple) : les développeurs choisissent la forme, tant que le point porte sur l'objectif du sprint.</p>
             <p>La <strong>Sprint Review</strong> n'est pas une simple démonstration : c'est une séance de travail où l'équipe et les parties prenantes regardent ce qui a été fait, ce qui a changé autour du produit, et décident ensemble de ce qu'il faut faire ensuite — le Product Backlog en sort ajusté.</p>
 
             <div class="takeaway takeaway--warn">
@@ -276,7 +276,7 @@
             <p>Point de vigilance : le PO représente des parties prenantes aux intérêts divergents — le support veut moins d'appels, la direction veut des économies, la sécurité veut des contrôles. Il peut donc se faire influencer, et cela se répercute directement sur l'ordre des priorités. <strong>C'est un poste de décision, pas de secrétariat.</strong></p>
 
             <h3>L'équipe technique</h3>
-            <p>Développeurs, administrateurs système, techniciens — ceux qui réalisent la solution. Quatre caractéristiques : elle est <strong>pluridisciplinaire</strong> (si elle doit attendre trois semaines qu'un service extérieur configure un serveur, ce n'est pas une équipe Scrum complète), <strong>auto-organisée</strong> (personne ne lui distribue les tâches), <strong>sans hiérarchie interne</strong> (les expertises diffèrent, l'autorité non) et <strong>collectivement responsable</strong>.</p>
+            <p>Développeurs, administrateurs système, techniciens — ceux qui réalisent la solution. Quatre caractéristiques (le Guide 2020 les attribue à toute l'équipe Scrum, dont elle fait partie) : elle est <strong>pluridisciplinaire</strong> (si elle doit attendre trois semaines qu'un service extérieur configure un serveur, ce n'est pas une équipe Scrum complète), <strong>auto-organisée</strong> (personne ne lui distribue les tâches), <strong>sans hiérarchie interne</strong> (les expertises diffèrent, l'autorité non) et <strong>collectivement responsable</strong>.</p>
 
             <h3>Le Scrum Master</h3>
             <p>Le rôle le plus mal compris, parce qu'on l'assimile à un chef d'équipe — c'est exactement l'inverse. C'est un <strong>facilitateur</strong>, un <strong>leader serviteur</strong> (le Guide 2020 dit : « un vrai leader au service de l'équipe Scrum et de l'organisation ») : au service de l'équipe, pas au-dessus d'elle. Il est responsable de l'<strong>efficacité</strong> de l'équipe Scrum. Il travaille vis-à-vis de trois publics :</p>
@@ -393,7 +393,7 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Qui estime, et en quoi</p>
-                <p>L'<strong>estimation de l'effort</strong> est une mesure <strong>relative</strong> de complexité — souvent en <em>story points</em>, via le <em>planning poker</em>. Ce n'est <strong>pas une durée en heures</strong>, et elle ne peut être faite <strong>que par l'équipe technique</strong>, pour une raison de bon sens : c'est elle qui fera le travail. Ni le PO ni le Scrum Master ne décident qu'une tâche « prendra deux jours ».</p>
+                <p>L'<strong>estimation de l'effort</strong> est une mesure <strong>relative</strong> de complexité — souvent en <em>story points</em>, via une technique comme le <em>planning poker</em>. Ce n'est <strong>pas une durée en heures</strong>, et elle ne peut être faite <strong>que par l'équipe technique</strong>, pour une raison de bon sens : c'est elle qui fera le travail. Ni le PO ni le Scrum Master ne décident qu'une tâche « prendra deux jours ».</p>
             </div>
 
             <div class="exo">
@@ -489,9 +489,9 @@
         <section class="chapter" id="kanban">
             <p class="chapter__num">08</p>
             <h2 class="chapter__title">Kanban, l'autre façon de faire</h2>
-            <p class="chapter__intro">Le tableau à trois colonnes du chapitre précédent porte un nom — le <em>Scrum board</em> — et il est en réalité emprunté à une méthode plus ancienne et plus large : <strong>Kanban</strong>. Beaucoup d'équipes mélangent les deux sans le savoir.</p>
+            <p class="chapter__intro">Le tableau à trois colonnes du chapitre précédent porte un nom — le <em>Scrum board</em> — et il est en réalité emprunté à une méthode plus large : <strong>Kanban</strong>. Beaucoup d'équipes mélangent les deux sans le savoir.</p>
 
-            <p>Le mot vient du japonais (<em>kanban</em> = « étiquette ») et des usines Toyota, où des cartes circulaient pour signaler qu'un poste avait besoin d'être réapprovisionné. <strong>Différence fondamentale avec Scrum</strong> : Kanban n'est pas un framework avec des rôles et des cérémonies. C'est une <strong>méthode de gestion du flux de travail</strong>, qui s'applique par-dessus une organisation existante — sans rien changer aux postes ni aux titres.</p>
+            <p>Le mot vient du japonais (<em>kanban</em> = « panneau » ou « signal ») et des usines Toyota, où des cartes circulaient pour signaler qu'un poste avait besoin d'être réapprovisionné. <strong>Différence fondamentale avec Scrum</strong> : Kanban n'est pas un framework avec des rôles et des cérémonies. C'est une <strong>méthode de gestion du flux de travail</strong>, qui s'applique par-dessus une organisation existante — sans rien changer aux postes ni aux titres.</p>
 
             <h3>Les six pratiques</h3>
             <ul>
@@ -516,7 +516,7 @@
                     <tbody>
                         <tr><td><strong>Rythme</strong></td><td>Flux continu, pas de sprints</td><td>Sprints à durée fixe</td></tr>
                         <tr><td><strong>Rôles</strong></td><td>Aucun rôle imposé</td><td>PO, Scrum Master, équipe technique</td></tr>
-                        <tr><td><strong>Changements</strong></td><td>On repriorise à tout moment</td><td>Déconseillés en cours de sprint</td></tr>
+                        <tr><td><strong>Changements</strong></td><td>On repriorise à tout moment</td><td>Interdits s'ils mettent en danger l'objectif du sprint</td></tr>
                         <tr><td><strong>Mesure courante</strong></td><td><em>Cycle time</em> / <em>lead time</em> (temps de traversée)</td><td>Vélocité (pratique répandue, absente du Guide Scrum)</td></tr>
                     </tbody>
                 </table>
@@ -560,7 +560,7 @@
                         <p class="walk__change">Le <b>raffinage</b> est une activité continue, pas un événement : il rend le haut du backlog <b>prêt</b> pour le Planning.</p>
                     </li>
                     <li class="walk__step">
-                        <p class="walk__where"><b>Étape 2</b> · toute l'équipe Scrum, jour 1 matin (4 h max)</p>
+                        <p class="walk__where"><b>Étape 2</b> · toute l'équipe Scrum, jour 1 matin (4 h max, règle de proportion)</p>
                         <p class="walk__head">Le Sprint Planning</p>
                         <p><em>Pourquoi ?</em> Les mots de passe représentent 80 % des appels : l'objectif sera « un employé peut réinitialiser seul son mot de passe ». <em>Quoi ?</em> Les développeurs choisissent les stories tenables et <strong>refusent les deux dernières</strong> — ce sont eux qui décident de la quantité, pas le PO. <em>Comment ?</em> Découpage en tâches.</p>
                         <p class="walk__change">Sortie : un <b>Sprint Goal</b> et un <b>Sprint Backlog</b> (pourquoi, quoi, comment), affichés sur le tableau.</p>
@@ -578,13 +578,13 @@
                         <p class="walk__change">Le <b>contenu</b> s'ajuste avec le PO ; l'<b>objectif</b> et la <b>timebox</b> restent fixes.</p>
                     </li>
                     <li class="walk__step">
-                        <p class="walk__where"><b>Étape 5</b> · équipe Scrum + parties prenantes, jour 10 matin (2 h max)</p>
+                        <p class="walk__where"><b>Étape 5</b> · équipe Scrum + parties prenantes, jour 10 matin (2 h max, règle de proportion)</p>
                         <p class="walk__head">La Sprint Review</p>
                         <p>Le PO, les développeurs, le responsable du support et deux employés testeurs. On <strong>inspecte le produit qui fonctionne</strong>, et uniquement ce qui respecte la DoD — une story « pas tout à fait testée » n'est pas présentée. Le responsable du support réagit : « les intérimaires n'ont pas d'adresse mail personnelle ». Personne n'y avait pensé ; ça devient un nouvel élément du backlog.</p>
                         <p class="walk__change">Seul l'<b>incrément</b> conforme à la <b>DoD</b> est montré ; le <b>Product Backlog</b> sort ajusté.</p>
                     </li>
                     <li class="walk__step">
-                        <p class="walk__where"><b>Étape 6</b> · équipe Scrum seule, jour 10 après-midi (1 h 30 max)</p>
+                        <p class="walk__where"><b>Étape 6</b> · équipe Scrum seule, jour 10 après-midi (1 h 30 max, règle de proportion)</p>
                         <p class="walk__head">La Rétrospective</p>
                         <p>Ce qui a marché : le découpage en petites tâches. Ce qui a coûté cher : les deux jours d'attente des accès. <strong>Action décidée</strong> : demander les accès techniques une semaine avant le début du sprint, dès le prochain sprint.</p>
                         <p class="walk__change">La <b>Rétro</b> change la <b>façon de travailler</b> : au moins une action concrète, appliquée tout de suite.</p>
@@ -692,10 +692,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du cours Agile / Scrum</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -181,11 +181,9 @@
                     <thead><tr><th>Produit</th><th>Collation exigée</th><th>Conséquence</th></tr></thead>
                     <tbody>
                         <tr><td><strong>DPM</strong></td><td><code>SQL_Latin1_General_CP1_CI_AS</code> (collation SQL)</td><td>À poser sur l'<strong>instance</strong> qui porte DPMDB</td></tr>
-                        <tr><td><strong>SharePoint</strong> (module <a href="sharepoint.html">SharePoint</a>)</td><td><code>Latin1_General_CI_AS_KS_WS</code> (collation Windows)</td><td>SharePoint la pose sur ses bases ; idéalement aussi sur l'instance</td></tr>
                     </tbody>
                 </table>
             </div>
-            <p>Deux produits Microsoft, deux collations différentes : une instance unique ne peut pas satisfaire les deux à la fois. C'est une raison concrète de donner à chacun <strong>sa propre instance</strong>.</p>
 
             <div class="scenario scenario--quick">
                 <p class="scenario__label scenario__label--quick">Question éclair</p>
@@ -221,7 +219,7 @@
 
             <div class="tip">
                 <p class="tip__label">Le compte qui compte vraiment</p>
-                <p>Le setup crée la base en lançant un script avec <code>sqlcmd -E</code> : en <strong>authentification Windows de la session ouverte</strong>, pas avec le compte saisi dans l'assistant. Il faut donc être connecté sur le serveur DPM avec un compte du domaine qui est <strong>sysadmin</strong> sur SQL. Le setup crée ensuite sur SQL la base <code>DPMDB_&lt;nom du serveur&gt;</code> et un login pour le compte ordinateur de DPM (<code>ORION\SRV-DPM01$</code>).</p>
+                <p>Le setup lance un script (<code>master.sql</code>) avec <code>sqlcmd -E</code> : en <strong>authentification Windows de la session ouverte</strong>, pas avec le compte saisi dans l'assistant. Il faut donc être connecté sur le serveur DPM avec un compte du domaine qui est <strong>sysadmin</strong> sur SQL. Le setup crée aussi sur SQL la base <code>DPMDB_&lt;nom du serveur&gt;</code> et un login pour le compte ordinateur de DPM (<code>ORION\SRV-DPM01$</code>).</p>
             </div>
 
             <h3>La console : cinq espaces</h3>
@@ -286,7 +284,7 @@
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>L'ordre est imposé : <strong>stockage</strong> d'abord (un volume que DPM formate et se réserve), <strong>agents</strong> ensuite. Un agent installé ne protège rien à lui seul — c'est le groupe de protection qui décide quoi sauvegarder.</p>
+                <p>L'ordre à suivre : <strong>stockage</strong> d'abord (un volume que DPM formate et se réserve), <strong>agents</strong> ensuite. Un agent installé ne protège rien à lui seul — c'est le groupe de protection qui décide quoi sauvegarder.</p>
             </div>
 
             <div class="scenario scenario--quick">
@@ -364,7 +362,7 @@
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 1</b> · console DPM → pool</p>
                         <p class="walk__head">Réserver la place</p>
-                        <p>À <em>Create Group</em>, DPM réserve dans le pool la place calculée à l'écran <em>Review disk storage</em> : un volume ReFS pour le réplica de chaque membre et ses points de récupération.</p>
+                        <p>À <em>Create Group</em>, DPM réserve la place calculée à l'écran <em>Review disk storage</em>, sur les volumes ReFS du pool, pour le réplica de chaque membre et ses points de récupération.</p>
                         <p class="walk__change">La place est <b>réservée par membre</b> avant toute copie.</p>
                     </li>
                     <li class="walk__step">
@@ -388,13 +386,13 @@
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 5</b> · DPM, vendredi 19 h</p>
                         <p class="walk__head">Figer un point de récupération</p>
-                        <p>À l'heure prévue, DPM synchronise une dernière fois puis <strong>fige</strong> l'état du réplica (un instantané du volume ReFS). C'est ce point qui apparaît en gras dans le calendrier de l'espace <em>Recovery</em>.</p>
+                        <p>À l'heure prévue, DPM synchronise une dernière fois puis <strong>fige</strong> l'état du réplica (une <em>shadow copy</em> du réplica). C'est ce point qui apparaît en gras dans le calendrier de l'espace <em>Recovery</em>.</p>
                         <p class="walk__change">Seul le <b>point de récupération</b> se restaure.</p>
                     </li>
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 6</b> · DPM, au fil des jours</p>
                         <p class="walk__head">Purger et contrôler</p>
-                        <p>Les points plus vieux que la <strong>rétention</strong> (5 jours ici) sont supprimés. Si un réplica devient incohérent (agent arrêté, journal de changements perdu), DPM lance une <strong>vérification de cohérence</strong> qui le compare à la source et corrige.</p>
+                        <p>Les points plus vieux que la <strong>rétention</strong> (5 jours ici) sont supprimés. Si un réplica devient incohérent, DPM lance une <strong>vérification de cohérence</strong> qui le compare à la source et corrige.</p>
                         <p class="walk__change">La <b>rétention</b> dit jusqu'où on peut remonter dans le temps.</p>
                     </li>
                 </ol>
@@ -501,7 +499,7 @@ Execute the SQL script
                     <ul>
                         <li>Créer un certificat pour le nom court et le nom complet du serveur.</li>
                         <li>Donner au compte du service SQL (le gMSA) la lecture de sa clé privée.</li>
-                        <li>Le choisir pour l'instance (onglet <em>Certificate</em> du Configuration Manager), redémarrer SQL, l'Agent et SSRS, exporter le certificat.</li>
+                        <li>Le choisir pour l'instance (onglet <em>Certificate</em> du Configuration Manager), redémarrer SQL, puis démarrer l'Agent et SSRS (s'ils sont arrêtés), exporter le certificat.</li>
                     </ul>
                 </div>
                 <div class="card">
@@ -524,13 +522,13 @@ Execute the SQL script
                 <p>Un journal de setup contient, dans l'ordre : la création de la base, l'exécution de <code>master.sql</code> avec <code>Error code = 1</code>, puis « <code>14262 @category_name ... does not exist</code> » et « <code>15151 Cannot drop the role</code> ». Un forum conseille de créer la catégorie manquante dans <code>msdb</code>. Que fais-tu ?</p>
                 <details class="reveal">
                     <summary>Afficher la correction</summary>
-                    <div class="reveal__body"><p>On ne crée rien dans <code>msdb</code> : 14262 et 15151 arrivent <strong>après</strong> l'échec, pendant le retour arrière du setup. La première erreur est le script lancé par <code>sqlcmd</code> : on <strong>reproduit</strong> cet appel à la main avec les mêmes arguments, et le vrai message apparaît — ici le certificat refusé. Règle générale : dans un journal, la cause est la <strong>première</strong> erreur, pas la plus bavarde.</p></div>
+                    <div class="reveal__body"><p>On ne crée rien dans <code>msdb</code> : 14262 et 15151 arrivent <strong>après</strong> l'échec, pendant le retour arrière du setup. La première erreur est le script lancé par <code>sqlcmd</code> : on <strong>reproduit</strong> cet appel à la main avec les mêmes arguments, et le vrai message apparaît — ici le certificat refusé. Dans ce journal, la cause est la <strong>première</strong> erreur, pas la plus bavarde.</p></div>
                 </details>
             </div>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Erreur 811 = le <code>sqlcmd</code> ODBC 18 du setup refuse le certificat auto-généré de SQL. Remède : un <strong>certificat dédié sur SQL</strong>, <strong>approuvé sur DPM</strong>. C'est la chaîne de confiance déjà vue avec <a href="exchange-securite.html">Exchange &amp; PKI</a> : un client ne fait confiance qu'à un certificat qu'il peut rattacher à une autorité qu'il connaît.</p>
+                <p>Dans le TP, l'erreur 811 avait pour cause le <code>sqlcmd</code> ODBC 18 du setup, qui refusait le certificat auto-généré de SQL. Remède : un <strong>certificat dédié sur SQL</strong>, <strong>approuvé sur DPM</strong>. C'est la chaîne de confiance déjà vue avec <a href="exchange-securite.html">Exchange &amp; PKI</a> : un client ne fait confiance qu'à un certificat qu'il peut rattacher à une autorité qu'il connaît.</p>
             </div>
 
             <div class="scenario scenario--quick">
@@ -581,12 +579,6 @@ Execute the SQL script
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-DPM01</span></div>
                 <pre class="terminal__code"><span class="k">sqlcmd</span> <span class="p">-b</span> <span class="p">-E</span> <span class="p">-S</span> SRV-SQL01 <span class="p">-Q</span> <span class="s">"SELECT SUSER_SNAME()"</span></pre>
             </div>
-                <p class="verify__sub">Sortie attendue</p>
-            <pre class="verify__out">
---------------------
-ORION\Administrator
-
-(1 rows affected)</pre>
                 <p class="verify__fail"><em>The certificate chain was issued by an authority that is not trusted</em> : le certificat présenté par SQL Server n'est pas approuvé par SRV-DPM01. C'est exactement l'erreur 811 du chapitre 08 — à corriger côté certificat, pas en désactivant le chiffrement.</p>
             </div>
             <div class="lab" data-lab="dpm-restauration">
@@ -594,7 +586,7 @@ ORION\Administrator
                 <p class="lab__title">Restaurer un fichier, chronomètre en main</p>
                 <div class="lab__meta"><span><b>Objectif :</b> mesurer le temps réel de restauration (le RTO), pas celui qu'on suppose</span><span><b>Point de départ :</b> un groupe de protection actif sur SRV-FILE01 avec au moins un point de récupération</span><span><b>Durée :</b> 20 min</span></div>
                 <ol class="lab__steps">
-                <li><p>Créer un fichier témoin <code>D:\DEPARTMENTS\Public\temoin.txt</code>, attendre la synchronisation suivante (ou lancer <em>Create recovery point</em>).</p></li>
+                <li><p>Créer un fichier témoin <code>D:\DEPARTMENTS\Public\temoin.txt</code>, attendre la synchronisation suivante.</p></li>
                 <li><p>Supprimer le fichier. Démarrer le chronomètre.</p></li>
                 <li><p>Console DPM → <em>Recovery</em> → le serveur → le volume → la date du point de récupération → le fichier → <em>Recover</em> → <em>Recover to the original location</em>.</p></li>
                 <li><p>Arrêter le chronomètre quand le fichier est de retour et lisible. Noter le temps, et refaire l'exercice en restaurant vers un <strong>autre</strong> emplacement (cas réel : ne pas écraser la version actuelle).</p></li>
@@ -657,10 +649,10 @@ ORION\Administrator
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center DPM 2025</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

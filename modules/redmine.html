@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -90,7 +90,7 @@
 
             <div class="tip">
                 <p class="tip__label">Redmine n'est pas né helpdesk</p>
-                <p>Il vient de la gestion de projets de développement. Configuré (un projet « Support », un tracker d'assistance, un workflow adapté, la connexion à l'AD), il fait un honnête outil de support — mais il lui manque nativement ce qu'ont les outils dédiés comme <strong>GLPI</strong> : un portail simplifié pour l'utilisateur, des SLA, l'inventaire du parc. Des plugins, gratuits ou payants, comblent une partie de ces manques.</p>
+                <p>Il vient de la gestion de projets de développement. Configuré (un projet « Support », un tracker d'assistance, un workflow adapté, la connexion à l'AD), il fait un honnête outil de support — mais ses fonctions principales ne couvrent pas ce qu'ont les outils dédiés comme <strong>GLPI</strong> : un portail simplifié pour l'utilisateur, des SLA, l'inventaire du parc. Des plugins, gratuits ou payants, comblent une partie de ces manques.</p>
             </div>
 
             <div class="takeaway">
@@ -270,7 +270,7 @@
                 <p>C'est la suite prévue du TP. Les utilisateurs du domaine doivent pouvoir déclarer des incidents et suivre les leurs ; seule l'équipe support doit pouvoir les résoudre. Que configures-tu, et où ?</p>
                 <details class="reveal">
                     <summary>Afficher une proposition</summary>
-                    <div class="reveal__body"><p><em>Une configuration possible, à partir des notions du chapitre 01.</em> <strong>Membres et rôles</strong> du projet : l'équipe support avec un rôle qui peut modifier et assigner les demandes, les utilisateurs avec un rôle de type <em>Reporter</em> (créer, commenter). <strong>Tracker</strong> : <em>Support</em> pour les incidents. <strong>Workflow</strong> (<em>Administration &gt; Workflow</em>, par rôle et par tracker) : le passage en <em>Resolved</em> réservé au rôle support. Enfin, se demander si le projet doit rester <strong>public</strong> : en l'état, n'importe quel compte connecté voit les tickets des autres.</p></div>
+                    <div class="reveal__body"><p><em>Une configuration possible, à partir des notions du chapitre 01.</em> <strong>Membres et rôles</strong> du projet : l'équipe support avec un rôle qui peut modifier et assigner les demandes, les utilisateurs avec un rôle de type <em>Reporter</em> (créer, commenter). <strong>Tracker</strong> : <em>Support</em> pour les incidents. <strong>Workflow</strong> (<em>Administration &gt; Workflow</em>, par rôle et par tracker) : le passage en <em>Resolved</em> réservé au rôle support. Enfin, se demander si le projet doit rester <strong>public</strong> : en l'état, n'importe quel compte connecté voit les tickets des autres, si le rôle <em>Non member</em> a la permission <em>View Issues</em> (les tickets privés restent cachés).</p></div>
                 </details>
             </div>
 
@@ -431,7 +431,7 @@
   <span class="p">-subj</span> <span class="s">"/C=BE/O=LAB/OU=IT/CN=helpdesk.orion.local"</span> \
   <span class="p">-addext</span> <span class="s">"subjectAltName=DNS:helpdesk.orion.local"</span></pre>
             </div>
-            <p><code>-x509</code> produit directement un certificat ; <code>-nodes</code> (<code>-noenc</code> depuis OpenSSL 3.0, l'ancien nom reste accepté) laisse la clé non chiffrée, pour que nginx la lise sans phrase secrète ; le <strong>subjectAltName</strong> est indispensable — le CN seul ne suffit plus aux navigateurs. Auto-signé : le chiffrement fonctionne, mais le navigateur avertit, faute d'autorité qu'il connaisse.</p>
+            <p><code>-x509</code> produit directement un certificat ; <code>-nodes</code> (<code>-noenc</code> depuis OpenSSL 3.0, l'ancien nom reste accepté) laisse la clé non chiffrée, pour que nginx la lise sans phrase secrète ; le <strong>subjectAltName</strong> est indispensable — un certificat public doit y porter le nom du site. Auto-signé : le chiffrement fonctionne, mais le navigateur avertit, faute d'autorité qu'il connaisse.</p>
 
             <h3>La configuration de nginx</h3>
             <div class="terminal">
@@ -447,7 +447,7 @@
     <span class="p">ssl_certificate</span>     /etc/nginx/certs/redmine.crt;
     <span class="p">ssl_certificate_key</span> /etc/nginx/certs/redmine.key;
     <span class="p">ssl_protocols</span> TLSv1.2 TLSv1.3;
-    <span class="p">client_max_body_size</span> 100M;                      <span class="c"># pièces jointes jusqu'à 100 Mo</span>
+    <span class="p">client_max_body_size</span> 100M;                      <span class="c"># 413 au-delà de 100 Mo ; Redmine limite aussi (5 Mo par défaut, Settings &gt; Files)</span>
     <span class="k">location</span> / {
         <span class="p">proxy_pass</span> http://redmine:3000;             <span class="c"># le service redmine du Compose</span>
         <span class="p">proxy_set_header</span> Host $host;
@@ -498,7 +498,7 @@
             <div class="gl"><b>.env</b><span>Fichier de variables lu par Compose pour remplacer les ${VARIABLE}.</span></div>
             <div class="gl"><b>cron</b><span>Le planificateur de tâches de Linux ; une ligne = minute, heure, jour, mois, jour de semaine, commande.</span></div>
             <div class="gl"><b>Reverse proxy</b><span>Serveur placé devant une application, qui reçoit les connexions et les lui transmet.</span></div>
-            <div class="gl"><b>SAN</b><span>subjectAltName — les noms qu'un certificat couvre, seuls pris en compte par les navigateurs.</span></div>
+            <div class="gl"><b>SAN</b><span>subjectAltName — les noms qu'un certificat couvre, seuls pris en compte par les navigateurs dès qu'il porte un nom DNS.</span></div>
         </div>
 
         <!-- Test de fin de module — rendu par assets/quiz.js -->
@@ -624,10 +624,10 @@ redmine-nginx   nginx     Up 3 hours
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Redmine en remplacement de SCSM »</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

@@ -11,7 +11,7 @@ window.CARTES = [
 { m: "reseau-bases", f: "Port et protocole de <strong>SSH</strong> ?", b: "TCP 22" },
 { m: "reseau-bases", f: "Port et protocole du <strong>DNS</strong> ?", b: "53, en UDP (et TCP pour les grosses réponses et les transferts de zone)" },
 { m: "reseau-bases", f: "Ports du <strong>DHCP</strong> ?", b: "UDP 67 (serveur) et 68 (client)" },
-{ m: "reseau-bases", f: "Port de <strong>HTTPS</strong> ?", b: "TCP 443 (et UDP 443 avec HTTP/3, QUIC)" },
+{ m: "reseau-bases", f: "Port de <strong>HTTPS</strong> ?", b: "TCP 443" },
 { m: "reseau-bases", f: "Port de <strong>RDP</strong> (bureau à distance) ?", b: "3389, TCP et UDP" },
 { m: "reseau-bases", f: "Port de <strong>SMB</strong> (partages Windows) ?", b: "TCP 445" },
 { m: "reseau-bases", f: "Ports de <strong>LDAP</strong> et LDAPS ?", b: "389 (LDAP) et 636 (LDAP sur TLS)" },
@@ -35,7 +35,7 @@ window.CARTES = [
 { m: "reseau-bases", f: "SYN → pas de réponse : que conclure ?", b: "Le paquet est jeté en route : pare-feu, routage, machine éteinte (« délai expiré »)." },
 { m: "reseau-bases", f: "Enregistrement DNS qui fait correspondre un nom à une adresse IPv6 ?", b: "AAAA" },
 { m: "reseau-bases", f: "Par quel type d'enregistrement DNS un poste trouve-t-il ses contrôleurs de domaine ?", b: "SRV (par exemple <code>_ldap._tcp.orion.local</code>)" },
-{ m: "reseau-bases", f: "Règle de choix d'une route quand plusieurs correspondent ?", b: "Le <strong>préfixe le plus long</strong>, puis la plus petite distance administrative, puis la meilleure métrique." },
+{ m: "reseau-bases", f: "Règle de choix d'une route quand plusieurs correspondent ?", b: "Le <strong>préfixe le plus long</strong>, puis (sur Cisco) la plus petite distance administrative, puis la meilleure métrique." },
 { m: "reseau-bases", f: "Préfixe des adresses IPv6 <strong>lien local</strong> ?", b: "<code>fe80::/10</code> — présente sur chaque interface, ne franchit jamais un routeur" },
 { m: "reseau-bases", f: "Quel protocole remplace ARP en IPv6 ?", b: "NDP (Neighbor Discovery), en ICMPv6 multicast" },
 { m: "reseau-bases", f: "Taille d'un réseau local IPv6 standard ?", b: "/64" },
@@ -58,7 +58,7 @@ window.CARTES = [
 { m: "depannage-reseau", f: "Écart d'horloge maximal toléré par Kerberos par défaut ?", b: "5 minutes" },
 
 /* ── CCNA ── */
-{ m: "ccna-reseau", f: "IOS : voir l'état de toutes les interfaces en une ligne chacune ?", b: "<code>show ip interface brief</code>" },
+{ m: "ccna-reseau", f: "IOS : voir la liste courte des adresses IP principales et l'état des interfaces ?", b: "<code>show ip interface brief</code>" },
 { m: "ccna-reseau", f: "IOS : lancer un <code>show</code> depuis le mode configuration ?", b: "Le préfixer par <code>do</code> : <code>do show running-config</code>" },
 { m: "ccna-reseau", f: "IOS : ajouter le VLAN 30 à un trunk sans retirer les autres ?", b: "<code>switchport trunk allowed vlan add 30</code>" },
 { m: "ccna-reseau", f: "IOS : relayer le DHCP vers un serveur 10.2.120.10 ?", b: "Sur l'interface du VLAN : <code>ip helper-address 10.2.120.10</code>" },
@@ -124,7 +124,7 @@ window.CARTES = [
 /* ── RDS ── */
 { m: "rds", f: "Combien de temps un déploiement RDS fonctionne-t-il sans serveur de licences ?", b: "120 jours (période de grâce)" },
 { m: "rds", f: "Quel rôle RDS reconnecte un utilisateur à sa session existante ?", b: "Le Connection Broker (RDCB)" },
-{ m: "rds", f: "Port de la passerelle RD (RD Gateway) ?", b: "TCP 443 (HTTPS), plus UDP 3391 en option pour le transport UDP" },
+{ m: "rds", f: "Port de la passerelle RD (RD Gateway) ?", b: "TCP 443 (HTTPS) et UDP 3391 (transport UDP), à ouvrir vers la VM passerelle" },
 { m: "rds", f: "CAL <em>Per User</em> ou <em>Per Device</em> ?", b: "Per User : une personne, plusieurs appareils. Per Device : un poste partagé par plusieurs personnes" },
 { m: "rds", f: "Affecter un certificat aux rôles d'un déploiement RDS en PowerShell ?", b: "<code>Set-RDCertificate -Role RDWebAccess …</code> (aussi RDGateway, RDPublishing, RDRedirector)" },
 
@@ -147,7 +147,7 @@ window.CARTES = [
 
 /* ── DPM ── */
 { m: "dpm", f: "Collation exigée par DPM pour l'instance SQL de sa base ?", b: "<code>SQL_Latin1_General_CP1_CI_AS</code> — choisie à l'installation de SQL" },
-{ m: "dpm", f: "Synchronisation ou point de récupération : lequel se restaure ?", b: "Le point de récupération ; la synchronisation ne fait que tenir le réplica à jour" },
+{ m: "dpm", f: "Synchronisation ou point de récupération : lequel se restaure ?", b: "Le point de récupération ; pour des fichiers, la synchronisation tient le réplica à jour sans créer de point restaurable" },
 
 /* ── VoIP (compléments) ── */
 { m: "voip", f: "Débit de la voix seule en G.711 et en G.729 ?", b: "64 kb/s et 8 kb/s (hors en-têtes)" },

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -260,7 +260,7 @@
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 1</b> · 101 → PBX</p>
                         <p class="walk__head">INVITE, avec une offre SDP</p>
-                        <p>Le poste demande l'ouverture de la session. Le corps du message, en <strong>SDP</strong> (Session Description Protocol), dit où et comment il veut recevoir la voix : son adresse (<code>c=IN IP4 …</code>), son port RTP et ses codecs par ordre de préférence (<code>m=audio 10000 RTP/AVP 8 0 9</code> : 8 = G.711a, 0 = G.711u, 9 = G.722). Un PBX répond souvent d'abord <code>407 Proxy Authentication Required</code> : le poste renvoie alors l'INVITE avec ses identifiants.</p>
+                        <p>Le poste demande l'ouverture de la session. Le corps du message, en <strong>SDP</strong> (Session Description Protocol), dit où et comment il veut recevoir la voix : son adresse (<code>c=IN IP4 …</code>), son port RTP et ses codecs par ordre de préférence (<code>m=audio 10000 RTP/AVP 8 0 9</code> : 8 = G.711a, 0 = G.711u, 9 = G.722). Un PBX qui exige une authentification répond d'abord <code>407 Proxy Authentication Required</code> : le poste renvoie alors l'INVITE avec ses identifiants.</p>
                         <p class="walk__change">SIP sur le port <b>5060</b> ; l'<b>offre SDP</b> annonce adresse, port et codecs.</p>
                     </li>
                     <li class="walk__step">
@@ -278,7 +278,7 @@
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 4</b> · 102 → PBX → 101</p>
                         <p class="walk__head">200 OK, avec la réponse SDP</p>
-                        <p>Le 102 décroche. Sa réponse SDP retient un codec commun et donne son adresse et son port RTP. Sans codec commun, l'appel aurait échoué ici (<code>488 Not Acceptable Here</code>), sauf si le PBX transcode.</p>
+                        <p>Le 102 décroche. Sa réponse SDP retient un codec commun et donne son adresse et son port RTP. Sans codec commun, l'appel aurait échoué ici (<code>488 Not Acceptable Here</code>, la réponse que recommande la RFC 3261), sauf si le PBX transcode.</p>
                         <p class="walk__change">Codec <b>négocié</b> ; chacun connaît l'adresse et le port RTP de l'autre.</p>
                     </li>
                     <li class="walk__step">
@@ -290,7 +290,7 @@
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 6</b> · 101 ⇄ 102</p>
                         <p class="walk__head">La voix : RTP et RTCP</p>
-                        <p>La voix part en <strong>RTP sur UDP</strong>, vers les ports annoncés dans le SDP (plage 9000–10999 sur un 3CX), un paquet toutes les 20 ms dans chaque sens. Selon la configuration, elle va directement d'un poste à l'autre ou passe par le PBX. RTCP rapporte à côté pertes et gigue.</p>
+                        <p>La voix part en <strong>RTP sur UDP</strong>, vers les ports annoncés dans le SDP (plage 9000–10999 sur un 3CX), un paquet toutes les 20 ms par défaut dans chaque sens. Selon la configuration, elle va directement d'un poste à l'autre ou passe par le PBX. RTCP rapporte à côté pertes et gigue.</p>
                         <p class="walk__change">Un <b>autre chemin</b> et d'autres ports que SIP : un pare-feu peut laisser passer l'un et pas l'autre.</p>
                     </li>
                     <li class="walk__step">
@@ -315,7 +315,7 @@
                         <button class="scenario__opt" data-why="Les erreurs du serveur sont en 5xx. Un 4xx dit que la demande ne peut pas aboutir chez ce destinataire.">Le PBX est en panne : c&#x27;est une erreur du serveur</button>
                         <button class="scenario__opt" data-why="Un appel établi passe par un 2xx (200 OK) puis un ACK. Un 4xx est une réponse finale : l&#x27;appel est terminé.">L&#x27;appel est établi, le 102 est simplement lent à décrocher</button>
                     </div>
-                    <div class="scenario__why"><p>Toute réponse 4xx, 5xx ou 6xx est <strong>finale</strong> : l'appel s'arrête là (l'appelant envoie seulement un ACK pour en accuser réception). <code>486</code> = occupé ; le PBX peut alors appliquer le renvoi « si occupé ». Dans Wireshark : <em>Téléphonie → Appels VoIP → Diagramme de flux</em>.</p></div>
+                    <div class="scenario__why"><p>Toute réponse 4xx, 5xx ou 6xx est <strong>finale</strong> : l'appel s'arrête là (l'appelant envoie seulement un ACK pour en accuser réception). <code>486</code> = occupé ; le PBX peut alors appliquer le renvoi « si occupé ». Dans Wireshark : <em>Telephony → VoIP Calls</em>, puis le bouton <em>Flow Sequence</em>.</p></div>
                 </div>
             </div>
         </section>
@@ -334,7 +334,7 @@
                         <tr><td><strong>G.711a</strong></td><td>PCMA</td><td>Europe et une grande partie du monde</td></tr>
                         <tr><td><strong>G.711u</strong></td><td>PCMU</td><td>Amérique du Nord, Japon</td></tr>
                         <tr><td><strong>G.729</strong></td><td>—</td><td>Partout où la bande passante est comptée (compression forte : 8 kb/s au lieu de 64)</td></tr>
-                        <tr><td><strong>G.722</strong></td><td>« HD voice », large bande</td><td>Entre postes du même réseau : même débit que G.711 (64 kb/s), mais un son nettement plus riche</td></tr>
+                        <tr><td><strong>G.722</strong></td><td>large bande, 7 kHz</td><td>Entre postes du même réseau : au plus 64 kb/s, comme G.711, mais un son nettement plus riche</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -356,7 +356,7 @@
                 <div class="scenario__step">
                     <p class="scenario__q">Le poste A propose G.711a et G.722 ; le trunk de l'opérateur n'accepte que G.729. Le PBX ne fait pas de transcodage. Que donne un appel de A vers l'extérieur ?</p>
                     <div class="scenario__opts">
-                        <button class="scenario__opt" data-ok>Il échoue faute de codec commun (souvent <code>488 Not Acceptable Here</code>)</button>
+                        <button class="scenario__opt" data-ok>Il échoue faute de codec commun (<code>488 Not Acceptable Here</code>, la réponse que recommande la RFC 3261)</button>
                         <button class="scenario__opt" data-why="Un codec n&#x27;est utilisé que s&#x27;il figure des deux côtés de la négociation SDP. L&#x27;opérateur n&#x27;accepte pas G.711a.">Il passe en G.711a, le codec le plus répandu en Europe</button>
                         <button class="scenario__opt" data-why="Le poste ne peut choisir que parmi les codecs qu&#x27;il a lui-même proposés. G.729 n&#x27;est pas dans sa liste.">Il passe en G.729 : le poste s&#x27;adapte au trunk</button>
                     </div>
@@ -432,7 +432,7 @@
                     <h4>Vis-à-vis de l'opérateur</h4>
                     <ul>
                         <li>Écoute possible en cas de flux non chiffré.</li>
-                        <li>Pas de <strong>localisation</strong> de l'appelant — problème pour les appels d'urgence.</li>
+                        <li><strong>Localisation</strong> de l'appelant parfois impossible (fournisseur indépendant du réseau) — problème pour les appels d'urgence.</li>
                         <li>Connexion Internet HS = plus aucune communication.</li>
                     </ul>
                 </div>
@@ -531,7 +531,7 @@
                         <tr><td>Allumé, mais « non enregistré »</td><td>Mauvais VLAN, pas d'adresse, mauvais identifiants SIP, port 5060 filtré</td><td>Adresse du téléphone, journaux du PBX</td></tr>
                         <tr><td>Ça sonne, on décroche, personne n'entend</td><td>RTP bloqué : pare-feu, NAT, plage de ports RTP non ouverte</td><td>Capture : SIP présent, RTP absent</td></tr>
                         <tr><td>Son dans un seul sens</td><td>NAT : l'adresse annoncée dans le SDP est privée, ou un « SIP ALG » de la box réécrit mal</td><td>Adresse <code>c=</code> du SDP dans la capture</td></tr>
-                        <tr><td>Voix hachée, robotique</td><td>Gigue et pertes : congestion, Wi-Fi, absence de QoS</td><td>Wireshark → <em>Téléphonie → Flux RTP</em> : gigue et pertes</td></tr>
+                        <tr><td>Voix hachée, robotique</td><td>Gigue et pertes : congestion, Wi-Fi, absence de QoS</td><td>Wireshark → <em>Telephony → RTP → RTP Stream Analysis</em> : gigue et pertes</td></tr>
                         <tr><td>Coupure au bout de ≈ 32 s</td><td>L'ACK n'arrive pas (NAT, ALG, adresse privée dans l'en-tête <em>Contact</em>) : le poste appelé abandonne après 64 × 500 ms</td><td>Capture SIP : 200 OK répété, aucun ACK</td></tr>
                     </tbody>
                 </table>
@@ -539,13 +539,13 @@
             <h3>Lire un appel dans Wireshark</h3>
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Capturer</strong><p>Sur le poste ou un port en miroir, pendant un appel de test.</p></div></div>
-                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Voir les appels</strong><p>Menu <em>Téléphonie → Appels VoIP</em> : chaque appel avec ses messages SIP, et un <strong>diagramme de flux</strong> INVITE → 180 → 200 → ACK → BYE.</p></div></div>
-                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Analyser l'audio</strong><p><em>Téléphonie → RTP → Flux RTP</em> : gigue maximale et moyenne, pourcentage de paquets perdus, dans chaque sens. On peut même réécouter la conversation (en labo).</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Voir les appels</strong><p>Menu <em>Telephony → VoIP Calls</em> : chaque appel avec ses messages SIP, et le bouton <em>Flow Sequence</em> ouvre un <strong>diagramme de flux</strong> INVITE → 180 → 200 → ACK → BYE.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Analyser l'audio</strong><p><em>Telephony → RTP → RTP Stream Analysis</em> : gigue maximale et moyenne, nombre de paquets perdus, dans chaque sens. On peut même réécouter la conversation (en labo).</p></div></div>
             </div>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
                 <p>L'appel de test est-il capturé avec sa signalisation et sa voix ?</p>
-                <p>Où regarder : dans Wireshark, le menu <em>Téléphonie → Appels VoIP</em>, puis <em>Téléphonie → RTP → Flux RTP</em>.</p>
+                <p>Où regarder : dans Wireshark, le menu <em>Telephony → VoIP Calls</em>, puis <em>Telephony → RTP → RTP Stream Analysis</em>.</p>
                 <p class="verify__sub">Sortie attendue</p>
                 <pre class="verify__out">Appels VoIP : un appel du poste 101 vers le poste 102
 Diagramme de flux : INVITE → 180 → 200 → ACK → BYE
@@ -553,7 +553,7 @@ Flux RTP : un flux de 101 vers 102, un flux de 102 vers 101
 Paquets perdus : moins de 1 % dans chaque sens</pre>
                 <p class="verify__fail">Pas de diagramme SIP : la capture ne contient pas la signalisation. Refais l'étape 1, avec la capture sur le poste ou sur un port en miroir, pendant l'appel. Un seul sens de flux RTP : c'est la ligne « Son dans un seul sens » du tableau ci-dessus. Plus de 1 % de perte : la voix est hachée, voir la ligne « Voix hachée, robotique ».</p>
             </div>
-            <p>Les ports à ouvrir pour un 3CX : SIP en <strong>5060</strong> (UDP/TCP, 5061 en TLS) et une plage RTP, <strong>9000–10999</strong> UDP par défaut ; <strong>5090</strong> (UDP/TCP) en plus pour le tunnel des postes distants et du SBC. Un pare-feu qui n'ouvre que 5060 donne exactement le symptôme « ça sonne mais pas de son ».</p>
+            <p>Les ports à ouvrir pour un 3CX : SIP en <strong>5060</strong> (UDP/TCP, 5061 en TLS) et une plage RTP, <strong>9000–10999</strong> UDP à ouvrir ; <strong>5090</strong> (UDP/TCP) en plus pour le tunnel des postes distants et du SBC. Un pare-feu qui n'ouvre que 5060 donne exactement le symptôme « ça sonne mais pas de son ».</p>
             <div class="scenario">
                 <p class="scenario__label">Scénario de panne</p>
                 <p class="scenario__title">Les appels sortants n'ont pas de son</p>
@@ -571,12 +571,12 @@ Paquets perdus : moins de 1 % dans chaque sens</pre>
                     <p class="scenario__q">Que regardes-tu en premier ?</p>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>Les règles du pare-feu / NAT : la plage RTP 9000–10999 UDP est-elle ouverte et redirigée vers le PBX ?</button>
-                        <button class="scenario__opt" data-why="Un problème de codec empêcherait plutôt l&#x27;appel de s&#x27;établir (488 Not Acceptable Here).">Le codec des téléphones</button>
+                        <button class="scenario__opt" data-why="Un problème de codec empêcherait plutôt l&#x27;appel de s&#x27;établir (488 Not Acceptable Here, la réponse que recommande la RFC 3261).">Le codec des téléphones</button>
                         <button class="scenario__opt" data-why="Les téléphones fonctionnent en interne.">Le PoE du switch</button>
                     </div>
                     <div class="scenario__why"><p>Seul le port 5060 est redirigé vers le PBX : la signalisation passe, les flux RTP entrants sont jetés par le pare-feu.</p></div>
                 </div>
-                <div class="scenario__end"><strong>Correction :</strong> rediriger la plage RTP vers le PBX et vérifier dans Wireshark qu'un flux RTP existe dans <strong>les deux sens</strong>. Si la box fait du « SIP ALG », le désactiver : il réécrit les messages SIP et casse souvent ce que le PBX gère déjà correctement.</div>
+                <div class="scenario__end"><strong>Correction :</strong> rediriger la plage RTP vers le PBX et vérifier dans Wireshark qu'un flux RTP existe dans <strong>les deux sens</strong>. Si la box fait du « SIP ALG », le désactiver : 3CX le recommande.</div>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -722,10 +722,10 @@ Appel sortant : le correspondant décroche et entend la voix</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

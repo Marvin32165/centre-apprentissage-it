@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -180,7 +180,7 @@ DNSServer            : 172.16.50.10</pre>
 <span class="c"># demande le mot de passe DSRM (restauration de l'annuaire), une confirmation, puis redémarre</span></pre>
             </div>
             <p>La promotion fixe aussi les <strong>niveaux fonctionnels</strong> de la forêt et du domaine (paramètres <code>-ForestMode</code> et <code>-DomainMode</code>) : ils décident des fonctions d'AD disponibles et de la version minimale de Windows des DC. Windows Server 2025 apporte son propre niveau (Windows Server 2025). Dans l'autre sens, pour ajouter un DC 2025 à une forêt existante, celle-ci doit être au moins au niveau <strong>Windows Server 2016</strong>. Le niveau se lit avec <code>(Get-ADForest).ForestMode</code> et <code>(Get-ADDomain).DomainMode</code>. On le monte une fois tous les DC à jour ; le redescendre n'est possible que dans des cas limités.</p>
-            <p>La promotion crée la zone DNS <code>orion.local</code> intégrée à l'annuaire, avec les enregistrements <strong>SRV</strong> (<code>_ldap._tcp</code>, <code>_kerberos._tcp</code>) par lesquels les postes trouvent leurs contrôleurs. C'est pour ça qu'AD ne fonctionne pas sans un DNS correct.</p>
+            <p>La promotion installe le DNS (par défaut pour une nouvelle forêt) et crée la zone DNS <code>orion.local</code> intégrée à l'annuaire, avec les enregistrements <strong>SRV</strong> (<code>_ldap._tcp</code>, <code>_kerberos._tcp</code>) par lesquels les postes trouvent leurs contrôleurs. C'est pour ça qu'AD ne fonctionne pas sans un DNS correct.</p>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
                 <p>Le domaine répond-il, et le contrôleur est-il sain ?</p>
@@ -259,7 +259,7 @@ SRV-AD02                 02m:48s    0 /   5    0</pre>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>Rien de visible : SRV-AD02 les authentifie seul</button>
                         <button class="scenario__opt" data-why="Tous les DC authentifient. Les rôles FSMO ne concernent que quelques opérations rares, pas l&#x27;ouverture de session.">Plus personne ne peut ouvrir de session</button>
-                        <button class="scenario__opt" data-why="La saisie est réservée à un DC perdu pour de bon : l&#x27;ancien porteur ne doit plus jamais revenir. Pour une heure d&#x27;arrêt, on attend.">Il faut saisir les rôles sur SRV-AD02</button>
+                        <button class="scenario__opt" data-why="La saisie est réservée à un DC perdu pour de bon : l&#x27;ancien porteur ne doit pas revenir sur le réseau avec son ancien état. Pour une heure d&#x27;arrêt, on attend.">Il faut saisir les rôles sur SRV-AD02</button>
                     </div>
                     <div class="scenario__why"><p>Un second DC sert justement à ça : il a toute la base, le DNS et le catalogue global. Pendant une heure, aucune opération à maître unique ne manque vraiment. Pour une absence longue, on <strong>transfère</strong> les rôles avant l'arrêt ; on ne les <strong>saisit</strong> que si SRV-AD01 ne reviendra jamais.</p></div>
                 </div>
@@ -298,7 +298,7 @@ SRV-AD02                 02m:48s    0 /   5    0</pre>
             <p><strong>AGDLP</strong> : les comptes (<em>Accounts</em>) vont dans des groupes <em>Globaux</em>, mis dans des groupes de <em>Domaine Local</em>, qui reçoivent les <em>Permissions</em>. Dans un petit lab, on donne souvent les droits directement aux groupes globaux (c'est ce que fait le TP) ; AGDLP prend tout son sens quand plusieurs services partagent les mêmes ressources.</p>
             <h3>Ce que le TP final ajoute</h3>
             <ul>
-                <li><strong>Utilisateur modèle</strong> : un compte désactivé qui porte les réglages communs (groupes, heures d'ouverture de session, profil). Dans <em>Active Directory Users and Computers</em>, clic droit → <em>Copy…</em> crée un nouveau compte qui en hérite.</li>
+                <li><strong>Utilisateur modèle</strong> : un compte désactivé qui porte les réglages communs (groupes, heures d'ouverture de session, profil).</li>
                 <li><strong>Heures d'ouverture de session</strong> : onglet <em>Account</em> → <em>Logon Hours…</em> du compte.</li>
                 <li><strong>Délégation</strong> : clic droit sur l'OU <em>Development</em> → <em>Delegate Control…</em> → ajouter <code>jsmith</code> → tâche « <em>Create, delete, and manage user accounts</em> ». Il gère les comptes de cette OU, et rien d'autre : il n'est pas administrateur du domaine.</li>
             </ul>
@@ -307,7 +307,7 @@ SRV-AD02                 02m:48s    0 /   5    0</pre>
                 <p>En PowerShell, crée un groupe de sécurité global <code>ACC-GRP</code> dans l'OU <code>OU=Accounting,OU=ORION-DPT,DC=orion,DC=local</code>.</p>
                 <details class="reveal">
                     <summary>Voir la solution</summary>
-                    <div class="reveal__body"><p><code>New-ADGroup -Name "ACC-GRP" -GroupScope Global -GroupCategory Security -Path "OU=Accounting,OU=ORION-DPT,DC=orion,DC=local"</code>. Sans <code>-GroupCategory</code>, le groupe est de sécurité par défaut ; <code>-GroupScope</code>, lui, est obligatoire.</p></div>
+                    <div class="reveal__body"><p><code>New-ADGroup -Name "ACC-GRP" -GroupScope Global -GroupCategory Security -Path "OU=Accounting,OU=ORION-DPT,DC=orion,DC=local"</code>. <code>-GroupScope</code>, lui, est obligatoire.</p></div>
                 </details>
             </div>
             <div class="verify">
@@ -342,7 +342,7 @@ Sacha Somers sso</pre>
                     <tbody>
                         <tr><td><strong>Primaire</strong></td><td>Un fichier sur ce serveur, modifiable</td><td>DNS autonome (le TP DNS du cours, sans AD)</td></tr>
                         <tr><td><strong>Secondaire</strong></td><td>Une copie en lecture seule, transférée depuis le primaire</td><td>Redondance hors AD</td></tr>
-                        <tr><td><strong>Intégrée à AD</strong></td><td>Dans l'annuaire, répliquée avec lui sur tous les DC</td><td>Dès qu'il y a un domaine : c'est le choix par défaut</td></tr>
+                        <tr><td><strong>Intégrée à AD</strong></td><td>Dans l'annuaire, répliquée avec lui sur tous les DC</td><td>Dès qu'il y a un domaine AD DS : le DNS y est intégré</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -369,7 +369,7 @@ Sacha Somers sso</pre>
             <pre class="verify__out">Nom :    srv-file01.orion.local
 Address:  172.16.50.20
 Aliases:  storage.orion.local</pre>
-                <p class="verify__fail">La résolution inverse échoue (<em>Non-existent domain</em>) : la zone inverse manque, ou l'enregistrement A a été créé sans <code>-CreatePtr</code> (case « <em>Create associated PTR record</em> » dans la console).</p>
+                <p class="verify__fail">La résolution inverse échoue (<em>Nonexistent domain</em>) : la zone inverse manque, ou l'enregistrement A a été créé sans <code>-CreatePtr</code> (case « <em>Create associated PTR record</em> » dans la console).</p>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -497,7 +497,7 @@ Serveurs DNS. . . . . . . . . . . . . .: 172.16.50.1</pre>
 CREATOR OWNER:(OI)(CI)(IO)(F)
 NT AUTHORITY\SYSTEM:(OI)(CI)(F)
 BUILTIN\Administrators:(OI)(CI)(F)</pre>
-                <p class="verify__fail">Un utilisateur du bon groupe est refusé : il a été ajouté au groupe <strong>après</strong> son ouverture de session. Le jeton n'est recalculé qu'à la prochaine ouverture de session (ou <code>klist purge</code>).</p>
+                <p class="verify__fail">Un utilisateur du bon groupe est refusé : il a été ajouté au groupe <strong>après</strong> son ouverture de session. Le jeton n'est recalculé qu'à la prochaine ouverture de session.</p>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -790,9 +790,9 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok><code>Test-ComputerSecureChannel -Repair -Credential ORION\admin</code></button>
                         <button class="scenario__opt" data-why="L&#x27;heure peut jouer, mais le message parle de relation d&#x27;approbation : le mot de passe du compte machine ne correspond plus.">w32tm /resync, pour recaler l&#x27;heure</button>
-                        <button class="scenario__opt" data-why="Le poste est déjà membre : Add-Computer échoue. Il faudrait sortir du domaine puis y revenir, ce qui est plus long que réparer le canal.">Add-Computer -DomainName orion.local</button>
+                        <button class="scenario__opt" data-why="Add-Computer joint un poste à un domaine, ou le fait passer d'un domaine à un autre : il ne répare rien. Il faudrait sortir du domaine puis y revenir, ce qui est plus long que réparer le canal.">Add-Computer -DomainName orion.local</button>
                     </div>
-                    <div class="scenario__why"><p>Un poste change le mot de passe de son <strong>compte machine</strong> tous les 30 jours par défaut. Le point de contrôle a remis un ancien mot de passe, que le DC ne reconnaît plus. <code>Test-ComputerSecureChannel</code> renvoie <code>False</code> ; avec <code>-Repair</code> et un compte autorisé, il réinitialise le mot de passe des deux côtés, sans sortir du domaine.</p></div>
+                    <div class="scenario__why"><p>Un poste change le mot de passe de son <strong>compte machine</strong> tous les 30 jours par défaut. Le point de contrôle a remis un ancien mot de passe, que le DC ne reconnaît plus. <code>Test-ComputerSecureChannel</code> renvoie <code>False</code> ; avec <code>-Repair</code> et un compte autorisé, il réinitialise le canal entre le poste et son domaine, sans sortir du domaine.</p></div>
                 </div>
             </div>
         </section>
@@ -974,10 +974,10 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

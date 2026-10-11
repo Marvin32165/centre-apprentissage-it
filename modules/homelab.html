@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -87,7 +87,7 @@
                 <table>
                     <thead><tr><th>Option</th><th>Pour qui</th><th>Atouts</th></tr></thead>
                     <tbody>
-                        <tr><td>Raspberry Pi</td><td>Débuter, faible conso</td><td>Silencieux, ~5 W, parfait pour Pi-hole</td></tr>
+                        <tr><td>Raspberry Pi</td><td>Débuter, faible conso</td><td>Silencieux, parfait pour Pi-hole</td></tr>
                         <tr><td>Mini-PC (NUC, Tiny)</td><td>Le meilleur rapport</td><td>x86, silencieux, tient plein de conteneurs</td></tr>
                         <tr><td>PC recyclé / tour</td><td>Récup gratuite</td><td>Extensible (RAM, disques), idéal Proxmox</td></tr>
                         <tr><td>Serveur d'occasion</td><td>Aller loin</td><td>Beaucoup de RAM/cœurs — mais bruit &amp; conso</td></tr>
@@ -190,7 +190,7 @@
             <p>Pour un certificat <em>valide</em> (cadenas vert) sans exposer le service, on utilise un domaine réel et le <strong>challenge DNS</strong> de Let's Encrypt : le certificat est émis sans ouvrir de port entrant. C'est le prolongement du module <a href="exchange-securite.html">PKI &amp; certificats</a>.</p>
             <div class="tip">
                 <p class="tip__label">Quel nom de domaine pour la maison ?</p>
-                <p>Let's Encrypt ne délivre de certificat que pour un domaine public qui t'appartient (ex. <code>lab.exemple.be</code>, des sous-domaines servis seulement par ton DNS local). Pour un nom purement interne, sans certificat public, utilise un suffixe réservé : <code>home.arpa</code> (RFC 8375) ou <code>.internal</code> (réservé par l'ICANN en 2024). <code>.lan</code> ou <code>.local</code> ne sont pas faits pour ça : <code>.local</code> est réservé au mDNS.</p>
+                <p>Let's Encrypt ne délivre de certificat que pour un domaine public qui t'appartient (ex. <code>lab.exemple.be</code>, des sous-domaines dont le serveur reste interne, si le TXT de validation est publié dans le DNS public). Pour un nom purement interne, sans certificat public, utilise un suffixe réservé : <code>home.arpa</code> (RFC 8375) ou <code>.internal</code> (réservé par l'ICANN en 2024). <code>.lan</code> ou <code>.local</code> ne sont pas faits pour ça : <code>.local</code> est réservé au mDNS.</p>
             </div>
 
             <div class="takeaway">
@@ -297,7 +297,7 @@
 
             <h3>Faire son NAS</h3>
             <ul>
-                <li><strong>Solutions clé en main</strong> — TrueNAS (basé ZFS), Unraid (souple pour disques de tailles mixtes), OpenMediaVault (léger, sur Debian).</li>
+                <li><strong>Solutions clé en main</strong> — TrueNAS (basé ZFS), Unraid (souple pour disques de tailles mixtes, tant que la parité est au moins aussi grande que le plus grand disque de données), OpenMediaVault (léger, sur Debian).</li>
                 <li><strong>Sur Proxmox</strong> — un pool <strong>ZFS</strong> (cf. module <a href="proxmox.html">Proxmox</a>) partagé en SMB/NFS, ou une VM TrueNAS avec passthrough des disques.</li>
             </ul>
 
@@ -375,7 +375,7 @@
                 <div class="card">
                     <h4>Mesh VPN — Tailscale</h4>
                     <ul>
-                        <li>Basé sur WireGuard, <strong>zéro port à ouvrir</strong></li>
+                        <li>Basé sur WireGuard, <strong>zéro port à ouvrir</strong> dans la plupart des cas</li>
                         <li>Relie tes appareils comme un réseau privé</li>
                         <li>Le plus simple pour débuter</li>
                     </ul>
@@ -384,7 +384,7 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Ne fais surtout pas ça</p>
-                <p>Ouvrir un <em>port forwarding</em> direct vers un service (RDP, une appli web, un NAS) est l'une des causes de compromission les plus fréquentes : des robots balaient en permanence tout Internet à la recherche de ces ports. Passe <strong>toujours</strong> par un VPN (WireGuard/Tailscale). Si un service doit vraiment être public, mets-le derrière un reverse proxy durci, avec authentification et à jour.</p>
+                <p>Ouvrir un <em>port forwarding</em> direct vers un service (RDP, une appli web, un NAS) est une voie d'entrée des attaquants : des robots balaient en permanence tout Internet à la recherche de ces ports. Passe <strong>toujours</strong> par un VPN (WireGuard/Tailscale). Si un service doit vraiment être public, mets-le derrière un reverse proxy durci, avec authentification et à jour.</p>
             </div>
 
             <div class="tip">
@@ -509,10 +509,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@TechnoTim" target="_blank" rel="noopener">TechnoTim</a> · <a href="https://www.youtube.com/@TechHut" target="_blank" rel="noopener">TechHut</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

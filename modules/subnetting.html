@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -87,7 +87,7 @@
                 <table>
                     <thead><tr><th>Classe</th><th>1er octet</th><th>Masque « par défaut »</th><th>Plages privées (RFC 1918)</th></tr></thead>
                     <tbody>
-                        <tr><td>A</td><td>1 – 126</td><td>/8 (255.0.0.0)</td><td>10.0.0.0 – 10.255.255.255</td></tr>
+                        <tr><td>A</td><td>1 – 126 (0 et 127 réservés)</td><td>/8 (255.0.0.0)</td><td>10.0.0.0 – 10.255.255.255</td></tr>
                         <tr><td>B</td><td>128 – 191</td><td>/16 (255.255.0.0)</td><td>172.16.0.0 – 172.31.255.255</td></tr>
                         <tr><td>C</td><td>192 – 223</td><td>/24 (255.255.255.0)</td><td>192.168.0.0 – 192.168.255.255</td></tr>
                     </tbody>
@@ -352,7 +352,7 @@
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>VLSM = un masque par besoin. <strong>Trie du plus grand au plus petit</strong>, prends le plus petit masque qui couvre le besoin (2<sup>h</sup> − 2 ≥ besoin), et empile les blocs sans trou. Une liaison point-à-point = un <strong>/30</strong> en règle générale (un <strong>/31</strong> est possible sur les équipements récents, RFC 3021).</p>
+                <p>VLSM = un masque par besoin. <strong>Trie du plus grand au plus petit</strong>, prends le plus petit masque qui couvre le besoin (2<sup>h</sup> − 2 ≥ besoin), et empile les blocs sans trou. Une liaison point-à-point = un <strong>/30</strong> en règle générale (un <strong>/31</strong> est possible si les deux extrémités le supportent, RFC 3021).</p>
             </div>
             <div class="scenario scenario--quick">
                 <p class="scenario__label scenario__label--quick">Question éclair</p>
@@ -460,7 +460,7 @@
             </div>
             <div class="tip">
                 <p class="tip__label">Le piège</p>
-                <p>Un masque générique se calcule depuis le <strong>masque</strong>, pas depuis le préfixe tapé « au jugé » : <code>/21</code> → <code>255.255.248.0</code> → <code>0.0.7.255</code>. Écrire <code>0.0.0.255</code> pour un /21 ne couvrirait qu'un huitième du réseau, sans aucun message d'erreur.</p>
+                <p>Un masque générique se calcule depuis le <strong>masque</strong>, pas depuis le préfixe tapé « au jugé » : <code>/21</code> → <code>255.255.248.0</code> → <code>0.0.7.255</code>. Écrire <code>0.0.0.255</code> pour un /21 ne couvrirait qu'un huitième du réseau.</p>
             </div>
             <div class="subgen" data-mode="wildcard">
                 <p class="subgen__label">Entraînement — masques génériques</p>
@@ -497,8 +497,8 @@
                     <thead><tr><th>Préfixe</th><th>Typiquement attribué à</th><th>Nombre de /64 dedans</th></tr></thead>
                     <tbody>
                         <tr><td>/32</td><td>Un fournisseur d'accès</td><td>4 294 967 296</td></tr>
-                        <tr><td>/48</td><td>Un site d'entreprise</td><td>65 536</td></tr>
-                        <tr><td>/56</td><td>Un abonné particulier ou une petite agence</td><td>256</td></tr>
+                        <tr><td>/48</td><td>Un site d'entreprise (ancien défaut, RFC 3177)</td><td>65 536</td></tr>
+                        <tr><td>/56</td><td>Un abonné particulier ou une petite agence (défaut conseillé par RFC 6177)</td><td>256</td></tr>
                         <tr><td>/64</td><td>Un réseau local (un VLAN)</td><td>1</td></tr>
                     </tbody>
                 </table>
@@ -626,11 +626,11 @@ Hosts/Net: 62                    Class C, Private Internet</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/watch?v=5WfiTHiU4x8&list=PLIhvC56v63IKrRHh3gvZZBAGvsvOhwrRF" target="_blank" rel="noopener">Subnetting — NetworkChuck</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
-<script src="../assets/atelier.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
+<script src="../assets/atelier.js?v=19"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -76,12 +76,12 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Avertissement</p>
-                <p>Tester, scanner ou attaquer un système <strong>sans autorisation écrite</strong> est illégal. En <strong>Belgique</strong>, l'<strong>article 550bis du Code pénal</strong> punit d'emprisonnement et d'amende le simple fait d'accéder sans autorisation à un système informatique, ou de s'y maintenir — plus lourdement avec une intention frauduleuse ou de nuire ; en <strong>France</strong>, ce sont les <strong>articles 323-1 et suivants</strong> du Code pénal. Les « bonnes intentions » ne changent rien : l'accès sans autorisation est l'infraction. Tout ce qui suit s'applique <strong>uniquement</strong> à des systèmes que tu possèdes ou que tu es explicitement autorisé à tester, dans un <strong>labo isolé</strong>.</p>
+                <p>Accéder à un système <strong>sans autorisation écrite</strong> est illégal ; tester ou scanner sans autorisation est <strong>risqué</strong>, car le droit varie selon les pays. En <strong>Belgique</strong>, l'<strong>article 550bis du Code pénal</strong> punit d'emprisonnement et d'amende le simple fait d'accéder sans autorisation à un système informatique, ou de s'y maintenir — plus lourdement avec une intention frauduleuse ; en <strong>France</strong>, ce sont les <strong>articles 323-1 et suivants</strong> du Code pénal, qui visent l'accès ou le maintien <em>frauduleux</em>. Les « bonnes intentions » ne changent rien : l'accès sans autorisation est l'infraction. Tout ce qui suit s'applique <strong>uniquement</strong> à des systèmes que tu possèdes ou que tu es explicitement autorisé à tester, dans un <strong>labo isolé</strong>.</p>
             </div>
 
             <div class="tip">
                 <p class="tip__label">L'exception belge, très encadrée</p>
-                <p>Depuis le <strong>15 février 2023</strong>, la loi belge (loi NIS, reprise par la loi NIS2 de 2024) protège la personne qui cherche et signale une vulnérabilité <strong>sans</strong> autorisation préalable, à des conditions strictes : aucune intention frauduleuse ni de nuire, ne faire que le <strong>strict nécessaire</strong> pour démontrer la faille, la signaler au plus vite à l'organisation <strong>et</strong> au <strong>CCB</strong> (Centre pour la Cybersécurité Belgique), et ne rien divulguer sans l'accord du CCB. Ce n'est pas un permis de tester : hors de ces conditions, l'article 550bis s'applique.</p>
+                <p>La loi belge de transposition de NIS2 (projet de mars 2024, Doc 55 3862) protège la personne qui cherche et signale une vulnérabilité <strong>sans</strong> autorisation préalable, à des conditions strictes : aucune intention frauduleuse ni de nuire, ne faire que le <strong>strict nécessaire</strong> pour démontrer la faille, la signaler au plus vite à l'organisation <strong>et</strong> au <strong>CCB</strong> (Centre pour la Cybersécurité Belgique), et ne rien divulguer sans l'accord du CCB. Ce n'est pas un permis de tester : hors de ces conditions, l'article 550bis s'applique.</p>
             </div>
 
             <h3>Les trois « chapeaux »</h3>
@@ -131,10 +131,10 @@
 
             <div class="tip">
                 <p class="tip__label">Règle d'or du labo</p>
-                <p>Le réseau du labo ne doit avoir <strong>aucune route vers Internet ni vers ton réseau domestique</strong>. Une VM volontairement vulnérable exposée en ligne se fait compromettre en quelques minutes — et peut servir de rebond vers le reste.</p>
+                <p>Le réseau du labo ne doit avoir <strong>aucune route vers Internet ni vers ton réseau domestique</strong>. Une VM volontairement vulnérable exposée en ligne se fait compromettre — et peut servir de rebond vers le reste.</p>
             </div>
 
-            <p>Sur Proxmox (cf. module <a href="proxmox.html">Proxmox &amp; Virtualisation</a>), on crée un pont dédié sans <code>bridge-ports</code>, puis on y branche Kali et les cibles. Elles se voient entre elles, et nulle part ailleurs.</p>
+            <p>Sur Proxmox (cf. module <a href="proxmox.html">Proxmox &amp; Virtualisation</a>), on crée un pont dédié avec <code>bridge-ports none</code>, puis on y branche Kali et les cibles. Elles se voient entre elles, et nulle part ailleurs.</p>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
                 <p>Le labo est-il isolé : aucune route vers l'extérieur sur Kali, et un pont sans carte physique ?</p>
@@ -229,7 +229,7 @@ iface vmbr1 inet manual
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Recon → Scan → Exploitation → Post-exploitation → <strong>Rapport</strong>. Un test sans rapport de correctifs ne sert à rien : la valeur d'un pentest, c'est ce qu'on <em>corrige</em> ensuite.</p>
+                <p>Recon → Scan → Exploitation → Post-exploitation → <strong>Rapport</strong> (cinq phases simplifiées : le PTES en compte sept). Un test sans rapport de correctifs ne sert à rien : la valeur d'un pentest, c'est ce qu'on <em>corrige</em> ensuite.</p>
             </div>
         </section>
 
@@ -393,7 +393,7 @@ PORT     STATE    SERVICE     VERSION
                     <p class="scenario__q">Tu as mis <code>PasswordAuthentication no</code> à la fin de <code>/etc/ssh/sshd_config</code> et redémarré SSH. Pourtant, une connexion par mot de passe passe encore. Que vérifies-tu ?</p>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>Un fichier de sshd_config.d qui fixe la valeur avant ta ligne</button>
-                        <button class="scenario__opt" data-why="Sur Debian, le service s&#x27;appelle ssh ; s&#x27;il n&#x27;avait pas redémarré, systemctl l&#x27;aurait signalé. Le comportement vient de la configuration lue.">Que le service s&#x27;appelle bien sshd et pas ssh</button>
+                        <button class="scenario__opt" data-why="Sur Debian, le service s&#x27;appelle ssh ; le nom du service n&#x27;y change rien. Le comportement vient de la configuration lue.">Que le service s&#x27;appelle bien sshd et pas ssh</button>
                         <button class="scenario__opt" data-why="Ta valeur no est déjà en minuscules, la forme documentée (dans sshd_config, les mots-clés ignorent la casse, pas leurs arguments) : le problème est ailleurs.">Qu&#x27;il faut écrire « No » avec une majuscule</button>
                     </div>
                     <div class="scenario__why"><p>Pour sshd, la <strong>première</strong> occurrence d'un mot-clé gagne. Or l'<code>Include</code> de <code>sshd_config.d/*.conf</code> est en tête du fichier. <code>sudo sshd -T</code> affiche la configuration effective ; on corrige le fichier fautif, ou on place son réglage dans un fichier de ce dossier au nom qui passe en premier.</p></div>
@@ -460,7 +460,7 @@ PORT     STATE    SERVICE     VERSION
                 <li><strong>MFA / 2FA partout</strong> — un second facteur (appli TOTP, clé FIDO2) bloque l'essentiel des vols de compte.</li>
                 <li><strong>Mises à jour</strong> — OS, navigateur, applis : les failles corrigées ne servent qu'à ceux qui n'ont pas patché.</li>
                 <li><strong>Phishing</strong> — vérifier l'expéditeur et l'URL, ne pas cliquer dans l'urgence. L'humain reste la première cible.</li>
-                <li><strong>Sauvegardes 3-2-1</strong> — le dernier rempart contre le rançongiciel, à condition qu'une copie soit <strong>hors ligne ou non modifiable</strong> (un rançongiciel chiffre aussi les sauvegardes qu'il peut atteindre) et que la restauration ait été testée (cf. module <a href="proxmox.html">Proxmox</a>, chapitre backup).</li>
+                <li><strong>Sauvegardes 3-2-1</strong> — le dernier rempart contre le rançongiciel, à condition qu'une copie soit <strong>hors ligne</strong> (un rançongiciel chiffre aussi les sauvegardes qu'il peut atteindre) et que la restauration ait été testée (cf. module <a href="proxmox.html">Proxmox</a>, chapitre backup).</li>
             </ul>
 
             <div class="tip">
@@ -511,10 +511,10 @@ PORT     STATE    SERVICE     VERSION
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Pour approfondir : <a href="https://www.youtube.com/@zSecurity" target="_blank" rel="noopener">zSecurity</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

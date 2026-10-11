@@ -57,7 +57,7 @@ window.QUIZ_BANK = {
         q: "Un client tente une connexion TCP sur un port ; il envoie <code>SYN</code> et reçoit aussitôt <code>RST</code>. Que conclure ?",
         c: ["La machine répond, mais aucun service n'écoute sur ce port", "Un pare-feu a jeté le paquet en silence sur le chemin", "La machine est éteinte ou débranchée du réseau", "La connexion est établie : le RST confirme l'ouverture"],
         a: 0,
-        why: "RST = « connexion refusée » : l'hôte est joignable, le port est fermé. Un paquet jeté par un pare-feu ou une machine éteinte ne donnent aucune réponse : on obtient un délai expiré. Une connexion établie suit SYN → SYN-ACK → ACK.",
+        why: "RST = « connexion refusée » : l'hôte est joignable, le port est fermé (hors Windows : mode furtif). Un paquet jeté par un pare-feu ou une machine éteinte ne donnent aucune réponse : on obtient un délai expiré. Une connexion établie suit SYN → SYN-ACK → ACK.",
         ref: "Chapitre 06"
     },
     {
@@ -122,7 +122,7 @@ window.QUIZ_BANK = {
         q: "Sur un routeur, <code>show ip interface brief</code> affiche <code>Gi0/0/2 … administratively down down</code>. Que faut-il faire ?",
         c: ["<code>no shutdown</code> sur l'interface", "Changer le câble", "Ajouter une route statique", "Recharger l'IOS"],
         a: 0,
-        why: "« administratively down » = éteinte par configuration. Les interfaces d'un routeur Cisco sont éteintes par défaut.",
+        why: "« administratively down » = éteinte par configuration. Une interface « administratively down » l'est par shutdown : elle reste éteinte tant qu'on ne tape pas no shutdown.",
         ref: "Chapitre 04"
     },
     {
@@ -136,7 +136,7 @@ window.QUIZ_BANK = {
         q: "Dans une capture, tu vois trois SYN vers le port 443 d'un serveur, à 1, 2 puis 4 secondes d'intervalle, sans aucune réponse. Que conclure ?",
         c: ["Le paquet est filtré en route (pare-feu, ACL) ou le serveur est injoignable", "Le service HTTPS est arrêté, mais le serveur, lui, répond", "Le certificat TLS du serveur est expiré ou non approuvé", "Le DNS est en panne et ne résout plus le nom du serveur"],
         a: 0,
-        why: "Un service arrêté sur un serveur joignable répond RST. Le silence total signifie que le paquet (ou la réponse) est jeté quelque part. Le certificat ne se négocie qu'après la poignée de main TCP, et des SYN vers une IP prouvent que le DNS a déjà répondu.",
+        why: "Un service arrêté sur un serveur joignable répond RST. Le silence total signifie que le paquet (ou la réponse) est jeté quelque part. Le certificat ne se négocie qu'après la poignée de main TCP, et des SYN vers une IP ne prouvent pas que le DNS a déjà répondu.",
         ref: "Chapitre 05"
     },
     {
@@ -150,7 +150,7 @@ window.QUIZ_BANK = {
         q: "Un lien montant tombe en panne lente. Côté switch, <code>show interfaces</code> affiche <code>Half-duplex, 100Mb/s</code> et des <em>late collisions</em> qui montent ; côté serveur, réglé en dur sur 100 Mb/s full, des erreurs CRC et des runts. Diagnostic le plus probable ?",
         c: ["Duplex mismatch : un côté forcé en full, l'autre retombé en half", "Le VLAN du lien n'est pas autorisé sur le trunk", "Une boucle de spanning tree sur le réseau", "Une étendue DHCP pleine sur le serveur"],
         a: 0,
-        why: "Un côté forcé désactive l'autonégociation : l'autre côté, resté en auto, ne voit rien et retombe en half-duplex. Le côté half voit des collisions tardives (impossibles en full-duplex) ; le côté full, qui émet sans écouter, voit des trames tronquées : CRC et runts. Un VLAN absent, une boucle ou un DHCP plein ne produisent pas d'erreurs de couche 1 sur l'interface. Remède : les deux côtés en auto, ou les deux forcés à l'identique.",
+        why: "Un côté forcé désactive l'autonégociation : l'autre côté, resté en auto, ne voit rien et retombe en half-duplex. Le côté half voit des collisions tardives (qui ne doivent pas apparaître en full-duplex) ; le côté full, qui émet sans écouter, voit des trames tronquées : CRC et runts. Un VLAN absent, une boucle ou un DHCP plein ne produisent pas d'erreurs de couche 1 sur l'interface. Remède : les deux côtés en auto, ou les deux forcés à l'identique.",
         ref: "Chapitre 06"
     },
     {
@@ -196,7 +196,7 @@ window.QUIZ_BANK = {
         q: "Quel réglage d'une VM Hyper-V est <strong>définitif</strong> une fois la machine créée ?",
         c: ["La génération (1 ou 2)", "La quantité de mémoire vive", "Le nombre de processeurs virtuels", "Le commutateur virtuel connecté"],
         a: 0,
-        why: "La génération se fixe à la création et ne peut plus être changée. Mémoire, CPU et carte réseau se modifient à tout moment ; se tromper de génération oblige à recréer la VM.",
+        why: "La génération se fixe à la création et ne peut plus être changée. En génération 2, la mémoire et la carte réseau s'ajoutent et se retirent à chaud ; se tromper de génération oblige à recréer la VM.",
         ref: "Chapitre 02"
     },
     {
@@ -208,9 +208,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "À quoi sert Sysprep avec l'option <code>Generalize</code> ?",
-        c: ["À retirer le SID et le nom pour rendre l'installation clonable", "À compresser le disque virtuel pour gagner de la place", "À convertir une VM de génération 1 en génération 2", "À sauvegarder l'état de la VM avant une mise à jour"],
+        c: ["À retirer le SID pour rendre l'installation clonable", "À compresser le disque virtuel pour gagner de la place", "À convertir une VM de génération 1 en génération 2", "À sauvegarder l'état de la VM avant une mise à jour"],
         a: 0,
-        why: "Generalize neutralise l'installation : SID unique, nom de machine et identifiants matériels sont retirés. L'image redevient réutilisable pour toutes les VM suivantes.",
+        why: "Generalize neutralise l'installation : le SID de l'ordinateur et les informations propres au PC, comme les pilotes installés, sont retirés. L'image redevient réutilisable pour toutes les VM suivantes.",
         ref: "Chapitre 05"
     },
     {
@@ -224,7 +224,7 @@ window.QUIZ_BANK = {
         q: "Quelle est la vraie limite des disques de différenciation ?",
         c: ["Les performances : les lectures traversent la chaîne parent/enfant", "Ils ne fonctionnent qu'avec des VM de génération 1", "Ils sont limités à 4 VM enfants par disque parent", "Ils empêchent de créer des points de contrôle"],
         a: 0,
-        why: "Ils économisent un disque entier par VM, mais les lectures traversent la chaîne. Ils marchent en génération 1 comme 2, sans limite fixe d'enfants, et acceptent les points de contrôle. Pour un labo durable, un disque dynamique classique est un meilleur compromis ; on garde la différenciation pour du jetable.",
+        why: "Ils économisent un disque entier par VM, mais les lectures traversent la chaîne. Ils marchent avec tout format de disque, et il faut garder la chaîne courte pour les performances. Pour un labo durable, un disque dynamique classique est un meilleur compromis ; on garde la différenciation pour du jetable.",
         ref: "Chapitre 06"
     },
     {
@@ -439,7 +439,7 @@ window.QUIZ_BANK = {
     pass: 70,
     questions: [
     {
-        q: "SRV-FILE01 a <code>8.8.8.8</code> comme DNS. <code>Add-Computer -DomainName orion.local</code> échoue : « le domaine n'existe pas ». Que corriger ?",
+        q: "SRV-FILE01 a <code>8.8.8.8</code> comme DNS. <code>Add-Computer -DomainName orion.local</code> échoue : le domaine est introuvable ou injoignable. Que corriger ?",
         c: ["Mettre le DNS du serveur sur 172.16.50.10, le contrôleur de domaine", "Recréer la forêt : le domaine orion.local est corrompu", "Désactiver le pare-feu de SRV-FILE01 pendant la jonction", "Renommer le serveur avant de retenter la jonction"],
         a: 0,
         why: "Un DNS public ne connaît pas orion.local ni ses enregistrements SRV. Un membre de domaine n'utilise que le DNS des DC.",
@@ -547,10 +547,10 @@ window.QUIZ_BANK = {
         ref: "Chapitre 04"
     },
     {
-        q: "<code>Import-Csv comptes.csv</code> d'un fichier enregistré par Excel en français renvoie des objets avec une seule propriété « Prenom;Nom;Login ». Que manque-t-il ?",
+        q: "<code>Import-Csv comptes.csv</code> d'un fichier enregistré avec des points-virgules renvoie des objets avec une seule propriété « Prenom;Nom;Login ». Que manque-t-il ?",
         c: ["<code>-Delimiter \";\"</code>", "<code>-Encoding UTF8</code> uniquement", "<code>-NoTypeInformation</code>", "Un en-tête dans le fichier"],
         a: 0,
-        why: "Excel en français sépare par des points-virgules ; Import-Csv attend des virgules par défaut.",
+        why: "Le point-virgule vient d'un réglage du séparateur de liste : Excel enregistre par défaut avec une virgule, etImport-Csv attend des virgules par défaut.",
         ref: "Chapitre 05"
     },
     {
@@ -564,7 +564,7 @@ window.QUIZ_BANK = {
         q: "Un <code>try { Get-Item C:\\inexistant } catch { … }</code> n'entre jamais dans le catch. Pourquoi ?",
         c: ["L'erreur est non bloquante : il faut <code>-ErrorAction Stop</code>", "<code>try</code>/<code>catch</code> n'existe pas en PowerShell 5.1", "Il faut obligatoirement un bloc <code>finally</code>", "<code>Get-Item</code> ne produit pas d'erreur sur un chemin absent"],
         a: 0,
-        why: "<code>catch</code> n'attrape que les erreurs bloquantes ; <code>-ErrorAction Stop</code> transforme l'erreur de la cmdlet en erreur bloquante. <code>try</code>/<code>catch</code> existe depuis PowerShell 2.0, <code>finally</code> est facultatif, et <code>Get-Item</code> affiche bien une erreur — non bloquante.",
+        why: "<code>catch</code> n'attrape que les erreurs bloquantes ; <code>-ErrorAction Stop</code> transforme l'erreur de la cmdlet en erreur bloquante. <code>finally</code> est facultatif, et <code>Get-Item</code> affiche bien une erreur — non bloquante.",
         ref: "Chapitre 07"
     },
     {
@@ -609,7 +609,7 @@ window.QUIZ_BANK = {
         q: "Contre quoi le RAID protège-t-il — et contre quoi non ?",
         c: ["Il protège d'une panne de disque, pas de l'effacement, de la corruption ni du vol", "Il protège de tout, y compris de la suppression accidentelle", "Il protège de la corruption logique mais pas de la panne matérielle", "Il remplace la sauvegarde si le nombre de disques est suffisant"],
         a: 0,
-        why: "Un RAID n'est pas une sauvegarde : la suppression d'un fichier est répliquée instantanément sur tous les disques. Il traite la disponibilité face à une panne matérielle, rien d'autre.",
+        why: "Un RAID n'est pas une sauvegarde. Il traite la disponibilité face à une panne matérielle, rien d'autre.",
         ref: "Chapitre 02"
     },
     {
@@ -637,7 +637,7 @@ window.QUIZ_BANK = {
         q: "Les deux nœuds voient le même LUN iSCSI. Dans quel état doivent rester ces disques avant que le cluster ne les prenne en charge ?",
         c: ["Offline", "Online et formatés sur les deux nœuds", "Online sur le nœud principal uniquement", "Peu importe : iSCSI gère l'accès concurrent"],
         a: 0,
-        why: "Si les deux nœuds écrivent hors du contrôle du cluster, le système de fichiers est corrompu. Tant que le cluster n'a pas pris la main, les disques restent <strong>offline</strong>.",
+        why: "Si les deux nœuds écrivent hors du contrôle du cluster, le système de fichiers est corrompu. Tant que le cluster n'a pas pris la main, les disques restent <strong>offline</strong> (pratique du TP : un seul serveur accède aux volumes à la fois).",
         ref: "Chapitre 08"
     },
     {
@@ -854,7 +854,7 @@ window.QUIZ_BANK = {
         q: "Pour changer le compte de service de SQL Server, quel outil utiliser ?",
         c: ["Le SQL Server Configuration Manager", "<code>services.msc</code>", "Le Gestionnaire des tâches", "SSMS, onglet Sécurité"],
         a: 0,
-        why: "Seul le Configuration Manager pose les ACL NTFS, les droits registre et les appartenances aux groupes locaux qui vont avec. <code>services.msc</code> change le compte sans rien de tout cela — et le service ne redémarre plus.",
+        why: "Le Configuration Manager pose les droits registre qui vont avec le compte. <code>services.msc</code> change le nom du compte sans ces réglages — et le service peut ne pas démarrer correctement.",
         ref: "Chapitre 04"
     },
     {
@@ -896,14 +896,14 @@ window.QUIZ_BANK = {
         q: "Un blocage dure depuis vingt minutes. Quelle est la cause la plus probable ?",
         c: ["Une transaction ouverte et jamais validée", "Un index très fragmenté sur une table", "Une mémoire insuffisante sur le serveur", "Une sauvegarde complète en cours"],
         a: 0,
-        why: "Le blocage est le mécanisme normal d'isolation ; il devient un incident quand il dure. Presque toujours : une fenêtre SSMS laissée après un <code>BEGIN TRAN</code>, ou une application qui ne fait pas son <code>COMMIT</code>. Fragmentation et manque de mémoire ralentissent sans bloquer, et une sauvegarde ne verrouille pas les données des requêtes.",
+        why: "Le blocage est le mécanisme normal d'isolation ; il devient un incident quand il dure. Presque toujours : une fenêtre SSMS laissée après un <code>BEGIN TRAN</code>, ou une application qui ne fait pas son <code>COMMIT</code>. Fragmentation et manque de mémoire ralentissent sans bloquer.",
         ref: "Chapitre 12"
     },
     {
         q: "Une base passe en <code>SUSPECT</code>. Quel est le premier réflexe ?",
         c: ["Lire le journal d'erreurs du moteur", "Redémarrer le service SQL Server", "Lancer <code>DBCC CHECKDB ... REPAIR_ALLOW_DATA_LOSS</code>", "Détacher puis rattacher la base"],
         a: 0,
-        why: "<code>RECOVERY_PENDING</code> et <code>SUSPECT</code> sont des symptômes de problèmes <em>sous</em> SQL Server : disque plein, volume démonté, fichier supprimé. Redémarrer ne règle rien : la base reste dans cet état tant que la cause n'est pas corrigée, et le journal d'erreurs, lui, est seulement archivé — c'est là qu'on lit la cause.",
+        why: "<code>RECOVERY_PENDING</code> est le symptôme de problèmes <em>sous</em> SQL Server : disque plein, volume démonté, fichier supprimé ; <code>SUSPECT</code> signale une base possiblement endommagée. Redémarrer ne règle rien : la base reste dans cet état tant que la cause n'est pas corrigée, et le journal d'erreurs, lui, est seulement archivé — c'est là qu'on lit la cause.",
         ref: "Chapitre 12"
     }]
 },
@@ -919,7 +919,7 @@ window.QUIZ_BANK = {
         q: "Quelle question tranche réellement entre SharePoint Server et SharePoint Online ?",
         c: ["Qui gère l'infrastructure", "Le nombre d'utilisateurs", "Le volume de documents stockés", "La version de Windows Server disponible"],
         a: 0,
-        why: "Server = contrôle et personnalisation maximaux, au prix d'une équipe IT. Online = simplicité et accès partout, au prix d'une moindre flexibilité technique. Tout le reste découle de ce choix.",
+        why: "Server = contrôle et personnalisation maximaux, au prix d'une équipe IT. Online = simplicité et accès partout, au prix d'une moindre flexibilité technique.",
         ref: "Chapitre 02"
     },
     {
@@ -961,7 +961,7 @@ window.QUIZ_BANK = {
         q: "Où SharePoint se situe-t-il dans le spectre On-site / IaaS / PaaS / SaaS ?",
         c: ["Server couvre On-site et IaaS ; Online est du pur SaaS", "Server est du PaaS, Online est du SaaS", "Les deux sont du SaaS, à des niveaux de service différents", "Server est On-site uniquement, Online est du IaaS"],
         a: 0,
-        why: "SharePoint occupe les deux extrémités du spectre : Server s'installe chez soi ou sur des VM louées (IaaS), Online est un service fini (SaaS). Le PaaS n'existe pas en natif : il ne sert qu'à étendre Online, pas à l'héberger.",
+        why: "SharePoint occupe les deux extrémités du spectre : Server s'installe chez soi ou sur des VM louées (IaaS), Online est un service fini (SaaS).",
         ref: "Chapitre 04"
     },
     {
@@ -1002,7 +1002,7 @@ window.QUIZ_BANK = {
         ref: "Chapitre 01 · ch. 04"
     },
     {
-        q: "Pendant le setup, quel compte crée réellement la base de DPM sur SQL ?",
+        q: "Pendant le setup, quel compte se connecte réellement à SQL pour exécuter le script master.sql ?",
         c: ["Le compte de la session ouverte sur le serveur DPM, car le script est lancé avec <code>sqlcmd -E</code>", "Le compte saisi dans les champs User Name / Password de l'assistant", "Le compte ordinateur du serveur DPM", "Le gMSA du service SQL"],
         a: 0,
         why: "<code>-E</code> = authentification Windows de la session en cours. Il faut donc être connecté sur DPM avec un compte du domaine <strong>sysadmin</strong> sur SQL, quel que soit le compte saisi dans l'assistant.",
@@ -1030,10 +1030,10 @@ window.QUIZ_BANK = {
         ref: "Chapitre 05 · ch. 06"
     },
     {
-        q: "Un groupe synchronise toutes les 15 minutes, crée un point de récupération chaque vendredi à 19 h et garde ses points 14 jours. Que peut-on restaurer un mercredi ?",
+        q: "Pour un partage de fichiers, un groupe synchronise toutes les 15 minutes, crée un point de récupération chaque vendredi à 19 h et garde ses points 14 jours où un point a réussi (soit 14 vendredis). Que peut-on restaurer un mercredi ?",
         c: ["L'état du vendredi précédent à 19 h : on ne restaure que des points de récupération", "L'état d'il y a au plus 15 minutes, grâce à la synchronisation", "L'état de la veille, la synchronisation créant un point par jour", "Rien avant le vendredi suivant"],
         a: 0,
-        why: "La synchronisation tient le réplica à jour, mais ne crée rien de restaurable. Seuls les points de récupération figent une version qu'on peut rendre.",
+        why: "Pour des fichiers, la synchronisation tient le réplica à jour sans créer de point restaurable. Seuls les points de récupération figent une version qu'on peut rendre.",
         ref: "Chapitre 06"
     },
     {
@@ -1047,14 +1047,14 @@ window.QUIZ_BANK = {
         q: "Erreur 811 « The DPM database was not created ». Quelle est la cause trouvée dans le TP ?",
         c: ["Le sqlcmd (ODBC 18) du setup refuse le certificat auto-généré de SQL", "La collation de l'instance SQL est incorrecte", "Le compte ordinateur de DPM n'a pas de login sur SQL", "La catégorie de jobs attendue manque dans msdb"],
         a: 0,
-        why: "Depuis la version 18, le pilote ODBC chiffre par défaut et exige un certificat de confiance. Remède : un certificat dédié sur SQL, importé dans les autorités racines de confiance du serveur DPM. Une collation incorrecte est refusée dès les vérifications du setup, et la catégorie manquante dans msdb (erreur 14262) n'est qu'une conséquence du nettoyage après l'échec.",
+        why: "Depuis la version 18, le pilote ODBC chiffre par défaut et exige un certificat de confiance. Remède : un certificat dédié sur SQL, importé dans les autorités racines de confiance du serveur DPM. La catégorie manquante dans msdb (erreur 14262) n'est qu'une conséquence du nettoyage après l'échec.",
         ref: "Chapitre 08"
     },
     {
         q: "Dans <code>DpmSetup.log</code>, après l'échec du script, apparaissent les erreurs 14262 et 15151. Comment les traiter ?",
         c: ["Comme des conséquences : la cause est l'erreur qui les précède", "Comme la cause : créer la catégorie manquante dans msdb", "Comme un problème de droits à corriger sur le rôle sysadmin", "Comme un SQL Server endommagé, à réinstaller"],
         a: 0,
-        why: "Dans un journal, la cause est la première erreur, pas la plus bavarde. On reproduit l'appel <code>sqlcmd</code> à la main pour faire apparaître le vrai message.",
+        why: "Dans ce journal, la cause est la première erreur, pas la plus bavarde. On reproduit l'appel <code>sqlcmd</code> à la main pour faire apparaître le vrai message.",
         ref: "Chapitre 08"
     },
     {
@@ -1263,7 +1263,7 @@ window.QUIZ_BANK = {
         ref: "Chapitre 03"
     },
     {
-        q: "Un port protégé par <code>port-security</code> (politique par défaut) voit arriver une adresse MAC inconnue. Que se passe-t-il ?",
+        q: "Un port protégé par <code>port-security</code> (politique par défaut) voit arriver une adresse MAC inconnue alors que son maximum (1 par défaut) est déjà atteint. Que se passe-t-il ?",
         c: ["Le port s'éteint et passe en <code>err-disabled</code> jusqu'à une intervention manuelle", "Le port rejette les trames mais reste actif", "Le port apprend la nouvelle adresse à la place de l'ancienne", "Le commutateur redémarre"],
         a: 0,
         why: "La politique par défaut est <code>shutdown</code>. Le port ne revient pas seul : cause levée, puis <code>shutdown</code> / <code>no shutdown</code>.",
@@ -1438,9 +1438,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "Que suppose la haute disponibilité (HA) dans un cluster Proxmox ?",
-        c: ["Un stockage partagé (ou répliqué) et au moins trois votes de quorum", "Deux nœuds identiques reliés par un lien 10 Gb/s", "Un seul nœud, sauvegardé toutes les heures", "Un pool ZFS répliqué, sans quorum nécessaire"],
+        c: ["Un stockage partagé (ou répliqué) et au moins trois nœuds", "Deux nœuds identiques reliés par un lien 10 Gb/s", "Un seul nœud, sauvegardé toutes les heures", "Un pool ZFS répliqué, sans quorum nécessaire"],
         a: 0,
-        why: "Le cluster apporte gestion unifiée et migration ; la HA exige que les disques de la VM soient disponibles sur un autre nœud (stockage partagé, ou réplication ZFS) et une majorité de votes : au moins trois nœuds, ou deux nœuds plus un QDevice témoin — même logique que le disque témoin d'un cluster Windows. Sans quorum, aucun nœud n'ose redémarrer les VM.",
+        why: "Le cluster apporte gestion unifiée et migration ; la HA exige que les disques de la VM soient disponibles sur un autre nœud (stockage partagé, ou réplication ZFS) et une majorité de votes : au moins trois nœuds (la HA l'exige) ; à deux nœuds, un QDevice témoin est recommandé pour la disponibilité — même logique que le disque témoin d'un cluster Windows. Sans quorum, aucun nœud n'ose redémarrer les VM.",
         ref: "Chapitre 08"
     },
     {
@@ -1495,7 +1495,7 @@ window.QUIZ_BANK = {
         ref: "Chapitre 04"
     },
     {
-        q: "<code>docker build -t mon-app</code> échoue avec « requires exactly 1 argument ». Que manque-t-il ?",
+        q: "<code>docker build -t mon-app</code> échoue avec « requires 1 argument ». Que manque-t-il ?",
         c: ["Le contexte de build, par exemple le point final <code>.</code>", "Le nom du fichier <code>Dockerfile</code> après <code>-t</code>", "L'option <code>-p</code>", "Les droits root"],
         a: 0,
         why: "<code>docker build</code> prend un dossier : le contexte envoyé au démon, seule chose que <code>COPY</code> peut lire. <code>docker build -t mon-app .</code>",
@@ -1582,7 +1582,7 @@ window.QUIZ_BANK = {
     },
     {
         q: "Quel protocole de partage pour quel usage sur un NAS ?",
-        c: ["SMB pour les postes de travail, NFS entre serveurs", "NFS pour les postes Windows, SMB entre serveurs Linux", "SMB pour la sauvegarde, NFS pour les médias", "Les deux sont interchangeables sans différence"],
+        c: ["SMB pour les postes de travail, NFS pour les machines Linux/UNIX", "NFS pour les postes Windows, SMB entre serveurs Linux", "SMB pour la sauvegarde, NFS pour les médias", "Les deux sont interchangeables sans différence"],
         a: 0,
         why: "SMB/CIFS est le partage universel côté postes ; NFS est plus adapté entre machines Unix. Et le rappel qui vaut partout : RAID = disponibilité, pas sauvegarde.",
         ref: "Chapitre 06"
@@ -1591,7 +1591,7 @@ window.QUIZ_BANK = {
         q: "Comment accéder à son homelab depuis l'extérieur ?",
         c: ["Par un VPN — WireGuard, ou Tailscale pour le zéro-config", "Par un port forwarding vers le service concerné", "En exposant le NAS sur une IP publique avec un mot de passe fort", "Par RDP direct, en changeant le port par défaut"],
         a: 0,
-        why: "Ouvrir un port forwarding direct vers un service est la <strong>cause n°1</strong> de compromission de homelab. Un homelab bien fait est invisible depuis Internet.",
+        why: "Ouvrir un port forwarding direct vers un service est une <strong>voie d'entrée</strong> des attaquants sur un homelab. Un homelab bien fait est invisible depuis Internet.",
         ref: "Chapitre 08"
     },
     {
@@ -1937,7 +1937,7 @@ window.QUIZ_BANK = {
     questions: [
     {
         q: "Pourquoi ne peut-on pas s'engager à l'avance, simultanément, sur le budget, le délai et le contenu exact ?",
-        c: ["Le triangle d'or : on ne fixe que deux des trois, le troisième varie", "Parce que les clients changent toujours d'avis en cours de route", "Parce que les estimations en heures sont toujours fausses", "Parce que Scrum interdit tout engagement contractuel"],
+        c: ["Le triangle (budget, délai, contenu) : on ne fixe que deux des trois, le troisième varie", "Parce que les clients changent toujours d'avis en cours de route", "Parce que les estimations en heures sont toujours fausses", "Parce que Scrum interdit tout engagement contractuel"],
         a: 0,
         why: "Choisir une méthode, c'est choisir lequel des trois on fait varier. Waterfall fige le contenu et laisse déraper délais et coûts ; l'Agile fige le temps et les moyens et fait varier la quantité livrée.",
         ref: "Chapitre 01"
@@ -1986,7 +1986,7 @@ window.QUIZ_BANK = {
     },
     {
         q: "« En tant qu'employé, je veux réinitialiser mon mot de passe et consulter mes demandes. » Que reproches-tu à cette user story ?",
-        c: ["Le « et » : ce sont deux besoins distincts, donc deux stories", "Elle ne nomme pas l'utilisateur", "Elle est trop courte pour être estimable", "Elle devrait être écrite du point de vue du système"],
+        c: ["Le « et » : selon la règle d'écriture du cours, ce sont deux besoins distincts, donc deux stories", "Elle ne nomme pas l'utilisateur", "Elle est trop courte pour être estimable", "Elle devrait être écrite du point de vue du système"],
         a: 0,
         why: "Pas de « et » (deux stories), pas de « ou » (une ambiguïté, on retourne voir le PO). Une story = un besoin, un utilisateur, un bénéfice — et c'est le bénéfice qui manque aussi ici.",
         ref: "Chapitre 06"
@@ -2153,14 +2153,14 @@ window.QUIZ_BANK = {
         q: "Pourquoi le stress a-t-il tendance à <strong>monter</strong> pendant un entretien ?",
         c: ["Parce que les trois réponses instinctives — fuir, combattre, se figer — y sont impossibles", "Parce que le recruteur cherche à déstabiliser le candidat", "Parce qu'une émotion dure tout l'entretien", "Parce que le stress n'apparaît que chez les candidats mal préparés"],
         a: 0,
-        why: "Le stress est un instinct de survie face au danger : <em>flee, fight, freeze</em>. En entretien, aucune de ces sorties n'est possible, donc il s'accumule. D'où l'intérêt d'agir dessus autrement : pensées, émotions, comportements.",
+        why: "Le stress est une réaction de survie face au danger : <em>flight, fight, freeze</em>. En entretien, aucune de ces sorties n'est possible, donc il s'accumule. D'où l'intérêt d'agir dessus autrement : pensées, émotions, comportements.",
         ref: "Chapitre 07"
     },
     {
         q: "Où peut-on agir pour casser le cercle vicieux du stress ?",
         c: ["Sur n'importe laquelle des trois parts : pensées, émotions ou comportements", "Uniquement sur les pensées, d'où viennent les émotions", "Uniquement sur le corps, par la respiration", "Nulle part : il faut attendre que ça passe"],
         a: 0,
-        why: "Les trois parts s'entretiennent : on peut positiver ses pensées (le stress aide à se concentrer), laisser passer l'émotion (la « règle des 90 secondes » popularisée par Jill Bolte Taylor est une image, pas une mesure) ou choisir son attitude (sourire, respiration lente). Agir sur une seule ralentit toute la boucle.",
+        why: "Les trois parts s'entretiennent : on peut positiver ses pensées (le stress aide à se concentrer), laisser passer l'émotion (la « règle des 90 secondes est une image, pas une mesure) ou choisir son attitude (sourire, respiration lente). Agir sur une seule ralentit toute la boucle.",
         ref: "Chapitre 07 · ch. 08"
     }]
 },

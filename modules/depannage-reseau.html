@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -102,7 +102,7 @@
                         <p class="walk__head">Le lien est-il monté ?</p>
                         <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell</span></div>
-                <pre class="terminal__code"><span class="k">Get-NetAdapter</span><span class="c">        # Status : Up, LinkSpeed : 1 Gbps</span></pre>
+                <pre class="terminal__code"><span class="k">Get-NetAdapter</span><span class="c">        # Status : Up</span></pre>
             </div>
                         <p class="walk__change"><code>Disconnected</code> : câble, prise, port du switch ou Wi-Fi coupé. On ne va <b>pas plus haut</b> tant que le lien n'est pas là.</p>
                     </li>
@@ -192,7 +192,7 @@
                     <thead><tr><th>Besoin</th><th>Commande</th><th>Ce qu'on regarde</th></tr></thead>
                     <tbody>
                         <tr><td>Configuration IP complète</td><td><code>ipconfig /all</code> · <code>Get-NetIPConfiguration -Detailed</code></td><td>IP, masque, passerelle, DNS, DHCP, bail</td></tr>
-                        <tr><td>État des cartes</td><td><code>Get-NetAdapter</code></td><td><code>Status</code> (Up/Disconnected) et <code>LinkSpeed</code></td></tr>
+                        <tr><td>État des cartes</td><td><code>Get-NetAdapter</code></td><td><code>Status</code> (Up/Disconnected)</td></tr>
                         <tr><td>Profil réseau</td><td><code>Get-NetConnectionProfile</code></td><td><code>Public</code> / <code>Private</code> / <code>DomainAuthenticated</code> : le pare-feu applique des règles différentes</td></tr>
                         <tr><td>Joignabilité</td><td><code>ping -n 4 hôte</code></td><td>Réponses, temps, TTL</td></tr>
                         <tr><td>Chemin</td><td><code>tracert -d hôte</code> · <code>pathping hôte</code></td><td>Dernier saut qui répond ; pertes par routeur (pathping)</td></tr>
@@ -210,12 +210,12 @@
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — un diagnostic en quatre lignes</span></div>
                 <pre class="terminal__code"><span class="k">Get-NetIPConfiguration</span> | <span class="k">Select-Object</span> InterfaceAlias, IPv4Address, IPv4DefaultGateway, DNSServer
 <span class="k">Test-NetConnection</span> 192.168.1.1<span class="c">                      # la passerelle répond ?</span>
-<span class="k">Test-NetConnection</span> orion.local <span class="p">-Port</span> 389<span class="c">            # DNS + DC + port LDAP d'un coup</span>
+<span class="k">Test-NetConnection</span> orion.local <span class="p">-Port</span> 389<span class="c">            # DNS + port LDAP d'un coup</span>
 <span class="k">Resolve-DnsName</span> www.exemple.be <span class="p">-Server</span> 1.1.1.1<span class="c">      # comparer avec un autre DNS</span></pre>
             </div>
             <div class="tip">
                 <p class="tip__label">Capturer sans installer Wireshark</p>
-                <p>Windows 10 (2004 et plus) et Windows Server 2022 embarquent <strong>pktmon</strong> : dans une console administrateur, <code>pktmon start --capture</code>, reproduire la panne, <code>pktmon stop</code>, puis <code>pktmon etl2pcap PktMon.etl --out panne.pcapng</code> produit un fichier que Wireshark ouvre sur un autre poste. Pratique sur un serveur où l'on n'installe rien.</p>
+                <p>Windows 10 et Windows Server 2019 (version 1809 et ultérieures) embarquent <strong>pktmon</strong> : dans une console administrateur, <code>pktmon start --capture</code>, reproduire la panne, <code>pktmon stop</code>, puis <code>pktmon etl2pcap PktMon.etl --out panne.pcapng</code> produit un fichier que Wireshark ouvre sur un autre poste. Pratique sur un serveur où l'on n'installe rien.</p>
             </div>
             <div class="cmdex" data-accept="Get-NetTCPConnection -State Listen( \|.*)?;;netstat -a(no|n|on)?( \| findstr (/i )?listen(ing)?)?" data-hint="Get-NetTCPConnection, avec un paramètre -State.">
                 <p class="cmdex__label">À toi de taper</p>
@@ -235,10 +235,10 @@
                     <p class="scenario__q"><code>Get-NetConnectionProfile</code> montre <code>NetworkCategory : Public</code> sur un serveur du domaine. Plus rien ne répond au ping, ni aux partages. Que soupçonnes-tu ?</p>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>Le pare-feu applique le profil Public, plus strict que le profil Domaine</button>
-                        <button class="scenario__opt" data-why="Get-NetConnectionProfile n&#x27;affiche une connexion que si la carte est connectée : le lien est là.">La carte réseau est déconnectée</button>
+                        <button class="scenario__opt" data-why="Get-NetConnectionProfile décrit les connexions associées aux cartes physiques : le profil Public s&#x27;affiche donc pour une connexion existante.">La carte réseau est déconnectée</button>
                         <button class="scenario__opt" data-why="Le profil réseau concerne le pare-feu local, pas la résolution de noms.">Le DNS ne résout plus le nom du serveur</button>
                     </div>
-                    <div class="scenario__why"><p>Un serveur du domaine doit être en <code>DomainAuthenticated</code>. En <code>Public</code>, les règles de partage et de ping sont fermées. Cause fréquente : le serveur n'a pas joint de DC au démarrage (DNS faux, DC injoignable). Vérifier avec <code>nltest /dsgetdc:orion.local</code>.</p></div>
+                    <div class="scenario__why"><p>Un serveur du domaine doit être en <code>DomainAuthenticated</code>. En <code>Public</code>, le partage de fichiers et d'imprimantes est fermé. Cause fréquente : le serveur n'a pas joint de DC au démarrage (DNS faux, DC injoignable). Vérifier avec <code>nltest /dsgetdc:orion.local</code>.</p></div>
                 </div>
             </div>
         </section>
@@ -247,7 +247,7 @@
         <section class="chapter" id="linux">
             <p class="chapter__num">03</p>
             <h2 class="chapter__title">La trousse à outils Linux</h2>
-            <p class="chapter__intro">Sur Debian, <code>ifconfig</code> et <code>netstat</code> sont obsolètes (paquet <code>net-tools</code>, plus installé par défaut). Les outils actuels sont <code>ip</code> et <code>ss</code>, du paquet <code>iproute2</code>.</p>
+            <p class="chapter__intro">Sur Debian, <code>ifconfig</code> et <code>netstat</code> sont obsolètes (paquet <code>net-tools</code>). Les outils actuels sont <code>ip</code> et <code>ss</code>, du paquet <code>iproute2</code>.</p>
 
             <div class="table-wrap">
                 <table>
@@ -264,7 +264,7 @@
                         <tr><td>Test d'un port</td><td><code>nc -zv hôte 443</code></td><td>netcat-openbsd</td></tr>
                         <tr><td>HTTP de bout en bout</td><td><code>curl -v https://hôte</code></td><td>curl</td></tr>
                         <tr><td>Capture</td><td><code>sudo tcpdump -i ens33 -n port 53</code></td><td>tcpdump</td></tr>
-                        <tr><td>Journaux réseau</td><td><code>journalctl -u networking</code> · <code>journalctl -u systemd-networkd</code></td><td>systemd</td></tr>
+                        <tr><td>Journaux réseau</td><td><code>journalctl -u networking</code> (ifupdown) · <code>journalctl -u systemd-networkd</code></td><td>systemd</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -275,7 +275,7 @@
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">bash</span></div>
                 <pre class="terminal__code"><span class="k">ip</span> route get 8.8.8.8</pre>
             </div>
-                <p class="verify__sub">Sortie attendue</p>
+                <p class="verify__sub">Exemple de sortie</p>
             <pre class="verify__out">8.8.8.8 via 192.168.1.1 dev ens33 src 192.168.1.50 uid 1000
     cache</pre>
                 <p class="verify__fail"><code>RTNETLINK answers: Network is unreachable</code> : aucune route ne correspond, il manque la route par défaut (<code>gateway</code> dans <code>/etc/network/interfaces</code>).</p>
@@ -320,12 +320,12 @@
                         <tr><td><code>show interfaces g0/1</code></td><td>Détail : vitesse, duplex, compteurs</td><td><code>Half-duplex</code>, <code>CRC</code> et <code>late collision</code> qui montent : duplex mismatch ou câble</td></tr>
                         <tr><td><code>show interfaces status</code></td><td>Ports d'un switch : VLAN, duplex, vitesse</td><td><code>err-disabled</code> : port coupé par port-security ou BPDU Guard</td></tr>
                         <tr><td><code>show vlan brief</code></td><td>VLAN et ports access associés</td><td>Un port dans le mauvais VLAN ; VLAN absent</td></tr>
-                        <tr><td><code>show interfaces trunk</code></td><td>Trunks actifs et VLAN autorisés</td><td>VLAN absent de <em>allowed and active</em> ; VLAN natif différent des deux côtés</td></tr>
+                        <tr><td><code>show interfaces trunk</code></td><td>Trunks actifs et VLAN autorisés</td><td>VLAN absent de <em>allowed and active</em></td></tr>
                         <tr><td><code>show mac address-table</code></td><td>MAC apprises par port</td><td>La MAC du poste n'apparaît pas : rien n'arrive sur le port</td></tr>
                         <tr><td><code>show ip route</code></td><td>Table de routage</td><td>Pas de <code>Gateway of last resort</code> ; réseau absent</td></tr>
                         <tr><td><code>show arp</code></td><td>Cache ARP du routeur</td><td>Entrée <code>Incomplete</code></td></tr>
                         <tr><td><code>show cdp neighbors</code></td><td>Équipements Cisco voisins, port local et distant</td><td>Pour vérifier le câblage réel sans aller dans la baie</td></tr>
-                        <tr><td><code>show ip dhcp binding</code></td><td>Baux distribués par le routeur</td><td>Étendue pleine, aucun bail</td></tr>
+                        <tr><td><code>show ip dhcp binding</code></td><td>Baux distribués par le routeur</td><td>Aucun bail pour un poste qui devrait en avoir un</td></tr>
                         <tr><td><code>show access-lists</code></td><td>ACL et compteurs de correspondances</td><td>Le compteur du <code>deny</code> monte quand le symptôme apparaît</td></tr>
                         <tr><td><code>show logging</code></td><td>Journal de l'équipement</td><td>Interfaces qui montent et descendent (<em>flapping</em>), violations</td></tr>
                     </tbody>
@@ -413,7 +413,7 @@ GigabitEthernet0/0/2   unassigned      YES unset  administratively down down</pr
             </div>
             <h3>Les signatures à reconnaître</h3>
             <ul>
-                <li>Des <strong>SYN répétés</strong> sans réponse, à intervalle qui double (≈ 1, 2, 4 secondes) : le paquet, ou sa réponse, est jeté quelque part.</li>
+                <li>Des <strong>SYN répétés</strong> sans réponse, à intervalle qui double (≈ 1, 2, 4 secondes avec une pile TCP qui part de 1 s, comme le recommande la RFC 6298) : le paquet, ou sa réponse, est jeté quelque part.</li>
                 <li><strong>SYN</strong> puis <strong>RST, ACK</strong> immédiat : port fermé, rien n'écoute.</li>
                 <li>Une requête DNS et une réponse <strong>No such name</strong> : faute de nom ou mauvaise zone.</li>
                 <li>Des <strong>DHCP Discover</strong> en boucle sans <em>Offer</em> : aucun serveur ne répond dans ce domaine de broadcast.</li>
@@ -459,7 +459,7 @@ GigabitEthernet0/0/2   unassigned      YES unset  administratively down down</pr
                         <tr><td>Ping de l'IP OK, du nom KO</td><td>DNS</td><td><code>nslookup nom</code> échoue ou répond faux</td><td>Serveur DNS du poste, enregistrement, <code>ipconfig /flushdns</code></td></tr>
                         <tr><td>Joint le réseau local, pas au-delà</td><td>Passerelle absente ou fausse</td><td><code>ipconfig</code> ; <code>tracert</code> s'arrête au 1ᵉʳ saut</td><td>Corriger la passerelle (option 3 DHCP)</td></tr>
                         <tr><td>Joint certaines machines locales, pas d'autres</td><td>Masque faux</td><td>Comparer les masques des deux machines</td><td>Corriger le masque</td></tr>
-                        <tr><td>Connexion « coupée » par intermittence</td><td>Conflit d'adresse IP</td><td>Message Windows ; <code>arp -a</code> montre une MAC qui change</td><td>Exclure l'adresse de l'étendue DHCP, réservation</td></tr>
+                        <tr><td>Connexion « coupée » par intermittence</td><td>Conflit d'adresse IP</td><td>Événement 4199 (source Tcpip) : « address conflict » avec l'adresse matérielle d'une autre machine</td><td>Exclure l'adresse de l'étendue DHCP, réservation</td></tr>
                         <tr><td>Ping OK, service KO, « délai expiré »</td><td>Pare-feu</td><td><code>Test-NetConnection -Port</code> False ; capture : SYN sans réponse</td><td>Règle de pare-feu (Windows, ufw, ACL)</td></tr>
                         <tr><td>Ping OK, service KO, « refusé »</td><td>Service arrêté ou mauvais port</td><td><code>netstat -ano</code> / <code>ss -tulpn</code> sur le serveur</td><td>Démarrer le service, corriger le port</td></tr>
                         <tr><td>Lien lent, erreurs CRC, <em>late collisions</em></td><td>Duplex mismatch ou câble</td><td><code>show interfaces</code> : half-duplex d'un côté</td><td>Auto/auto des deux côtés, changer le câble</td></tr>
@@ -523,7 +523,7 @@ GigabitEthernet0/0/2   unassigned      YES unset  administratively down down</pr
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>Le lien physique et le port du switch : <code>Get-NetAdapter</code>, puis le port côté switch</button>
                         <button class="scenario__opt" data-why="Sans adresse valide, le DNS n&#x27;est pas encore la question : le poste n&#x27;a pas parlé au DHCP.">Le serveur DNS</button>
-                        <button class="scenario__opt" data-why="Le pare-feu Windows ne bloque pas le DHCP client.">Le pare-feu Windows</button>
+                        <button class="scenario__opt" data-why="Par défaut, le pare-feu Windows ne bloque pas le DHCP client.">Le pare-feu Windows</button>
                     </div>
                     <div class="scenario__why"><p>La carte est <code>Up</code> en 1 Gb/s. Sur le switch, <code>show interfaces status</code> montre que le port <code>Gi1/0/7</code> du poste est dans le <strong>VLAN 99</strong> (gestion), pas le VLAN 10 des postes : quelqu'un a déplacé le câble, ou mal reconfiguré le port. Le serveur DHCP n'a pas d'étendue sur ce VLAN.</p></div>
                 </div>
@@ -587,9 +587,9 @@ TcpTestSucceeded       : False</pre>
                         <button class="scenario__opt" data-why="On ne désarme pas un serveur pour tester : on regarde d&#x27;abord si le service écoute, puis la règle précise.">Désactiver complètement le pare-feu</button>
                         <button class="scenario__opt" data-why="Ça ne corrige rien et ajoute de la confusion.">Changer le port RDP</button>
                     </div>
-                    <div class="scenario__why"><p>Rien n'écoute sur 3389 : le Bureau à distance n'est pas activé. Il est désactivé par défaut sur une installation neuve de Windows Server, et ce serveur récemment déployé n'a jamais été configuré pour. Une fois activé, <code>netstat</code> montre <code>0.0.0.0:3389 LISTENING</code> et la règle de pare-feu « Bureau à distance » s'active avec.</p></div>
+                    <div class="scenario__why"><p>Rien n'écoute sur 3389 : le Bureau à distance n'est pas activé. Une fois activé, <code>netstat</code> montre <code>0.0.0.0:3389 LISTENING</code> et la règle de pare-feu « Bureau à distance » s'active avec.</p></div>
                 </div>
-                <div class="scenario__end"><strong>Correction :</strong> <em>Paramètres → Système → Bureau à distance</em> (ou <code>sconfig</code> sur un Server Core), puis refaire <code>Test-NetConnection</code> : <code>TcpTestSucceeded : True</code>.</div>
+                <div class="scenario__end"><strong>Correction :</strong> <em>Gestionnaire de serveur → Serveur local → Bureau à distance</em> (ou <code>sconfig</code> sur un Server Core), puis refaire <code>Test-NetConnection</code> : <code>TcpTestSucceeded : True</code>.</div>
             </div>
             <div class="scenario">
                 <p class="scenario__label">Scénario de panne</p>
@@ -724,7 +724,7 @@ Fa0/12           err-disabled bpduguard</pre>
                 <li><a href="https://learn.microsoft.com/fr-fr/powershell/module/nettcpip/test-netconnection" rel="noopener">Microsoft Learn — Test-NetConnection</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/windows-server/networking/technologies/pktmon/pktmon" rel="noopener">Microsoft Learn — pktmon, le capteur de paquets intégré à Windows</a></li>
                 <li><a href="https://learn.microsoft.com/fr-fr/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc731935(v=ws.11)" rel="noopener">Microsoft Learn — nltest</a></li>
-                <li><a href="https://man7.org/linux/man-pages/man8/ss.8.html" rel="noopener">Page de manuel de ss (iproute2)</a></li>
+                <li><a href="https://manpages.debian.org/unstable/iproute2/ss.8.en.html" rel="noopener">Page de manuel de ss (iproute2)</a></li>
                 <li><a href="https://www.tcpdump.org/manpages/pcap-filter.7.html" rel="noopener">Page de manuel de tcpdump et syntaxe des filtres de capture (pcap-filter)</a></li>
                 <li><a href="https://www.wireshark.org/docs/dfref/" rel="noopener">Wireshark — référence des filtres d'affichage</a></li>
                 <li><a href="https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/12027-53.html" rel="noopener">Cisco — dépannage des problèmes de ports et d'interfaces des switchs Catalyst</a></li>
@@ -774,10 +774,10 @@ Fa0/12           err-disabled bpduguard</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

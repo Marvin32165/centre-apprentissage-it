@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -89,7 +89,7 @@
                 <table>
                     <thead><tr><th><span class="sr-only">Critère</span></th><th>Windows PowerShell 5.1</th><th>PowerShell 7</th></tr></thead>
                     <tbody>
-                        <tr><td>Livraison</td><td>Intégré à Windows 10/11 et Windows Server, plus d'évolution (correctifs seulement)</td><td>À installer (winget, MSI), versions régulières</td></tr>
+                        <tr><td>Livraison</td><td>Intégré à Windows 10/11 et Windows Server, soumis au cycle de support Windows</td><td>À installer (winget, MSI), versions régulières</td></tr>
                         <tr><td>Exécutable</td><td><code>powershell.exe</code></td><td><code>pwsh.exe</code></td></tr>
                         <tr><td>Plateformes</td><td>Windows seulement (.NET Framework)</td><td>Windows, Linux, macOS (.NET moderne)</td></tr>
                         <tr><td>Modules Windows (AD, DHCP, Hyper-V…)</td><td>Tous</td><td>La plupart directement, les autres via la couche de compatibilité Windows PowerShell</td></tr>
@@ -324,7 +324,7 @@ $<span class="k">comptes</span> | <span class="k">Where-Object</span> Service <s
             </div>
             <div class="tip">
                 <p class="tip__label">Le point-virgule</p>
-                <p>Un CSV ouvert dans Excel en français utilise le <strong>point-virgule</strong> comme séparateur. Sans <code>-Delimiter ";"</code>, PowerShell lit toute la ligne comme une seule colonne.</p>
+                <p>Par défaut, Excel enregistre un CSV avec une <strong>virgule</strong>, mais le séparateur de liste peut être réglé sur le point-virgule. Sans <code>-Delimiter ";"</code>, PowerShell lit toute la ligne comme une seule colonne.</p>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -358,7 +358,7 @@ $<span class="k">comptes</span> | <span class="k">Where-Object</span> Service <s
 <span class="c"># Les services automatiques arrêtés (souvent une panne)</span>
 <span class="k">Get-Service</span> | <span class="k">Where-Object</span> { <span class="p">$_.StartType</span> <span class="p">-eq</span> <span class="s">'Automatic'</span> <span class="p">-and</span> <span class="p">$_.Status</span> <span class="p">-ne</span> <span class="s">'Running'</span> }
 <span class="c"># Les comptes AD qui ne se sont pas connectés depuis 90 jours</span>
-<span class="k">Search-ADAccount</span> <span class="p">-AccountInactive</span> <span class="p">-TimeSpan</span> 90.00:00:00 <span class="p">-UsersOnly</span> | <span class="k">Select-Object</span> Name, LastLogonDate</pre>
+<span class="k">Search-ADAccount</span> <span class="p">-AccountInactive</span> <span class="p">-TimeSpan</span> 90.00:00:00 <span class="p">-UsersOnly</span> | <span class="k">Select-Object</span> Name</pre>
             </div>
             <div class="tip">
                 <p class="tip__label">Format-Table en dernier</p>
@@ -417,7 +417,7 @@ $<span class="k">comptes</span> | <span class="k">Where-Object</span> Service <s
                 <li><code>param()</code> déclare les paramètres ; <code>[Parameter(Mandatory)]</code> les rend obligatoires (PowerShell les demande s'ils manquent).</li>
                 <li><code>try { } catch { }</code> n'attrape que les erreurs <strong>bloquantes</strong> : beaucoup de cmdlets n'émettent que des erreurs non bloquantes, d'où <code>-ErrorAction Stop</code>.</li>
                 <li>Une fonction <strong>renvoie des objets</strong> (pas du texte avec <code>Write-Host</code>) : le résultat se trie, se filtre, s'exporte.</li>
-                <li>Ici, un port fermé n'est pas une erreur : <code>Test-NetConnection</code> renvoie simplement <code>TcpTestSucceeded = False</code> (avec un avertissement, masqué par <code>-WarningAction SilentlyContinue</code>). Le <code>catch</code> ne sert que pour les vraies erreurs.</li>
+                <li>Ici, un port fermé n'est pas une erreur : <code>Test-NetConnection</code> renvoie simplement <code>TcpTestSucceeded</code>, à <code>True</code> si la connexion TCP réussit (exemple 3 de la page Test-NetConnection). Le <code>catch</code> ne sert que pour les vraies erreurs.</li>
                 <li>Le même bloc <code>param()</code> en tête d'un fichier <code>.ps1</code> en fait un script paramétrable : <code>.\Test-Lab.ps1 -Ordinateur SRV-AD01</code>.</li>
             </ul>
             <div class="takeaway">
@@ -574,7 +574,7 @@ ProductVendor   : Microsoft Corporation</pre>
                     <div class="reveal__body"><pre class="verify__out">[int]$n = Read-Host "Nombre de termes"
 $suite = [System.Collections.Generic.List[int]]@(0, 1)
 while ($suite.Count -lt $n) { $suite.Add($suite[-1] + $suite[-2]) }
-$suite -join ", "</pre><p><code>$suite[-1]</code> et <code>$suite[-2]</code> sont les deux derniers éléments. Une <code>List</code> s'agrandit sans recopier le tableau à chaque ajout, contrairement à <code>+=</code> sur un tableau.</p></div>
+$suite -join ", "</pre><p><code>$suite[-1]</code> et <code>$suite[-2]</code> sont les deux derniers éléments. Une <code>List</code> s'agrandit sans recopier le tableau à chaque ajout (seulement quand sa capacité est dépassée), contrairement à <code>+=</code> sur un tableau.</p></div>
                 </details>
             </div>
             <div class="exo">
@@ -683,10 +683,10 @@ while ($s1 -lt 3 -and $s2 -lt 3) {
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

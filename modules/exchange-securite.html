@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -81,12 +81,12 @@
             <ul>
                 <li>Créer un utilisateur <strong>technicien</strong> disposant de tous les droits d'administration.</li>
                 <li>Joindre les machines au domaine <code>orion.local</code>.</li>
-                <li>Exchange étend le schéma AD : il faut les droits <em>Schema Admins</em> et <em>Enterprise Admins</em> pour <code>Setup.exe /PrepareSchema</code> puis <code>/PrepareAD</code>.</li>
+                <li>Exchange étend le schéma AD : il faut les droits <em>Schema Admins</em> et <em>Enterprise Admins</em> pour <code>Setup.exe /PrepareSchema</code>, puis <em>Enterprise Admins</em> pour <code>/PrepareAD</code> (et <em>Schema Admins</em> aussi si l'on a sauté <code>/PrepareSchema</code>).</li>
             </ul>
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Quelle version ?</p>
-                <p>Le TP a été fait sur <strong>Exchange Server 2019</strong>, dont le support a pris fin le <strong>14 octobre 2025</strong> (plus aucun correctif de sécurité). Son successeur est <strong>Exchange Server Subscription Edition (SE)</strong>, sorti le 1er juillet 2025 : même code et mêmes cmdlets que la 2019 CU15, mais une licence par abonnement et un support sans date de fin tant qu'on reste à jour. Tout ce module s'applique tel quel à SE.</p>
+                <p>Le TP a été fait sur <strong>Exchange Server 2019</strong>, dont le support a pris fin le <strong>14 octobre 2025</strong> (plus aucun correctif de sécurité). Son successeur est <strong>Exchange Server Subscription Edition (SE)</strong>, sorti le 1er juillet 2025 : un support sans date de fin tant qu'on reste à jour. Des cmdlets de ce module, comme <code>Enable-Mailbox</code> ou <code>Get-ExchangeCertificate</code>, sont indiquées applicables à SE.</p>
             </div>
 
             <h3>Rôles, connecteurs et ports</h3>
@@ -101,7 +101,7 @@
                     </tbody>
                 </table>
             </div>
-            <p>Côté clients, tout passe en <strong>HTTPS (443)</strong> : OWA (<code>/owa</code>), le centre d'administration (<code>/ecp</code>), Outlook (MAPI over HTTP) et Autodiscover. C'est pour ça qu'Exchange a besoin d'un vrai certificat (chapitres 4 à 6).</p>
+            <p>Côté clients Outlook et web, tout passe en <strong>HTTPS (443)</strong> : OWA (<code>/owa</code>), le centre d'administration (<code>/ecp</code>), Outlook (MAPI over HTTP) et Autodiscover. C'est pour ça qu'Exchange a besoin d'un vrai certificat (chapitres 4 à 6).</p>
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -221,7 +221,7 @@
                 <p><strong>Clé publique pour chiffrer → on protège un secret.</strong><br><strong>Clé privée pour chiffrer (= signer) → on prouve une identité.</strong><br>La signature ne cache rien ; elle garantit <em>qui</em> a écrit et <em>que rien n'a bougé</em>.</p>
             </div>
 
-            <p class="note">« Chiffrer l'empreinte avec la clé privée » est l'image exacte pour <strong>RSA</strong>. D'autres algorithmes de signature (ECDSA) ne chiffrent rien au sens strict, mais le principe reste le même : seule la clé privée produit la signature, la clé publique suffit à la vérifier. Et en pratique, on ne chiffre pas non plus un gros message en asymétrique : TLS ou S/MIME chiffrent une <strong>clé de session symétrique</strong> (AES), qui chiffre le contenu.</p>
+            <p class="note">« Chiffrer l'empreinte avec la clé privée » est l'image exacte pour <strong>RSA</strong>. D'autres algorithmes de signature (ECDSA) ne chiffrent rien au sens strict, mais le principe reste le même : seule la clé privée produit la signature, la clé publique suffit à la vérifier. Et en pratique, on ne chiffre pas non plus un gros message en asymétrique : TLS ou S/MIME chiffrent une <strong>clé de session symétrique</strong> (AES, ou ChaCha20-Poly1305 selon la suite), qui chiffre le contenu.</p>
 
             <div class="scenario scenario--quick">
                 <p class="scenario__label scenario__label--quick">Question éclair</p>
@@ -258,14 +258,14 @@
             <h3>Établir puis vérifier la confiance</h3>
             <p>J'importe le <strong>certificat racine</strong> de <code>ORION-CA</code> dans le magasin « Autorités racines de confiance » de tous les PC (via <strong>GPO</strong> en AD). Dès lors, chaque machine fait confiance à <strong>tout ce que <code>ORION-CA</code> a signé</strong>. À réception d'un certificat, le PC regarde <em>qui l'a émis</em> et <strong>remonte la chaîne</strong> jusqu'à une racine connue.</p>
 
-            <h4>Exemple réel — le certificat de <code>*.google.com</code> (chaîne relevée à la rédaction ; les noms des intermédiaires changent de temps en temps)</h4>
+            <h4>Exemple réel — le certificat de <code>*.google.com</code> (chaîne relevée à la rédaction ; contrôle du 11/10/2026 : WR2 est toujours signée par GTS Root R1, mais www.google.com est signé par WE2 ; les noms des intermédiaires changent de temps en temps)</h4>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Visionneuse de certificats — lecture de bas en haut</span></div>
-                <pre class="terminal__code">GTS Root R1          <span class="c">← CA RACINE — préinstallée dans Windows</span>
+                <pre class="terminal__code">GTS Root R1          <span class="c">← CA RACINE</span>
   └─ WR2             <span class="c">← CA INTERMÉDIAIRE — signée par la racine</span>
        └─ *.google.com   <span class="c">← CERTIFICAT SERVEUR (feuille, wildcard)</span></pre>
             </div>
-            <p>Le serveur présente <code>*.google.com</code>, signé par <code>WR2</code>, lui-même signé par <code>GTS Root R1</code> (préinstallée) → la chaîne remonte à une racine connue → <strong>cadenas, aucune alerte</strong>. Une chaîne réelle a souvent <strong>3 niveaux</strong> : l'intermédiaire évite d'exposer la clé privée de la racine au quotidien.</p>
+            <p>Le serveur présente <code>*.google.com</code>, signé par <code>WR2</code>, lui-même signé par <code>GTS Root R1</code> → la chaîne remonte à une racine connue → <strong>cadenas, aucune alerte</strong>. Une chaîne réelle a souvent <strong>3 niveaux</strong> : l'intermédiaire évite d'exposer la clé privée de la racine au quotidien.</p>
 
             <h3>Pourquoi c'est sûr — le point qui blinde l'oral</h3>
             <p>La CA signe le certificat avec sa <strong>clé privée</strong> (qu'elle seule possède) ; le PC vérifie avec la <strong>clé publique</strong> de la CA (dans le certificat racine importé). Un attaquant <strong>ne peut pas fabriquer un faux « certificat signé ORION-CA »</strong> sans voler la clé privée de la CA. C'est la <strong>signature cryptographique</strong>, pas le nom écrit dessus, qui fait foi.</p>
@@ -307,7 +307,7 @@
             </div>
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Piège</p>
-                <p>Une CA d'entreprise publie par défaut CDP et AIA dans <strong>LDAP</strong> (lisible seulement par les machines du domaine) et en <strong>HTTP</strong> sur la CA. Un poste hors domaine, ou un client sur Internet, n'atteint ni l'un ni l'autre : la vérification de révocation échoue. Une CRL <strong>expirée</strong> (CA éteinte trop longtemps) fait le même effet sur tout le monde. Pour lire ce que voit le client : <code>certutil -verify -urlfetch fichier.cer</code>.</p>
+                <p>Une CA d'entreprise publie par défaut CDP et AIA dans <strong>LDAP</strong> (lisible seulement par les machines du domaine) et en <strong>HTTP</strong> sur la CA. Un poste hors domaine, ou un client sur Internet, peut ne pas atteindre ni l'un ni l'autre : la vérification de révocation peut alors échouer. Une CRL <strong>expirée</strong> (CA éteinte trop longtemps) fait le même effet sur tout le monde. Pour lire ce que voit le client : <code>certutil -verify -urlfetch fichier.cer</code>.</p>
             </div>
 
             <div class="scenario scenario--quick">
@@ -342,18 +342,18 @@
     <span class="p">-KeyLength</span> 2048 <span class="p">-HashAlgorithmName</span> SHA256 <span class="p">-Force</span>
 
 <span class="c"># Le rôle d'inscription web s'installe, puis se configure à part</span>
-<span class="k">Install-AdcsWebEnrollment</span> <span class="p">-Force</span>             <span class="c"># page http://srv-ad01/certsrv</span></pre>
+<span class="k">Install-AdcsWebEnrollment</span> <span class="p">-Force</span>             <span class="c"># page https://srv-ad01/certsrv</span></pre>
             </div>
 
             <ul>
                 <li><strong>EnterpriseRootCA</strong> — intégrée à AD : la racine est <em>automatiquement</em> distribuée aux membres du domaine (plus besoin d'importer à la main, c'est l'avantage majeur vs une CA autonome).</li>
-                <li><strong>KeyLength / HashAlgorithm</strong> — robustesse de la clé et de l'empreinte (2048 bits, SHA-256 au minimum).</li>
+                <li><strong>KeyLength / HashAlgorithm</strong> — robustesse de la clé et de l'empreinte (2048 bits et SHA-256 dans l'exemple ; Microsoft conseille les options les plus robustes que les applications acceptent).</li>
                 <li><strong>Modèles de certificats</strong> — une CA d'entreprise n'émet que d'après des <strong>modèles</strong> publiés (<em>Certificate Templates</em>) : <em>Web Server</em> pour un serveur web ou Exchange, <em>Computer</em>, <em>User</em>… Chaque modèle fixe la durée, l'usage de la clé et <strong>qui a le droit de demander</strong> (permission <em>Enroll</em> dans l'onglet <em>Security</em> du modèle).</li>
             </ul>
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Labo vs production</p>
-                <p>La CA sur le contrôleur de domaine, c'est un raccourci de labo. En production, Microsoft conseille un serveur dédié, et souvent deux niveaux : une <strong>racine hors ligne</strong> (autonome, éteinte, qui ne signe que l'émettrice) et une <strong>CA émettrice d'entreprise</strong> en ligne. Autre piège : une machine qui héberge AD CS <strong>ne peut plus être renommée</strong> ni changer de domaine — choisis son nom avant.</p>
+                <p>La CA sur le contrôleur de domaine, c'est un raccourci de labo. En production, Microsoft conseille souvent deux niveaux : une <strong>racine hors ligne</strong> (autonome, éteinte, qui ne signe que l'émettrice) et une <strong>CA émettrice d'entreprise</strong> en ligne. Autre piège : une machine qui héberge AD CS <strong>ne peut plus être renommée</strong> ni changer de domaine — choisis son nom avant.</p>
             </div>
 
             <div class="verify">
@@ -367,10 +367,8 @@
                 <p class="verify__sub">Sortie attendue (extrait)</p>
                 <pre class="verify__out">Status   Name      DisplayName
 ------   ----      -----------
-Running  CertSvc   Active Directory Certificate Services
-
-CA name: ORION-CA</pre>
-                <p class="verify__fail">Service arrêté : lire le journal Application (source <em>CertificationAuthority</em>) ; une CRL expirée empêche par exemple le service de démarrer. Le nom ne convient pas : il ne se change pas, il faut désinstaller et réinstaller la CA.</p>
+Running  CertSvc   Active Directory Certificate Services</pre>
+                <p class="verify__fail">Service arrêté : lire le journal des événements (source <em>Microsoft-Windows-CertificationAuthority</em>, événement 100) ; une CRL expirée peut empêcher le service de démarrer. Le nom ne convient pas : il ne se change pas, il faut désinstaller et réinstaller la CA.</p>
             </div>
 
             <div class="takeaway">
@@ -387,7 +385,7 @@ CA name: ORION-CA</pre>
                         <button class="scenario__opt" data-why="La racine sur le poste conditionne la confiance dans les certificats émis, pas la liste des modèles qu&#x27;on peut demander.">Que la racine d&#x27;ORION-CA est sur ton poste</button>
                         <button class="scenario__opt" data-why="La longueur de clé de la CA n&#x27;a aucun rapport avec les modèles proposés ; et elle ne se change pas sans réinstaller.">Que la clé de la CA fait au moins 4096 bits</button>
                     </div>
-                    <div class="scenario__why"><p>Un modèle n'est proposé que s'il est <strong>publié</strong> sur la CA (console <em>Certification Authority</em> → <em>Certificate Templates</em> ; <code>certutil -CATemplates</code> les liste) et si le demandeur a la permission <strong>Enroll</strong> sur ce modèle (console <em>Certificate Templates</em>, onglet <em>Security</em>). Par défaut, <em>Web Server</em> n'accorde <em>Enroll</em> qu'aux administrateurs du domaine et de l'entreprise.</p></div>
+                    <div class="scenario__why"><p>Un modèle n'est proposé que s'il est <strong>publié</strong> sur la CA (console <em>Certification Authority</em> → <em>Certificate Templates</em> ; <code>certutil -CATemplates</code> les liste) et si le demandeur a la permission <strong>Enroll</strong> sur ce modèle (console <em>Certificate Templates</em>, onglet <em>Security</em>).</p></div>
                 </div>
             </div>
         </section>
@@ -463,7 +461,7 @@ CA name: ORION-CA</pre>
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 3</b> · CA ORION-CA</p>
                         <p class="walk__head">La CA applique le modèle</p>
-                        <p>La demande nomme le modèle <em>Web Server</em>. La CA vérifie qu'il est publié et que le demandeur a <strong>Enroll</strong> dessus ; le modèle fixe la durée de validité et l'usage (<em>Server Authentication</em>). Selon le modèle, le certificat est émis tout de suite ou mis <strong>en attente</strong> d'approbation.</p>
+                        <p>La demande nomme le modèle <em>Web Server</em>. La CA vérifie qu'il est publié et que le demandeur a <strong>Enroll</strong> dessus ; le modèle fixe la durée de validité et l'usage (<em>Web Server</em> : identité d'un serveur web). Selon le modèle, le certificat est émis tout de suite ou mis <strong>en attente</strong> d'approbation.</p>
                         <p class="walk__change">Le <b>modèle</b> décide qui peut demander et ce que contiendra le certificat.</p>
                     </li>
                     <li class="walk__step">
@@ -532,13 +530,6 @@ CA name: ORION-CA</pre>
                 <pre class="terminal__code"><span class="k">Get-ChildItem</span> Cert:\LocalMachine\Root | <span class="k">Where-Object</span> Subject <span class="p">-like</span> <span class="s">"*ORION-CA*"</span> | <span class="k">Select-Object</span> Subject<span class="c">   # sur le client</span>
 <span class="k">certutil</span> <span class="p">-ping</span><span class="c">                                                                  # la CA répond</span></pre>
             </div>
-                <p class="verify__sub">Sortie attendue</p>
-            <pre class="verify__out">Subject
--------
-CN=ORION-CA, DC=orion, DC=local
-
-Connecting to SRV-AD01.orion.local\ORION-CA …
-Server "ORION-CA" ICertRequest2 interface is alive</pre>
                 <p class="verify__fail">La racine de la CA n'est pas dans le magasin du client : il n'est pas membre du domaine, ou la stratégie n'a pas été appliquée (<code>gpupdate /force</code>). Le navigateur signale un nom invalide : le certificat ne contient pas le nom tapé (<code>mail.orion.local</code>) dans ses noms alternatifs (SAN).</p>
             </div>
             <div class="takeaway">
@@ -598,10 +589,10 @@ Server "ORION-CA" ICertRequest2 interface is alive</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse des fiches PKI &amp; du TP Exchange 2019</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

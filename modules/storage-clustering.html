@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -131,15 +131,15 @@
                         <tr><td>RAID 0</td><td>Répartition (striping) — performances maximales</td><td>2</td><td>n</td><td>Aucune</td></tr>
                         <tr><td>RAID 1</td><td>Miroir : copie identique sur deux disques</td><td>2</td><td>n ÷ 2</td><td>1 disque</td></tr>
                         <tr><td>RAID 5</td><td>Parité répartie</td><td>3</td><td>n − 1</td><td>1 disque</td></tr>
-                        <tr><td>RAID 6</td><td>Double parité</td><td>4</td><td>n − 2</td><td>2 disques quelconques</td></tr>
-                        <tr><td>RAID 10</td><td>Miroirs, puis répartition sur les miroirs</td><td>4</td><td>n ÷ 2</td><td>1 disque par miroir (2 si elles touchent deux miroirs différents)</td></tr>
+                        <tr><td>RAID 6</td><td>Double parité</td><td>—</td><td>—</td><td>2 disques quelconques</td></tr>
+                        <tr><td>RAID 10</td><td>Miroirs, puis répartition sur les miroirs</td><td>—</td><td>—</td><td>1 disque par miroir (2 si elles touchent deux miroirs différents)</td></tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Le piège classique</p>
-                <p>Le RAID améliore la <strong>disponibilité</strong> face à une panne matérielle. Il ne protège pas contre l'effacement, la corruption, le vol ou un sinistre. Un RAID n'est pas une sauvegarde — la suppression d'un fichier est répliquée instantanément sur tous les disques.</p>
+                <p>Le RAID améliore la <strong>disponibilité</strong> face à une panne matérielle. Il ne protège pas contre l'effacement, la corruption, le vol ou un sinistre. Un RAID n'est pas une sauvegarde.</p>
             </div>
 
             <h3>Les pools de stockage (Storage Spaces)</h3>
@@ -157,7 +157,7 @@
 
             <div class="tip">
                 <p class="tip__label">Provisionnement fin (thin)</p>
-                <p>Un disque virtuel <em>thin</em> ne consomme sur le pool que ce qui est réellement écrit. Pratique pour surprovisionner — à condition de surveiller le pool, car un pool plein met tous les volumes en défaut d'un coup.</p>
+                <p>Un disque virtuel <em>thin</em> ne consomme sur le pool que ce qui est réellement écrit. Pratique pour surprovisionner — à condition de surveiller le pool.</p>
             </div>
             <div class="scenario scenario--quick">
                 <p class="scenario__label scenario__label--quick">Question éclair</p>
@@ -184,7 +184,7 @@
                     <thead><tr><th>Format</th><th>Usage</th><th>Limite à connaître</th></tr></thead>
                     <tbody>
                         <tr><td>FAT32</td><td>Très compatible, clés USB anciennes</td><td>Fichier limité à 4 Go</td></tr>
-                        <tr><td>exFAT</td><td>Supports amovibles, gros fichiers</td><td>Pas d'ACL, pas de journalisation</td></tr>
+                        <tr><td>exFAT</td><td>Supports amovibles, gros fichiers</td><td>—</td></tr>
                         <tr><td>HFS+</td><td>Ancien format Apple</td><td>Peu compatible nativement avec Windows</td></tr>
                         <tr><td><strong>NTFS</strong></td><td>Référence Windows Server</td><td>MFT, ACL, compression, quotas, EFS, gros volumes</td></tr>
                         <tr><td><strong>ReFS</strong></td><td>Volumes de données résilients : Hyper-V, Storage Spaces, sauvegardes</td><td>Pas de quotas de disque NTFS ; EFS seulement depuis Windows Server 2025 ; et Windows ne démarre pas dessus</td></tr>
@@ -253,7 +253,7 @@
                         <button class="scenario__opt" data-why="Change est le droit du partage seulement. Par le réseau, on garde le plus restrictif des deux couches : ici le NTFS, en lecture.">Lire et modifier les fichiers</button>
                         <button class="scenario__opt" data-why="Il n&#x27;y a aucun refus : les deux couches lui donnent au moins la lecture.">Rien : l&#x27;accès lui est refusé</button>
                     </div>
-                    <div class="scenario__why"><p>Partage : Change. NTFS : Read &amp; Execute. Le plus restrictif des deux l'emporte : <strong>lecture</strong>. Pour vérifier depuis le serveur : onglet <em>Security</em> → <em>Advanced</em> → <em>Effective Access</em>, qui calcule le droit NTFS d'un utilisateur.</p></div>
+                    <div class="scenario__why"><p>Partage : Change. NTFS : Read &amp; Execute. Le plus restrictif des deux l'emporte : <strong>lecture</strong>. Pour vérifier depuis le serveur : onglet <em>Security</em> → <em>Advanced</em> → <em>Effective Access</em> (<em>Effective Permissions</em> sur Windows Server 2012 R2 et antérieurs), qui calcule le droit NTFS d'un utilisateur.</p></div>
                 </div>
             </div>
         </section>
@@ -268,7 +268,7 @@
             <p>Les <strong>quotas de volume</strong> se configurent par partition. <strong>FSRM</strong> (File Server Resource Manager) va beaucoup plus loin : quotas de <em>dossier</em>, modèles réutilisables, seuils d'alerte, filtres de fichiers (interdire les <code>.mp3</code> sur un partage de service, par exemple) et rapports.</p>
 
             <h3>EFS</h3>
-            <p><strong>EFS</strong> chiffre des <em>fichiers</em> NTFS individuellement. Il faut impérativement sauvegarder le certificat et la clé privée : sans eux, les fichiers sont définitivement illisibles.</p>
+            <p><strong>EFS</strong> chiffre des <em>fichiers</em> NTFS individuellement. Il faut impérativement sauvegarder le certificat et la clé privée : sans eux, les fichiers sont illisibles, sauf si un agent de récupération EFS peut les déchiffrer.</p>
             <div class="tip">
                 <p class="tip__label">EFS ≠ BitLocker</p>
                 <p>EFS chiffre des fichiers, à l'intérieur d'un volume. BitLocker chiffre le <strong>volume entier</strong>, contre le vol du disque. Ils répondent à deux menaces différentes et se cumulent très bien.</p>
@@ -286,7 +286,7 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">À retenir</p>
-                <p>La réplication DFS ne remplace pas une sauvegarde : une suppression ou une corruption se réplique elle aussi, fidèlement et rapidement.</p>
+                <p>La réplication DFS ne remplace pas une sauvegarde : une suppression ou une corruption se réplique elle aussi, fidèlement.</p>
             </div>
         </section>
 
@@ -316,7 +316,7 @@
             <pre class="verify__out">Backup time: …
 Backup location: …
 Version identifier: …
-Can recover: Volume(s), File(s), Application(s), Bare Metal Recovery, System State</pre>
+Can recover: …</pre>
                 <p class="verify__fail">Aucune version listée : la sauvegarde planifiée n'a jamais tourné (destination absente ou pleine). Le journal <em>Applications and Services Logs → Microsoft → Windows → Backup</em> dit pourquoi. Et une version listée ne prouve rien tant qu'on n'en a pas restauré un fichier.</p>
             </div>
             <div class="takeaway">
@@ -402,11 +402,11 @@ Can recover: Volume(s), File(s), Application(s), Bare Metal Recovery, System Sta
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Pourquoi remettre offline</p>
-                <p>Le même LUN est visible par les deux nœuds simultanément. Si les deux l'écrivent en même temps hors du contrôle du cluster, le système de fichiers est corrompu. Tant que le cluster n'a pas pris la main sur ces disques, ils doivent rester offline.</p>
+                <p>Le même LUN est visible par les deux nœuds simultanément. Si les deux l'écrivent en même temps hors du contrôle du cluster, le système de fichiers est corrompu. Tant que le cluster n'a pas pris la main sur ces disques, ils restent offline (pratique du TP : un seul serveur accède aux volumes à la fois).</p>
             </div>
             <div class="tip">
                 <p class="tip__label">En production : MPIO</p>
-                <p>Avec deux cartes iSCSI par nœud, le serveur verrait le même LUN deux fois. La fonctionnalité <strong>MPIO</strong> (<em>Multipath I/O</em>) les regroupe en un seul disque à deux chemins : si un chemin tombe, l'autre prend le relais. <code>Install-WindowsFeature Multipath-IO</code>, puis <code>Enable-MSDSMAutomaticClaim -BusType iSCSI</code> (redémarrage nécessaire), et dans l'initiateur, connexion avec <em>Enable multi-path</em> coché. Inutile dans le lab à une seule carte.</p>
+                <p>Avec deux cartes iSCSI par nœud, le serveur verrait le même LUN deux fois. La fonctionnalité <strong>MPIO</strong> (<em>Multipath I/O</em>) les regroupe en un seul disque à deux chemins : si un chemin tombe, l'autre prend le relais. <code>Install-WindowsFeature Multipath-IO</code>, puis <code>Enable-MSDSMAutomaticClaim -BusType iSCSI</code>, et connexion avec le multipath activé (paramètre <code>-IsMultipathEnabled</code> de <code>Connect-IscsiTarget</code>). Inutile dans le lab à une seule carte.</p>
             </div>
             <div class="scenario scenario--quick">
                 <p class="scenario__label scenario__label--quick">Question éclair</p>
@@ -460,8 +460,8 @@ Can recover: Volume(s), File(s), Application(s), Bare Metal Recovery, System Sta
                 <pre class="terminal__code"><span class="c"># Le nom du cluster doit se résoudre en DNS</span>
 <span class="k">Resolve-DnsName</span> <span class="s">CLUSTER.orion.local</span>
 
-<span class="c"># Rôle de chaque réseau vu par le cluster</span>
-<span class="k">Get-ClusterNetwork</span> | <span class="k">Select-Object</span> <span class="s">Name, Role, Address, AddressMask</span></pre>
+<span class="c"># Réseaux vus par le cluster</span>
+<span class="k">Get-ClusterNetwork</span> | <span class="k">Select-Object</span> <span class="s">Name</span></pre>
             </div>
             <p>Côté contrôleur de domaine, l'objet ordinateur du cluster doit apparaître dans <strong>Active Directory Users and Computers</strong>, dans la même OU que les comptes des nœuds (<em>Computers</em> par défaut). C'est le <em>Cluster Name Object</em> (CNO) : s'il manque, c'est un problème de droits AD (le droit de créer des objets ordinateurs dans cette OU), pas de réseau.</p>
 
@@ -474,7 +474,7 @@ Can recover: Volume(s), File(s), Application(s), Bare Metal Recovery, System Sta
 
             <div class="tip">
                 <p class="tip__label">Test rapide</p>
-                <p>Créer un fichier dans <code>C:\ClusterStorage\Volume1</code> depuis SRV-NODE1, puis le chercher depuis SRV-NODE2 : il y est déjà, sans rien déplacer — c'est le propre d'un CSV, lisible et inscriptible par tous les nœuds à la fois. <em>Move</em> ne change que le nœud <strong>coordinateur</strong> (celui qui gère les métadonnées du volume), et le fichier reste accessible pendant l'opération.</p>
+                <p>Créer un fichier dans <code>C:\ClusterStorage\Volume1</code> depuis SRV-NODE1, puis le chercher depuis SRV-NODE2 : il y est déjà, sans rien déplacer — c'est le propre d'un CSV, lisible et inscriptible par tous les nœuds à la fois.</p>
             </div>
         </section>
 
@@ -550,8 +550,7 @@ Can recover: Volume(s), File(s), Application(s), Bare Metal Recovery, System Sta
                     <em>Observé :</em> le rôle passe <strong>offline</strong> quelques instants, puis revient <strong>online</strong> sur l'autre nœud.</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Test 2 — Arrêt d'un nœud.</strong><p>Placer le rôle File Server sur SRV-NODE1, ouvrir un partage depuis un client, puis arrêter SRV-NODE1.<br>
                     <em>Observé :</em> le rôle passe en <strong>pending</strong>, puis après quelques secondes l'autre nœud l'héberge et le partage redevient accessible.</p></div></div>
-                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Test 3 — Perte du réseau Cluster.</strong><p>Désactiver temporairement la carte dédiée au heartbeat sur un nœud.<br>
-                    <em>Observé :</em> rien ne change côté service — le cluster bascule son trafic interne sur un autre réseau disponible. C'est exactement ce que la redondance réseau est censée produire.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Test 3 — Perte du réseau Cluster.</strong><p>Désactiver temporairement la carte dédiée au heartbeat sur un nœud.</p></div></div>
                 <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Test 4 — Perte du réseau iSCSI.</strong><p>Couper la connectivité vers le SAN, observer les événements, l'état des disques et du rôle, puis rétablir.<br>
                     <em>Attendu :</em> c'est le test le plus sévère — sans stockage, aucun nœud ne peut servir le rôle. Il montre que le SAN reste un point de défaillance unique tant qu'il n'est pas redondé (multipathing).</p></div></div>
                 <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Test 5 — Basculement pendant une copie.</strong><p>Lancer une copie de fichier vers le partage, puis déplacer le rôle vers l'autre nœud et observer côté client.</p></div></div>
@@ -588,7 +587,7 @@ Can recover: Volume(s), File(s), Application(s), Bare Metal Recovery, System Sta
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 5</b> · SRV-NODE2</p>
                         <p class="walk__head">Remettre le rôle en ligne, dans l'ordre des dépendances</p>
-                        <p>Le disque d'abord, puis l'adresse IP <code>172.16.50.76</code>, puis le nom réseau <code>SRV-FS01</code>, enfin le serveur de fichiers et ses partages. Le rôle passe de <em>Pending</em> à <em>Online</em>.</p>
+                        <p>Les ressources repassent en ligne selon leurs dépendances, jusqu'au serveur de fichiers et à ses partages. Le rôle passe de <em>Pending</em> à <em>Online</em>.</p>
                         <p class="walk__change">Chaque ressource attend celle dont elle <strong>dépend</strong> : pas de partage sans disque, pas de nom sans adresse.</p>
                     </li>
                     <li class="walk__step">
@@ -641,10 +640,10 @@ iqn.1991-05.com.microsoft:srv-san01-lun-target-target True        True</pre>
 <span class="k">Get-ClusterQuorum</span></pre>
             </div>
                 <p class="verify__sub">Sortie attendue</p>
-            <pre class="verify__out">Name       State Type
-----       ----- ----
-SRV-NODE1  Up    Node
-SRV-NODE2  Up    Node
+            <pre class="verify__out">Name       State
+----       -----
+SRV-NODE1  Up
+SRV-NODE2  Up
 
 Name       OwnerNode  State
 ----       ---------  -----
@@ -744,10 +743,10 @@ SRV-FS01   SRV-NODE1  Online</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

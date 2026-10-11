@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -79,7 +79,7 @@
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Avant de cocher : deux prérequis</p>
-                <p>Hyper-V n'existe que dans les éditions <strong>Pro, Entreprise et Éducation</strong> de Windows 11 (sous Windows 10 : Pro et Entreprise ; et dans Windows Server) : pas dans Windows Famille. Et la <strong>virtualisation matérielle</strong> (Intel VT-x / AMD-V) doit être activée dans le BIOS/UEFI du poste : le Gestionnaire des tâches l'indique dans <em>Performances → Processeur → Virtualisation</em>.</p>
+                <p>Hyper-V n'existe que dans les éditions <strong>Pro, Entreprise et Éducation</strong> de Windows 11 (sous Windows 10 : Pro et Entreprise ; et dans Windows Server) : pas dans Windows Famille. Et la <strong>virtualisation matérielle</strong> (Intel VT-x / AMD-V) doit être activée dans le BIOS/UEFI du poste.</p>
             </div>
 
             <h3>La même chose en PowerShell</h3>
@@ -138,7 +138,7 @@ SRV-FILE01   Off          2</pre>
             <h3>Les réglages de l'assistant</h3>
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Mémoire</strong><p>Décocher la <strong>mémoire dynamique</strong> et attribuer une valeur fixe — 8192 Mo pour un Windows Server.</p></div></div>
-                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Connexion réseau</strong><p><em>Default Switch</em> pour commencer (il fournit un accès Internet via NAT). On créera un commutateur dédié au chapitre 07.</p></div></div>
+                <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Connexion réseau</strong><p><em>Default Switch</em> pour commencer. On créera un commutateur dédié au chapitre 07.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Support d'installation</strong><p>Installer un système d'exploitation à partir d'un fichier <strong>ISO</strong>.</p></div></div>
             </div>
 
@@ -151,7 +151,7 @@ SRV-FILE01   Off          2</pre>
                         <tr><td><strong>Microprogramme</strong></td><td>C'est l'ordre de démarrage (<em>boot order</em>)</td><td>Pour booter sur l'ISO, puis sur le disque</td></tr>
                         <tr><td><strong>Sécurité</strong></td><td>Pour une VM Linux : garder le démarrage sécurisé mais choisir le modèle <strong>Microsoft UEFI Certificate Authority</strong> (le désactiver seulement si la distribution n'est pas signée)</td><td>Le modèle par défaut (« Microsoft Windows ») rejette les chargeurs Linux ; Debian et Ubuntu sont signés pour l'autre modèle</td></tr>
                         <tr><td><strong>Mémoire</strong></td><td>Ne pas activer la mémoire dynamique</td><td>Évite les à-coups sur un serveur</td></tr>
-                        <tr><td><strong>Processeurs</strong></td><td>L'assistant crée la VM avec <strong>1</strong> processeur virtuel : passer à <strong>2</strong> (le maximum proposé = le nombre de processeurs logiques de l'hôte)</td><td>Un serveur à 1 vCPU rame ; trop de vCPU prive l'hôte et les autres VM</td></tr>
+                        <tr><td><strong>Processeurs</strong></td><td>L'assistant crée la VM avec <strong>12</strong> processeurs virtuels (valeur relevée au TP) : passer à <strong>2</strong></td><td>Un serveur à 1 vCPU rame ; trop de vCPU prive l'hôte et les autres VM</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -194,7 +194,7 @@ SRV-FILE01   Off          2</pre>
 
             <div class="tip">
                 <p class="tip__label">Aucun disque proposé à l'installation ?</p>
-                <p>Sur un serveur <em>physique</em>, cela signifie que Windows n'a pas le pilote du contrôleur de stockage : il faut le charger depuis l'assistant. En VM Hyper-V avec un Windows Server récent, le pilote du contrôleur virtuel est intégré : le disque apparaît d'office. S'il manque, c'est plutôt que la VM n'a pas de disque attaché.</p>
+                <p>Sur un serveur <em>physique</em>, cela signifie que Windows n'a pas le pilote du contrôleur de stockage : il faut le charger depuis l'assistant.</p>
             </div>
 
             <h3>Deux commandes de confort</h3>
@@ -234,7 +234,7 @@ SRV-FILE01   Off          2</pre>
 
             <div class="takeaway takeaway--warn">
                 <p class="takeaway__label">Réservé au labo</p>
-                <p>Couper le pare-feu fait gagner du temps quand on débogue un TP, et <strong>uniquement</strong> dans ce cadre. Sur un serveur réel, on ouvre les ports nécessaires — on ne désarme pas la machine. Penser à le rallumer avant de faire un Sysprep : l'état est capturé dans l'image.</p>
+                <p>Couper le pare-feu fait gagner du temps quand on débogue un TP, et <strong>uniquement</strong> dans ce cadre. Sur un serveur réel, on ouvre les ports nécessaires — on ne désarme pas la machine.</p>
             </div>
         </section>
 
@@ -244,13 +244,13 @@ SRV-FILE01   Off          2</pre>
             <h2 class="chapter__title">Sysprep : fabriquer une image réutilisable</h2>
             <p class="chapter__intro">Réinstaller Windows Server à chaque TP prend une demi-heure. Sysprep permet de le faire <em>une fois</em>, puis de repartir de cette image pour toutes les VM suivantes.</p>
 
-            <p>Sysprep « généralise » l'installation : il retire le SID unique de la machine, son nom et ses identifiants matériels. L'image redevient neutre, prête à être clonée.</p>
+            <p>Sysprep « généralise » l'installation : il retire le SID unique de la machine et les informations propres au PC, comme les pilotes installés. L'image redevient neutre, prête à être clonée.</p>
 
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Lancer l'outil</strong><p>Ouvrir <code>C:\Windows\System32\Sysprep</code> et exécuter <code>sysprep.exe</code>.</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Cocher « Generalize »</strong><p>Et choisir <em>Shutdown</em> dans les options d'arrêt.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Ne pas rallumer la VM</strong><p>Un seul démarrage suffirait à réattribuer un SID et à ruiner l'image.</p></div></div>
-                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Supprimer la VM dans Hyper-V Manager</strong><p>Le disque virtuel reste sur le disque de l'hôte. <strong>Avant</strong> le Sysprep, la VM ne doit avoir aucun point de contrôle : sinon l'état généralisé est dans un fichier <code>.avhdx</code> à côté, et le <code>.vhdx</code> qu'on récupère n'est pas l'image finale. Supprimer les points de contrôle les fusionne dans le disque principal.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Supprimer la VM dans Hyper-V Manager</strong><p>Le disque virtuel reste sur le disque de l'hôte. Un point de contrôle est stocké dans un fichier <code>.avhdx</code> à côté du <code>.vhdx</code> ; supprimer le point de contrôle les fusionne dans le disque principal.</p></div></div>
                 <div class="step"><div class="step__num">5</div><div class="step__body"><strong>Isoler le disque</strong><p>Aller dans <code>C:\VM\WS01\Virtual Hard Disks</code>, renommer <code>WS01.vhdx</code> en <code>TEST-SYSPREP.vhdx</code>, puis le copier dans un dossier parent dédié, par exemple <code>C:\PARENT\</code>.</p></div></div>
                 <div class="step"><div class="step__num">6</div><div class="step__body"><strong>Nettoyer</strong><p>Supprimer <code>C:\VM\WS01</code>. Il ne reste que l'image, réutilisable indéfiniment.</p></div></div>
             </div>
@@ -304,7 +304,7 @@ SRV-FILE01   Off          2</pre>
                 <pre class="verify__out">VhdType      ParentPath
 -------      ----------
 Differencing C:\PARENT\TEST-SYSPREP.vhdx</pre>
-                <p class="verify__fail"><code>ParentPath</code> introuvable : le disque parent a été déplacé ou renommé, et toutes les VM qui en dépendent refusent de démarrer. On le remet à sa place, ou on reconnecte l'enfant (<em>Edit Disk → Reconnect</em>).</p>
+                <p class="verify__fail"><code>ParentPath</code> introuvable : le disque parent a été déplacé ou renommé, et toutes les VM qui en dépendent refusent de démarrer. On le remet à sa place, ou on rattache l'enfant à son parent avec <code>Set-VHD -Path "C:\VM\TEST-WS01\TEST-WS01-DISK1.vhdx" -ParentPath "C:\PARENT\TEST-SYSPREP.vhdx"</code>.</p>
             </div>
             <div class="scenario scenario--quick">
                 <p class="scenario__label scenario__label--quick">Question éclair</p>
@@ -477,10 +477,10 @@ Differencing C:\PARENT\TEST-SYSPREP.vhdx</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

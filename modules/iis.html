@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -64,14 +64,14 @@
                 <li>Ajouter un site FTP authentifié sur des comptes du domaine.</li>
             </ul>
             <p class="brief__foot"><strong>Prérequis :</strong> <a href="windows-server.html">Windows Server</a> (domaine, DNS) et <a href="powershell.html">PowerShell</a> pour les scripts de préparation.</p>
-            <p class="brief__foot">Ce module prépare directement <a href="sharepoint.html">SharePoint Server SE</a>, qui est une application IIS : les notions de site, de pool et de binding y reviennent telles quelles.</p>
+            <p class="brief__foot">Ce module prépare directement <a href="sharepoint.html">SharePoint Server SE</a>, dont chaque application web est un site IIS : les notions de site, de pool et de binding y reviennent telles quelles.</p>
         </section>
 
         <!-- 01 -->
         <section class="chapter" id="role">
             <p class="chapter__num">01</p>
             <h2 class="chapter__title">Ce qu'est IIS</h2>
-            <p class="chapter__intro">IIS (<em>Internet Information Services</em>) est le serveur web de Microsoft, livré comme un <strong>rôle</strong> de Windows Server. Il héberge sites et applications web, et c'est la plateforme d'exécution habituelle des technologies ASP.NET. Sa version suit celle de Windows : <strong>IIS 10</strong> sur Windows Server 2016, 2019, 2022 et 2025.</p>
+            <p class="chapter__intro">IIS (<em>Internet Information Services</em>) est le serveur web de Microsoft, livré comme un <strong>rôle</strong> de Windows Server. Il héberge sites et applications web, et c'est la plateforme d'exécution habituelle des technologies ASP.NET. Sa version suit celle de Windows : <strong>IIS 10</strong> sur Windows Server 2016, 2019 et 2022.</p>
 
             <div class="table-wrap">
                 <table>
@@ -79,7 +79,7 @@
                     <tbody>
                         <tr><td><strong>HTTP / HTTPS</strong></td><td>Publication de sites web — le cœur du rôle</td></tr>
                         <tr><td><strong>FTP</strong></td><td>Dépôt et récupération de fichiers (chapitre 08)</td></tr>
-                        <tr><td><strong>SMTP</strong></td><td>Relais de messagerie, sans boîte aux lettres. Attention : c'est une <strong>fonctionnalité Windows à part</strong> (<em>SMTP Server</em>), gérée par l'ancienne console IIS 6, dépréciée depuis longtemps et <strong>retirée de Windows Server 2025</strong>. Pour du courrier, on passe par Exchange ou un relais tiers.</td></tr>
+                        <tr><td><strong>SMTP</strong></td><td>Relais de messagerie, sans boîte aux lettres. Attention : c'est une <strong>fonctionnalité Windows à part</strong> (<em>SMTP Server</em>), <strong>retirée de Windows Server 2025</strong>. Pour du courrier, on passe par Exchange ou un relais tiers.</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -256,7 +256,7 @@ Running  WAS     Windows Process Activation Service
             <h2 class="chapter__title">Les pools d'applications</h2>
             <p class="chapter__intro">Un <strong>pool d'applications</strong> est le processus de travail (<code>w3wp.exe</code>) dans lequel tourne un site. C'est l'unité d'<strong>isolation</strong> d'IIS : deux sites dans deux pools distincts ne peuvent pas se planter l'un l'autre, et tournent sous des identités différentes.</p>
 
-            <p>Quand on crée un site <strong>dans IIS Manager</strong> (<em>Add Website…</em>), la console <strong>crée automatiquement un pool portant son nom</strong>. En PowerShell, <code>New-Website</code> ne le fait pas : sans <code>-ApplicationPool</code>, le site atterrit dans <code>DefaultAppPool</code> — d'où le <code>New-WebAppPool</code> du chapitre 09.</p>
+            <p>Quand on crée un site <strong>dans IIS Manager</strong> (<em>Add Website…</em>), la console <strong>crée automatiquement un pool portant son nom</strong>. En PowerShell, <code>New-Website</code> ne le fait pas : sans <code>-ApplicationPool</code>, le site prend le pool par défaut de <code>applicationDefaults</code> (<code>DefaultAppPool</code> dans les exemples officiels) — d'où le <code>New-WebAppPool</code> du chapitre 09.</p>
             <p> On en crée un séparé quand un site a besoin d'une identité propre — typiquement pour l'<strong>authentification</strong> : le pool s'exécute alors sous un compte de domaine qui, seul, a les droits sur les données visées.</p>
 
             <div class="table-wrap">
@@ -267,7 +267,7 @@ Running  WAS     Windows Process Activation Service
                         <tr><td><strong>Status</strong></td><td><code>Started</code> / <code>Stopped</code> — un pool arrêté rend son site injoignable</td></tr>
                         <tr><td><strong>.NET CLR Version</strong></td><td><code>v4.0</code>, ou <strong>No Managed Code</strong> pour un site statique ou PHP</td></tr>
                         <tr><td><strong>Managed Pipeline Mode</strong></td><td><code>Integrated</code> (moderne) ou <code>Classic</code> (compatibilité ascendante)</td></tr>
-                        <tr><td><strong>Identity</strong></td><td>Compte sous lequel tourne le processus — <code>ApplicationPoolIdentity</code> par défaut : un <strong>compte virtuel</strong> propre au pool, <code>IIS AppPool\&lt;nom du pool&gt;</code>, qui sort sur le réseau sous le compte ordinateur (<code>ORION\SRV-WEB01$</code>). Autres choix : <em>LocalService</em>, <em>NetworkService</em>, <em>LocalSystem</em> (à éviter : tous les droits sur la machine) ou un compte de domaine personnalisé (idéalement un <strong>gMSA</strong>, dont le mot de passe tourne tout seul)</td></tr>
+                        <tr><td><strong>Identity</strong></td><td>Compte sous lequel tourne le processus — <code>ApplicationPoolIdentity</code> par défaut : un <strong>compte virtuel</strong> propre au pool, <code>IIS AppPool\&lt;nom du pool&gt;</code>, qui sort sur le réseau sous le compte ordinateur (<code>ORION\SRV-WEB01$</code>). Autres choix : <em>LocalService</em>, <em>NetworkService</em>, <em>LocalSystem</em> (à éviter : des privilèges étendus sur la machine) ou un compte de domaine personnalisé (idéalement un <strong>gMSA</strong>, dont le mot de passe tourne tout seul)</td></tr>
                         <tr><td><strong>Applications</strong></td><td>Nombre d'applications hébergées par le pool</td></tr>
                     </tbody>
                 </table>
@@ -332,7 +332,7 @@ Running  WAS     Windows Process Activation Service
                     <p class="scenario__q">Tu copies les fichiers du site <code>cafe</code> dans <code>D:\web\cafe</code> en tant qu'administrateur. L'authentification anonyme est réglée sur <em>Application pool identity</em>. Le site répond <strong>401.3</strong>, alors que toi, tu ouvres les fichiers sans problème. Que corriges-tu ?</p>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>Donner la lecture à <code>IIS AppPool\cafe</code> sur le dossier</button>
-                        <button class="scenario__opt" data-why="Ton compte n&#x27;est pas celui qui lit les fichiers : c&#x27;est l&#x27;identité du pool. Et passer le pool en LocalSystem donnerait tous les droits sur la machine à un site web.">Passer l&#x27;identité du pool en <em>LocalSystem</em></button>
+                        <button class="scenario__opt" data-why="Ton compte n&#x27;est pas celui qui lit les fichiers : c&#x27;est l&#x27;identité du pool. Et passer le pool en LocalSystem donnerait des privilèges étendus sur la machine à un site web.">Passer l&#x27;identité du pool en <em>LocalSystem</em></button>
                         <button class="scenario__opt" data-why="Un 401.3 n&#x27;est pas un pool arrêté (ce serait un 503) : redémarrer ne change rien aux droits NTFS.">Redémarrer le pool <code>cafe</code> dans la console</button>
                     </div>
                     <div class="scenario__why"><p>401.3 = accès refusé par une ACL. Avec l'anonyme sur <em>Application pool identity</em>, le contenu est lu par <code>w3wp.exe</code> sous l'identité du pool, pas sous le compte qui a copié les fichiers (avec le réglage par défaut, ce serait <code>IUSR</code>). <code>icacls "D:\web\cafe" /grant "IIS AppPool\cafe:(OI)(CI)RX" /T</code> donne la lecture au seul compte virtuel du pool : moindre privilège respecté.</p></div>
@@ -359,7 +359,7 @@ Running  WAS     Windows Process Activation Service
                 <li><strong>Host name</strong> : <code>cafe.orion.local</code>.</li>
             </ul>
 
-            <p>Le <em>host name</em> est ce qui permet d'héberger <strong>plusieurs sites sur la même IP et le même port 80</strong> : IIS lit l'en-tête <code>Host</code> de la requête HTTP et aiguille vers le bon site. Sans lui, deux sites en <code>*:80</code> entrent en conflit : le second refuse de démarrer.</p>
+            <p>Le <em>host name</em> est ce qui permet d'héberger <strong>plusieurs sites sur la même IP et le même port 80</strong> : IIS lit l'en-tête <code>Host</code> de la requête HTTP et aiguille vers le bon site. Sans lui, deux sites en <code>*:80</code> entrent en conflit.</p>
 
             <h3>Et en HTTPS ? Le rôle de SNI</h3>
             <p>En HTTPS, le serveur doit présenter son <strong>certificat</strong> pendant la poignée de main TLS, donc <em>avant</em> d'avoir lu l'en-tête <code>Host</code>, qui voyage chiffré. Sans aide, IIS ne sait pas quel certificat envoyer : historiquement, il fallait une IP par site HTTPS. <strong>SNI</strong> (<em>Server Name Indication</em>, extension TLS gérée depuis IIS 8) règle le problème : le client annonce le nom voulu dès son premier message.</p>
@@ -466,7 +466,7 @@ Running  WAS     Windows Process Activation Service
 
             <div class="tip">
                 <p class="tip__label">Erreur 500.19 au premier chargement</p>
-                <p>La section <code>httpErrors</code> est verrouillée au niveau serveur sur certaines installations. On la déverrouille une fois : <code>Set-WebConfiguration //System.webServer/httpErrors -Metadata overrideMode -Value Allow -PSPath IIS:/</code>. À défaut, retirer le bloc <code>&lt;httpErrors&gt;</code> du <code>web.config</code> concerné — le reste de la configuration fonctionne sans lui. Le 500.19 a d'autres causes : XML mal formé, élément d'un module non installé (URL Rewrite par exemple), ou <code>web.config</code> illisible par IIS. La page d'erreur détaillée, consultée <strong>sur le serveur</strong>, cite la ligne fautive.</p>
+                <p>La section <code>httpErrors</code> est déverrouillée par défaut ; elle peut être verrouillée au niveau serveur sur certaines installations. On la déverrouille une fois : <code>Set-WebConfiguration /System.webServer/httpErrors -Metadata overrideMode -Value Allow -PSPath IIS:/</code>. À défaut, retirer le bloc <code>&lt;httpErrors&gt;</code> du <code>web.config</code> concerné — le reste de la configuration fonctionne sans lui. Le 500.19 a d'autres causes : XML mal formé, élément d'un module non installé (URL Rewrite par exemple), ou <code>web.config</code> illisible par IIS. La page d'erreur détaillée, consultée <strong>sur le serveur</strong>, cite la ligne fautive.</p>
             </div>
 
             <div class="takeaway">
@@ -540,7 +540,7 @@ Running  WAS     Windows Process Activation Service
             <div class="scenario scenario--quick">
                 <p class="scenario__label scenario__label--quick">Question éclair</p>
                 <div class="scenario__step">
-                    <p class="scenario__q">Le site FTP a le binding <code>ftp.orion.local</code>. Dans FileZilla, <code>ORION\alice</code> et son bon mot de passe donnent <strong>530 User cannot log in</strong>. Que tapes-tu dans le champ identifiant ?</p>
+                    <p class="scenario__q">Le site FTP a le binding <code>ftp.orion.local</code>. Dans FileZilla, <code>ORION\alice</code> et son bon mot de passe donnent <strong>530 Not logged in</strong>. Que tapes-tu dans le champ identifiant ?</p>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok><code>ftp.orion.local|alice</code></button>
                         <button class="scenario__opt" data-why="L&#x27;UPN identifie bien le compte, mais ne dit pas à IIS vers quel site FTP virtuel aller : le nom d&#x27;hôte manque toujours.">L&#x27;UPN <code>alice@orion.local</code></button>
@@ -608,7 +608,7 @@ IP4Address : 172.16.50.25
                         <tr><td><strong>401.3</strong></td><td>Accès refusé par une ACL NTFS</td><td>Le compte qui lit le contenu (<code>IUSR</code> en anonyme par défaut, ou <code>IIS AppPool\cafe</code>) doit pouvoir lire le dossier</td></tr>
                         <tr><td><strong>403</strong></td><td>Interdit par IIS lui-même</td><td>Sous-code : 403.14 = pas de document par défaut et listage désactivé, 403.4 = HTTPS exigé, 403.503 = restriction d'adresse IP</td></tr>
                         <tr><td><strong>500</strong></td><td>Erreur côté serveur</td><td>Journal d'événements Application, <code>web.config</code> invalide</td></tr>
-                        <tr><td><strong>503</strong></td><td>Service indisponible</td><td>Le <strong>pool d'applications est arrêté</strong> (souvent : identité au mot de passe expiré)</td></tr>
+                        <tr><td><strong>503</strong></td><td>Service indisponible</td><td>Le <strong>pool d'applications est arrêté</strong></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -709,10 +709,10 @@ IP4Address : 172.16.50.25
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du labo IIS</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
 </body>
 </html>

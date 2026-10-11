@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=18">
+    <link rel="stylesheet" href="../assets/theme.css?v=19">
 </head>
 <body>
 
@@ -140,9 +140,9 @@
                 <table>
                     <thead><tr><th>OSI</th><th>Couche</th><th>TCP/IP</th><th>Unité (PDU)</th><th>Adresse ou repère</th><th>Exemples</th></tr></thead>
                     <tbody>
-                        <tr><td>7</td><td>Application</td><td>Application</td><td>Données</td><td>—</td><td>HTTP, DNS, SMTP, SSH</td></tr>
-                        <tr><td>6</td><td>Présentation</td><td>Application</td><td>Données</td><td>—</td><td>TLS, encodage</td></tr>
-                        <tr><td>5</td><td>Session</td><td>Application</td><td>Données</td><td>—</td><td>Ouverture / reprise de dialogue</td></tr>
+                        <tr><td>7</td><td>Application</td><td>Application</td><td>—</td><td>—</td><td>HTTP, DNS, SMTP, SSH</td></tr>
+                        <tr><td>6</td><td>Présentation</td><td>Application</td><td>—</td><td>—</td><td>chiffrement, encodage</td></tr>
+                        <tr><td>5</td><td>Session</td><td>Application</td><td>—</td><td>—</td><td>Ouverture / reprise de dialogue</td></tr>
                         <tr><td>4</td><td>Transport</td><td>Transport</td><td><strong>Segment</strong> (TCP) / datagramme (UDP)</td><td><strong>Port</strong></td><td>TCP, UDP</td></tr>
                         <tr><td>3</td><td>Réseau</td><td>Internet</td><td><strong>Paquet</strong></td><td><strong>Adresse IP</strong></td><td>IPv4, IPv6, ICMP</td></tr>
                         <tr><td>2</td><td>Liaison</td><td>Accès réseau</td><td><strong>Trame</strong></td><td><strong>Adresse MAC</strong></td><td>Ethernet, Wi-Fi, ARP</td></tr>
@@ -288,7 +288,7 @@ Vlan    Mac Address       Type        Ports
                 </div>
                 <div class="card">
                     <h4>Non — destination distante</h4>
-                    <p>Elle envoie la trame à la <strong>passerelle</strong> (MAC de la passerelle, IP du destinataire). Sans passerelle configurée, le paquet ne part pas : <code>ping</code> échoue tout de suite (<em>General failure</em> / « Défaillance générale » sous Windows, <em>Network is unreachable</em> sous Linux).</p>
+                    <p>Elle envoie la trame à la <strong>passerelle</strong> (MAC de la passerelle, IP du destinataire). Sans passerelle configurée, le paquet ne part pas : <code>ping</code> échoue tout de suite.</p>
                 </div>
             </div>
             <p>C'est pour cela qu'un <strong>masque faux</strong> donne des pannes étranges : une machine en <code>/16</code> au lieu de <code>/24</code> croit que <code>192.168.5.10</code> est « chez elle », ne passe pas par la passerelle, et n'obtient jamais de réponse. Le calcul exact du masque est l'objet du module <a href="subnetting.html">Subnetting</a>.</p>
@@ -383,7 +383,7 @@ Vlan    Mac Address       Type        Ports
             <div class="steps">
                 <div class="step"><div class="step__num">1</div><div class="step__body"><strong>La question, en broadcast</strong><p>« Qui a <code>192.168.1.1</code> ? Réponds à <code>192.168.1.25</code> » — trame envoyée à <code>FF-FF-FF-FF-FF-FF</code>, reçue par tout le réseau local.</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>La réponse, en unicast</strong><p>Seule la machine concernée répond : « <code>192.168.1.1</code>, c'est <code>00-1A-2B-3C-4D-5E</code> ».</p></div></div>
-                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>La mémoire</strong><p>La réponse est gardée dans le <strong>cache ARP</strong> : de quelques dizaines de secondes à quelques minutes sur un poste, 4 heures par défaut sur un routeur Cisco. Pas de nouvelle question à chaque paquet.</p></div></div>
+                <div class="step"><div class="step__num">3</div><div class="step__body"><strong>La mémoire</strong><p>La réponse est gardée dans le <strong>cache ARP</strong> : sur un poste Windows, une entrée reste « Reachable » de 15 à 45 secondes, puis passe en « Stale » ; 4 heures par défaut sur un routeur Cisco. Pas de nouvelle question à chaque paquet.</p></div></div>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">Le point qui piège</p>
@@ -413,12 +413,12 @@ Adresse Internet      Adresse physique      Type
 192.168.1.255         ff-ff-ff-ff-ff-ff     statique</pre>
                 <p class="verify__fail">Si <code>ping</code> vers la passerelle échoue et qu'aucune entrée n'apparaît (ou <code>INCOMPLETE</code> sous Linux), le problème est en dessous d'IP : câble, Wi-Fi, VLAN ou port du switch.</p>
             </div>
-            <div class="cmdex" data-accept="arp -d( \*)?;;netsh interface ip delete arpcache;;Remove-NetNeighbor( .*)?" data-hint="la commande s&#x27;appelle comme le protocole, avec l&#x27;option qui supprime (delete).">
+            <div class="cmdex" data-accept="arp -d \*;;netsh interface ip delete arpcache;;Remove-NetNeighbor( .*)?" data-hint="la commande s&#x27;appelle comme le protocole, avec l&#x27;option qui supprime (delete).">
                 <p class="cmdex__label">À toi de taper</p>
-                <p>Sous Windows, vide le cache ARP (il faut une console administrateur). Une seule commande.</p>
+                <p>Sous Windows, vide le cache ARP. Une seule commande.</p>
                 <details class="reveal">
                     <summary>Voir la solution</summary>
-                    <div class="reveal__body"><p><code>arp -d *</code> (ou <code>arp -d</code>) vide le cache ; <code>netsh interface ip delete arpcache</code> fait pareil. Utile après avoir changé une carte ou une VM de place : sinon le poste continue d'envoyer à l'ancienne MAC pendant quelques minutes.</p></div>
+                    <div class="reveal__body"><p><code>arp -d *</code> vide le cache ; <code>netsh interface ip delete arpcache</code> fait pareil. Utile après avoir changé une carte ou une VM de place : sinon le poste continue d'envoyer à l'ancienne MAC pendant quelques minutes.</p></div>
                 </details>
             </div>
             <div class="exo">
@@ -472,8 +472,8 @@ PC 51234 → Serveur 443   [ACK]       « bien reçu, j'attends y+1 » — conne
                     <thead><tr><th>Ce qu'on voit</th><th>Ce qui s'est passé</th><th>Diagnostic</th></tr></thead>
                     <tbody>
                         <tr><td><code>SYN</code> → <code>SYN, ACK</code></td><td>Le port est <strong>ouvert</strong>, un service écoute</td><td>Si l'application échoue quand même, regarder la couche 7</td></tr>
-                        <tr><td><code>SYN</code> → <code>RST</code></td><td>La machine répond mais <strong>rien n'écoute</strong> sur ce port : « connexion refusée »</td><td>Service arrêté, mauvais port</td></tr>
-                        <tr><td><code>SYN</code> → rien</td><td>Le paquet est <strong>jeté</strong> en route : expiration du délai</td><td>Pare-feu, routage, machine éteinte</td></tr>
+                        <tr><td><code>SYN</code> → <code>RST</code></td><td>La machine répond mais <strong>rien n'écoute</strong> sur ce port : « connexion refusée » (hors Windows, qui n'envoie pas de RST par défaut)</td><td>Service arrêté, mauvais port</td></tr>
+                        <tr><td><code>SYN</code> → rien</td><td>Le paquet est <strong>jeté</strong> en route : expiration du délai</td><td>Pare-feu, routage, machine éteinte, ou port fermé sous Windows (pas de RST)</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -484,7 +484,7 @@ PC 51234 → Serveur 443   [ACK]       « bien reçu, j'attends y+1 » — conne
                     <thead><tr><th>Port</th><th>Proto</th><th>Service</th><th>Port</th><th>Proto</th><th>Service</th></tr></thead>
                     <tbody>
                         <tr><td>20/21</td><td>TCP</td><td>FTP (données / contrôle)</td><td>389</td><td>TCP/UDP</td><td>LDAP (636 = LDAPS)</td></tr>
-                        <tr><td>22</td><td>TCP</td><td>SSH, SFTP</td><td>443</td><td>TCP (UDP avec QUIC)</td><td>HTTPS</td></tr>
+                        <tr><td>22</td><td>TCP</td><td>SSH, SFTP</td><td>443</td><td>TCP</td><td>HTTPS</td></tr>
                         <tr><td>23</td><td>TCP</td><td>Telnet (en clair : à bannir)</td><td>445</td><td>TCP</td><td>SMB (partages Windows)</td></tr>
                         <tr><td>25</td><td>TCP</td><td>SMTP (587 = soumission)</td><td>514</td><td>UDP</td><td>Syslog</td></tr>
                         <tr><td>53</td><td>UDP/TCP</td><td>DNS</td><td>1433</td><td>TCP</td><td>SQL Server</td></tr>
@@ -502,7 +502,7 @@ PC 51234 → Serveur 443   [ACK]       « bien reçu, j'attends y+1 » — conne
                 <p>Voir ce qui écoute sur une machine, et tester un port à distance.</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Windows · Linux</span></div>
-                <pre class="terminal__code"><span class="k">netstat</span> <span class="p">-ano</span> | <span class="k">findstr</span> LISTENING<span class="c">          # Windows : ports en écoute + PID</span>
+                <pre class="terminal__code"><span class="k">netstat</span> <span class="p">-ano</span> | <span class="k">findstr</span> LISTEN<span class="c">          # Windows : ports en écoute + PID</span>
 <span class="k">Get-NetTCPConnection</span> <span class="p">-State</span> Listen<span class="c">         # PowerShell</span>
 <span class="k">Test-NetConnection</span> srv-web <span class="p">-Port</span> 443<span class="c">       # le port répond-il à distance ?</span>
 <span class="k">ss</span> <span class="p">-tulpn</span><span class="c">                                  # Linux : TCP/UDP en écoute + processus</span>
@@ -520,7 +520,7 @@ TcpTestSucceeded : True</pre>
                 <p>En PowerShell, teste si le port <strong>3389</strong> (RDP) répond sur la machine <code>srv-ad01</code>.</p>
                 <details class="reveal">
                     <summary>Voir la solution</summary>
-                    <div class="reveal__body"><p><code>Test-NetConnection srv-ad01 -Port 3389</code> (alias <code>tnc</code>). Pour les ports courants, <code>-CommonTCPPort RDP</code> (ou HTTP, SMB, WINRM) fait la même chose. Regarde la ligne <code>TcpTestSucceeded</code>.</p></div>
+                    <div class="reveal__body"><p><code>Test-NetConnection srv-ad01 -Port 3389</code>. Pour les ports courants, <code>-CommonTCPPort RDP</code> (ou HTTP, SMB, WINRM) fait la même chose. Regarde la ligne <code>TcpTestSucceeded</code>.</p></div>
                 </details>
             </div>
             <div class="tool" data-tool="ports"><noscript><p>Cet outil a besoin de JavaScript.</p></noscript></div>
@@ -576,7 +576,7 @@ TcpTestSucceeded : True</pre>
             </div>
             <div class="tip">
                 <p class="tip__label">DNS en entreprise</p>
-                <p>Dans un domaine Active Directory, les postes doivent utiliser <strong>uniquement</strong> le DNS des contrôleurs de domaine. Mettre <code>8.8.8.8</code> en DNS sur un poste du domaine casse l'ouverture de session et les GPO : Internet ne connaît pas <code>orion.local</code> ni ses enregistrements SRV. C'est le DNS du DC qui, lui, transfère (<em>redirecteurs</em>) vers Internet.</p>
+                <p>Dans un domaine Active Directory, les postes doivent utiliser le DNS des contrôleurs de domaine (sauf scénario d'intégration à un DNS existant, où Microsoft recommande « any DNS server on the network »). Mettre <code>8.8.8.8</code> en DNS sur un poste du domaine casse l'ouverture de session et les GPO : Internet ne connaît pas <code>orion.local</code> ni ses enregistrements SRV. C'est le DNS du DC qui, lui, transfère (<em>redirecteurs</em>) vers Internet.</p>
             </div>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
@@ -658,7 +658,7 @@ Address:  203.0.113.10</pre>
                 </table>
             </div>
             <h3>Le DHCP traverse les routeurs grâce au relais</h3>
-            <p>DISCOVER est un broadcast : il ne franchit pas un routeur. Avec un serveur DHCP central et plusieurs réseaux (VLAN), on configure sur l'interface du routeur un <strong>relais DHCP</strong> qui transforme le broadcast en unicast vers le serveur — sur Cisco, <code>ip helper-address 192.168.10.5</code>. Le serveur choisit l'étendue d'après l'adresse de l'interface qui a relayé.</p>
+            <p>DISCOVER est un broadcast : il ne franchit pas un routeur. Avec un serveur DHCP central et plusieurs réseaux (VLAN), on configure sur l'interface du routeur un <strong>relais DHCP</strong> qui réexpédie le broadcast du client vers le serveur, à une adresse configurée — sur Cisco, <code>ip helper-address 192.168.10.5</code>. Le serveur choisit l'étendue d'après l'adresse de l'interface qui a relayé.</p>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
                 <p>Rendre puis redemander une adresse, et lire le bail.</p>
@@ -717,13 +717,13 @@ Serveur DHCP . . . . . . . . . . . . . : 192.168.1.1</pre>
             </ul>
             <p>Ton PC a lui aussi une table de routage — souvent une seule ligne utile : la <strong>route par défaut</strong> <code>0.0.0.0/0</code> vers la passerelle.</p>
             <h3>La règle d'or : le préfixe le plus long</h3>
-            <p>Si plusieurs routes correspondent, le routeur prend <strong>la plus précise</strong> (le masque le plus long). Avec les routes <code>10.0.0.0/8</code>, <code>10.1.0.0/16</code> et <code>0.0.0.0/0</code>, un paquet pour <code>10.1.5.9</code> suit <code>/16</code> ; pour <code>10.2.0.1</code>, <code>/8</code> ; pour <code>8.8.8.8</code>, la route par défaut. À égalité de préfixe, c'est la <strong>distance administrative</strong> (confiance dans la source : connecté 0, statique 1, OSPF 110) puis la <strong>métrique</strong> qui départagent.</p>
+            <p>Si plusieurs routes correspondent, le routeur prend <strong>la plus précise</strong> (le masque le plus long). Avec les routes <code>10.0.0.0/8</code>, <code>10.1.0.0/16</code> et <code>0.0.0.0/0</code>, un paquet pour <code>10.1.5.9</code> suit <code>/16</code> ; pour <code>10.2.0.1</code>, <code>/8</code> ; pour <code>8.8.8.8</code>, la route par défaut. À égalité de préfixe, c'est sur Cisco la <strong>distance administrative</strong> (confiance dans la source : connecté 0, statique 1, OSPF 110) puis la <strong>métrique</strong> qui départagent. Sous Windows, la route de plus petite métrique est choisie.</p>
             <div class="verify">
                 <p class="verify__label">Vérifier</p>
                 <p>Lire la table de routage et suivre un chemin.</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Windows · Linux · Cisco</span></div>
-                <pre class="terminal__code"><span class="k">route</span> print -4<span class="c">                 # Windows</span>
+                <pre class="terminal__code"><span class="k">route</span> print<span class="c">                 # Windows</span>
 <span class="k">Get-NetRoute</span> <span class="p">-AddressFamily</span> IPv4
 <span class="k">tracert</span> <span class="p">-d</span> 8.8.8.8<span class="c">             # Windows : chaque routeur traversé (-d : sans résolution DNS)</span>
 <span class="k">ip</span> route<span class="c">                       # Linux</span>
@@ -882,7 +882,7 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
                     <thead><tr><th>Notion</th><th>Ce qu'il faut savoir</th></tr></thead>
                     <tbody>
                         <tr><td><strong>SSID</strong></td><td>Le nom du réseau. Un point d'accès peut en diffuser plusieurs, chacun relié à un VLAN (invités, interne).</td></tr>
-                        <tr><td><strong>Bandes</strong></td><td>2,4 GHz : porte loin, mais saturée (3 canaux sans chevauchement : 1, 6, 11). 5 GHz : plus de débit et de canaux, porte moins loin. 6 GHz (Wi-Fi 6E/7) : très rapide, courte portée.</td></tr>
+                        <tr><td><strong>Bandes</strong></td><td>2,4 GHz : porte loin, mais saturée (3 canaux sans chevauchement : 1, 6, 11). 6 GHz (Wi-Fi 6E/7) : très rapide, courte portée.</td></tr>
                         <tr><td><strong>Normes</strong></td><td>Wi-Fi 5 (802.11ac), Wi-Fi 6/6E (802.11ax), Wi-Fi 7 (802.11be). Le débit annoncé est partagé entre tous les clients du point d'accès.</td></tr>
                         <tr><td><strong>Sécurité</strong></td><td><strong>WPA3</strong> si possible, sinon WPA2-AES. Jamais WEP ; TKIP seulement en repli, quand le matériel ne gère pas AES. En entreprise : WPA2/3-<strong>Entreprise</strong> (802.1X, un compte par utilisateur via un serveur RADIUS) plutôt qu'une clé partagée.</td></tr>
                     </tbody>
@@ -902,7 +902,7 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
                     <p class="scenario__q">Sur un switch, on passe le port de l'imprimante en <strong>VLAN 20</strong> ; les postes restent en VLAN 10, sans routeur entre les deux. Plus personne n'imprime. Pourquoi ?</p>
                     <div class="scenario__opts">
                         <button class="scenario__opt" data-ok>Deux VLAN = deux réseaux : sans routage, les postes ne joignent plus l'imprimante</button>
-                        <button class="scenario__opt" data-why="Un changement de VLAN sur un port s&#x27;applique tout de suite, sans redémarrage.">Le switch doit redémarrer pour appliquer le VLAN</button>
+                        <button class="scenario__opt" data-why="La commande switchport access vlan réaffecte le port à un autre VLAN : c&#x27;est l&#x27;imprimante qui quitte le réseau des postes.">Le switch doit redémarrer pour appliquer le VLAN</button>
                         <button class="scenario__opt" data-why="Un trunk relie des équipements qui gèrent les étiquettes 802.1Q. Une imprimante se branche sur un port access.">Le port de l&#x27;imprimante doit passer en trunk</button>
                     </div>
                     <div class="scenario__why"><p>Chaque VLAN est un <strong>domaine de broadcast</strong> séparé : l'ARP des postes n'atteint plus l'imprimante. Il faut soit la remettre en VLAN 10, soit lui donner une adresse du réseau du VLAN 20 et router entre les deux.</p></div>
@@ -1159,11 +1159,11 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=18"></script>
-<script src="../assets/app.js?v=18"></script>
-<script src="../assets/quiz-data.js?v=18"></script>
-<script src="../assets/quiz.js?v=18"></script>
-<script src="../assets/pratique.js?v=18"></script>
-<script src="../assets/atelier.js?v=18"></script>
+<script src="../assets/catalogue.js?v=19"></script>
+<script src="../assets/app.js?v=19"></script>
+<script src="../assets/quiz-data.js?v=19"></script>
+<script src="../assets/quiz.js?v=19"></script>
+<script src="../assets/pratique.js?v=19"></script>
+<script src="../assets/atelier.js?v=19"></script>
 </body>
 </html>
