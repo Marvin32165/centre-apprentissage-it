@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=17">
+    <link rel="stylesheet" href="../assets/theme.css?v=18">
 </head>
 <body>
 
@@ -462,7 +462,7 @@ Serveurs DNS. . . . . . . . . . . . . .: 172.16.50.1</pre>
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">PowerShell — SRV-FILE01 (script du TP final, extrait)</span></div>
                 <pre class="terminal__code"><span class="k">New-Item</span> <span class="p">-Path</span> <span class="s">"D:\DEPARTMENTS\Development"</span> <span class="p">-ItemType</span> Directory <span class="p">-Force</span>
 <span class="k">New-SmbShare</span> <span class="p">-Name</span> <span class="s">"DEPARTMENTS"</span> <span class="p">-Path</span> <span class="s">"D:\DEPARTMENTS"</span> <span class="p">-ChangeAccess</span> <span class="s">"ORION\Domain Users"</span>
-<span class="k">icacls</span> <span class="s">"D:\DEPARTMENTS\Development"</span> /inheritance:d<span class="c">                    # copie puis coupe l'héritage</span>
+<span class="k">icacls</span> <span class="s">"D:\DEPARTMENTS\Development"</span> /inheritancelevel:d<span class="c">                    # copie puis coupe l'héritage</span>
 <span class="k">icacls</span> <span class="s">"D:\DEPARTMENTS\Development"</span> /grant <span class="s">"ORION\DEV-GRP:(OI)(CI)M"</span><span class="c">   # Modify, propagé</span>
 <span class="k">icacls</span> <span class="s">"D:\DEPARTMENTS\Development"</span> /grant <span class="s">"CREATOR OWNER:(OI)(CI)(IO)F"</span>
 <span class="k">icacls</span> <span class="s">"D:\DEPARTMENTS\Development"</span> /remove <span class="s">"BUILTIN\Users"</span> <span class="s">"Authenticated Users"</span></pre>
@@ -501,7 +501,7 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Partage large, NTFS précis, droit effectif = le plus restrictif des deux. Couper l'héritage avec copie (<code>/inheritance:d</code>), donner aux groupes, retirer <em>Users</em>, jamais de Deny. Un changement de groupe ne compte qu'après une nouvelle ouverture de session.</p>
+                <p>Partage large, NTFS précis, droit effectif = le plus restrictif des deux. Couper l'héritage avec copie (<code>/inheritancelevel:d</code>), donner aux groupes, retirer <em>Users</em>, jamais de Deny. Un changement de groupe ne compte qu'après une nouvelle ouverture de session.</p>
             </div>
             <div class="scenario scenario--quick">
                 <p class="scenario__label scenario__label--quick">Question éclair</p>
@@ -974,10 +974,10 @@ BUILTIN\Administrators:(OI)(CI)(F)</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=17"></script>
-<script src="../assets/app.js?v=17"></script>
-<script src="../assets/quiz-data.js?v=17"></script>
-<script src="../assets/quiz.js?v=17"></script>
-<script src="../assets/pratique.js?v=17"></script>
+<script src="../assets/catalogue.js?v=18"></script>
+<script src="../assets/app.js?v=18"></script>
+<script src="../assets/quiz-data.js?v=18"></script>
+<script src="../assets/quiz.js?v=18"></script>
+<script src="../assets/pratique.js?v=18"></script>
 </body>
 </html>

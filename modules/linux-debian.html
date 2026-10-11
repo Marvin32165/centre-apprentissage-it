@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=17">
+    <link rel="stylesheet" href="../assets/theme.css?v=18">
 </head>
 <body>
 
@@ -108,7 +108,7 @@
                 <thead><tr><th>Nom de code</th><th>Version</th><th>Sortie</th><th>Support (sécurité)</th></tr></thead>
                 <tbody>
                     <tr><td>bullseye</td><td>Debian 11</td><td>août 2021</td><td>terminé : LTS arrêté fin août 2026</td></tr>
-                    <tr><td>bookworm</td><td>Debian 12</td><td>juin 2023</td><td>régulier jusqu'en juin 2026, puis LTS jusqu'au 30 juin 2028</td></tr>
+                    <tr><td>bookworm</td><td>Debian 12</td><td>juin 2023</td><td>régulier jusqu'au 11 juillet 2026, puis LTS jusqu'au 30 juin 2028</td></tr>
                     <tr><td>trixie</td><td>Debian 13</td><td>9 août 2025</td><td>la <strong>stable</strong> actuelle</td></tr>
                     <tr><td>stable / testing / unstable</td><td colspan="3">stable actuelle / future version en préparation / développement permanent (sid) : testing et unstable sont à éviter en production</td></tr>
                 </tbody>
@@ -233,7 +233,7 @@
                 <p class="takeaway__label">Attention</p>
                 <p>Linux est sensible à la casse : <code>/Home</code> et <code>/home</code> sont différents. Le séparateur est <code>/</code> (pas <code>\</code>).</p>
             </div>
-            <p class="note">Depuis Debian 12, <code>/bin</code>, <code>/sbin</code> et <code>/lib</code> ne sont plus que des <strong>liens symboliques</strong> vers <code>/usr/bin</code>, <code>/usr/sbin</code> et <code>/usr/lib</code> (fusion de <code>/usr</code>) : <code>ls /bin</code> et <code>ls /usr/bin</code> montrent la même chose.</p>
+            <p class="note">Depuis Debian 10 (buster), les nouvelles installations n'ont plus que des <strong>liens symboliques</strong> de <code>/bin</code>, <code>/sbin</code> et <code>/lib</code> vers <code>/usr/bin</code>, <code>/usr/sbin</code> et <code>/usr/lib</code> (fusion de <code>/usr</code>) : Debian 12 convertit les systèmes plus anciens à la mise à niveau. <code>ls /bin</code> et <code>ls /usr/bin</code> montrent la même chose.</p>
             <div class="tip">
                 <p class="tip__label">Où chercher quoi ?</p>
                 <p>Config système → <code>/etc</code> · Journaux → <code>/var/log</code> · Programmes → <code>/usr/bin</code>, <code>/opt</code> · Vos fichiers → <code>/home/votre_nom</code></p>
@@ -361,7 +361,7 @@
             <ul>
                 <li><code>Ctrl+O</code> puis <code>Entrée</code> — sauvegarder ;</li>
                 <li><code>Ctrl+X</code> — quitter ;</li>
-                <li><code>Ctrl+W</code> — chercher (<code>Ctrl+W</code> puis <code>Ctrl+R</code> — rechercher-remplacer) ;</li>
+                <li><code>Ctrl+W</code> — chercher (<code>Ctrl+W</code> puis <code>Ctrl+\</code> — rechercher-remplacer) ;</li>
                 <li><code>Ctrl+K</code> / <code>Ctrl+U</code> — couper / coller une ligne.</li>
             </ul>
             <div class="tip">
@@ -1969,11 +1969,11 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=17"></script>
-<script src="../assets/app.js?v=17"></script>
-<script src="../assets/quiz-data.js?v=17"></script>
-<script src="../assets/quiz.js?v=17"></script>
-<script src="../assets/pratique.js?v=17"></script>
-<script src="../assets/atelier.js?v=17"></script>
+<script src="../assets/catalogue.js?v=18"></script>
+<script src="../assets/app.js?v=18"></script>
+<script src="../assets/quiz-data.js?v=18"></script>
+<script src="../assets/quiz.js?v=18"></script>
+<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/atelier.js?v=18"></script>
 </body>
 </html>

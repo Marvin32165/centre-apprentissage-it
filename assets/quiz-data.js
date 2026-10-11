@@ -310,7 +310,7 @@ window.QUIZ_BANK = {
         q: "SSH refuse d'utiliser vos clés. Quel droit doit porter le dossier <code>~/.ssh</code> ?",
         c: ["700 — accessible au seul propriétaire", "755 — lisible par tous, modifiable par le propriétaire", "644 — lisible par tous", "777 — accessible à tous, pour éviter les blocages"],
         a: 0,
-        why: "SSH refuse un <code>~/.ssh</code> trop permissif : <code>chmod 700 ~/.ssh</code>. C'est une protection, pas un caprice — une clé privée lisible par d'autres n'est plus privée.",
+        why: "SSH (StrictModes) refuse un <code>~/.ssh</code> modifiable par le groupe ou les autres : le réglage habituel est <code>chmod 700 ~/.ssh</code> (755 n'est pas refusé pour cette raison). C'est une protection, pas un caprice — une clé privée lisible par d'autres n'est plus privée.",
         ref: "Chapitre 15"
     },
     {
@@ -338,7 +338,7 @@ window.QUIZ_BANK = {
         q: "Pourquoi identifier une partition par son UUID dans <code>/etc/fstab</code> plutôt que par <code>/dev/sdb1</code> ?",
         c: ["Les noms sdX peuvent changer d'un démarrage à l'autre, pas l'UUID", "L'UUID est plus rapide à monter au démarrage", "fstab refuse les noms de la forme /dev/sdX", "L'UUID chiffre la partition qu'il désigne"],
         a: 0,
-        why: "Sur la VM du cours, les lettres ont changé plusieurs fois (ajout de disque, simple redémarrage). L'UUID est écrit dans le système de fichiers lui-même : il ne change qu'en reformatant. fstab accepte /dev/sdX, mais c'est un pari sur l'ordre de détection des disques.",
+        why: "Sur la VM du cours, les lettres ont changé plusieurs fois (ajout de disque, simple redémarrage). L'UUID est écrit dans le système de fichiers lui-même : il ne change qu'en le réécrivant (<code>tune2fs -U</code>), sans reformater. fstab accepte /dev/sdX, mais c'est un pari sur l'ordre de détection des disques.",
         ref: "Chapitre 21"
     },
     {
@@ -644,7 +644,7 @@ window.QUIZ_BANK = {
         q: "De quoi un cluster de basculement protège-t-il réellement ?",
         c: ["De la panne d'un nœud", "De la panne du SAN", "D'un fichier supprimé par erreur", "D'un rançongiciel"],
         a: 0,
-        why: "Le cluster couvre la panne d'un serveur. Panne du SAN, suppression et chiffrement par rançongiciel frappent le stockage partagé, clusterisé ou non — seules les sauvegardes répondent à ces trois-là.",
+        why: "Le cluster couvre la panne d'un serveur. Panne du SAN, suppression et chiffrement par rançongiciel frappent le stockage partagé, clusterisé ou non — les sauvegardes répondent à ces trois-là, et les copies instantanées (VSS) aident aussi contre une suppression.",
         ref: "Chapitre 11"
     },
     {
@@ -966,9 +966,9 @@ window.QUIZ_BANK = {
     },
     {
         q: "En SharePoint Online, quelles couches Microsoft absorbe-t-il ?",
-        c: ["Le bas de la pile : données et infrastructure", "L'interface utilisateur uniquement", "Toutes les couches, y compris la gouvernance des contenus", "Aucune : Online n'est qu'une façade"],
+        c: ["Le bas de la pile : l'infrastructure, pas les données", "L'interface utilisateur uniquement", "Toutes les couches, y compris la gouvernance des contenus", "Aucune : Online n'est qu'une façade"],
         a: 0,
-        why: "Cinq couches, de l'interface à l'infrastructure. En Online, Microsoft prend le bas de la pile ; en Server, vous en restez responsable — d'où le besoin d'une équipe IT.",
+        why: "Cinq couches, de l'interface à l'infrastructure. En Online, Microsoft prend le bas de la pile (datacentres, serveurs, réseau) ; les données restent sous la responsabilité du client, et en Server, vous en restez responsable de tout — d'où le besoin d'une équipe IT.",
         ref: "Chapitre 05"
     },
     {

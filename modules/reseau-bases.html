@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=17">
+    <link rel="stylesheet" href="../assets/theme.css?v=18">
 </head>
 <body>
 
@@ -200,7 +200,7 @@
                 <div class="step"><div class="step__num">1</div><div class="step__body"><strong>Il apprend</strong><p>À chaque trame reçue, il note la <strong>MAC source</strong> et le port d'arrivée dans sa <strong>table MAC</strong> (table CAM).</p></div></div>
                 <div class="step"><div class="step__num">2</div><div class="step__body"><strong>Il commute</strong><p>Pour une MAC de destination connue, il envoie la trame <strong>uniquement</strong> sur le bon port.</p></div></div>
                 <div class="step"><div class="step__num">3</div><div class="step__body"><strong>Il inonde</strong><p>Pour une MAC inconnue, ou un broadcast, il l'envoie sur <strong>tous les ports</strong> sauf celui d'arrivée (<em>flooding</em>).</p></div></div>
-                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Il oublie</strong><p>Une entrée inutilisée disparaît au bout de 300 secondes par défaut sur un switch Cisco.</p></div></div>
+                <div class="step"><div class="step__num">4</div><div class="step__body"><strong>Il oublie</strong><p>Une entrée inutilisée disparaît au bout de 300 secondes par défaut sur un switch Cisco IOS (1800 secondes sur un Nexus 7000).</p></div></div>
             </div>
             <div class="cards">
                 <div class="card">
@@ -598,7 +598,7 @@ Address:  192.168.1.1
 Réponse ne faisant pas autorité :
 Nom :    www.exemple.be
 Address:  203.0.113.10</pre>
-                <p class="verify__fail"><em>Non-existent domain</em> = le nom n'existe pas (faute de frappe, mauvaise zone). <em>Request timed out</em> = le serveur DNS ne répond pas (mauvaise IP de DNS, port 53 bloqué). Si <code>ping 203.0.113.10</code> marche mais pas <code>ping www.exemple.be</code>, le réseau va bien : c'est le DNS.</p>
+                <p class="verify__fail"><em>Nonexistent domain</em> = le nom n'existe pas (faute de frappe, mauvaise zone). <em>Request timed out</em> = le serveur DNS ne répond pas (mauvaise IP de DNS, port 53 bloqué). Si <code>ping 203.0.113.10</code> marche mais pas <code>ping www.exemple.be</code>, le réseau va bien : c'est le DNS.</p>
             </div>
             <div class="cmdex" data-accept="Resolve-DnsName (-Name )?exemple\.be -Type MX;;Resolve-DnsName -Type MX (-Name )?exemple\.be;;nslookup -(q|type|querytype)=mx exemple\.be" data-hint="Resolve-DnsName, avec le paramètre -Type.">
                 <p class="cmdex__label">À toi de taper</p>
@@ -852,7 +852,7 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
                         <button class="scenario__opt" data-why="Non : fe80:: existe sur chaque interface, même quand tout va bien. Ce n&#x27;est pas une adresse de secours comme APIPA.">Il a raison : fe80:: est l&#x27;équivalent de 169.254</button>
                         <button class="scenario__opt" data-why="::1 est la boucle locale : elle vit sur l&#x27;interface lo, jamais sur une carte réseau.">Il manque l&#x27;adresse ::1 sur la carte réseau</button>
                     </div>
-                    <div class="scenario__why"><p>L'adresse <strong>lien local</strong> est toujours là ; l'adresse <strong>globale</strong> n'apparaît que si un routeur envoie des annonces (SLAAC) ou si un DHCPv6 répond. Dans un lab sans routeur IPv6, n'avoir que <code>fe80::</code> est normal.</p></div>
+                    <div class="scenario__why"><p>L'adresse <strong>lien local</strong> est toujours là ; l'adresse <strong>globale</strong> n'apparaît que si on la configure à la main, si un routeur envoie des annonces (SLAAC) ou si un DHCPv6 répond. Dans un lab sans routeur IPv6, n'avoir que <code>fe80::</code> est normal.</p></div>
                 </div>
             </div>
         </section>
@@ -884,7 +884,7 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
                         <tr><td><strong>SSID</strong></td><td>Le nom du réseau. Un point d'accès peut en diffuser plusieurs, chacun relié à un VLAN (invités, interne).</td></tr>
                         <tr><td><strong>Bandes</strong></td><td>2,4 GHz : porte loin, mais saturée (3 canaux sans chevauchement : 1, 6, 11). 5 GHz : plus de débit et de canaux, porte moins loin. 6 GHz (Wi-Fi 6E/7) : très rapide, courte portée.</td></tr>
                         <tr><td><strong>Normes</strong></td><td>Wi-Fi 5 (802.11ac), Wi-Fi 6/6E (802.11ax), Wi-Fi 7 (802.11be). Le débit annoncé est partagé entre tous les clients du point d'accès.</td></tr>
-                        <tr><td><strong>Sécurité</strong></td><td><strong>WPA3</strong> si possible, sinon WPA2-AES. Jamais WEP ni WPA/TKIP. En entreprise : WPA2/3-<strong>Entreprise</strong> (802.1X, un compte par utilisateur via un serveur RADIUS) plutôt qu'une clé partagée.</td></tr>
+                        <tr><td><strong>Sécurité</strong></td><td><strong>WPA3</strong> si possible, sinon WPA2-AES. Jamais WEP ; TKIP seulement en repli, quand le matériel ne gère pas AES. En entreprise : WPA2/3-<strong>Entreprise</strong> (802.1X, un compte par utilisateur via un serveur RADIUS) plutôt qu'une clé partagée.</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1159,11 +1159,11 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=17"></script>
-<script src="../assets/app.js?v=17"></script>
-<script src="../assets/quiz-data.js?v=17"></script>
-<script src="../assets/quiz.js?v=17"></script>
-<script src="../assets/pratique.js?v=17"></script>
-<script src="../assets/atelier.js?v=17"></script>
+<script src="../assets/catalogue.js?v=18"></script>
+<script src="../assets/app.js?v=18"></script>
+<script src="../assets/quiz-data.js?v=18"></script>
+<script src="../assets/quiz.js?v=18"></script>
+<script src="../assets/pratique.js?v=18"></script>
+<script src="../assets/atelier.js?v=18"></script>
 </body>
 </html>

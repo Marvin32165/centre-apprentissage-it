@@ -77,7 +77,7 @@ window.CARTES = [
 { m: "cisco-securite", f: "DHCP snooping : quel port déclarer <code>trust</code> ?", b: "Celui qui mène au vrai serveur DHCP (le lien montant)" },
 
 /* ── VoIP ── */
-{ m: "voip", f: "Délai de bouche à oreille recommandé pour la voix (ITU-T G.114) ?", b: "≤ 150 ms" },
+{ m: "voip", f: "Délai de bouche à oreille pour une interactivité transparente (ITU-T G.114) ?", b: "≤ 150 ms" },
 { m: "voip", f: "Débit réel d'un appel G.711 sur Ethernet, par sens ?", b: "≈ 87 kb/s" },
 { m: "voip", f: "« Ça sonne mais personne n'entend » : cause classique ?", b: "SIP passe, RTP est bloqué (pare-feu, NAT, plage RTP non ouverte)" },
 

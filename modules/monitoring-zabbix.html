@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=17">
+    <link rel="stylesheet" href="../assets/theme.css?v=18">
 </head>
 <body>
 
@@ -245,13 +245,13 @@ LABOPS-NAT  172.16.50.0/24                     True</pre>
                     <tbody>
                         <tr><td><code>Loaded</code></td><td><strong>enabled</strong> — le service démarrera tout seul au boot</td></tr>
                         <tr><td><code>Active</code></td><td><strong>active (running)</strong> en vert — le service tourne</td></tr>
-                        <tr><td><code>Status</code></td><td><code>"Server is operational"</code></td></tr>
+                        <tr><td><code>Active</code></td><td><code>active (running)</code> ; le port 10051 en écoute se vérifie avec <code>ss -tlnp</code></td></tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="tip">
-                <p class="tip__label">Aucune sortie = tout va bien</p>
+                <p class="tip__label">Pour systemctl, aucune sortie = succès ; l'absence de sortie d'une autre commande ne prouve rien</p>
                 <p>Sous Linux, une commande qui réussit est généralement silencieuse. <code>systemctl start</code> qui ne dit rien a fonctionné ; c'est <code>status</code> qu'on interroge pour en avoir la preuve.</p>
             </div>
 
@@ -606,7 +606,7 @@ LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
                     <li class="walk__step">
                         <p class="walk__where"><b>Étape 6</b> · serveur → destinataire ou agent</p>
                         <p class="walk__head">Les opérations s'exécutent</p>
-                        <p>Envoyer un message à un utilisateur ou à un groupe par un <strong>type de média</strong> (e-mail, Teams, SMS…), ou lancer un <strong>script</strong> sur l'agent ou le serveur. Les macros comme <code>{HOST.NAME}</code> ou <code>{EVENT.NAME}</code> (le nom du problème) sont remplacées par leurs valeurs. <code>{TRIGGER.NAME}</code> est l'ancien nom : les modèles de message par défaut utilisent <code>{EVENT.NAME}</code>. Le résultat se lit dans <em>Reports → Action log</em>.</p>
+                        <p>Envoyer un message à un utilisateur ou à un groupe par un <strong>type de média</strong> (e-mail, SMS, script ou webhook ; Teams passe par un webhook), ou lancer un <strong>script</strong> sur l'agent ou le serveur. Les macros comme <code>{HOST.NAME}</code> ou <code>{EVENT.NAME}</code> (le nom du problème) sont remplacées par leurs valeurs. <code>{TRIGGER.NAME}</code> est l'ancien nom : les modèles de message par défaut utilisent <code>{EVENT.NAME}</code>. Le résultat se lit dans <em>Reports → Action log</em>.</p>
                         <p class="walk__change">Une notification n'arrive que si l'utilisateur a un <b>média</b> configuré et les <b>droits</b> sur l'hôte.</p>
                     </li>
                     <li class="walk__step">
@@ -719,7 +719,7 @@ LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
                 <p>Sur SRV-FILE01, redémarre l'agent Zabbix installé dans ce module (l'agent 1, service <em>Zabbix Agent</em>) après une modification de sa configuration.</p>
                 <details class="reveal">
                     <summary>Voir la solution</summary>
-                    <div class="reveal__body"><p><code>Restart-Service "Zabbix Agent"</code> — guillemets obligatoires, le nom contient une espace. Une modification de <code>zabbix_agentd.conf</code> (comme <code>AllowKey</code> ou un <code>UserParameter</code>) n'est lue qu'au démarrage. Avec l'agent 2, le service s'appelle <em>Zabbix Agent 2</em> et le fichier <code>zabbix_agent2.conf</code>.</p></div>
+                    <div class="reveal__body"><p><code>Restart-Service "Zabbix Agent"</code> — guillemets obligatoires, le nom contient une espace. Une modification de <code>zabbix_agentd.conf</code> (comme <code>AllowKey</code>) n'est lue qu'au démarrage ; un <code>UserParameter</code> ou un <code>Include</code> se relit à chaud avec <code>zabbix_agentd -R userparameter_reload</code>. Avec l'agent 2, le service s'appelle <em>Zabbix Agent 2</em> et le fichier <code>zabbix_agent2.conf</code>.</p></div>
                 </details>
             </div>
             <div class="scenario">
@@ -797,10 +797,10 @@ LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du labo monitoring</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=17"></script>
-<script src="../assets/app.js?v=17"></script>
-<script src="../assets/quiz-data.js?v=17"></script>
-<script src="../assets/quiz.js?v=17"></script>
-<script src="../assets/pratique.js?v=17"></script>
+<script src="../assets/catalogue.js?v=18"></script>
+<script src="../assets/app.js?v=18"></script>
+<script src="../assets/quiz-data.js?v=18"></script>
+<script src="../assets/quiz.js?v=18"></script>
+<script src="../assets/pratique.js?v=18"></script>
 </body>
 </html>

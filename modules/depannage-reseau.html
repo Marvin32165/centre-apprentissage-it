@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=17">
+    <link rel="stylesheet" href="../assets/theme.css?v=18">
 </head>
 <body>
 
@@ -260,7 +260,7 @@
                         <tr><td>Voisins (ARP/NDP)</td><td><code>ip neigh</code></td><td>iproute2</td></tr>
                         <tr><td>Ports en écoute / connexions</td><td><code>ss -tulpn</code> · <code>ss -tnp</code></td><td>iproute2</td></tr>
                         <tr><td>Chemin</td><td><code>traceroute -n</code> · <code>tracepath</code> · <code>mtr</code></td><td>traceroute, iputils-tracepath, mtr-tiny</td></tr>
-                        <tr><td>DNS</td><td><code>dig</code> · <code>host</code> · <code>resolvectl query</code></td><td>bind9-dnsutils, systemd-resolved</td></tr>
+                        <tr><td>DNS</td><td><code>dig</code> · <code>host</code> · <code>resolvectl query</code></td><td>bind9-dnsutils (dig), bind9-host (host), systemd-resolved</td></tr>
                         <tr><td>Test d'un port</td><td><code>nc -zv hôte 443</code></td><td>netcat-openbsd</td></tr>
                         <tr><td>HTTP de bout en bout</td><td><code>curl -v https://hôte</code></td><td>curl</td></tr>
                         <tr><td>Capture</td><td><code>sudo tcpdump -i ens33 -n port 53</code></td><td>tcpdump</td></tr>
@@ -774,10 +774,10 @@ Fa0/12           err-disabled bpduguard</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=17"></script>
-<script src="../assets/app.js?v=17"></script>
-<script src="../assets/quiz-data.js?v=17"></script>
-<script src="../assets/quiz.js?v=17"></script>
-<script src="../assets/pratique.js?v=17"></script>
+<script src="../assets/catalogue.js?v=18"></script>
+<script src="../assets/app.js?v=18"></script>
+<script src="../assets/quiz-data.js?v=18"></script>
+<script src="../assets/quiz.js?v=18"></script>
+<script src="../assets/pratique.js?v=18"></script>
 </body>
 </html>

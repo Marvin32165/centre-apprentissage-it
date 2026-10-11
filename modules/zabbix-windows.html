@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=17">
+    <link rel="stylesheet" href="../assets/theme.css?v=18">
 </head>
 <body>
 
@@ -112,7 +112,7 @@
                 <table>
                     <thead><tr><th>Conteneur</th><th>Image</th><th>Rôle</th></tr></thead>
                     <tbody>
-                        <tr><td><code>zabbix-postgres</code></td><td><code>postgres:16-alpine</code></td><td>La base : configuration et historique, dans un volume nommé</td></tr>
+                        <tr><td><code>zabbix-postgres</code></td><td><code>postgres:16-alpine</code></td><td>La base : configuration et historique, dans un volume nommé. Tag épinglé pour ce lab (zabbix-docker 7.4 prend <code>17-alpine</code> par défaut).</td></tr>
                         <tr><td><code>zabbix-server</code></td><td><code>zabbix-server-pgsql:alpine-7.4-latest</code></td><td>Le moteur — port <strong>10051</strong> publié pour les agents actifs</td></tr>
                         <tr><td><code>zabbix-web</code></td><td><code>zabbix-web-nginx-pgsql:alpine-7.4-latest</code></td><td>L'interface — port <strong>80</strong> de la VM vers 8080 du conteneur</td></tr>
                     </tbody>
@@ -183,7 +183,7 @@
                         <tr><td>Host name</td><td><code>SRV-AD01</code> — <strong>exactement</strong> le nom de l'hôte qu'on créera dans Zabbix</td></tr>
                         <tr><td>Zabbix server IP/DNS</td><td><code>srv-zbx01.orion.local</code></td></tr>
                         <tr><td>Agent listen port</td><td><code>10050</code></td></tr>
-                        <tr><td>Server or proxy for active checks</td><td><code>srv-zbx01.orion.local</code></td></tr>
+                        <tr><td>Server or Proxy for active checks</td><td><code>srv-zbx01.orion.local</code></td></tr>
                         <tr><td>Add agent location to the PATH</td><td>coché</td></tr>
                     </tbody>
                 </table>
@@ -539,10 +539,10 @@
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du TP System Center « Zabbix en remplacement de SCOM »</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=17"></script>
-<script src="../assets/app.js?v=17"></script>
-<script src="../assets/quiz-data.js?v=17"></script>
-<script src="../assets/quiz.js?v=17"></script>
-<script src="../assets/pratique.js?v=17"></script>
+<script src="../assets/catalogue.js?v=18"></script>
+<script src="../assets/app.js?v=18"></script>
+<script src="../assets/quiz-data.js?v=18"></script>
+<script src="../assets/quiz.js?v=18"></script>
+<script src="../assets/pratique.js?v=18"></script>
 </body>
 </html>
