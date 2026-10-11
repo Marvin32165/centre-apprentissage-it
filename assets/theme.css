@@ -18,108 +18,116 @@
 :root {
     color-scheme: light;
 
-    /* ── Papier & surfaces ── */
-    --paper:      #FAF6F0;
-    --surface:    #FFFDF9;
-    --surface-2:  #F5EFE6;
-    --surface-3:  #EEE6DA;
-    --border:     #E9E0D3;
-    --border-md:  #D8C9B6;
+    /* ── Papier & surfaces : un papier chaud, des aplats plutôt que des ombres ── */
+    --paper:      #F3EEE5;
+    --surface:    #F9F6F0;
+    --surface-2:  #EAE3D7;
+    --surface-3:  #E1D8C9;
+    --border:     #DDD3C3;
+    --border-md:  #C7B9A4;
 
     /* ── Encre ── */
-    --ink:       #241C17;
-    --ink-soft:  #66574A;
-    --ink-faint: #78685A;   /* 4,7:1 sur --surface-2 (WCAG AA) */
+    --ink:       #1B1713;
+    --ink-soft:  #544A40;
+    --ink-faint: #6B5F52;   /* 4,9:1 sur --surface-2 (WCAG AA) */
 
-    /* ── Terre cuite ── */
-    --accent:      #B0543A;
-    --accent-2:    #95452E;
-    --accent-ink:  #6B2F1E;
-    --accent-soft: #F7EAE2;
-    --accent-line: #E6C8B9;
+    /* ── Terre cuite, un seul accent ── */
+    --accent:      #9C3F1D;
+    --accent-2:    #83331A;
+    --accent-ink:  #5A230F;
+    --accent-soft: #F1E2D6;
+    --accent-line: #E0C0AB;
     --on-accent:   #FFFFFF;
 
     /* ── Bruns ── */
-    --brown:      #7A5B41;
-    --brown-soft: #F1E9DE;
+    --brown:      #6E5139;
+    --brown-soft: #ECE3D6;
 
     /* ── Sémantique, désaturée ── */
-    --yes:       #4F6F4A;
-    --yes-ink:   #33482F;
-    --yes-soft:  #ECF1E8;
-    --yes-line:  #C6D3C2;
-    --no:        #A63D2C;
-    --no-ink:    #7E2E21;
-    --no-soft:   #FAEBE7;
-    --no-line:   #E8C3B9;
-    --warn:      #8E631F;
-    --warn-ink:  #5F4214;
-    --warn-soft: #F8F0E1;
-    --warn-line: #E9D8B4;
+    --yes:       #3F6140;
+    --yes-ink:   #2C442D;
+    --yes-soft:  #E7EDE2;
+    --yes-line:  #C2D0BD;
+    --no:        #9A3524;
+    --no-ink:    #732619;
+    --no-soft:   #F6E6E1;
+    --no-line:   #E4BFB4;
+    --warn:      #7C561A;
+    --warn-ink:  #573C11;
+    --warn-soft: #F4ECDC;
+    --warn-line: #E2D0AA;
 
     /* ── Terminal (sombre dans les deux thèmes) ── */
-    --term-bg:    #241C18;
-    --term-bar:   #2E2520;
-    --term-ink:   #E9DFD4;
-    --term-faint: #A08C7E;
-    --term-k:     #E59A78;
-    --term-p:     #D9BE84;
-    --term-s:     #AFC49B;
-    --term-c:     #9D8C7F;   /* commentaires : 4,6:1 sur le terminal */
+    --term-bg:    #1E1915;
+    --term-bar:   #1E1915;
+    --term-ink:   #EBE2D6;
+    --term-faint: #A3907F;
+    --term-k:     #E89A76;
+    --term-p:     #D9BF86;
+    --term-s:     #B3C79E;
+    --term-c:     #A08F81;   /* commentaires : 4,6:1 sur le terminal */
 
-    /* ── Effets ── */
-    --nav-bg:   rgba(250, 246, 240, .82);
-    --shadow-1: 0 1px 2px rgba(58, 40, 28, .05), 0 8px 24px -18px rgba(58, 40, 28, .35);
-    --shadow-2: 0 2px 6px rgba(58, 40, 28, .06), 0 22px 48px -28px rgba(58, 40, 28, .45);
-    --grid-line: rgba(176, 84, 58, .07);
+    /* ── Effets : presque rien, des filets ── */
+    --nav-bg:   rgba(243, 238, 229, .9);
+    --shadow-1: 0 1px 0 rgba(27, 23, 19, .04);
+    --shadow-2: 0 1px 2px rgba(27, 23, 19, .06), 0 24px 48px -24px rgba(27, 23, 19, .28);
+    --grid-line: transparent;
 
-    /* ── Typographie ── */
-    --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
-    --font-body:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --font-mono:    'JetBrains Mono', 'Cascadia Code', Consolas, monospace;
+    /* ── Typographie : un serif de lecture, un sans d'interface, un mono ── */
+    --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --font-body:    'Newsreader', Georgia, 'Times New Roman', serif;
+    --font-ui:      'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono:    'IBM Plex Mono', 'Cascadia Code', Consolas, monospace;
 
     /* ── Formes & mesures ── */
-    --r-sm: 8px;
-    --r:    12px;
-    --r-lg: 18px;
-    --measure: 1180px;
-    --read:    46rem;
-    --nav-h:   56px;
+    --r-sm: 3px;
+    --r:    4px;
+    --r-lg: 6px;
+    --measure: 1200px;
+    --read:    42rem;
+    --nav-h:   60px;
+
+    /* ── Mouvement ── */
+    --ease-out: cubic-bezier(.22, 1, .36, 1);
+    --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+    --d-fast: 160ms;
+    --d-base: 260ms;
+    --d-slow: 620ms;
 }
 
 /* ── Thème sombre : les mêmes teintes, en brun profond ── */
 :root[data-theme="dark"] {
     color-scheme: dark;
-    --paper: #171310; --surface: #1F1915; --surface-2: #27201B; --surface-3: #30271F;
-    --border: #3A2F27; --border-md: #4D3F34;
-    --ink: #F2E9DF; --ink-soft: #C3B2A2; --ink-faint: #998878;
-    --accent: #D9805F; --accent-2: #E59578; --accent-ink: #F3CDBD; --accent-soft: #33221A; --accent-line: #5A3829; --on-accent: #1A120E;
-    --brown: #C2A27F; --brown-soft: #2B231C;
-    --yes: #93B78C; --yes-ink: #C9DDC4; --yes-soft: #1E2A1E; --yes-line: #3A5136;
-    --no: #E58A76; --no-ink: #F5C4B8; --no-soft: #331C17; --no-line: #5E3127;
-    --warn: #D6AA62; --warn-ink: #EFD8AE; --warn-soft: #2E2416; --warn-line: #574325;
-    --term-bg: #110D0B; --term-bar: #1A1411;
-    --nav-bg: rgba(23, 19, 16, .78);
-    --shadow-1: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -18px rgba(0, 0, 0, .8);
-    --shadow-2: 0 2px 6px rgba(0, 0, 0, .35), 0 22px 48px -28px rgba(0, 0, 0, .9);
-    --grid-line: rgba(217, 128, 95, .06);
+    --paper: #13100D; --surface: #1A1612; --surface-2: #221C17; --surface-3: #2B241E;
+    --border: #312A23; --border-md: #463C33;
+    --ink: #EDE6DA; --ink-soft: #BBAF9F; --ink-faint: #9C8F7F;
+    --accent: #E3916A; --accent-2: #ECA47F; --accent-ink: #F4D2C1; --accent-soft: #33211A; --accent-line: #5C3B2B; --on-accent: #1A120E;
+    --brown: #C4A685; --brown-soft: #29211B;
+    --yes: #94B98C; --yes-ink: #CBDEC5; --yes-soft: #1C271C; --yes-line: #374E34;
+    --no: #E88D79; --no-ink: #F6C6BA; --no-soft: #311B16; --no-line: #5C3026;
+    --warn: #D9AE66; --warn-ink: #F0D9AF; --warn-soft: #2C2215; --warn-line: #554124;
+    --term-bg: #0E0B09; --term-bar: #0E0B09;
+    --nav-bg: rgba(19, 16, 13, .88);
+    --shadow-1: 0 1px 0 rgba(0, 0, 0, .3);
+    --shadow-2: 0 1px 2px rgba(0, 0, 0, .4), 0 24px 48px -24px rgba(0, 0, 0, .8);
+    --grid-line: transparent;
 }
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
         color-scheme: dark;
-        --paper: #171310; --surface: #1F1915; --surface-2: #27201B; --surface-3: #30271F;
-        --border: #3A2F27; --border-md: #4D3F34;
-        --ink: #F2E9DF; --ink-soft: #C3B2A2; --ink-faint: #998878;
-        --accent: #D9805F; --accent-2: #E59578; --accent-ink: #F3CDBD; --accent-soft: #33221A; --accent-line: #5A3829; --on-accent: #1A120E;
-        --brown: #C2A27F; --brown-soft: #2B231C;
-        --yes: #93B78C; --yes-ink: #C9DDC4; --yes-soft: #1E2A1E; --yes-line: #3A5136;
-        --no: #E58A76; --no-ink: #F5C4B8; --no-soft: #331C17; --no-line: #5E3127;
-        --warn: #D6AA62; --warn-ink: #EFD8AE; --warn-soft: #2E2416; --warn-line: #574325;
-        --term-bg: #110D0B; --term-bar: #1A1411;
-        --nav-bg: rgba(23, 19, 16, .78);
-        --shadow-1: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -18px rgba(0, 0, 0, .8);
-        --shadow-2: 0 2px 6px rgba(0, 0, 0, .35), 0 22px 48px -28px rgba(0, 0, 0, .9);
-        --grid-line: rgba(217, 128, 95, .06);
+        --paper: #13100D; --surface: #1A1612; --surface-2: #221C17; --surface-3: #2B241E;
+        --border: #312A23; --border-md: #463C33;
+        --ink: #EDE6DA; --ink-soft: #BBAF9F; --ink-faint: #9C8F7F;
+        --accent: #E3916A; --accent-2: #ECA47F; --accent-ink: #F4D2C1; --accent-soft: #33211A; --accent-line: #5C3B2B; --on-accent: #1A120E;
+        --brown: #C4A685; --brown-soft: #29211B;
+        --yes: #94B98C; --yes-ink: #CBDEC5; --yes-soft: #1C271C; --yes-line: #374E34;
+        --no: #E88D79; --no-ink: #F6C6BA; --no-soft: #311B16; --no-line: #5C3026;
+        --warn: #D9AE66; --warn-ink: #F0D9AF; --warn-soft: #2C2215; --warn-line: #554124;
+        --term-bg: #0E0B09; --term-bar: #0E0B09;
+        --nav-bg: rgba(19, 16, 13, .88);
+        --shadow-1: 0 1px 0 rgba(0, 0, 0, .3);
+        --shadow-2: 0 1px 2px rgba(0, 0, 0, .4), 0 24px 48px -24px rgba(0, 0, 0, .8);
+        --grid-line: transparent;
     }
 }
 
@@ -1882,3 +1890,462 @@ tr.row-split td { border-top: 2px solid var(--yes-line); }
 .sources__verif > summary:hover { color: var(--ink); }
 .content .sources__verif ul { margin-top: 8px; }
 .sources__note { font-size: .74rem; color: var(--ink-faint); margin-top: 6px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   REFONTE ÉDITORIALE (v20, 11/10/2026)
+   Une revue imprimée plutôt qu'une application : un serif de lecture
+   (Newsreader, tailles optiques), un sans d'interface (Instrument Sans),
+   un mono sobre (IBM Plex Mono). Des filets fins au lieu des ombres,
+   des arrondis de 3 à 6 px, un seul accent terre cuite. Les étiquettes
+   ne sont plus des capitales espacées en mono : une petite étiquette
+   d'interface, en casse normale. Le mouvement accompagne la lecture
+   (apparition au défilement, transitions de page, ouverture des
+   corrections) et disparaît si le visiteur demande moins d'animations.
+   Cette couche surcharge les règles plus haut, sans changer le HTML.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Texte : un serif de lecture, 17 px, chiffres elzéviriens ── */
+body {
+    font-family: var(--font-body);
+    font-size: 17.5px; line-height: 1.62;
+    font-optical-sizing: auto;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    font-kerning: normal;
+    transition: background-color var(--d-base) var(--ease-out), color var(--d-base) var(--ease-out);
+}
+h1, h2, h3, h4, .hero__title, .chapter__title { font-optical-sizing: auto; }
+table, .fact, .test, .q__opts, .opt, code, kbd, .terminal, .sitenav, .toc, .btn, input, select, textarea, button {
+    font-variant-numeric: lining-nums tabular-nums;
+}
+::selection { background: var(--accent); color: var(--on-accent); }
+a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible, label:focus-within {
+    outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px;
+    transition: outline-offset var(--d-fast) var(--ease-out);
+}
+
+/* Tout ce qui est interface passe en sans : barre, sommaire, boutons,
+   étiquettes, tableaux, quiz, palette. Le serif reste pour lire. */
+.sitenav, .toc, .btn, .sitenav__btn, .palette, .search, .search__input, .chip, .pill, .tg, .fact,
+.toc__back, .toc__meter, .toc__path, table, .q__opts, .opt, .test__actions, .test__count, .test__facts,
+.resume, .res, .path__steps, .modcard, .dash, .next, .rel, .exam-card__foot, .exam-card__mods,
+.totop, .terminal__copy, .reveal > summary, .lab__steps, .scenario__opt, .cmdex input, .subgen, .tool,
+.gt-pop, .stairs, .palier, .howto, .diag, .cours-list, .road__step p, footer, .site-footer {
+    font-family: var(--font-ui);
+}
+
+/* ── Étiquettes : fini les capitales espacées en mono ── */
+.eyebrow, .section-tag, .fact b, .toc__label, .toc__group-label, .toc__path-label, .res-group__title,
+.path__num, .exam-card__num, .resume__label, .test__label, .q__hint, .search-hit__module, .palette__group,
+.takeaway__label, .tip__label, .verify__label, .cmdex__label, .exo__label, .brief__label, .lab__label,
+.scenario__label, .subgen__label, .sources__label, .next__label, .rel__label, .section-banner__label,
+.verify > p.verify__label, .cmdex > p.cmdex__label, .exo > p.exo__label, .scenario > p.scenario__label,
+.subgen > p.subgen__label, .takeaway p.takeaway__label, .tip p.tip__label, .res__badge, .test__best,
+.q__why .q__ref, .rel__state {
+    font-family: var(--font-ui);
+    text-transform: none; letter-spacing: .005em;
+    font-size: .8rem; font-weight: 600;
+}
+.takeaway__label::before, .tip__label::before, .verify__label::before, .cmdex__label::before, .exo__label::before,
+.lab__label::before, .scenario__label::before, .subgen__label::before {
+    width: 14px; height: 1px; border-radius: 0;
+}
+.eyebrow { font-size: .84rem; font-weight: 500; color: var(--ink-soft); margin-bottom: 28px; }
+.eyebrow a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--border-md); text-underline-offset: 4px; }
+.eyebrow a:hover { text-decoration-color: var(--accent); }
+.section-tag { color: var(--accent-2); font-size: .84rem; }
+.section-tag::before { width: 28px; background: currentColor; }
+
+/* ── Barre du site : un bandeau de revue, sans pastilles ── */
+.sitenav {
+    background: var(--nav-bg);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    view-transition-name: sitenav;
+}
+.sitenav__inner { padding: 0 32px; gap: 6px 28px; }
+.sitenav__home { font-family: var(--font-display); font-size: 1.12rem; font-weight: 600; letter-spacing: -.012em; gap: 12px; }
+.sitenav__home::before {
+    width: 10px; height: 10px; border-radius: 0; background: var(--accent);
+    transform: rotate(45deg); transition: transform var(--d-base) var(--ease-out);
+}
+.sitenav__home:hover { color: var(--ink); }
+.sitenav__home:hover::before { transform: rotate(135deg); }
+.sitenav__links { gap: 4px 18px; }
+.sitenav__links a {
+    position: relative; font-size: .86rem; font-weight: 500; color: var(--ink-soft);
+    padding: 8px 0; border-radius: 0; background: none;
+}
+.sitenav__links a::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 3px; height: 1px; background: currentColor;
+    transform: scaleX(0); transform-origin: right; transition: transform var(--d-base) var(--ease-out);
+}
+.sitenav__links a:hover { color: var(--ink); background: none; }
+.sitenav__links a:hover::after { transform: scaleX(1); transform-origin: left; }
+.sitenav__links a[aria-current] { color: var(--ink); background: none; }
+.sitenav__links a[aria-current]::after { transform: scaleX(1); background: var(--accent); height: 2px; }
+.sitenav__btn {
+    font-family: var(--font-ui); border-radius: var(--r); background: transparent;
+    border-color: var(--border-md); padding: 7px 11px;
+    transition: border-color var(--d-fast) var(--ease-out), color var(--d-fast) var(--ease-out), background var(--d-fast) var(--ease-out);
+}
+.sitenav__btn:hover { border-color: var(--ink); color: var(--ink); background: var(--surface); }
+.sitenav__btn:active { transform: scale(.97); }
+
+/* ── Héros : une une de journal ── */
+.hero {
+    background: var(--paper);
+    padding: 88px 0 64px;
+    border-bottom: 1px solid var(--ink);
+}
+.hero::before { display: none; }
+.hero::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 3px; height: 1px; background: var(--border-md);
+}
+.hero__title {
+    font-weight: 400; font-size: clamp(2.6rem, 6.4vw, 5rem);
+    line-height: .98; letter-spacing: -.035em; max-width: 16ch; margin-bottom: 26px;
+    font-variation-settings: 'opsz' 72;
+}
+.hero__title em { font-style: italic; font-weight: 300; color: inherit; }
+.hero__lead { font-size: 1.2rem; line-height: 1.55; color: var(--ink-soft); max-width: 58ch; }
+.hero__lead a { color: var(--ink); text-decoration-color: var(--accent); text-decoration-thickness: 1px; }
+.hero__lead a:hover { color: var(--accent-2); }
+.hero__meta { gap: 8px; margin-top: 28px; }
+.chip, .pill, .tg {
+    font-family: var(--font-ui); font-size: .76rem; letter-spacing: 0; text-transform: none;
+    border-radius: var(--r-sm); padding: 3px 9px; background: transparent;
+    border: 1px solid var(--border-md); color: var(--ink-soft);
+}
+.pill { color: var(--accent-2); border-color: var(--accent-line); }
+
+/* Faits du module : une rangée de colonnes séparées par des filets. */
+.hero__facts { gap: 0; margin-top: 40px; border-top: 1px solid var(--border); }
+.fact {
+    padding: 14px 28px 0 0; margin-right: 28px; border-right: 1px solid var(--border);
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 500;
+}
+.fact:last-child { border-right: none; margin-right: 0; }
+.fact b { font-size: .76rem; font-weight: 500; color: var(--ink-faint); }
+.fact a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent-line); text-underline-offset: 4px; }
+
+/* ── Recherche du portail : un champ sobre, souligné ── */
+.search__input {
+    font-family: var(--font-ui); border-radius: var(--r); box-shadow: none;
+    background-color: var(--surface); border-color: var(--border-md);
+}
+.search__input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px var(--accent-soft); }
+.search__results, .palette__box { border-radius: var(--r-lg); }
+.palette { background: color-mix(in srgb, var(--ink) 30%, transparent); }
+.palette__item, .search-hit { border-radius: var(--r-sm); }
+.palette__icon { border-radius: var(--r-sm); font-family: var(--font-ui); }
+
+/* ── Titres de section du portail ── */
+.portal__head h2, .paths__head h2, .resources__head h2, .roadmap h2, .exams-index h2, .map-section h2 {
+    font-weight: 400; font-size: clamp(2rem, 3.6vw, 3rem); letter-spacing: -.03em; line-height: 1.04;
+    font-variation-settings: 'opsz' 60;
+}
+.portal__head p:not(.section-tag), .paths__head p:not(.section-tag), .resources__head p:not(.section-tag),
+.exams-index > p:not(.section-tag) { font-size: 1.08rem; }
+.res-group__title { font-size: .84rem; }
+
+/* ── Cartes, fiches, encarts : des cadres de papier, pas des bulles ── */
+.path, .res, .exam-card, .road__step, .card, .lab, .next, .resume__inner, .toc__meter, .gl, .cours-list li,
+.node, .test, .brief, .modcard, .dash, .palier, .howto, .diag, .reveal, .tool, .subgen {
+    border-radius: var(--r-lg); box-shadow: none;
+}
+.path, .res, .exam-card, .road__step {
+    background: transparent; border-color: var(--border-md);
+    transition: border-color var(--d-base) var(--ease-out), background-color var(--d-base) var(--ease-out);
+}
+.path:hover, .res:hover, .exam-card:hover, .road__step:hover {
+    border-color: var(--ink); background: var(--surface); box-shadow: none; transform: none;
+}
+.path__title, .exam-card__title { font-weight: 500; font-size: 1.45rem; letter-spacing: -.02em; }
+.path__num, .exam-card__num { color: var(--accent-2); }
+.path__steps a { border-radius: var(--r-sm); font-size: .9rem; }
+.path__steps a::before { font-family: var(--font-display); font-style: italic; font-size: .95rem; color: var(--ink-faint); }
+.path__steps a:hover { background: var(--surface-2); color: var(--ink); }
+.path__steps a:hover::before { color: var(--accent); }
+.path__steps em { font-family: var(--font-ui); }
+.road__n { font-weight: 300; font-size: 2.4rem; }
+.resume__inner { background: var(--surface); border-color: var(--border-md); }
+.resume__label { border-radius: var(--r-sm); background: transparent; border: 1px solid var(--accent-line); }
+.res__badge { border-radius: var(--r-sm); }
+.res__url { font-family: var(--font-mono); }
+
+/* ── Boutons : à l'encre, angles presque droits ── */
+.btn {
+    font-family: var(--font-ui); font-weight: 600; letter-spacing: 0;
+    border-radius: var(--r); background: var(--ink); color: var(--paper); border-color: var(--ink);
+    box-shadow: none;
+    transition: background-color var(--d-fast) var(--ease-out), border-color var(--d-fast) var(--ease-out),
+                color var(--d-fast) var(--ease-out), transform var(--d-fast) var(--ease-out);
+}
+.btn:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); transform: none; }
+.btn:active { transform: scale(.98); }
+.btn--ghost { background: transparent; color: var(--ink); border-color: var(--border-md); }
+.btn--ghost:hover { background: transparent; color: var(--ink); border-color: var(--ink); }
+
+/* ── Page de module ── */
+@media (min-width: 901px) { .layout { grid-template-columns: 240px minmax(0, 1fr); gap: 72px; padding-top: 56px; } }
+.content { max-width: 44rem; }
+.toc__back {
+    border-radius: var(--r); background: transparent; border-color: var(--border-md);
+    font-family: var(--font-ui);
+}
+.toc__back:hover { border-color: var(--ink); color: var(--ink); }
+.toc__label { font-size: .84rem; color: var(--ink); padding-left: 12px; }
+.toc__link { font-size: .86rem; border-radius: 0; }
+.toc__link span { font-family: var(--font-display); font-style: italic; font-size: .86rem; }
+.toc__link.is-active { background: none; color: var(--ink); }
+.toc__link.is-active span { color: var(--accent); }
+.toc__link::before { transition: background var(--d-base) var(--ease-out), transform var(--d-base) var(--ease-out); transform: scaleY(.4); }
+.toc__link.is-active::before { transform: none; }
+.toc__meter { background: transparent; border-color: var(--border); }
+.toc__meter b { font-family: var(--font-ui); font-size: .78rem; }
+.toc__meter .bar { height: 2px; border-radius: 0; }
+.toc__meter .bar i { border-radius: 0; background: var(--accent); }
+.toc__path { background: transparent; border: 1px solid var(--border); }
+.toc__path li::before { font-family: var(--font-display); font-style: italic; font-size: .8rem; }
+.toc__group-label::before { border-radius: 0; width: 10px; height: 1px; }
+
+/* Bandeau de section */
+.section-banner__accent { width: 10px; height: 10px; border-radius: 0; }
+.section-banner__label { font-size: .86rem; }
+
+/* Chapitres : un grand numéro en italique, un filet, un titre de revue */
+.chapter, .panel { padding: 56px 0 60px; }
+.chapter__num {
+    font-family: var(--font-display); font-style: italic; font-weight: 300;
+    font-size: 2.6rem; line-height: 1; letter-spacing: -.02em; color: var(--accent);
+    gap: 18px; margin-bottom: 18px;
+    font-variant-numeric: lining-nums;
+}
+.chapter__num::before { display: none; }
+.chapter__num::after { background: var(--border-md); height: 1px; }
+.chapter--pratique .chapter__num { color: var(--warn); }
+.chapter__title {
+    font-weight: 450; font-size: clamp(2rem, 3.4vw, 2.75rem);
+    line-height: 1.06; letter-spacing: -.03em; margin-bottom: 18px;
+    font-variation-settings: 'opsz' 60;
+}
+.chapter__intro { font-size: 1.16rem; line-height: 1.6; max-width: 60ch; }
+.content h3 { font-weight: 500; font-size: 1.45rem; letter-spacing: -.02em; margin: 44px 0 12px; }
+.content h4 { font-family: var(--font-ui); font-size: .92rem; font-weight: 600; letter-spacing: .005em; }
+.content p { margin-bottom: 16px; }
+.content li::marker { color: var(--accent); font-family: var(--font-display); }
+.content a {
+    color: var(--ink); text-decoration-color: var(--accent); text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color var(--d-fast) var(--ease-out), text-decoration-thickness var(--d-fast) var(--ease-out);
+}
+.content a:hover { color: var(--accent-2); text-decoration-thickness: 2px; }
+
+/* Code en ligne : discret, sans cadre */
+code, .mono {
+    font-family: var(--font-mono); font-size: .82em; border: none; border-radius: var(--r-sm);
+    background: var(--surface-2); color: var(--accent-ink); padding: .12em .38em;
+}
+
+/* Encadrés : un aplat teinté, cadré d'un filet, pas de liseré latéral */
+.takeaway, .tip, .verify, .cmdex, .exo, .theory { border-radius: var(--r-lg); }
+.takeaway { padding: 20px 24px; }
+.takeaway p, .tip p { font-size: 1rem; line-height: 1.58; }
+
+/* Terminal : un bloc d'imprimerie, sans fausses pastilles de fenêtre */
+.terminal {
+    border-radius: var(--r-lg); box-shadow: none;
+    border: 1px solid color-mix(in srgb, var(--term-bg) 70%, var(--border-md));
+}
+.terminal__bar { border-bottom: 1px solid rgba(235, 226, 214, .08); padding: 8px 16px; }
+.terminal__dot { display: none; }
+.terminal__title { text-align: left; margin-left: 0; padding-right: 70px; font-size: .72rem; letter-spacing: 0; }
+.terminal__code { font-size: .82rem; line-height: 1.75; padding: 18px 22px 20px; }
+.terminal__copy {
+    font-family: var(--font-ui); text-transform: none; letter-spacing: 0; font-size: .74rem;
+    border-radius: var(--r-sm); top: 4px;
+}
+
+/* Étapes : chiffres en italique, filet vertical */
+.step__num {
+    border-radius: 0; border: none; border-bottom: 1px solid var(--accent-line); background: transparent;
+    font-family: var(--font-display); font-style: italic; font-size: 1.15rem; color: var(--accent);
+}
+.step:not(:last-child)::before { background: var(--border); }
+
+/* Tableaux : des filets horizontaux, une tête en petites lettres */
+.table-wrap { border: none; border-radius: 0; background: transparent; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+table { font-size: .9rem; }
+thead th {
+    background: transparent; color: var(--ink); font-size: .78rem; letter-spacing: .01em;
+    border-bottom: 1px solid var(--border-md); padding: 12px 14px 10px;
+}
+tbody td { padding: 12px 14px; }
+tbody tr:hover td { background: var(--surface); }
+tbody td:first-child { font-weight: 600; }
+
+/* Corrections repliées */
+.reveal { background: transparent; border-color: var(--border-md); }
+.reveal > summary { font-family: var(--font-ui); }
+
+/* Glossaire et cartes */
+.gl b { font-family: var(--font-ui); }
+
+/* Retour en haut */
+.totop { border-radius: var(--r); }
+
+/* ══════════════════════════════════════════════════════════════════
+   MOUVEMENT — discret, au service de la lecture
+   ══════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: no-preference) {
+    /* Entrée de page : le héros se compose ligne à ligne. */
+    .hero .eyebrow, .hero__title, .hero__lead, .hero__meta, .hero__facts, .hero .search, .hero [data-dash], .hero .modcard {
+        animation: cai-rise var(--d-slow) var(--ease-out) both;
+    }
+    .hero__title { animation-delay: 60ms; }
+    .hero__lead { animation-delay: 140ms; }
+    .hero__meta, .hero .search { animation-delay: 200ms; }
+    .hero__facts { animation-delay: 240ms; }
+    .hero [data-dash], .hero .modcard { animation-delay: 300ms; }
+    @keyframes cai-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+    /* Le filet du héros se trace de gauche à droite. */
+    .hero::after { transform-origin: left; animation: cai-draw 900ms var(--ease-out) 200ms both; }
+    @keyframes cai-draw { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+    /* Transitions entre pages : la barre reste, le contenu glisse à peine. */
+    ::view-transition-old(root) { animation: 180ms var(--ease-out) both cai-vt-out; }
+    ::view-transition-new(root) { animation: 320ms var(--ease-out) both cai-vt-in; }
+    @keyframes cai-vt-out { to { opacity: 0; transform: translateY(-6px); } }
+    @keyframes cai-vt-in { from { opacity: 0; transform: translateY(8px); } }
+    ::view-transition-group(sitenav) { animation-duration: 0s; }
+
+    /* Bascule clair / sombre : le nouveau thème s'ouvre en cercle depuis le bouton. */
+    :root.theme-vt::view-transition-old(root) { animation: none; }
+    :root.theme-vt::view-transition-new(root) {
+        animation: cai-theme 560ms var(--ease-in-out) both;
+    }
+    @keyframes cai-theme {
+        from { clip-path: circle(0 at var(--vt-x, 100%) var(--vt-y, 0)); }
+        to   { clip-path: circle(150vmax at var(--vt-x, 100%) var(--vt-y, 0)); }
+    }
+
+    /* Ouverture des corrections et des <details> : hauteur animée. */
+    :root { interpolate-size: allow-keywords; }
+    details::details-content {
+        block-size: 0; overflow: clip;
+        transition: block-size var(--d-base) var(--ease-out), content-visibility var(--d-base) allow-discrete;
+    }
+    details[open]::details-content { block-size: auto; }
+    .reveal > summary::before { transition: transform var(--d-base) var(--ease-out); }
+
+    /* Apparition au défilement : seulement les grands blocs, jamais le texte courant. */
+    @supports (animation-timeline: view()) {
+        .chapter__num, .chapter__title, .takeaway, .tip, .verify, .table-wrap, .terminal, .cards, .steps,
+        .lab, .exo, .cmdex, .scenario, .path, .res, .exam-card, .road__step, .next, .test, .palier, .brief {
+            animation: cai-reveal linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 38%;
+        }
+        .chapter__num::after { animation: cai-draw linear both; animation-timeline: view(); animation-range: entry 10% entry 60%; transform-origin: left; }
+        @keyframes cai-reveal { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    }
+
+    /* Flèches qui avancent au survol. */
+    .resume__go, .path__steps a, .next a { transition: color var(--d-fast) var(--ease-out), background-color var(--d-fast) var(--ease-out), padding var(--d-base) var(--ease-out); }
+    .path__steps a:hover { padding-left: 14px; }
+}
+
+/* Barre de progression de lecture : reliée au défilement, sans script, là où c'est possible. */
+.progress { height: 2px; }
+@supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .progress__bar { animation: cai-progress linear both; animation-timeline: scroll(root block); }
+        @keyframes cai-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    }
+}
+
+/* Mobile : la typographie se resserre un peu. */
+@media (max-width: 700px) {
+    body { font-size: 17px; }
+    .hero { padding: 56px 0 44px; }
+    .sitenav__inner { padding: 0 18px; }
+    .fact { padding-right: 18px; margin-right: 18px; }
+    .chapter__num { font-size: 2.1rem; }
+    .layout { gap: 32px; }
+}
+
+/* ── Refonte, suite : les étiquettes des composants ajoutés depuis la v13 ── */
+.dash__label, .modcard__label, .dash__palier-num, .dash__stats dt, .modcard__palier b, .stair__num, .palier__num,
+.palier__job b, .palier__label, .diag__where, .diag__label, .howto__tag, .map__where, .map__col-title span,
+.map__soon, .map__state, .map__icon, .search-hit__module, .palette__group, .tool__label, .content p.tool__label,
+.tool__sub, .test__label, .q__hint, .q__why .q__ref, .test__best, .exam-card__num, .scoreboard__row--head,
+.sup__kind, .verify__sub, .verify > p.verify__sub, .walk__label, .hdr b, .glo__where, .srs__mod, .versus__tag,
+.opt.is-right::after, .opt.is-wrong::after, .opt__key, .howto__step::after, .res__badge, .resume__tools button,
+.resume__tools label, .resume__reset, .map__folder {
+    font-family: var(--font-ui); text-transform: none; letter-spacing: .005em; font-weight: 600;
+}
+.dash__label, .modcard__label, .palier__num, .diag__label, .exam-card__num, .test__label, .map__where { font-size: .84rem; color: var(--accent-2); }
+.dash__stats dt, .modcard__palier b, .dash__palier-num, .stair__num, .palier__job b, .palier__label, .q__hint,
+.test__best, .verify__sub, .verify > p.verify__sub, .glo__where, .srs__mod, .versus__tag, .sup__kind, .map__col-title span { font-size: .76rem; }
+.howto__tag { border-radius: var(--r-sm); }
+.howto__tag::before { width: 10px; height: 1px; border-radius: 0; }
+.howto__step { border-radius: var(--r-lg); }
+.howto__step::after { font-family: var(--font-display); font-style: italic; font-weight: 300; font-size: 1.2rem; }
+
+/* Tableau de bord et fiche du module : un cadre de papier, sans liseré en dégradé */
+.dash, .modcard { border-radius: var(--r-lg); border-color: var(--border-md); background: var(--surface); padding: 24px; }
+.dash::before, .modcard::before { display: none; }
+.dash__title { font-weight: 500; font-size: 1.45rem; letter-spacing: -.02em; }
+.dash__starts { gap: 0; border-top: 1px solid var(--border); }
+.dash__starts a {
+    border: none; border-bottom: 1px solid var(--border); border-radius: 0; background: transparent;
+    padding: 14px 4px; grid-template-columns: 30px minmax(0, 1fr);
+    transition: background-color var(--d-fast) var(--ease-out), padding var(--d-base) var(--ease-out);
+}
+.dash__starts a::before {
+    width: auto; height: auto; background: none; border-radius: 0; align-self: start;
+    font: italic 300 1.5rem/1 var(--font-display); color: var(--accent);
+}
+.dash__starts a:hover { background: var(--surface-2); transform: none; padding-left: 10px; }
+.dash__starts b { font-family: var(--font-ui); font-size: .94rem; }
+.dash__palier, .modcard__palier { border-radius: var(--r); background: transparent; border-color: var(--border-md); }
+.dash__palier:hover, .modcard__palier:hover { border-color: var(--ink); }
+.dash__big, .modcard__pct { font-family: var(--font-display); font-weight: 400; }
+.ring__track { stroke: var(--border); stroke-width: 4; }
+.ring__val { stroke-width: 4; stroke-linecap: butt; }
+.dash__bar, .stair__bar, .diag__track, .diag__bar-track { border-radius: 0; height: 2px; }
+.dash__bar i, .stair__bar i, .diag__track i, .diag__bar-track i { border-radius: 0; }
+
+/* Objectifs : un encart de papier, numérotation en italique */
+.brief { background: var(--surface); border-color: var(--border-md); box-shadow: none; }
+.brief__list li::before {
+    width: auto; height: auto; border: none; border-radius: 0; background: none;
+    font: italic 300 1.35rem/1 var(--font-display); color: var(--accent);
+}
+
+/* Quiz : des options en filets, une lettre en italique */
+.opt { border-radius: var(--r); }
+.opt__key { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: .95rem; }
+.opt.is-right::after, .opt.is-wrong::after { font-size: .76rem; }
+
+/* Carte des modules */
+.map__node { border-radius: var(--r); }
+.map__node:hover { transform: none; border-color: var(--ink); }
+.map__detail { border-radius: var(--r-lg); box-shadow: none; }
+.map__open { border-radius: var(--r); background: var(--ink); color: var(--paper); }
+.map__open:hover { background: var(--accent); color: var(--on-accent); }
+.map__chip { border-radius: var(--r-sm); font-family: var(--font-ui); }
+.map__bar { border-radius: 0; height: 2px; }
+
+/* Paliers et escalier */
+.palier, .stair a, .diag__opt { border-radius: var(--r-lg); }
+.stair a:hover, .diag__opt:hover { transform: none; }
+
+/* Sommaire : l'élément actif sans dégradé */
+.toc__link.is-active { background: none; }
+
+/* Titres de cartes : interligne serré (le corps est à 1,62). */
+.path__title, .exam-card__title, .dash__title, .lab__title, .test__title, .map__title, .palier__title,
+.road__step h3, .road__step h4, .card h4, .res__name, .stair__title, .diag__title, .q__text { line-height: 1.18; }
+.path__title { margin: 10px 0 10px; }

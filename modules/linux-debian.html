@@ -7,9 +7,9 @@
     <title>Linux Debian — Du premier login à la maîtrise du terminal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Instrument+Sans:wght@400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=19">
+    <link rel="stylesheet" href="../assets/theme.css?v=20">
 </head>
 <body>
 
@@ -1026,7 +1026,7 @@ iface ens33 inet <span class="k">static</span>
                 <div class="scenario__step">
                     <p class="scenario__q">Tu as attribué une adresse au serveur avec <code>sudo ip addr add 192.168.1.10/24 dev ens33</code> : tout fonctionne. Après un redémarrage, le serveur n&#x27;a plus d&#x27;adresse. Pourquoi ?</p>
                     <div class="scenario__opts">
-                        <button class="scenario__opt" data-ok>La commande ip ne modifie que la configuration en mémoire, jamais les fichiers</button>
+                        <button class="scenario__opt" data-ok>La commande ip agit sur la configuration active du noyau, pas sur /etc/network/interfaces</button>
                         <button class="scenario__opt" data-why="Le DHCP ne « reprend » pas une adresse fixe : simplement, rien dans la configuration ne demande de la remettre.">Le DHCP a repris l&#x27;adresse au démarrage</button>
                         <button class="scenario__opt" data-why="Ce service relit /etc/network/interfaces, où l&#x27;adresse n&#x27;a jamais été écrite : il ne l&#x27;aurait pas reposée.">Il fallait lancer systemctl restart networking après la commande ip</button>
                     </div>
@@ -1969,11 +1969,11 @@ lv_storage vg_data -wi-ao---- 30,00g</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=19"></script>
-<script src="../assets/app.js?v=19"></script>
-<script src="../assets/quiz-data.js?v=19"></script>
-<script src="../assets/quiz.js?v=19"></script>
-<script src="../assets/pratique.js?v=19"></script>
-<script src="../assets/atelier.js?v=19"></script>
+<script src="../assets/catalogue.js?v=20"></script>
+<script src="../assets/app.js?v=20"></script>
+<script src="../assets/quiz-data.js?v=20"></script>
+<script src="../assets/quiz.js?v=20"></script>
+<script src="../assets/pratique.js?v=20"></script>
+<script src="../assets/atelier.js?v=20"></script>
 </body>
 </html>

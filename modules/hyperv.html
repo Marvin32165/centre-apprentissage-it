@@ -7,9 +7,9 @@
     <title>Hyper-V — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Instrument+Sans:wght@400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=19">
+    <link rel="stylesheet" href="../assets/theme.css?v=20">
 </head>
 <body>
 
@@ -149,7 +149,7 @@ SRV-FILE01   Off          2</pre>
                     <thead><tr><th>Rubrique</th><th>À faire</th><th>Pourquoi</th></tr></thead>
                     <tbody>
                         <tr><td><strong>Microprogramme</strong></td><td>C'est l'ordre de démarrage (<em>boot order</em>)</td><td>Pour booter sur l'ISO, puis sur le disque</td></tr>
-                        <tr><td><strong>Sécurité</strong></td><td>Pour une VM Linux : garder le démarrage sécurisé mais choisir le modèle <strong>Microsoft UEFI Certificate Authority</strong> (le désactiver seulement si la distribution n'est pas signée)</td><td>Le modèle par défaut (« Microsoft Windows ») rejette les chargeurs Linux ; Debian et Ubuntu sont signés pour l'autre modèle</td></tr>
+                        <tr><td><strong>Sécurité</strong></td><td>Pour une VM Linux : garder le démarrage sécurisé mais choisir le modèle <strong>Microsoft UEFI Certificate Authority</strong> (le désactiver seulement si la distribution n'est pas signée)</td><td>Le modèle par défaut (« Microsoft Windows ») rejette les chargeurs Linux ; Debian 10 à 12 et Ubuntu sont signés pour l'autre modèle</td></tr>
                         <tr><td><strong>Mémoire</strong></td><td>Ne pas activer la mémoire dynamique</td><td>Évite les à-coups sur un serveur</td></tr>
                         <tr><td><strong>Processeurs</strong></td><td>L'assistant crée la VM avec <strong>12</strong> processeurs virtuels (valeur relevée au TP) : passer à <strong>2</strong></td><td>Un serveur à 1 vCPU rame ; trop de vCPU prive l'hôte et les autres VM</td></tr>
                     </tbody>
@@ -175,7 +175,7 @@ SRV-FILE01   Off          2</pre>
                         <button class="scenario__opt" data-why="La génération ne se change pas après coup, et une génération 1 n&#x27;est pas nécessaire : Debian démarre très bien en UEFI une fois le bon modèle choisi.">Je repasse la VM en génération 1, plus compatible</button>
                         <button class="scenario__opt" data-why="L&#x27;ISO Debian n&#x27;est pas en cause : son chargeur est signé, mais pour l&#x27;autorité « UEFI CA », pas pour le modèle « Microsoft Windows » choisi par défaut.">Je retélécharge l&#x27;ISO, elle doit être corrompue</button>
                     </div>
-                    <div class="scenario__why"><p>Le modèle par défaut (<em>Microsoft Windows</em>) n'accepte que les chargeurs Windows. Debian et Ubuntu sont signés via le <strong>shim</strong> par l'autorité <em>Microsoft UEFI Certificate Authority</em> : on choisit ce modèle et on garde le démarrage sécurisé actif. Le désactiver ne sert que pour une distribution non signée.</p></div>
+                    <div class="scenario__why"><p>Le modèle par défaut (<em>Microsoft Windows</em>) n'accepte que les chargeurs Windows. Debian 10 à 12 et Ubuntu sont signés via le <strong>shim</strong> par l'autorité <em>Microsoft UEFI Certificate Authority</em> : on choisit ce modèle et on garde le démarrage sécurisé actif. Le désactiver ne sert que pour une distribution non signée.</p></div>
                 </div>
             </div>
         </section>
@@ -477,10 +477,10 @@ Differencing C:\PARENT\TEST-SYSPREP.vhdx</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=19"></script>
-<script src="../assets/app.js?v=19"></script>
-<script src="../assets/quiz-data.js?v=19"></script>
-<script src="../assets/quiz.js?v=19"></script>
-<script src="../assets/pratique.js?v=19"></script>
+<script src="../assets/catalogue.js?v=20"></script>
+<script src="../assets/app.js?v=20"></script>
+<script src="../assets/quiz-data.js?v=20"></script>
+<script src="../assets/quiz.js?v=20"></script>
+<script src="../assets/pratique.js?v=20"></script>
 </body>
 </html>

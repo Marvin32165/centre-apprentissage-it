@@ -136,7 +136,7 @@ window.QUIZ_BANK = {
         q: "Dans une capture, tu vois trois SYN vers le port 443 d'un serveur, à 1, 2 puis 4 secondes d'intervalle, sans aucune réponse. Que conclure ?",
         c: ["Le paquet est filtré en route (pare-feu, ACL) ou le serveur est injoignable", "Le service HTTPS est arrêté, mais le serveur, lui, répond", "Le certificat TLS du serveur est expiré ou non approuvé", "Le DNS est en panne et ne résout plus le nom du serveur"],
         a: 0,
-        why: "Un service arrêté sur un serveur joignable répond RST. Le silence total signifie que le paquet (ou la réponse) est jeté quelque part. Le certificat ne se négocie qu'après la poignée de main TCP, et des SYN vers une IP ne prouvent pas que le DNS a déjà répondu.",
+        why: "Un service arrêté sur un serveur joignable répond RST (hors Windows : le mode furtif bloque ce RST). Le silence total signifie que le paquet (ou la réponse) est jeté quelque part. Le certificat ne se négocie qu'après la poignée de main TCP, et des SYN vers une IP ne prouvent pas que le DNS a déjà répondu.",
         ref: "Chapitre 05"
     },
     {
@@ -1371,7 +1371,7 @@ window.QUIZ_BANK = {
     },
     {
         q: "Un appel fonctionne, mais seul l'un des deux interlocuteurs entend l'autre. Quelle piste examiner en premier ?",
-        c: ["Le NAT : adresse privée annoncée dans le SDP, ou un SIP ALG", "Le codec négocié entre les deux postes", "L'alimentation PoE du téléphone", "Le serveur DHCP du VLAN voix"],
+        c: ["Le NAT : adresse privée annoncée dans le SDP, ou un SIP ALG qui réécrit les messages SIP", "Le codec négocié entre les deux postes", "L'alimentation PoE du téléphone", "Le serveur DHCP du VLAN voix"],
         a: 0,
         why: "Le son à sens unique est la signature d'un problème de NAT : un des deux flux RTP part vers une adresse injoignable. On le voit dans la capture (adresse c= du SDP, flux RTP dans un seul sens). Un codec incompatible ferait échouer l'appel dans les deux sens, un défaut PoE ou DHCP empêcherait le poste de fonctionner du tout.",
         ref: "Chapitre 09"
@@ -1635,7 +1635,7 @@ window.QUIZ_BANK = {
         q: "Que faut-il impérativement avant de scanner ou tester un système qui ne vous appartient pas ?",
         c: ["Une autorisation écrite du propriétaire", "Un VPN pour masquer son adresse", "Un compte utilisateur valide sur la cible", "Rien, tant qu'aucune donnée n'est modifiée"],
         a: 0,
-        why: "Sans autorisation, c'est illégal — en Belgique, article 550bis du Code pénal ; en France, articles 323-1 et suivants. Pas d'autorisation = pas de test : on s'entraîne sur ses propres machines ou sur des plateformes prévues pour.",
+        why: "Sans autorisation, c'est illégal — en Belgique, article 550bis du Code pénal (l'exception de la loi NIS2 du 26 avril 2024 ne couvre que le signalement encadré d'une faille : ce n'est pas un permis de tester) ; en France, articles 323-1 et suivants. Pas d'autorisation = pas de test : on s'entraîne sur ses propres machines ou sur des plateformes prévues pour.",
         ref: "Chapitre 01"
     },
     {
@@ -1860,7 +1860,7 @@ window.QUIZ_BANK = {
         q: "Une boutique en ligne doit absorber un pic de trafic pendant deux heures, puis revenir à sa charge normale sans intervention. Quel bénéfice du cloud est en jeu ?",
         c: ["L'élasticité", "La scalabilité", "La haute disponibilité", "La fiabilité"],
         a: 0,
-        why: "Scalabilité = <em>je</em> décide d'ajuster. Élasticité = <em>ça</em> s'ajuste tout seul. Le mot « sans intervention » tranche la question.",
+        why: "Scalabilité = <em>je</em> décide d'ajuster. Élasticité = <em>ça</em> suit la charge, et s'ajuste seul si une mise à l'échelle automatique est configurée. Le mot « sans intervention » tranche la question.",
         ref: "Chapitre 01"
     },
     {
@@ -1916,7 +1916,7 @@ window.QUIZ_BANK = {
         q: "Quel outil pour <strong>estimer</strong> le coût d'une architecture avant de la déployer ?",
         c: ["Le Pricing Calculator", "Cost Management", "Le TCO Calculator", "Azure Advisor"],
         a: 0,
-        why: "Avant de déployer : estimer (Pricing Calculator). Après : surveiller (Cost Management, budgets, alertes). Le TCO Calculator (retiré, remplacé par le business case d'Azure Migrate) servait à autre chose : comparer le coût local à celui d'Azure.",
+        why: "Avant de déployer : estimer (Pricing Calculator). Après : surveiller (Cost Management, budgets, alertes). Le TCO Calculator (Microsoft oriente vers le business case d'Azure Migrate) servait à autre chose : comparer le coût local à celui d'Azure.",
         ref: "Chapitre 09"
     },
     {
@@ -2025,7 +2025,7 @@ window.QUIZ_BANK = {
         q: "Qu'est-ce qui manque nativement à Redmine face à un outil de helpdesk dédié comme GLPI ?",
         c: ["Un portail simplifié pour l'utilisateur", "La gestion de SLA", "L'inventaire du parc", "Le suivi de demandes par statut"],
         a: [0, 1, 2],
-        why: "Redmine vient de la gestion de projets de développement. Configuré, il fait un honnête outil de support, mais portail simplifié, SLA et inventaire demandent des plugins.",
+        why: "Redmine vient de la gestion de projets de développement. Configuré, il fait un honnête outil de support, mais portail simplifié, SLA et inventaire ne figurent pas parmi ses fonctions principales ; des plugins en apportent une partie.",
         ref: "Chapitre 01"
     },
     {

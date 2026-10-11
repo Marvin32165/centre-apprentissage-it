@@ -7,9 +7,9 @@
     <title>Supervision — Zabbix — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Instrument+Sans:wght@400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=19">
+    <link rel="stylesheet" href="../assets/theme.css?v=20">
 </head>
 <body>
 
@@ -219,6 +219,11 @@ LABOPS-NAT  172.16.50.0/24</pre>
             <h2 class="chapter__title">Ubuntu Server et MySQL</h2>
             <p class="chapter__intro">La VM Linux porte tout : la base, le serveur Zabbix et le frontend. Le dimensionnement se choisit selon les besoins réels — ici <strong>2 vCPU et 8 Go de RAM</strong>, mémoire dynamique décochée, génération 2 avec <em>Secure Boot</em> désactivé.</p>
 
+            <div class="tip">
+                <p class="tip__label">Précision : installation par paquets</p>
+                <p>Ce chapitre installe MySQL sur Ubuntu 26.04, par paquets : la doc Zabbix 7.4 propose ces paquets pour une base MySQL ou PostgreSQL. Le TP a fait autrement : Ubuntu 24.04.5 LTS, et Zabbix en conteneurs Docker avec PostgreSQL 16.</p>
+            </div>
+
             <h3>À l'installation d'Ubuntu</h3>
             <ul>
                 <li><strong>Configuration réseau manuelle</strong> sur l'interface : adresse <code>172.16.50.40/24</code>, passerelle <code>172.16.50.1</code>, DNS <code>172.16.50.10</code>.</li>
@@ -266,6 +271,11 @@ LABOPS-NAT  172.16.50.0/24</pre>
             <p class="chapter__num">05</p>
             <h2 class="chapter__title">Installer Zabbix</h2>
             <p class="chapter__intro">La page <em>zabbix.com/download</em> génère les commandes d'installation à partir de six choix. <strong>Changer une seule valeur change l'URL du dépôt et la liste des paquets</strong> — d'où l'importance de noter la combinaison retenue.</p>
+
+            <div class="tip">
+                <p class="tip__label">Précision : les paquets, pas le TP</p>
+                <p>Les commandes ci-dessous installent par paquets, avec MySQL et Ubuntu 26.04. Le TP a utilisé les images officielles Zabbix 7.4 et PostgreSQL 16 en conteneurs Docker, sur Ubuntu 24.04.5 LTS : même version de Zabbix, autre base, autre mode d'installation.</p>
+            </div>
 
             <div class="table-wrap">
                 <table>
@@ -404,7 +414,7 @@ LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
             </div>
 
             <h3>Agent 1 ou agent 2</h3>
-            <p>Zabbix propose <strong>deux agents</strong>. Un seul suffit par machine, et le serveur ne fait pas la différence : même protocole, même port <code>10050</code>, mêmes modes passif et actif, mêmes <code>UserParameter</code>. Ce labo installe l'<strong>agent 1</strong> partout.</p>
+            <p>Zabbix propose <strong>deux agents</strong>. Un seul suffit par machine, et le serveur ne fait pas la différence : même protocole, même port <code>10050</code>, mêmes modes passif et actif, mêmes <code>UserParameter</code>. Le TP a installé l'<strong>agent 2</strong> sur les trois serveurs Windows ; ce chapitre et les exercices suivants suivent l'<strong>agent 1</strong> (service <em>Zabbix Agent</em>, <code>zabbix_agentd.conf</code>). Avec l'agent 2, le service s'appelle <em>Zabbix Agent 2</em> et le fichier <code>zabbix_agent2.conf</code>.</p>
 
             <div class="table-wrap">
                 <table>
@@ -797,10 +807,10 @@ LISTEN 0  511    0.0.0.0:8080   0.0.0.0:*  users:(("nginx",…))</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · Synthèse du labo monitoring</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=19"></script>
-<script src="../assets/app.js?v=19"></script>
-<script src="../assets/quiz-data.js?v=19"></script>
-<script src="../assets/quiz.js?v=19"></script>
-<script src="../assets/pratique.js?v=19"></script>
+<script src="../assets/catalogue.js?v=20"></script>
+<script src="../assets/app.js?v=20"></script>
+<script src="../assets/quiz-data.js?v=20"></script>
+<script src="../assets/quiz.js?v=20"></script>
+<script src="../assets/pratique.js?v=20"></script>
 </body>
 </html>

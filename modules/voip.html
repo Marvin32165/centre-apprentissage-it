@@ -7,9 +7,9 @@
     <title>Téléphonie IP (VoIP / ToIP) — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Instrument+Sans:wght@400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=19">
+    <link rel="stylesheet" href="../assets/theme.css?v=20">
 </head>
 <body>
 
@@ -530,7 +530,7 @@
                         <tr><td>Le téléphone ne s'allume pas</td><td>PoE absent ou budget PoE du switch épuisé</td><td><code>show power inline</code> sur le switch</td></tr>
                         <tr><td>Allumé, mais « non enregistré »</td><td>Mauvais VLAN, pas d'adresse, mauvais identifiants SIP, port 5060 filtré</td><td>Adresse du téléphone, journaux du PBX</td></tr>
                         <tr><td>Ça sonne, on décroche, personne n'entend</td><td>RTP bloqué : pare-feu, NAT, plage de ports RTP non ouverte</td><td>Capture : SIP présent, RTP absent</td></tr>
-                        <tr><td>Son dans un seul sens</td><td>NAT : l'adresse annoncée dans le SDP est privée, ou un « SIP ALG » de la box réécrit mal</td><td>Adresse <code>c=</code> du SDP dans la capture</td></tr>
+                        <tr><td>Son dans un seul sens</td><td>NAT : l'adresse annoncée dans le SDP est privée, ou un « SIP ALG » de la box réécrit les messages SIP, ce qui peut perturber l'appel</td><td>Adresse <code>c=</code> du SDP dans la capture</td></tr>
                         <tr><td>Voix hachée, robotique</td><td>Gigue et pertes : congestion, Wi-Fi, absence de QoS</td><td>Wireshark → <em>Telephony → RTP → RTP Stream Analysis</em> : gigue et pertes</td></tr>
                         <tr><td>Coupure au bout de ≈ 32 s</td><td>L'ACK n'arrive pas (NAT, ALG, adresse privée dans l'en-tête <em>Contact</em>) : le poste appelé abandonne après 64 × 500 ms</td><td>Capture SIP : 200 OK répété, aucun ACK</td></tr>
                     </tbody>
@@ -722,10 +722,10 @@ Appel sortant : le correspondant décroche et entend la voix</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=19"></script>
-<script src="../assets/app.js?v=19"></script>
-<script src="../assets/quiz-data.js?v=19"></script>
-<script src="../assets/quiz.js?v=19"></script>
-<script src="../assets/pratique.js?v=19"></script>
+<script src="../assets/catalogue.js?v=20"></script>
+<script src="../assets/app.js?v=20"></script>
+<script src="../assets/quiz-data.js?v=20"></script>
+<script src="../assets/quiz.js?v=20"></script>
+<script src="../assets/pratique.js?v=20"></script>
 </body>
 </html>

@@ -7,9 +7,9 @@
     <title>CCNA — Réseau Cisco — Module</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Instrument+Sans:wght@400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=19">
+    <link rel="stylesheet" href="../assets/theme.css?v=20">
 </head>
 <body>
 
@@ -104,7 +104,7 @@
                 <li><code>do show …</code> lance un <code>show</code> sans quitter le mode configuration.</li>
                 <li><kbd>Ctrl</kbd>+<kbd>Z</kbd> ou <code>end</code> revient en mode privilégié ; <code>exit</code> remonte d'un niveau.</li>
                 <li><code>no</code> devant une commande l'annule (<code>no shutdown</code>, <code>no ip address</code>).</li>
-                <li><strong>Deux configurations</strong> : la <code>running-config</code> (en mémoire vive, active) et la <code>startup-config</code> (en NVRAM, rechargée au démarrage). Sans <code>copy running-config startup-config</code> (ou <code>write</code>), tout est perdu au redémarrage.</li>
+                <li><strong>Deux configurations</strong> : la <code>running-config</code> (en mémoire vive, active) et la <code>startup-config</code> (en NVRAM sur la plupart des plateformes, rechargée au démarrage). Sans <code>copy running-config startup-config</code> (ou <code>write</code>), tout est perdu au redémarrage.</li>
             </ul>
             <div class="cmdex" data-accept="do sh(ow?)? ip int\w* br\w*" data-hint="il faut un préfixe devant la commande show.">
                 <p class="cmdex__label">À toi de taper</p>
@@ -985,7 +985,7 @@ SW-CORE1     Gig 0/0         152       S I         2960       Gig 0/1</pre>
             </div>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>NTP pour une heure commune, horodatage et Syslog pour des journaux exploitables hors de l'équipement, CDP/LLDP pour voir le câblage réel, SNMP (v3 de préférence) pour la supervision.</p>
+                <p>NTP pour une heure commune, horodatage et Syslog pour des journaux exploitables hors de l'équipement, CDP pour voir le câblage réel (LLDP seulement une fois activé), SNMP (v3 de préférence) pour la supervision.</p>
             </div>
         </section>
 
@@ -1139,10 +1139,10 @@ FE80::2D0:97FF:FE2B:1A01
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=19"></script>
-<script src="../assets/app.js?v=19"></script>
-<script src="../assets/quiz-data.js?v=19"></script>
-<script src="../assets/quiz.js?v=19"></script>
-<script src="../assets/pratique.js?v=19"></script>
+<script src="../assets/catalogue.js?v=20"></script>
+<script src="../assets/app.js?v=20"></script>
+<script src="../assets/quiz-data.js?v=20"></script>
+<script src="../assets/quiz.js?v=20"></script>
+<script src="../assets/pratique.js?v=20"></script>
 </body>
 </html>

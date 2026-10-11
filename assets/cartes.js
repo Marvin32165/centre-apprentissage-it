@@ -180,11 +180,11 @@ window.CARTES = [
 
 /* ── Azure ── */
 { m: "azure", f: "LRS, ZRS, GRS, RA-GRS ?", b: "Un datacenter · plusieurs zones d'une région · une région secondaire · GRS avec lecture secondaire" },
-{ m: "azure", f: "Scalabilité ou élasticité ?", b: "Scalabilité : on ajuste la capacité. Élasticité : elle s'ajuste toute seule à la charge" },
+{ m: "azure", f: "Scalabilité ou élasticité ?", b: "Scalabilité : on ajuste la capacité. Élasticité : elle suit la charge, et s'ajuste seule si une mise à l'échelle automatique est configurée" },
 { m: "azure", f: "Hiérarchie de gestion Azure, du plus large au plus fin ?", b: "Management groups → subscriptions → resource groups → ressources" },
 { m: "azure", f: "RBAC ou Azure Policy ?", b: "RBAC : ce qu'une identité a le droit de faire. Policy : les propriétés qu'une ressource doit respecter" },
 { m: "azure", f: "Load Balancer ou Application Gateway ?", b: "Load Balancer : couche 4 (TCP/UDP). Application Gateway : couche 7 (URL, nom d'hôte, WAF)" },
-{ m: "azure", f: "Pricing Calculator ou business case d'Azure Migrate ?", b: "Pricing Calculator : estimer le coût d'une architecture Azure. Business case d'Azure Migrate (successeur du TCO Calculator) : comparer le coût local à celui d'Azure" },
+{ m: "azure", f: "Pricing Calculator ou business case d'Azure Migrate ?", b: "Pricing Calculator : estimer le coût d'une architecture Azure. Business case d'Azure Migrate : comparer le coût local à celui d'Azure" },
 { m: "azure", f: "SLA de 99,9 % : indisponibilité tolérée par mois ?", b: "Environ 43 minutes" },
 
 /* ── Scrum ── */

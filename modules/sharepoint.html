@@ -8,10 +8,10 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Instrument+Sans:wght@400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=19">
+    <link rel="stylesheet" href="../assets/theme.css?v=20">
 </head>
 <body>
 
@@ -175,7 +175,7 @@
 
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
-                <p>Tout se résume à une question : <strong>qui gère l'infrastructure ?</strong> <span class="pill pill--server">Server</span> = contrôle et personnalisation maximaux, au prix d'une équipe IT. <span class="pill pill--online">Online</span> = simplicité et accès partout, au prix d'une moindre flexibilité technique.</p>
+                <p>Une question guide le choix : <strong>qui gère l'infrastructure ?</strong> <span class="pill pill--server">Server</span> = contrôle et personnalisation maximaux, au prix d'une équipe IT. <span class="pill pill--online">Online</span> = simplicité et accès partout, au prix d'une moindre flexibilité technique.</p>
             </div>
 
             <div class="scenario scenario--quick">
@@ -249,7 +249,7 @@
                         <tr><td>Virtualisation</td><td><span class="dot dot--you"></span></td><td><span class="dot dot--cloud"></span></td><td><span class="dot dot--cloud"></span></td><td class="col-online"><span class="dot dot--cloud"></span></td></tr>
                         <tr><td>Serveurs physiques / Réseau physique</td><td><span class="dot dot--you"></span></td><td><span class="dot dot--cloud"></span></td><td><span class="dot dot--cloud"></span></td><td class="col-online"><span class="dot dot--cloud"></span></td></tr>
                         <tr><td>Datacenter</td><td><span class="dot dot--you"></span></td><td><span class="dot dot--cloud"></span></td><td><span class="dot dot--cloud"></span></td><td class="col-online"><span class="dot dot--cloud"></span></td></tr>
-                        <tr class="row-split"><td>SharePoint</td><td><strong>Server</strong></td><td><strong>Server / VM</strong></td><td>—</td><td class="col-online"><strong>Online</strong></td></tr>
+                        <tr class="row-split"><td>SharePoint</td><td><strong>Server</strong></td><td><strong>Server / VM</strong></td><td>Base seule (Azure SQL MI)</td><td class="col-online"><strong>Online</strong></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -881,7 +881,7 @@ New-NetFirewallRule -DisplayName "SQL Browser (UDP 1434)" `
 ----        ----
 SRV-SP01    SingleServerFarm
 200</pre>
-                <p class="verify__fail">« Cannot access the local farm » : la console n'est pas lancée avec un compte administrateur de ferme, ou SQL est injoignable.</p>
+                <p class="verify__fail">La console ne peut pas lire la ferme : vérifier que le compte est membre du rôle <code>SharePoint_Shell_Access</code> de la base de configuration et du groupe local <code>WSS_ADMIN_WPG</code> (<code>Add-SPShellAdmin</code>), et que SQL répond.</p>
             </div>
 
             <div class="tip">
@@ -1301,7 +1301,7 @@ Mount-SPContentDatabase -Name "SP_Content_Intranet" `
             <pre class="verify__out">DisplayName           Url
 -----------           ---
 SharePoint - 80       http://intranet/</pre>
-                <p class="verify__fail">« Cannot access the local farm » : la console n'est pas lancée avec le compte d'installation (<code>sp_setup</code>), ou SQL Server n'est pas joignable — tester <code>Test-NetConnection srv-sql01 -Port 1433</code> depuis SRV-SP01.</p>
+                <p class="verify__fail">La console ne peut pas lire la ferme : vérifier que le compte est membre du rôle <code>SharePoint_Shell_Access</code> et du groupe local <code>WSS_ADMIN_WPG</code> (<code>Add-SPShellAdmin</code>), et que SQL Server répond — tester <code>Test-NetConnection srv-sql01 -Port 1433</code> depuis SRV-SP01.</p>
             </div>
             <div class="cmdex" data-accept="Backup-SPSite (-Identity )?&quot;?http://intranet/?&quot;? -Path &quot;?C:\\Backup\\intranet\.bak&quot;?( -Force)?" data-hint="Backup-SPSite, l&#x27;URL, puis -Path.">
                 <p class="cmdex__label">À toi de taper</p>
@@ -1379,11 +1379,11 @@ SharePoint - 80       http://intranet/</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · 10 chapitres de théorie + 8 chapitres de pratique</p>
 </footer>
 
-<script src="../assets/catalogue.js?v=19"></script>
-<script src="../assets/app.js?v=19"></script>
-<script src="../assets/quiz-data.js?v=19"></script>
-<script src="../assets/quiz.js?v=19"></script>
-<script src="../assets/pratique.js?v=19"></script>
+<script src="../assets/catalogue.js?v=20"></script>
+<script src="../assets/app.js?v=20"></script>
+<script src="../assets/quiz-data.js?v=20"></script>
+<script src="../assets/quiz.js?v=20"></script>
+<script src="../assets/pratique.js?v=20"></script>
 
 </body>
 </html>

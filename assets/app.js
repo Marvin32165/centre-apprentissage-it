@@ -438,9 +438,22 @@
         }
         btn.addEventListener('click', function () {
             var next = current() === 'dark' ? 'light' : 'dark';
-            root.dataset.theme = next;
-            try { window.localStorage.setItem('cai.theme', next); } catch (e) { /* ignoré */ }
-            paint();
+            function apply() {
+                root.dataset.theme = next;
+                try { window.localStorage.setItem('cai.theme', next); } catch (e) { /* ignoré */ }
+                paint();
+            }
+            /* Le nouveau thème s'ouvre en cercle depuis le bouton, là où
+               le navigateur sait faire une View Transition et si le
+               visiteur n'a pas demandé moins d'animations. */
+            var calme = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (!document.startViewTransition || calme) { apply(); return; }
+            var r = btn.getBoundingClientRect();
+            root.style.setProperty('--vt-x', Math.round(r.left + r.width / 2) + 'px');
+            root.style.setProperty('--vt-y', Math.round(r.top + r.height / 2) + 'px');
+            root.classList.add('theme-vt');
+            var t = document.startViewTransition(apply);
+            t.finished.then(function () { root.classList.remove('theme-vt'); }, function () { root.classList.remove('theme-vt'); });
         });
         if (media && media.addEventListener) media.addEventListener('change', paint);
         paint();
