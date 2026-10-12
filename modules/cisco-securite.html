@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Instrument+Sans:wght@400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=20">
+    <link rel="stylesheet" href="../assets/theme.css?v=21">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
             <span class="fact fact--n2"><b>Niveau</b> Intermédiaire</span>
             <span class="fact"><b>Durée</b> ≈ 5 h 30</span>
             <span class="fact"><b>Chapitres</b> 11</span>
-            <span class="fact"><b>Test</b> 10 questions</span>
+            <span class="fact"><b>Test</b> 20 questions</span>
             <span class="fact"><b>Prérequis</b> <a href="subnetting.html">Subnetting</a> · <a href="ccna-reseau.html">CCNA</a> (utile)</span>
         </div>
     </div>
@@ -138,15 +138,15 @@
             </div>
 
             <h3>Neutraliser le VLAN 1</h3>
-            <p>Tous les ports sont dans le VLAN 1 à la sortie d'usine, et ce VLAN ne se supprime pas. On déplace les ports dans un autre VLAN, puis on éteint l'interface du VLAN 1 :</p>
+            <p>Tous les ports sont dans le VLAN 1 à la sortie d'usine, et ce VLAN ne se supprime pas. On déplace l'adresse d'administration, puis les ports, dans un autre VLAN, et on éteint l'interface du VLAN 1 :</p>
             <div class="terminal">
                 <div class="terminal__bar"><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__dot"></span><span class="terminal__title">Cisco IOS</span></div>
                 <pre class="terminal__code"><span class="k">vlan</span> 45
  <span class="k">exit</span>
+<span class="c">! … adresse d'administration déplacée d'abord sur l'interface vlan 45, puis :</span>
 <span class="k">interface range</span> fa0/1 - 24
  <span class="p">switchport mode access</span>
  <span class="p">switchport access vlan</span> 45
-<span class="c">! … adresse d'administration déplacée sur l'interface vlan 45, puis :</span>
 <span class="k">interface vlan</span> 1
  <span class="p">shutdown</span></pre>
             </div>
@@ -784,10 +784,10 @@ SW2(config)# <span class="k">spanning-tree</span> vlan 20 root primary</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=20"></script>
-<script src="../assets/app.js?v=20"></script>
-<script src="../assets/quiz-data.js?v=20"></script>
-<script src="../assets/quiz.js?v=20"></script>
-<script src="../assets/pratique.js?v=20"></script>
+<script src="../assets/catalogue.js?v=21"></script>
+<script src="../assets/app.js?v=21"></script>
+<script src="../assets/quiz-data.js?v=21"></script>
+<script src="../assets/quiz.js?v=21"></script>
+<script src="../assets/pratique.js?v=21"></script>
 </body>
 </html>

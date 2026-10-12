@@ -72,7 +72,7 @@
     }
 
     /* ══ Constitution du questionnaire ══════════════════════════════
-       Un test de module prend toutes ses questions, dans l'ordre.
+       Un test de module tire DRAW questions par niveau (plus bas).
        Un examen tire au sort dans les fonds des modules qu'il couvre,
        puis ajoute ses propres questions de synthèse — celles-ci sont
        toujours posées, c'est là que se joue le lien entre modules.
@@ -99,7 +99,36 @@
             var want = Math.max(0, (def.draw || 20) - own.length);
             return shuffle(own.concat(sample(pool, want)));
         }
-        return tag(def.questions, def.id);
+        return byLevel(drawLevels(tag(def.questions, def.id), def.draw || DRAW));
+    }
+
+    /* ══ Tirage d'un test de module ═════════════════════════════════
+       Le fonds compte une soixantaine de questions, chacune notée lvl
+       1 (débutant), 2 (intermédiaire) ou 3 (pro). Chaque passage en
+       tire DRAW au hasard, un tiers par niveau (complété avec les
+       autres niveaux si l'un manque), puis les range du plus simple
+       au plus pointu. « Recommencer » refait un tirage.
+       ══════════════════════════════════════════════════════════════ */
+    var DRAW = 20;
+    var LEVELS = { 1: 'Débutant', 2: 'Intermédiaire', 3: 'Pro' };
+    function lvlOf(q) { return LEVELS[q.lvl] ? q.lvl : 2; }
+    function drawLevels(all, n) {
+        if (all.length <= n) return all;
+        var groups = { 1: [], 2: [], 3: [] };
+        shuffle(all).forEach(function (q) { groups[lvlOf(q)].push(q); });
+        var quota = { 1: Math.ceil(n / 3), 2: Math.ceil((n - Math.ceil(n / 3)) / 2) };
+        quota[3] = n - quota[1] - quota[2];
+        var picked = [], rest = [];
+        [1, 2, 3].forEach(function (l) {
+            picked = picked.concat(groups[l].slice(0, quota[l]));
+            rest = rest.concat(groups[l].slice(quota[l]));
+        });
+        return picked.concat(rest.slice(0, n - picked.length));
+    }
+    function byLevel(list) {
+        return list.map(function (q, i) { return [q, i]; })
+            .sort(function (x, y) { return (lvlOf(x[0]) - lvlOf(y[0])) || (x[1] - y[1]); })
+            .map(function (x) { return x[0]; });
     }
 
     /* ══ Rendu ══════════════════════════════════════════════════════ */
@@ -174,8 +203,11 @@
             submit.disabled = true;
             submit.textContent = 'Corriger le test';
 
+            var poolSize = (def.questions || []).length;
             facts.innerHTML =
-                '<span><b>' + state.questions.length + '</b> questions</span>' +
+                '<span><b>' + state.questions.length + '</b> questions' +
+                    (kind !== 'exam' && poolSize > state.questions.length
+                        ? ', tirées parmi <b>' + poolSize + '</b>, du niveau débutant au niveau pro' : '') + '</span>' +
                 '<span>Seuil de réussite <b>' + passMark + ' %</b></span>' +
                 (kind === 'exam' && def.parts
                     ? '<span><b>' + def.parts.length + '</b> modules couverts</span>'
@@ -196,6 +228,7 @@
                 var qhead = el('div', 'q__head');
                 qhead.appendChild(el('span', 'q__num', String(i + 1).replace(/^(\d)$/, '0$1')));
                 qhead.appendChild(el('p', 'q__text', q.q));
+                if (q.lvl && LEVELS[q.lvl]) qhead.appendChild(el('span', 'q__lvl q__lvl--' + q.lvl, LEVELS[q.lvl]));
                 block.appendChild(qhead);
 
                 if (multi) block.appendChild(el('p', 'q__hint', 'Plusieurs réponses attendues'));
