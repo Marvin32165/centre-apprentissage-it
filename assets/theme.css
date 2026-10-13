@@ -282,7 +282,7 @@ kbd {
 .fact--n3 b::before { background: var(--no); }
 
 /* ── Recherche du portail ── */
-.search { position: relative; max-width: 560px; margin-top: 32px; }
+.search { position: relative; z-index: 40; /* au-dessus du tableau de bord (animé = contexte d'empilement propre) */ max-width: 560px; margin-top: 32px; }
 .search__input {
     width: 100%; font: 1rem var(--font-body); color: var(--ink);
     background: var(--surface); border: 1px solid var(--border-md);
