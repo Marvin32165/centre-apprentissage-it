@@ -464,7 +464,8 @@
        chargé à la première ouverture s'il n'est pas déjà dans la page. */
     var palette = (function () {
         var el, input, list, items = [], active = 0, lastFocus = null, indexState = 'none';
-        function norm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+        /* Sans accents ni ponctuation : « tcp/ip » et « l'encapsulation » se découpent en mots. */
+        function norm(t) { return String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
 
         function pages() {
             var p = [
@@ -500,7 +501,7 @@
             return (window.SEARCH_INDEX || []).map(function (e) {
                 return {
                     href: MODS + e.file + '#' + e.anchor, title: e.title, icon: '§', group: 'Chapitres',
-                    sub: e.module.replace(/ — Module$/, ''), hay: norm(e.title), body: norm(e.module + ' ' + e.snippet)
+                    sub: e.module.replace(/ — Module$/, ''), hay: norm(e.title), kw: norm(e.kw), body: norm(e.module + ' ' + e.snippet)
                 };
             });
         }
@@ -523,22 +524,30 @@
         function search(q) {
             var all = pages().concat(modules());
             if (!q) return all;
-            var words = norm(q).split(/\s+/).filter(Boolean);
-            function score(it) {
+            var words = norm(q).split(' ').filter(Boolean);
+            if (!words.length) return all;
+            function has(txt, w, loose) {
+                var i = (' ' + txt).indexOf(' ' + w);
+                return i === -1 && loose ? txt.indexOf(w) : i;
+            }
+            function score(it, loose) {
                 var s = 0;
                 for (var i = 0; i < words.length; i++) {
                     var w = words[i];
-                    if (it.hay.indexOf(w) === 0) s += 6;
-                    else if (it.hay.indexOf(' ' + w) > -1) s += 4;
-                    else if (it.hay.indexOf(w) > -1) s += 3;
-                    else if (it.body && it.body.indexOf(w) > -1) s += 1;
+                    if ((' ' + it.hay + ' ').indexOf(' ' + w + ' ') > -1) s += 10;
+                    else if (has(it.hay, w, loose) > -1) s += 6;
+                    else if (it.kw && has(it.kw, w, loose) > -1) s += 3;
+                    else if (it.body && has(it.body, w, loose) > -1) s += 1;
                     else return 0;
                 }
                 return s;
             }
-            var found = all.concat(glossary(), chapters()).map(function (it) { return { it: it, s: score(it) }; })
-                .filter(function (x) { return x.s > 0; })
-                .sort(function (a, b) { return b.s - a.s; });
+            var pool = all.concat(glossary(), chapters()), found = [];
+            for (var pass = 0; pass < 2 && !found.length; pass++) {
+                found = pool.map(function (it, n) { return { it: it, s: score(it, pass === 1), n: n }; })
+                    .filter(function (x) { return x.s > 0; })
+                    .sort(function (a, b) { return b.s - a.s || a.n - b.n; });
+            }
             var out = [], perGroup = { Pages: 0, Modules: 0, Glossaire: 0, Chapitres: 0 };
             found.forEach(function (x) {
                 var cap = x.it.group === 'Chapitres' ? 12 : x.it.group === 'Glossaire' ? 5 : 8;
