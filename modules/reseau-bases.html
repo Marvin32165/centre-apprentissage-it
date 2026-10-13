@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Instrument+Sans:wght@400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <script>try{var t=localStorage.getItem('cai.theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-    <link rel="stylesheet" href="../assets/theme.css?v=21">
+    <link rel="stylesheet" href="../assets/theme.css?v=22">
 </head>
 <body>
 
@@ -164,6 +164,40 @@
             <p>Voici la même requête, une fois toutes les enveloppes posées, telle qu'elle part sur le câble. Lis-la de gauche à droite : c'est l'ordre dans lequel les octets circulent, et l'ordre dans lequel un équipement les lit.</p>
             <div class="frame"><span class="hdr hdr--l2"><b>Ethernet (couche 2)</b>MAC src <i>aa:aa:aa:00:00:25</i> (ton PC)<br>MAC dst <i>aa:aa:aa:00:00:01</i> (la passerelle)</span><span class="hdr hdr--l3"><b>IPv4 (couche 3)</b>IP src <i>192.168.1.25</i><br>IP dst <i>203.0.113.10</i><br>TTL 128</span><span class="hdr hdr--l4"><b>TCP (couche 4)</b>port src <i>51234</i><br>port dst <i>443</i></span><span class="hdr hdr--data"><b>Données (couche 7)</b>GET / HTTP/1.1<br>Host: www.exemple.be</span></div>
             <p class="frame__legend">Un <strong>switch</strong> lit la case brune et s'arrête là. Un <strong>routeur</strong> lit aussi la case terre cuite. Un <strong>pare-feu</strong> va jusqu'à la case des ports. Seul le serveur ouvre la dernière.</p>
+            <h3>Ce que chaque couche règle</h3>
+            <p>Le modèle OSI ne sert pas à réciter : il sert à <strong>savoir où chercher</strong>. Chaque couche répond à une question, et une panne s'y reconnaît à un symptôme précis.</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Couche</th><th>La question qu'elle règle</th><th>Ce qui la fait tomber</th><th>Pour la tester</th></tr></thead>
+                    <tbody>
+                        <tr><td>7 — Application</td><td>Le service comprend-il la requête ?</td><td>Service arrêté, mauvais identifiants, erreur HTTP 403 ou 500, nom DNS introuvable</td><td><code>curl</code>, le navigateur, <code>nslookup</code></td></tr>
+                        <tr><td>4 — Transport</td><td>Le bon programme répond-il sur le bon <strong>port</strong> ?</td><td>Port bloqué par un pare-feu, service qui n'écoute pas</td><td><code>Test-NetConnection hôte -Port 443</code> (Windows), <code>nc -zv hôte 443</code> (Linux)</td></tr>
+                        <tr><td>3 — Réseau</td><td>Le paquet sait-il rejoindre <strong>un autre réseau</strong> ?</td><td>Mauvaise passerelle ou mauvais masque, route manquante</td><td><code>ping</code>, <code>tracert</code> (Windows) / <code>traceroute</code> (Linux)</td></tr>
+                        <tr><td>2 — Liaison</td><td>La trame arrive-t-elle sur <strong>le même réseau local</strong> ?</td><td>Mauvais VLAN, ARP sans réponse, adresse MAC en double</td><td><code>arp -a</code>, <code>show mac address-table</code> (Cisco)</td></tr>
+                        <tr><td>1 — Physique</td><td>Le signal passe-t-il ?</td><td>Câble débranché ou abîmé, port éteint, débit ou duplex incompatibles</td><td>Les voyants, <code>show interfaces</code> (Cisco)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>Les couches 5 et 6 n'apparaissent pas dans ce tableau : TCP/IP les range dans « Application », et on ne dépanne presque jamais à ce niveau-là.</p>
+            <h3>Qui lit quoi : les équipements par couche</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Équipement</th><th>Va jusqu'à la couche</th><th>Il décide d'après</th></tr></thead>
+                    <tbody>
+                        <tr><td>Hub (concentrateur, disparu)</td><td>1</td><td>Rien : il répète les bits sur tous ses ports</td></tr>
+                        <tr><td>Switch</td><td>2</td><td>L'<strong>adresse MAC</strong> de destination</td></tr>
+                        <tr><td>Routeur (et switch de niveau 3)</td><td>3</td><td>L'<strong>adresse IP</strong> de destination et sa table de routage</td></tr>
+                        <tr><td>Pare-feu</td><td>4, parfois jusqu'à 7</td><td>IP, <strong>ports</strong>, état de la connexion ; un pare-feu « nouvelle génération » reconnaît aussi l'application</td></tr>
+                        <tr><td>Proxy, reverse proxy, WAF</td><td>7</td><td>Le contenu de la requête : URL, en-têtes, méthode</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Trois pièges de vocabulaire</h3>
+            <ul>
+                <li><strong>OSI n'est pas ce qui tourne sur Internet.</strong> C'est un modèle de référence (ISO, 1984) pour raisonner ; la pile réellement utilisée est TCP/IP. On parle pourtant de « couche 2 » et de « couche 3 » partout, y compris sur du matériel Cisco.</li>
+                <li><strong>Certains protocoles ne se classent pas proprement.</strong> <code>ping</code> envoie de l'<strong>ICMP</strong>, transporté dans de l'IP : couche 3. <strong>ARP</strong> fait le lien entre l'IP (3) et la MAC (2) ; ce cours le range avec la liaison.</li>
+                <li><strong>Le mot « paquet » est employé à tort et à travers.</strong> Au sens strict, c'est l'unité de la couche 3 ; la trame est celle de la couche 2, le segment celle du TCP.</li>
+            </ul>
             <p>Pour retenir l'ordre des sept couches OSI, de 1 à 7 : <strong>P</strong>our <strong>L</strong>e <strong>R</strong>éseau, <strong>T</strong>out <strong>S</strong>e <strong>P</strong>asse <strong>A</strong>utomatiquement — Physique, Liaison, Réseau, Transport, Session, Présentation, Application.</p>
             <div class="takeaway">
                 <p class="takeaway__label">À retenir</p>
@@ -183,6 +217,18 @@
                         <button class="scenario__opt" data-why="Un routeur n&#x27;ouvre ni les ports ni le contenu : c&#x27;est le rôle d&#x27;un pare-feu applicatif ou d&#x27;un proxy.">Jusqu'à la couche 7, pour lire la requête</button>
                     </div>
                     <div class="scenario__why"><p>Le routeur retire l'en-tête Ethernet, lit l'en-tête IP, consulte sa table de routage, décrémente le TTL, puis repose le paquet dans une <strong>nouvelle trame</strong> pour le tronçon suivant.</p></div>
+                </div>
+            </div>
+            <div class="scenario scenario--quick">
+                <p class="scenario__label scenario__label--quick">Question éclair</p>
+                <div class="scenario__step">
+                    <p class="scenario__q">Un poste pingue <code>8.8.8.8</code> avec succès, mais le navigateur répond « site introuvable » pour <code>www.exemple.be</code>. Où chercher ?</p>
+                    <div class="scenario__opts">
+                        <button class="scenario__opt" data-ok>Au niveau du nom : la résolution DNS (couche 7), pas le câble ni l'IP</button>
+                        <button class="scenario__opt" data-why="Si le câble était en cause, le ping vers 8.8.8.8 échouerait lui aussi.">Le câble (couche 1)</button>
+                        <button class="scenario__opt" data-why="La passerelle fonctionne puisque le ping vers 8.8.8.8 passe : l&#x27;IP et le routage sont bons.">La passerelle (couche 3)</button>
+                    </div>
+                    <div class="scenario__why"><p>Le ping vers une adresse IP prouve les couches 1 à 3. Si seul le <strong>nom</strong> échoue, le coupable est le serveur DNS configuré sur le poste : on teste avec <code>nslookup www.exemple.be</code>.</p></div>
                 </div>
             </div>
         </section>
@@ -1159,11 +1205,11 @@ L        10.0.0.1/32 is directly connected, GigabitEthernet0/0/1</pre>
     <p><a href="../index.html">← Retour au portail</a> · <a href="../examens.html">Examens transversaux</a> · <a href="../revision.html">Révision du jour</a></p>
 </footer>
 
-<script src="../assets/catalogue.js?v=21"></script>
-<script src="../assets/app.js?v=21"></script>
-<script src="../assets/quiz-data.js?v=21"></script>
-<script src="../assets/quiz.js?v=21"></script>
-<script src="../assets/pratique.js?v=21"></script>
-<script src="../assets/atelier.js?v=21"></script>
+<script src="../assets/catalogue.js?v=22"></script>
+<script src="../assets/app.js?v=22"></script>
+<script src="../assets/quiz-data.js?v=22"></script>
+<script src="../assets/quiz.js?v=22"></script>
+<script src="../assets/pratique.js?v=22"></script>
+<script src="../assets/atelier.js?v=22"></script>
 </body>
 </html>
