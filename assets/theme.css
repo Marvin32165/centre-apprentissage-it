@@ -2354,3 +2354,47 @@ tbody td:first-child { font-weight: 600; }
 .path__title, .exam-card__title, .dash__title, .lab__title, .test__title, .map__title, .palier__title,
 .road__step h3, .road__step h4, .card h4, .res__name, .stair__title, .diag__title, .q__text { line-height: 1.18; }
 .path__title { margin: 10px 0 10px; }
+
+/* ══════════════════════════════════════════════════════════════════
+   ACCESSIBILITÉ ET CONFORT TACTILE (refonte, v23) — voir DESIGN.md
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Lien d'évitement : visible seulement au clavier */
+.skip-link {
+    position: fixed; top: 8px; left: 8px; z-index: 300;
+    padding: 10px 16px; border-radius: var(--r-lg);
+    background: var(--accent); color: var(--on-accent);
+    font: 600 .9rem var(--font-ui); text-decoration: none;
+    transform: translateY(-200%);
+}
+.skip-link:focus { transform: none; }
+main[tabindex="-1"]:focus { outline: none; }
+
+/* Pas de délai de double tap, surbrillance tactile discrète */
+a, button, summary, label, input, select, .gt { touch-action: manipulation; }
+html { -webkit-tap-highlight-color: color-mix(in srgb, var(--accent) 18%, transparent); }
+
+/* Fenêtres flottantes : le défilement ne remonte pas à la page */
+.palette, .palette__box { overscroll-behavior: contain; }
+
+/* Encoches : bouton « haut de page » et navigation hors des zones système */
+.totop { right: max(14px, env(safe-area-inset-right)); bottom: max(14px, env(safe-area-inset-bottom)); }
+.sitenav__inner { padding-left: max(28px, env(safe-area-inset-left)); padding-right: max(28px, env(safe-area-inset-right)); }
+
+/* Petits libellés : jamais sous 12 px (lisibilité, WCAG 1.4.4) */
+.content p.tool__label, .tool__label, .tool__sub, .q__num, .q__lvl, .test__count, .pnav__dir,
+.lab__count, .walk__label, .walk__where, .walk__pos, .toc__meter b, .hdr b,
+.modcard__palier b, .palier__job b { font-size: .75rem; }
+
+/* Chiffres alignés dans les tableaux et les compteurs */
+table, .fact, .dash, .srs__stats, .palier__tally, .lab__count, .test__count, .walk__pos { font-variant-numeric: tabular-nums; }
+
+/* Pastilles de navigation d'étapes : zone cliquable élargie sans changer le dessin */
+.walk__dot { position: relative; }
+.walk__dot::after { content: ""; position: absolute; inset: -12px -6px; }
+
+/* Mobile : un tableau trop serré défile dans son cadre au lieu d'écraser ses colonnes */
+@media (max-width: 700px) {
+    .table-wrap { -webkit-overflow-scrolling: touch; }
+    .table-wrap table { min-width: 34rem; }
+}
