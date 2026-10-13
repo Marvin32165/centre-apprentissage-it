@@ -151,7 +151,7 @@ Le Centre d'apprentissage IT est le carnet de travail d'une seule personne qui s
 - **Accent terre cuite** (`primary`) : l'action principale, les liens, l'état courant dans la navigation et la barre de progression de lecture. Jamais en décoration de fond large.
 - **Sauge** (`semantic-success`) : réservée à ce qui est validé (module terminé, réponse juste). Le rouge brique (`semantic-error`) et l'ocre (`semantic-warning`) servent aux erreurs et aux mises en garde.
 - **Texte** : `ink` pour le texte courant, `ink-muted` pour le secondaire, `ink-faint` pour les légendes seulement (4,9:1 minimum sur `surface-2`).
-- **Fonds** : `canvas` (page), `surface-1` (cartes), `surface-2` (zones en retrait). Pas de dégradé hormis le halo terre cuite du bandeau d'accueil et la pastille du logo.
+- **Fonds** : `canvas` (page), `surface-1` (cartes), `surface-2` (zones en retrait). Pas de dégradé hormis le halo terre cuite du bandeau d'accueil.
 - **Thème sombre** : mêmes teintes en brun profond (`canvas-dark`, `surface-dark`, `ink-dark`, accent `primary-dark`), suivi du système ou choix du visiteur (`localStorage`, clé `cai.theme`). Les couleurs ne sont jamais écrites en dur dans un composant : tout passe par les variables CSS de `assets/theme.css`.
 - Contraste du texte : au moins 4,5:1 sur son fond, dans les deux thèmes.
 
@@ -179,7 +179,7 @@ Angles discrets : `rounded.md` (4 px) pour les champs et petits éléments, `rou
 
 ## Components
 
-- **Navigation** : logo pastille (moitié terre cuite, moitié brun) + nom, liens en Instrument Sans 13,5 px, boutons Recherche / Thème. Survol : fond `surface-2`. Page courante : fond `primary-soft`.
+- **Navigation** : logo en losange terre cuite (10 px, tourné à 45°) + nom, liens en Instrument Sans 13,5 px, boutons Recherche / Thème. Survol : fond `surface-2`. Page courante : fond `primary-soft`.
 - **Cartes de module et de parcours** : fond `surface-1`, filet, pas d'ombre ; le survol change la bordure.
 - **Encadrés** (note, succès, erreur, attention) : fond teinté `-soft`, texte de la teinte foncée, jamais de couleur seule : toujours un titre ou un libellé.
 - **Terminal** : toujours sombre, même en thème clair, avec un bouton Copier visible au survol et au focus clavier.
@@ -221,8 +221,8 @@ Décidés seul, d'après ce que le site utilise déjà (aucune question posée) 
 
 1. **Public et ton** : une seule personne en formation, tutoiement et français conservés tels que dans les pages.
 2. **Couleurs et polices** : reprises à l'identique de `assets/theme.css` (aucune nouvelle teinte) ; Newsreader, Instrument Sans et IBM Plex Mono conservées.
-3. **Logo** : il n'y a pas de fichier logo ; j'ai décrit la pastille CSS (terre cuite / brun) comme logo officiel.
+3. **Logo** : il n'y a pas de fichier logo ; j'ai pris comme logo le losange terre cuite dessiné en CSS devant le nom du site.
 4. **Sites de référence** : aucun cité, l'esprit « livre technique » est déduit du CSS (commentaire d'en-tête de `theme.css`).
 5. **Tailles de titres** (56 px / 32 px) : valeurs approchées, à ajuster si tu veux les figer.
-6. **Favicon** : le site n'en a pas ; j'en ajouterai un en SVG dans les couleurs de la pastille.
+6. **Favicon** : le site n'en avait pas ; ajouté en SVG (`assets/favicon.svg`) : le losange terre cuite sur fond crème, à valider.
 7. **Ligne `CLAUDE.md`** : le dépôt n'a pas de `CLAUDE.md` ; je n'en crée pas, DESIGN.md se cite avec `@DESIGN.md`.
