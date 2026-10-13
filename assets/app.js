@@ -674,6 +674,18 @@
             '</span></div>';
         var progressEl = document.querySelector('.progress');
         document.body.insertBefore(nav, progressEl ? progressEl.nextSibling : document.body.firstChild);
+
+        /* Lien d'évitement : premier élément focalisable de chaque page. */
+        var mainEl = document.querySelector('main');
+        if (mainEl) {
+            if (!mainEl.id) mainEl.id = 'contenu';
+            mainEl.setAttribute('tabindex', '-1');
+            var skip = document.createElement('a');
+            skip.className = 'skip-link';
+            skip.href = '#' + mainEl.id;
+            skip.textContent = 'Aller au contenu';
+            document.body.insertBefore(skip, document.body.firstChild);
+        }
         nav.querySelector('.sitenav__find').addEventListener('click', function () { palette.open(); });
         themeButton(nav.querySelector('.sitenav__theme'));
     })();
