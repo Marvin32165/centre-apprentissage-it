@@ -2384,7 +2384,8 @@ html { -webkit-tap-highlight-color: color-mix(in srgb, var(--accent) 18%, transp
 /* Petits libellés : jamais sous 12 px (lisibilité, WCAG 1.4.4) */
 .content p.tool__label, .tool__label, .tool__sub, .q__num, .q__lvl, .test__count, .pnav__dir,
 .lab__count, .walk__label, .walk__where, .walk__pos, .toc__meter b, .hdr b,
-.modcard__palier b, .palier__job b { font-size: .75rem; }
+.modcard__palier b, .palier__job b, .res__url, .map__icon, .map__state, .glo__dom, .stair__meta, .sitenav__btn kbd { font-size: .75rem; }
+.cron__legend { font-size: .75rem !important; }
 
 /* Chiffres alignés dans les tableaux et les compteurs */
 table, .fact, .dash, .srs__stats, .palier__tally, .lab__count, .test__count, .walk__pos { font-variant-numeric: tabular-nums; }
