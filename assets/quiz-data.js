@@ -29,7 +29,7 @@ window.QUIZ_BANK = {
     name: "Réseau : les bases",
     file: "reseau-bases.html",
     title: "Test — Réseau : les bases",
-    intro: "Douze chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro. Peu de définitions : surtout des situations, des commandes et des sorties à lire.",
+    intro: "Douze chapitres, vingt questions tirées au hasard parmi soixante. Peu de définitions : surtout des situations, des commandes et des sorties à lire.",
     pass: 70,
     questions: [
     {
@@ -518,7 +518,7 @@ window.QUIZ_BANK = {
     name: "Dépannage réseau",
     file: "depannage-reseau.html",
     title: "Test — Dépannage réseau",
-    intro: "Huit chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro : que fais-tu, et que conclus-tu de ce que tu vois ?",
+    intro: "Huit chapitres, vingt questions tirées au hasard parmi soixante : que fais-tu, et que conclus-tu de ce que tu vois ?",
     pass: 70,
     questions: [
     {
@@ -1009,7 +1009,7 @@ window.QUIZ_BANK = {
     name: "Hyper-V & labo virtuel",
     file: "hyperv.html",
     title: "Test — Hyper-V & labo virtuel",
-    intro: "Huit chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro. L'objectif : savoir monter un labo Hyper-V propre et le redéployer sans tout refaire à la main.",
+    intro: "Huit chapitres, vingt questions tirées au hasard parmi soixante. L'objectif : savoir monter un labo Hyper-V propre et le redéployer sans tout refaire à la main.",
     pass: 70,
     questions: [
     {
@@ -1498,7 +1498,7 @@ window.QUIZ_BANK = {
     name: "Linux Debian",
     file: "linux-debian.html",
     title: "Test — Linux Debian",
-    intro: "Le module le plus dense du parcours : vingt questions tirées au hasard parmi soixante, du débutant au pro, sur le terminal, les permissions, les filtres texte, le réseau, les services, les disques et les volumes.",
+    intro: "Le module le plus dense du parcours : vingt questions tirées au hasard parmi soixante, sur le terminal, les permissions, les filtres texte, le réseau, les services, les disques et les volumes.",
     pass: 70,
     questions: [
     {
@@ -1987,7 +1987,7 @@ window.QUIZ_BANK = {
     name: "Réseau & Subnetting",
     file: "subnetting.html",
     title: "Test — Réseau & Subnetting",
-    intro: "Vingt questions de calcul à faire de tête, tirées au hasard parmi soixante, du débutant au pro. Si tu passes ce test sans papier, le subnetting est acquis.",
+    intro: "Vingt questions de calcul à faire de tête, tirées au hasard parmi soixante. Si tu passes ce test sans papier, le subnetting est acquis.",
     pass: 75,
     questions: [
     {
@@ -2478,7 +2478,7 @@ window.QUIZ_BANK = {
     name: "Windows Server 2025",
     file: "windows-server.html",
     title: "Test — Windows Server 2025",
-    intro: "Treize chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro : surtout des situations du lab Orion, et ce qu'il faut taper ou regarder.",
+    intro: "Treize chapitres, vingt questions tirées au hasard parmi soixante : surtout des situations du lab Orion, et ce qu'il faut taper ou regarder.",
     pass: 70,
     questions: [
     {
@@ -2968,7 +2968,7 @@ window.QUIZ_BANK = {
     name: "PowerShell",
     file: "powershell.html",
     title: "Test — PowerShell",
-    intro: "Dix chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro : que renvoie ce code, que taper, et pourquoi ça casse.",
+    intro: "Dix chapitres, vingt questions tirées au hasard parmi soixante : que renvoie ce code, que taper, et pourquoi ça casse.",
     pass: 70,
     questions: [
     {
@@ -3458,7 +3458,7 @@ window.QUIZ_BANK = {
     name: "Stockage & Clustering",
     file: "storage-clustering.html",
     title: "Test — Stockage & Clustering",
-    intro: "Du disque au cluster de basculement : douze chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro. Beaucoup de pièges classiques de production.",
+    intro: "Du disque au cluster de basculement : douze chapitres, vingt questions tirées au hasard parmi soixante. Beaucoup de pièges classiques de production.",
     pass: 70,
     questions: [
     {
@@ -3947,7 +3947,7 @@ window.QUIZ_BANK = {
     name: "Bureau à distance (RDS)",
     file: "rds.html",
     title: "Test — Bureau à distance (RDS)",
-    intro: "Sept chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro : les rôles, le déploiement, et ce qui le fait tenir dans la durée.",
+    intro: "Sept chapitres, vingt questions tirées au hasard parmi soixante : les rôles, le déploiement, et ce qui le fait tenir dans la durée.",
     pass: 70,
     questions: [
     {
@@ -4437,7 +4437,7 @@ window.QUIZ_BANK = {
     name: "Exchange & PKI",
     file: "exchange-securite.html",
     title: "Test — Exchange & PKI",
-    intro: "Messagerie et cryptographie appliquée. Les deux sens du chiffrement asymétrique sont le cœur du test : si tu les tiens, le reste suit. Vingt questions par passage, tirées au hasard parmi soixante, du débutant au pro.",
+    intro: "Messagerie et cryptographie appliquée. Les deux sens du chiffrement asymétrique sont le cœur du test : si tu les tiens, le reste suit. Vingt questions par passage, tirées au hasard parmi soixante.",
     pass: 70,
     questions: [
     {
@@ -4926,7 +4926,7 @@ window.QUIZ_BANK = {
     name: "SQL Server",
     file: "sql-server.html",
     title: "Test — SQL Server",
-    intro: "Vingt questions d'administration, tirées au hasard parmi soixante, du débutant au pro, et choisies parmi les erreurs qui coûtent le plus cher en production : dimensionnement, sauvegardes, droits et diagnostic.",
+    intro: "Vingt questions d'administration, tirées au hasard parmi soixante, et choisies parmi les erreurs qui coûtent le plus cher en production : dimensionnement, sauvegardes, droits et diagnostic.",
     pass: 70,
     questions: [
     {
@@ -5415,7 +5415,7 @@ window.QUIZ_BANK = {
     name: "SharePoint Server SE",
     file: "sharepoint.html",
     title: "Test — SharePoint Server SE",
-    intro: "Théorie et pratique : le choix Server vs Online, l'architecture en couches, et la question qui fâche — qui sauvegarde vos données. Vingt questions par passage, tirées au hasard parmi soixante, du débutant au pro.",
+    intro: "Théorie et pratique : le choix Server vs Online, l'architecture en couches, et la question qui fâche — qui sauvegarde vos données. Vingt questions par passage, tirées au hasard parmi soixante.",
     pass: 70,
     questions: [
     {
@@ -5904,7 +5904,7 @@ window.QUIZ_BANK = {
     name: "System Center DPM",
     file: "dpm.html",
     title: "Test — System Center DPM",
-    intro: "Neuf chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro. Elles portent sur ce qui fait échouer une installation DPM et sur la distinction qui décide de ce qu'on pourra restaurer : synchronisation ou point de récupération.",
+    intro: "Neuf chapitres, vingt questions tirées au hasard parmi soixante. Elles portent sur ce qui fait échouer une installation DPM et sur la distinction qui décide de ce qu'on pourra restaurer : synchronisation ou point de récupération.",
     pass: 70,
     questions: [
     {
@@ -6393,7 +6393,7 @@ window.QUIZ_BANK = {
     name: "IIS — Serveur web Windows",
     file: "iis.html",
     title: "Test — IIS, serveur web Windows",
-    intro: "Neuf chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro. L'objectif : savoir publier plusieurs sites sur un même serveur sans les mélanger, et comprendre ce qui se passe entre le binding et le DNS.",
+    intro: "Neuf chapitres, vingt questions tirées au hasard parmi soixante. L'objectif : savoir publier plusieurs sites sur un même serveur sans les mélanger, et comprendre ce qui se passe entre le binding et le DNS.",
     pass: 70,
     questions: [
     {
@@ -6884,7 +6884,7 @@ window.QUIZ_BANK = {
     name: "CCNA — Réseau Cisco",
     file: "ccna-reseau.html",
     title: "Test — CCNA, réseau Cisco",
-    intro: "Quinze chapitres de configuration et de vérification. Les questions ressemblent à l'examen pratique : que taper, et que conclure d'une sortie show. Vingt questions par passage, tirées au hasard parmi soixante, du débutant au pro.",
+    intro: "Quinze chapitres de configuration et de vérification. Les questions ressemblent à l'examen pratique : que taper, et que conclure d'une sortie show. Vingt questions par passage, tirées au hasard parmi soixante.",
     pass: 70,
     questions: [
     {
@@ -7374,7 +7374,7 @@ window.QUIZ_BANK = {
     name: "Cisco IOS — Sécurité, VLAN, STP & ACL",
     file: "cisco-securite.html",
     title: "Test — Cisco IOS, sécurité",
-    intro: "Onze chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro : les gestes qui rendent un réseau Cisco sûr, et les pièges qui le cassent sans prévenir.",
+    intro: "Onze chapitres, vingt questions tirées au hasard parmi soixante : les gestes qui rendent un réseau Cisco sûr, et les pièges qui le cassent sans prévenir.",
     pass: 70,
     questions: [
     {
@@ -7863,7 +7863,7 @@ window.QUIZ_BANK = {
     name: "Téléphonie IP (VoIP / ToIP)",
     file: "voip.html",
     title: "Test — Téléphonie IP",
-    intro: "De la voix au paquet : protocoles, codecs, QoS et le grand classique du dépannage — « ça sonne, mais on n'entend rien ». Vingt questions par passage, tirées au hasard parmi soixante, du débutant au pro.",
+    intro: "De la voix au paquet : protocoles, codecs, QoS et le grand classique du dépannage — « ça sonne, mais on n'entend rien ». Vingt questions par passage, tirées au hasard parmi soixante.",
     pass: 70,
     questions: [
     {
@@ -8354,7 +8354,7 @@ window.QUIZ_BANK = {
     name: "Proxmox & Virtualisation",
     file: "proxmox.html",
     title: "Test — Proxmox & Virtualisation",
-    intro: "Dix chapitres sur l'hyperviseur du homelab : VM contre conteneurs, ZFS, réseau, sauvegardes et cluster. Vingt questions par passage, tirées au hasard parmi soixante, du débutant au pro.",
+    intro: "Dix chapitres sur l'hyperviseur du homelab : VM contre conteneurs, ZFS, réseau, sauvegardes et cluster. Vingt questions par passage, tirées au hasard parmi soixante.",
     pass: 70,
     questions: [
     {
@@ -8843,7 +8843,7 @@ window.QUIZ_BANK = {
     name: "Docker & conteneurs",
     file: "docker.html",
     title: "Test — Docker & conteneurs",
-    intro: "Neuf chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro : ce qu'est un conteneur, et les erreurs qui font perdre des données ou arrêter un service sans le vouloir.",
+    intro: "Neuf chapitres, vingt questions tirées au hasard parmi soixante : ce qu'est un conteneur, et les erreurs qui font perdre des données ou arrêter un service sans le vouloir.",
     pass: 70,
     questions: [
     {
@@ -9332,7 +9332,7 @@ window.QUIZ_BANK = {
     name: "Homelab & Self-hosting",
     file: "homelab.html",
     title: "Test — Homelab & Self-hosting",
-    intro: "Docker, reverse proxy, DNS local, NAS et accès distant. Une seule erreur dans ce test peut coûter tout un homelab : celle sur le port forwarding. Vingt questions par passage, tirées au hasard parmi soixante, du débutant au pro.",
+    intro: "Docker, reverse proxy, DNS local, NAS et accès distant. Une seule erreur dans ce test peut coûter tout un homelab : celle sur le port forwarding. Vingt questions par passage, tirées au hasard parmi soixante.",
     pass: 70,
     questions: [
     {
@@ -9821,7 +9821,7 @@ window.QUIZ_BANK = {
     name: "Cybersécurité",
     file: "securite.html",
     title: "Test — Cybersécurité & hygiène",
-    intro: "Module défensif. Certaines questions ne sont pas techniques — et ce sont les plus importantes du test. Vingt questions par passage, tirées au hasard parmi soixante, du débutant au pro.",
+    intro: "Module défensif. Certaines questions ne sont pas techniques — et ce sont les plus importantes du test. Vingt questions par passage, tirées au hasard parmi soixante.",
     pass: 75,
     questions: [
     {
@@ -10312,7 +10312,7 @@ window.QUIZ_BANK = {
     name: "Supervision — Zabbix",
     file: "monitoring-zabbix.html",
     title: "Test — Supervision avec Zabbix",
-    intro: "Dix chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro. L'objectif : savoir monter une supervision qui remonte vraiment des données, et comprendre ce qui se passe quand elle n'en remonte pas.",
+    intro: "Dix chapitres, vingt questions tirées au hasard parmi soixante. L'objectif : savoir monter une supervision qui remonte vraiment des données, et comprendre ce qui se passe quand elle n'en remonte pas.",
     pass: 70,
     questions: [
     {
@@ -10801,7 +10801,7 @@ window.QUIZ_BANK = {
     name: "Zabbix & serveurs Windows",
     file: "zabbix-windows.html",
     title: "Test — Zabbix & serveurs Windows",
-    intro: "Huit chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro. Elles portent sur ce qui casse quand on change de sens ou de réseau : vérifications actives, PSK, noms de services Docker, et les modèles maison.",
+    intro: "Huit chapitres, vingt questions tirées au hasard parmi soixante. Elles portent sur ce qui casse quand on change de sens ou de réseau : vérifications actives, PSK, noms de services Docker, et les modèles maison.",
     pass: 70,
     questions: [
     {
@@ -11290,7 +11290,7 @@ window.QUIZ_BANK = {
     name: "Azure — AZ-900",
     file: "azure.html",
     title: "Test — Azure AZ-900",
-    intro: "Douze chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro, posées comme à l'examen : un scénario, un mot-clé, et des propositions plausibles. L'objectif n'est pas de réciter une définition, mais de choisir le service le plus simple qui répond au besoin.",
+    intro: "Douze chapitres, vingt questions tirées au hasard parmi soixante, posées comme à l'examen : un scénario, un mot-clé, et des propositions plausibles. L'objectif n'est pas de réciter une définition, mais de choisir le service le plus simple qui répond au besoin.",
     pass: 70,
     questions: [
     {
@@ -11779,7 +11779,7 @@ window.QUIZ_BANK = {
     name: "Agile & Scrum",
     file: "scrum.html",
     title: "Test — Agile & Scrum",
-    intro: "Dix chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro. Elles portent surtout sur les distinctions que tout le monde confond : Review et Rétrospective, les deux backlogs, critères d'acceptation et Definition of Done.",
+    intro: "Dix chapitres, vingt questions tirées au hasard parmi soixante. Elles portent surtout sur les distinctions que tout le monde confond : Review et Rétrospective, les deux backlogs, critères d'acceptation et Definition of Done.",
     pass: 70,
     questions: [
     {
@@ -12268,7 +12268,7 @@ window.QUIZ_BANK = {
     name: "Redmine — helpdesk",
     file: "redmine.html",
     title: "Test — Redmine",
-    intro: "Huit chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro. Elles portent sur le modèle de Redmine, sur le piège LDAP de Windows Server 2025, et sur ce qui rend une application en conteneurs exploitable : secrets, sauvegarde, HTTPS.",
+    intro: "Huit chapitres, vingt questions tirées au hasard parmi soixante. Elles portent sur le modèle de Redmine, sur le piège LDAP de Windows Server 2025, et sur ce qui rend une application en conteneurs exploitable : secrets, sauvegarde, HTTPS.",
     pass: 70,
     questions: [
     {
@@ -12757,7 +12757,7 @@ window.QUIZ_BANK = {
     name: "Entretien de recrutement",
     file: "entretien-recrutement.html",
     title: "Test — Entretien de recrutement",
-    intro: "Neuf chapitres, vingt questions tirées au hasard parmi soixante, du débutant au pro. Elles portent sur ce qui se décide en une seconde le jour J : à quel niveau répondre, comment formuler un défaut, quoi faire avant de partir, et comment reprendre la main sur son stress.",
+    intro: "Neuf chapitres, vingt questions tirées au hasard parmi soixante. Elles portent sur ce qui se décide en une seconde le jour J : à quel niveau répondre, comment formuler un défaut, quoi faire avant de partir, et comment reprendre la main sur son stress.",
     pass: 70,
     questions: [
     {

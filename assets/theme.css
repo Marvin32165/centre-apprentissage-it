@@ -1569,7 +1569,7 @@ tr.row-split td { border-top: 2px solid var(--yes-line); }
 /* ══════════════════════════════════════════════════════════════════
    v13 — DE DÉBUTANT À PRO
    Héros à deux colonnes (tableau de bord, fiche du module), anneaux de
-   progression, infobulles du glossaire, page feuille-de-route.html et
+   progression, infobulles du glossaire et
    test de positionnement. Uniquement des variables du thème.
    ══════════════════════════════════════════════════════════════════ */
 
@@ -1825,7 +1825,7 @@ tr.row-split td { border-top: 2px solid var(--yes-line); }
 .diag__ma, .diag__mw { margin-top: 4px; }
 .diag__mref { margin-top: 4px; font-size: .82rem; }
 
-/* ── Portail : le bandeau « De débutant à pro » ── */
+/* ── Portail : le bandeau des paliers ── */
 .ladder { max-width: var(--measure); margin: 0 auto; padding: 76px 28px 0; }
 .ladder .stairs { margin-top: 26px; }
 .ladder__foot { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }

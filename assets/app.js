@@ -14,8 +14,7 @@
       supports du cours ; au portail, carte interactive, suggestion du
       prochain module, boîte à outils et dossiers des cours
    9. Thème clair / sombre et palette de recherche (Ctrl+K ou « / »)
-  10. De débutant à pro : paliers du catalogue, tableau de bord (portail et
-      feuille de route), fiche du module dans le héro, infobulles du glossaire
+  10. Paliers du catalogue, tableau de bord (portail), fiche du module dans le héro, infobulles du glossaire
       sur les sigles des chapitres
 
    Les scores des tests sont écrits par assets/quiz.js sous la clé
@@ -650,7 +649,6 @@
         nav.setAttribute('aria-label', 'Navigation du site');
         var links = [
             ['index.html#parcours', 'Parcours'],
-            ['feuille-de-route.html', 'Débutant → pro'],
             ['atelier.html', 'Atelier'],
             ['glossaire.html', 'Glossaire'],
             ['labo.html', 'Lab Orion'],
@@ -918,10 +916,10 @@
     }
 
     /* ══════════════════════════════════════════════════════════════
-       10. DE DÉBUTANT À PRO
+       10. PROGRESSION
        Les paliers du catalogue (CAT.paliers) relus avec la progression
-       locale : tableau de bord ([data-dash], au portail et sur la
-       feuille de route), fiche du module dans le héro de chaque module,
+       locale : tableau de bord ([data-dash], au portail),
+       fiche du module dans le héro de chaque module,
        et infobulles du glossaire sur les sigles des chapitres.
        ══════════════════════════════════════════════════════════════ */
     var PALIERS = CAT.paliers || [];
@@ -959,7 +957,7 @@
             '" stroke-dashoffset="' + (c * (1 - Math.max(0, Math.min(100, pct)) / 100)).toFixed(1) + '"/></svg>';
     }
 
-    /* API pour les autres scripts de page (feuille de route). */
+    /* API pour les autres scripts de page. */
     window.CAI = window.CAI || {};
     window.CAI.state = state;
     window.CAI.stateText = stateText;
@@ -971,36 +969,6 @@
     window.CAI.ring = ring;
     window.CAI.esc = esc;
     window.CAI.site = SITE;
-
-    /* ── L'escalier des paliers ([data-stairs], au portail et sur la feuille de route) ── */
-    function heuresDe(ids) {
-        var min = 0;
-        ids.forEach(function (id) {
-            var d = (mod(id) && mod(id).duree) || '';
-            var h = d.match(/(\d+)\s*h/), m = d.match(/h\s*(\d+)/);
-            min += (h ? +h[1] * 60 : 0) + (m ? +m[1] : 0);
-        });
-        return Math.round(min / 60);
-    }
-    function paintStairs() {
-        labsAll = read('cai.labs', {}) || {};
-        var cur = currentPalier();
-        var F = (pageFile === 'feuille-de-route.html') ? '' : SITE + 'feuille-de-route.html';
-        document.querySelectorAll('[data-stairs]').forEach(function (host) {
-            host.innerHTML = PALIERS.map(function (p) {
-                var st = palierState(p);
-                var cls = st.atteint ? 'is-done' : (cur && cur.id === p.id ? 'is-current' : '');
-                return '<li class="stair ' + cls + '"><a href="' + F + '#palier-' + p.id + '">' +
-                    '<span class="stair__num">Palier ' + p.num + (st.atteint ? ' · atteint' : (cls ? ' · tu es ici' : '')) + '</span>' +
-                    '<span class="stair__title">' + esc(p.title) + '</span>' +
-                    '<span class="stair__job">' + esc(p.poste) + '</span>' +
-                    '<span class="stair__bar"><i style="width:' + st.pct + '%"></i></span>' +
-                    '<span class="stair__meta">' + st.total + ' modules · ≈ ' + heuresDe(st.ids) + ' h</span></a></li>';
-            }).join('');
-        });
-    }
-    if (PALIERS.length) paintStairs();
-    window.CAI.paintStairs = paintStairs;
 
     /* ── Avancement de chaque parcours, sur ses cartes du portail ── */
     CAT.parcours.forEach(function (p) {
@@ -1037,17 +1005,14 @@
             var diag = read('cai.diag', null);
             var missions = PALIERS.filter(function (p) { return palierState(p).mission >= ((p.mission && p.mission.etapes) || 1); }).length;
             var fresh = !chDone && !Object.keys(scoresAll).length && !diag && !Object.keys(labsAll).length && !read(KEY_LAST, null);
-            var F = SITE + 'feuille-de-route.html';
 
             if (fresh) {
                 dashHost.className = 'dash dash--welcome';
                 dashHost.innerHTML =
                     '<p class="dash__label">Tu débutes ?</p>' +
-                    '<p class="dash__title">Trois façons de commencer</p>' +
+                    '<p class="dash__title">Par où commencer</p>' +
                     '<ol class="dash__starts">' +
-                        '<li><a href="' + F + '#diagnostic"><b>Faire le test de positionnement</b><span>Douze questions, cinq minutes : il dit par où commencer.</span></a></li>' +
                         '<li><a href="' + MODS + ORDER[0] + '.html"><b>Partir de zéro</b><span>' + esc(mod(ORDER[0]).title) + ', le premier module du parcours 01.</span></a></li>' +
-                        '<li><a href="' + F + '#paliers"><b>Voir le chemin jusqu’au métier</b><span>Quatre paliers, de technicien·ne support à ingénieur·e.</span></a></li>' +
                     '</ol>' +
                     '<p class="dash__note">Ta progression reste dans ce navigateur, nulle part ailleurs.</p>';
                 return;
@@ -1062,7 +1027,7 @@
                 '<div class="dash__top">' + ring(pct, 'ring--lg') +
                     '<div><p class="dash__big">' + pct + '<small> %</small></p>' +
                     '<p class="dash__sub">' + chDone + ' / ' + chTotal + ' chapitres acquis</p></div></div>' +
-                (pal ? '<a class="dash__palier" href="' + F + '#palier-' + pal.id + '">' +
+                (pal ? '<a class="dash__palier" href="#parcours">' +
                     '<span class="dash__palier-num">Palier ' + pal.num + (ps.atteint ? ' · atteint' : ' · en cours') + '</span>' +
                     '<span class="dash__palier-title">' + esc(pal.title) + '</span>' +
                     '<span class="dash__palier-job">' + esc(pal.poste) + '</span>' +
@@ -1111,8 +1076,7 @@
                     '<p class="modcard__test">' + (rec ? (rec.passed ? '<span class="modcard__ok">Test validé</span> · meilleur score ' + rec.best + ' %' : 'Test : meilleur score ' + rec.best + ' %, pas encore validé') : 'Test pas encore passé') + '</p>' +
                     (nextCh ? '<a class="btn btn--primary modcard__go" href="#' + nextCh.id + '">' + (k ? 'Reprendre' : 'Commencer') + ' : ' + esc(h ? h.textContent.trim() : 'chapitre suivant') + '</a>'
                             : (hasTest ? '<a class="btn btn--primary modcard__go" href="#test">Tous les chapitres sont acquis : passer le test</a>' : '')) +
-                    (nextCh && hasTest ? '<a class="modcard__link" href="#test">Aller directement au test →</a>' : '') +
-                    (pal ? '<a class="modcard__palier" href="' + SITE + 'feuille-de-route.html#palier-' + pal.id + '"><b>Palier ' + pal.num + '</b> ' + esc(pal.title) + '<span>' + esc(pal.poste) + '</span></a>' : '');
+                    (nextCh && hasTest ? '<a class="modcard__link" href="#test">Aller directement au test →</a>' : '');
             };
             paintCard();
             document.addEventListener('cai:progress', paintCard);

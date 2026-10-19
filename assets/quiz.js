@@ -104,13 +104,13 @@
 
     /* ══ Tirage d'un test de module ═════════════════════════════════
        Le fonds compte une soixantaine de questions, chacune notée lvl
-       1 (débutant), 2 (intermédiaire) ou 3 (pro). Chaque passage en
+       1 (facile), 2 (moyen) ou 3 (difficile). Chaque passage en
        tire DRAW au hasard, un tiers par niveau (complété avec les
        autres niveaux si l'un manque), puis les range du plus simple
        au plus pointu. « Recommencer » refait un tirage.
        ══════════════════════════════════════════════════════════════ */
     var DRAW = 20;
-    var LEVELS = { 1: 'Débutant', 2: 'Intermédiaire', 3: 'Pro' };
+    var LEVELS = { 1: 'Facile', 2: 'Moyen', 3: 'Difficile' };
     function lvlOf(q) { return LEVELS[q.lvl] ? q.lvl : 2; }
     function drawLevels(all, n) {
         if (all.length <= n) return all;
@@ -207,7 +207,7 @@
             facts.innerHTML =
                 '<span><b>' + state.questions.length + '</b> questions' +
                     (kind !== 'exam' && poolSize > state.questions.length
-                        ? ', tirées parmi <b>' + poolSize + '</b>, du niveau débutant au niveau pro' : '') + '</span>' +
+                        ? ', tirées parmi <b>' + poolSize + '</b>' : '') + '</span>' +
                 '<span>Seuil de réussite <b>' + passMark + ' %</b></span>' +
                 (kind === 'exam' && def.parts
                     ? '<span><b>' + def.parts.length + '</b> modules couverts</span>'
@@ -228,7 +228,6 @@
                 var qhead = el('div', 'q__head');
                 qhead.appendChild(el('span', 'q__num', String(i + 1).replace(/^(\d)$/, '0$1')));
                 qhead.appendChild(el('p', 'q__text', q.q));
-                if (q.lvl && LEVELS[q.lvl]) qhead.appendChild(el('span', 'q__lvl q__lvl--' + q.lvl, LEVELS[q.lvl]));
                 block.appendChild(qhead);
 
                 if (multi) block.appendChild(el('p', 'q__hint', 'Plusieurs réponses attendues'));
