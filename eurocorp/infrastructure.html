@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infrastructure — EUROCORP</title>
+<meta name="description" content="Sites, machines, tunnels et plages IP du labo.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Infrastructure</div><h1>Les quatre sites et leurs machines</h1>
+<p class="lead">Un onglet pour tout voir, un onglet par ville. Adresses et noms : propositions à valider.</p>
+<div data-tabs><div class="tabs" role="tablist"><button role="tab" id="t-glob" aria-controls="glob" aria-selected="false">Global</button><button role="tab" id="t-bru" aria-controls="bru" aria-selected="false">Bruxelles</button><button role="tab" id="t-par" aria-controls="par" aria-selected="false">Paris</button><button role="tab" id="t-lon" aria-controls="lon" aria-selected="false">Londres</button><button role="tab" id="t-ber" aria-controls="ber" aria-selected="false">Berlin</button></div><div role="tabpanel" id="glob"><h2>Vue générale</h2><p>Quatre sites reliés en étoile : Bruxelles est le centre, les trois autres se connectent à lui par IPsec.</p><div data-svg="global"></div><h3>Toutes les machines</h3><div data-vms="all"></div><h3>Sites</h3><div data-render="sites"></div><h3>Tunnels</h3><div data-render="tunnels"></div><h3>Plages LAN</h3><div data-render="plages"></div><h3>DNS</h3><div data-render="dns"></div></div><div role="tabpanel" id="bru" hidden><h2>Bruxelles</h2><div data-svg="site:BRU"></div><h3>Machines de Bruxelles</h3><div data-vms="BRU"></div></div><div role="tabpanel" id="par" hidden><h2>Paris</h2><div data-svg="site:PAR"></div><h3>Machines de Paris</h3><div data-vms="PAR"></div></div><div role="tabpanel" id="lon" hidden><h2>Londres</h2><div data-svg="site:LON"></div><h3>Machines de Londres</h3><div data-vms="LON"></div></div><div role="tabpanel" id="ber" hidden><h2>Berlin</h2><div data-svg="site:BER"></div><h3>Machines de Berlin</h3><div data-vms="BER"></div></div></div>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docker — EUROCORP</title>
+<meta name="description" content="Configuration des .env Zabbix et Redmine.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Docker</div><h1>Configurer les .env</h1>
+<p class="lead">Les <code>.env</code> du livrable sont commités (valeurs jetables). Ce que fait chaque variable, pour pouvoir les refaire en comprenant.</p>
+<div class="note bref"><b>En bref</b><p>Dossier <code>05-Docker/&lt;appli&gt;/</code> : un <code>docker-compose.yml</code> sans secret, un <code>.env</code> avec les valeurs, un <code>.env.example</code> vide. Sur la VM : copier le dossier, <code>chmod 600 .env</code>, <code>docker compose config -q</code>, <code>docker compose up -d</code>.</p></div>
+<h2><span class="num">1</span>Zabbix — BRU-DOCKER01</h2><div class="tw"><table><thead><tr><th>Variable</th><th>Rôle</th><th>Comment la choisir</th></tr></thead><tbody><tr><td class="mono">POSTGRES_DB</td><td>Nom de la base Zabbix</td><td>Libre, ex. zabbix. Le compose l'utilise pour le serveur et la base.</td></tr><tr><td class="mono">POSTGRES_USER</td><td>Compte applicatif</td><td>Libre, ex. zabbix.</td></tr><tr><td class="mono">POSTGRES_PASSWORD</td><td>Mot de passe de ce compte</td><td>Alphanumérique, 20 caractères ou plus. Lu seulement à la 1re création du volume.</td></tr></tbody></table></div>
+<h2><span class="num">2</span>Redmine — LON-DOCKER01</h2><div class="tw"><table><thead><tr><th>Variable</th><th>Rôle</th><th>Comment la choisir</th></tr></thead><tbody><tr><td class="mono">MYSQL_DATABASE</td><td>Base de Redmine</td><td>Libre, ex. redmine.</td></tr><tr><td class="mono">MYSQL_USER</td><td>Compte applicatif MariaDB</td><td>Libre, ex. redmine.</td></tr><tr><td class="mono">MYSQL_PASSWORD</td><td>Mot de passe de ce compte</td><td>Alphanumérique, 20+.</td></tr><tr><td class="mono">MYSQL_ROOT_PASSWORD</td><td>Mot de passe root MariaDB</td><td>Différent du précédent ; pour l'administration, pas pour Redmine.</td></tr><tr><td class="mono">REDMINE_SECRET_KEY_BASE</td><td>Clé qui signe les sessions</td><td>Longue chaîne aléatoire (64 hex). La changer déconnecte tout le monde.</td></tr></tbody></table></div>
+<div class="note warn"><b>Piège</b><p>Changer le mot de passe dans le <code>.env</code> après le premier démarrage ne change pas celui de la base. Soit tu le changes dans la base, soit <code>docker compose down -v</code> (données perdues).</p></div>
+<h2><span class="num">3</span>Ordre de travail</h2>
+<ol><li>Vérifier le compose avec l'<a href="compose.html">outil Compose</a>.</li><li><code>docker compose config -q</code> : aucune erreur.</li><li><code>docker compose up -d</code>, puis <code>docker compose ps</code> : tout « Up ».</li><li>Si un service redémarre : <code>docker logs &lt;nom&gt; --tail 50</code>.</li><li>Redmine : tester <code>https://helpdesk.eurocorp.lan</code> (certificat auto-signé : avertissement normal).</li></ol>
+<h2><span class="num">4</span>Wazuh et Greenbone</h2>
+<p><b>Greenbone</b> : <code>05-Docker/greenbone/fetch-compose.sh</code> télécharge le compose officiel (ports 443/9392). <b>Wazuh</b> : voir <code>05-Docker/wazuh/README.md</code> ; Docker ou tout-en-un, à décider. Passe chaque compose à l'outil Compose.</p>
+<p><b>Reste à toi :</b> lancer, constater, noter les écarts avec tes notes.</p>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

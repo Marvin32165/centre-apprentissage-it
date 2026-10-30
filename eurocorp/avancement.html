@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avancement — EUROCORP</title>
+<meta name="description" content="Planning, état et décisions.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Avancement</div><h1>Où on en est, ce qui reste</h1>
+<h2><span class="num">1</span>Planning</h2><div data-render="planning"></div>
+<h2><span class="num">2</span>État</h2><div data-etat=""></div>
+<h2><span class="num">3</span>Décisions à prendre (les tiennes)</h2>
+<div class="tw"><table><thead><tr><th>Décision</th><th>Proposition actuelle</th></tr></thead><tbody>
+<tr><td>Nom de domaine</td><td>eurocorp.lan (NetBIOS EUROCORP)</td></tr>
+<tr><td>NLB : unicast ou multicast</td><td>À trancher ; conséquences dans tes notes IIS (MAC spoofing Hyper-V)</td></tr>
+<tr><td>DHCP failover</td><td>BRU-DC01 + PAR-DC01</td></tr>
+<tr><td>Préfixe de nommage « 2- »</td><td>À confirmer avec le formateur</td></tr>
+<tr><td>10 ou 12 dates de labo</td><td>Écart entre le planning et le cahier des charges</td></tr>
+<tr><td>Wazuh : Docker ou tout-en-un</td><td>Selon la RAM restante</td></tr>
+</tbody></table></div>
+<div class="note warn"><b>À savoir</b><p>Les pages Prérequis, Réseau, Identité, Services et Exploitation ne sont pas encore écrites : elles sont grisées dans le menu. Pour ces sujets, utilise tes notes brutes (<code>notes/brut/</code>) et le dossier <code>exercices/eurocorp-lab/</code>.</p></div>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
