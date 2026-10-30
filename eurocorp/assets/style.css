@@ -284,3 +284,8 @@ main > ol > li > .code, main > ol > li > .tw, main > ol > li > div[data-render] 
 main > ol > li { margin-bottom: 14px; }
 main p code, main li code, main td code { overflow-wrap: anywhere; }
 .scr { margin: 6px 0 22px; } .scr summary { cursor: pointer; font: 600 15px var(--font-ui); color: var(--accent); padding: 6px 0; }
+
+.moi-sec { margin: .4rem 0 .8rem; }
+.moi-sec p { margin: .2rem 0 0; }
+.moi-autre { opacity: .6; }
+.moi-autre-n { opacity: .85; }
