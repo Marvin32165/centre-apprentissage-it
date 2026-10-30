@@ -242,3 +242,10 @@ figure, [data-flow] { max-width: 100%; min-width: 0; } @media (max-width: 640px)
   .nav-links a, .nav-links .soon { white-space: nowrap; flex: 0 0 auto; }
   .nav-in .theme { margin-left: auto; }
 }
+
+/* « je suis cette machine » */
+.moi select { font: 500 13px var(--font-ui); padding: 6px 8px; border: 1px solid var(--border-md); border-radius: var(--r); background: var(--surface); color: var(--ink); max-width: 190px; }
+.sr { position: absolute; left: -9999px; }
+.moi-bandeau { background: var(--accent-soft); border-left: 3px solid var(--accent); margin-bottom: 18px; }
+tr.moi-ligne td { background: var(--accent-soft); font-weight: 600; }
+@media (max-width: 760px) { .moi { order: 2; } .moi select { max-width: 160px; } }

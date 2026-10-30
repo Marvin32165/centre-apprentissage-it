@@ -160,6 +160,8 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     if (!$('#ram-out')) return;
+    var me = window.EURO_MOI && window.EURO_MOI();
+    if (me) { $('#ip-in').value = me.ip; $('#hv-site').value = me.site; $('#fx-cible').value = me.ip; }
     ['ram-host', 'ram-res'].forEach(function (i) { $('#' + i).addEventListener('input', ram); }); ram();
     $('#ip-in').addEventListener('input', cidr); cidr();
     $('#cd-in').addEventListener('input', sub); sub();

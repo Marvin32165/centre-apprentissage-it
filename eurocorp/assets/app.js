@@ -38,6 +38,31 @@
     });
   }
 
+
+  /* --- « Je suis cette machine » ------------------------------------------ */
+  var CLE_MOI = 'euro.moi';
+  function moi() { try { return localStorage.getItem(CLE_MOI) || ''; } catch (e) { return ''; } }
+  function moiVM() { var m = moi(); return D.vms.filter(function (v) { return v.nom === m; })[0] || null; }
+  function moiSelect() {
+    var h = '<option value="">Ma machine : choisir…</option>';
+    D.sites.forEach(function (st) {
+      h += '<optgroup label="' + esc(st.nom) + '">' + D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).map(function (v) {
+        return '<option value="' + esc(v.nom) + '"' + (v.nom === moi() ? ' selected' : '') + '>' + esc(v.nom) + '</option>'; }).join('') + '</optgroup>';
+    });
+    return '<label class="moi"><span class="sr">Je suis la machine</span><select id="moi" aria-label="Je suis la machine">' + h + '</select></label>';
+  }
+  function moiBandeau() {
+    var v = moiVM(), main = $('#contenu'); if (!main || !v) return;
+    var b = document.createElement('div'); b.className = 'note moi-bandeau';
+    b.innerHTML = '<b>Tu es ' + esc(v.nom) + '</b> · ' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + esc(v.os) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go · site ' + esc(v.site) +
+      '. <a href="infrastructure.html#' + v.site.toLowerCase() + '">Voir mon site</a>. Tes cases cochées sont à toi seul.';
+    main.insertBefore(b, main.firstChild);
+  }
+  function moiSurligne() {
+    var m = moi(); if (!m) return;
+    $$('main tbody tr').forEach(function (tr) { var td = tr.firstElementChild; if (td && td.textContent.trim() === m) tr.classList.add('moi-ligne'); });
+  }
+
   /* --- navigation et pied de page ---------------------------------------- */
   function buildNav() {
     var host = $('#nav'); if (!host) return;
@@ -48,7 +73,8 @@
     }).join('');
     host.outerHTML = '<a class="skip" href="#contenu">Aller au contenu</a><header class="nav"><div class="nav-in">' +
       '<a class="brand" href="index.html">EURO<b>CORP</b> · labo</a><nav class="nav-links" aria-label="Pages">' + links + '</nav>' +
-      '<button class="theme" type="button" id="theme">Thème</button></div></header>';
+      moiSelect() + '<button class="theme" type="button" id="theme">Thème</button></div></header>';
+    $('#moi').addEventListener('change', function () { try { localStorage.setItem(CLE_MOI, this.value); } catch (e) { /* ignoré */ } location.reload(); });
     $('#theme').addEventListener('click', function () {
       var dark = document.documentElement.getAttribute('data-theme') === 'dark';
       var next = dark ? 'light' : 'dark'; applyTheme(next);
@@ -73,7 +99,8 @@
       }
       tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.getAttribute('aria-controls'), true); }); });
       var h = location.hash.slice(1);
-      show(panels.some(function (p) { return p.id === h; }) ? h : panels[0].id, false);
+      var v = moiVM(), mien = v && panels.filter(function (p) { return p.id === v.site.toLowerCase(); })[0];
+      show(panels.some(function (p) { return p.id === h; }) ? h : (mien ? mien.id : panels[0].id), false);
     });
   }
 
@@ -300,7 +327,7 @@
     var items = $$('main ol > li'), page = pageNom(), d = lire();
     if (items.length) { d.tot[page] = items.length; ecrire(d); }
     items.forEach(function (li, i) {
-      var id = page + '#' + i, cb = document.createElement('input');
+      var id = (moi() ? moi() + '|' : '') + page + '#' + i, cb = document.createElement('input');
       cb.type = 'checkbox'; cb.className = 'suivi'; cb.checked = !!d.ok[id];
       cb.setAttribute('aria-label', 'Étape faite');
       li.classList.toggle('fait', cb.checked);
@@ -316,7 +343,7 @@
     var d = lire(), noms = {};
     PAGES.forEach(function (p) { noms[p[0]] = p[1]; });
     var rows = Object.keys(d.tot).filter(function (p) { return noms[p]; }).map(function (p) {
-      var n = Object.keys(d.ok).filter(function (k) { return k.split('#')[0] === p; }).length, t = d.tot[p];
+      var pre = moi() ? moi() + '|' : '', n = Object.keys(d.ok).filter(function (k) { return k.split('#')[0] === pre + p; }).length, t = d.tot[p];
       return '<tr><td><a href="' + p + '">' + esc(noms[p]) + '</a></td><td>' + n + ' / ' + t + '</td><td><progress max="' + t + '" value="' + n + '"></progress></td></tr>';
     });
     el.innerHTML = (rows.length ? '<div class="tw"><table><thead><tr><th>Page</th><th>Étapes cochées</th><th></th></tr></thead><tbody>' + rows.join('') + '</tbody></table></div>'
@@ -334,7 +361,8 @@
       if (a === 'rst') { var x = lire(); x.ok = {}; ecrire(x); location.reload(); }
     });
   }
+  window.EURO_MOI = function () { return moiVM(); };
   document.addEventListener('DOMContentLoaded', function () {
-    buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy(); initSuivi();
+    buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy(); initSuivi(); moiBandeau(); moiSurligne();
   });
 })();
