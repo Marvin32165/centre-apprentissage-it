@@ -50,22 +50,13 @@ Bob;Durand;Informatique</textarea>
 <div class="fld"><label for="fx-id">Flux</label><select id="fx-id"></select></div>
 <div class="fld"><label for="fx-cible">Machine ou IP cible</label><input id="fx-cible" value="172.17.10.10"></div>
 <div class="code"><div class="cap"><span>Test-NetConnection</span><button class="copy" type="button">Copier</button></div><pre id="fx-out"></pre></div>
-<h2><span class="num">8</span>Secrets du labo</h2>
-<p>Valeurs aléatoires tirées dans ton navigateur (rien n'est envoyé). Pour une clé IPsec, un PSK Zabbix ou un mot de passe de labo. Ne les colle pas dans un fichier suivi par git, sauf <code>.env</code> du labo.</p>
-<p><button class="btn" id="sec-go" type="button">Tirer de nouvelles valeurs</button></p>
-<div class="tw"><table><tbody id="sec-rows"></tbody></table></div>
-<h2><span class="num">9</span>DHCP : étendues et failover</h2>
+<h2><span class="num">8</span>DHCP : étendues et failover</h2>
 <p>Une étendue par site (plage .100–.199 du plan) et le failover entre deux serveurs. À lancer sur le serveur DHCP principal.</p>
 <div class="fld"><label for="dh-par">Serveur partenaire (FQDN) — à valider</label><input id="dh-par" value="par-dc01.eurocorp.lan"></div>
 <div class="code"><div class="cap"><span>DHCP</span><button class="copy" type="button">Copier</button></div><pre id="dh-out"></pre></div>
-<h2><span class="num">10</span>Sites AD et sous-réseaux</h2>
+<h2><span class="num">9</span>Sites AD et sous-réseaux</h2>
 <p>Un site AD par ville, son sous-réseau, et des liens de sites vers Bruxelles (étoile comme les tunnels).</p>
 <div class="code"><div class="cap"><span>Active Directory — sites</span><button class="copy" type="button">Copier</button></div><pre id="as-out"></pre></div>
-<h2><span class="num">11</span>Hyper-V Replica</h2>
-<p>Pour les VM qui ont un réplica prévu dans le plan.</p>
-<div class="fld"><label for="rp-hote">Hôte cible (nom ou FQDN)</label><input id="rp-hote" value="HOTE-PARIS"></div>
-<div class="fld"><label for="rp-freq">Fréquence de réplication</label><select id="rp-freq"><option value="30">30 secondes</option><option value="300" selected>5 minutes</option><option value="900">15 minutes</option></select></div>
-<div class="code"><div class="cap"><span>Replica</span><button class="copy" type="button">Copier</button></div><pre id="rp-out"></pre></div>
 <div class="note warn"><b>À relire</b><p>Ces scripts sont générés à partir du plan, pas exécutés sur tes VM. Lis chaque commande avant de lancer, et fais d'abord un essai sur une seule machine.</p></div>
 </main>
 <div id="pied"></div>

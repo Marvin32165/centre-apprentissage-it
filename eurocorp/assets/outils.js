@@ -128,15 +128,7 @@
     $('#fx-out').textContent = o.join('\n');
   }
 
-  /* 8. secrets */
-  function rnd(n, set) { var a = new Uint32Array(n), s = ''; (window.crypto || window.msCrypto).getRandomValues(a); for (var i = 0; i < n; i++) s += set.charAt(a[i] % set.length); return s; }
-  function secrets() {
-    var AN = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789', HEX = '0123456789abcdef';
-    var rows = [['Mot de passe de labo (24 car.)', rnd(24, AN)], ['Clé IPsec partagée (40 car.)', rnd(40, AN)], ['PSK Zabbix (64 hex = 32 octets)', rnd(64, HEX)], ['Clé de session Redmine (64 hex)', rnd(64, HEX)], ['Secret partagé DHCP failover (20 car.)', rnd(20, AN)]];
-    $('#sec-rows').innerHTML = rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td class="mono" style="word-break:break-all">' + esc(r[1]) + '</td></tr>'; }).join('');
-  }
-
-  /* 9. DHCP */
+  /* 8. DHCP */
   function ipOf(nom) { var v = D.vms.filter(function (x) { return x.nom === nom; })[0]; return v ? v.ip : ''; }
   function dhcp() {
     var o = ['# Généré par l\'outil EUROCORP — à relire. Serveur principal : BRU-DC01.'], dns = [ipOf('BRU-DC01'), ipOf('PAR-DC01')].filter(Boolean).join(',');
@@ -151,7 +143,7 @@
     $('#dh-out').textContent = o.join('\n');
   }
 
-  /* 10. sites AD */
+  /* 9. sites AD */
   function adSites() {
     var o = ['# Généré par l\'outil EUROCORP — à relire. À lancer sur un contrôleur de domaine.'];
     D.sites.forEach(function (s) {
@@ -165,18 +157,6 @@
     $('#as-out').textContent = o.join('\n');
   }
 
-  /* 11. Replica */
-  function replica() {
-    var hote = $('#rp-hote').value.trim(), f = $('#rp-freq').value, o = ['# Généré par l\'outil EUROCORP — à relire.', '# 1) Sur l\'hôte cible (' + hote + ') : accepter les réplications (Kerberos, port 80).', 'Set-VMReplicationServer -ReplicationEnabled $true -AllowedAuthenticationType Kerberos -ReplicationAllowedFromAnyServer $true -DefaultStorageLocation "D:\\Replica"', 'Enable-NetFirewallRule -DisplayName "Hyper-V Replica HTTP Listener (TCP-In)"', '', '# 2) Sur l\'hôte source : activer la réplication des VM prévues.'];
-    var list = D.vms.filter(function (v) { return !v.virtuel && v.replica; });
-    list.forEach(function (v) {
-      o.push('Enable-VMReplication -VMName "' + v.nom + '" -ReplicaServerName "' + hote + '" -ReplicaServerPort 80 -AuthenticationType Kerberos -ReplicationFrequencySec ' + f);
-      o.push('Start-VMInitialReplication -VMName "' + v.nom + '"');
-    });
-    if (!list.length) o.push('# Aucune VM avec réplica dans le plan.');
-    o.push('', '# 3) Suivi : Get-VMReplication | Select Name, State, Health, LastReplicationTime');
-    $('#rp-out').textContent = o.join('\n');
-  }
 
   document.addEventListener('DOMContentLoaded', function () {
     if (!$('#ram-out')) return;
@@ -185,6 +165,6 @@
     $('#cd-in').addEventListener('input', sub); sub();
     ['ad-dom', 'ad-ou', 'ad-csv'].forEach(function (i) { $('#' + i).addEventListener('input', ad); }); ad();
     whatifInit(); ['hv-site', 'hv-parent', 'hv-dir'].forEach(function (i) { $('#' + i).addEventListener('input', hv); }); hv(); dnsGen();
-    fluxInit(); secrets(); $('#sec-go').addEventListener('click', secrets); dhcp(); $('#dh-par').addEventListener('input', dhcp); adSites(); replica(); ['rp-hote', 'rp-freq'].forEach(function (i) { $('#' + i).addEventListener('input', replica); });
+    fluxInit(); dhcp(); $('#dh-par').addEventListener('input', dhcp); adSites();
   });
 })();
