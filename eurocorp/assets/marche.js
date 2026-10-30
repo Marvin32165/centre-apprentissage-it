@@ -238,7 +238,90 @@
     if (/SQL/.test(n)) return 'sql'; if (/-SP0/.test(n)) return 'sp'; if (/-FS0/.test(n)) return 'fs'; if (n === 'BRU-DOCKER01') return 'zabbix';
     if (n === 'LON-DOCKER01') return 'redmine'; if (n === 'BER-DOCKER01') return 'wazuh'; if (n === 'BER-DOCKER02') return 'greenbone'; if (/-CLT01$/.test(n)) return 'clt'; return '';
   }
-  var PH = [['prep', 'Préparation'], ['inst', 'Installation'], ['conf', 'Configuration'], ['verif', 'Vérifications']];
+
+  /* ---------- détail pas à pas propre à chaque machine ---------- */
+  var T_VM = 'Créer les VM Windows depuis le parent';
+  var SQL_ONLY = ['Le gMSA du moteur SQL', 'Sur PAR-SQL01 : prendre en compte le groupe', 'Disques de SQL', 'Dimensionnement', 'Installer SQL Server (instance nommée)', 'Écran critique : le classement (collation)', 'Comptes de service du moteur', 'Protocole et port', 'Pare-feu', 'Mémoire et parallélisme', 'Les services SQL tournent sous le gMSA', 'Classement correct'];
+  var SP_ONLY = ['Comptes de service', 'Dimensionnement', 'Installer SharePoint sur PAR-SP01', 'Assistant de configuration de la ferme', 'Comptes gérés et applications de service', 'DNS et premier site', 'SQL accessible depuis SharePoint', 'SharePoint répond'];
+  var AC_ONLY = ["Installer l'autorité de certification d'abord"];
+  var SUP_WIN = ['Superviser avec Zabbix (agents Windows)', 'Détection avec Wazuh et Sysmon'];
+  function sectionsPour(v, k) {
+    var n = v.nom, o = [];
+    function add(t, opt) { o.push({ t: t, only: opt && opt.only, skip: opt && opt.skip, subst: opt && opt.subst }); }
+    var win = /Windows Server/.test(v.os);
+    if (k === 'fw') { add('Une VM OPNsense par site'); add('Les tunnels IPsec'); add('Les routes et le DNS à travers les tunnels'); add('Le filtrage : remplacer « tout autorisé »'); }
+    else if (k === 'dc') {
+      if (n === 'BRU-DC01') { add('La forêt et le premier contrôleur (BRU-DC01)'); add('Messagerie : Exchange Server et autorité de certification (BRU-EXCH01)', { only: AC_ONLY }); add('DHCP avec failover'); add("Unités d'organisation, groupes AGDLP et comptes"); }
+      else { add('Les autres contrôleurs et les sites AD'); add('DHCP avec failover'); }
+    }
+    else if (k === 'iis') add('IIS et équilibrage de charge NLB (BRU-IIS01 / 02)', n === 'BRU-IIS02' ? { skip: ['Créer le cluster NLB', 'Contenu identique sur les deux nœuds'] } : null);
+    else if (k === 'exch') add('Messagerie : Exchange Server et autorité de certification (BRU-EXCH01)', { skip: AC_ONLY });
+    else if (k === 'fs') { add('Serveur de fichiers (LON-FS01)'); add("Réplication Hyper-V et reprise d'activité"); }
+    else if (k === 'sql') add('SQL Server et SharePoint (PAR-SQL01 / PAR-SP01)', { only: SQL_ONLY });
+    else if (k === 'sp') add('SQL Server et SharePoint (PAR-SQL01 / PAR-SP01)', { only: SP_ONLY });
+    else if (k === 'zabbix') { add('Docker et Compose : les bases du labo'); add('Zabbix 7.4 (BRU-DOCKER01)'); }
+    else if (k === 'redmine') { add('Docker et Compose : les bases du labo'); add('Redmine (LON-DOCKER01)'); add('Sauvegarde de Redmine'); }
+    else if (k === 'wazuh') { add('Docker et Compose : les bases du labo'); add('Wazuh (BER-DOCKER01)'); }
+    else if (k === 'greenbone') { add('Docker et Compose : les bases du labo'); add('Greenbone Community (BER-DOCKER02)'); }
+    else if (k === 'clt') add("Recette : tester l'ensemble");
+    if (win && k !== 'fw' && k !== 'clt') SUP_WIN.forEach(function (t) { add(t, { subst: true }); });
+    return o;
+  }
+  var DEP = {
+    fw: 'Commutateurs <code>WAN</code> et <code>LAN-xx</code> créés sur l\'hôte. Pour monter un tunnel, le pare-feu de l\'autre extrémité doit être installé.',
+    dc: 'BRU-DC01 : aucune, c\'est le premier serveur du domaine (après le pare-feu et le tunnel). PAR-DC01 : BRU-DC01 en ligne et tunnel Bruxelles–Paris validé.',
+    iis: 'BRU-DC01 (domaine et DNS). BRU-IIS02 : BRU-IIS01 doit exister avant la création du cluster NLB.',
+    exch: 'BRU-DC01 (annuaire et autorité de certification), 16 Go de RAM libres sur l\'hôte, disques pour bases et journaux.',
+    sql: 'BRU-DC01 (domaine, clé racine KDS pour le gMSA) et tunnel Bruxelles–Paris pour joindre le domaine.',
+    sp: 'PAR-SQL01 installé avec la bonne collation, domaine, comptes de service créés.',
+    fs: 'BRU-DC01 (domaine), groupes AGDLP créés (page Identité), tunnel Bruxelles–Londres.',
+    zabbix: 'DNS <code>zabbix.eurocorp.lan</code> ; tunnels et flux F16/F18 pour recevoir les agents des autres sites.',
+    redmine: 'Active Directory (LDAP) joignable, tunnel Bruxelles–Londres, flux F19/F20.',
+    wazuh: 'Réglage noyau <code>vm.max_map_count</code>, 8 Go de RAM, DNS <code>wazuh.eurocorp.lan</code>, flux F21/F22.',
+    greenbone: 'Accès Internet pour les flux de données (F28), cibles à scanner et accord du formateur.',
+    clt: 'Domaine, DHCP (BRU-DC01 ou PAR-DC01) et services du labo à tester.'
+  };
+  function fluxMachine(v) {
+    var re = new RegExp(v.nom.replace(/[-]/g, '\\-')), l = D.flux.filter(function (f) { return re.test(f.de) || re.test(f.vers); });
+    if (!l.length) return '<p>Aucun flux nominatif : la machine utilise les flux généraux (DNS, Kerberos, relais DHCP) des postes du LAN.</p>';
+    return '<table><thead><tr><th>ID</th><th>De</th><th>Vers</th><th>Ports</th><th>Service</th></tr></thead><tbody>' + l.map(function (f) {
+      return '<tr><td>' + esc(f.id) + '</td><td>' + esc(f.de) + '</td><td>' + esc(f.vers) + '</td><td>' + esc(f.proto) + '</td><td>' + esc(f.service) + '</td></tr>'; }).join('') + '</tbody></table>';
+  }
+  function fiche(v, st, k) {
+    var dns = v.nom === 'BRU-DC01' ? 'lui-même (127.0.0.1)' : (/^PAR-DC01$/.test(v.nom) ? ip('BRU-DC01') + ' puis lui-même' : ip('BRU-DC01') + ' puis ' + ip('PAR-DC01'));
+    var l = [['Rôle', esc(v.role)], ['Système', esc(v.os)], ['Adresse IP', '<code>' + esc(v.ip) + '</code> /24'], ['Passerelle', '<code>' + esc(st.gw) + '</code> (OPNsense de ' + esc(st.nom) + ')'],
+      ['DNS', /Ubuntu|OPNsense/.test(v.os) ? (/OPNsense/.test(v.os) ? 'les deux contrôleurs' : esc(ip('BRU-DC01'))) : dns], ['Dimensions', v.vcpu + ' vCPU · ' + v.ram + ' Go de RAM fixes · disque ' + v.disque + ' Go'],
+      ['Commutateur', /OPNsense/.test(v.os) ? '<code>WAN</code> (carte 1) puis <code>LAN-' + st.id + '</code> (carte 2)' : '<code>LAN-' + st.id + '</code>'], ['À avoir avant', DEP[k] || '—']];
+    return S('Fiche de ' + v.nom, '<table><tbody>' + l.map(function (x) { return '<tr><th scope="row">' + x[0] + '</th><td>' + x[1] + '</td></tr>'; }).join('') + '</tbody></table><p><b>Flux qui concernent cette machine</b> (matrice de ' + D.flux.length + ' flux) :</p>' + fluxMachine(v) + '<p>Les étapes ci-dessous sont dans l\'ordre ; « Détail » reprend le pas à pas des pages 1 à 6 pour cette machine.</p>');
+  }
+  function enrichir(plan, v, st, k) {
+    var SEC = window.EURO_SEC || {}, out = { prep: [], inst: [], conf: [], verif: [], sup: [] };
+    PH.forEach(function (p) { out[p[0]] = (plan && plan[p[0]] ? plan[p[0]].slice() : []); });
+    if (['iis', 'exch', 'fs', 'sql', 'sp', 'zabbix', 'redmine', 'wazuh', 'greenbone'].indexOf(k) >= 0) {
+      PH.forEach(function (p) { out[p[0]] = out[p[0]].filter(function (s) { return /^(Créer la VM|IP fixe|Joindre le domaine|Installer Docker et le plugin|Enregistrement DNS|Ajouter ce nœud|Machine terminée)/.test(s[0]); }); });
+    }
+    var fin = null;
+    PH.forEach(function (p) { var l = out[p[0]]; if (l.length && l[l.length - 1][0] === 'Machine terminée') { fin = l.pop(); } });
+    out.prep.unshift(fiche(v, st, k));
+    sectionsPour(v, k).forEach(function (s) {
+      var sec = SEC[s.t]; if (!sec) return;
+      PH.forEach(function (p) {
+        (sec[p[0]] || []).forEach(function (x) {
+          if (s.only && s.only.indexOf(x[0]) < 0) return;
+          if (s.skip && s.skip.indexOf(x[0]) >= 0) return;
+          var h = x[1];
+          if (s.subst) { h = h.replace(/BRU-DC01/g, v.nom).replace(/172\.17\.10\.10(?!\d)/g, v.ip); }
+          h = h.replace(/LAN-BRU/g, 'LAN-' + st.id);
+          if (s.subst) { if (/^(Répéter pour chaque serveur|Aller plus loin|Faire pareil sur les autres machines|Wazuh ne lit pas le réseau)/.test(x[0])) return; out.sup.push(S('Détail · ' + x[0], h)); }
+          else out[p[0]].push(S('Détail · ' + x[0], h));
+        });
+      });
+    });
+    if (fin) (out.sup.length ? out.sup : out.verif).push(fin);
+    return out;
+  }
+
+  var PH = [['prep', 'Préparation'], ['inst', 'Installation'], ['conf', 'Configuration'], ['verif', 'Vérifications'], ['sup', 'Ensuite : supervision et sécurité']];
   document.addEventListener('DOMContentLoaded', function () {
     var host = document.getElementById('marche'); if (!host) return;
     var html = '';
@@ -248,13 +331,13 @@
         var hp = stepsHote(st);
         html += '<article class="vm" data-vm="HOTE-' + st.id + '"><h3>Hôte de ' + esc(st.nom) + ' <small>commutateurs, modèle Sysprep, parent <code>C:\\PARENT\\TEST-SYSPREP.vhdx</code> · à faire en premier</small></h3>';
         PH.forEach(function (p) {
-          if (!hp[p[0]].length) return;
+          if (!hp[p[0]] || !hp[p[0]].length) return;
           html += '<h4>' + p[1] + '</h4><ol>' + hp[p[0]].map(function (s) { return '<li><div class="st"><details><summary>' + s[0] + '</summary><div class="det">' + s[1] + '</div></details></div></li>'; }).join('') + '</ol>';
         });
         html += '</article>';
       })();
       D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).forEach(function (v) {
-        var k = cle(v), plan = k ? M[k](v, st) : null;
+        var k = cle(v), plan = k ? enrichir(M[k](v, st), v, st, k) : null;
         html += '<article class="vm" data-vm="' + esc(v.nom) + '"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go</small></h3>';
         PH.forEach(function (p) {
           if (!plan || !plan[p[0]] || !plan[p[0]].length) return;
