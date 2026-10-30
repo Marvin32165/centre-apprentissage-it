@@ -138,7 +138,7 @@
     var sum = function (k) { return list.reduce(function (a, v) { return a + v[k]; }, 0); };
     var span = head.length - 5 - (showSite ? 0 : 0);
     var foot = '<tfoot><tr><td colspan="' + (head.length - 5) + '">Total (' + list.length + ' VM)</td><td>' + sum('vcpu') + '</td><td>' + sum('ram') + ' Go</td><td>' + sum('disque') + ' Go max</td><td colspan="2"></td></tr></tfoot>';
-    var note = site === 'all' ? '' : '<p class="src">Capacité de l\'hôte : 64 Go de RAM et ~1 To — marge RAM : ' + (64 - sum('ram')) + ' Go. Disques dynamiques : « max » = taille maximale, pas l\'espace réellement pris.</p>';
+    var note = site === 'all' ? '' : '<p class="src">Hôte : 64 Go de RAM et ~1 To, à titre indicatif (toutes les VM ne sont pas allumées en même temps). Disques dynamiques : « max » = taille maximale, pas l\'espace réellement pris.</p>';
     el.innerHTML = table(head, rows, foot) + note;
   }
   function renderSites(el) {
