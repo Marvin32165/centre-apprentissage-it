@@ -512,14 +512,30 @@
   function lire() { try { return JSON.parse(localStorage.getItem(CLE)) || { ok: {}, tot: {} }; } catch (e) { return { ok: {}, tot: {} }; } }
   function ecrire(d) { try { localStorage.setItem(CLE, JSON.stringify(d)); return true; } catch (e) { return false; } }
   function pageNom() { return (location.pathname.split('/').pop() || 'index.html'); }
+  /* Suivi commun du groupe : étapes faites publiées dans data/eurocorp.json (« suivi »), visibles par tous.
+     Une étape y est repérée par le début de son texte (cleEtape), pas par son numéro : ajouter une étape
+     à une page ne décale donc pas les cases communes. */
+  function cleEtape(li) {
+    var c = li.cloneNode(true);
+    $$('ol, ul, .dt, input, .code', c).forEach(function (x) { x.remove(); });
+    return c.textContent.replace(/\s+/g, ' ').trim().slice(0, 80);
+  }
+  function communs(page) { var s = D.suivi && D.suivi[page]; return (s && s.faits) || []; }
   function initSuivi() {
-    var items = $$('main ol > li'), page = pageNom(), d = lire();
+    var items = $$('main ol > li'), page = pageNom(), d = lire(), com = communs(page), vus = {};
     if (items.length) { d.tot[page] = items.length; ecrire(d); }
     items.forEach(function (li, i) {
+      var cle = cleEtape(li);                     // deux étapes au même texte (« OK. ») : « OK. », « OK.#2 »…
+      vus[cle] = (vus[cle] || 0) + 1; if (vus[cle] > 1) cle += '#' + vus[cle];
       if (li.closest('[data-masque]')) return;
       var id = pfx(page) + page + '#' + i, cb = document.createElement('input');
       cb.type = 'checkbox'; cb.className = 'suivi'; cb.checked = !!d.ok[id];
       cb.setAttribute('aria-label', 'Étape faite');
+      if (com.indexOf(cle) >= 0) {
+        cb.checked = true; cb.disabled = true; cb.title = 'Fait : suivi commun du groupe';
+        li.classList.add('commun');
+        if (d.ok[id]) { delete d.ok[id]; ecrire(d); }   // compté une seule fois, dans le suivi commun
+      }
       li.classList.toggle('fait', cb.checked);
       cb.addEventListener('change', function () {
         var x = lire(); if (cb.checked) x.ok[id] = 1; else delete x.ok[id];
@@ -532,9 +548,14 @@
   function renderSuivi(el) {
     var d = lire(), noms = {};
     PAGES.forEach(function (p) { noms[p[0]] = p[1]; });
-    var rows = Object.keys(d.tot).filter(function (p) { return noms[p]; }).map(function (p) {
-      var pre = pfx(p), n = Object.keys(d.ok).filter(function (k) { return k.split('#')[0] === pre + p; }).length, t = d.tot[p];
-      return '<tr><td><a href="' + p + '">' + esc(noms[p]) + '</a></td><td>' + n + ' / ' + t + '</td><td><progress max="' + t + '" value="' + n + '"></progress></td></tr>';
+    var pages = Object.keys(d.tot);
+    Object.keys(D.suivi || {}).forEach(function (p) { if (pages.indexOf(p) < 0) pages.push(p); });
+    var rows = pages.filter(function (p) { return noms[p]; }).map(function (p) {
+      var pre = pfx(p), c = communs(p).length,
+          n = c + Object.keys(d.ok).filter(function (k) { return k.split('#')[0] === pre + p; }).length,
+          t = d.tot[p] || (D.suivi[p] && D.suivi[p].total) || n;
+      return '<tr><td><a href="' + p + '">' + esc(noms[p]) + '</a></td><td>' + n + ' / ' + t +
+        (c ? ' <small>(' + c + ' en commun)</small>' : '') + '</td><td><progress max="' + t + '" value="' + n + '"></progress></td></tr>';
     });
     el.innerHTML = (rows.length ? '<div class="tw"><table><thead><tr><th>Page</th><th>Étapes cochées</th><th></th></tr></thead><tbody>' + rows.join('') + '</tbody></table></div>'
       : '<p>Rien de coché pour l\'instant. Ouvre une page et coche les étapes faites : elles sont mémorisées dans ce navigateur.</p>') +
