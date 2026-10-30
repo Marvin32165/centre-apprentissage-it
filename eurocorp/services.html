@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Services Windows — EUROCORP</title>
+<meta name="description" content="Fichiers, web, messagerie et SharePoint.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Services</div><h1>Fichiers, web, messagerie, SharePoint</h1>
+<p class="lead">Ce que les utilisateurs voient. Chaque service dépend de l'annuaire et du DNS : ne démarre pas avant que <a href="identite.html">l'identité</a> soit stable.</p>
+<div class="tw"><table><thead><tr><th>Service</th><th>Idée</th><th>Conséquence / piège</th></tr></thead><tbody>
+<tr><td><b>Serveur de fichiers</b></td><td>AGDLP : comptes → groupes globaux → groupes locaux de domaine → droits sur les dossiers</td><td>Ne jamais donner de droits à un utilisateur directement. Réplica Hyper-V prévu pour LON-FS01 vers Paris.</td></tr>
+<tr><td><b>IIS + NLB</b></td><td>Plusieurs serveurs web derrière une adresse virtuelle</td><td>Unicast : les nœuds partagent une MAC, il faut autoriser l'usurpation de MAC sur Hyper-V et les nœuds ne se parlent plus entre eux. Multicast : il faut que le réseau gère le multicast. À trancher.</td></tr>
+<tr><td><b>Exchange SE + PKI</b></td><td>Messagerie ; certificats par une autorité interne (AD CS)</td><td>Installer l'autorité de certification avant, sinon certificats auto-signés partout. Préparer le schéma AD d'abord.</td></tr>
+<tr><td><b>SQL Server + SharePoint SE</b></td><td>SharePoint stocke tout dans SQL ; comptes de service gMSA</td><td>Créer la clé racine KDS pour les gMSA. Le classement (collation) de SQL doit convenir à SharePoint : à vérifier <b>avant</b> l'installation, il ne se change pas facilement.</td></tr>
+</tbody></table></div>
+<div class="note warn"><b>À valider</b><p>Répartition par site et tailles : voir l'<a href="infrastructure.html">inventaire</a>. Les détails d'installation sont dans tes notes brutes de chaque cours.</p></div>
+<p><b>Reste à toi :</b> choisir le mode NLB, tester la bascule (arrêter un nœud), noter les résultats.</p>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

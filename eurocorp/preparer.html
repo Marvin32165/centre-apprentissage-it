@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Préparer Hyper-V — EUROCORP</title>
+<meta name="description" content="Prérequis et préparation de l'hôte Hyper-V.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Préparer</div><h1>Préparer l'hôte Hyper-V</h1>
+<p class="lead">Avant la première VM : réseau virtuel, image parent, convention de nommage. Tout ce qui est fait ici, on ne le refait pas 21 fois.</p>
+<div class="note bref"><b>En bref</b><p>Une seule image Windows préparée (sysprep) sert de parent ; chaque VM est un disque différentiel léger. Trois types de commutateurs virtuels séparent l'extérieur, les LAN de sites et les liens isolés.</p></div>
+<figure><div data-flow='{"label":"De l image parent aux 21 VM","nodes":[{"t":"Windows Server installé","s":"à jour"},{"t":"Sysprep","s":"généralise, arrêt","c":"hub"},{"t":"TEST-SYSPREP.vhdx","s":"parent, lecture seule"},{"t":"Disques différentiels","s":"un par VM","c":"ok"}],"edges":["","protégé",""]}'></div><figcaption>Chemin du parent d'après tes notes : <code>C:\PARENT\TEST-SYSPREP.vhdx</code>.</figcaption></figure>
+<h2><span class="num">1</span>Pourquoi cette méthode</h2>
+<p>Installer Windows 21 fois prend des heures et du disque. Un parent + des différentiels : une installation, des VM qui démarrent en quelques minutes, et un disque qui ne grossit que de ce qui change. Conséquence : <b>ne jamais démarrer ni modifier le parent</b> — tous les différentiels en dépendent.</p>
+<h2><span class="num">2</span>Les commutateurs virtuels</h2>
+<div class="tw"><table><thead><tr><th>Type</th><th>Sert à</th><th>Dans le labo</th></tr></thead><tbody>
+<tr><td>Externe</td><td>Relier à la salle de TP (10.10.28.0/24)</td><td>Côté WAN des pare-feu OPNsense</td></tr>
+<tr><td>Interne</td><td>Hôte + VM</td><td>À décider si utile (accès de l'hôte aux LAN)</td></tr>
+<tr><td>Privé</td><td>VM entre elles seulement</td><td>Un par LAN de site : isole les 4 sites</td></tr></tbody></table></div>
+<div class="note warn"><b>À valider</b><p>Nombre exact de commutateurs et leurs noms : reconstitué, à confirmer avec ton cahier des charges.</p></div>
+<h2><span class="num">3</span>Ordre</h2>
+<ol><li>Créer les commutateurs (1 externe, 4 privés).</li><li>Préparer le parent (mises à jour, sysprep, arrêt, lecture seule).</li><li>Créer le premier différentiel + VM de test, vérifier le démarrage.</li><li>Seulement ensuite, créer les VM d'un site, puis les autres.</li></ol>
+<p><b>Reste à toi :</b> la RAM totale : voir l'<a href="infrastructure.html">inventaire</a> (marge vs 64 Go) avant de créer quoi que ce soit.</p>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

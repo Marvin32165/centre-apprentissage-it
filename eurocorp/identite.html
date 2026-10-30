@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Identité — EUROCORP</title>
+<meta name="description" content="AD, DNS, sites AD et DHCP.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Identité</div><h1>Active Directory, DNS et DHCP</h1>
+<p class="lead">Le socle dont tout le reste dépend : sans annuaire et sans DNS, ni Exchange, ni SharePoint, ni Redmine (LDAP) ne fonctionnent.</p>
+<div class="note bref"><b>En bref</b><p>Un domaine, un contrôleur par site, des « sites AD » qui reflètent la topologie, un DHCP en failover entre deux sites, des GPO. Les noms (<code>eurocorp.lan</code>) sont des propositions à valider.</p></div>
+<figure><div data-flow='{"label":"Ordre d installation","nodes":[{"t":"BRU-DC01","s":"1re forêt","c":"hub"},{"t":"DC des autres sites","s":"PAR, LON, BER"},{"t":"Sites et sous-réseaux","s":"liés aux tunnels"},{"t":"DHCP + failover","s":"BRU ↔ PAR","c":"ok"}],"edges":["promotion","","après"]}'></div></figure>
+<h2><span class="num">1</span>Pourquoi cet ordre</h2>
+<p>Le premier DC crée la forêt et le DNS. Les autres l'utilisent comme DNS <b>avant</b> d'être promus. Créer les sites AD et leurs sous-réseaux évite que les clients de Londres s'authentifient à Bruxelles par le tunnel.</p>
+<h2><span class="num">2</span>DNS</h2><div data-render="dns"></div>
+<h2><span class="num">3</span>DHCP</h2>
+<p>Plage dynamique .100–.199 de chaque LAN. Le failover tient la plage sur deux serveurs (BRU-DC01 + PAR-DC01, proposé). Les sites sans serveur DHCP utilisent le relais OPNsense : voir <a href="reseau.html">Réseau</a>.</p>
+<div class="note warn"><b>À valider</b><p>Où héberger le DHCP, mode du failover (équilibré ou secours), durée du bail.</p></div>
+<p><b>Reste à toi :</b> la structure d'UO, les groupes (AGDLP : comptes → globaux → locaux de domaine → droits) et les GPO.</p>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

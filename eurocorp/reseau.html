@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Réseau et pare-feu — EUROCORP</title>
+<meta name="description" content="OPNsense, IPsec en étoile et flux autorisés.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Réseau</div><h1>OPNsense, tunnels et flux</h1>
+<p class="lead">Chaque site a son pare-feu OPNsense. Bruxelles est le centre : les trois autres s'y relient par IPsec.</p>
+<div class="note bref"><b>En bref</b><p>Un pare-feu par site (WAN dans la salle, LAN du site), trois tunnels IPsec site-à-site vers Bruxelles, puis des règles qui n'autorisent que les flux nécessaires (liste ci-dessous). Le DHCP passe d'un site à l'autre par relais.</p></div>
+<div data-svg="global"></div>
+<h2><span class="num">1</span>Pourquoi en étoile</h2>
+<p>3 tunnels au lieu de 6. Conséquence : Paris ↔ Londres passe par Bruxelles ; si Bruxelles tombe, les autres sites ne se voient plus. Les routes et les règles de chaque pare-feu doivent donc connaître tous les LAN.</p>
+<h2><span class="num">2</span>Tunnels et plages</h2>
+<div data-render="tunnels"></div><div data-render="plages"></div>
+<h2><span class="num">3</span>Ordre de configuration</h2>
+<ol><li>Interfaces WAN/LAN et passerelle de chaque OPNsense.</li><li>Tunnel BRU-PAR d'abord ; ping d'un LAN à l'autre avant d'ajouter le suivant.</li><li>BRU-LON, BRU-BER.</li><li>Règles de filtrage, flux par flux (tableau).</li><li>Relais DHCP là où le DHCP n'est pas local.</li></ol>
+<div class="note warn"><b>Piège</b><p>Un tunnel « établi » ne prouve rien : teste un ping réel LAN à LAN, et regarde les phases 1 et 2 dans les journaux si ça échoue (clé, identifiants, réseaux locaux/distants inversés).</p></div>
+<h2><span class="num">4</span>Flux à autoriser</h2><div data-render="flux"></div>
+<p><b>Reste à toi :</b> choisir pour chaque flux autorisé si tu le restreins davantage ; noter les captures de test.</p>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
