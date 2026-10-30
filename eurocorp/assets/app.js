@@ -7,6 +7,7 @@
   var PAGES = [
     ['index.html', 'Accueil'],
     ['infrastructure.html', 'Infrastructure'],
+    ['marche.html', 'Ma marche à suivre'],
     ['preparer.html', '1 · Préparer'],
     ['reseau.html', '2 · Réseau'],
     ['identite.html', '3 · Identité'],

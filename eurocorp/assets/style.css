@@ -251,3 +251,7 @@ tr.moi-ligne td { background: var(--accent-soft); font-weight: 600; }
 @media (max-width: 760px) { .moi { order: 2; } .moi select { max-width: 160px; } }
 .note.src { border-left-color: var(--accent); }
 .note.src h3 { margin-top: 14px; font-size: 16px; }
+
+.vm { border: 1px solid var(--border); border-radius: var(--r); padding: 6px 16px 10px; margin: 14px 0; background: var(--surface); }
+.vm h3 { margin: 10px 0 6px; } .vm h3 small { font: 400 13px var(--font-ui); color: var(--ink-soft); display: block; margin-top: 2px; }
+.vm ol { padding-left: 34px; margin: 8px 0; } .vm li { margin: 6px 0; }
