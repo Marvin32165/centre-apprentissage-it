@@ -123,7 +123,7 @@ window.EURO = {
    "disque": 60,
    "mem": "statique",
    "replica": "",
-   "statut": "afaire"
+   "statut": "encours"
   },
   {
    "nom": "BRU-IIS01",
@@ -280,7 +280,7 @@ window.EURO = {
    "disque": 20,
    "mem": "statique",
    "replica": "",
-   "statut": "afaire"
+   "statut": "encours"
   },
   {
    "nom": "LON-FS01",
@@ -332,7 +332,7 @@ window.EURO = {
    "disque": 20,
    "mem": "statique",
    "replica": "",
-   "statut": "afaire"
+   "statut": "encours"
   },
   {
    "nom": "BER-DOCKER01",
@@ -802,32 +802,32 @@ window.EURO = {
   {
    "cle": "hyperv",
    "nom": "Hyper-V : vSwitch et VM",
-   "statut": "encours",
-   "note": "Site Paris : VM OPNsense et commutateurs créés. Autres sites : état non relevé ici."
+   "statut": "fait",
+   "note": "Jour 1 : Windows Server installé sur les hôtes. Commutateurs et VM OPNsense créés (Paris vérifié le 29/10 ; autres sites selon tes dires du jour 1)."
   },
   {
    "cle": "opnsense",
    "nom": "OPNsense (4 sites)",
    "statut": "encours",
-   "note": "Paris : WAN 10.10.28.112, LAN 172.17.20.1, interface web joignable depuis le LAN (validé 29/10). Bruxelles (hub) en cours. Londres et Berlin : non relevé."
+   "note": "Jour 1 : OPNsense installés sur les sites ; pare-feu (règles) pas terminé. Paris : WAN 10.10.28.112, LAN 172.17.20.1, interface web joignable depuis le LAN (validé 29/10)."
   },
   {
    "cle": "ipsec",
    "nom": "IPsec + routage intersite",
-   "statut": "afaire",
-   "note": "Prochaine étape : tunnel Paris–Bruxelles (configuration du hub), puis Londres et Berlin."
+   "statut": "encours",
+   "note": "Jour 1 : tunnels IPsec montés avec « tout autorisé », pas terminés. Ensuite : vérifier un ping LAN à LAN par tunnel, puis remplacer « tout autorisé » par la matrice de flux."
   },
   {
    "cle": "filtrage",
    "nom": "Règles firewall (matrice de flux)",
    "statut": "afaire",
-   "note": "Matrice proposée dans le site ; règles à écrire après les tunnels."
+   "note": "Tout est encore autorisé : la matrice (28 flux) remplace « tout autorisé » une fois les tunnels validés."
   },
   {
    "cle": "ad",
    "nom": "AD DS + DNS + Sites and Services",
-   "statut": "afaire",
-   "note": ""
+   "statut": "encours",
+   "note": "Jour 1 : DC01 installé, domaine eurocorp.lan créé (nom confirmé) ; DC01 pas terminé : DNS, sites et services, rôles à finir."
   },
   {
    "cle": "dhcp",
