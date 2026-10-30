@@ -191,6 +191,7 @@
     });
     var vis = titres.filter(function (h) { return !h.hidden; }).map(function (h) { return titreSection(h).replace(/\s*\([^)]*\)\s*$/, ''); });
     var h1 = $('main h1'), lead = $('main p.lead');
+    if (!hote && v) vis = vis.map(function (t) { var k = K.cle(v); return t === 'SQL Server et SharePoint' ? (k === 'sql' ? 'SQL Server' : k === 'sp' ? 'SharePoint' : t) : t; });
     if (vis.length && h1) h1.textContent = vis.join(' · ');
     if (lead) lead.innerHTML = vis.length ? (hote ? 'Ce que tu fais sur l\'hôte de <b>' + esc(st.nom) + '</b> (' + esc(st.hote) + ') pour ses ' + cibles.length + ' machines : ' + cibles.map(function (c) { return esc(c.nom); }).join(', ') + '.' : 'Ce que tu fais sur <b>' + esc(v.nom) + '</b> (' + esc(v.role) + ', <code>' + esc(v.ip) + '</code>) : seulement ce qui la concerne sur cette page.') : lead.innerHTML;
     $$('main .note.bref').forEach(function (x) { x.hidden = true; x.setAttribute('data-masque', '1'); });
