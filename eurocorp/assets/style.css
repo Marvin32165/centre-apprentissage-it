@@ -249,3 +249,5 @@ figure, [data-flow] { max-width: 100%; min-width: 0; } @media (max-width: 640px)
 .moi-bandeau { background: var(--accent-soft); border-left: 3px solid var(--accent); margin-bottom: 18px; }
 tr.moi-ligne td { background: var(--accent-soft); font-weight: 600; }
 @media (max-width: 760px) { .moi { order: 2; } .moi select { max-width: 160px; } }
+.note.src { border-left-color: var(--accent); }
+.note.src h3 { margin-top: 14px; font-size: 16px; }
