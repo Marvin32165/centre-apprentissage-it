@@ -79,7 +79,7 @@ $ErrorActionPreference = &#x27;Stop&#x27;
 
 # --- Plan (généré depuis data/eurocorp.json) -------------------------------------------------
 $Plan = @(
-    @{ Nom=&#x27;BRU-FW01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.10.1&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — hub IPsec&#x27; }
+    @{ Nom=&#x27;BRU-FW01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.10.1&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=20; Role=&#x27;OPNsense — hub IPsec&#x27; }
     @{ Nom=&#x27;BRU-DC01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.10&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;AD DS + DNS + DHCP (failover)&#x27; }
     @{ Nom=&#x27;BRU-IIS01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.21&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;IIS — nœud NLB 1&#x27; }
     @{ Nom=&#x27;BRU-IIS02&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.22&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;IIS — nœud NLB 2&#x27; }
@@ -91,11 +91,11 @@ $Plan = @(
     @{ Nom=&#x27;PAR-SQL01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.20&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=100; Role=&#x27;SQL Server (base de SharePoint)&#x27; }
     @{ Nom=&#x27;PAR-SP01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.21&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=12; Vcpu=4; DisqueGo=100; Role=&#x27;SharePoint Server SE&#x27; }
     @{ Nom=&#x27;PAR-CLT01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
-    @{ Nom=&#x27;LON-FW01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.30.1&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke&#x27; }
+    @{ Nom=&#x27;LON-FW01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.30.1&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=40; Role=&#x27;OPNsense — spoke&#x27; }
     @{ Nom=&#x27;LON-FS01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.30.10&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=160; Role=&#x27;File Server (Direction, RH, Finance, IT, Commun)&#x27; }
     @{ Nom=&#x27;LON-DOCKER01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.30.40&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=40; Role=&#x27;Docker — Redmine (+ MariaDB, nginx)&#x27; }
     @{ Nom=&#x27;LON-CLT01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
-    @{ Nom=&#x27;BER-FW01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.40.1&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke&#x27; }
+    @{ Nom=&#x27;BER-FW01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.40.1&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=40; Role=&#x27;OPNsense — spoke&#x27; }
     @{ Nom=&#x27;BER-DOCKER01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.40.40&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=100; Role=&#x27;Docker — pile Wazuh (indexer, manager, dashboard)&#x27; }
     @{ Nom=&#x27;BER-DOCKER02&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.40.41&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=60; Role=&#x27;Docker — Greenbone Community Edition&#x27; }
     @{ Nom=&#x27;BER-CLT01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
@@ -131,9 +131,10 @@ foreach ($vm in $liste) {
         &#x27;FW&#x27; {
             $disque = Join-Path $dossier &quot;$nom.vhdx&quot;
             New-VHD -Path $disque -SizeBytes ([int64]$vm.DisqueGo * 1GB) -Dynamic | Out-Null
-            # carte 1 = WAN, carte 2 = LAN : l&#x27;ordre fait que OPNsense les voit comme hn0 puis hn1
-            New-VM -Name $nom -Generation 2 -MemoryStartupBytes $ram -VHDPath $disque -Path $VMRoot -SwitchName &#x27;WAN&#x27; | Out-Null
-            Add-VMNetworkAdapter -VMName $nom -SwitchName $lan
+            # carte 1 = LAN (hn0), carte 2 = WAN (hn1) : OPNsense fait de hn0 son LAN avec un DHCP actif,
+            # qui ne doit jamais etre sur le reseau de salle (incident du 29/10)
+            New-VM -Name $nom -Generation 2 -MemoryStartupBytes $ram -VHDPath $disque -Path $VMRoot -SwitchName $lan | Out-Null
+            Add-VMNetworkAdapter -VMName $nom -SwitchName &#x27;WAN&#x27;
             Set-VMFirmware -VMName $nom -EnableSecureBoot Off
             if ($OpnsenseIso) { Add-VMDvdDrive -VMName $nom -Path $OpnsenseIso; Set-VMFirmware -VMName $nom -FirstBootDevice (Get-VMDvdDrive -VMName $nom) }
         }
@@ -179,7 +180,7 @@ param(
 )
 $ErrorActionPreference = &#x27;Stop&#x27;
 $Plan = @(
-    @{ Nom=&#x27;BRU-FW01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.10.1&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — hub IPsec&#x27; }
+    @{ Nom=&#x27;BRU-FW01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.10.1&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=20; Role=&#x27;OPNsense — hub IPsec&#x27; }
     @{ Nom=&#x27;BRU-DC01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.10&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;AD DS + DNS + DHCP (failover)&#x27; }
     @{ Nom=&#x27;BRU-IIS01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.21&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;IIS — nœud NLB 1&#x27; }
     @{ Nom=&#x27;BRU-IIS02&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.22&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;IIS — nœud NLB 2&#x27; }
@@ -191,11 +192,11 @@ $Plan = @(
     @{ Nom=&#x27;PAR-SQL01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.20&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=100; Role=&#x27;SQL Server (base de SharePoint)&#x27; }
     @{ Nom=&#x27;PAR-SP01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.21&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=12; Vcpu=4; DisqueGo=100; Role=&#x27;SharePoint Server SE&#x27; }
     @{ Nom=&#x27;PAR-CLT01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
-    @{ Nom=&#x27;LON-FW01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.30.1&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke&#x27; }
+    @{ Nom=&#x27;LON-FW01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.30.1&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=40; Role=&#x27;OPNsense — spoke&#x27; }
     @{ Nom=&#x27;LON-FS01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.30.10&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=160; Role=&#x27;File Server (Direction, RH, Finance, IT, Commun)&#x27; }
     @{ Nom=&#x27;LON-DOCKER01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.30.40&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=40; Role=&#x27;Docker — Redmine (+ MariaDB, nginx)&#x27; }
     @{ Nom=&#x27;LON-CLT01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
-    @{ Nom=&#x27;BER-FW01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.40.1&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke&#x27; }
+    @{ Nom=&#x27;BER-FW01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.40.1&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=40; Role=&#x27;OPNsense — spoke&#x27; }
     @{ Nom=&#x27;BER-DOCKER01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.40.40&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=100; Role=&#x27;Docker — pile Wazuh (indexer, manager, dashboard)&#x27; }
     @{ Nom=&#x27;BER-DOCKER02&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.40.41&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=60; Role=&#x27;Docker — Greenbone Community Edition&#x27; }
     @{ Nom=&#x27;BER-CLT01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
