@@ -175,9 +175,12 @@
         remplace(/LAN-BRU/, function (t) { return t.replace(/LAN-BRU/g, 'LAN-' + st.id); });
       }
     });
-    var somm = $('.somm'); if (somm) {
-      Array.prototype.forEach.call(somm.querySelectorAll('a'), function (a) { var h = document.getElementById(a.getAttribute('href').slice(1)); if (h && h.hidden) { a.hidden = true; } });
-    }
+    var vis = titres.filter(function (h) { return !h.hidden; }).map(function (h) { return titreSection(h).replace(/\s*\([^)]*\)\s*$/, ''); });
+    var h1 = $('main h1'), lead = $('main p.lead');
+    if (vis.length && h1) h1.textContent = vis.join(' · ');
+    if (lead) lead.innerHTML = vis.length ? (hote ? 'Ce que tu fais sur l\'hôte de <b>' + esc(st.nom) + '</b> (' + esc(st.hote) + ') : le réseau virtuel et le modèle Sysprep.' : 'Ce que tu fais sur <b>' + esc(v.nom) + '</b> (' + esc(v.role) + ', <code>' + esc(v.ip) + '</code>) : seulement ce qui la concerne sur cette page.') : lead.innerHTML;
+    $$('main .note.bref').forEach(function (x) { x.hidden = true; x.setAttribute('data-masque', '1'); });
+    var somm = $('.somm'); if (somm) { somm.hidden = true; somm.setAttribute('data-masque', '1'); }
     var nom = hote ? 'l\'hôte de ' + esc(st.nom) : esc(v.nom), b = document.createElement('div'); b.className = 'note moi-bandeau';
     b.innerHTML = nbVisibles ? '<b>Vue de ' + nom + '</b> : seules les parties de cette page qui concernent cette machine sont affichées (' + nbVisibles + ' sur ' + titres.length + '). Choisis « Toutes les machines » en haut à gauche pour tout voir.'
       : '<b>Rien pour ' + nom + ' sur cette page.</b> Elle ne la concerne pas : ouvre « Ma marche à suivre » pour toute sa marche, ou choisis « Toutes les machines » pour tout voir.';
