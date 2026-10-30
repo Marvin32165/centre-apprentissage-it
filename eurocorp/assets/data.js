@@ -1113,6 +1113,18 @@ window.EURO = {
     "Coche On-the-fly user creation.",
     "curl -kI https://helpdesk.eurocorp.lan : HTTP/1.1 200 ou 302."
    ]
+  },
+  "marche.html": {
+   "total": 2797,
+   "faits": [
+    "Fiche de BRU-DC01RôleAD DS + DNS + DHCP (failover)SystèmeWindows Server 2025Adre",
+    "Créer la VM depuis le disque parentComment. Hyper-V Manager → New → Virtual Mach",
+    "IP fixe, puis renommer la machine (en dernier)Comment. ncpa.cpl → IPv4 : 172.17.",
+    "Détail · IP fixe et DNS sur lui-mêmeAdresse 172.17.10.10, masque /24, passerelle",
+    "Détail · Choisir le nomeurocorp.lan (NetBIOS EUROCORP). Déjà créé le jour 1 ; la",
+    "Détail · Les serveurs ont une IP fixeLe serveur DHCP lui-même n'est jamais en DH",
+    "Fiche de BRU-EXCH01RôleExchange Server SESystèmeWindows Server 2025Adresse IP172"
+   ]
   }
  }
 };
