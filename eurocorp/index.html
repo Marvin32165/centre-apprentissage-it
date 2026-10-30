@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EUROCORP — labo final</title>
+<meta name="description" content="Guide du labo final EUROCORP : infrastructure multisite Hyper-V, Windows Server 2025, OPNsense et Docker.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+
+<div class="eyebrow">Labo final · Administration système &amp; virtualisation</div>
+<h1>EUROCORP</h1>
+<p class="lead">Quatre sites, un annuaire commun, des services Windows et Linux, de la supervision et une reprise après incident. Ce guide dit quoi faire, dans quel ordre, et surtout pourquoi.</p>
+
+<div class="note bref"><b>Comment s'en servir</b>
+<p>Chaque brique suit le même fil : <b>en bref</b>, <b>pourquoi</b>, <b>comment</b>, puis ce que ça change pour la suite. Les commandes viennent de tes notes de cours quand elles existent ; sinon une pastille le dit. Les choix à trancher et les vérifications restent à toi : ils sont listés à la fin de chaque page.</p></div>
+
+<figure>
+<div data-svg="global"></div>
+<figcaption>Les quatre sites partagent le réseau de salle. Chacun a son LAN derrière un OPNsense ; Bruxelles est le hub : les tunnels IPsec partent de là.</figcaption>
+</figure>
+
+<div class="cards" aria-label="Chiffres clés">
+<div class="card"><div class="k">MACHINES</div><h3><span data-stat="vm"></span> VM</h3><p>réparties sur 4 hôtes Hyper-V</p></div>
+<div class="card"><div class="k">MÉMOIRE</div><h3><span data-stat="ram"></span> de RAM</h3><p>sur 256 Go disponibles</p></div>
+<div class="card"><div class="k">FIREWALL</div><h3><span data-stat="flux"></span> flux autorisés</h3><p>tout le reste est bloqué</p></div>
+</div>
+
+<h2><span class="num">LE PARCOURS</span>Dans l'ordre du labo</h2>
+<div class="cards">
+<a class="card" data-page="infrastructure.html" href="infrastructure.html"><div class="k">VUE D'ENSEMBLE</div><h3>Infrastructure</h3><p>Toutes les machines, puis une vue par ville : plan IP, VM, rôles.</p></a>
+<a class="card" data-page="preparer.html" href="preparer.html"><div class="k">ÉTAPE 1</div><h3>Préparer</h3><p>Prérequis, Hyper-V, modèle sysprep, commutateurs virtuels.</p></a>
+<a class="card" data-page="reseau.html" href="reseau.html"><div class="k">ÉTAPE 2</div><h3>Réseau</h3><p>OPNsense, tunnels IPsec, filtrage et matrice de flux.</p></a>
+<a class="card" data-page="identite.html" href="identite.html"><div class="k">ÉTAPE 3</div><h3>Identité</h3><p>Active Directory, DNS, DHCP avec Failover, GPO.</p></a>
+<a class="card" data-page="services.html" href="services.html"><div class="k">ÉTAPE 4</div><h3>Services</h3><p>File Server, IIS + NLB, Exchange, SharePoint + SQL Server.</p></a>
+<a class="card" data-page="docker.html" href="docker.html"><div class="k">ÉTAPE 5</div><h3>Docker</h3><p>Zabbix, Redmine, Wazuh, Greenbone et leurs <code>.env</code>.</p></a>
+<a class="card" data-page="exploitation.html" href="exploitation.html"><div class="k">ÉTAPE 6</div><h3>Exploitation</h3><p>Supervision, scripts PowerShell, Replica, sauvegarde et PRA, tests.</p></a>
+<a class="card" data-page="compose.html" href="compose.html"><div class="k">OUTIL</div><h3>Docker Compose</h3><p>Générer et vérifier un compose et son <code>.env</code>.</p></a>
+<a class="card" data-page="avancement.html" href="avancement.html"><div class="k">SUIVI</div><h3>Avancement</h3><p>Planning, état de chaque brique, décisions à prendre.</p></a>
+</div>
+
+<h2><span class="num">REPÈRES</span>Les pastilles</h2>
+<div class="tw"><table>
+<thead><tr><th>Pastille</th><th>Sens</th></tr></thead>
+<tbody>
+<tr><td><span class="badge b-notes">Notes</span></td><td>Vu en cours ou en labo : repris de tes notes brutes.</td></tr>
+<tr><td><span class="badge b-cdc">Cahier des charges</span></td><td>Exigé par le sujet, mais absent de tes notes : à réaliser et à documenter.</td></tr>
+<tr><td><span class="badge b-ref">À valider</span></td><td>Reconstitué depuis la documentation officielle, jamais rejoué ici : à tester avant de s'y fier.</td></tr>
+</tbody></table></div>
+
+<h2><span class="num">RÈGLES</span>À ne pas oublier</h2>
+<ul>
+<li>Aucun serveur sur le réseau de salle <code>10.10.28.0/24</code> : il ne sert qu'au transport entre sites et aux hôtes.</li>
+<li>Chaque site a son LAN derrière son OPNsense, et tout passage d'un site à l'autre transite par OPNsense.</li>
+<li>Pas de règle « LAN vers ANY » comme seule sécurité : n'ouvrir que ce que la matrice de flux justifie.</li>
+<li>Docker : un compose par application, des volumes persistants, les mots de passe dans un <code>.env</code>.</li>
+<li>Valider le plan IP avant de déployer massivement.</li>
+</ul>
+
+<h2><span class="num">ÉTAT</span>Où en est-on</h2>
+<div data-etat="architecture,hyperv,opnsense,ipsec"></div>
+<p><a href="avancement.html" data-page="avancement.html">Voir tout l'avancement</a></p>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

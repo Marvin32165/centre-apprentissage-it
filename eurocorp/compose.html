@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outil Docker Compose — EUROCORP</title>
+<meta name="description" content="Générateur de compose et de .env, vérificateur et mémo de diagnostic Docker pour le labo EUROCORP.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Outil</div>
+<h1>Docker Compose et .env</h1>
+<p class="lead">Générer un compose et son <code>.env</code> à partir de quelques champs, vérifier un compose existant, et retrouver les commandes de diagnostic. Tout se passe dans le navigateur : rien n'est envoyé.</p>
+
+<div class="note bref"><b>En bref</b>
+<p>Le générateur couvre les deux applications dont tu as les notes (Zabbix et Redmine). Le vérificateur marche pour n'importe quel compose, donc aussi pour Wazuh et Greenbone. Il signale les oublis fréquents, il ne remplace pas <code>docker compose config</code> sur la VM.</p></div>
+
+<h2><span class="num">1</span>Comment fonctionne le .env</h2>
+<p>Dans le dossier du <code>docker-compose.yml</code>, <code>docker compose</code> lit tout seul le fichier <code>.env</code>. Chaque <code>${VARIABLE}</code> du compose est remplacée par la valeur du <code>.env</code> avant que les conteneurs ne démarrent. Le compose ne contient donc plus aucun mot de passe : on peut le lire, le montrer ou le commiter sans rien dévoiler. Dans ce labo les <code>.env</code> sont aussi commités, ce sont des valeurs jetables.</p>
+
+<figure>
+<div data-flow='{"label":"Le .env alimente le compose, qui crée les conteneurs","nodes":[{"t":".env","s":"POSTGRES_PASSWORD=…","c":"hub"},{"t":"docker-compose.yml","s":"${POSTGRES_PASSWORD}"},{"t":"docker compose up -d","s":"remplace les variables"},{"t":"Conteneurs","s":"reçoivent les valeurs","c":"ok"}],"edges":["lu seul","",""]}'></div>
+<figcaption>Rien à configurer : même dossier, nom exact <code>.env</code>.</figcaption>
+</figure>
+
+<div class="tw"><table>
+<thead><tr><th>Règle</th><th>Pourquoi c'est important</th></tr></thead>
+<tbody>
+<tr><td><code>CLE=valeur</code>, sans espace autour du <code>=</code></td><td><code>CLE = valeur</code> n'est pas lue : la variable reste vide.</td></tr>
+<tr><td>Pas de guillemets nécessaires, sauf valeur avec espaces</td><td>Les guillemets autour d'une valeur simple sont sans effet, mais un <code>#</code> précédé d'un espace commence un commentaire.</td></tr>
+<tr><td>Un <code>$</code> dans une valeur s'écrit <code>$$</code></td><td>Sinon il est pris pour une variable. Le plus simple : mots de passe alphanumériques, comme ceux du générateur.</td></tr>
+<tr><td><code>${VAR:-défaut}</code> dans le compose</td><td>Donne une valeur de secours si <code>VAR</code> est absente. Sans défaut, une variable absente devient vide, sans erreur.</td></tr>
+<tr><td>Une variable d'environnement du shell passe avant le <code>.env</code></td><td>Si un <code>export POSTGRES_PASSWORD=…</code> traîne dans la session, c'est lui qui gagne. Voir ce qui est réellement appliqué : <code>docker compose config</code>.</td></tr>
+<tr><td><code>chmod 600 .env</code> sur la VM</td><td>Seul le propriétaire (root) lit le fichier. Git ne conserve pas ce droit : à refaire après chaque <code>git clone</code>.</td></tr>
+<tr><td>Changer un mot de passe de base <b>après</b> le premier démarrage</td><td>Sans effet sur la base : le mot de passe n'est lu qu'à la création du volume. Soit on le change dans la base, soit on supprime le volume (<code>docker compose down -v</code>, perte des données).</td></tr>
+</tbody></table></div>
+
+<div class="code"><div class="cap"><span>Voir ce que Compose appliquera réellement</span><button class="copy" type="button">Copier</button></div>
+<pre>docker compose config          # compose complet avec les variables remplacées
+docker compose config -q       # silencieux : n'affiche que les erreurs de syntaxe
+docker compose config | grep -i password   # vérifier qu'une variable n'est pas vide</pre></div>
+
+<h2><span class="num">2</span>Générateur</h2>
+<p>Choisis l'application, ajuste les champs : le compose, le <code>.env</code>, la configuration nginx (Redmine) et les commandes se mettent à jour. Les mots de passe sont tirés au hasard dans ton navigateur ; <b>Générer</b> en tire de nouveaux. Copie ou télécharge chaque fichier.</p>
+
+<div id="gen">
+<div class="fld"><label for="app">Application</label>
+<select id="app"><option value="zabbix">Zabbix — BRU-DOCKER01</option><option value="redmine">Redmine — LON-DOCKER01</option></select></div>
+<div class="tool">
+<div class="panelbox" id="form" aria-label="Champs"></div>
+<div id="out" aria-live="polite"></div>
+</div>
+</div>
+
+<div class="note warn"><b>Wazuh et Greenbone</b>
+<p>Le compose de Greenbone est celui du projet (script <code>fetch-compose.sh</code> du dossier <code>05-Docker/greenbone</code>) et celui de Wazuh vient du dépôt officiel : ils sont trop longs et changent trop souvent pour être générés ici. Passe-les au vérificateur ci-dessous.</p></div>
+
+<h2><span class="num">3</span>Vérificateur</h2>
+<p>Colle un <code>docker-compose.yml</code> et son <code>.env</code>. Le contrôle cherche : variables manquantes ou inutilisées, mots de passe écrits en clair, <code>restart</code> absent, image sans version, volumes ou réseaux non déclarés, ports en double, base de données sans volume.</p>
+<div class="two">
+<div><label for="vc"><b>docker-compose.yml</b></label><textarea id="vc" spellcheck="false" placeholder="services:&#10;  ..."></textarea></div>
+<div><label for="ve"><b>.env</b></label><textarea id="ve" spellcheck="false" placeholder="CLE=valeur"></textarea></div>
+</div>
+<p style="margin-top:12px"><button class="btn" id="verif" type="button">Vérifier</button> <button class="btn ghost" id="vex" type="button">Essayer sur un exemple défectueux</button></p>
+<div id="vr" aria-live="polite"></div>
+
+<h2><span class="num">4</span>Commandes de diagnostic</h2>
+<p>Celles que le cahier des charges demande de maîtriser. Ordre habituel quand « ça ne marche pas » : <code>docker ps</code>, puis <code>docker logs</code>.</p>
+<div class="tw"><table>
+<thead><tr><th>Commande</th><th>Ce qu'elle montre</th><th>Quand l'utiliser</th></tr></thead>
+<tbody>
+<tr><td class="mono">docker ps</td><td>Les conteneurs qui tournent, leurs ports et leur âge</td><td>Un conteneur « Restarting » ou absent : il plante.</td></tr>
+<tr><td class="mono">docker compose ps</td><td>Même vue, limitée aux services du compose du dossier</td><td>Vérifier que toute la pile est « Up » (<code>-a</code> pour voir les arrêtés).</td></tr>
+<tr><td class="mono">docker logs &lt;nom&gt; --tail 50</td><td>Les dernières lignes de sortie du conteneur</td><td>Premier réflexe après une erreur (mot de passe refusé, base introuvable, PSK inconnue…).</td></tr>
+<tr><td class="mono">docker inspect &lt;nom&gt;</td><td>Configuration complète : variables, montages, réseaux, IP</td><td>Vérifier quel volume est monté, quelle valeur a été reçue.</td></tr>
+<tr><td class="mono">docker stats</td><td>CPU, mémoire, réseau de chaque conteneur en direct</td><td>Un service lent ou une VM qui sature.</td></tr>
+<tr><td class="mono">docker volume ls</td><td>Les volumes persistants</td><td>Confirmer que les données survivent à un <code>down</code> (volumes présents).</td></tr>
+<tr><td class="mono">docker network ls</td><td>Les réseaux Docker (un par compose, plus ceux par défaut)</td><td>Comprendre quels conteneurs se voient ; <code>docker network inspect &lt;réseau&gt;</code> pour le détail.</td></tr>
+<tr><td class="mono">docker compose up -d &lt;service&gt;</td><td>(Re)lance un seul service sans toucher aux autres</td><td>Après modification du compose ou du <code>.env</code> : Compose recrée ce qui a changé.</td></tr>
+<tr><td class="mono">docker compose down</td><td>Arrête et supprime les conteneurs et réseaux, garde les volumes</td><td>Repartir propre. Avec <code>-v</code> : supprime aussi les volumes (données perdues).</td></tr>
+</tbody></table></div>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/compose.js"></script>
+</body>
+</html>
