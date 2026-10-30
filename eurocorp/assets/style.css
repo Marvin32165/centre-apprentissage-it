@@ -209,3 +209,10 @@ select#app { font: 600 15px var(--font-ui); max-width: 320px; }
 /* --- pages pas encore écrites ------------------------------------------ */
 .nav-links .soon { color: var(--ink-faint); padding: 6px 10px; opacity: .6; cursor: default; }
 a.soon, .card.soon { opacity: .65; pointer-events: none; }
+
+/* suivi */
+input.suivi { position: absolute; left: -26px; top: 4px; width: 18px; height: 18px; accent-color: var(--accent, #9C3F1D); cursor: pointer; }
+main ol:not(.steps) { padding-left: 34px; }
+main ol > li { position: relative; }
+main ol > li.fait { color: var(--muted, #6B5F52); text-decoration: line-through; text-decoration-color: rgba(0,0,0,.25); }
+progress { width: 140px; accent-color: var(--accent, #9C3F1D); }

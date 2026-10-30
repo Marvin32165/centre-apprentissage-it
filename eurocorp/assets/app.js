@@ -289,7 +289,51 @@
     $$('[data-stat]').forEach(renderStats);
   }
 
+
+  /* --- suivi : cases à cocher mémorisées dans le navigateur ---------------- */
+  var CLE = 'euro.suivi.v1';
+  function lire() { try { return JSON.parse(localStorage.getItem(CLE)) || { ok: {}, tot: {} }; } catch (e) { return { ok: {}, tot: {} }; } }
+  function ecrire(d) { try { localStorage.setItem(CLE, JSON.stringify(d)); return true; } catch (e) { return false; } }
+  function pageNom() { return (location.pathname.split('/').pop() || 'index.html'); }
+  function initSuivi() {
+    var items = $$('main ol > li'), page = pageNom(), d = lire();
+    if (items.length) { d.tot[page] = items.length; ecrire(d); }
+    items.forEach(function (li, i) {
+      var id = page + '#' + i, cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.className = 'suivi'; cb.checked = !!d.ok[id];
+      cb.setAttribute('aria-label', 'Étape faite');
+      li.classList.toggle('fait', cb.checked);
+      cb.addEventListener('change', function () {
+        var x = lire(); if (cb.checked) x.ok[id] = 1; else delete x.ok[id];
+        ecrire(x); li.classList.toggle('fait', cb.checked);
+      });
+      li.insertBefore(cb, li.firstChild);
+    });
+    $$('[data-suivi]').forEach(renderSuivi);
+  }
+  function renderSuivi(el) {
+    var d = lire(), noms = {};
+    PAGES.forEach(function (p) { noms[p[0]] = p[1]; });
+    var rows = Object.keys(d.tot).filter(function (p) { return noms[p]; }).map(function (p) {
+      var n = Object.keys(d.ok).filter(function (k) { return k.split('#')[0] === p; }).length, t = d.tot[p];
+      return '<tr><td><a href="' + p + '">' + esc(noms[p]) + '</a></td><td>' + n + ' / ' + t + '</td><td><progress max="' + t + '" value="' + n + '"></progress></td></tr>';
+    });
+    el.innerHTML = (rows.length ? '<div class="tw"><table><thead><tr><th>Page</th><th>Étapes cochées</th><th></th></tr></thead><tbody>' + rows.join('') + '</tbody></table></div>'
+      : '<p>Rien de coché pour l\'instant. Ouvre une page et coche les étapes faites : elles sont mémorisées dans ce navigateur.</p>') +
+      '<p class="note">La mémoire est propre à ce navigateur et à cette adresse. Pour la passer à un autre poste : Exporter, puis Importer.</p>' +
+      '<p><button class="btn ghost" type="button" data-a="exp">Exporter</button> <button class="btn ghost" type="button" data-a="imp">Importer</button> <button class="btn ghost" type="button" data-a="rst">Tout décocher</button></p><textarea hidden spellcheck="false" aria-label="Données de suivi"></textarea>';
+    var ta = $('textarea', el);
+    el.addEventListener('click', function (e) {
+      var a = e.target.getAttribute && e.target.getAttribute('data-a'); if (!a) return;
+      if (a === 'exp') { ta.hidden = false; ta.value = JSON.stringify(lire()); ta.select(); }
+      if (a === 'imp') {
+        if (ta.hidden || !ta.value) { ta.hidden = false; ta.value = ''; ta.placeholder = 'Colle ici les données exportées puis clique de nouveau sur Importer'; return; }
+        try { var o = JSON.parse(ta.value); if (o && o.ok && o.tot) { ecrire(o); renderSuivi(el); } } catch (x) { ta.value = 'Données invalides.'; }
+      }
+      if (a === 'rst') { var x = lire(); x.ok = {}; ecrire(x); location.reload(); }
+    });
+  }
   document.addEventListener('DOMContentLoaded', function () {
-    buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy();
+    buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy(); initSuivi();
   });
 })();
