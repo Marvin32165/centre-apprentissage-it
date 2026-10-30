@@ -189,6 +189,17 @@
       if (!hote && o.subst) remplace(/BRU-DC01|172\.17\.10\.10/, function (t) { return t.replace(/BRU-DC01/g, v.nom).replace(/172\.17\.10\.10(?![0-9])/g, v.ip); });
       remplace(/LAN-BRU/, function (t) { return t.replace(/LAN-BRU/g, 'LAN-' + st.id); });
     });
+    /* numéros de section continus sur ce qui reste affiché */
+    titres.filter(function (h) { return !h.hidden; }).forEach(function (h, i) { var n = h.querySelector('.num'); if (n) n.textContent = String(i + 1); });
+    /* introduction propre à la machine quand le texte parle de « tous » les contrôleurs */
+    if (!hote && v) titres.forEach(function (h2) {
+      var t = titreSection(h2), k = K.cle(v), e = h2.nextElementSibling; if (h2.hidden || !e || e.tagName !== 'P') return;
+      if (t === 'Les autres contrôleurs et les sites AD' && k === 'dc') {
+        e.innerHTML = v.nom === 'PAR-DC01'
+          ? '<b>' + esc(v.nom) + '</b> (Paris, <code>' + esc(v.ip) + '</code>) est le <b>deuxième contrôleur</b> du domaine : il rejoint <code>eurocorp.lan</code> par le tunnel de Paris, puis est promu à côté de <code>BRU-DC01</code>. Londres et Berlin n\'ont pas de contrôleur. Ensuite, les <b>sites AD</b> (quatre) disent à l\'annuaire quels réseaux sont « proches ».'
+          : '<b>' + esc(v.nom) + '</b> (Bruxelles, <code>' + esc(v.ip) + '</code>) est le <b>premier contrôleur</b>, déjà en place. Sur cette page, il te reste à ajouter <code>PAR-DC01</code> (Paris) pour la réplication, puis à créer les <b>sites AD</b> (quatre) et leurs sous-réseaux.';
+      }
+    });
     var vis = titres.filter(function (h) { return !h.hidden; }).map(function (h) { return titreSection(h).replace(/\s*\([^)]*\)\s*$/, ''); });
     var h1 = $('main h1'), lead = $('main p.lead');
     if (!hote && v) vis = vis.map(function (t) { var k = K.cle(v); return t === 'SQL Server et SharePoint' ? (k === 'sql' ? 'SQL Server' : k === 'sp' ? 'SharePoint' : t) : t; });
