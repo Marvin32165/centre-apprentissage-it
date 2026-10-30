@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scripts — EUROCORP</title>
+<meta name="description" content="Scripts PowerShell et shell du labo : VM depuis le parent Sysprep, réseau, domaine, DNS, DHCP, groupes, gMSA, NLB, Replica, Docker.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Scripts</div><h1>Les scripts du labo</h1>
+<p class="lead">Dans l'ordre où on les lance. Les premiers servent dès que le parent Sysprep est prêt : créer les VM du site, puis régler chaque VM. Chaque script se déplie ; <b>Copier</b> met tout dans le presse-papiers.</p>
+<div class="note warn"><b>À savoir</b><p>Ces scripts sont écrits d'après le plan mais <b>n'ont jamais été exécutés</b>. Lance chacun d'abord avec <code>-WhatIf</code> (il affiche ce qu'il ferait sans rien faire), puis sur <b>une seule</b> machine. Aucun mot de passe n'est dans un script : ils sont demandés au lancement.</p></div>
+<div class="note bref"><b>En bref</b><p>Sur l'hôte : <code>00</code> commutateurs, <code>01</code> VM du site. Dans chaque VM : <code>02</code> réseau et nom, <code>03</code> domaine. Sur les contrôleurs : <code>04</code> à <code>10</code>. Services : <code>11</code> à <code>14</code>. Linux : <code>20</code> à <code>22</code>. Le dossier du livrable : <code>exercices/eurocorp-lab/06-PowerShell/scripts/</code>.</p></div>
+<h2 id="sc00"><span class="num">00</span>Commutateurs virtuels de l&#x27;hôte</h2><p><b>Où :</b> Sur l&#x27;hôte Hyper-V (PowerShell administrateur).</p><p>Crée le commutateur externe WAN (salle) et le commutateur privé LAN-&lt;site&gt;. À lancer une fois par hôte.</p>
+<details class="scr"><summary>Voir le script <code>00-New-EuroCorpSwitches.ps1</code></summary><div class="code"><div class="cap"><span>00-New-EuroCorpSwitches.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Crée les commutateurs virtuels de l&#x27;hôte : WAN (externe, vers la salle) et LAN-&lt;site&gt; (privé).
+.PARAMETER Site
+  BRU, PAR, LON ou BER : l&#x27;hôte sur lequel tu es.
+.PARAMETER CarteReseau
+  Nom de la carte physique branchée sur la salle (Get-NetAdapter).
+.EXAMPLE
+  .\00-New-EuroCorpSwitches.ps1 -Site BRU -CarteReseau &quot;Ethernet&quot; -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory)][ValidateSet(&#x27;BRU&#x27;,&#x27;PAR&#x27;,&#x27;LON&#x27;,&#x27;BER&#x27;)][string]$Site,
+    [Parameter(Mandatory)][string]$CarteReseau
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+if (-not (Get-NetAdapter -Name $CarteReseau -ErrorAction SilentlyContinue)) {
+    throw &quot;Carte &#x27;$CarteReseau&#x27; introuvable. Noms disponibles : $((Get-NetAdapter).Name -join &#x27;, &#x27;)&quot;
+}
+if (-not (Get-VMSwitch -Name &#x27;WAN&#x27; -ErrorAction SilentlyContinue)) {
+    if ($PSCmdlet.ShouldProcess(&#x27;WAN&#x27;, &#x27;Créer le commutateur externe&#x27;)) {
+        # -AllowManagementOS $true garde l&#x27;hôte joignable (RDP) pendant que le commutateur prend la carte
+        New-VMSwitch -Name &#x27;WAN&#x27; -NetAdapterName $CarteReseau -AllowManagementOS $true | Out-Null
+    }
+} else { Write-Host &quot;WAN existe déjà : ignoré.&quot; }
+$lan = &quot;LAN-$Site&quot;
+if (-not (Get-VMSwitch -Name $lan -ErrorAction SilentlyContinue)) {
+    if ($PSCmdlet.ShouldProcess($lan, &#x27;Créer le commutateur privé&#x27;)) {
+        New-VMSwitch -Name $lan -SwitchType Private | Out-Null
+    }
+} else { Write-Host &quot;$lan existe déjà : ignoré.&quot; }
+Get-VMSwitch | Format-Table Name, SwitchType
+</pre></div></details>
+<h2 id="sc01"><span class="num">01</span>Créer les VM du site depuis le parent Sysprep</h2><p><b>Où :</b> Sur l&#x27;hôte Hyper-V, une fois C:\PARENT\TEST-SYSPREP.vhdx prêt.</p><p>Crée toutes les VM du site : serveurs Windows en disque différentiel, OPNsense (2 cartes), VM Linux Docker (ISO). Mémoire fixe, vCPU et RAM du plan. Ne démarre rien sans -Demarrer.</p>
+<details class="scr"><summary>Voir le script <code>01-New-EuroCorpVMs.ps1</code></summary><div class="code"><div class="cap"><span>01-New-EuroCorpVMs.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Crée les VM d&#x27;un site à partir du plan EUROCORP (source : data/eurocorp.json).
+.DESCRIPTION
+  - Serveurs Windows : disque DIFFÉRENTIEL sur le parent généralisé (Sysprep), génération 2.
+  - OPNsense : 2 cartes (WAN puis LAN-&lt;site&gt;), disque neuf, démarrage sécurisé désactivé, ISO si fournie.
+  - Linux (Docker) : disque neuf, démarrage sécurisé désactivé, ISO si fournie.
+  - Clients Windows 11 : ignorés (installation depuis ISO, TPM virtuel) sauf indication contraire plus bas.
+  Partout : mémoire dynamique DÉSACTIVÉE, aucun point de contrôle automatique.
+  Idempotent : une VM qui existe déjà est ignorée. -WhatIf montre ce qui serait fait.
+.EXAMPLE
+  .\01-New-EuroCorpVMs.ps1 -Site BRU -WhatIf
+  .\01-New-EuroCorpVMs.ps1 -Site PAR -VMRoot D:\VM -OpnsenseIso D:\ISO\OPNsense.iso -LinuxIso D:\ISO\ubuntu-24.04.iso
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory)][ValidateSet(&#x27;BRU&#x27;,&#x27;PAR&#x27;,&#x27;LON&#x27;,&#x27;BER&#x27;)][string]$Site,
+    [string]$Parent = &#x27;C:\PARENT\TEST-SYSPREP.vhdx&#x27;,
+    [string]$VMRoot = &#x27;D:\VM&#x27;,
+    [string]$OpnsenseIso,
+    [string]$LinuxIso,
+    [string[]]$Seulement,          # limiter à certaines VM (noms du plan)
+    [switch]$Demarrer
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+
+# --- Plan (généré depuis data/eurocorp.json) -------------------------------------------------
+$Plan = @(
+    @{ Nom=&#x27;BRU-FW01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.10.1&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — hub IPsec&#x27; }
+    @{ Nom=&#x27;BRU-DC01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.10&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;AD DS + DNS + DHCP (failover)&#x27; }
+    @{ Nom=&#x27;BRU-IIS01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.21&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;IIS — nœud NLB 1&#x27; }
+    @{ Nom=&#x27;BRU-IIS02&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.22&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;IIS — nœud NLB 2&#x27; }
+    @{ Nom=&#x27;BRU-EXCH01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.30&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=16; Vcpu=4; DisqueGo=200; Role=&#x27;Exchange Server SE&#x27; }
+    @{ Nom=&#x27;BRU-DOCKER01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.10.40&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Docker — Zabbix (serveur + web + PostgreSQL)&#x27; }
+    @{ Nom=&#x27;BRU-CLT01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
+    @{ Nom=&#x27;PAR-FW01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.20.1&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke (VM actuelle : 2-PARIS-OPNSENSE)&#x27; }
+    @{ Nom=&#x27;PAR-DC01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.10&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;AD DS + DNS + DHCP (failover)&#x27; }
+    @{ Nom=&#x27;PAR-SQL01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.20&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=100; Role=&#x27;SQL Server (base de SharePoint)&#x27; }
+    @{ Nom=&#x27;PAR-SP01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.21&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=12; Vcpu=4; DisqueGo=100; Role=&#x27;SharePoint Server SE&#x27; }
+    @{ Nom=&#x27;PAR-CLT01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
+    @{ Nom=&#x27;LON-FW01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.30.1&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke&#x27; }
+    @{ Nom=&#x27;LON-FS01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.30.10&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=160; Role=&#x27;File Server (Direction, RH, Finance, IT, Commun)&#x27; }
+    @{ Nom=&#x27;LON-DOCKER01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.30.40&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=40; Role=&#x27;Docker — Redmine (+ MariaDB, nginx)&#x27; }
+    @{ Nom=&#x27;LON-CLT01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
+    @{ Nom=&#x27;BER-FW01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.40.1&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke&#x27; }
+    @{ Nom=&#x27;BER-DOCKER01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.40.40&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=100; Role=&#x27;Docker — pile Wazuh (indexer, manager, dashboard)&#x27; }
+    @{ Nom=&#x27;BER-DOCKER02&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.40.41&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=60; Role=&#x27;Docker — Greenbone Community Edition&#x27; }
+    @{ Nom=&#x27;BER-CLT01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
+)
+# ---------------------------------------------------------------------------------------------
+
+$lan = &quot;LAN-$Site&quot;
+foreach ($sw in &#x27;WAN&#x27;, $lan) {
+    if (-not (Get-VMSwitch -Name $sw -ErrorAction SilentlyContinue)) { throw &quot;Commutateur &#x27;$sw&#x27; absent : lance d&#x27;abord 00-New-EuroCorpSwitches.ps1.&quot; }
+}
+if (-not (Test-Path $Parent)) { throw &quot;Parent Sysprep introuvable : $Parent&quot; }
+if (-not (Get-Item $Parent).IsReadOnly) { Write-Warning &quot;Le parent n&#x27;est pas en lecture seule : Set-ItemProperty &#x27;$Parent&#x27; -Name IsReadOnly -Value `$true&quot; }
+
+$liste = $Plan | Where-Object { $_.Site -eq $Site }
+if ($Seulement) { $liste = $liste | Where-Object { $Seulement -contains $_.Nom } }
+
+foreach ($vm in $liste) {
+    $nom = $vm.Nom
+    if (Get-VM -Name $nom -ErrorAction SilentlyContinue) { Write-Host &quot;[$nom] existe déjà : ignoré.&quot;; continue }
+    if ($vm.Type -eq &#x27;CLIENT&#x27;) { Write-Host &quot;[$nom] client Windows 11 : à créer depuis l&#x27;ISO (génération 2, TPM virtuel). Ignoré.&quot;; continue }
+
+    $dossier = Join-Path $VMRoot $nom
+    $ram = [int64]$vm.RamGo * 1GB
+    if (-not $PSCmdlet.ShouldProcess($nom, &quot;Créer la VM ($($vm.Type), $($vm.RamGo) Go, $($vm.Vcpu) vCPU)&quot;)) { continue }
+    New-Item -ItemType Directory -Path $dossier -Force | Out-Null
+
+    switch ($vm.Type) {
+        &#x27;WIN&#x27; {
+            $disque = Join-Path $dossier &quot;$nom.vhdx&quot;
+            New-VHD -Path $disque -ParentPath $Parent -Differencing | Out-Null
+            New-VM -Name $nom -Generation 2 -MemoryStartupBytes $ram -VHDPath $disque -Path $VMRoot -SwitchName $lan | Out-Null
+        }
+        &#x27;FW&#x27; {
+            $disque = Join-Path $dossier &quot;$nom.vhdx&quot;
+            New-VHD -Path $disque -SizeBytes ([int64]$vm.DisqueGo * 1GB) -Dynamic | Out-Null
+            # carte 1 = WAN, carte 2 = LAN : l&#x27;ordre fait que OPNsense les voit comme hn0 puis hn1
+            New-VM -Name $nom -Generation 2 -MemoryStartupBytes $ram -VHDPath $disque -Path $VMRoot -SwitchName &#x27;WAN&#x27; | Out-Null
+            Add-VMNetworkAdapter -VMName $nom -SwitchName $lan
+            Set-VMFirmware -VMName $nom -EnableSecureBoot Off
+            if ($OpnsenseIso) { Add-VMDvdDrive -VMName $nom -Path $OpnsenseIso; Set-VMFirmware -VMName $nom -FirstBootDevice (Get-VMDvdDrive -VMName $nom) }
+        }
+        &#x27;LINUX&#x27; {
+            $disque = Join-Path $dossier &quot;$nom.vhdx&quot;
+            New-VHD -Path $disque -SizeBytes ([int64]$vm.DisqueGo * 1GB) -Dynamic | Out-Null
+            New-VM -Name $nom -Generation 2 -MemoryStartupBytes $ram -VHDPath $disque -Path $VMRoot -SwitchName $lan | Out-Null
+            Set-VMFirmware -VMName $nom -EnableSecureBoot Off
+            if ($LinuxIso) { Add-VMDvdDrive -VMName $nom -Path $LinuxIso; Set-VMFirmware -VMName $nom -FirstBootDevice (Get-VMDvdDrive -VMName $nom) }
+        }
+    }
+    Set-VMMemory -VMName $nom -DynamicMemoryEnabled $false
+    Set-VMProcessor -VMName $nom -Count $vm.Vcpu
+    Set-VM -Name $nom -AutomaticCheckpointsEnabled $false
+    Write-Host &quot;[$nom] créée.&quot;
+}
+
+if ($Demarrer -and -not $WhatIfPreference) {
+    foreach ($vm in $liste) { if ($vm.Type -ne &#x27;CLIENT&#x27; -and (Get-VM -Name $vm.Nom -ErrorAction SilentlyContinue).State -eq &#x27;Off&#x27;) { Start-VM -Name $vm.Nom } }
+}
+Get-VM | Where-Object { $liste.Nom -contains $_.Name } |
+    Format-Table Name, State, @{n=&#x27;RAM(Go)&#x27;;e={$_.MemoryStartup/1GB}}, ProcessorCount, @{n=&#x27;Mém.dyn.&#x27;;e={(Get-VMMemory -VMName $_.Name).DynamicMemoryEnabled}}
+</pre></div></details>
+<h2 id="sc02"><span class="num">02</span>Premier réglage d&#x27;un serveur (IP, DNS, nom)</h2><p><b>Où :</b> Dans chaque VM Windows, après l&#x27;OOBE (PowerShell administrateur).</p><p>Lit le plan : IP fixe, passerelle, DNS, IPv6 coupé, fuseau horaire, pare-feu coupé (lab), renommage puis redémarrage. Un seul paramètre : le nom de la VM.</p>
+<details class="scr"><summary>Voir le script <code>02-Initialize-EuroCorpServer.ps1</code></summary><div class="code"><div class="cap"><span>02-Initialize-EuroCorpServer.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Premier réglage d&#x27;un serveur Windows EUROCORP d&#x27;après le plan : IP fixe, passerelle, DNS, IPv6 coupé,
+  fuseau horaire, pare-feu coupé (LABORATOIRE SEULEMENT), renommage, redémarrage.
+.PARAMETER Nom
+  Nom de la machine dans le plan (ex. BRU-DC01).
+.PARAMETER Dns
+  Remplace les DNS déduits du plan.
+.EXAMPLE
+  .\02-Initialize-EuroCorpServer.ps1 -Nom BRU-DC01 -WhatIf
+  .\02-Initialize-EuroCorpServer.ps1 -Nom PAR-SQL01
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory)][string]$Nom,
+    [string[]]$Dns,
+    [string]$Carte = &#x27;Ethernet&#x27;,
+    [switch]$GarderPareFeu
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+$Plan = @(
+    @{ Nom=&#x27;BRU-FW01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.10.1&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — hub IPsec&#x27; }
+    @{ Nom=&#x27;BRU-DC01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.10&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;AD DS + DNS + DHCP (failover)&#x27; }
+    @{ Nom=&#x27;BRU-IIS01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.21&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;IIS — nœud NLB 1&#x27; }
+    @{ Nom=&#x27;BRU-IIS02&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.22&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;IIS — nœud NLB 2&#x27; }
+    @{ Nom=&#x27;BRU-EXCH01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.30&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=16; Vcpu=4; DisqueGo=200; Role=&#x27;Exchange Server SE&#x27; }
+    @{ Nom=&#x27;BRU-DOCKER01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.10.40&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Docker — Zabbix (serveur + web + PostgreSQL)&#x27; }
+    @{ Nom=&#x27;BRU-CLT01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
+    @{ Nom=&#x27;PAR-FW01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.20.1&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke (VM actuelle : 2-PARIS-OPNSENSE)&#x27; }
+    @{ Nom=&#x27;PAR-DC01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.10&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;AD DS + DNS + DHCP (failover)&#x27; }
+    @{ Nom=&#x27;PAR-SQL01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.20&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=100; Role=&#x27;SQL Server (base de SharePoint)&#x27; }
+    @{ Nom=&#x27;PAR-SP01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.21&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=12; Vcpu=4; DisqueGo=100; Role=&#x27;SharePoint Server SE&#x27; }
+    @{ Nom=&#x27;PAR-CLT01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
+    @{ Nom=&#x27;LON-FW01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.30.1&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke&#x27; }
+    @{ Nom=&#x27;LON-FS01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.30.10&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=160; Role=&#x27;File Server (Direction, RH, Finance, IT, Commun)&#x27; }
+    @{ Nom=&#x27;LON-DOCKER01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.30.40&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=40; Role=&#x27;Docker — Redmine (+ MariaDB, nginx)&#x27; }
+    @{ Nom=&#x27;LON-CLT01&#x27;; Site=&#x27;LON&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.30.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
+    @{ Nom=&#x27;BER-FW01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.40.1&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke&#x27; }
+    @{ Nom=&#x27;BER-DOCKER01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.40.40&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=100; Role=&#x27;Docker — pile Wazuh (indexer, manager, dashboard)&#x27; }
+    @{ Nom=&#x27;BER-DOCKER02&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.40.41&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=60; Role=&#x27;Docker — Greenbone Community Edition&#x27; }
+    @{ Nom=&#x27;BER-CLT01&#x27;; Site=&#x27;BER&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.40.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
+)
+$vm = $Plan | Where-Object { $_.Nom -eq $Nom }
+if (-not $vm) { throw &quot;&#x27;$Nom&#x27; absent du plan. Noms : $($Plan.Nom -join &#x27;, &#x27;)&quot; }
+if ($vm.Type -ne &#x27;WIN&#x27;) { throw &quot;$Nom n&#x27;est pas un serveur Windows (type $($vm.Type)).&quot; }
+if ($vm.Ip -eq &#x27;DHCP&#x27;) { throw &quot;$Nom est en DHCP : rien à fixer.&quot; }
+
+# DNS : le premier contrôleur se pointe sur lui-même ; les autres sur les contrôleurs (BRU d&#x27;abord, sauf PAR-DC01)
+$dcBru = ($Plan | Where-Object Nom -eq &#x27;BRU-DC01&#x27;).Ip
+$dcPar = ($Plan | Where-Object Nom -eq &#x27;PAR-DC01&#x27;).Ip
+if (-not $Dns) {
+    if     ($Nom -eq &#x27;BRU-DC01&#x27;) { $Dns = @($vm.Ip) }
+    elseif ($Nom -eq &#x27;PAR-DC01&#x27;) { $Dns = @($dcBru) }      # avant la promotion ; repasser sur lui-même ensuite
+    else                         { $Dns = @($dcBru, $dcPar) }
+}
+
+if (-not (Get-NetAdapter -Name $Carte -ErrorAction SilentlyContinue)) { throw &quot;Carte &#x27;$Carte&#x27; introuvable : $((Get-NetAdapter).Name -join &#x27;, &#x27;)&quot; }
+
+if ($PSCmdlet.ShouldProcess($Nom, &quot;IP $($vm.Ip)/24, passerelle $($vm.Gw), DNS $($Dns -join &#x27;, &#x27;)&quot;)) {
+    # repartir propre si une IP existe déjà
+    Get-NetIPAddress -InterfaceAlias $Carte -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object { $_.PrefixOrigin -ne &#x27;WellKnown&#x27; } | Remove-NetIPAddress -Confirm:$false -ErrorAction SilentlyContinue
+    Remove-NetRoute -InterfaceAlias $Carte -DestinationPrefix &#x27;0.0.0.0/0&#x27; -Confirm:$false -ErrorAction SilentlyContinue
+    New-NetIPAddress -InterfaceAlias $Carte -IPAddress $vm.Ip -PrefixLength 24 -DefaultGateway $vm.Gw | Out-Null
+    Set-DnsClientServerAddress -InterfaceAlias $Carte -ServerAddresses $Dns
+    Disable-NetAdapterBinding -Name $Carte -ComponentID ms_tcpip6
+    Set-TimeZone -Id &#x27;Romance Standard Time&#x27;           # Bruxelles, Paris, Berlin (Londres : adapter si besoin)
+    if (-not $GarderPareFeu) { Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled False }
+    # Bureau à distance
+    Set-ItemProperty -Path &#x27;HKLM:\System\CurrentControlSet\Control\Terminal Server&#x27; -Name fDenyTSConnections -Value 0
+    Enable-NetFirewallRule -DisplayGroup &#x27;Remote Desktop&#x27; -ErrorAction SilentlyContinue
+}
+if ($env:COMPUTERNAME -ne $Nom) {
+    if ($PSCmdlet.ShouldProcess($Nom, &#x27;Renommer et redémarrer&#x27;)) { Rename-Computer -NewName $Nom -Restart }
+} else { Write-Host &quot;Déjà nommée $Nom.&quot; }
+</pre></div></details>
+<h2 id="sc03"><span class="num">03</span>Joindre le domaine</h2><p><b>Où :</b> Dans chaque serveur Windows (sauf BRU-DC01), après 02.</p><p>Vérifie que le DNS résout le domaine, puis joint eurocorp.lan dans l&#x27;UO choisie et redémarre.</p>
+<details class="scr"><summary>Voir le script <code>03-Join-EuroCorpDomain.ps1</code></summary><div class="code"><div class="cap"><span>03-Join-EuroCorpDomain.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Joint le serveur au domaine EUROCORP. Prérequis : 02-Initialize-EuroCorpServer.ps1 fait, BRU-DC01 en ligne.
+.PARAMETER OU
+  DN de l&#x27;UO de destination (ex. &quot;OU=Serveurs,OU=EuroCorp,DC=eurocorp,DC=lan&quot;). Vide = conteneur Computers.
+.EXAMPLE
+  .\03-Join-EuroCorpDomain.ps1 -OU &quot;OU=Serveurs,OU=EuroCorp,DC=eurocorp,DC=lan&quot;
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [string]$Domaine = &#x27;eurocorp.lan&#x27;,
+    [string]$OU
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+if ((Get-CimInstance Win32_ComputerSystem).PartOfDomain) { Write-Host &quot;Déjà dans le domaine.&quot;; return }
+# Sans la résolution des enregistrements SRV du domaine, Add-Computer échoue : on le vérifie avant.
+if (-not (Resolve-DnsName -Name &quot;_ldap._tcp.dc._msdcs.$Domaine&quot; -Type SRV -ErrorAction SilentlyContinue)) {
+    throw &quot;Le DNS ne résout pas $Domaine : vérifie le DNS de la carte (BRU-DC01 doit répondre) et le tunnel.&quot;
+}
+$cred = Get-Credential -Message &quot;Compte autorisé à joindre des machines au domaine ($Domaine)&quot;
+$jonction = @{ DomainName = $Domaine; Credential = $cred; Restart = $true }
+if ($OU) { $jonction.OUPath = $OU }
+if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, &quot;Joindre $Domaine&quot;)) { Add-Computer @jonction }
+</pre></div></details>
+<h2 id="sc04"><span class="num">04</span>Créer la forêt (BRU-DC01)</h2><p><b>Où :</b> Sur BRU-DC01 uniquement, après 02.</p><p>Installe AD DS et DNS puis crée la forêt eurocorp.lan. Demande le mot de passe DSRM (à noter dans Infos.md).</p>
+<details class="scr"><summary>Voir le script <code>04-New-EuroCorpForest.ps1</code></summary><div class="code"><div class="cap"><span>04-New-EuroCorpForest.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Crée la forêt eurocorp.lan sur BRU-DC01 (rôles AD DS + DNS). Le serveur redémarre à la fin.
+.EXAMPLE
+  .\04-New-EuroCorpForest.ps1 -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param([string]$Domaine = &#x27;eurocorp.lan&#x27;, [string]$NetBios = &#x27;EUROCORP&#x27;)
+$ErrorActionPreference = &#x27;Stop&#x27;
+if ($env:COMPUTERNAME -ne &#x27;BRU-DC01&#x27;) { throw &quot;À lancer sur BRU-DC01 (ici : $env:COMPUTERNAME).&quot; }
+$dns = (Get-DnsClientServerAddress -AddressFamily IPv4 | Where-Object { $_.ServerAddresses }).ServerAddresses
+Write-Host &quot;DNS de la carte : $($dns -join &#x27;, &#x27;) (doit être l&#x27;IP de BRU-DC01 elle-même)&quot;
+if ($PSCmdlet.ShouldProcess($Domaine, &#x27;Installer AD DS + DNS et créer la forêt&#x27;)) {
+    Install-WindowsFeature AD-Domain-Services, DNS -IncludeManagementTools | Out-Null
+    $dsrm = Read-Host -AsSecureString &quot;Mot de passe DSRM (restauration des services d&#x27;annuaire)&quot;
+    Install-ADDSForest -DomainName $Domaine -DomainNetbiosName $NetBios -InstallDns -SafeModeAdministratorPassword $dsrm -Force
+}
+</pre></div></details>
+<h2 id="sc05"><span class="num">05</span>Ajouter un contrôleur (PAR-DC01)</h2><p><b>Où :</b> Sur PAR-DC01, après 02 et 03, tunnel BRU-PAR monté.</p><p>Promeut PAR-DC01 en deuxième contrôleur (DNS inclus), puis repointe son DNS.</p>
+<details class="scr"><summary>Voir le script <code>05-Add-EuroCorpDomainController.ps1</code></summary><div class="code"><div class="cap"><span>05-Add-EuroCorpDomainController.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Promeut PAR-DC01 en contrôleur de domaine supplémentaire. Prérequis : machine dans le domaine, BRU-DC01 joignable.
+.EXAMPLE
+  .\05-Add-EuroCorpDomainController.ps1 -Site PAR -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [string]$Domaine = &#x27;eurocorp.lan&#x27;,
+    [string]$SiteAD = &#x27;Default-First-Site-Name&#x27;    # remplacé par PAR après 07-New-EuroCorpAdSites.ps1
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+if (-not (Test-NetConnection -ComputerName &quot;bru-dc01.$Domaine&quot; -Port 389 -InformationLevel Quiet)) { throw &quot;BRU-DC01 injoignable sur 389 : vérifier le tunnel et les règles.&quot; }
+if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, &quot;Promouvoir en contrôleur de $Domaine&quot;)) {
+    Install-WindowsFeature AD-Domain-Services, DNS -IncludeManagementTools | Out-Null
+    $cred = Get-Credential -Message &quot;Administrateur du domaine $Domaine&quot;
+    $dsrm = Read-Host -AsSecureString &quot;Mot de passe DSRM de ce contrôleur&quot;
+    Install-ADDSDomainController -DomainName $Domaine -InstallDns -Credential $cred -SafeModeAdministratorPassword $dsrm -SiteName $SiteAD -Force
+}
+# Après redémarrage : DNS préféré = lui-même, BRU-DC01 en secondaire
+#   Set-DnsClientServerAddress -InterfaceAlias Ethernet -ServerAddresses &lt;IP de PAR-DC01&gt;,&lt;IP de BRU-DC01&gt;
+</pre></div></details>
+<h2 id="sc06"><span class="num">06</span>Zones inverses et enregistrements DNS</h2><p><b>Où :</b> Sur BRU-DC01 (ou n&#x27;importe quel DC), une fois la forêt créée.</p><p>Crée les zones inverses des 4 LAN et tous les enregistrements A et CNAME du plan (avec PTR). Ignore ceux qui existent déjà.</p>
+<details class="scr"><summary>Voir le script <code>06-New-EuroCorpDns.ps1</code></summary><div class="code"><div class="cap"><span>06-New-EuroCorpDns.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Crée les zones de recherche inversée et les enregistrements DNS du plan EUROCORP.
+.EXAMPLE
+  .\06-New-EuroCorpDns.ps1 -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param([string]$Zone = &#x27;eurocorp.lan&#x27;)
+$ErrorActionPreference = &#x27;Stop&#x27;
+
+# Zones inverses : 172.17.10.0/24 -&gt; 10.17.172.in-addr.arpa, etc.
+foreach ($o in @(&#x27;10&#x27;,&#x27;20&#x27;,&#x27;30&#x27;,&#x27;40&#x27;)) {
+    $nom = &quot;$o.17.172.in-addr.arpa&quot;
+    if (-not (Get-DnsServerZone -Name $nom -ErrorAction SilentlyContinue)) {
+        if ($PSCmdlet.ShouldProcess($nom, &#x27;Créer la zone inverse&#x27;)) { Add-DnsServerPrimaryZone -NetworkId &quot;172.17.$o.0/24&quot; -ReplicationScope Domain }
+    }
+}
+$A = @(
+    @{ Nom=&#x27;bru-fw01&#x27;; Ip=&#x27;172.17.10.1&#x27; }
+    @{ Nom=&#x27;bru-dc01&#x27;; Ip=&#x27;172.17.10.10&#x27; }
+    @{ Nom=&#x27;bru-iis01&#x27;; Ip=&#x27;172.17.10.21&#x27; }
+    @{ Nom=&#x27;bru-iis02&#x27;; Ip=&#x27;172.17.10.22&#x27; }
+    @{ Nom=&#x27;bru-exch01&#x27;; Ip=&#x27;172.17.10.30&#x27; }
+    @{ Nom=&#x27;bru-docker01&#x27;; Ip=&#x27;172.17.10.40&#x27; }
+    @{ Nom=&#x27;par-fw01&#x27;; Ip=&#x27;172.17.20.1&#x27; }
+    @{ Nom=&#x27;par-dc01&#x27;; Ip=&#x27;172.17.20.10&#x27; }
+    @{ Nom=&#x27;par-sql01&#x27;; Ip=&#x27;172.17.20.20&#x27; }
+    @{ Nom=&#x27;par-sp01&#x27;; Ip=&#x27;172.17.20.21&#x27; }
+    @{ Nom=&#x27;lon-fw01&#x27;; Ip=&#x27;172.17.30.1&#x27; }
+    @{ Nom=&#x27;lon-fs01&#x27;; Ip=&#x27;172.17.30.10&#x27; }
+    @{ Nom=&#x27;lon-docker01&#x27;; Ip=&#x27;172.17.30.40&#x27; }
+    @{ Nom=&#x27;ber-fw01&#x27;; Ip=&#x27;172.17.40.1&#x27; }
+    @{ Nom=&#x27;ber-docker01&#x27;; Ip=&#x27;172.17.40.40&#x27; }
+    @{ Nom=&#x27;ber-docker02&#x27;; Ip=&#x27;172.17.40.41&#x27; }
+    @{ Nom=&#x27;intranet&#x27;; Ip=&#x27;172.17.10.20&#x27; }        # VIP NLB
+    @{ Nom=&#x27;mail&#x27;; Ip=&#x27;172.17.10.30&#x27; }
+    @{ Nom=&#x27;sharepoint&#x27;; Ip=&#x27;172.17.20.21&#x27; }
+    @{ Nom=&#x27;files&#x27;; Ip=&#x27;172.17.30.10&#x27; }
+)
+foreach ($r in $A) {
+    if (Get-DnsServerResourceRecord -ZoneName $Zone -Name $r.Nom -RRType A -ErrorAction SilentlyContinue) { Write-Host &quot;A $($r.Nom) existe : ignoré.&quot;; continue }
+    if ($PSCmdlet.ShouldProcess($r.Nom, &quot;A $($r.Ip)&quot;)) { Add-DnsServerResourceRecordA -ZoneName $Zone -Name $r.Nom -IPv4Address $r.Ip -CreatePtr }
+}
+$C = @(
+    @{ Nom=&#x27;autodiscover&#x27;; Cible=&#x27;mail&#x27; }
+    @{ Nom=&#x27;zbx01&#x27;; Cible=&#x27;bru-docker01&#x27; }
+    @{ Nom=&#x27;helpdesk&#x27;; Cible=&#x27;lon-docker01&#x27; }
+    @{ Nom=&#x27;wazuh&#x27;; Cible=&#x27;ber-docker01&#x27; }
+    @{ Nom=&#x27;greenbone&#x27;; Cible=&#x27;ber-docker02&#x27; }
+)
+foreach ($r in $C) {
+    if (Get-DnsServerResourceRecord -ZoneName $Zone -Name $r.Nom -RRType CName -ErrorAction SilentlyContinue) { Write-Host &quot;CNAME $($r.Nom) existe : ignoré.&quot;; continue }
+    if ($PSCmdlet.ShouldProcess($r.Nom, &quot;CNAME $($r.Cible)&quot;)) { Add-DnsServerResourceRecordCName -ZoneName $Zone -Name $r.Nom -HostNameAlias &quot;$($r.Cible).$Zone&quot; }
+}
+Get-DnsServerResourceRecord -ZoneName $Zone | Where-Object RecordType -in &#x27;A&#x27;,&#x27;CNAME&#x27; | Sort-Object RecordType, HostName | Format-Table HostName, RecordType, @{n=&#x27;Valeur&#x27;;e={ if ($_.RecordType -eq &#x27;A&#x27;) { $_.RecordData.IPv4Address } else { $_.RecordData.HostNameAlias } }}
+</pre></div></details>
+<h2 id="sc07"><span class="num">07</span>Sites AD, sous-réseaux et liens</h2><p><b>Où :</b> Sur BRU-DC01, après 05.</p><p>Crée un site AD par ville, son sous-réseau, les liens en étoile vers Bruxelles et place chaque contrôleur dans son site.</p>
+<details class="scr"><summary>Voir le script <code>07-New-EuroCorpAdSites.ps1</code></summary><div class="code"><div class="cap"><span>07-New-EuroCorpAdSites.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Sites Active Directory : un par ville, sous-réseau, liens en étoile BRU-&lt;ville&gt;, contrôleurs déplacés.
+.EXAMPLE
+  .\07-New-EuroCorpAdSites.ps1 -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param([int]$IntervalleMinutes = 15, [int]$Cout = 100)
+$ErrorActionPreference = &#x27;Stop&#x27;
+$Sites = @(
+@{ Id=&#x27;BRU&#x27;; Reseau=&#x27;172.17.10.0/24&#x27; }
+@{ Id=&#x27;PAR&#x27;; Reseau=&#x27;172.17.20.0/24&#x27; }
+@{ Id=&#x27;LON&#x27;; Reseau=&#x27;172.17.30.0/24&#x27; }
+@{ Id=&#x27;BER&#x27;; Reseau=&#x27;172.17.40.0/24&#x27; }
+)
+foreach ($s in $Sites) {
+    if (-not (Get-ADReplicationSite -Filter &quot;Name -eq &#x27;$($s.Id)&#x27;&quot;)) {
+        if ($PSCmdlet.ShouldProcess($s.Id, &#x27;Créer le site&#x27;)) { New-ADReplicationSite -Name $s.Id }
+    }
+    if (-not (Get-ADReplicationSubnet -Filter &quot;Name -eq &#x27;$($s.Reseau)&#x27;&quot;)) {
+        if ($PSCmdlet.ShouldProcess($s.Reseau, &quot;Sous-réseau -&gt; $($s.Id)&quot;)) { New-ADReplicationSubnet -Name $s.Reseau -Site $s.Id }
+    }
+}
+foreach ($s in $Sites | Where-Object Id -ne &#x27;BRU&#x27;) {
+    $lien = &quot;BRU-$($s.Id)&quot;
+    if (-not (Get-ADReplicationSiteLink -Filter &quot;Name -eq &#x27;$lien&#x27;&quot;)) {
+        if ($PSCmdlet.ShouldProcess($lien, &#x27;Créer le lien de sites&#x27;)) {
+            New-ADReplicationSiteLink -Name $lien -SitesIncluded &#x27;BRU&#x27;, $s.Id -Cost $Cout -ReplicationFrequencyInMinutes $IntervalleMinutes
+        }
+    }
+}
+# Contrôleurs dans leur site (un contrôleur déjà là, ex. PAR-DC01)
+foreach ($s in $Sites) {
+    $dc = Get-ADDomainController -Filter &quot;Name -eq &#x27;$($s.Id)-DC01&#x27;&quot; -ErrorAction SilentlyContinue
+    if ($dc -and $dc.Site -ne $s.Id -and $PSCmdlet.ShouldProcess($dc.Name, &quot;Déplacer vers $($s.Id)&quot;)) { Move-ADDirectoryServer -Identity $dc.Name -Site $s.Id }
+}
+Get-ADReplicationSite -Filter * | Format-Table Name
+Get-ADReplicationSiteLink -Filter * | Format-Table Name, Cost, ReplicationFrequencyInMinutes
+</pre></div></details>
+<h2 id="sc08"><span class="num">08</span>DHCP : étendues et failover</h2><p><b>Où :</b> Sur BRU-DC01 (serveur principal), après 06.</p><p>Installe le rôle, l&#x27;autorise dans l&#x27;AD, crée les 4 étendues (.100-.199) et monte le failover vers PAR-DC01.</p>
+<details class="scr"><summary>Voir le script <code>08-New-EuroCorpDhcp.ps1</code></summary><div class="code"><div class="cap"><span>08-New-EuroCorpDhcp.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  DHCP EUROCORP : rôle, autorisation AD, une étendue par site (.100 à .199), failover vers le partenaire.
+.PARAMETER Secret
+  Secret partagé du failover. Demandé si absent ; ne jamais l&#x27;écrire dans un fichier versionné.
+.EXAMPLE
+  .\08-New-EuroCorpDhcp.ps1 -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [string]$Domaine = &#x27;eurocorp.lan&#x27;,
+    [string]$Principal = &#x27;bru-dc01&#x27;,
+    [string]$Partenaire = &#x27;par-dc01&#x27;,
+    [int]$PourcentLocal = 50,
+    [securestring]$Secret
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+$dcBru = &#x27;172.17.10.10&#x27;; $dcPar = &#x27;172.17.20.10&#x27;
+$Plages = @(
+@{ Site=&#x27;BRU&#x27;; Nom=&#x27;LAN-BRU&#x27;; Reseau=&#x27;172.17.10&#x27;; Gw=&#x27;172.17.10.1&#x27; }
+@{ Site=&#x27;PAR&#x27;; Nom=&#x27;LAN-PAR&#x27;; Reseau=&#x27;172.17.20&#x27;; Gw=&#x27;172.17.20.1&#x27; }
+@{ Site=&#x27;LON&#x27;; Nom=&#x27;LAN-LON&#x27;; Reseau=&#x27;172.17.30&#x27;; Gw=&#x27;172.17.30.1&#x27; }
+@{ Site=&#x27;BER&#x27;; Nom=&#x27;LAN-BER&#x27;; Reseau=&#x27;172.17.40&#x27;; Gw=&#x27;172.17.40.1&#x27; }
+)
+if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, &#x27;Installer et autoriser le rôle DHCP&#x27;)) {
+    Install-WindowsFeature DHCP -IncludeManagementTools | Out-Null
+    if (-not (Get-DhcpServerInDC | Where-Object DnsName -like &quot;$Principal.*&quot;)) { Add-DhcpServerInDC -DnsName &quot;$Principal.$Domaine&quot; }
+    # évite l&#x27;avertissement « configuration post-installation » de Server Manager
+    Set-ItemProperty -Path &#x27;HKLM:\SOFTWARE\Microsoft\ServerManager\Roles\12&#x27; -Name ConfigurationState -Value 2 -ErrorAction SilentlyContinue
+}
+foreach ($p in $Plages) {
+    $id = &quot;$($p.Reseau).0&quot;
+    if (-not (Get-DhcpServerv4Scope -ScopeId $id -ErrorAction SilentlyContinue)) {
+        if ($PSCmdlet.ShouldProcess($p.Nom, &quot;Étendue $id ($($p.Reseau).100 - .199)&quot;)) {
+            Add-DhcpServerv4Scope -Name $p.Nom -StartRange &quot;$($p.Reseau).100&quot; -EndRange &quot;$($p.Reseau).199&quot; -SubnetMask 255.255.255.0 -State Active
+            Set-DhcpServerv4OptionValue -ScopeId $id -Router $p.Gw -DnsServer $dcBru, $dcPar -DnsDomain $Domaine
+        }
+    }
+}
+if (-not (Get-DhcpServerv4Failover -ErrorAction SilentlyContinue)) {
+    if (-not $Secret) { $Secret = Read-Host -AsSecureString &#x27;Secret partagé du failover&#x27; }
+    $clair = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Secret))
+    if ($PSCmdlet.ShouldProcess(&quot;$Principal &lt;-&gt; $Partenaire&quot;, &#x27;Failover équilibré&#x27;)) {
+        # le rôle DHCP doit déjà être installé et autorisé sur le partenaire
+        Add-DhcpServerv4Failover -ComputerName &quot;$Principal.$Domaine&quot; -PartnerServer &quot;$Partenaire.$Domaine&quot; -Name &#x27;BRU-PAR&#x27; `
+            -ScopeId ($Plages | ForEach-Object { &quot;$($_.Reseau).0&quot; }) -LoadBalancePercent $PourcentLocal -SharedSecret $clair
+    }
+}
+Get-DhcpServerv4Scope | Format-Table ScopeId, Name, StartRange, EndRange, State
+Get-DhcpServerv4Failover | Format-List Name, PartnerServer, Mode, LoadBalancePercent, State
+</pre></div></details>
+<h2 id="sc09"><span class="num">09</span>UO, groupes AGDLP, comptes de test</h2><p><b>Où :</b> Sur BRU-DC01, après 04.</p><p>Crée l&#x27;UO EuroCorp et ses sous-UO, les groupes globaux GG_&lt;service&gt; et locaux DL_&lt;service&gt;_Modifier/Lecture (AGDLP) et le groupe LAPS-Readers.</p>
+<details class="scr"><summary>Voir le script <code>09-New-EuroCorpOuGroups.ps1</code></summary><div class="code"><div class="cap"><span>09-New-EuroCorpOuGroups.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Structure d&#x27;annuaire EUROCORP : UO, groupes globaux (GG_) imbriqués dans des groupes locaux de domaine (DL_).
+  Règle AGDLP : Comptes -&gt; Groupes Globaux -&gt; groupes Locaux de domaine -&gt; Permissions (sur les dossiers).
+.EXAMPLE
+  .\09-New-EuroCorpOuGroups.ps1 -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [string]$Racine = &#x27;DC=eurocorp,DC=lan&#x27;,
+    [string[]]$Services = @(&#x27;Direction&#x27;,&#x27;RH&#x27;,&#x27;Finance&#x27;,&#x27;IT&#x27;)
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+function Nouvelle-Uo($nom, $chemin) {
+    $dn = &quot;OU=$nom,$chemin&quot;
+    if (-not (Get-ADOrganizationalUnit -Filter &quot;DistinguishedName -eq &#x27;$dn&#x27;&quot;)) {
+        if ($PSCmdlet.ShouldProcess($dn, &#x27;Créer l&#x27;&#x27;UO&#x27;)) { New-ADOrganizationalUnit -Name $nom -Path $chemin }
+    }
+    return $dn
+}
+$eurocorp = Nouvelle-Uo &#x27;EuroCorp&#x27; $Racine
+$ouGroupes = Nouvelle-Uo &#x27;Groupes&#x27; $eurocorp
+foreach ($u in &#x27;Utilisateurs&#x27;,&#x27;Serveurs&#x27;,&#x27;Postes&#x27;) { Nouvelle-Uo $u $eurocorp | Out-Null }
+
+function Nouveau-Groupe($nom, $portee) {
+    if (-not (Get-ADGroup -Filter &quot;Name -eq &#x27;$nom&#x27;&quot;)) {
+        if ($PSCmdlet.ShouldProcess($nom, &quot;Groupe $portee&quot;)) { New-ADGroup -Name $nom -GroupScope $portee -GroupCategory Security -Path $ouGroupes }
+    }
+}
+foreach ($s in $Services) {
+    Nouveau-Groupe &quot;GG_$s&quot; Global
+    foreach ($droit in &#x27;Modifier&#x27;,&#x27;Lecture&#x27;) {
+        Nouveau-Groupe &quot;DL_${s}_$droit&quot; DomainLocal
+    }
+    # AGDLP : le groupe global entre dans le groupe local &quot;Modifier&quot; ; &quot;Lecture&quot; reste vide, à remplir selon besoin
+    if (-not $WhatIfPreference) { Add-ADGroupMember -Identity &quot;DL_${s}_Modifier&quot; -Members &quot;GG_$s&quot; -ErrorAction SilentlyContinue }
+}
+Nouveau-Groupe &#x27;DL_Commun_Lecture&#x27; DomainLocal
+Nouveau-Groupe &#x27;DL_Commun_Modifier&#x27; DomainLocal
+Nouveau-Groupe &#x27;LAPS-Readers&#x27; Global
+Get-ADGroup -Filter &quot;Name -like &#x27;GG_*&#x27; -or Name -like &#x27;DL_*&#x27; -or Name -like &#x27;LAPS*&#x27;&quot; | Sort-Object Name | Format-Table Name, GroupScope
+</pre></div></details>
+<h2 id="sc10"><span class="num">10</span>Clé KDS et gMSA pour SQL</h2><p><b>Où :</b> Sur BRU-DC01, avant l&#x27;installation de SQL Server.</p><p>Crée la clé racine KDS (labo : utilisable tout de suite), l&#x27;UO GMSA, le groupe GM_GMSA_SQL contenant PAR-SQL01 et le compte GMSA_SQL.</p>
+<details class="scr"><summary>Voir le script <code>10-New-EuroCorpGmsa.ps1</code></summary><div class="code"><div class="cap"><span>10-New-EuroCorpGmsa.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Prépare le gMSA du moteur SQL Server (le mot de passe est géré par l&#x27;Active Directory).
+  La clé KDS est antidatée de 10 h : réservé au LABORATOIRE (en production, attendre la réplication).
+.EXAMPLE
+  .\10-New-EuroCorpGmsa.ps1 -Serveur PAR-SQL01 -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [string]$Serveur = &#x27;PAR-SQL01&#x27;,
+    [string]$Domaine = &#x27;eurocorp.lan&#x27;,
+    [string]$Racine = &#x27;DC=eurocorp,DC=lan&#x27;
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+if (-not (Get-KdsRootKey)) {
+    if ($PSCmdlet.ShouldProcess(&#x27;KDS&#x27;, &#x27;Créer la clé racine&#x27;)) { Add-KdsRootKey -EffectiveTime ((Get-Date).AddHours(-10)) | Out-Null }
+}
+$ou = &quot;OU=GMSA,$Racine&quot;
+if (-not (Get-ADOrganizationalUnit -Filter &quot;DistinguishedName -eq &#x27;$ou&#x27;&quot;)) {
+    if ($PSCmdlet.ShouldProcess($ou, &#x27;Créer l&#x27;&#x27;UO&#x27;)) { New-ADOrganizationalUnit -Name GMSA -Path $Racine }
+}
+if (-not (Get-ADGroup -Filter &quot;Name -eq &#x27;GM_GMSA_SQL&#x27;&quot;)) {
+    if ($PSCmdlet.ShouldProcess(&#x27;GM_GMSA_SQL&#x27;, &#x27;Créer le groupe&#x27;)) { New-ADGroup -Name GM_GMSA_SQL -GroupScope Global -GroupCategory Security -Path $ou }
+}
+# Le groupe doit contenir le COMPTE ORDINATEUR du serveur (pas un utilisateur)
+if ($PSCmdlet.ShouldProcess($Serveur, &#x27;Ajouter au groupe&#x27;)) { Add-ADGroupMember -Identity GM_GMSA_SQL -Members (Get-ADComputer $Serveur) }
+if (-not (Get-ADServiceAccount -Filter &quot;Name -eq &#x27;GMSA_SQL&#x27;&quot;)) {
+    if ($PSCmdlet.ShouldProcess(&#x27;GMSA_SQL&#x27;, &#x27;Créer le compte&#x27;)) {
+        New-ADServiceAccount GMSA_SQL -DNSHostName &quot;gmsa_sql.$Domaine&quot; -PrincipalsAllowedToRetrieveManagedPassword GM_GMSA_SQL
+    }
+}
+Write-Host @&quot;
+
+Ensuite, SUR $Serveur :
+  klist purge -li 0x3e7
+  gpupdate /force /target:computer
+  Install-WindowsFeature RSAT-AD-PowerShell
+  Install-ADServiceAccount GMSA_SQL
+  Test-ADServiceAccount GMSA_SQL        # doit répondre True
+Dans SQL Server Configuration Manager : compte du moteur et de l&#x27;Agent = EUROCORP\GMSA_SQL`$ (avec le `$ final, mot de passe vide).
+&quot;@
+</pre></div></details>
+<h2 id="sc11"><span class="num">11</span>Dossiers, partages et permissions (LON-FS01)</h2><p><b>Où :</b> Sur LON-FS01, après jonction au domaine et script 09.</p><p>Crée D:\Data\&lt;service&gt;, un partage par service et les permissions NTFS par groupes DL_ (pas d&#x27;utilisateur direct).</p>
+<details class="scr"><summary>Voir le script <code>11-New-EuroCorpFileShares.ps1</code></summary><div class="code"><div class="cap"><span>11-New-EuroCorpFileShares.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Serveur de fichiers : un dossier et un partage par service, droits donnés aux groupes locaux de domaine (AGDLP).
+.EXAMPLE
+  .\11-New-EuroCorpFileShares.ps1 -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [string]$Racine = &#x27;D:\Data&#x27;,
+    [string[]]$Services = @(&#x27;Direction&#x27;,&#x27;RH&#x27;,&#x27;Finance&#x27;,&#x27;IT&#x27;,&#x27;Commun&#x27;),
+    [string]$NetBios = &#x27;EUROCORP&#x27;
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+Install-WindowsFeature FS-FileServer, FS-DFS-Namespace, FS-Resource-Manager -IncludeManagementTools | Out-Null
+if (-not (Test-Path (Split-Path $Racine -Qualifier))) { throw &quot;Le volume $(Split-Path $Racine -Qualifier) n&#x27;existe pas : ajouter le disque de données.&quot; }
+foreach ($s in $Services) {
+    $chemin = Join-Path $Racine $s
+    $modif = &quot;$NetBios\DL_${s}_Modifier&quot;; $lect = &quot;$NetBios\DL_${s}_Lecture&quot;
+    if ($PSCmdlet.ShouldProcess($chemin, &#x27;Dossier + partage + droits&#x27;)) {
+        New-Item -ItemType Directory -Path $chemin -Force | Out-Null
+        if (-not (Get-SmbShare -Name $s -ErrorAction SilentlyContinue)) {
+            # permissions de partage larges ; le droit effectif est le plus restrictif des deux : on règle en NTFS
+            New-SmbShare -Name $s -Path $chemin -FullAccess &quot;$NetBios\Admins du domaine&quot; -ChangeAccess $modif -ReadAccess $lect | Out-Null
+        }
+        $acl = Get-Acl $chemin
+        $acl.SetAccessRuleProtection($true, $false)          # coupe l&#x27;héritage depuis D:\Data
+        foreach ($r in @(
+            @(&#x27;BUILTIN\Administrators&#x27;,&#x27;FullControl&#x27;), @(&#x27;NT AUTHORITY\SYSTEM&#x27;,&#x27;FullControl&#x27;),
+            @($modif,&#x27;Modify&#x27;), @($lect,&#x27;ReadAndExecute&#x27;))) {
+            $acl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($r[0], $r[1], &#x27;ContainerInherit,ObjectInherit&#x27;, &#x27;None&#x27;, &#x27;Allow&#x27;)))
+        }
+        Set-Acl -Path $chemin -AclObject $acl
+    }
+}
+Get-SmbShare | Where-Object { $_.Name -in $Services } | Format-Table Name, Path
+# Espace de noms DFS (domaine) : à faire dans DFS Management -&gt; New Namespace, ou :
+#   New-DfsnRoot -TargetPath &quot;\\LON-FS01\Files&quot; -Type DomainV2 -Path &quot;\\eurocorp.lan\Files&quot;
+#   New-DfsnFolder -Path &quot;\\eurocorp.lan\Files\Finance&quot; -TargetPath &quot;\\LON-FS01\Finance&quot;
+</pre></div></details>
+<h2 id="sc12"><span class="num">12</span>NLB : autoriser l&#x27;usurpation de MAC (hôte)</h2><p><b>Où :</b> Sur l&#x27;hôte de Bruxelles, seulement si NLB en mode unicast.</p><p>Active MAC address spoofing sur les cartes des deux nœuds IIS.</p>
+<details class="scr"><summary>Voir le script <code>12-Set-EuroCorpNlbHost.ps1</code></summary><div class="code"><div class="cap"><span>12-Set-EuroCorpNlbHost.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  NLB en mode UNICAST : les nœuds partagent une MAC virtuelle, Hyper-V doit autoriser l&#x27;usurpation de MAC.
+  (Multicast : inutile, mais le réseau doit accepter les trames de groupe.)
+.EXAMPLE
+  .\12-Set-EuroCorpNlbHost.ps1 -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param([string[]]$Noeuds = @(&#x27;BRU-IIS01&#x27;,&#x27;BRU-IIS02&#x27;))
+foreach ($n in $Noeuds) {
+    if ($PSCmdlet.ShouldProcess($n, &#x27;MacAddressSpoofing On&#x27;)) { Set-VMNetworkAdapter -VMName $n -MacAddressSpoofing On }
+}
+Get-VMNetworkAdapter -VMName $Noeuds | Format-Table VMName, SwitchName, MacAddressSpoofing
+</pre></div></details>
+<h2 id="sc13"><span class="num">13</span>NLB : IIS et cluster</h2><p><b>Où :</b> Sur BRU-IIS01 puis BRU-IIS02, après jonction au domaine.</p><p>Installe IIS et NLB. Sur BRU-IIS01, crée le cluster (adresse virtuelle 172.17.10.20) ; sur BRU-IIS02, l&#x27;ajoute.</p>
+<details class="scr"><summary>Voir le script <code>13-New-EuroCorpNlb.ps1</code></summary><div class="code"><div class="cap"><span>13-New-EuroCorpNlb.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  IIS + NLB. Lancer sur BRU-IIS01 avec -Role Premier, puis sur BRU-IIS02 avec -Role Ajout.
+.PARAMETER Mode
+  Unicast (nécessite 12-Set-EuroCorpNlbHost.ps1) ou Multicast : DÉCISION À PRENDRE avant de lancer.
+.EXAMPLE
+  .\13-New-EuroCorpNlb.ps1 -Role Premier -Mode Unicast -WhatIf
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory)][ValidateSet(&#x27;Premier&#x27;,&#x27;Ajout&#x27;)][string]$Role,
+    [Parameter(Mandatory)][ValidateSet(&#x27;Unicast&#x27;,&#x27;Multicast&#x27;)][string]$Mode,
+    [string]$Vip = &#x27;172.17.10.20&#x27;,
+    [string]$Nom = &#x27;intranet.eurocorp.lan&#x27;,
+    [string]$Carte = &#x27;Ethernet&#x27;,
+    [string]$Premier = &#x27;BRU-IIS01&#x27;
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, &#x27;Installer IIS et NLB&#x27;)) {
+    Install-WindowsFeature Web-Server, NLB -IncludeManagementTools | Out-Null
+}
+$op = if ($Mode -eq &#x27;Unicast&#x27;) { &#x27;Unicast&#x27; } else { &#x27;Multicast&#x27; }
+if ($Role -eq &#x27;Premier&#x27;) {
+    if ($PSCmdlet.ShouldProcess($Vip, &quot;Créer le cluster $Nom en $Mode&quot;)) {
+        New-NlbCluster -InterfaceName $Carte -ClusterPrimaryIP $Vip -SubnetMask 255.255.255.0 -ClusterName $Nom -OperationMode $op
+        # règle de ports : 80 (ajouter 443 quand le certificat est en place)
+        Get-NlbClusterPortRule | Remove-NlbClusterPortRule -Force
+        Add-NlbClusterPortRule -StartPort 80 -EndPort 80 -Protocol Tcp -Mode Multiple -Affinity Single
+    }
+} else {
+    if ($PSCmdlet.ShouldProcess($Premier, &#x27;Ajouter ce nœud&#x27;)) { Get-NlbCluster -HostName $Premier | Add-NlbClusterNode -NewNodeName $env:COMPUTERNAME -NewNodeInterface $Carte }
+}
+Get-NlbClusterNode | Format-Table Name, State, HostId
+# Contenu du site à mettre en place IDENTIQUE sur les deux nœuds (NLB répartit les connexions, pas les fichiers).
+</pre></div></details>
+<h2 id="sc14"><span class="num">14</span>Réplication Hyper-V (LON-FS01 vers Paris)</h2><p><b>Où :</b> Étape 1 sur l&#x27;hôte de Paris (cible), étape 2 sur l&#x27;hôte de Londres (source).</p><p>Autorise la réplication sur l&#x27;hôte cible, puis l&#x27;active pour LON-FS01 avec un intervalle choisi et lance la réplication initiale.</p>
+<details class="scr"><summary>Voir le script <code>14-Enable-EuroCorpReplica.ps1</code></summary><div class="code"><div class="cap"><span>14-Enable-EuroCorpReplica.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Hyper-V Replica de LON-FS01 vers l&#x27;hôte de Paris.
+.PARAMETER Role
+  Cible (sur l&#x27;hôte de Paris) ou Source (sur l&#x27;hôte de Londres).
+.PARAMETER Auth
+  Kerberos (hôtes dans le domaine, port 80) ou Certificat (port 443) : DÉCISION À PRENDRE.
+.EXAMPLE
+  .\14-Enable-EuroCorpReplica.ps1 -Role Cible -Auth Kerberos -StockageReplica D:\Replica
+  .\14-Enable-EuroCorpReplica.ps1 -Role Source -Auth Kerberos -HoteCible &lt;nom-hôte-Paris&gt;
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [Parameter(Mandatory)][ValidateSet(&#x27;Cible&#x27;,&#x27;Source&#x27;)][string]$Role,
+    [Parameter(Mandatory)][ValidateSet(&#x27;Kerberos&#x27;,&#x27;Certificat&#x27;)][string]$Auth,
+    [string]$StockageReplica = &#x27;D:\Replica&#x27;,
+    [string]$HoteCible,
+    [string]$VM = &#x27;LON-FS01&#x27;,
+    [ValidateSet(30,300,900)][int]$IntervalleSecondes = 300
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+$port = if ($Auth -eq &#x27;Kerberos&#x27;) { 80 } else { 443 }
+if ($Role -eq &#x27;Cible&#x27;) {
+    if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, &quot;Recevoir des réplicas ($Auth, port $port)&quot;)) {
+        New-Item -ItemType Directory -Path $StockageReplica -Force | Out-Null
+        $type = if ($Auth -eq &#x27;Kerberos&#x27;) { &#x27;Kerberos&#x27; } else { &#x27;Certificate&#x27; }
+        Set-VMReplicationServer -ReplicationEnabled $true -AllowedAuthenticationType $type -ReplicationAllowedFromAnyServer $true -DefaultStorageLocation $StockageReplica
+        New-NetFirewallRule -DisplayName &quot;Hyper-V Replica ($port)&quot; -Direction Inbound -Protocol TCP -LocalPort $port -Action Allow | Out-Null
+    }
+} else {
+    if (-not $HoteCible) { throw &#x27;Source : indiquer -HoteCible (nom de l&#x27;&#x27;hôte de Paris).&#x27; }
+    if ($PSCmdlet.ShouldProcess($VM, &quot;Répliquer vers $HoteCible&quot;)) {
+        Enable-VMReplication -VMName $VM -ReplicaServerName $HoteCible -ReplicaServerPort $port `
+            -AuthenticationType $(if ($Auth -eq &#x27;Kerberos&#x27;) { &#x27;Kerberos&#x27; } else { &#x27;Certificate&#x27; }) -ReplicationFrequencySec $IntervalleSecondes
+        Start-VMInitialReplication -VMName $VM        # copie complète : hors heures de travail
+    }
+    Get-VMReplication -VMName $VM | Format-List VMName, State, Health, LastReplicationTime
+}
+# Test de basculement, SUR L&#x27;HÔTE DE PARIS (copie isolée, la production n&#x27;est pas touchée) :
+#   Start-VMFailover -VMName LON-FS01 -AsTest      ... vérifier ...      Stop-VMFailover -VMName LON-FS01
+</pre></div></details>
+<h2 id="sc20"><span class="num">20</span>VM Linux : réseau (netplan)</h2><p><b>Où :</b> Dans chaque VM Ubuntu Docker, après l&#x27;installation (sudo).</p><p>Écrit /etc/netplan/50-eurocorp.yaml d&#x27;après le plan : IP fixe, passerelle, DNS = contrôleurs, domaine de recherche.</p>
+<details class="scr"><summary>Voir le script <code>20-set-linux-network.sh</code></summary><div class="code"><div class="cap"><span>20-set-linux-network.sh</span><button class="copy" type="button">Copier</button></div><pre>#!/usr/bin/env bash
+# Réseau d&#x27;une VM Linux EUROCORP d&#x27;après le plan (source : data/eurocorp.json).
+# Usage : sudo ./20-set-linux-network.sh BRU-DOCKER01 [interface]
+set -euo pipefail
+NOM=&quot;${1:?Usage: $0 &lt;NOM-DU-PLAN&gt; [interface]}&quot;
+IFACE=&quot;${2:-$(ip -o -4 route show to default | awk &#x27;{print $5}&#x27; | head -1)}&quot;
+IFACE=&quot;${IFACE:-$(ls /sys/class/net | grep -v &#x27;^lo$&#x27; | head -1)}&quot;
+case &quot;$NOM&quot; in
+    BRU-DOCKER01) IP=172.17.10.40; GW=172.17.10.1 ;;
+    LON-DOCKER01) IP=172.17.30.40; GW=172.17.30.1 ;;
+    BER-DOCKER01) IP=172.17.40.40; GW=172.17.40.1 ;;
+    BER-DOCKER02) IP=172.17.40.41; GW=172.17.40.1 ;;
+    *) echo &quot;Nom inconnu : $NOM&quot; &gt;&amp;2; exit 1 ;;
+esac
+DNS1=172.17.10.10; DNS2=172.17.20.10; DOMAINE=eurocorp.lan
+cat &gt; /etc/netplan/50-eurocorp.yaml &lt;&lt;EOF
+network:
+  version: 2
+  ethernets:
+    $IFACE:
+      dhcp4: false
+      addresses: [$IP/24]
+      routes:
+        - to: default
+          via: $GW
+      nameservers:
+        addresses: [$DNS1, $DNS2]
+        search: [$DOMAINE]
+EOF
+chmod 600 /etc/netplan/50-eurocorp.yaml
+hostnamectl set-hostname &quot;$(echo &quot;$NOM&quot; | tr &#x27;A-Z&#x27; &#x27;a-z&#x27;)&quot;
+echo &quot;Écrit : /etc/netplan/50-eurocorp.yaml (interface $IFACE, $IP). Vérifier puis : sudo netplan apply&quot;
+echo &quot;Si une ancienne config DHCP existe dans /etc/netplan/, la renommer en .disabled avant d&#x27;appliquer.&quot;
+</pre></div></details>
+<h2 id="sc21"><span class="num">21</span>VM Linux : installer Docker</h2><p><b>Où :</b> Dans chaque VM Ubuntu Docker, après 20 (sudo).</p><p>Dépôt officiel Docker (comme ton cours, partie 3), puis docker-ce et le plugin Compose.</p>
+<details class="scr"><summary>Voir le script <code>21-install-docker.sh</code></summary><div class="code"><div class="cap"><span>21-install-docker.sh</span><button class="copy" type="button">Copier</button></div><pre>#!/usr/bin/env bash
+# Installe Docker CE et le plugin Compose depuis le dépôt officiel (Ubuntu / Debian).
+# Usage : sudo ./21-install-docker.sh [utilisateur-a-ajouter-au-groupe-docker]
+set -euo pipefail
+. /etc/os-release
+apt-get update
+apt-get install -y ca-certificates curl gnupg
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL &quot;https://download.docker.com/linux/$ID/gpg&quot; | gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
+echo &quot;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$ID $VERSION_CODENAME stable&quot; &gt; /etc/apt/sources.list.d/docker.list
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+systemctl enable --now docker
+[ -n &quot;${1:-}&quot; ] &amp;&amp; usermod -aG docker &quot;$1&quot; &amp;&amp; echo &quot;$1 ajouté au groupe docker (se reconnecter).&quot;
+docker compose version
+docker run --rm hello-world
+</pre></div></details>
+<h2 id="sc22"><span class="num">22</span>VM Linux : heure depuis le contrôleur</h2><p><b>Où :</b> Dans chaque VM Ubuntu, optionnel (sudo).</p><p>Synchronise l&#x27;heure sur BRU-DC01 avec chrony (Kerberos et les certificats supportent mal les écarts).</p>
+<details class="scr"><summary>Voir le script <code>22-chrony-dc.sh</code></summary><div class="code"><div class="cap"><span>22-chrony-dc.sh</span><button class="copy" type="button">Copier</button></div><pre>#!/usr/bin/env bash
+# Heure synchronisée sur le contrôleur de domaine (chrony). Usage : sudo ./22-chrony-dc.sh
+set -euo pipefail
+apt-get install -y chrony
+mkdir -p /etc/chrony/sources.d
+echo &quot;server 172.17.10.10 iburst prefer&quot; &gt; /etc/chrony/sources.d/dc.sources
+# si des pools Ubuntu injoignables bloquent la sélection : les désactiver sans les supprimer
+for f in /etc/chrony/sources.d/ubuntu-ntp-pools.sources; do [ -f &quot;$f&quot; ] &amp;&amp; mv &quot;$f&quot; &quot;$f.disabled&quot; || true; done
+systemctl restart chrony
+sleep 2; chronyc makestep || true
+chronyc sources
+chronyc tracking | head -5
+</pre></div></details>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -10,43 +10,44 @@
   function src(s) { return '<p class="srcl">Ton cours : ' + s + '</p>'; }
   function P() { return Array.prototype.slice.call(arguments).join(''); }
   function S(t, d) { return [t, d]; }
+  function scr(n, cmd) { var sh = /\.sh/.test(cmd); return '<p class="srcl">Script : <a href="scripts.html#sc' + n + '"><code>' + (sh ? 'sudo ./' : '.\\') + cmd + '</code></a>' + (sh ? '' : ' (lance d\'abord avec <code>-WhatIf</code>)') + '</p>'; }
 
   /* ---------- étapes communes ---------- */
   function creerVM(v, st) {
     return S('Créer la VM depuis le disque parent', P(
       '<p><b>Comment.</b> Hyper-V Manager → New → Virtual Machine : génération 2, démarrage ' + v.ram + ' Go, <b>mémoire dynamique décochée</b>, réseau = commutateur privé du site (LAN-' + st.id + '), « attacher un disque dur virtuel ultérieurement ». Ensuite Settings → Processor : ' + v.vcpu + ' ; SCSI → Hard Drive → Add → New → type <b>Differencing</b>, parent = <code>C:\\PARENT\\TEST-SYSPREP.vhdx</code>. Plus rapide : l\'outil « Script Hyper-V » de la page Outils.</p>',
       '<p><b>Pourquoi.</b> Le différentiel ne copie rien du parent : la VM démarre en quelques minutes et le parent reste intact.</p>',
-      '<p><b>Vérifier.</b> La VM démarre sur l\'écran de première configuration (mot de passe administrateur).</p>', src('<code>hyperv</code> §1 et §4, <code>windows-serveur</code> §7')));
+      '<p><b>Vérifier.</b> La VM démarre sur l\'écran de première configuration (mot de passe administrateur).</p>', src('<code>hyperv</code> §1 et §4, <code>windows-serveur</code> §7'), scr('01', '01-New-EuroCorpVMs.ps1 -Site ' + st.id + ' -Seulement ' + v.nom)));
   }
   function ipFixe(v, st, dns) {
     return S('IP fixe, puis renommer la machine (en dernier)', P(
       '<p><b>Comment.</b> <code>ncpa.cpl</code> → IPv4 : <b>' + v.ip + '</b> / 255.255.255.0, passerelle <b>' + st.gw + '</b>, DNS <b>' + dns + '</b> ; décocher IPv6. Puis Local Server → Computer name → <b>' + v.nom + '</b> (redémarre).</p>',
       '<p><b>Pourquoi.</b> Un serveur ne doit pas changer d\'adresse (DNS, règles du pare-feu). Renommer en dernier, car ça redémarre.</p>',
-      '<p><b>Vérifier.</b> <code>ipconfig /all</code> montre l\'adresse et le nom ; <code>ping ' + st.gw + '</code> répond.</p>', src('<code>hyperv</code> §2')));
+      '<p><b>Vérifier.</b> <code>ipconfig /all</code> montre l\'adresse et le nom ; <code>ping ' + st.gw + '</code> répond.</p>', src('<code>hyperv</code> §2'), scr('02', '02-Initialize-EuroCorpServer.ps1 -Nom ' + v.nom)));
   }
   function joindre(v) {
     return S('Joindre le domaine ' + DOM, P(
       '<p><b>Comment.</b> Le DNS de la carte doit pointer vers un contrôleur (' + ip('BRU-DC01') + '). Puis <code>sysdm.cpl</code> → Change → Domain : <code>' + DOM + '</code>, compte administrateur du domaine, redémarrer. En PowerShell : <code>Add-Computer -DomainName ' + DOM + ' -Restart</code>.</p>',
       '<p><b>Pourquoi.</b> Sans domaine, pas de comptes AD, de GPO ni de gMSA.</p>',
-      '<p><b>Vérifier.</b> <code>(Get-CimInstance Win32_ComputerSystem).Domain</code> renvoie <code>' + DOM + '</code> ; la machine apparaît dans Active Directory Users and Computers.</p>'));
+      '<p><b>Vérifier.</b> <code>(Get-CimInstance Win32_ComputerSystem).Domain</code> renvoie <code>' + DOM + '</code> ; la machine apparaît dans Active Directory Users and Computers.</p>', scr('03', '03-Join-EuroCorpDomain.ps1')));
   }
   function creerLinux(v, st) {
     return S('Créer la VM Ubuntu Server 24.04', P(
       '<p><b>Comment.</b> Hyper-V → New VM : génération 2, ' + v.ram + ' Go fixes, ' + v.vcpu + ' vCPU, réseau LAN-' + st.id + ', ISO Ubuntu Server 24.04. Dans Settings → Security : décocher <b>Secure Boot</b> pour l\'installation. Installer avec OpenSSH Server.</p>',
       '<p><b>Pourquoi.</b> Pas de disque parent Windows pour Linux : installation classique depuis l\'ISO. SSH permet de travailler à distance.</p>',
-      '<p><b>Vérifier.</b> La VM redémarre sur Ubuntu et on se connecte en SSH.</p>', src('<code>hyperv</code> §1 (Secure Boot et Linux)')));
+      '<p><b>Vérifier.</b> La VM redémarre sur Ubuntu et on se connecte en SSH.</p>', src('<code>hyperv</code> §1 (Secure Boot et Linux)'), scr('01', '01-New-EuroCorpVMs.ps1 -Site ' + st.id + ' -Seulement ' + v.nom + ' -LinuxIso <chemin-iso>')));
   }
   function ipLinux(v, st) {
     return S('IP fixe sous Ubuntu', P(
       '<p><b>Comment.</b> Éditer le fichier de <code>/etc/netplan/</code> :</p>', pre('network:\n  version: 2\n  ethernets:\n    eth0:            # nom réel : ip a\n      addresses: [' + v.ip + '/24]\n      routes:\n        - to: default\n          via: ' + st.gw + '\n      nameservers:\n        addresses: [' + ip('BRU-DC01') + ']\n        search: [' + DOM + ']'),
       '<p>puis <code>sudo netplan apply</code> et <code>sudo hostnamectl set-hostname ' + v.nom.toLowerCase() + '</code>.</p>',
-      '<p><b>Vérifier.</b> <code>ip a</code>, <code>ping ' + st.gw + '</code>, <code>ping ' + ip('BRU-DC01') + '</code>.</p>'));
+      '<p><b>Vérifier.</b> <code>ip a</code>, <code>ping ' + st.gw + '</code>, <code>ping ' + ip('BRU-DC01') + '</code>.</p>', scr('20', '20-set-linux-network.sh ' + v.nom)));
   }
   function docker() {
     return S('Installer Docker et le plugin Compose', P(
       '<p><b>Comment.</b> Ajouter le dépôt officiel Docker, puis :</p>', pre('sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin'),
       '<p><b>Pourquoi.</b> Le plugin <code>docker-compose-plugin</code> fournit la commande <code>docker compose</code> utilisée partout dans le labo.</p>',
-      '<p><b>Vérifier.</b> <code>docker --version</code>, <code>docker compose version</code>, <code>sudo docker run hello-world</code>.</p>', src('<code>docker</code> §3')));
+      '<p><b>Vérifier.</b> <code>docker --version</code>, <code>docker compose version</code>, <code>sudo docker run hello-world</code>.</p>', src('<code>docker</code> §3'), scr('21', '21-install-docker.sh <utilisateur>')));
   }
   function dnsA(v) {
     return S('Enregistrement DNS de la machine', P(

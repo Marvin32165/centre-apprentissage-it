@@ -283,3 +283,4 @@ h3.ph { font: 600 13px var(--font-ui); letter-spacing: .08em; text-transform: up
 main > ol > li > .code, main > ol > li > .tw, main > ol > li > div[data-render] { margin-top: 8px; }
 main > ol > li { margin-bottom: 14px; }
 main p code, main li code, main td code { overflow-wrap: anywhere; }
+.scr { margin: 6px 0 22px; } .scr summary { cursor: pointer; font: 600 15px var(--font-ui); color: var(--accent); padding: 6px 0; }

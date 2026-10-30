@@ -15,6 +15,7 @@
     ['docker.html', '5 · Docker'],
     ['exploitation.html', '6 · Exploitation'],
     ['compose.html', 'Outil Compose'],
+    ['scripts.html', 'Scripts'],
     ['outils.html', 'Autres outils'],
     ['avancement.html', 'Avancement']
   ];
