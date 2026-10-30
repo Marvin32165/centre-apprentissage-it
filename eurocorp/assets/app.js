@@ -520,7 +520,35 @@
     $$('ol, ul, .dt, input, .code', c).forEach(function (x) { x.remove(); });
     return c.textContent.replace(/\s+/g, ' ').trim().slice(0, 80);
   }
-  function communs(page) { var s = D.suivi && D.suivi[page]; return (s && s.faits) || []; }
+  /* Site servi dans le labo (LON-DOCKER01) : le suivi commun est en direct, lu et écrit sur api/suivi.
+     Chaque case cochée y est enregistrée pour tout le groupe ; ailleurs (GitHub) LIVE reste null. */
+  var LIVE = null;
+  function communs(page) { var s = (LIVE || D.suivi || {})[page]; return (s && s.faits) || []; }
+  function envoyer(page, cle, total, cb, li) {
+    cb.disabled = true;
+    fetch('api/suivi', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ page: page, cle: cle, fait: cb.checked, total: total }) })
+      .then(function (r) { if (!r.ok) throw r; return r.json(); })
+      .then(function (s) { LIVE = s; })
+      .catch(function () { cb.checked = !cb.checked; alert('Case non enregistrée : le serveur du suivi ne répond pas.'); })
+      .then(function () { cb.disabled = false; li.classList.toggle('fait', cb.checked); li.classList.toggle('commun', cb.checked); });
+  }
+  function rafraichir() {
+    fetch('api/suivi', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw r; return r.json(); }).then(function (s) {
+      LIVE = s; var com = communs(pageNom());
+      $$('main ol > li > input.suivi').forEach(function (cb) {
+        if (cb.disabled || !cb.dataset.cle) return;
+        var f = com.indexOf(cb.dataset.cle) >= 0;
+        cb.checked = f; cb.parentNode.classList.toggle('fait', f); cb.parentNode.classList.toggle('commun', f);
+      });
+    }).catch(function () { /* serveur momentanément absent : on garde l'état affiché */ });
+  }
+  function demarrerSuivi() {
+    if (!/^https?:$/.test(location.protocol) || /github\.io$/.test(location.hostname)) { initSuivi(); return; }
+    fetch('api/suivi', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw r; return r.json(); })
+      .then(function (s) { LIVE = s; initSuivi(); setInterval(rafraichir, 10000); })
+      .catch(function () { initSuivi(); });
+  }
   function initSuivi() {
     var items = $$('main ol > li'), page = pageNom(), d = lire(), com = communs(page), vus = {};
     if (items.length) { d.tot[page] = items.length; ecrire(d); }
@@ -531,6 +559,14 @@
       var id = pfx(page) + page + '#' + i, cb = document.createElement('input');
       cb.type = 'checkbox'; cb.className = 'suivi'; cb.checked = !!d.ok[id];
       cb.setAttribute('aria-label', 'Étape faite');
+      if (LIVE) {                                 // en direct : la case est celle du groupe, cliquable par tous
+        var c = cle;
+        cb.checked = com.indexOf(c) >= 0; cb.dataset.cle = c; cb.title = 'Suivi commun du groupe (en direct)';
+        li.classList.toggle('fait', cb.checked); li.classList.toggle('commun', cb.checked);
+        cb.addEventListener('change', function () { envoyer(page, c, items.length, cb, li); });
+        li.insertBefore(cb, li.firstChild);
+        return;
+      }
       if (com.indexOf(cle) >= 0) {
         cb.checked = true; cb.disabled = true; cb.title = 'Fait : suivi commun du groupe';
         li.classList.add('commun');
@@ -548,18 +584,19 @@
   function renderSuivi(el) {
     var d = lire(), noms = {};
     PAGES.forEach(function (p) { noms[p[0]] = p[1]; });
-    var pages = Object.keys(d.tot);
-    Object.keys(D.suivi || {}).forEach(function (p) { if (pages.indexOf(p) < 0) pages.push(p); });
+    var pages = Object.keys(d.tot), S = LIVE || D.suivi || {};
+    Object.keys(S).forEach(function (p) { if (pages.indexOf(p) < 0) pages.push(p); });
     var rows = pages.filter(function (p) { return noms[p]; }).map(function (p) {
       var pre = pfx(p), c = communs(p).length,
-          n = c + Object.keys(d.ok).filter(function (k) { return k.split('#')[0] === pre + p; }).length,
-          t = d.tot[p] || (D.suivi[p] && D.suivi[p].total) || n;
+          n = c + (LIVE ? 0 : Object.keys(d.ok).filter(function (k) { return k.split('#')[0] === pre + p; }).length),
+          t = d.tot[p] || (S[p] && S[p].total) || n;
       return '<tr><td><a href="' + p + '">' + esc(noms[p]) + '</a></td><td>' + n + ' / ' + t +
         (c ? ' <small>(' + c + ' en commun)</small>' : '') + '</td><td><progress max="' + t + '" value="' + n + '"></progress></td></tr>';
     });
     el.innerHTML = (rows.length ? '<div class="tw"><table><thead><tr><th>Page</th><th>Étapes cochées</th><th></th></tr></thead><tbody>' + rows.join('') + '</tbody></table></div>'
       : '<p>Rien de coché pour l\'instant. Ouvre une page et coche les étapes faites : elles sont mémorisées dans ce navigateur.</p>') +
-      '<p class="note">La mémoire est propre à ce navigateur et à cette adresse. Pour la passer à un autre poste : Exporter, puis Importer.</p>' +
+      (LIVE ? '<p class="note">Suivi commun en direct : chaque case cochée est enregistrée sur le serveur du labo et visible par tout le groupe.</p>'
+        : '<p class="note">La mémoire est propre à ce navigateur et à cette adresse. Pour la passer à un autre poste : Exporter, puis Importer.</p>') +
       '<p><button class="btn ghost" type="button" data-a="exp">Exporter</button> <button class="btn ghost" type="button" data-a="imp">Importer</button> <button class="btn ghost" type="button" data-a="rst">Tout décocher</button></p><textarea hidden spellcheck="false" aria-label="Données de suivi"></textarea>';
     var ta = $('textarea', el);
     el.addEventListener('click', function (e) {
@@ -574,6 +611,6 @@
   }
   window.EURO_MOI = function () { return moiSite(); };
   document.addEventListener('DOMContentLoaded', function () {
-    buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy(); machineFiltre(); initSuivi(); moiBandeau(); moiSurligne();
+    buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy(); machineFiltre(); demarrerSuivi(); moiBandeau(); moiSurligne();
   });
 })();
