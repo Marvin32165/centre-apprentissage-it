@@ -793,7 +793,7 @@ window.EURO = {
    "cle": "architecture",
    "nom": "Architecture & plan IP",
    "statut": "encours",
-   "note": "Plan IP du groupe 2 posé (WAN .111–.114, LAN 172.17.10/20/30/40.0/24). Écarts constatés le 30/10 : DC de Bruxelles en .11 (plan .10), Exchange en .12 et 8 Go (plan .30 et 16 Go, imposé par l’énoncé)."
+   "note": "Plan IP du groupe 2 posé (WAN .111–.114, LAN 172.17.10/20/30/40.0/24). Vérifié le 30/10 : DC de Bruxelles en 172.17.10.10, conforme au plan. Écart restant : Exchange en .11 et 8 Go (plan .30 et 16 Go, imposé par l’énoncé)."
   },
   {
    "cle": "hyperv",
