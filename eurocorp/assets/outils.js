@@ -9,10 +9,10 @@
     var host = +$('#ram-host').value || 0, res = +$('#ram-res').value || 0, rows = '', me = window.EURO_MOI && window.EURO_MOI();
     D.sites.forEach(function (st) {
       var t = D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).reduce(function (a, v) { return a + (+v.ram || 0); }, 0), m = host - res - t;
-      rows += '<tr' + (me && me.id === st.id ? ' class="moi-ligne"' : '') + '><td>' + esc(st.nom) + '</td><td>' + t + ' Go</td><td>' + m + ' Go</td><td>' + (m >= 0 ? 'ça tient' : 'ne tient pas') + '</td></tr>';
+      rows += '<tr' + (me && me.id === st.id ? ' class="moi-ligne"' : '') + '><td>' + esc(st.nom) + '</td><td>' + t + ' Go</td><td>' + m + ' Go</td><td>' + (m >= 0 ? '' : 'à allumer par étapes') + '</td></tr>';
     });
     $('#ram-out').innerHTML = '<div class="tw"><table><thead><tr><th>Hôte</th><th>RAM des VM</th><th>Marge (après réserve)</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-      '<p>Chaque site a son propre hôte de ' + host + ' Go (cahier des charges), mémoire statique. La réserve de ' + res + ' Go pour Hyper-V est une hypothèse.</p>';
+      '<p>Indicatif : hôte de ' + host + ' Go par site, mémoire statique ; toutes les VM ne seront pas allumées en même temps.</p>';
   }
 
   /* 2. Adresse / CIDR */
@@ -62,7 +62,7 @@
     var host = +$('#ram-host').value || 0, res = +$('#ram-res').value || 0, tot = 0, n = 0;
     wi.forEach(function (r) { if (r.cb.checked && $('#wi-site').value === r.site) { tot += +r.in.value || 0; n++; } else if (r.tr) { } r.tr.hidden = $('#wi-site').value !== r.site; });
     var m = host - res - tot;
-    $('#wi-out').innerHTML = '<p><b>' + n + ' VM gardées sur cet hôte, ' + tot + ' Go. Marge : ' + m + ' Go.</b> ' + (m >= 0 ? 'Ça tient.' : 'Il manque ' + (-m) + ' Go.') + '</p>';
+    $('#wi-out').innerHTML = '<p><b>' + n + ' VM gardées sur cet hôte, ' + tot + ' Go. Marge : ' + m + ' Go.</b> ' + (m >= 0 ? '' : 'Au-delà de la RAM : allume ces VM par étapes.') + '</p>';
   }
   function whatifInit() {
     var tb = $('#wi-rows'); wi = []; var me0 = window.EURO_MOI && window.EURO_MOI(); if (me0) $('#wi-site').value = me0.id;

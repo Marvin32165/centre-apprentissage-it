@@ -15,9 +15,9 @@
 <div class="eyebrow">Outils</div><h1>Petits outils du labo</h1>
 <p class="lead">Trois calculs qui évitent des erreurs bêtes. Tout se passe dans le navigateur. Pour Docker, voir l'<a href="compose.html">outil Compose</a>.</p>
 <h2><span class="num">1</span>Budget RAM</h2>
-<p>Chaque site a son hôte Hyper-V : la RAM des VM de chaque site est comparée à celle de son hôte.</p>
+<p>Chaque site a son hôte Hyper-V. Total des VM de chaque site contre la RAM de son hôte. <b>Indicatif</b> : toutes les VM ne seront pas allumées en même temps, ce n'est donc pas une limite.</p>
 <div class="fld"><label for="ram-host">RAM de chaque hôte (Go) — 64 d'après le cahier des charges</label><input id="ram-host" type="number" value="64"></div>
-<div class="fld"><label for="ram-res">Réserve pour Hyper-V sur chaque hôte (Go) — hypothèse à ajuster</label><input id="ram-res" type="number" value="4"></div>
+<div class="fld"><label for="ram-res">Réserve pour Hyper-V sur chaque hôte (Go) — hypothèse</label><input id="ram-res" type="number" value="4"></div>
 <div id="ram-out" aria-live="polite"></div>
 <h2><span class="num">2</span>Où va cette adresse ?</h2>
 <p>Tape une IP : l'outil dit à quel site elle appartient et si elle est dans la plage serveurs, virtuelle ou DHCP.</p>

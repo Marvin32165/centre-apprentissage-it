@@ -55,7 +55,7 @@
     var vms = D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }), ram = vms.reduce(function (a, v) { return a + (+v.ram || 0); }, 0);
     var tun = st.id === 'BRU' ? 'Hub : 3 tunnels IPsec (Paris, Londres, Berlin)' : 'Spoke : 1 tunnel IPsec vers Bruxelles';
     b.innerHTML = '<b>Tu es l\'hôte de ' + esc(st.nom) + '</b> · hôte ' + esc(st.hote) + ' · WAN ' + esc(st.wan) + ' · LAN ' + esc(st.lan) + ' (passerelle ' + esc(st.gw) + ') · ' + tun + '.<br>' +
-      vms.length + ' VM à héberger, ' + ram + ' Go de RAM sur 64 Go (marge ' + (64 - ram) + ' Go) : ' + vms.map(function (v) { return esc(v.nom); }).join(', ') +
+      vms.length + ' VM à héberger : ' + vms.map(function (v) { return esc(v.nom); }).join(', ') +
       '. <a href="infrastructure.html#' + st.id.toLowerCase() + '">Voir mon site</a>. Tes cases cochées sont celles de cet hôte.';
     main.insertBefore(b, main.firstChild);
   }
