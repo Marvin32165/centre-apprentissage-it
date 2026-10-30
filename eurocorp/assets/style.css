@@ -275,3 +275,11 @@ tr.moi-ligne td { background: var(--accent-soft); font-weight: 600; }
 .vm .srcl { font-size: 13px; color: var(--ink-soft); }
 @media (max-width: 640px) { .vm { padding: 4px 12px 8px; } .vm .det { font-size: 15px; } }
 main .vm ol:not(.steps) { padding-left: 0; }
+
+/* pages guides : phases et sommaire */
+h3.ph { font: 600 13px var(--font-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 22px 0 6px; }
+.somm { margin: 18px 0 8px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; font: 500 14px/1.7 var(--font-ui); color: var(--ink-soft); }
+.somm b { color: var(--ink); margin-right: 6px; }
+main > ol > li > .code, main > ol > li > .tw, main > ol > li > div[data-render] { margin-top: 8px; }
+main > ol > li { margin-bottom: 14px; }
+main p code, main li code, main td code { overflow-wrap: anywhere; }
