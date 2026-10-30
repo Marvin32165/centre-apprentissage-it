@@ -26,6 +26,15 @@
 <div class="note warn"><b>À valider</b><p>Nombre exact de commutateurs et leurs noms : reconstitué, à confirmer avec ton cahier des charges.</p></div>
 <h2><span class="num">3</span>Ordre</h2>
 <ol><li>Créer les commutateurs (1 externe, 4 privés).</li><li>Préparer le parent (mises à jour, sysprep, arrêt, lecture seule).</li><li>Créer le premier différentiel + VM de test, vérifier le démarrage.</li><li>Seulement ensuite, créer les VM d'un site, puis les autres.</li></ol>
+<h2><span class="num">4</span>Le détail, d'après tes notes Hyper-V et Windows Server</h2>
+<div class="tw"><table><thead><tr><th>Étape</th><th>Ce que disent tes notes</th></tr></thead><tbody>
+<tr><td>Créer la VM modèle</td><td>Génération 2, <b>mémoire dynamique décochée</b>, 2 processeurs (au lieu de tous les cœurs), Windows Server 2025 Standard (Desktop Experience).</td></tr>
+<tr><td>Premier démarrage</td><td>IP fixe, fuseau horaire, IE Enhanced Security Off, Bureau à distance autorisé, Windows Update en « télécharger seulement », pare-feu coupé (<b>lab uniquement</b>), et <b>renommer en dernier</b> car ça redémarre.</td></tr>
+<tr><td>Sysprep</td><td><code>sysprep.exe</code> : cocher <b>Generalize</b>, arrêt <b>Shutdown</b>, <b>ne pas rallumer</b>. Supprimer la VM (fusion des .avhdx), renommer le .vhdx en <code>sysprep.vhdx</code>, le copier dans <code>C:\PARENT\</code>.</td></tr>
+<tr><td>Recréer des VM</td><td>« Attacher un disque dur virtuel ultérieurement », puis ajouter un disque SCSI de type <b>Differencing</b> dont le parent est le modèle.</td></tr>
+<tr><td>En PowerShell</td><td><code>New-VHD -ParentPath … -Differencing</code>, <code>New-VM -Generation 2 -MemoryStartupBytes …</code>, <code>Set-VMMemory -DynamicMemoryEnabled $false</code>. L'outil « Script Hyper-V » de la page <a href="outils.html">Autres outils</a> fait ces commandes pour tout un site.</td></tr>
+</tbody></table></div>
+<p class="note">Source : tes fiches <code>hyperv/notes/Notes.md</code> et <code>windows-serveur/notes/Notes.md</code> (parties 6 et 7). Ton parent s'appelle <code>TEST-SYSPREP.vhdx</code> dans le labo PowerShell.</p>
 <p><b>Reste à toi :</b> la RAM totale : voir l'<a href="infrastructure.html">inventaire</a> (marge vs 64 Go) avant de créer quoi que ce soit.</p>
 </main>
 <div id="pied"></div>

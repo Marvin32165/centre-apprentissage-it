@@ -21,6 +21,11 @@
 <tr><td><b>SQL Server + SharePoint SE</b></td><td>SharePoint stocke tout dans SQL ; comptes de service gMSA</td><td>Créer la clé racine KDS pour les gMSA. Le classement (collation) de SQL doit convenir à SharePoint : à vérifier <b>avant</b> l'installation, il ne se change pas facilement.</td></tr>
 </tbody></table></div>
 <div class="note warn"><b>À valider</b><p>Répartition par site et tailles : voir l'<a href="infrastructure.html">inventaire</a>. Les détails d'installation sont dans tes notes brutes de chaque cours.</p></div>
+<h2><span class="num">1</span>SQL Server pour SharePoint, d'après tes notes</h2>
+<ol><li>Sur SQL Server : service <b>SQL Server Browser</b> en démarrage automatique.</li><li>Classement (<b>collation</b>) <code>Latin1_General_CI_AS_KS_WS</code> : à régler à l'installation de SQL.</li><li>Sur l'AD, une seule fois : <code>Add-KdsRootKey -EffectiveTime ((Get-Date).AddHours(-10))</code>.</li><li>Créer l'OU <code>GMSA</code> et le groupe <code>GS_GMSA_SQL</code> contenant le serveur SQL.</li><li><code>New-ADServiceAccount GMSA_SQL -DNSHostName … -PrincipalsAllowedToRetrieveManagedPassword GS_GMSA_SQL</code>.</li><li>Sur le serveur SQL, donner ce compte aux <b>trois services sauf Browser</b>, puis Apply.</li></ol>
+<p class="note">Source : <code>sharepoint/notes/Notes.md</code> (parties 2 et 3). Tes notes s'arrêtent avant l'installation de SharePoint. Elles mélangent deux noms de domaine : dans le labo, ce sera <code>eurocorp.lan</code>.</p>
+<h2><span class="num">2</span>IIS, Exchange</h2>
+<p>IIS : tes fiches couvrent le rôle, IIS Manager, les pools, les sites avec nom propre et FTP (<code>iis/notes/Notes.md</code>), <b>pas le NLB</b> : cette partie vient du cahier des charges. Exchange : boîtes, bases, connecteurs, transport, PKI et AD CS (<code>exchange/notes/Notes.md</code>) ; lis les parties 7 à 10 avant de poser l'autorité de certification.</p>
 <p><b>Reste à toi :</b> choisir le mode NLB, tester la bascule (arrêter un nœud), noter les résultats.</p>
 </main>
 <div id="pied"></div>

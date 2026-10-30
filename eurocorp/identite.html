@@ -22,6 +22,15 @@
 <h2><span class="num">3</span>DHCP</h2>
 <p>Plage dynamique .100–.199 de chaque LAN. Le failover tient la plage sur deux serveurs (BRU-DC01 + PAR-DC01, proposé). Les sites sans serveur DHCP utilisent le relais OPNsense : voir <a href="reseau.html">Réseau</a>.</p>
 <div class="note warn"><b>À valider</b><p>Où héberger le DHCP, mode du failover (équilibré ou secours), durée du bail.</p></div>
+<h2><span class="num">4</span>Le détail, d'après tes notes Windows Server</h2>
+<div class="tw"><table><thead><tr><th>Sujet</th><th>Ce que disent tes notes</th></tr></thead><tbody>
+<tr><td>DNS</td><td>Prérequis : <b>IP statique</b>. Le rôle DNS s'installe avec le premier AD. Zones directe et inverse (ID réseau sans le dernier octet), test avec <code>nslookup</code>.</td></tr>
+<tr><td>DHCP</td><td>Le serveur doit être <b>autorisé dans l'AD</b>. Étendue : plage, masque, routeur, bail (8 jours par défaut dans ton TP). Un <b>relais DHCP</b> sert aux réseaux distants. Séquence DORA pour diagnostiquer.</td></tr>
+<tr><td>Fichiers</td><td>DFS Namespaces : un chemin unique <code>\\domaine\Files</code> indépendant du serveur (sans DFS Replication au TP).</td></tr>
+<tr><td>LAPS</td><td><code>Update-LapsADSchema</code> (une fois pour la forêt), <code>Set-LapsADComputerSelfPermission</code> sur l'OU, <b>une GPO est nécessaire</b> (BackupDirectory = 2). Niveau fonctionnel 2016 minimum pour le chiffrement. Lecture : <code>Get-LapsADPassword</code>.</td></tr>
+</tbody></table></div>
+<div class="note warn"><b>Pas dans tes notes</b><p>Le <b>failover DHCP</b>, les <b>sites et services AD</b> et le <b>relais DHCP par OPNsense</b> ne sont pas dans tes fiches : les scripts des outils sont des propositions à relire (docs Microsoft/OPNsense).</p></div>
+<p class="note">Source : <code>windows-serveur/notes/Notes.md</code> (parties 8, 9, 10, 13).</p>
 <p><b>Reste à toi :</b> la structure d'UO, les groupes (AGDLP : comptes → globaux → locaux de domaine → droits) et les GPO.</p>
 </main>
 <div id="pied"></div>
