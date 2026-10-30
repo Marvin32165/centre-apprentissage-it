@@ -67,49 +67,6 @@
   }
 
 
-  /* --- pages 1 à 6 : ce qui concerne MON hôte ---------------------------- */
-  var SEC_HOTE = {
-    'preparer.html': { 1: 'tous', 2: 'win', 3: 'win', 4: 'win', 5: 'linux', 6: 'tous' },
-    'reseau.html': { 1: 'fw', 2: 'fw', 3: 'fw', 4: 'fw' },
-    'identite.html': { 1: ['BRU-DC01'], 2: ['PAR-DC01'], 3: ['BRU-DC01', 'PAR-DC01'], 4: ['BRU-DC01'] },
-    'services.html': { 1: ['LON-FS01'], 2: ['BRU-IIS01', 'BRU-IIS02'], 3: ['BRU-EXCH01'], 4: ['PAR-SQL01', 'PAR-SP01'] },
-    'docker.html': { 1: 'linux', 2: ['BRU-DOCKER01'], 3: ['LON-DOCKER01'], 4: ['BER-DOCKER01'], 5: ['BER-DOCKER02'] },
-    'exploitation.html': { 1: 'win', 2: ['LON-DOCKER01'], 3: ['BER-DOCKER01', 'BRU-DC01'], 4: 'replica', 5: 'tous' }
-  };
-  function moiSections() {
-    var st = moiSite(), page = location.pathname.split('/').pop(), map = SEC_HOTE[page]; if (!st || !map) return;
-    var tous = D.vms.filter(function (v) { return !v.virtuel && v.nom.charAt(0) !== '('; });
-    var siens = tous.filter(function (v) { return v.site === st.id; });
-    var desc = function (l) { return l.map(function (v) { return '<code>' + esc(v.nom) + '</code> (' + esc(v.ip) + ')'; }).join(', '); };
-    $$('main h2[id^="s"]').forEach(function (h) {
-      var n = +h.id.slice(1), r = map[n]; if (!r) return;
-      var cible;
-      if (r === 'tous') cible = siens;
-      else if (r === 'win') cible = siens.filter(function (v) { return /Windows/.test(v.os); });
-      else if (r === 'linux') cible = siens.filter(function (v) { return /Ubuntu|Debian|Linux/.test(v.os); });
-      else if (r === 'fw') cible = siens.filter(function (v) { return /^.{3}-FW/.test(v.nom); });
-      else if (r === 'replica') cible = tous.filter(function (v) { return v.replica; });
-      else cible = tous.filter(function (v) { return r.indexOf(v.nom) >= 0; });
-      var siennes = cible.filter(function (v) { return v.site === st.id; });
-      var d = document.createElement('div');
-      if (siennes.length) {
-        d.className = 'note moi-sec';
-        d.innerHTML = '<b>Pour ton hôte (' + esc(st.nom) + ')</b><p>' + (r === 'replica' ? 'Machines répliquées : ' : 'Tes machines concernées : ') + desc(siennes) + '.</p>';
-      } else if (cible.length) {
-        d.className = 'note moi-sec moi-autre-n';
-        d.innerHTML = '<b>Pas sur ton hôte</b><p>Cette partie se fait sur ' + desc(cible) + '. Lis-la pour comprendre ce que tes collègues montent, mais rien à faire chez toi' + (st.id === 'BRU' ? '' : ' (sauf la vérification depuis ton LAN)') + '.</p>';
-        h.classList.add('moi-autre');
-      } else return;
-      var nx = h.nextElementSibling; h.parentNode.insertBefore(d, nx);
-    });
-    /* noms de commutateurs et exemples : ceux de mon site */
-    if (page === 'preparer.html') {
-      var w = document.createTreeWalker($('main'), NodeFilter.SHOW_TEXT, null), t, L = [];
-      while ((t = w.nextNode())) if (/LAN-BRU/.test(t.nodeValue) && !/LAN-PAR/.test(t.nodeValue)) L.push(t);
-      L.forEach(function (x) { x.nodeValue = x.nodeValue.replace(/LAN-BRU/g, 'LAN-' + st.id); });
-    }
-  }
-
   /* --- navigation et pied de page ---------------------------------------- */
   function buildNav() {
     var host = $('#nav'); if (!host) return;

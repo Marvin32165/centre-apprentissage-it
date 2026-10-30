@@ -57,6 +57,36 @@
   }
   var FIN = S('Machine terminée', '<p>Reporter les tests dans <code>09-Tests</code> (attendu / obtenu / date), noter ce qui a été fait dans <code>Infos.md</code> et dans <code>04-Windows</code>. Cocher seulement si les vérifications ci-dessus passent.</p>');
 
+
+  /* ---------- ce qui change d'un site à l'autre ---------- */
+  function vmsSite(st) { return D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }); }
+  function fluxSite(st) {
+    return D.flux.filter(function (f) { var re = new RegExp('\\b' + st.id + '-'); return re.test(f.vers) || re.test(f.de); });
+  }
+  function tableFlux(st) {
+    var l = fluxSite(st); if (!l.length) return '';
+    return '<table><thead><tr><th>ID</th><th>De</th><th>Vers</th><th>Ports</th><th>Service</th></tr></thead><tbody>' + l.map(function (f) {
+      return '<tr><td>' + esc(f.id) + '</td><td>' + esc(f.de) + '</td><td>' + esc(f.vers) + '</td><td>' + esc(f.proto) + '</td><td>' + esc(f.service) + '</td></tr>'; }).join('') + '</tbody></table>';
+  }
+  function tunnelsSite(st) {
+    var hub = st.id === 'BRU';
+    var l = D.tunnels.filter(function (x) { return hub || x.id === 'BRU-' + st.id; });
+    return '<table><thead><tr><th>Tunnel</th><th>Réseau /30</th><th>' + (hub ? 'IP hub (ici)' : 'IP hub (en face)') + '</th><th>' + (hub ? 'IP spoke (en face)' : 'IP spoke (ici)') + '</th></tr></thead><tbody>' + l.map(function (x) {
+      return '<tr><td>' + esc(x.id) + '</td><td>' + esc(x.reseau) + '</td><td>' + esc(x.hub) + '</td><td>' + esc(x.spoke) + '</td></tr>'; }).join('') + '</tbody></table>';
+  }
+  function autresSites(st) { return D.sites.filter(function (s) { return s.id !== st.id; }); }
+  function premierServeur(s) { var l = vmsSite(s).filter(function (v) { return !/-FW|-CLT/.test(v.nom); }); return l.length ? l[0] : null; }
+  function stepsHote(st) {
+    var H = window.EURO_HOTE || { prep: [], inst: [], conf: [], verif: [] }, o = {};
+    ['prep', 'inst', 'conf', 'verif'].forEach(function (k) {
+      o[k] = H[k].map(function (x) {
+        var h = x[1].replace(/LAN-BRU/g, 'LAN-' + st.id);
+        return S(x[0], h);
+      });
+    });
+    return o;
+  }
+
   /* ---------- par machine ---------- */
   var M = {
     fw: function (v, st) {
@@ -70,9 +100,11 @@
           S('Sécuriser l\'accès', '<p><b>Comment.</b> Changer tout de suite le mot de passe par défaut de l\'interface web ; le noter dans <code>Infos.md</code> (seul endroit autorisé).</p>'),
           S('WAN : autoriser le réseau privé de la salle', '<p><b>Comment.</b> Interfaces → WAN : décocher <i>Block private networks</i> (et <i>Block bogon networks</i> si besoin).</p><p><b>Pourquoi.</b> La salle est en 10.10.28.0/24, une plage privée : par défaut OPNsense la bloque sur le WAN et le tunnel ne monte pas.</p>'),
           S(hub ? 'IPsec : trois tunnels côté hub' : 'IPsec : un tunnel vers Bruxelles', P('<p><b>Comment.</b> VPN → IPsec. <b>Phase 1</b> : passerelle distante = ' + (hub ? 'WAN du spoke (Paris ' + D.sites[1].wan + ', Londres ' + D.sites[2].wan + ', Berlin ' + D.sites[3].wan + ')' : 'WAN de Bruxelles (' + D.sites[0].wan + ')') + ', authentification par clé partagée (même clé des deux côtés), identifiants cohérents. <b>Phase 2</b> : réseau local = ' + st.lan + ', réseau distant = LAN de l\'autre site' + (hub ? ' (un par tunnel)' : ' (Bruxelles)') + '. Réseau de tunnel : un /30 pris dans 172.17.255.0/24 (voir Réseau).</p>', '<p><b>Pourquoi.</b> La phase 1 authentifie les deux pare-feu, la phase 2 dit quels réseaux passent. Local et distant inversés = tunnel « établi » mais rien ne passe.</p>', '<p><b>Vérifier.</b> VPN → IPsec → état : tunnel établi des deux côtés.</p>')),
+          S('Les tunnels de ' + st.nom + ' et leurs adresses', '<p><b>Comment.</b> Voici les tunnels de ce pare-feu, avec le réseau /30 de transit (pris dans 172.17.255.0/24) :</p>' + tunnelsSite(st) + '<p>' + (hub ? 'Trois connexions distinctes sur le hub, une par spoke ; les réseaux distants à déclarer sont ' + autresSites(st).map(function (s) { return s.lan; }).join(', ') + '.' : 'Une seule connexion vers Bruxelles. Réseau local ' + st.lan + ', réseau distant : ' + D.sites[0].lan + ' et, pour joindre les autres sites par le hub, ' + autresSites(st).filter(function (s) { return s.id !== 'BRU'; }).map(function (s) { return s.lan; }).join(' et ') + '.') + '</p><p><b>Vérifier.</b> VPN → IPsec → Status : la connexion est <i>Established</i>, et <code>ping ' + (hub ? D.tunnels[0].spoke : D.tunnels.filter(function (x) { return x.id === 'BRU-' + st.id; })[0].hub) + '</code> répond depuis la console.</p>'),
+          S('Les flux à ouvrir pour les serveurs de ' + st.nom, '<p><b>Comment.</b> Parmi les 28 flux de la matrice, ceux qui entrent ou sortent chez toi (' + vmsSite(st).filter(function (v) { return !/-CLT/.test(v.nom); }).map(function (v) { return esc(v.nom); }).join(', ') + ') :</p>' + tableFlux(st) + '<p>Les règles se mettent sur l\'interface IPsec (trafic des autres sites) et sur le LAN (trafic sortant), avec « Log » le temps des tests.</p>'),
           S('Règles : d\'abord « tout autorisé », puis la matrice', '<p><b>Comment.</b> Pendant le montage, une règle large sur l\'interface IPsec. Une fois les pings OK, remplacer par les 28 flux de la matrice (page Réseau), flux par flux : une règle = interface, protocole, source, destination, ports. Créer des alias pour les groupes de machines.</p><p><b>Pourquoi.</b> Les règles se lisent de haut en bas, la première qui correspond gagne : l\'ordre compte, et la règle « tout » se supprime en dernier.</p>' + src('<code>cisco-securite</code> §6 : même logique que les ACL')),
           hub ? S('Relais DHCP', '<p><b>Comment.</b> Services → DHCP Relay : interface LAN, serveur de destination = DHCP de Bruxelles/Paris. Désactiver le serveur DHCP d\'OPNsense sur ce LAN.</p>' + src('<code>windows-serveur</code> §8')) : S('Relais DHCP vers le serveur du plan', '<p><b>Comment.</b> Services → DHCP Relay : interface LAN, destination ' + ip('BRU-DC01') + ' (et ' + ip('PAR-DC01') + '). Désactiver le DHCP natif d\'OPNsense sur ce LAN.</p><p><b>Pourquoi.</b> Les clients de ce site n\'ont pas de serveur DHCP local : le relais transmet leurs DISCOVER au serveur distant à travers le tunnel.</p>' + src('<code>windows-serveur</code> §8'))],
-        verif: [S('Pings LAN à LAN', '<p><b>Comment.</b> Depuis un serveur de ce site : <code>ping</code> de la passerelle de chaque autre site (tests T01 à T04).</p><p><b>Si ça échoue.</b> Phase 2 inversée, règle manquante sur l\'interface IPsec, pare-feu Windows de la cible.</p>'),
+        verif: [S('Pings LAN à LAN', '<p><b>Comment.</b> Depuis un serveur de ' + st.nom + ' : ' + autresSites(st).map(function (s) { var p = premierServeur(s); return '<code>ping ' + s.gw + '</code>' + (p ? ' puis <code>ping ' + p.ip + '</code> (' + esc(p.nom) + ')' : ''); }).join(' ; ') + ' (tests T01 à T04).</p><p><b>Si ça échoue.</b> Phase 2 inversée, règle manquante sur l\'interface IPsec, pare-feu Windows de la cible.</p>'),
           S('Un flux autorisé, un flux bloqué', '<p><b>Comment.</b> <code>Test-NetConnection &lt;cible&gt; -Port 389</code> (flux F04) doit réussir, un port hors matrice doit échouer (T05, T06). Journaux : Firewall → Log Files → Live View.</p>'), FIN]
       };
     },
@@ -195,7 +227,8 @@
         prep: [creerVM(v, st), S('Réseau en DHCP', '<p><b>Comment.</b> Laisser la carte en DHCP : c\'est le but de ce poste.</p>')],
         inst: [S('Installer Windows 11', '<p><b>Comment.</b> Installation standard depuis l\'ISO (TPM et Secure Boot virtuels activés dans Settings → Security).</p>')],
         conf: [joindre(v), S('Session de test', '<p><b>Comment.</b> Ouvrir une session avec un compte du domaine de chaque service.</p>')],
-        verif: [S('Poste de test', '<p><b>Comment.</b> Adresse DHCP reçue (T09), partage accessible selon le groupe (T11), intranet (T12), Redmine (T16).</p>'), FIN]
+        verif: [S('Adresse reçue de ' + st.nom, '<p><b>Comment.</b> <code>ipconfig /renew</code> puis <code>ipconfig /all</code> : adresse dans <b>' + st.lan.split('/')[0].split('.').slice(0, 3).join('.') + '.100 – .199</b>, passerelle <b>' + st.gw + '</b>, DNS = contrôleur(s) du plan. ' + (st.id === 'BRU' || st.id === 'PAR' ? 'Le serveur DHCP est dans ton site (' + st.id + '-DC01), avec son failover.' : 'Pas de serveur DHCP dans ton site : l\'adresse vient de BRU-DC01 ou PAR-DC01 par le relais d\'OPNsense, à travers le tunnel.') + ' (T09)</p>'),
+          S('Les services accessibles depuis ' + st.nom, '<p><b>Comment.</b> Depuis ce poste, ouvre ou teste chaque service du labo :</p><ul>' + D.vms.filter(function (x) { return !x.virtuel && !/-CLT|-FW/.test(x.nom) && x.nom.indexOf(st.id + '-') !== 0; }).slice(0, 12).map(function (x) { return '<li><code>' + esc(x.nom) + '</code> (' + esc(x.ip) + ') — ' + esc(x.role) + '</li>'; }).join('') + '</ul><p>Partage du serveur de fichiers selon le groupe (T11), intranet (T12), Redmine (T16). Chaque service qui répond depuis ' + st.nom + ' prouve le tunnel, le DNS et la règle de pare-feu correspondants.</p>'), FIN]
       };
     }
   };
@@ -211,6 +244,15 @@
     var html = '';
     D.sites.forEach(function (st) {
       html += '<section class="msite" data-site="' + st.id + '"><h2>' + esc(st.nom) + '</h2>';
+      (function () {
+        var hp = stepsHote(st);
+        html += '<article class="vm" data-vm="HOTE-' + st.id + '"><h3>Hôte de ' + esc(st.nom) + ' <small>commutateurs, modèle Sysprep, parent <code>C:\\PARENT\\TEST-SYSPREP.vhdx</code> · à faire en premier</small></h3>';
+        PH.forEach(function (p) {
+          if (!hp[p[0]].length) return;
+          html += '<h4>' + p[1] + '</h4><ol>' + hp[p[0]].map(function (s) { return '<li><div class="st"><details><summary>' + s[0] + '</summary><div class="det">' + s[1] + '</div></details></div></li>'; }).join('') + '</ol>';
+        });
+        html += '</article>';
+      })();
       D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).forEach(function (v) {
         var k = cle(v), plan = k ? M[k](v, st) : null;
         html += '<article class="vm" data-vm="' + esc(v.nom) + '"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go</small></h3>';
@@ -223,7 +265,7 @@
       html += '</section>';
     });
     var opts = '<option value="">Toutes les machines (général)</option>' + D.sites.map(function (st) {
-      return '<optgroup label="' + esc(st.nom) + '">' + D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).map(function (v) {
+      return '<optgroup label="' + esc(st.nom) + '"><option value="HOTE-' + st.id + '">Hôte de ' + esc(st.nom) + ' — commutateurs et modèle Sysprep</option>' + D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).map(function (v) {
         return '<option value="' + esc(v.nom) + '">' + esc(v.nom) + ' — ' + esc(v.role) + '</option>'; }).join('') + '</optgroup>'; }).join('');
     host.innerHTML = '<label class="machine-choix"><b>Machine</b> <select id="machine" aria-label="Choisir une machine">' + opts + '</select></label>' + html;
     var sel = document.getElementById('machine'), cle0 = 'euro.machine';
