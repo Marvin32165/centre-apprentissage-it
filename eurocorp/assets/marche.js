@@ -1,62 +1,201 @@
-/* Marche à suivre par machine : étapes dans l'ordre, selon le rôle de chaque VM. Les cases sont gérées par app.js (suivi). */
+/* Marche à suivre par machine : préparation, installation, configuration, vérifications.
+   Chaque étape a un détail (comment, pourquoi, vérifier). Les cases sont gérées par app.js. */
 (function () {
   'use strict';
   var D = window.EURO;
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  var VM_BASE = ['Créer la VM depuis le disque parent (disque différentiel, génération 2, mémoire statique) : <a href="preparer.html">Préparer</a>', 'IP fixe, renommer la machine en dernier (redémarrage)'];
-  var FIN = 'Machine terminée : tests passés, noter le résultat dans <code>09-Tests</code> et <code>Infos.md</code>';
-  function site(id) { return D.sites.filter(function (s) { return s.id === id; })[0]; }
-  var ETAPES = {
+  function ip(n) { var v = D.vms.filter(function (x) { return x.nom === n; })[0]; return v ? v.ip : ''; }
+  var DOM = D.meta.domaine, NB = D.meta.netbios;
+  function pre(s) { return '<pre class="mini">' + esc(s) + '</pre>'; }
+  function src(s) { return '<p class="srcl">Ton cours : ' + s + '</p>'; }
+  function P() { return Array.prototype.slice.call(arguments).join(''); }
+  function S(t, d) { return [t, d]; }
+
+  /* ---------- étapes communes ---------- */
+  function creerVM(v, st) {
+    return S('Créer la VM depuis le disque parent', P(
+      '<p><b>Comment.</b> Hyper-V Manager → New → Virtual Machine : génération 2, démarrage ' + v.ram + ' Go, <b>mémoire dynamique décochée</b>, réseau = commutateur privé du site (LAN-' + st.id + '), « attacher un disque dur virtuel ultérieurement ». Ensuite Settings → Processor : ' + v.vcpu + ' ; SCSI → Hard Drive → Add → New → type <b>Differencing</b>, parent = <code>C:\\PARENT\\TEST-SYSPREP.vhdx</code>. Plus rapide : l\'outil « Script Hyper-V » de la page Outils.</p>',
+      '<p><b>Pourquoi.</b> Le différentiel ne copie rien du parent : la VM démarre en quelques minutes et le parent reste intact.</p>',
+      '<p><b>Vérifier.</b> La VM démarre sur l\'écran de première configuration (mot de passe administrateur).</p>', src('<code>hyperv</code> §1 et §4, <code>windows-serveur</code> §7')));
+  }
+  function ipFixe(v, st, dns) {
+    return S('IP fixe, puis renommer la machine (en dernier)', P(
+      '<p><b>Comment.</b> <code>ncpa.cpl</code> → IPv4 : <b>' + v.ip + '</b> / 255.255.255.0, passerelle <b>' + st.gw + '</b>, DNS <b>' + dns + '</b> ; décocher IPv6. Puis Local Server → Computer name → <b>' + v.nom + '</b> (redémarre).</p>',
+      '<p><b>Pourquoi.</b> Un serveur ne doit pas changer d\'adresse (DNS, règles du pare-feu). Renommer en dernier, car ça redémarre.</p>',
+      '<p><b>Vérifier.</b> <code>ipconfig /all</code> montre l\'adresse et le nom ; <code>ping ' + st.gw + '</code> répond.</p>', src('<code>hyperv</code> §2')));
+  }
+  function joindre(v) {
+    return S('Joindre le domaine ' + DOM, P(
+      '<p><b>Comment.</b> Le DNS de la carte doit pointer vers un contrôleur (' + ip('BRU-DC01') + '). Puis <code>sysdm.cpl</code> → Change → Domain : <code>' + DOM + '</code>, compte administrateur du domaine, redémarrer. En PowerShell : <code>Add-Computer -DomainName ' + DOM + ' -Restart</code>.</p>',
+      '<p><b>Pourquoi.</b> Sans domaine, pas de comptes AD, de GPO ni de gMSA.</p>',
+      '<p><b>Vérifier.</b> <code>(Get-CimInstance Win32_ComputerSystem).Domain</code> renvoie <code>' + DOM + '</code> ; la machine apparaît dans Active Directory Users and Computers.</p>'));
+  }
+  function creerLinux(v, st) {
+    return S('Créer la VM Ubuntu Server 24.04', P(
+      '<p><b>Comment.</b> Hyper-V → New VM : génération 2, ' + v.ram + ' Go fixes, ' + v.vcpu + ' vCPU, réseau LAN-' + st.id + ', ISO Ubuntu Server 24.04. Dans Settings → Security : décocher <b>Secure Boot</b> pour l\'installation. Installer avec OpenSSH Server.</p>',
+      '<p><b>Pourquoi.</b> Pas de disque parent Windows pour Linux : installation classique depuis l\'ISO. SSH permet de travailler à distance.</p>',
+      '<p><b>Vérifier.</b> La VM redémarre sur Ubuntu et on se connecte en SSH.</p>', src('<code>hyperv</code> §1 (Secure Boot et Linux)')));
+  }
+  function ipLinux(v, st) {
+    return S('IP fixe sous Ubuntu', P(
+      '<p><b>Comment.</b> Éditer le fichier de <code>/etc/netplan/</code> :</p>', pre('network:\n  version: 2\n  ethernets:\n    eth0:            # nom réel : ip a\n      addresses: [' + v.ip + '/24]\n      routes:\n        - to: default\n          via: ' + st.gw + '\n      nameservers:\n        addresses: [' + ip('BRU-DC01') + ']\n        search: [' + DOM + ']'),
+      '<p>puis <code>sudo netplan apply</code> et <code>sudo hostnamectl set-hostname ' + v.nom.toLowerCase() + '</code>.</p>',
+      '<p><b>Vérifier.</b> <code>ip a</code>, <code>ping ' + st.gw + '</code>, <code>ping ' + ip('BRU-DC01') + '</code>.</p>'));
+  }
+  function docker() {
+    return S('Installer Docker et le plugin Compose', P(
+      '<p><b>Comment.</b> Ajouter le dépôt officiel Docker, puis :</p>', pre('sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin'),
+      '<p><b>Pourquoi.</b> Le plugin <code>docker-compose-plugin</code> fournit la commande <code>docker compose</code> utilisée partout dans le labo.</p>',
+      '<p><b>Vérifier.</b> <code>docker --version</code>, <code>docker compose version</code>, <code>sudo docker run hello-world</code>.</p>', src('<code>docker</code> §3')));
+  }
+  function dnsA(v) {
+    return S('Enregistrement DNS de la machine', P(
+      '<p><b>Comment.</b> Sur un DC : DNS Manager → zone <code>' + DOM + '</code> → New Host (A) : <code>' + v.nom.toLowerCase() + '</code> → <code>' + v.ip + '</code>. Ou l\'outil « DNS » de la page Outils.</p>',
+      '<p><b>Pourquoi.</b> Les autres machines et les agents joignent les serveurs par leur nom.</p>',
+      '<p><b>Vérifier.</b> <code>nslookup ' + v.nom.toLowerCase() + '.' + DOM + '</code> depuis un autre site.</p>', src('<code>windows-serveur</code> §9')));
+  }
+  var FIN = S('Machine terminée', '<p>Reporter les tests dans <code>09-Tests</code> (attendu / obtenu / date), noter ce qui a été fait dans <code>Infos.md</code> et dans <code>04-Windows</code>. Cocher seulement si les vérifications ci-dessus passent.</p>');
+
+  /* ---------- par machine ---------- */
+  var M = {
     fw: function (v, st) {
       var hub = st.id === 'BRU';
-      return ['Créer la VM OPNsense avec deux cartes : WAN (commutateur externe) et LAN (commutateur privé du site)',
-        'Installer OPNsense ; WAN ' + st.wan + ' (passerelle de la salle ' + D.meta.passerelle_salle + '), LAN ' + st.gw + '/24',
-        'Ouvrir l\'interface web depuis le LAN, changer le mot de passe par défaut (à noter dans <code>Infos.md</code>)',
-        hub ? 'Monter les 3 tunnels IPsec côté hub (Paris, Londres, Berlin), un /30 chacun : <a href="reseau.html">Réseau</a>' : 'Monter le tunnel IPsec vers Bruxelles (côté spoke), mêmes clés et réseaux inversés : <a href="reseau.html">Réseau</a>',
-        'Vérifier un ping LAN à LAN dans chaque tunnel (tests T01 à T04)',
-        'Remplacer « tout autorisé » par les règles de la matrice (28 flux) : <a href="reseau.html">Réseau</a>',
-        hub ? 'Prévoir le relais DHCP pour les sites sans serveur DHCP' : 'Relais DHCP vers le serveur DHCP du plan, si ce site n\'a pas de serveur DHCP', FIN];
+      return {
+        prep: [S('Préparer les commutateurs', P('<p><b>Comment.</b> Un commutateur <b>externe</b> (WAN, salle ' + D.meta.reseau_salle + ') et un commutateur <b>privé</b> par site (LAN-' + st.id + '). La VM OPNsense a deux cartes, une sur chacun.</p>', '<p><b>Pourquoi.</b> Le pare-feu est le seul point de passage entre le LAN du site et l\'extérieur.</p>', '<p><b>Vérifier.</b> Dans Settings de la VM, les deux cartes sont sur les bons commutateurs.</p>', src('<code>hyperv</code> §5'))),
+          S('Créer la VM OPNsense', '<p><b>Comment.</b> 2 vCPU, ' + v.ram + ' Go, disque ' + v.disque + ' Go, deux cartes réseau. Monter l\'ISO OPNsense. Si la VM ne démarre pas en génération 2, désactiver Secure Boot (Settings → Security) ou prendre la génération 1.</p><p><b>Vérifier.</b> La VM démarre sur l\'ISO.</p>')],
+        inst: [S('Installer OPNsense', '<p><b>Comment.</b> Lancer l\'installation depuis l\'ISO, choisir le disque, redémarrer sans l\'ISO.</p><p><b>Vérifier.</b> La console affiche le menu OPNsense (interfaces WAN et LAN).</p>')],
+        conf: [
+          S('Interfaces et adresses', '<p><b>Comment.</b> Console → <i>Assign interfaces</i> (WAN = carte externe, LAN = carte privée), puis <i>Set interface IP address</i> : WAN <b>' + st.wan + '</b>/24 passerelle ' + D.meta.passerelle_salle + ', LAN <b>' + st.gw + '</b>/24.</p><p><b>Vérifier.</b> Depuis un serveur du LAN, <code>ping ' + st.gw + '</code> répond et l\'interface web s\'ouvre sur <code>https://' + st.gw + '</code>.</p>'),
+          S('Sécuriser l\'accès', '<p><b>Comment.</b> Changer tout de suite le mot de passe par défaut de l\'interface web ; le noter dans <code>Infos.md</code> (seul endroit autorisé).</p>'),
+          S('WAN : autoriser le réseau privé de la salle', '<p><b>Comment.</b> Interfaces → WAN : décocher <i>Block private networks</i> (et <i>Block bogon networks</i> si besoin).</p><p><b>Pourquoi.</b> La salle est en 10.10.28.0/24, une plage privée : par défaut OPNsense la bloque sur le WAN et le tunnel ne monte pas.</p>'),
+          S(hub ? 'IPsec : trois tunnels côté hub' : 'IPsec : un tunnel vers Bruxelles', P('<p><b>Comment.</b> VPN → IPsec. <b>Phase 1</b> : passerelle distante = ' + (hub ? 'WAN du spoke (Paris ' + D.sites[1].wan + ', Londres ' + D.sites[2].wan + ', Berlin ' + D.sites[3].wan + ')' : 'WAN de Bruxelles (' + D.sites[0].wan + ')') + ', authentification par clé partagée (même clé des deux côtés), identifiants cohérents. <b>Phase 2</b> : réseau local = ' + st.lan + ', réseau distant = LAN de l\'autre site' + (hub ? ' (un par tunnel)' : ' (Bruxelles)') + '. Réseau de tunnel : un /30 pris dans 172.17.255.0/24 (voir Réseau).</p>', '<p><b>Pourquoi.</b> La phase 1 authentifie les deux pare-feu, la phase 2 dit quels réseaux passent. Local et distant inversés = tunnel « établi » mais rien ne passe.</p>', '<p><b>Vérifier.</b> VPN → IPsec → état : tunnel établi des deux côtés.</p>')),
+          S('Règles : d\'abord « tout autorisé », puis la matrice', '<p><b>Comment.</b> Pendant le montage, une règle large sur l\'interface IPsec. Une fois les pings OK, remplacer par les 28 flux de la matrice (page Réseau), flux par flux : une règle = interface, protocole, source, destination, ports. Créer des alias pour les groupes de machines.</p><p><b>Pourquoi.</b> Les règles se lisent de haut en bas, la première qui correspond gagne : l\'ordre compte, et la règle « tout » se supprime en dernier.</p>' + src('<code>cisco-securite</code> §6 : même logique que les ACL')),
+          hub ? S('Relais DHCP', '<p><b>Comment.</b> Services → DHCP Relay : interface LAN, serveur de destination = DHCP de Bruxelles/Paris. Désactiver le serveur DHCP d\'OPNsense sur ce LAN.</p>' + src('<code>windows-serveur</code> §8')) : S('Relais DHCP vers le serveur du plan', '<p><b>Comment.</b> Services → DHCP Relay : interface LAN, destination ' + ip('BRU-DC01') + ' (et ' + ip('PAR-DC01') + '). Désactiver le DHCP natif d\'OPNsense sur ce LAN.</p><p><b>Pourquoi.</b> Les clients de ce site n\'ont pas de serveur DHCP local : le relais transmet leurs DISCOVER au serveur distant à travers le tunnel.</p>' + src('<code>windows-serveur</code> §8'))],
+        verif: [S('Pings LAN à LAN', '<p><b>Comment.</b> Depuis un serveur de ce site : <code>ping</code> de la passerelle de chaque autre site (tests T01 à T04).</p><p><b>Si ça échoue.</b> Phase 2 inversée, règle manquante sur l\'interface IPsec, pare-feu Windows de la cible.</p>'),
+          S('Un flux autorisé, un flux bloqué', '<p><b>Comment.</b> <code>Test-NetConnection &lt;cible&gt; -Port 389</code> (flux F04) doit réussir, un port hors matrice doit échouer (T05, T06). Journaux : Firewall → Log Files → Live View.</p>'), FIN]
+      };
     },
     dc: function (v, st) {
       var premier = v.nom === 'BRU-DC01';
-      return VM_BASE.concat([
-        premier ? 'Installer AD DS + DNS, créer la forêt <code>' + D.meta.domaine + '</code> (jour 1 : fait, à terminer)' : 'DNS = BRU-DC01, joindre le domaine, puis promouvoir en contrôleur de domaine',
-        'Sites AD : créer le site ' + st.id + ' et son sous-réseau ' + st.lan + ' (outil « Sites AD »)',
-        'DHCP : installer le rôle, autoriser le serveur dans l\'AD, étendue .100–.199, routeur ' + st.gw,
-        premier ? 'Failover DHCP avec PAR-DC01 (outil « DHCP »)' : 'Failover DHCP avec BRU-DC01 (outil « DHCP »)',
-        'Tests : DNS (T07), réplication AD (T08), DHCP (T09, T10)', FIN]);
+      return {
+        prep: [creerVM(v, st), ipFixe(v, st, premier ? v.ip : ip('BRU-DC01'))],
+        inst: [premier ? S('Installer AD DS et DNS, créer la forêt', P('<p><b>Comment.</b> Server Manager → Add roles → Active Directory Domain Services (+ DNS), puis « Promote this server » → <b>Add a new forest</b>, domaine racine <code>' + DOM + '</code>, NetBIOS ' + NB + '. En commande : <code>Install-ADDSForest -DomainName "' + DOM + '" -DomainNetbiosName "' + NB + '" -InstallDns</code>. Mot de passe DSRM demandé.</p>', '<p><b>Pourquoi.</b> Le premier DC crée la forêt et le DNS dont tout le reste dépend. <b>Jour 1 :</b> domaine créé, DC01 à terminer.</p>', '<p><b>Vérifier.</b> <code>Get-ADDomain</code> ; <code>dcdiag</code> sans erreur.</p>', src('<code>rds</code> (Install-ADDSForest), <code>sharepoint</code> (AD-Domain-Services)'))) :
+          S('Joindre le domaine puis promouvoir en contrôleur', P('<p><b>Comment.</b> DNS = ' + ip('BRU-DC01') + ', joindre le domaine, puis <code>Install-WindowsFeature AD-Domain-Services, DNS -IncludeManagementTools</code> et « Promote this server » → <b>Add a domain controller to an existing domain</b> (même résultat en PowerShell avec <code>Install-ADDSDomainController -DomainName ' + DOM + ' -InstallDns -Credential (Get-Credential)</code>).</p>', '<p><b>Pourquoi.</b> Un second DC évite la panne complète de l\'annuaire et porte le DHCP en failover.</p>', '<p><b>Vérifier.</b> <code>repadmin /replsummary</code> : réplication sans échec.</p>', src('<code>sharepoint</code> §1 pour <code>Install-WindowsFeature</code>')))],
+        conf: [
+          S('Sites et sous-réseaux AD', '<p><b>Comment.</b> Active Directory Sites and Services : créer le site <b>' + st.id + '</b>, y ajouter le sous-réseau <b>' + st.lan + '</b>, déplacer ce DC dans son site. Liens de sites entre BRU et les autres, coût 100, fréquence 15 min (outil « Sites AD »).</p><p><b>Pourquoi.</b> Les clients choisissent le DC de leur site et la réplication suit la topologie réelle (étoile).</p><p><b>Vérifier.</b> Le DC apparaît sous son site.</p>'),
+          S('DHCP : rôle, autorisation, étendue', P('<p><b>Comment.</b> Add roles → DHCP Server, puis « Complete DHCP configuration » (autorise le serveur dans l\'AD). Nouvelle étendue IPv4 « LAN ' + st.nom + ' » : <b>' + st.lan.split('/')[0].split('.').slice(0, 3).join('.') + '.100 → .199</b>, masque 255.255.255.0, routeur <b>' + st.gw + '</b>, DNS ' + ip('BRU-DC01') + ', domaine <code>' + DOM + '</code>, bail 8 jours (valeur de ton TP), puis activer l\'étendue.</p>', '<p><b>Pourquoi.</b> Un serveur DHCP non autorisé dans l\'AD ne distribue rien.</p>', '<p><b>Vérifier.</b> Un client obtient une adresse de la plage (T09).</p>', src('<code>windows-serveur</code> §8'))),
+          S('Failover DHCP avec ' + (premier ? 'PAR-DC01' : 'BRU-DC01'), '<p><b>Comment.</b> Console DHCP → clic droit sur l\'étendue → <i>Configure Failover</i> : serveur partenaire, mode <b>équilibré 50/50</b>, secret partagé, et ajouter les étendues des autres sites si besoin. Ou l\'outil « DHCP » de la page Outils (le secret est demandé par <code>Read-Host</code>).</p><p><b>Pourquoi.</b> Si un des deux DC tombe, l\'autre continue à distribuer les adresses. Les deux serveurs se parlent en TCP 647 (flux F08).</p><p><b>Vérifier.</b> État « Normal » des deux côtés.</p>'),
+          S('DNS : zones et enregistrements', '<p><b>Comment.</b> Zone directe <code>' + DOM + '</code> intégrée à l\'AD, zone inverse pour chaque LAN (ID réseau sans le dernier octet), enregistrements A du plan et CNAME (<code>intranet</code>, <code>helpdesk</code>) : outil « DNS ».</p>' + src('<code>windows-serveur</code> §9'))],
+        verif: [S('DNS, réplication, DHCP', '<p><b>Comment.</b> <code>nslookup bru-dc01.' + DOM + '</code> depuis chaque site (T07) ; <code>.\\Test-EuroCorpAD.ps1</code> (T08) ; client en DHCP puis arrêt du DHCP principal (T09, T10).</p>'), FIN]
+      };
     },
-    iis: function (v) {
-      return VM_BASE.concat(['Joindre le domaine', 'Installer le rôle Web Server (IIS) : voir tes notes <code>iis</code>', 'Créer le site et la page de test (même contenu sur les deux nœuds)',
-        v.nom === 'BRU-IIS01' ? 'Décider unicast ou multicast, créer le cluster NLB et l\'adresse virtuelle (' + (D.dns.filter(function (r) { return /intranet/.test(r.nom); })[0] || { nom: 'intranet' }).nom + ')' : 'Ajouter ce nœud au cluster NLB',
-        'Test : arrêter un nœud, recharger la page (T12)', FIN]);
+    iis: function (v, st) {
+      var un = v.nom === 'BRU-IIS01';
+      return {
+        prep: [creerVM(v, st), ipFixe(v, st, ip('BRU-DC01')), joindre(v)],
+        inst: [S('Installer le rôle Web Server (IIS)', '<p><b>Comment.</b> Add roles → Web Server (IIS) ; en PowerShell : <code>Install-WindowsFeature Web-Server -IncludeManagementTools</code>.</p><p><b>Vérifier.</b> <code>http://localhost</code> affiche la page IIS.</p>' + src('<code>iis</code> §4')),
+          S('Installer la fonctionnalité NLB', '<p><b>Comment.</b> <code>Install-WindowsFeature NLB -IncludeManagementTools</code>.</p>')],
+        conf: [S('Site avec son propre nom', '<p><b>Comment.</b> IIS Manager → Sites → Add Website : nom <code>intranet</code>, dossier <code>C:\\inetpub\\intranet</code>, liaison avec le nom d\'hôte <code>intranet.' + DOM + '</code>. Une page d\'accueil qui affiche le <b>nom du nœud</b>.</p><p><b>Pourquoi.</b> Afficher le nom du nœud permet de voir quel serveur répond pendant le test.</p>' + src('<code>iis</code> §8')),
+          S('MAC spoofing pour le NLB unicast', '<p><b>Comment.</b> Si tu choisis le mode <b>unicast</b> : Settings de la VM → Network Adapter → Advanced Features → <i>Enable MAC address spoofing</i>.</p><p><b>Pourquoi.</b> En unicast tous les nœuds prennent la même MAC ; sans cette option Hyper-V la bloque. En multicast chaque nœud garde sa MAC mais le réseau doit gérer le multicast.</p>'),
+          un ? S('Créer le cluster NLB et l\'adresse virtuelle', '<p><b>Comment.</b> Network Load Balancing Manager → New Cluster : hôte BRU-IIS01, interface du LAN, adresse virtuelle de la plage .50–.99 de Bruxelles (ex. 172.17.10.50), mode unicast ou multicast (ton choix). Puis un enregistrement DNS <code>intranet</code> → cette adresse.</p><p><b>Vérifier.</b> Le cluster est « Converged ».</p>') : S('Ajouter ce nœud au cluster', '<p><b>Comment.</b> NLB Manager → clic droit sur le cluster → Add Host To Cluster : ' + v.nom + '.</p><p><b>Vérifier.</b> Les deux nœuds sont « Converged ».</p>')],
+        verif: [S('Test de bascule', '<p><b>Comment.</b> <code>http://intranet.' + DOM + '</code> depuis un client ; arrêter un nœud, recharger : le site répond encore (T12).</p>'), FIN]
+      };
     },
-    exch: function () {
-      return VM_BASE.concat(['Joindre le domaine ; vérifier que le schéma AD est prêt', 'PKI : installer AD CS (autorité interne) : voir <code>exchange</code> §7 à §10', 'Installer Exchange Server SE', 'Créer les bases et quelques boîtes (Direction, RH, Finance, IT)', 'Certificat d\'Exchange délivré par la CA interne', 'Test : courrier entre deux boîtes (T13)', FIN]);
+    exch: function (v, st) {
+      return {
+        prep: [creerVM(v, st), ipFixe(v, st, ip('BRU-DC01')), joindre(v),
+          S('Préparer le schéma AD et les prérequis', '<p><b>Comment.</b> Installer les prérequis de la version d\'Exchange (liste de l\'éditeur) puis, avec le média Exchange : <code>Setup.exe /PrepareSchema</code> et <code>/PrepareAD /OrganizationName:EUROCORP</code> avec l\'option d\'acceptation de licence demandée par Setup, avec un compte membre de Schema Admins et Enterprise Admins.</p><p><b>Pourquoi.</b> Exchange étend le schéma AD ; à faire une fois pour la forêt.</p><p><b>Vérifier.</b> Setup termine sans erreur.</p>')],
+        inst: [S('PKI : installer AD CS (autorité interne)', '<p><b>Comment.</b> Add roles → Active Directory Certificate Services → Certification Authority, <i>Enterprise Root CA</i>. Suivre ton cours.</p><p><b>Pourquoi.</b> Les certificats d\'Exchange sont délivrés par ta CA et reconnus dans le domaine.</p>' + src('<code>exchange</code> §7 à §10')),
+          S('Installer Exchange Server', '<p><b>Comment.</b> Assistant Setup, rôles Mailbox, redémarrage à la fin.</p><p><b>Vérifier.</b> L\'Exchange Admin Center s\'ouvre (<code>https://' + v.nom.toLowerCase() + '/ecp</code>).</p>')],
+        conf: [S('Bases et boîtes aux lettres', '<p><b>Comment.</b> EAC → Mailboxes : une boîte par service (Direction, RH, Finance, IT) ; bases dans le dossier prévu.</p>' + src('<code>exchange</code> §2 et §4')),
+          S('Connecteurs et transport', '<p><b>Comment.</b> Send/Receive connectors selon ton cours.</p>' + src('<code>exchange</code> §5 et §6')),
+          S('Certificat de la CA interne', '<p><b>Comment.</b> Demander un certificat à ta CA et l\'affecter aux services IIS/SMTP.</p>' + src('<code>exchange</code> §9 et §10'))],
+        verif: [S('Courrier entre deux boîtes', '<p><b>Comment.</b> Se connecter à deux boîtes (OWA ou client de test), envoyer, recevoir (T13).</p>'), FIN]
+      };
     },
-    sql: function () {
-      return VM_BASE.concat(['Joindre le domaine', 'Installer SQL Server ; collation <code>Latin1_General_CI_AS_KS_WS</code> et SQL Server Browser en automatique', 'Sur l\'AD : clé KDS, OU GMSA, groupe, compte gMSA (voir <a href="services.html">Services</a>)', 'Donner le gMSA aux services SQL (sauf Browser)', FIN]);
+    sql: function (v, st) {
+      return {
+        prep: [creerVM(v, st), ipFixe(v, st, ip('BRU-DC01')), joindre(v),
+          S('Préparer le compte de service (gMSA) sur l\'AD', P('<p><b>Comment.</b> Sur un DC :</p>', pre('Add-KdsRootKey -EffectiveTime ((Get-Date).AddHours(-10))   # une seule fois\nNew-ADOrganizationalUnit -Name GMSA -Path "DC=eurocorp,DC=lan"\nNew-ADGroup -Name GS_GMSA_SQL -GroupScope Global -Path "OU=GMSA,DC=eurocorp,DC=lan"\nAdd-ADGroupMember GS_GMSA_SQL -Members (Get-ADComputer PAR-SQL01)\nNew-ADServiceAccount GMSA_SQL -DNSHostName gmsa_sql.' + DOM + ' -PrincipalsAllowedToRetrieveManagedPassword GS_GMSA_SQL'), '<p><b>Pourquoi.</b> Le mot de passe du compte est géré par l\'AD : rien à stocker ni à changer à la main.</p>', src('<code>sharepoint</code> §3')))],
+        inst: [S('Installer SQL Server avec le bon classement', '<p><b>Comment.</b> Setup SQL Server → Database Engine ; à l\'étape <i>Server Configuration → Collation</i> : <code>Latin1_General_CI_AS_KS_WS</code>.</p><p><b>Pourquoi.</b> SharePoint exige ce classement ; il ne se change pas facilement après coup.</p><p><b>Vérifier.</b> <code>SELECT SERVERPROPERTY(\'Collation\')</code>.</p>' + src('<code>sharepoint</code> §2')),
+          S('Service SQL Server Browser en automatique', '<p><b>Comment.</b> <code>services.msc</code> → SQL Server Browser → Démarrage automatique, démarrer.</p>' + src('<code>sharepoint</code> §2'))],
+        conf: [S('Donner le gMSA aux services SQL', '<p><b>Comment.</b> Sur PAR-SQL01, <code>Install-ADServiceAccount GMSA_SQL</code>, puis SQL Server Configuration Manager : les <b>trois services sauf Browser</b> → compte <code>' + NB + '\\GMSA_SQL$</code> (le <code>$</code> final est en général exigé), mot de passe vide → Apply.</p>' + src('<code>sharepoint</code> §3')),
+          S('Ouvrir SQL sur le réseau', '<p><b>Comment.</b> Port TCP 1433 (ou port fixe) autorisé dans le pare-feu Windows ; Browser en UDP 1434.</p>')],
+        verif: [S('Connexion depuis le futur serveur SharePoint', '<p><b>Comment.</b> Depuis PAR-SP01 : <code>Test-NetConnection PAR-SQL01 -Port 1433</code> ; connexion SSMS réussie.</p>'), FIN]
+      };
     },
-    sp: function () {
-      return VM_BASE.concat(['Joindre le domaine', 'Installer les prérequis SharePoint puis SharePoint Server SE (tes notes s\'arrêtent avant)', 'Créer la ferme (base sur PAR-SQL01), comptes de service gMSA', 'Créer le site, test d\'ouverture (T14)', FIN]);
+    sp: function (v, st) {
+      return {
+        prep: [creerVM(v, st), ipFixe(v, st, ip('BRU-DC01')), joindre(v),
+          S('Comptes de service gMSA pour SharePoint', '<p><b>Comment.</b> Même démarche que pour SQL (clé KDS déjà créée) : un groupe, un gMSA par compte de service (ferme, application web), le serveur SharePoint dans le groupe.</p>' + src('<code>sharepoint</code> §3'))],
+        inst: [S('Installer les prérequis puis SharePoint Server SE', '<p><b>Comment.</b> Monter l\'ISO, lancer « Install software prerequisites » (redémarrages possibles), puis « Install SharePoint Server ».</p><p><b>Vérifier.</b> L\'assistant d\'installation se termine.</p>')],
+        conf: [S('Créer la ferme', '<p><b>Comment.</b> Assistant de configuration (<i>Configuration Wizard</i>) : nouvelle ferme, serveur de base de données <b>PAR-SQL01</b>, nom de base de configuration, compte de ferme gMSA, phrase secrète de ferme (la noter dans Infos.md).</p>'),
+          S('Application web et collection de sites', '<p><b>Comment.</b> Administration centrale → Web applications → New ; puis une collection de sites (site d\'équipe) sur cette application.</p>')],
+        verif: [S('Ouvrir le site', '<p><b>Comment.</b> Depuis un client : ouvrir l\'adresse du site, s\'authentifier avec un compte du domaine (T14).</p>'), FIN]
+      };
     },
-    fs: function () {
-      return VM_BASE.concat(['Joindre le domaine', 'Rôle serveur de fichiers ; dossiers Direction, RH, Finance, IT, Commun', 'Groupes AGDLP (globaux par service → locaux de domaine → permissions NTFS) : <a href="services.html">Services</a>', 'Partages + permissions NTFS, tester avec un utilisateur de chaque service (T11)', 'Hyper-V Replica vers Paris : voir <code>07-Sauvegarde-PRA</code> (T21)', FIN]);
+    fs: function (v, st) {
+      return {
+        prep: [creerVM(v, st), ipFixe(v, st, ip('BRU-DC01')), joindre(v),
+          S('Créer les groupes (AGDLP)', '<p><b>Comment.</b> Pour chaque service (Direction, RH, Finance, IT) : un groupe <b>global</b> qui contient les comptes ; un groupe <b>local de domaine</b> par droit (ex. <code>FS_Finance_Modifier</code>) qui contient le groupe global.</p><p><b>Pourquoi.</b> Les permissions ne vont qu\'aux groupes locaux : quand quelqu\'un change de service, on change un seul groupe.</p>' + src('<code>storage-clustering</code> §4 : privilégier les groupes'))],
+        inst: [S('Installer le rôle serveur de fichiers', '<p><b>Comment.</b> Add roles → File and Storage Services → File Server (DFS Namespaces en option).</p>' + src('<code>windows-serveur</code> §10'))],
+        conf: [S('Dossiers et permissions NTFS', '<p><b>Comment.</b> Un dossier par service + Commun. Propriétés → Security : retirer l\'héritage superflu, donner le droit au <b>groupe local</b> uniquement. Un refus explicite prime sur une autorisation.</p>' + src('<code>storage-clustering</code> §4')),
+          S('Partages', '<p><b>Comment.</b> Partager chaque dossier (permission de partage large, la sécurité est portée par NTFS) ; <code>net share</code> pour lister.</p>' + src('<code>storage-clustering</code> §5')),
+          S('Hyper-V Replica vers Paris', '<p><b>Comment.</b> Voir <code>07-Sauvegarde-PRA</code> : accepter la réplication sur l\'hôte de Paris, activer la réplication de ' + v.nom + ', réplication initiale.</p><p><b>Vérifier.</b> <code>Get-VMReplication</code> : état Replicating, santé Normal.</p>')],
+        verif: [S('Droits par service et basculement', '<p><b>Comment.</b> Un utilisateur par service ouvre ses dossiers (T11) ; test de basculement du Replica (T21).</p>'), FIN]
+      };
     },
-    zabbix: function () {
-      return ['Créer la VM Ubuntu Server 24.04 (IP fixe)', 'Installer Docker et le plugin Compose (tes notes <code>docker</code> §3)', 'Copier <code>05-Docker/zabbix/</code>, <code>chmod 600 .env</code>', '<code>docker compose config -q</code> puis <code>docker compose up -d</code> : <a href="docker.html">Docker</a>', 'Installer l\'agent 2 avec PSK sur les autres machines (script <code>08-Supervision-Securite</code>), créer les hôtes', 'Test : valeurs reçues pour chaque site (T15)', FIN];
+    zabbix: function (v, st) {
+      return {
+        prep: [creerLinux(v, st), ipLinux(v, st), dnsA(v), docker(),
+          S('Préparer le dossier du projet', P('<p><b>Comment.</b></p>', pre('sudo mkdir -p /opt/zabbix-lab && cd /opt/zabbix-lab'), '<p>Y copier <code>05-Docker/zabbix/docker-compose.yml</code> et <code>.env</code>.</p>', src('<code>zabbix</code> §1')))],
+        inst: [S('Démarrer la pile', P('<p><b>Comment.</b></p>', pre('sudo chmod 600 .env\nsudo docker compose config -q\nsudo docker compose up -d'), '<p><b>Vérifier.</b> <code>docker ps</code> : base, serveur, web « Up » ; <code>docker logs</code> du serveur sans erreur.</p>', src('<code>zabbix</code> §2')))],
+        conf: [S('Interface web', '<p><b>Comment.</b> <code>http://' + v.nom.toLowerCase() + '.' + DOM + '</code>, assistant de première connexion, changer le mot de passe du compte par défaut.</p>'),
+          S('Agent 2 + PSK sur chaque machine surveillée', P('<p><b>Comment.</b> Installer le MSI « Zabbix agent 2 » (même version que le serveur), nom d\'hôte exact, serveur <code>' + v.nom.toLowerCase() + '.' + DOM + '</code>, port 10050. Puis, dans PowerShell 7, le script <code>08-Supervision-Securite/Configure-ZabbixAgent2-PSK.ps1</code> avec <code>-ZabbixServer</code>, <code>-HostName</code>, <code>-PskIdentity</code> : il génère une PSK, règle les lignes TLS de <code>zabbix_agent2.conf</code> et redémarre le service.</p>', '<p><b>Pourquoi.</b> La PSK chiffre et authentifie les échanges agent ↔ serveur. L\'identité et la valeur affichées vont dans l\'onglet Encryption de l\'hôte.</p>', src('<code>system-center/zabbix</code> §3'))),
+          S('Créer les hôtes', '<p><b>Comment.</b> Data collection → Hosts → Create host : nom = nom d\'hôte de l\'agent, template « Windows by Zabbix agent active », groupes « Windows servers » et « Virtual machines », onglet Encryption : PSK (identité + valeur).</p>' + src('<code>system-center/zabbix</code> §3.3'))],
+        verif: [S('Données reçues', '<p><b>Comment.</b> Chaque hôte passe au vert dans Monitoring → Hosts, des valeurs récentes apparaissent (T15).</p>'), FIN]
+      };
     },
-    redmine: function () {
-      return ['Créer la VM Ubuntu Server 24.04 (IP fixe)', 'Installer Docker et le plugin Compose', 'Copier <code>05-Docker/redmine/</code> dans <code>/opt/redmine</code>, <code>chmod 600 .env</code>', 'Lancer la pile, ouvrir <code>https://helpdesk.eurocorp.lan</code> (certificat auto-signé)', 'Authentification LDAP sur l\'AD, créer les trackers', 'Planifier <code>backup-redmine.sh</code> et tester la restauration (T16 à T18) : <code>07-Sauvegarde-PRA</code>', FIN];
+    redmine: function (v, st) {
+      return {
+        prep: [creerLinux(v, st), ipLinux(v, st), dnsA(v), docker(),
+          S('Dossier de déploiement', P('<p><b>Comment.</b></p>', pre('sudo mkdir -p /opt/redmine'), '<p>Y copier tout <code>05-Docker/redmine/</code> (compose, <code>.env</code>, <code>nginx/</code>, <code>backup-redmine.sh</code>).</p>', src('<code>system-center/redmine</code> §3')))],
+        inst: [S('Lancer Redmine, MariaDB et nginx', P('<p><b>Comment.</b></p>', pre('cd /opt/redmine\nsudo chmod 600 .env\nsudo docker compose config -q\nsudo docker compose up -d\nsudo docker ps'), '<p><b>Vérifier.</b> Trois conteneurs : redmine-db, redmine-app, redmine-nginx. Au premier démarrage Redmine crée ses tables.</p>', src('<code>system-center/redmine</code> §3 et §8')))],
+        conf: [S('Premier accès et configuration par défaut', '<p><b>Comment.</b> <code>https://helpdesk.' + DOM + '</code> (certificat auto-signé : avertissement normal). Se connecter avec le compte administrateur par défaut, <b>changer le mot de passe</b> immédiatement, puis Administration → « Load the default configuration » : trackers Bug / Feature / Support, rôles, statuts.</p>' + src('<code>system-center/redmine</code> §3.3')),
+          S('Activer l\'API', '<p><b>Comment.</b> Administration → Settings → Integration : activer le service REST ; la clé API se lit dans My account.</p>' + src('<code>system-center/redmine</code> §3.4')),
+          S('Authentification LDAP sur l\'AD', P('<p><b>Comment.</b> Administration → LDAP authentication → New : hôte <code>bru-dc01.' + DOM + '</code>, port 389, compte de service en lecture (pas Administrator en production), Base DN <code>DC=eurocorp,DC=lan</code>, création à la volée cochée, attributs <code>sAMAccountName</code>, <code>givenName</code>, <code>sN</code>, <code>mail</code>. Bouton <i>Test</i>.</p>', '<p><b>Si « Invalid LDAP Account/Password ».</b> Le DC refuse peut-être le LDAP non signé : voir la stratégie « LDAP server signing requirements » des contrôleurs de domaine (réglage de lab uniquement).</p>', src('<code>system-center/redmine</code> §4'))),
+          S('Sauvegarde planifiée', '<p><b>Comment.</b> <code>sudo crontab -e</code> : <code>0 2 * * * /opt/redmine/backup-redmine.sh</code>. Détails et restauration : <code>07-Sauvegarde-PRA</code>.</p>' + src('<code>system-center/redmine</code> §7'))],
+        verif: [S('Connexion, ticket, sauvegarde', '<p><b>Comment.</b> Connexion avec un compte du domaine, création d\'un ticket (T16), exécution de <code>backup-redmine.sh</code> : trois fichiers non vides (T17), restauration sur une copie (T18).</p>'), FIN]
+      };
     },
-    wazuh: function () {
-      return ['Créer la VM Ubuntu Server 24.04 (IP fixe)', 'Installer Docker et Compose', 'Déployer Wazuh : <code>05-Docker/wazuh/README.md</code> (choix Docker ou tout-en-un à trancher)', 'Installer Sysmon (<code>08-Supervision-Securite/sysmonconfig.xml</code>) et l\'agent Wazuh sur des Windows ; lire le journal <code>Microsoft-Windows-Sysmon/Operational</code>', 'Test : provoquer un événement, le retrouver dans Wazuh (T19)', FIN];
+    wazuh: function (v, st) {
+      return {
+        prep: [creerLinux(v, st), ipLinux(v, st), dnsA(v),
+          S('Choisir : tout-en-un ou Docker', '<p><b>Comment.</b> Ton cours installe Wazuh en <b>tout-en-un</b> (indexer + manager + dashboard sur la VM). Le cahier des charges parle de Docker : la procédure « single-node » de la documentation Wazuh. Choisis avant d\'installer ; l\'ancien guide est dans <code>05-Docker/wazuh/README.md</code>.</p>' + src('<code>system-center/XDR - SIEM</code> §3')), docker()],
+        inst: [S('Installer Wazuh', P('<p><b>Comment (méthode de ton cours).</b></p>', pre('mkdir wazuh && cd wazuh\ncurl -sO https://packages.wazuh.com/4.14/wazuh-install.sh\nsudo bash ./wazuh-install.sh -a'), '<p>L\'assistant affiche l\'adresse du dashboard, l\'utilisateur <code>admin</code> et un mot de passe <b>généré, affiché une seule fois</b> : le noter dans <code>Infos.md</code>.</p>', '<p><b>Vérifier.</b> « Installation finished » ; <code>https://' + v.nom.toLowerCase() + '.' + DOM + '</code> s\'ouvre (certificat auto-signé).</p>', src('<code>system-center/XDR - SIEM</code> §3')))],
+        conf: [S('Déployer l\'agent sur un Windows', P('<p><b>Comment.</b> Dashboard → Agents → Deploy new agent : package Windows MSI, adresse du serveur = FQDN du Wazuh, nom d\'agent vide (nom de la machine, unique, non modifiable). Lancer la commande affichée dans un PowerShell en administrateur, puis <code>NET START Wazuh</code>.</p>', '<p><b>Vérifier.</b> L\'agent est « active » dans Endpoints.</p>', src('<code>system-center/XDR - SIEM</code> §5'))),
+          S('Installer Sysmon', P('<p><b>Comment.</b> Créer <code>C:\\Tools</code>, y mettre Sysmon et <code>08-Supervision-Securite/sysmonconfig.xml</code>, puis :</p>', pre('cd C:\\Tools\n.\\Sysmon64.exe -accepteula -i .\\sysmonconfig.xml'), '<p><b>Vérifier.</b> Les événements sont dans Event Viewer → Applications and Services Logs → Microsoft → Windows → Sysmon → Operational.</p>', src('<code>system-center/XDR - SIEM</code> §6.1'))),
+          S('Envoyer le journal Sysmon à Wazuh', P('<p><b>Comment.</b> Dans <code>C:\\Program Files (x86)\\ossec-agent\\ossec.conf</code>, ajouter :</p>', pre('<localfile>\n  <location>Microsoft-Windows-Sysmon/Operational</location>\n  <log_format>eventchannel</log_format>\n</localfile>'), '<p>puis <code>Restart-Service Wazuh</code>.</p>', src('<code>system-center/XDR - SIEM</code> §6.2')))],
+        verif: [S('Événement retrouvé dans Wazuh', '<p><b>Comment.</b> Provoquer un événement (ouvrir un processus, créer un fichier) sur la machine surveillée, le retrouver dans le dashboard (T19).</p>'), FIN]
+      };
     },
-    greenbone: function () {
-      return ['Créer la VM Ubuntu Server 24.04 (IP fixe)', 'Installer Docker et Compose', 'Récupérer le compose officiel : <code>05-Docker/greenbone/fetch-compose.sh</code>', 'Lancer, attendre la synchronisation des flux, ouvrir l\'interface (443 / 9392)', 'Premier scan sur une seule cible (T20)', FIN];
+    greenbone: function (v, st) {
+      return {
+        prep: [creerLinux(v, st), ipLinux(v, st), dnsA(v), docker(),
+          S('Dossier et fichier compose', P('<p><b>Comment.</b></p>', pre('mkdir -p ~/greenbone-community-edition && cd ~/greenbone-community-edition'), '<p>Récupérer le compose officiel avec <code>05-Docker/greenbone/fetch-compose.sh</code> (ou <code>curl -f -O -L https://greenbone.github.io/docs/latest/_static/compose.yaml</code>).</p>', src('<code>system-center/openvas</code> §2.1')))],
+        inst: [S('Publier l\'interface et démarrer', P('<p><b>Comment.</b> Dans le compose, les ports de nginx sont liés à <code>127.0.0.1</code> : les passer en <code>443:443</code> et <code>9392:9392</code> pour joindre l\'interface depuis un autre poste (lab uniquement). Puis :</p>', pre('sudo docker compose pull\nsudo docker compose up -d\nsudo docker compose ps'), '<p><b>Vérifier.</b> Les conteneurs sont « Up » ; la synchronisation des flux de vulnérabilités peut durer longtemps avant le premier scan.</p>', src('<code>system-center/openvas</code> §2.2 et §2.3')))],
+        conf: [S('Se connecter et changer le mot de passe', '<p><b>Comment.</b> <code>https://' + v.nom.toLowerCase() + '.' + DOM + '/</code> ; compte administrateur par défaut, <b>à changer</b> tout de suite.</p>' + src('<code>system-center/openvas</code> §2.4')),
+          S('Cible et tâche', '<p><b>Comment.</b> Scans → Tasks → New Task : créer une cible (hôte unique au début, liste de ports « All IANA assigned TCP »), tâche avec la config <b>Host Discovery</b> pour un premier passage (détecte les machines, aucune vulnérabilité), puis <b>Full and fast</b>.</p>' + src('<code>system-center/openvas</code> §3 et §4'))],
+        verif: [S('Premier rapport', '<p><b>Comment.</b> Lancer la tâche sur <b>une seule cible</b>, lire le rapport (onglets Results, Hosts) (T20). Un rapport « vide » après Host Discovery est normal : le filtre masque les résultats sans gravité.</p>' + src('<code>system-center/openvas</code> §3.4')), FIN]
+      };
     },
-    clt: function () {
-      return ['Créer la VM Windows 11 (optionnelle)', 'Joindre le domaine, ouvrir une session avec un compte de test', 'Servir de poste de test : DHCP, partages, intranet, Redmine (T09, T11, T12, T16)', FIN];
+    clt: function (v, st) {
+      return {
+        prep: [creerVM(v, st), S('Réseau en DHCP', '<p><b>Comment.</b> Laisser la carte en DHCP : c\'est le but de ce poste.</p>')],
+        inst: [S('Installer Windows 11', '<p><b>Comment.</b> Installation standard depuis l\'ISO (TPM et Secure Boot virtuels activés dans Settings → Security).</p>')],
+        conf: [joindre(v), S('Session de test', '<p><b>Comment.</b> Ouvrir une session avec un compte du domaine de chaque service.</p>')],
+        verif: [S('Poste de test', '<p><b>Comment.</b> Adresse DHCP reçue (T09), partage accessible selon le groupe (T11), intranet (T12), Redmine (T16).</p>'), FIN]
+      };
     }
   };
   function cle(v) {
@@ -65,15 +204,20 @@
     if (/SQL/.test(n)) return 'sql'; if (/-SP0/.test(n)) return 'sp'; if (/-FS0/.test(n)) return 'fs'; if (n === 'BRU-DOCKER01') return 'zabbix';
     if (n === 'LON-DOCKER01') return 'redmine'; if (n === 'BER-DOCKER01') return 'wazuh'; if (n === 'BER-DOCKER02') return 'greenbone'; if (/-CLT01$/.test(n)) return 'clt'; return '';
   }
+  var PH = [['prep', 'Préparation'], ['inst', 'Installation'], ['conf', 'Configuration'], ['verif', 'Vérifications']];
   document.addEventListener('DOMContentLoaded', function () {
     var host = document.getElementById('marche'); if (!host) return;
     var html = '';
     D.sites.forEach(function (st) {
       html += '<section class="msite" data-site="' + st.id + '"><h2>' + esc(st.nom) + '</h2>';
       D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).forEach(function (v) {
-        var k = cle(v), steps = k ? ETAPES[k](v, st) : ['Étapes à définir pour cette machine'];
-        html += '<article class="vm"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go</small></h3><ol>' +
-          steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></article>';
+        var k = cle(v), plan = k ? M[k](v, st) : null;
+        html += '<article class="vm"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go</small></h3>';
+        PH.forEach(function (p) {
+          if (!plan || !plan[p[0]] || !plan[p[0]].length) return;
+          html += '<h4>' + p[1] + '</h4><ol>' + plan[p[0]].map(function (s) { return '<li><div class="st"><details><summary>' + s[0] + '</summary><div class="det">' + s[1] + '</div></details></div></li>'; }).join('') + '</ol>';
+        });
+        html += '</article>';
       });
       html += '</section>';
     });

@@ -255,3 +255,23 @@ tr.moi-ligne td { background: var(--accent-soft); font-weight: 600; }
 .vm { border: 1px solid var(--border); border-radius: var(--r); padding: 6px 16px 10px; margin: 14px 0; background: var(--surface); }
 .vm h3 { margin: 10px 0 6px; } .vm h3 small { font: 400 13px var(--font-ui); color: var(--ink-soft); display: block; margin-top: 2px; }
 .vm ol { padding-left: 34px; margin: 8px 0; } .vm li { margin: 6px 0; }
+
+/* marche : numéros, cases, détails */
+.vm h4 { margin: 18px 0 4px; font: 600 13px var(--font-ui); text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
+.vm ol { list-style: none; counter-reset: n; padding-left: 0; margin: 4px 0 10px; }
+.vm li { counter-increment: n; display: flex; gap: 10px; align-items: flex-start; margin: 4px 0; padding: 6px 0; border-bottom: 1px solid var(--border); position: static; }
+.vm li input.suivi { position: static; flex: 0 0 auto; margin: 3px 0 0; width: 22px; height: 22px; }
+.vm .st { flex: 1; min-width: 0; }
+.vm summary { cursor: pointer; font-weight: 600; list-style: none; }
+.vm summary::-webkit-details-marker { display: none; }
+.vm summary::before { content: counter(n) ". "; color: var(--ink-soft); font-weight: 500; }
+.vm summary::after { content: " ▾"; color: var(--ink-faint); font-weight: 400; }
+.vm details[open] summary::after { content: " ▴"; }
+.vm li.fait { text-decoration: none; color: inherit; }
+.vm li.fait summary { text-decoration: line-through; color: var(--ink-soft); }
+.vm .det { margin: 8px 0 4px; font-size: 15px; }
+.vm .det p { margin: 6px 0; }
+.vm pre.mini { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r); padding: 8px 10px; overflow-x: auto; font: 12.5px/1.5 var(--font-mono); white-space: pre; }
+.vm .srcl { font-size: 13px; color: var(--ink-soft); }
+@media (max-width: 640px) { .vm { padding: 4px 12px 8px; } .vm .det { font-size: 15px; } }
+main .vm ol:not(.steps) { padding-left: 0; }

@@ -55,7 +55,7 @@
     if (!st) { b.innerHTML = '<b>Vue générale</b> : les ' + D.vms.filter(function (v) { return !v.virtuel; }).length + ' machines des 4 sites. Choisis ton hôte dans le menu en haut pour ne voir que ton site.'; main.insertBefore(b, main.firstChild); return; }
     var vms = D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }), ram = vms.reduce(function (a, v) { return a + (+v.ram || 0); }, 0);
     var tun = st.id === 'BRU' ? 'Hub : 3 tunnels IPsec (Paris, Londres, Berlin)' : 'Spoke : 1 tunnel IPsec vers Bruxelles';
-    b.innerHTML = '<b>Tu es l\'hôte de ' + esc(st.nom) + '</b> · hôte ' + esc(st.hote) + ' · WAN ' + esc(st.wan) + ' · LAN ' + esc(st.lan) + ' (passerelle ' + esc(st.gw) + ') · ' + tun + '.<br>' +
+    b.innerHTML = '<b>Tu es l\'hôte de ' + esc(st.nom) + '</b>Hôte ' + esc(st.hote) + ' · WAN ' + esc(st.wan) + ' · LAN ' + esc(st.lan) + ' (passerelle ' + esc(st.gw) + ') · ' + tun + '.<br>' +
       vms.length + ' VM à héberger : ' + vms.map(function (v) { return esc(v.nom); }).join(', ') +
       '. <a href="infrastructure.html#' + st.id.toLowerCase() + '">Voir mon site</a>. Tes cases cochées sont celles de cet hôte.';
     main.insertBefore(b, main.firstChild);
