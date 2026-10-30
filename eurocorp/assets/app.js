@@ -128,7 +128,7 @@
   function machine() { try { return localStorage.getItem(CLE_MACH) || ''; } catch (e) { return ''; } }
   function machineSelect() {
     var cur = machine(), h = '<option value="">Toutes les machines</option>' + D.sites.map(function (st) {
-      return '<optgroup label="' + esc(st.nom) + '"><option value="HOTE-' + st.id + '"' + (cur === 'HOTE-' + st.id ? ' selected' : '') + '>Hôte de ' + esc(st.nom) + ' : tout (' + D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).length + ' machines)</option>' +
+      return '<optgroup label="' + esc(st.nom) + '"><option value="HOTE-' + st.id + '"' + (cur === 'HOTE-' + st.id ? ' selected' : '') + '>Hôte de ' + esc(st.nom) + ' (' + D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).length + ' machines)</option>' +
         D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).map(function (v) {
           return '<option value="' + esc(v.nom) + '"' + (cur === v.nom ? ' selected' : '') + '>' + esc(v.nom) + '</option>'; }).join('') + '</optgroup>'; }).join('');
     return '<label class="moi mach"><span class="sr">Machine</span><select id="machine-h" aria-label="Machine">' + h + '</select></label>';

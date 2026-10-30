@@ -297,18 +297,20 @@
       (function () {
         var hp = stepsHote(st);
         html += '<article class="vm" data-site="' + st.id + '" data-vm="HOTE-' + st.id + '"><h3>Hôte de ' + esc(st.nom) + ' <small>commutateurs, modèle Sysprep, parent <code>C:\\PARENT\\TEST-SYSPREP.vhdx</code> · à faire en premier</small></h3>';
+        var n0 = 0;
         PH.forEach(function (p) {
           if (!hp[p[0]] || !hp[p[0]].length) return;
-          html += '<h4>' + p[1] + '</h4><ol>' + hp[p[0]].map(function (s) { return '<li><div class="st"><details><summary>' + s[0] + '</summary><div class="det">' + s[1] + '</div></details></div></li>'; }).join('') + '</ol>';
+          html += '<h4>' + p[1] + '</h4><ol style="counter-reset:n ' + n0 + '">' + (n0 += hp[p[0]].length, hp[p[0]]).map(function (s) { return '<li><div class="st"><details><summary>' + s[0] + '</summary><div class="det">' + s[1] + '</div></details></div></li>'; }).join('') + '</ol>';
         });
         html += '</article>';
       })();
       D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).forEach(function (v) {
         var k = cle(v), plan = k ? enrichir(M[k](v, st), v, st, k) : null;
         html += '<article class="vm" data-site="' + st.id + '" data-vm="' + esc(v.nom) + '"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go</small></h3>';
+        var n0 = 0;
         PH.forEach(function (p) {
           if (!plan || !plan[p[0]] || !plan[p[0]].length) return;
-          html += '<h4>' + p[1] + '</h4><ol>' + plan[p[0]].map(function (s) { return '<li><div class="st"><details><summary>' + s[0] + '</summary><div class="det">' + s[1] + '</div></details></div></li>'; }).join('') + '</ol>';
+          html += '<h4>' + p[1] + '</h4><ol style="counter-reset:n ' + n0 + '">' + (n0 += plan[p[0]].length, plan[p[0]]).map(function (s) { return '<li><div class="st"><details><summary>' + s[0] + '</summary><div class="det">' + s[1] + '</div></details></div></li>'; }).join('') + '</ol>';
         });
         html += '</article>';
       });
