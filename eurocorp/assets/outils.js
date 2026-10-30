@@ -4,18 +4,15 @@
   var D = window.EURO, $ = function (s, r) { return (r || document).querySelector(s); };
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
-  /* 1. Budget RAM */
+  /* 1. Budget RAM : un hôte par site */
   function ram() {
-    var host = +$('#ram-host').value || 0, res = +$('#ram-res').value || 0, rows = '', tot = 0;
-    ['BRU', 'PAR', 'LON', 'BER'].forEach(function (s) {
-      var t = D.vms.filter(function (v) { return !v.virtuel && v.site === s; }).reduce(function (a, v) { return a + (+v.ram || 0); }, 0);
-      tot += t; rows += '<tr><td>' + s + '</td><td>' + t + ' Go</td></tr>';
+    var host = +$('#ram-host').value || 0, res = +$('#ram-res').value || 0, rows = '', me = window.EURO_MOI && window.EURO_MOI();
+    D.sites.forEach(function (st) {
+      var t = D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).reduce(function (a, v) { return a + (+v.ram || 0); }, 0), m = host - res - t;
+      rows += '<tr' + (me && me.id === st.id ? ' class="moi-ligne"' : '') + '><td>' + esc(st.nom) + '</td><td>' + t + ' Go</td><td>' + m + ' Go</td><td>' + (m >= 0 ? 'ça tient' : 'ne tient pas') + '</td></tr>';
     });
-    var marge = host - res - tot;
-    $('#ram-out').innerHTML = '<div class="tw"><table><thead><tr><th>Site</th><th>RAM des VM</th></tr></thead><tbody>' + rows +
-      '<tr><td><b>Total VM</b></td><td><b>' + tot + ' Go</b></td></tr><tr><td>Hôte + réserve</td><td>' + res + ' Go</td></tr></tbody></table></div>' +
-      '<p class="' + (marge >= 0 ? '' : 'warnline') + '"><b>Marge : ' + marge + ' Go</b> sur ' + host + ' Go. ' +
-      (marge >= 0 ? 'Ça tient (mémoire statique, sans mémoire dynamique).' : 'Ça ne tient pas, et la mémoire dynamique est exclue : réduis la RAM d\'une VM, regroupe des rôles ou reporte des VM (Wazuh, Exchange, SharePoint sont les plus gourmandes).') + '</p>';
+    $('#ram-out').innerHTML = '<div class="tw"><table><thead><tr><th>Hôte</th><th>RAM des VM</th><th>Marge (après réserve)</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<p>Chaque site a son propre hôte de ' + host + ' Go (cahier des charges), mémoire statique. La réserve de ' + res + ' Go pour Hyper-V est une hypothèse.</p>';
   }
 
   /* 2. Adresse / CIDR */
@@ -63,19 +60,19 @@
   var wi = null;
   function whatif() {
     var host = +$('#ram-host').value || 0, res = +$('#ram-res').value || 0, tot = 0, n = 0;
-    wi.forEach(function (r) { if (r.cb.checked) { tot += +r.in.value || 0; n++; } });
+    wi.forEach(function (r) { if (r.cb.checked && $('#wi-site').value === r.site) { tot += +r.in.value || 0; n++; } else if (r.tr) { } r.tr.hidden = $('#wi-site').value !== r.site; });
     var m = host - res - tot;
-    $('#wi-out').innerHTML = '<p><b>' + n + ' VM gardées, ' + tot + ' Go. Marge : ' + m + ' Go.</b> ' + (m >= 0 ? 'Ça tient.' : 'Il manque ' + (-m) + ' Go.') + '</p>';
+    $('#wi-out').innerHTML = '<p><b>' + n + ' VM gardées sur cet hôte, ' + tot + ' Go. Marge : ' + m + ' Go.</b> ' + (m >= 0 ? 'Ça tient.' : 'Il manque ' + (-m) + ' Go.') + '</p>';
   }
   function whatifInit() {
-    var tb = $('#wi-rows'); wi = [];
+    var tb = $('#wi-rows'); wi = []; var me0 = window.EURO_MOI && window.EURO_MOI(); if (me0) $('#wi-site').value = me0.id;
     D.vms.filter(function (v) { return !v.virtuel; }).forEach(function (v) {
       var tr = document.createElement('tr'), cb = document.createElement('input'), inp = document.createElement('input');
       cb.type = 'checkbox'; cb.checked = true; cb.setAttribute('aria-label', 'Garder ' + v.nom); inp.type = 'number'; inp.value = v.ram; inp.min = 0; inp.style.width = '70px'; inp.setAttribute('aria-label', 'RAM de ' + v.nom);
       [cb, document.createTextNode(v.nom), document.createTextNode(v.role), inp].forEach(function (x) { var td = document.createElement('td'); td.appendChild(x); tr.appendChild(td); });
-      tb.appendChild(tr); wi.push({ cb: cb, in: inp }); cb.addEventListener('change', whatif); inp.addEventListener('input', whatif);
+      tb.appendChild(tr); wi.push({ cb: cb, in: inp, tr: tr, site: v.site }); cb.addEventListener('change', whatif); inp.addEventListener('input', whatif);
     });
-    ['ram-host', 'ram-res'].forEach(function (i) { $('#' + i).addEventListener('input', whatif); }); whatif();
+    ['ram-host', 'ram-res'].forEach(function (i) { $('#' + i).addEventListener('input', whatif); }); $('#wi-site').addEventListener('input', whatif); whatif();
   }
 
   /* 5. Hyper-V */
@@ -161,7 +158,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     if (!$('#ram-out')) return;
     var me = window.EURO_MOI && window.EURO_MOI();
-    if (me) { $('#ip-in').value = me.ip; $('#hv-site').value = me.site; $('#fx-cible').value = me.ip; }
+    if (me) { $('#ip-in').value = me.hote; $('#hv-site').value = me.id; $('#fx-cible').value = me.hote; }
     ['ram-host', 'ram-res'].forEach(function (i) { $('#' + i).addEventListener('input', ram); }); ram();
     $('#ip-in').addEventListener('input', cidr); cidr();
     $('#cd-in').addEventListener('input', sub); sub();

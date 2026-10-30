@@ -39,28 +39,29 @@
   }
 
 
-  /* --- « Je suis cette machine » ------------------------------------------ */
+  /* --- « Je suis l'hôte de… » : Général ou un des 4 sites ---------------------- */
   var CLE_MOI = 'euro.moi';
   function moi() { try { return localStorage.getItem(CLE_MOI) || ''; } catch (e) { return ''; } }
-  function moiVM() { var m = moi(); return D.vms.filter(function (v) { return v.nom === m; })[0] || null; }
+  function moiSite() { var m = moi(); return D.sites.filter(function (s) { return s.id === m; })[0] || null; }
   function moiSelect() {
-    var h = '<option value="">Ma machine : choisir…</option>';
-    D.sites.forEach(function (st) {
-      h += '<optgroup label="' + esc(st.nom) + '">' + D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).map(function (v) {
-        return '<option value="' + esc(v.nom) + '"' + (v.nom === moi() ? ' selected' : '') + '>' + esc(v.nom) + '</option>'; }).join('') + '</optgroup>';
-    });
-    return '<label class="moi"><span class="sr">Je suis la machine</span><select id="moi" aria-label="Je suis la machine">' + h + '</select></label>';
+    var h = '<option value="">Général : toutes les machines</option>' + D.sites.map(function (s) {
+      return '<option value="' + s.id + '"' + (s.id === moi() ? ' selected' : '') + '>Hôte de ' + esc(s.nom) + '</option>'; }).join('');
+    return '<label class="moi"><span class="sr">Je suis</span><select id="moi" aria-label="Je suis l\'hôte de">' + h + '</select></label>';
   }
   function moiBandeau() {
-    var v = moiVM(), main = $('#contenu'); if (!main || !v) return;
+    var st = moiSite(), main = $('#contenu'); if (!main) return;
     var b = document.createElement('div'); b.className = 'note moi-bandeau';
-    b.innerHTML = '<b>Tu es ' + esc(v.nom) + '</b> · ' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + esc(v.os) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go · site ' + esc(v.site) +
-      '. <a href="infrastructure.html#' + v.site.toLowerCase() + '">Voir mon site</a>. Tes cases cochées sont à toi seul.';
+    if (!st) { b.innerHTML = '<b>Vue générale</b> : les ' + D.vms.filter(function (v) { return !v.virtuel; }).length + ' machines des 4 sites. Choisis ton hôte dans le menu en haut pour ne voir que ton site.'; main.insertBefore(b, main.firstChild); return; }
+    var vms = D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }), ram = vms.reduce(function (a, v) { return a + (+v.ram || 0); }, 0);
+    var tun = st.id === 'BRU' ? 'Hub : 3 tunnels IPsec (Paris, Londres, Berlin)' : 'Spoke : 1 tunnel IPsec vers Bruxelles';
+    b.innerHTML = '<b>Tu es l\'hôte de ' + esc(st.nom) + '</b> · hôte ' + esc(st.hote) + ' · WAN ' + esc(st.wan) + ' · LAN ' + esc(st.lan) + ' (passerelle ' + esc(st.gw) + ') · ' + tun + '.<br>' +
+      vms.length + ' VM à héberger, ' + ram + ' Go de RAM sur 64 Go (marge ' + (64 - ram) + ' Go) : ' + vms.map(function (v) { return esc(v.nom); }).join(', ') +
+      '. <a href="infrastructure.html#' + st.id.toLowerCase() + '">Voir mon site</a>. Tes cases cochées sont celles de cet hôte.';
     main.insertBefore(b, main.firstChild);
   }
   function moiSurligne() {
-    var m = moi(); if (!m) return;
-    $$('main tbody tr').forEach(function (tr) { var td = tr.firstElementChild; if (td && td.textContent.trim() === m) tr.classList.add('moi-ligne'); });
+    var st = moiSite(); if (!st) return;
+    $$('main tbody tr').forEach(function (tr) { var td = tr.firstElementChild; if (td && td.textContent.trim().indexOf(st.id + '-') === 0) tr.classList.add('moi-ligne'); });
   }
 
   /* --- navigation et pied de page ---------------------------------------- */
@@ -99,7 +100,7 @@
       }
       tabs.forEach(function (t) { t.addEventListener('click', function () { show(t.getAttribute('aria-controls'), true); }); });
       var h = location.hash.slice(1);
-      var v = moiVM(), mien = v && panels.filter(function (p) { return p.id === v.site.toLowerCase(); })[0];
+      var v = moiSite(), mien = v && panels.filter(function (p) { return p.id === v.id.toLowerCase(); })[0];
       show(panels.some(function (p) { return p.id === h; }) ? h : (mien ? mien.id : panels[0].id), false);
     });
   }
@@ -361,7 +362,7 @@
       if (a === 'rst') { var x = lire(); x.ok = {}; ecrire(x); location.reload(); }
     });
   }
-  window.EURO_MOI = function () { return moiVM(); };
+  window.EURO_MOI = function () { return moiSite(); };
   document.addEventListener('DOMContentLoaded', function () {
     buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy(); initSuivi(); moiBandeau(); moiSurligne();
   });

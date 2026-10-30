@@ -15,9 +15,9 @@
 <div class="eyebrow">Outils</div><h1>Petits outils du labo</h1>
 <p class="lead">Trois calculs qui évitent des erreurs bêtes. Tout se passe dans le navigateur. Pour Docker, voir l'<a href="compose.html">outil Compose</a>.</p>
 <h2><span class="num">1</span>Budget RAM</h2>
-<p>Additionne la RAM des VM du <a href="infrastructure.html">plan</a> et la compare à ton hôte.</p>
-<div class="fld"><label for="ram-host">RAM de l'hôte (Go)</label><input id="ram-host" type="number" value="64"></div>
-<div class="fld"><label for="ram-res">Réserve pour Hyper-V (Go) — hypothèse à ajuster</label><input id="ram-res" type="number" value="4"></div>
+<p>Chaque site a son hôte Hyper-V : la RAM des VM de chaque site est comparée à celle de son hôte.</p>
+<div class="fld"><label for="ram-host">RAM de chaque hôte (Go) — 64 d'après le cahier des charges</label><input id="ram-host" type="number" value="64"></div>
+<div class="fld"><label for="ram-res">Réserve pour Hyper-V sur chaque hôte (Go) — hypothèse à ajuster</label><input id="ram-res" type="number" value="4"></div>
 <div id="ram-out" aria-live="polite"></div>
 <h2><span class="num">2</span>Où va cette adresse ?</h2>
 <p>Tape une IP : l'outil dit à quel site elle appartient et si elle est dans la plage serveurs, virtuelle ou DHCP.</p>
@@ -33,8 +33,8 @@ Bob;Durand;Informatique</textarea>
 <div class="code"><div class="cap"><span>Script généré</span><button class="copy" type="button">Copier</button></div><pre id="ad-out"></pre></div>
 <p><b>Reste à toi :</b> créer l'OU avant, vérifier le nommage des comptes, tester sur un seul utilisateur.</p>
 <h2><span class="num">4</span>Et si on retirait des VM ?</h2>
-<p>Décoche une VM ou change sa RAM : le total se recalcule contre la RAM de l'hôte du point 1. Rien n'est enregistré dans le plan : c'est un brouillon pour décider.</p>
-<div id="wi-out" aria-live="polite"></div><div class="tw"><table><thead><tr><th>Garder</th><th>VM</th><th>Rôle</th><th>RAM (Go)</th></tr></thead><tbody id="wi-rows"></tbody></table></div>
+<p>Décoche une VM ou change sa RAM : le total se recalcule pour l'hôte choisi, contre sa RAM du point 1. Rien n'est enregistré dans le plan : c'est un brouillon pour décider.</p>
+<div class="fld"><label for="wi-site">Hôte</label><select id="wi-site"><option value="BRU">Bruxelles</option><option value="PAR">Paris</option><option value="LON">Londres</option><option value="BER">Berlin</option></select></div><div id="wi-out" aria-live="polite"></div><div class="tw"><table><thead><tr><th>Garder</th><th>VM</th><th>Rôle</th><th>RAM (Go)</th></tr></thead><tbody id="wi-rows"></tbody></table></div>
 <h2><span class="num">5</span>Créer les VM Hyper-V (script)</h2>
 <p>Choisis un site : le script crée les VM du plan avec un disque différentiel sur ton parent. À relire et à lancer sur l'hôte, un site à la fois.</p>
 <div class="fld"><label for="hv-site">Site</label><select id="hv-site"><option value="BRU">Bruxelles</option><option value="PAR">Paris</option><option value="LON">Londres</option><option value="BER">Berlin</option></select></div>
