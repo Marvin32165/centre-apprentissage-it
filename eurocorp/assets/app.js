@@ -146,6 +146,44 @@
     });
     return ok;
   }
+  /* phrase d'introduction propre à une machine, pour chaque rubrique des pages 1 à 6 */
+  function introMachine(t, v, st, k) {
+    var n = '<b>' + esc(v.nom) + '</b>', ip = '<code>' + esc(v.ip || 'IP à définir') + '</code>', res = vm => D.vms.filter(x => x.nom === vm)[0] || {}, bru = D.sites.filter(x => x.id === 'BRU')[0] || {};
+    var taille = esc(v.vcpu) + ' vCPU, ' + esc(v.ram) + ' Go, disque ' + esc(v.disque) + ' Go, mémoire statique';
+    var autreDC = D.vms.filter(x => /-DC01$/.test(x.nom) && x.nom !== v.nom)[0] || {};
+    var noms = D.vms.filter(x => !x.virtuel && x.site === st.id).map(x => x.nom), nf = D.flux.filter(f => noms.some(m => (f.de + ' ' + f.vers).indexOf(m) >= 0)).length;
+    var T = {
+      'Les commutateurs virtuels': k === 'fw' ? n + ' a deux cartes : le commutateur externe <code>WAN</code> (' + esc(st.wan) + ') et le commutateur privé de ' + esc(st.nom) + ' (LAN ' + esc(st.lan) + ', passerelle ' + ip + ').' : n + ' (' + ip + ') se branche seulement sur le commutateur privé de ' + esc(st.nom) + ' et sort par ' + esc(st.id) + '-FW01 (<code>' + esc(st.gw) + '</code>).',
+      "L'image parent (sysprep)": n + ' (' + esc(v.os) + ') sera un clone de ce parent : ce que tu règles ici, elle l\'aura ; son nom, son IP et le domaine se règlent après le clonage.',
+      'Généraliser avec Sysprep et ranger le parent': 'Fait une seule fois sur l\'hôte de ' + esc(st.nom) + ' : ' + n + ' ne passe pas par Sysprep, elle en hérite.',
+      'Créer les VM Windows depuis le parent': n + ' : ' + ip + ', ' + taille + '. Disque différentiel sur le parent de l\'hôte ' + esc(st.hote) + '.',
+      'Créer les VM Linux (Docker)': n + ' : Ubuntu depuis l\'ISO, ' + ip + ', ' + taille + '.',
+      'Ordre de travail du jour': 'Pour ' + n + ' : le commutateur et le pare-feu de ' + esc(st.nom) + ' d\'abord, puis ce que demande son rôle (' + esc(v.role) + ').',
+      'Une VM OPNsense par site': n + ' est le pare-feu de ' + esc(st.nom) + ' (' + esc(st.role) + ') : WAN <code>' + esc(st.wan) + '</code>, LAN ' + ip + ' sur ' + esc(st.lan) + ', ' + esc(v.vcpu) + ' vCPU, ' + esc(v.ram) + ' Go.',
+      'Les tunnels IPsec': st.id === 'BRU' ? n + ' est le <b>hub</b> : il monte les 3 tunnels (Paris, Londres, Berlin).' : n + ' monte <b>un seul tunnel</b>, vers Bruxelles (WAN <code>' + esc(bru.wan) + '</code>), depuis son WAN <code>' + esc(st.wan) + '</code>.',
+      'Les routes et le DNS à travers les tunnels': 'Depuis ' + esc(st.nom) + ' (' + esc(st.lan) + ') : routes vers les trois autres LAN par le tunnel, et DNS vers ' + esc(res('BRU-DC01').ip) + ' puis ' + esc(res('PAR-DC01').ip) + '.',
+      'Le filtrage : remplacer « tout autorisé »': 'Pour ' + esc(st.nom) + ' : ' + nf + ' des ' + D.flux.length + ' flux de la matrice touchent les machines de ce site (' + noms.join(', ') + ').',
+      'La forêt et le premier contrôleur (BRU-DC01)': n + ' (' + ip + ') crée la forêt <code>' + esc(D.meta.domaine) + '</code> et le DNS : c\'est le seul contrôleur où l\'on crée la forêt.',
+      'Les autres contrôleurs et les sites AD': v.nom === 'PAR-DC01' ? n + ' (Paris, ' + ip + ') est le <b>deuxième contrôleur</b> : il rejoint <code>' + esc(D.meta.domaine) + '</code> par le tunnel de Paris, puis est promu à côté de <code>BRU-DC01</code>. Londres et Berlin n\'ont pas de contrôleur ; tu crées ensuite les quatre sites AD.' : n + ' (Bruxelles, ' + ip + ') est le <b>premier contrôleur</b>, déjà en place : il te reste à ajouter <code>PAR-DC01</code> pour la réplication, puis à créer les quatre sites AD.',
+      'DHCP avec failover': n + ' (' + ip + ') sert l\'étendue de ' + esc(st.nom) + ' et, en secours, celle de ' + esc((D.sites.filter(x => x.id === autreDC.site)[0] || {}).nom) + ', en failover avec <b>' + esc(autreDC.nom) + '</b> (<code>' + esc(autreDC.ip) + '</code>).',
+      "Unités d'organisation, groupes AGDLP et comptes": 'Créés depuis ' + n + ' ; ils valent pour tout le domaine, pas seulement pour ' + esc(st.nom) + '.',
+      'Serveur de fichiers (LON-FS01)': n + ' (' + ip + ') héberge à ' + esc(st.nom) + ' les partages Direction, RH, Finance, IT et Commun ; ' + (v.replica ? 'réplica vers ' + esc(v.replica.replace(/^→\s*/, '')) + '.' : 'sans réplica.'),
+      'IIS et équilibrage de charge NLB (BRU-IIS01 / 02)': n + ' (' + ip + ') est le <b>nœud ' + (/02$/.test(v.nom) ? '2' : '1') + '</b> de l\'intranet, derrière l\'adresse virtuelle <code>' + esc(((D.dns.filter(x => x.nom === 'intranet')[0] || {}).cible || '').replace(/\s*\(.*$/, '')) + '</code>.' + (/02$/.test(v.nom) ? ' Le cluster est créé depuis le nœud 1 : ici tu rejoins seulement.' : ''),
+      'Messagerie : Exchange Server et autorité de certification (BRU-EXCH01)': k === 'dc' ? n + ' (' + ip + ') porte l\'autorité de certification (AD CS) dont Exchange utilisera les certificats.' : n + ' (' + ip + ', ' + esc(v.ram) + ' Go) héberge Exchange ; ses certificats viennent de l\'autorité sur BRU-DC01.',
+      'SQL Server et SharePoint (PAR-SQL01 / PAR-SP01)': k === 'sql' ? n + ' (' + ip + ', ' + esc(v.ram) + ' Go) héberge le moteur SQL, base de SharePoint (<code>' + esc(res('PAR-SP01').ip) + '</code>).' : n + ' (' + ip + ', ' + esc(v.ram) + ' Go) héberge la ferme SharePoint ; sa base est sur PAR-SQL01 (<code>' + esc(res('PAR-SQL01').ip) + '</code>).',
+      'Docker et Compose : les bases du labo': n + ' (' + ip + ', ' + esc(v.ram) + ' Go) : Docker et Compose d\'abord, puis son application (' + esc(v.role) + ').',
+      'Zabbix 7.4 (BRU-DOCKER01)': n + ' héberge le <b>serveur</b> Zabbix : tous les agents du labo l\'appellent sur ' + ip + ', port 10051.',
+      'Redmine (LON-DOCKER01)': n + ' (Londres, ' + ip + ') héberge le helpdesk ; ses comptes viennent de l\'AD par LDAP (' + esc(res('BRU-DC01').ip) + ').',
+      'Wazuh (BER-DOCKER01)': n + ' (Berlin, ' + ip + ') héberge le <b>manager</b> Wazuh : les agents des autres machines lui envoient leurs journaux.',
+      'Greenbone Community (BER-DOCKER02)': n + ' (Berlin, ' + ip + ') héberge le scanner : ses cibles sont les autres machines du labo.',
+      'Superviser avec Zabbix (agents Windows)': n + ' (' + esc(v.os) + ') installe l\'agent 2 et envoie ses mesures à BRU-DOCKER01 (<code>' + esc(res('BRU-DOCKER01').ip) + '</code>).',
+      'Sauvegarde de Redmine': n + ' porte les données à sauvegarder : base MariaDB et volume des pièces jointes.',
+      'Détection avec Wazuh et Sysmon': n + ' : agent Wazuh vers BER-DOCKER01 (<code>' + esc(res('BER-DOCKER01').ip) + '</code>)' + (/Windows/.test(v.os) ? ', plus Sysmon.' : '.'),
+      "Réplication Hyper-V et reprise d'activité": v.replica ? n + ' (' + esc(st.nom) + ') est répliquée vers ' + esc(v.replica.replace(/^→\s*/, '')) + '.' : n + ' n\'est pas répliquée dans le plan ; seule LON-FS01 l\'est.',
+      "Recette : tester l'ensemble": k === 'clt' ? n + ' (' + ip + ') est le poste client de ' + esc(st.nom) + ' : les tests se jouent depuis lui.' : 'Pour ' + n + ' : les tests qui touchent ' + esc(v.role) + '.'
+    };
+    return T[t] || 'Cette partie concerne ' + n + ' (' + esc(v.role) + ', ' + ip + ').';
+  }
   function titreSection(h2) { var c = h2.cloneNode(true), n = c.querySelector('.num'); if (n) n.remove(); return c.textContent.trim(); }
   function machineFiltre() {
     var m = machine(), page = pageNom(), K = window.EURO_MACH; if (!m || !K || !K.PAGE_SECTIONS[page]) return;
@@ -156,10 +194,10 @@
     var sel = {};
     function ajoute(o) { if (K.PAGE_SECTIONS[page].indexOf(o.t) < 0) return; (sel[o.t] = sel[o.t] || []).push(o); }
     var cibles = hote ? D.vms.filter(function (x) { return !x.virtuel && x.site === st.id; }) : [v];
-    if (hote && page === 'preparer.html') K.HOTE_SEC.forEach(function (t) { ajoute({ t: t }); });
+    if (hote && page === 'preparer.html') K.HOTE_SEC.forEach(function (t) { ajoute({ t: t, m: 'hôte' }); });
     cibles.forEach(function (c) {
-      K.sectionsPour(c, K.cle(c)).forEach(ajoute);
-      if (page === 'preparer.html') ajoute({ t: /Ubuntu|Debian|Linux/.test(c.os) ? 'Créer les VM Linux (Docker)' : 'Créer les VM Windows depuis le parent' });
+      K.sectionsPour(c, K.cle(c)).forEach(function (o) { o.m = c.nom; ajoute(o); });
+      if (page === 'preparer.html') ajoute({ t: /OPNsense/.test(c.os) ? 'Les commutateurs virtuels' : /Ubuntu|Debian|Linux/.test(c.os) ? 'Créer les VM Linux (Docker)' : 'Créer les VM Windows depuis le parent', m: c.nom });
     });
     var titres = $$('main h2[id^="s"]'), nbVisibles = 0;
     function masque(x) { x.hidden = true; x.setAttribute('data-masque', '1'); }
@@ -191,14 +229,15 @@
     });
     /* numéros de section continus sur ce qui reste affiché */
     titres.filter(function (h) { return !h.hidden; }).forEach(function (h, i) { var n = h.querySelector('.num'); if (n) n.textContent = String(i + 1); });
-    /* introduction propre à la machine quand le texte parle de « tous » les contrôleurs */
-    if (!hote && v) titres.forEach(function (h2) {
-      var t = titreSection(h2), k = K.cle(v), e = h2.nextElementSibling; if (h2.hidden || !e || e.tagName !== 'P') return;
-      if (t === 'Les autres contrôleurs et les sites AD' && k === 'dc') {
-        e.innerHTML = v.nom === 'PAR-DC01'
-          ? '<b>' + esc(v.nom) + '</b> (Paris, <code>' + esc(v.ip) + '</code>) est le <b>deuxième contrôleur</b> du domaine : il rejoint <code>eurocorp.lan</code> par le tunnel de Paris, puis est promu à côté de <code>BRU-DC01</code>. Londres et Berlin n\'ont pas de contrôleur. Ensuite, les <b>sites AD</b> (quatre) disent à l\'annuaire quels réseaux sont « proches ».'
-          : '<b>' + esc(v.nom) + '</b> (Bruxelles, <code>' + esc(v.ip) + '</code>) est le <b>premier contrôleur</b>, déjà en place. Sur cette page, il te reste à ajouter <code>PAR-DC01</code> (Paris) pour la réplication, puis à créer les <b>sites AD</b> (quatre) et leurs sous-réseaux.';
-      }
+    /* une phrase « Pour <machine> » en tête de chaque rubrique + titre sans la liste des autres machines */
+    titres.forEach(function (h2) {
+      if (h2.hidden) return;
+      var t = titreSection(h2), os = sel[t] || [], txt;
+      if (hote) {
+        var ms = []; os.forEach(function (o) { if (o.m && ms.indexOf(o.m) < 0) ms.push(o.m); });
+        txt = 'Sur <b>l\'hôte de ' + esc(st.nom) + '</b> (' + esc(st.hote) + ') : cette partie concerne ' + (ms.length ? ms.map(function (m) { return m === 'hôte' ? 'l\'hôte lui-même' : '<b>' + esc(m) + '</b>'; }).join(', ') : 'tout le site') + '.';
+      } else { txt = introMachine(t, v, st, K.cle(v)); var tn = Array.prototype.filter.call(h2.childNodes, function (n) { return n.nodeType === 3; }).pop(); if (tn) tn.nodeValue = tn.nodeValue.replace(/\s*\([^)]*\)\s*$/, '') + ' (' + v.nom + ')'; }
+      var pm = document.createElement('p'); pm.className = 'pour-moi'; pm.setAttribute('data-masque', '1'); pm.innerHTML = txt; h2.parentNode.insertBefore(pm, h2.nextSibling);
     });
     var vis = titres.filter(function (h) { return !h.hidden; }).map(function (h) { return titreSection(h).replace(/\s*\([^)]*\)\s*$/, ''); });
     var h1 = $('main h1'), lead = $('main p.lead');
