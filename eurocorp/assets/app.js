@@ -133,6 +133,19 @@
           return '<option value="' + esc(v.nom) + '"' + (cur === v.nom ? ' selected' : '') + '>' + esc(v.nom) + '</option>'; }).join('') + '</optgroup>'; }).join('');
     return '<label class="moi mach"><span class="sr">Machine</span><select id="machine-h" aria-label="Machine">' + h + '</select></label>';
   }
+  /* une page 1 à 6 est-elle utile à la machine choisie ? (sinon absente du menu) */
+  function pageUtile(page) {
+    var m = machine(), K = window.EURO_MACH; if (!m || !K || !K.PAGE_SECTIONS[page]) return true;
+    var hote = /^HOTE-/.test(m), cibles = hote ? D.vms.filter(function (x) { return !x.virtuel && x.site === m.slice(5); }) : D.vms.filter(function (x) { return x.nom === m; });
+    if (!cibles.length) return true;
+    if (hote && page === 'preparer.html') return true;
+    var ok = false;
+    cibles.forEach(function (c) {
+      K.sectionsPour(c, K.cle(c)).forEach(function (o) { if (K.PAGE_SECTIONS[page].indexOf(o.t) >= 0) ok = true; });
+      if (page === 'preparer.html') ok = true;
+    });
+    return ok;
+  }
   function titreSection(h2) { var c = h2.cloneNode(true), n = c.querySelector('.num'); if (n) n.remove(); return c.textContent.trim(); }
   function machineFiltre() {
     var m = machine(), page = pageNom(), K = window.EURO_MACH; if (!m || !K || !K.PAGE_SECTIONS[page]) return;
@@ -192,7 +205,7 @@
   function buildNav() {
     var host = $('#nav'); if (!host) return;
     var here = location.pathname.split('/').pop() || 'index.html';
-    var links = PAGES.map(function (p) {
+    var links = PAGES.filter(function (p) { return p[0] === here || pageUtile(p[0]); }).map(function (p) {
       if (!pageExists(p[0])) return '<span class="soon" title="Page à venir">' + p[1] + '</span>';
       return '<a href="' + p[0] + '"' + (p[0] === here ? ' aria-current="page"' : '') + '>' + p[1] + '</a>';
     }).join('');
