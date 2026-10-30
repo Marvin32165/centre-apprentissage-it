@@ -15,7 +15,7 @@
     $('#ram-out').innerHTML = '<div class="tw"><table><thead><tr><th>Site</th><th>RAM des VM</th></tr></thead><tbody>' + rows +
       '<tr><td><b>Total VM</b></td><td><b>' + tot + ' Go</b></td></tr><tr><td>Hôte + réserve</td><td>' + res + ' Go</td></tr></tbody></table></div>' +
       '<p class="' + (marge >= 0 ? '' : 'warnline') + '"><b>Marge : ' + marge + ' Go</b> sur ' + host + ' Go. ' +
-      (marge >= 0 ? 'Ça tient. Les VM à mémoire dynamique peuvent descendre en dessous de leur valeur.' : 'Ça ne tient pas : réduis une VM (Wazuh, Exchange, SharePoint sont les plus gourmandes) ou passe en mémoire dynamique.') + '</p>';
+      (marge >= 0 ? 'Ça tient (mémoire statique, sans mémoire dynamique).' : 'Ça ne tient pas, et la mémoire dynamique est exclue : réduis la RAM d\'une VM, regroupe des rôles ou reporte des VM (Wazuh, Exchange, SharePoint sont les plus gourmandes).') + '</p>';
   }
 
   /* 2. Adresse / CIDR */

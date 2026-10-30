@@ -134,7 +134,7 @@ window.EURO = {
    "vcpu": 2,
    "ram": 4,
    "disque": 60,
-   "mem": "dynamique",
+   "mem": "statique",
    "replica": "",
    "statut": "afaire"
   },
@@ -147,7 +147,7 @@ window.EURO = {
    "vcpu": 2,
    "ram": 4,
    "disque": 60,
-   "mem": "dynamique",
+   "mem": "statique",
    "replica": "",
    "statut": "afaire"
   },
@@ -200,7 +200,7 @@ window.EURO = {
    "vcpu": 2,
    "ram": 4,
    "disque": 60,
-   "mem": "dynamique",
+   "mem": "statique",
    "replica": "",
    "statut": "afaire"
   },
@@ -265,7 +265,7 @@ window.EURO = {
    "vcpu": 2,
    "ram": 4,
    "disque": 60,
-   "mem": "dynamique",
+   "mem": "statique",
    "replica": "",
    "statut": "afaire"
   },
@@ -317,7 +317,7 @@ window.EURO = {
    "vcpu": 2,
    "ram": 4,
    "disque": 60,
-   "mem": "dynamique",
+   "mem": "statique",
    "replica": "",
    "statut": "afaire"
   },
@@ -369,7 +369,7 @@ window.EURO = {
    "vcpu": 2,
    "ram": 4,
    "disque": 60,
-   "mem": "dynamique",
+   "mem": "statique",
    "replica": "",
    "statut": "afaire"
   }
