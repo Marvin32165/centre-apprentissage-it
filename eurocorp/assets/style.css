@@ -290,3 +290,10 @@ main p code, main li code, main td code { overflow-wrap: anywhere; }
 .moi-autre { opacity: .6; }
 .moi-autre-n { opacity: .85; }
 .machine-choix { display:block; margin:.6rem 0 1rem; } .machine-choix select { max-width:100%; font:inherit; padding:.4rem; }
+
+.dt { margin: 8px 0 4px; padding: 8px 12px; border-left: 3px solid var(--accent, #B5532F); background: rgba(0,0,0,.025); border-radius: 0 6px 6px 0; font-size: 15px; }
+.dt-b { margin: 6px 0; }
+.dt-b p { margin: 4px 0; }
+.dt-piege { color: #8a3b1c; }
+ol.dts { margin: 4px 0 4px; padding-left: 22px; }
+ol.dts > li { margin: 3px 0; }
