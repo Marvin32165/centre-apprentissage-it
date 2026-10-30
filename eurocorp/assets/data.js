@@ -18,7 +18,7 @@ window.EURO = {
    "wan": "10.10.28.111",
    "lan": "172.17.10.0/24",
    "gw": "172.17.10.1",
-   "hote": "172.17.10.250"
+   "hote": "10.10.28.219 (réseau de salle)"
   },
   {
    "id": "PAR",
@@ -27,7 +27,7 @@ window.EURO = {
    "wan": "10.10.28.112",
    "lan": "172.17.20.0/24",
    "gw": "172.17.20.1",
-   "hote": "172.17.20.250"
+   "hote": "10.10.28.233 (réseau de salle)"
   },
   {
    "id": "LON",
@@ -36,7 +36,7 @@ window.EURO = {
    "wan": "10.10.28.113",
    "lan": "172.17.30.0/24",
    "gw": "172.17.30.1",
-   "hote": "172.17.30.250"
+   "hote": "10.10.28.224 (réseau de salle)"
   },
   {
    "id": "BER",
@@ -45,27 +45,27 @@ window.EURO = {
    "wan": "10.10.28.114",
    "lan": "172.17.40.0/24",
    "gw": "172.17.40.1",
-   "hote": "172.17.40.250"
+   "hote": "10.10.28.201 (réseau de salle)"
   }
  ],
  "tunnels": [
   {
    "id": "BRU-PAR",
-   "reseau": "172.17.255.0/30",
-   "hub": "172.17.255.1",
-   "spoke": "172.17.255.2"
+   "reseau": "172.17.20.0/24 ↔ autres LAN",
+   "hub": "10.10.28.111",
+   "spoke": "10.10.28.112"
   },
   {
    "id": "BRU-LON",
-   "reseau": "172.17.255.4/30",
-   "hub": "172.17.255.5",
-   "spoke": "172.17.255.6"
+   "reseau": "172.17.30.0/24 ↔ autres LAN",
+   "hub": "10.10.28.111",
+   "spoke": "10.10.28.113"
   },
   {
    "id": "BRU-BER",
-   "reseau": "172.17.255.8/30",
-   "hub": "172.17.255.9",
-   "spoke": "172.17.255.10"
+   "reseau": "172.17.40.0/24 ↔ autres LAN",
+   "hub": "10.10.28.111",
+   "spoke": "10.10.28.114"
   }
  ],
  "plages_lan": [
@@ -90,12 +90,8 @@ window.EURO = {
    "usage": "Clients — pool DHCP"
   },
   {
-   "plage": ".200 – .249",
+   "plage": ".200 – .254",
    "usage": "Réserve"
-  },
-  {
-   "plage": ".250",
-   "usage": "Hôte Hyper-V (management)"
   }
  ],
  "vms": [
@@ -105,12 +101,12 @@ window.EURO = {
    "role": "OPNsense — hub IPsec",
    "ip": "172.17.10.1",
    "os": "OPNsense",
-   "vcpu": 2,
-   "ram": 2,
+   "vcpu": 4,
+   "ram": 8,
    "disque": 20,
    "mem": "statique",
    "replica": "",
-   "statut": "encours"
+   "statut": "fait"
   },
   {
    "nom": "BRU-DC01",
@@ -215,7 +211,7 @@ window.EURO = {
    "disque": 20,
    "mem": "statique",
    "replica": "",
-   "statut": "encours"
+   "statut": "fait"
   },
   {
    "nom": "PAR-DC01",
@@ -276,11 +272,11 @@ window.EURO = {
    "ip": "172.17.30.1",
    "os": "OPNsense",
    "vcpu": 2,
-   "ram": 2,
-   "disque": 20,
+   "ram": 4,
+   "disque": 40,
    "mem": "statique",
    "replica": "",
-   "statut": "encours"
+   "statut": "fait"
   },
   {
    "nom": "LON-FS01",
@@ -328,11 +324,11 @@ window.EURO = {
    "ip": "172.17.40.1",
    "os": "OPNsense",
    "vcpu": 2,
-   "ram": 2,
-   "disque": 20,
+   "ram": 4,
+   "disque": 40,
    "mem": "statique",
    "replica": "",
-   "statut": "encours"
+   "statut": "fait"
   },
   {
    "nom": "BER-DOCKER01",
@@ -565,11 +561,11 @@ window.EURO = {
   },
   {
    "id": "F15",
-   "de": "LON-FS01",
-   "vers": "PAR-* (hôte Hyper-V Paris)",
-   "proto": "TCP 80 ou 443 (au choix, selon Kerberos/certificat)",
+   "de": "Hôte Hyper-V Londres (10.10.28.224)",
+   "vers": "Hôte Hyper-V Paris (10.10.28.233)",
+   "proto": "TCP 80 (Kerberos) ou 443 (certificat), par le réseau de salle",
    "service": "Hyper-V Replica",
-   "pourquoi": "Répliquer le File Server vers Paris",
+   "pourquoi": "Répliquer LON-FS01 vers Paris : la réplication va d’hôte à hôte, pas de VM à VM",
    "groupe": "Virtualisation"
   },
   {
@@ -673,11 +669,11 @@ window.EURO = {
   },
   {
    "id": "F27",
-   "de": "Postes d'administration",
-   "vers": "OPNsense (LAN)",
+   "de": "Postes d’administration (alias ADMIN_PC)",
+   "vers": "OPNsense (WAN, « This Firewall »)",
    "proto": "TCP 443",
    "service": "Interface web OPNsense",
-   "pourquoi": "Administrer le pare-feu depuis le LAN uniquement",
+   "pourquoi": "Administrer les pare-feux depuis le réseau de salle, source limitée à ADMIN_PC",
    "groupe": "Administration"
   },
   {
@@ -797,31 +793,31 @@ window.EURO = {
    "cle": "architecture",
    "nom": "Architecture & plan IP",
    "statut": "encours",
-   "note": "Plan IP du groupe 2 posé (WAN .111–.114, LAN 172.17.10/20/30/40.0/24, tunnels 172.17.255.x). À faire valider avant de déployer massivement."
+   "note": "Plan IP du groupe 2 posé (WAN .111–.114, LAN 172.17.10/20/30/40.0/24). Écarts constatés le 30/10 : DC de Bruxelles en .11 (plan .10), Exchange en .12 et 8 Go (plan .30 et 16 Go, imposé par l’énoncé)."
   },
   {
    "cle": "hyperv",
    "nom": "Hyper-V : vSwitch et VM",
    "statut": "fait",
-   "note": "Jour 1 : Windows Server installé sur les hôtes. Commutateurs et VM OPNsense créés (Paris vérifié le 29/10 ; autres sites selon tes dires du jour 1)."
+   "note": "Hyper-V et vSwitch en place sur les 4 hôtes : WAN externe, LAN de site privé (aucun hôte sur un LAN). Vérifié le 30/10 sur Bruxelles, Londres et Berlin."
   },
   {
    "cle": "opnsense",
    "nom": "OPNsense (4 sites)",
-   "statut": "encours",
-   "note": "Jour 1 : OPNsense installés sur les sites ; pare-feu (règles) pas terminé. Paris : WAN 10.10.28.112, LAN 172.17.20.1, interface web joignable depuis le LAN (validé 29/10)."
+   "statut": "fait",
+   "note": "4 OPNsense en service (WAN .111–.114, LAN 172.17.x.1). Pare-feux actifs : alias ADMIN_PC, GRP2_FW, HOTES_HV, LAN_SITES ; Block private networks décoché, Disable reply-to coché. LON et BER en 26.1.11 depuis le 30/10."
   },
   {
    "cle": "ipsec",
    "nom": "IPsec + routage intersite",
-   "statut": "encours",
-   "note": "Jour 1 : tunnels IPsec montés avec « tout autorisé », pas terminés. Ensuite : vérifier un ping LAN à LAN par tunnel, puis remplacer « tout autorisé » par la matrice de flux."
+   "statut": "fait",
+   "note": "3 tunnels IKEv2 vers le hub BRU (AES-256/SHA-256/DH14), règles WAN UDP 500, 4500 et ESP. Ping LAN ↔ LAN validé dans tous les sens le 29/10, transit Paris ↔ Londres ↔ Berlin par Bruxelles."
   },
   {
    "cle": "filtrage",
    "nom": "Règles firewall (matrice de flux)",
-   "statut": "afaire",
-   "note": "Tout est encore autorisé : la matrice (28 flux) remplace « tout autorisé » une fois les tunnels validés."
+   "statut": "encours",
+   "note": "Pas de « tout autorisé » sur IPsec : seuls l’admin, le ping et l’IPsec sont ouverts. Reste à ouvrir les flux de services de la matrice et à remplacer « LAN vers any » sur les LAN."
   },
   {
    "cle": "ad",

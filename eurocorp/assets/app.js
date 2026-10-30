@@ -334,7 +334,7 @@
       D.sites.map(function (s) { return mono([esc(s.nom), esc(s.role), s.wan, s.lan, s.gw, s.hote], [2, 3, 4, 5]); }));
   }
   function renderTunnels(el) {
-    el.innerHTML = table(['Tunnel', 'Réseau de transit', 'Côté hub (BRU)', 'Côté spoke'],
+    el.innerHTML = table(['Tunnel', 'Trafic chiffré (child)', 'WAN hub (BRU)', 'WAN spoke'],
       D.tunnels.map(function (t) { return mono([t.id, t.reseau, t.hub, t.spoke], [1, 2, 3]); }));
   }
   function renderPlages(el) {
