@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Outils — EUROCORP</title>
+<meta name="description" content="Budget RAM, vérificateur d'adresse, générateur de script New-ADUser.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Outils</div><h1>Petits outils du labo</h1>
+<p class="lead">Trois calculs qui évitent des erreurs bêtes. Tout se passe dans le navigateur. Pour Docker, voir l'<a href="compose.html">outil Compose</a>.</p>
+<h2><span class="num">1</span>Budget RAM</h2>
+<p>Additionne la RAM des VM du <a href="infrastructure.html">plan</a> et la compare à ton hôte.</p>
+<div class="fld"><label for="ram-host">RAM de l'hôte (Go)</label><input id="ram-host" type="number" value="64"></div>
+<div class="fld"><label for="ram-res">Réserve pour Hyper-V (Go) — hypothèse à ajuster</label><input id="ram-res" type="number" value="4"></div>
+<div id="ram-out" aria-live="polite"></div>
+<h2><span class="num">2</span>Où va cette adresse ?</h2>
+<p>Tape une IP : l'outil dit à quel site elle appartient et si elle est dans la plage serveurs, virtuelle ou DHCP.</p>
+<div class="fld"><label for="ip-in">Adresse IP</label><input id="ip-in" value="172.17.30.40"></div><div id="ip-out" aria-live="polite"></div>
+<h3>Calcul d'un réseau</h3>
+<div class="fld"><label for="cd-in">Réseau en notation CIDR</label><input id="cd-in" value="172.17.255.0/30"></div><div id="cd-out" aria-live="polite"></div>
+<h2><span class="num">3</span>Créer des utilisateurs AD</h2>
+<p>Colle une liste « prénom;nom;service ». L'outil écrit un script <code>New-ADUser</code> à relire. Le mot de passe est demandé au lancement, il n'est jamais dans le script.</p>
+<div class="fld"><label for="ad-dom">Domaine (UPN)</label><input id="ad-dom" value="eurocorp.lan"></div>
+<div class="fld"><label for="ad-ou">Unité d'organisation (DN) — à valider</label><input id="ad-ou" value="OU=Utilisateurs,DC=eurocorp,DC=lan"></div>
+<label for="ad-csv"><b>Liste</b></label><textarea id="ad-csv" spellcheck="false">Alice;Martin;Direction
+Bob;Durand;Informatique</textarea>
+<div class="code"><div class="cap"><span>Script généré</span><button class="copy" type="button">Copier</button></div><pre id="ad-out"></pre></div>
+<p><b>Reste à toi :</b> créer l'OU avant, vérifier le nommage des comptes, tester sur un seul utilisateur.</p>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/outils.js"></script>
+</body>
+</html>
