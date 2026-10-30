@@ -296,7 +296,7 @@
       html += '<section class="msite" data-site="' + st.id + '"><h2>' + esc(st.nom) + '</h2>';
       (function () {
         var hp = stepsHote(st);
-        html += '<article class="vm" data-vm="HOTE-' + st.id + '"><h3>Hôte de ' + esc(st.nom) + ' <small>commutateurs, modèle Sysprep, parent <code>C:\\PARENT\\TEST-SYSPREP.vhdx</code> · à faire en premier</small></h3>';
+        html += '<article class="vm" data-site="' + st.id + '" data-vm="HOTE-' + st.id + '"><h3>Hôte de ' + esc(st.nom) + ' <small>commutateurs, modèle Sysprep, parent <code>C:\\PARENT\\TEST-SYSPREP.vhdx</code> · à faire en premier</small></h3>';
         PH.forEach(function (p) {
           if (!hp[p[0]] || !hp[p[0]].length) return;
           html += '<h4>' + p[1] + '</h4><ol>' + hp[p[0]].map(function (s) { return '<li><div class="st"><details><summary>' + s[0] + '</summary><div class="det">' + s[1] + '</div></details></div></li>'; }).join('') + '</ol>';
@@ -305,7 +305,7 @@
       })();
       D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).forEach(function (v) {
         var k = cle(v), plan = k ? enrichir(M[k](v, st), v, st, k) : null;
-        html += '<article class="vm" data-vm="' + esc(v.nom) + '"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go</small></h3>';
+        html += '<article class="vm" data-site="' + st.id + '" data-vm="' + esc(v.nom) + '"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go</small></h3>';
         PH.forEach(function (p) {
           if (!plan || !plan[p[0]] || !plan[p[0]].length) return;
           html += '<h4>' + p[1] + '</h4><ol>' + plan[p[0]].map(function (s) { return '<li><div class="st"><details><summary>' + s[0] + '</summary><div class="det">' + s[1] + '</div></details></div></li>'; }).join('') + '</ol>';
@@ -322,10 +322,23 @@
       Array.prototype.forEach.call(host.querySelectorAll('.msite'), function (s) {
         var vis = 0;
         Array.prototype.forEach.call(s.querySelectorAll('article.vm'), function (a) {
-          var ok = !m || a.getAttribute('data-vm') === m; a.hidden = !ok; if (ok) vis++; });
+          var ok = !m || a.getAttribute('data-vm') === m || (/^HOTE-/.test(m) && a.getAttribute('data-site') === m.slice(5)); a.hidden = !ok; if (ok) vis++; });
         s.hidden = !vis;
       });
     }
     filtre();
+    function avancement() {
+      Array.prototype.forEach.call(host.querySelectorAll('article.vm'), function (a) {
+        var cb = a.querySelectorAll('input.suivi'), n = 0; Array.prototype.forEach.call(cb, function (c) { if (c.checked) n++; });
+        var h = a.querySelector('h3'), p = a.querySelector('.avance');
+        if (!p) { p = document.createElement('span'); p.className = 'avance'; h.appendChild(p); }
+        p.textContent = n + ' / ' + cb.length + ' étapes';
+        p.classList.toggle('fini', cb.length > 0 && n === cb.length);
+      });
+    }
+    host.addEventListener('change', avancement);
+    setTimeout(avancement, 0);
+    window.addEventListener('load', avancement);
+    setTimeout(avancement, 500);
   });
 })();

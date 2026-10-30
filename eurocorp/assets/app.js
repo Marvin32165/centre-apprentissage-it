@@ -128,7 +128,7 @@
   function machine() { try { return localStorage.getItem(CLE_MACH) || ''; } catch (e) { return ''; } }
   function machineSelect() {
     var cur = machine(), h = '<option value="">Toutes les machines</option>' + D.sites.map(function (st) {
-      return '<optgroup label="' + esc(st.nom) + '"><option value="HOTE-' + st.id + '"' + (cur === 'HOTE-' + st.id ? ' selected' : '') + '>Hôte de ' + esc(st.nom) + ' (réseau et modèle)</option>' +
+      return '<optgroup label="' + esc(st.nom) + '"><option value="HOTE-' + st.id + '"' + (cur === 'HOTE-' + st.id ? ' selected' : '') + '>Hôte de ' + esc(st.nom) + ' : tout (' + D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).length + ' machines)</option>' +
         D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).map(function (v) {
           return '<option value="' + esc(v.nom) + '"' + (cur === v.nom ? ' selected' : '') + '>' + esc(v.nom) + '</option>'; }).join('') + '</optgroup>'; }).join('');
     return '<label class="moi mach"><span class="sr">Machine</span><select id="machine-h" aria-label="Machine">' + h + '</select></label>';
@@ -141,24 +141,27 @@
     if (!hote && !v) return;
     var st = hote ? D.sites.filter(function (s) { return s.id === m.slice(5); })[0] : D.sites.filter(function (s) { return s.id === v.site; })[0];
     var sel = {};
-    if (hote) { if (page === 'preparer.html') K.HOTE_SEC.forEach(function (t) { sel[t] = {}; }); }
-    else {
-      K.sectionsPour(v, K.cle(v)).forEach(function (o) { if (K.PAGE_SECTIONS[page].indexOf(o.t) >= 0) sel[o.t] = o; });
-      if (page === 'preparer.html') sel[/Ubuntu|Debian|Linux/.test(v.os) ? 'Créer les VM Linux (Docker)' : 'Créer les VM Windows depuis le parent'] = {};
-    }
+    function ajoute(o) { if (K.PAGE_SECTIONS[page].indexOf(o.t) < 0) return; (sel[o.t] = sel[o.t] || []).push(o); }
+    var cibles = hote ? D.vms.filter(function (x) { return !x.virtuel && x.site === st.id; }) : [v];
+    if (hote && page === 'preparer.html') K.HOTE_SEC.forEach(function (t) { ajoute({ t: t }); });
+    cibles.forEach(function (c) {
+      K.sectionsPour(c, K.cle(c)).forEach(ajoute);
+      if (page === 'preparer.html') ajoute({ t: /Ubuntu|Debian|Linux/.test(c.os) ? 'Créer les VM Linux (Docker)' : 'Créer les VM Windows depuis le parent' });
+    });
     var titres = $$('main h2[id^="s"]'), nbVisibles = 0;
     function masque(x) { x.hidden = true; x.setAttribute('data-masque', '1'); }
     titres.forEach(function (h2) {
-      var o = sel[titreSection(h2)], grp = [h2], e = h2.nextElementSibling;
+      var os = sel[titreSection(h2)], grp = [h2], e = h2.nextElementSibling, o = os ? { subst: os.some(function (x) { return x.subst; }), filtre: !os.some(function (x) { return !x.only && !x.skip; }), liste: os } : null;
       while (e && e.tagName !== 'H2') { grp.push(e); e = e.nextElementSibling; }
       if (!o) { grp.forEach(masque); return; }
       nbVisibles++;
-      if (o.only || o.skip) {
+      if (o.filtre) {
         grp.forEach(function (x) {
           if (x.tagName !== 'OL') return;
           Array.prototype.forEach.call(x.children, function (li) {
             var b = li.querySelector(':scope > b'), t = b ? b.textContent.trim() : '';
-            if ((o.only && o.only.indexOf(t) < 0) || (o.skip && o.skip.indexOf(t) >= 0)) masque(li);
+            var permis = o.liste.some(function (c) { return !((c.only && c.only.indexOf(t) < 0) || (c.skip && c.skip.indexOf(t) >= 0)); });
+            if (!permis) masque(li);
           });
           if (!Array.prototype.some.call(x.children, function (li) { return !li.hidden; })) { masque(x); if (x.previousElementSibling && x.previousElementSibling.classList.contains('ph')) masque(x.previousElementSibling); }
         });
@@ -170,15 +173,13 @@
           L.forEach(function (n) { n.nodeValue = fn(n.nodeValue); });
         });
       }
-      if (!hote) {
-        if (o.subst) remplace(/BRU-DC01|172\.17\.10\.10/, function (t) { return t.replace(/BRU-DC01/g, v.nom).replace(/172\.17\.10\.10(?![0-9])/g, v.ip); });
-        remplace(/LAN-BRU/, function (t) { return t.replace(/LAN-BRU/g, 'LAN-' + st.id); });
-      }
+      if (!hote && o.subst) remplace(/BRU-DC01|172\.17\.10\.10/, function (t) { return t.replace(/BRU-DC01/g, v.nom).replace(/172\.17\.10\.10(?![0-9])/g, v.ip); });
+      remplace(/LAN-BRU/, function (t) { return t.replace(/LAN-BRU/g, 'LAN-' + st.id); });
     });
     var vis = titres.filter(function (h) { return !h.hidden; }).map(function (h) { return titreSection(h).replace(/\s*\([^)]*\)\s*$/, ''); });
     var h1 = $('main h1'), lead = $('main p.lead');
     if (vis.length && h1) h1.textContent = vis.join(' · ');
-    if (lead) lead.innerHTML = vis.length ? (hote ? 'Ce que tu fais sur l\'hôte de <b>' + esc(st.nom) + '</b> (' + esc(st.hote) + ') : le réseau virtuel et le modèle Sysprep.' : 'Ce que tu fais sur <b>' + esc(v.nom) + '</b> (' + esc(v.role) + ', <code>' + esc(v.ip) + '</code>) : seulement ce qui la concerne sur cette page.') : lead.innerHTML;
+    if (lead) lead.innerHTML = vis.length ? (hote ? 'Ce que tu fais sur l\'hôte de <b>' + esc(st.nom) + '</b> (' + esc(st.hote) + ') pour ses ' + cibles.length + ' machines : ' + cibles.map(function (c) { return esc(c.nom); }).join(', ') + '.' : 'Ce que tu fais sur <b>' + esc(v.nom) + '</b> (' + esc(v.role) + ', <code>' + esc(v.ip) + '</code>) : seulement ce qui la concerne sur cette page.') : lead.innerHTML;
     $$('main .note.bref').forEach(function (x) { x.hidden = true; x.setAttribute('data-masque', '1'); });
     var somm = $('.somm'); if (somm) { somm.hidden = true; somm.setAttribute('data-masque', '1'); }
     var nom = hote ? 'l\'hôte de ' + esc(st.nom) : esc(v.nom), b = document.createElement('div'); b.className = 'note moi-bandeau';
