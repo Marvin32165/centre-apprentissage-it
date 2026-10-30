@@ -232,41 +232,8 @@
       };
     }
   };
-  function cle(v) {
-    var n = v.nom;
-    if (/-FW01$/.test(n)) return 'fw'; if (/-DC01$/.test(n)) return 'dc'; if (/-IIS0/.test(n)) return 'iis'; if (/EXCH/.test(n)) return 'exch';
-    if (/SQL/.test(n)) return 'sql'; if (/-SP0/.test(n)) return 'sp'; if (/-FS0/.test(n)) return 'fs'; if (n === 'BRU-DOCKER01') return 'zabbix';
-    if (n === 'LON-DOCKER01') return 'redmine'; if (n === 'BER-DOCKER01') return 'wazuh'; if (n === 'BER-DOCKER02') return 'greenbone'; if (/-CLT01$/.test(n)) return 'clt'; return '';
-  }
-
-  /* ---------- détail pas à pas propre à chaque machine ---------- */
-  var T_VM = 'Créer les VM Windows depuis le parent';
-  var SQL_ONLY = ['Le gMSA du moteur SQL', 'Sur PAR-SQL01 : prendre en compte le groupe', 'Disques de SQL', 'Dimensionnement', 'Installer SQL Server (instance nommée)', 'Écran critique : le classement (collation)', 'Comptes de service du moteur', 'Protocole et port', 'Pare-feu', 'Mémoire et parallélisme', 'Les services SQL tournent sous le gMSA', 'Classement correct'];
-  var SP_ONLY = ['Comptes de service', 'Dimensionnement', 'Installer SharePoint sur PAR-SP01', 'Assistant de configuration de la ferme', 'Comptes gérés et applications de service', 'DNS et premier site', 'SQL accessible depuis SharePoint', 'SharePoint répond'];
-  var AC_ONLY = ["Installer l'autorité de certification d'abord"];
-  var SUP_WIN = ['Superviser avec Zabbix (agents Windows)', 'Détection avec Wazuh et Sysmon'];
-  function sectionsPour(v, k) {
-    var n = v.nom, o = [];
-    function add(t, opt) { o.push({ t: t, only: opt && opt.only, skip: opt && opt.skip, subst: opt && opt.subst }); }
-    var win = /Windows Server/.test(v.os);
-    if (k === 'fw') { add('Une VM OPNsense par site'); add('Les tunnels IPsec'); add('Les routes et le DNS à travers les tunnels'); add('Le filtrage : remplacer « tout autorisé »'); }
-    else if (k === 'dc') {
-      if (n === 'BRU-DC01') { add('La forêt et le premier contrôleur (BRU-DC01)'); add('Messagerie : Exchange Server et autorité de certification (BRU-EXCH01)', { only: AC_ONLY }); add('DHCP avec failover'); add("Unités d'organisation, groupes AGDLP et comptes"); }
-      else { add('Les autres contrôleurs et les sites AD'); add('DHCP avec failover'); }
-    }
-    else if (k === 'iis') add('IIS et équilibrage de charge NLB (BRU-IIS01 / 02)', n === 'BRU-IIS02' ? { skip: ['Créer le cluster NLB', 'Contenu identique sur les deux nœuds'] } : null);
-    else if (k === 'exch') add('Messagerie : Exchange Server et autorité de certification (BRU-EXCH01)', { skip: AC_ONLY });
-    else if (k === 'fs') { add('Serveur de fichiers (LON-FS01)'); add("Réplication Hyper-V et reprise d'activité"); }
-    else if (k === 'sql') add('SQL Server et SharePoint (PAR-SQL01 / PAR-SP01)', { only: SQL_ONLY });
-    else if (k === 'sp') add('SQL Server et SharePoint (PAR-SQL01 / PAR-SP01)', { only: SP_ONLY });
-    else if (k === 'zabbix') { add('Docker et Compose : les bases du labo'); add('Zabbix 7.4 (BRU-DOCKER01)'); }
-    else if (k === 'redmine') { add('Docker et Compose : les bases du labo'); add('Redmine (LON-DOCKER01)'); add('Sauvegarde de Redmine'); }
-    else if (k === 'wazuh') { add('Docker et Compose : les bases du labo'); add('Wazuh (BER-DOCKER01)'); }
-    else if (k === 'greenbone') { add('Docker et Compose : les bases du labo'); add('Greenbone Community (BER-DOCKER02)'); }
-    else if (k === 'clt') add("Recette : tester l'ensemble");
-    if (win && k !== 'fw' && k !== 'clt') SUP_WIN.forEach(function (t) { add(t, { subst: true }); });
-    return o;
-  }
+  function cle(v) { return window.EURO_MACH.cle(v); }
+  function sectionsPour(v, k) { return window.EURO_MACH.sectionsPour(v, k); }
   var DEP = {
     fw: 'Commutateurs <code>WAN</code> et <code>LAN-xx</code> créés sur l\'hôte. Pour monter un tunnel, le pare-feu de l\'autre extrémité doit être installé.',
     dc: 'BRU-DC01 : aucune, c\'est le premier serveur du domaine (après le pare-feu et le tunnel). PAR-DC01 : BRU-DC01 en ligne et tunnel Bruxelles–Paris validé.',
@@ -347,13 +314,11 @@
       });
       html += '</section>';
     });
-    var opts = '<option value="">Toutes les machines (général)</option>' + D.sites.map(function (st) {
-      return '<optgroup label="' + esc(st.nom) + '"><option value="HOTE-' + st.id + '">Hôte de ' + esc(st.nom) + ' — commutateurs et modèle Sysprep</option>' + D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).map(function (v) {
-        return '<option value="' + esc(v.nom) + '">' + esc(v.nom) + ' — ' + esc(v.role) + '</option>'; }).join('') + '</optgroup>'; }).join('');
-    host.innerHTML = '<label class="machine-choix"><b>Machine</b> <select id="machine" aria-label="Choisir une machine">' + opts + '</select></label>' + html;
-    var sel = document.getElementById('machine'), cle0 = 'euro.machine';
+    host.innerHTML = html;
+    var sel = { value: '' };
+    try { sel.value = localStorage.getItem('euro.machine') || ''; } catch (e) { /* ignoré */ }
     function filtre() {
-      var m = sel.value; try { localStorage.setItem(cle0, m); } catch (e) { /* ignoré */ }
+      var m = sel.value;
       Array.prototype.forEach.call(host.querySelectorAll('.msite'), function (s) {
         var vis = 0;
         Array.prototype.forEach.call(s.querySelectorAll('article.vm'), function (a) {
@@ -361,8 +326,6 @@
         s.hidden = !vis;
       });
     }
-    try { sel.value = localStorage.getItem(cle0) || ''; } catch (e) { /* ignoré */ }
-    if (sel.value === null) sel.value = '';
-    sel.addEventListener('change', filtre); filtre();
+    filtre();
   });
 })();

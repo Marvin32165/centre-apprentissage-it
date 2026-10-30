@@ -43,7 +43,13 @@
 
   /* --- « Je suis l'hôte de… » : Général ou un des 4 sites ---------------------- */
   var CLE_MOI = 'euro.moi';
-  function moi() { try { return localStorage.getItem(CLE_MOI) || ''; } catch (e) { return ''; } }
+  function moi() {
+    var m = ''; try { m = localStorage.getItem('euro.machine') || ''; } catch (e) { /* ignoré */ }
+    if (!m) return '';
+    if (/^HOTE-/.test(m)) return m.slice(5);
+    var v = D.vms.filter(function (x) { return x.nom === m; })[0]; return v ? v.site : '';
+  }
+  function pfx(page) { if (page === 'marche.html') return ''; var m = ''; try { m = localStorage.getItem('euro.machine') || ''; } catch (e) { /* ignoré */ } return m ? m + '|' : ''; }
   function moiSite() { var m = moi(); return D.sites.filter(function (s) { return s.id === m; })[0] || null; }
   function moiSelect() {
     var h = '<option value="">Général : toutes les machines</option>' + D.sites.map(function (s) {
@@ -53,12 +59,12 @@
   function moiBandeau() {
     var st = moiSite(), main = $('#contenu'); if (!main) return;
     var b = document.createElement('div'); b.className = 'note moi-bandeau';
-    if (!st) { b.innerHTML = '<b>Vue générale</b> : les ' + D.vms.filter(function (v) { return !v.virtuel; }).length + ' machines des 4 sites. Choisis ton hôte dans le menu en haut pour ne voir que ton site.'; main.insertBefore(b, main.firstChild); return; }
+    if (!st) { b.innerHTML = '<b>Vue générale</b> : les ' + D.vms.filter(function (v) { return !v.virtuel; }).length + ' machines des 4 sites. Choisis une machine en haut à gauche pour ne voir que ce qui la concerne.'; main.insertBefore(b, main.firstChild); return; }
     var vms = D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }), ram = vms.reduce(function (a, v) { return a + (+v.ram || 0); }, 0);
     var tun = st.id === 'BRU' ? 'Hub : 3 tunnels IPsec (Paris, Londres, Berlin)' : 'Spoke : 1 tunnel IPsec vers Bruxelles';
-    b.innerHTML = '<b>Tu es l\'hôte de ' + esc(st.nom) + '</b>Hôte ' + esc(st.hote) + ' · WAN ' + esc(st.wan) + ' · LAN ' + esc(st.lan) + ' (passerelle ' + esc(st.gw) + ') · ' + tun + '.<br>' +
+    b.innerHTML = '<b>Site de la machine choisie : ' + esc(st.nom) + '</b>Hôte ' + esc(st.hote) + ' · WAN ' + esc(st.wan) + ' · LAN ' + esc(st.lan) + ' (passerelle ' + esc(st.gw) + ') · ' + tun + '.<br>' +
       vms.length + ' VM à héberger : ' + vms.map(function (v) { return esc(v.nom); }).join(', ') +
-      '. <a href="infrastructure.html#' + st.id.toLowerCase() + '">Voir mon site</a>. Tes cases cochées sont celles de cet hôte.';
+      '. <a href="infrastructure.html#' + st.id.toLowerCase() + '">Voir mon site</a>. Tes cases cochées sont propres à la machine choisie.';
     main.insertBefore(b, main.firstChild);
   }
   function moiSurligne() {
@@ -66,6 +72,117 @@
     $$('main tbody tr').forEach(function (tr) { var td = tr.firstElementChild; if (td && td.textContent.trim().indexOf(st.id + '-') === 0) tr.classList.add('moi-ligne'); });
   }
 
+
+  /* --- machines : quelles rubriques et quelles étapes la concernent -------- */
+  window.EURO_MACH = (function () {
+  var T_VM = 'Créer les VM Windows depuis le parent';
+  var SQL_ONLY = ['Le gMSA du moteur SQL', 'Sur PAR-SQL01 : prendre en compte le groupe', 'Disques de SQL', 'Dimensionnement', 'Installer SQL Server (instance nommée)', 'Écran critique : le classement (collation)', 'Comptes de service du moteur', 'Protocole et port', 'Pare-feu', 'Mémoire et parallélisme', 'Les services SQL tournent sous le gMSA', 'Classement correct'];
+  var SP_ONLY = ['Comptes de service', 'Dimensionnement', 'Installer SharePoint sur PAR-SP01', 'Assistant de configuration de la ferme', 'Comptes gérés et applications de service', 'DNS et premier site', 'SQL accessible depuis SharePoint', 'SharePoint répond'];
+  var AC_ONLY = ["Installer l'autorité de certification d'abord"];
+  var SUP_WIN = ['Superviser avec Zabbix (agents Windows)', 'Détection avec Wazuh et Sysmon'];
+  function sectionsPour(v, k) {
+    var n = v.nom, o = [];
+    function add(t, opt) { o.push({ t: t, only: opt && opt.only, skip: opt && opt.skip, subst: opt && opt.subst }); }
+    var win = /Windows Server/.test(v.os);
+    if (k === 'fw') { add('Une VM OPNsense par site'); add('Les tunnels IPsec'); add('Les routes et le DNS à travers les tunnels'); add('Le filtrage : remplacer « tout autorisé »'); }
+    else if (k === 'dc') {
+      if (n === 'BRU-DC01') { add('La forêt et le premier contrôleur (BRU-DC01)'); add('Messagerie : Exchange Server et autorité de certification (BRU-EXCH01)', { only: AC_ONLY }); add('DHCP avec failover'); add("Unités d'organisation, groupes AGDLP et comptes"); }
+      else { add('Les autres contrôleurs et les sites AD'); add('DHCP avec failover'); }
+    }
+    else if (k === 'iis') add('IIS et équilibrage de charge NLB (BRU-IIS01 / 02)', n === 'BRU-IIS02' ? { skip: ['Créer le cluster NLB', 'Contenu identique sur les deux nœuds'] } : null);
+    else if (k === 'exch') add('Messagerie : Exchange Server et autorité de certification (BRU-EXCH01)', { skip: AC_ONLY });
+    else if (k === 'fs') { add('Serveur de fichiers (LON-FS01)'); add("Réplication Hyper-V et reprise d'activité"); }
+    else if (k === 'sql') add('SQL Server et SharePoint (PAR-SQL01 / PAR-SP01)', { only: SQL_ONLY });
+    else if (k === 'sp') add('SQL Server et SharePoint (PAR-SQL01 / PAR-SP01)', { only: SP_ONLY });
+    else if (k === 'zabbix') { add('Docker et Compose : les bases du labo'); add('Zabbix 7.4 (BRU-DOCKER01)'); }
+    else if (k === 'redmine') { add('Docker et Compose : les bases du labo'); add('Redmine (LON-DOCKER01)'); add('Sauvegarde de Redmine'); }
+    else if (k === 'wazuh') { add('Docker et Compose : les bases du labo'); add('Wazuh (BER-DOCKER01)'); }
+    else if (k === 'greenbone') { add('Docker et Compose : les bases du labo'); add('Greenbone Community (BER-DOCKER02)'); }
+    else if (k === 'clt') add("Recette : tester l'ensemble");
+    if (win && k !== 'fw' && k !== 'clt') SUP_WIN.forEach(function (t) { add(t, { subst: true }); });
+    return o;
+  }
+  function cle(v) {
+    var n = v.nom;
+    if (/-FW01$/.test(n)) return 'fw'; if (/-DC01$/.test(n)) return 'dc'; if (/-IIS0/.test(n)) return 'iis'; if (/EXCH/.test(n)) return 'exch';
+    if (/SQL/.test(n)) return 'sql'; if (/-SP0/.test(n)) return 'sp'; if (/-FS0/.test(n)) return 'fs'; if (n === 'BRU-DOCKER01') return 'zabbix';
+    if (n === 'LON-DOCKER01') return 'redmine'; if (n === 'BER-DOCKER01') return 'wazuh'; if (n === 'BER-DOCKER02') return 'greenbone'; if (/-CLT01$/.test(n)) return 'clt'; return '';
+  }
+
+  /* ---------- détail pas à pas propre à chaque machine ---------- */
+    var PAGE_SECTIONS = {
+      'preparer.html': ['Les commutateurs virtuels', "L'image parent (sysprep)", 'Généraliser avec Sysprep et ranger le parent', 'Créer les VM Windows depuis le parent', 'Créer les VM Linux (Docker)', 'Ordre de travail du jour'],
+      'reseau.html': ['Une VM OPNsense par site', 'Les tunnels IPsec', 'Les routes et le DNS à travers les tunnels', 'Le filtrage : remplacer « tout autorisé »'],
+      'identite.html': ['La forêt et le premier contrôleur (BRU-DC01)', 'Les autres contrôleurs et les sites AD', 'DHCP avec failover', "Unités d'organisation, groupes AGDLP et comptes"],
+      'services.html': ['Serveur de fichiers (LON-FS01)', 'IIS et équilibrage de charge NLB (BRU-IIS01 / 02)', 'Messagerie : Exchange Server et autorité de certification (BRU-EXCH01)', 'SQL Server et SharePoint (PAR-SQL01 / PAR-SP01)'],
+      'docker.html': ['Docker et Compose : les bases du labo', 'Zabbix 7.4 (BRU-DOCKER01)', 'Redmine (LON-DOCKER01)', 'Wazuh (BER-DOCKER01)', 'Greenbone Community (BER-DOCKER02)'],
+      'exploitation.html': ['Superviser avec Zabbix (agents Windows)', 'Sauvegarde de Redmine', 'Détection avec Wazuh et Sysmon', "Réplication Hyper-V et reprise d'activité", "Recette : tester l'ensemble"]
+    };
+    var HOTE_SEC = ['Les commutateurs virtuels', "L'image parent (sysprep)", 'Généraliser avec Sysprep et ranger le parent'];
+    return { cle: cle, sectionsPour: sectionsPour, PAGE_SECTIONS: PAGE_SECTIONS, HOTE_SEC: HOTE_SEC };
+  })();
+
+
+  /* --- « Machine » : les pages 1 à 6 ne montrent que ce qui la concerne ---------- */
+  var CLE_MACH = 'euro.machine';
+  function machine() { try { return localStorage.getItem(CLE_MACH) || ''; } catch (e) { return ''; } }
+  function machineSelect() {
+    var cur = machine(), h = '<option value="">Toutes les machines</option>' + D.sites.map(function (st) {
+      return '<optgroup label="' + esc(st.nom) + '"><option value="HOTE-' + st.id + '"' + (cur === 'HOTE-' + st.id ? ' selected' : '') + '>Hôte de ' + esc(st.nom) + ' (réseau et modèle)</option>' +
+        D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).map(function (v) {
+          return '<option value="' + esc(v.nom) + '"' + (cur === v.nom ? ' selected' : '') + '>' + esc(v.nom) + '</option>'; }).join('') + '</optgroup>'; }).join('');
+    return '<label class="moi mach"><span class="sr">Machine</span><select id="machine-h" aria-label="Machine">' + h + '</select></label>';
+  }
+  function titreSection(h2) { var c = h2.cloneNode(true), n = c.querySelector('.num'); if (n) n.remove(); return c.textContent.trim(); }
+  function machineFiltre() {
+    var m = machine(), page = pageNom(), K = window.EURO_MACH; if (!m || !K || !K.PAGE_SECTIONS[page]) return;
+    var main = $('main'); if (!main) return;
+    var hote = /^HOTE-/.test(m), v = hote ? null : D.vms.filter(function (x) { return x.nom === m; })[0];
+    if (!hote && !v) return;
+    var st = hote ? D.sites.filter(function (s) { return s.id === m.slice(5); })[0] : D.sites.filter(function (s) { return s.id === v.site; })[0];
+    var sel = {};
+    if (hote) { if (page === 'preparer.html') K.HOTE_SEC.forEach(function (t) { sel[t] = {}; }); }
+    else {
+      K.sectionsPour(v, K.cle(v)).forEach(function (o) { if (K.PAGE_SECTIONS[page].indexOf(o.t) >= 0) sel[o.t] = o; });
+      if (page === 'preparer.html') sel[/Ubuntu|Debian|Linux/.test(v.os) ? 'Créer les VM Linux (Docker)' : 'Créer les VM Windows depuis le parent'] = {};
+    }
+    var titres = $$('main h2[id^="s"]'), nbVisibles = 0;
+    function masque(x) { x.hidden = true; x.setAttribute('data-masque', '1'); }
+    titres.forEach(function (h2) {
+      var o = sel[titreSection(h2)], grp = [h2], e = h2.nextElementSibling;
+      while (e && e.tagName !== 'H2') { grp.push(e); e = e.nextElementSibling; }
+      if (!o) { grp.forEach(masque); return; }
+      nbVisibles++;
+      if (o.only || o.skip) {
+        grp.forEach(function (x) {
+          if (x.tagName !== 'OL') return;
+          Array.prototype.forEach.call(x.children, function (li) {
+            var b = li.querySelector(':scope > b'), t = b ? b.textContent.trim() : '';
+            if ((o.only && o.only.indexOf(t) < 0) || (o.skip && o.skip.indexOf(t) >= 0)) masque(li);
+          });
+          if (!Array.prototype.some.call(x.children, function (li) { return !li.hidden; })) { masque(x); if (x.previousElementSibling && x.previousElementSibling.classList.contains('ph')) masque(x.previousElementSibling); }
+        });
+      }
+      function remplace(re, fn) {
+        grp.forEach(function (x) {
+          var w = document.createTreeWalker(x, NodeFilter.SHOW_TEXT, null), n, L = [];
+          while ((n = w.nextNode())) if (re.test(n.nodeValue)) L.push(n);
+          L.forEach(function (n) { n.nodeValue = fn(n.nodeValue); });
+        });
+      }
+      if (!hote) {
+        if (o.subst) remplace(/BRU-DC01|172\.17\.10\.10/, function (t) { return t.replace(/BRU-DC01/g, v.nom).replace(/172\.17\.10\.10(?![0-9])/g, v.ip); });
+        remplace(/LAN-BRU/, function (t) { return t.replace(/LAN-BRU/g, 'LAN-' + st.id); });
+      }
+    });
+    var somm = $('.somm'); if (somm) {
+      Array.prototype.forEach.call(somm.querySelectorAll('a'), function (a) { var h = document.getElementById(a.getAttribute('href').slice(1)); if (h && h.hidden) { a.hidden = true; } });
+    }
+    var nom = hote ? 'l\'hôte de ' + esc(st.nom) : esc(v.nom), b = document.createElement('div'); b.className = 'note moi-bandeau';
+    b.innerHTML = nbVisibles ? '<b>Vue de ' + nom + '</b> : seules les parties de cette page qui concernent cette machine sont affichées (' + nbVisibles + ' sur ' + titres.length + '). Choisis « Toutes les machines » en haut à gauche pour tout voir.'
+      : '<b>Rien pour ' + nom + ' sur cette page.</b> Elle ne la concerne pas : ouvre « Ma marche à suivre » pour toute sa marche, ou choisis « Toutes les machines » pour tout voir.';
+    main.insertBefore(b, main.firstChild);
+  }
 
   /* --- navigation et pied de page ---------------------------------------- */
   function buildNav() {
@@ -76,9 +193,9 @@
       return '<a href="' + p[0] + '"' + (p[0] === here ? ' aria-current="page"' : '') + '>' + p[1] + '</a>';
     }).join('');
     host.outerHTML = '<a class="skip" href="#contenu">Aller au contenu</a><header class="nav"><div class="nav-in">' +
-      '<a class="brand" href="index.html">EURO<b>CORP</b> · labo</a><nav class="nav-links" aria-label="Pages">' + links + '</nav>' +
-      moiSelect() + '<button class="theme" type="button" id="theme">Thème</button></div></header>';
-    $('#moi').addEventListener('change', function () { try { localStorage.setItem(CLE_MOI, this.value); } catch (e) { /* ignoré */ } location.reload(); });
+      '<a class="brand" href="index.html">EURO<b>CORP</b> · labo</a>' + machineSelect() + '<nav class="nav-links" aria-label="Pages">' + links + '</nav>' +
+      '<button class="theme" type="button" id="theme">Thème</button></div></header>';
+    $('#machine-h').addEventListener('change', function () { try { localStorage.setItem(CLE_MACH, this.value); } catch (e) { /* ignoré */ } location.reload(); });
     $('#theme').addEventListener('click', function () {
       var dark = document.documentElement.getAttribute('data-theme') === 'dark';
       var next = dark ? 'light' : 'dark'; applyTheme(next);
@@ -331,7 +448,8 @@
     var items = $$('main ol > li'), page = pageNom(), d = lire();
     if (items.length) { d.tot[page] = items.length; ecrire(d); }
     items.forEach(function (li, i) {
-      var id = (moi() ? moi() + '|' : '') + page + '#' + i, cb = document.createElement('input');
+      if (li.closest('[data-masque]')) return;
+      var id = pfx(page) + page + '#' + i, cb = document.createElement('input');
       cb.type = 'checkbox'; cb.className = 'suivi'; cb.checked = !!d.ok[id];
       cb.setAttribute('aria-label', 'Étape faite');
       li.classList.toggle('fait', cb.checked);
@@ -347,7 +465,7 @@
     var d = lire(), noms = {};
     PAGES.forEach(function (p) { noms[p[0]] = p[1]; });
     var rows = Object.keys(d.tot).filter(function (p) { return noms[p]; }).map(function (p) {
-      var pre = moi() ? moi() + '|' : '', n = Object.keys(d.ok).filter(function (k) { return k.split('#')[0] === pre + p; }).length, t = d.tot[p];
+      var pre = pfx(p), n = Object.keys(d.ok).filter(function (k) { return k.split('#')[0] === pre + p; }).length, t = d.tot[p];
       return '<tr><td><a href="' + p + '">' + esc(noms[p]) + '</a></td><td>' + n + ' / ' + t + '</td><td><progress max="' + t + '" value="' + n + '"></progress></td></tr>';
     });
     el.innerHTML = (rows.length ? '<div class="tw"><table><thead><tr><th>Page</th><th>Étapes cochées</th><th></th></tr></thead><tbody>' + rows.join('') + '</tbody></table></div>'
@@ -367,6 +485,6 @@
   }
   window.EURO_MOI = function () { return moiSite(); };
   document.addEventListener('DOMContentLoaded', function () {
-    buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy(); initSuivi(); moiBandeau(); moiSurligne();
+    buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy(); machineFiltre(); initSuivi(); moiBandeau(); moiSurligne();
   });
 })();

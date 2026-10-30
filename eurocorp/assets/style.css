@@ -297,3 +297,7 @@ main p code, main li code, main td code { overflow-wrap: anywhere; }
 .dt-piege { color: #8a3b1c; }
 ol.dts { margin: 4px 0 4px; padding-left: 22px; }
 ol.dts > li { margin: 3px 0; }
+.mach select { max-width: 150px; }
+[hidden] { display: none !important; }
+.nav .mach select { max-width: 230px; }
+@media (max-width: 760px) { .nav .mach select { max-width: 100%; min-width: 210px; } }
