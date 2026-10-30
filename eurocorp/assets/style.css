@@ -289,3 +289,4 @@ main p code, main li code, main td code { overflow-wrap: anywhere; }
 .moi-sec p { margin: .2rem 0 0; }
 .moi-autre { opacity: .6; }
 .moi-autre-n { opacity: .85; }
+.machine-choix { display:block; margin:.6rem 0 1rem; } .machine-choix select { max-width:100%; font:inherit; padding:.4rem; }

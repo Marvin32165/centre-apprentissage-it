@@ -213,7 +213,7 @@
       html += '<section class="msite" data-site="' + st.id + '"><h2>' + esc(st.nom) + '</h2>';
       D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).forEach(function (v) {
         var k = cle(v), plan = k ? M[k](v, st) : null;
-        html += '<article class="vm"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go</small></h3>';
+        html += '<article class="vm" data-vm="' + esc(v.nom) + '"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go</small></h3>';
         PH.forEach(function (p) {
           if (!plan || !plan[p[0]] || !plan[p[0]].length) return;
           html += '<h4>' + p[1] + '</h4><ol>' + plan[p[0]].map(function (s) { return '<li><div class="st"><details><summary>' + s[0] + '</summary><div class="det">' + s[1] + '</div></details></div></li>'; }).join('') + '</ol>';
@@ -222,8 +222,22 @@
       });
       html += '</section>';
     });
-    host.innerHTML = html;
-    var me = window.EURO_MOI && window.EURO_MOI();
-    Array.prototype.forEach.call(host.querySelectorAll('.msite'), function (s) { s.hidden = !!me && s.getAttribute('data-site') !== me.id; });
+    var opts = '<option value="">Toutes les machines (général)</option>' + D.sites.map(function (st) {
+      return '<optgroup label="' + esc(st.nom) + '">' + D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).map(function (v) {
+        return '<option value="' + esc(v.nom) + '">' + esc(v.nom) + ' — ' + esc(v.role) + '</option>'; }).join('') + '</optgroup>'; }).join('');
+    host.innerHTML = '<label class="machine-choix"><b>Machine</b> <select id="machine" aria-label="Choisir une machine">' + opts + '</select></label>' + html;
+    var sel = document.getElementById('machine'), cle0 = 'euro.machine';
+    function filtre() {
+      var m = sel.value; try { localStorage.setItem(cle0, m); } catch (e) { /* ignoré */ }
+      Array.prototype.forEach.call(host.querySelectorAll('.msite'), function (s) {
+        var vis = 0;
+        Array.prototype.forEach.call(s.querySelectorAll('article.vm'), function (a) {
+          var ok = !m || a.getAttribute('data-vm') === m; a.hidden = !ok; if (ok) vis++; });
+        s.hidden = !vis;
+      });
+    }
+    try { sel.value = localStorage.getItem(cle0) || ''; } catch (e) { /* ignoré */ }
+    if (sel.value === null) sel.value = '';
+    sel.addEventListener('change', filtre); filtre();
   });
 })();

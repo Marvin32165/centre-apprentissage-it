@@ -410,6 +410,6 @@
   }
   window.EURO_MOI = function () { return moiSite(); };
   document.addEventListener('DOMContentLoaded', function () {
-    buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy(); initSuivi(); moiBandeau(); moiSurligne(); moiSections();
+    buildNav(); buildFooter(); render(); gatePages(); initTabs(); initCopy(); initSuivi(); moiBandeau(); moiSurligne();
   });
 })();
