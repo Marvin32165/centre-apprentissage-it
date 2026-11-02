@@ -8,6 +8,7 @@
     ['index.html', 'Accueil'],
     ['infrastructure.html', 'Infrastructure'],
     ['inventaire.html', 'Inventaire'],
+    ['acces.html', 'Accès'],
     ['marche.html', 'Ma marche à suivre'],
     ['preparer.html', '1 · Préparer'],
     ['reseau.html', '2 · Réseau'],
@@ -283,7 +284,7 @@
       var ici = L.indexOf(here) >= 0;
       return '<details class="dd' + (ici ? ' ici' : '') + '"><summary' + (ici ? ' title="Page ouverte : ' + esc(nom[here]) + '"' : '') + '>' + titre + '</summary><div class="dd-m">' + h + '</div></details>';
     }
-    var liens = lien('marche.html', 'Ma marche') + menu('Guide', GUIDE) + lien('inventaire.html') + lien('recette.html') + lien('avancement.html') + menu('Outils', OUTILS_P);
+    var liens = lien('marche.html', 'Ma marche') + menu('Guide', GUIDE) + lien('inventaire.html') + lien('acces.html') + lien('recette.html') + lien('avancement.html') + menu('Outils', OUTILS_P);
     host.outerHTML = '<a class="skip" href="#contenu">Aller au contenu</a><header class="nav"><div class="nav-in">' +
       '<a class="brand" href="index.html" title="Accueil">EURO<b>CORP</b> · labo</a>' +
       '<button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="nav-links">Menu</button>' +
@@ -534,6 +535,7 @@
     $$('[data-stat]').forEach(renderStats);
     $$('[data-inventaire]').forEach(function (el) { renderInventaire(el); });
     $$('[data-recette]').forEach(function (el) { renderRecette(el); });
+    $$('[data-acces]').forEach(function (el) { renderAcces(el); });
   }
 
 
@@ -756,6 +758,10 @@
   function nomEtat(c) { var x = D.etat.filter(function (e) { return e.cle === c; })[0]; return x ? x.nom : c; }
   function decrire(e) {
     if (e.op === 'case') return (e.fait ? 'a coché' : 'a décoché') + ' « ' + esc(coupe(e.cle, 70)) + ' » <a href="' + esc(e.page) + '">' + esc(nomPage(e.page)) + '</a>';
+    if (e.op === 'etat' && /^acces-/.test(e.cle)) {     // jamais le mot de passe : seulement le nom de l'accès
+      var avant = e.avant && e.avant.note, ta = titreAcces(e.note) || titreAcces(avant);
+      return (e.note ? (avant ? 'a modifié' : 'a ajouté') : 'a supprimé') + ' l\'accès <a href="acces.html"><b>' + esc(coupe(ta, 50)) + '</b></a>';
+    }
     if (e.op === 'etat' && /^test-/.test(e.cle)) return 'test <a href="recette.html"><b>' + esc(e.cle.slice(5).toUpperCase()) + '</b></a> : ' + (e.statut ? { fait: '<span class="badge b-fait">OK</span>', encours: '<span class="badge b-encours">KO</span>', afaire: 'remis à faire' }[e.statut] : '') + (e.note != null ? (e.statut ? ', ' : '') + 'obtenu « ' + esc(coupe(e.note, 60)) + ' »' : '');
     if (e.op === 'etat') return 'a mis <b>' + esc(nomEtat(e.cle)) + '</b>' + (e.statut ? ' en <span class="badge b-' + esc(e.statut) + '">' + ST[e.statut] + '</span>' : '') + (e.note != null ? (e.statut ? ', note modifiée' : ' : note modifiée') : '');
     if (e.op === 'vm') {
@@ -985,6 +991,7 @@
     $$('[data-machines]').forEach(function (el) { if (libre(el)) renderMachines(el); });
     renderInventaire();
     renderRecette();
+    renderAcces();
     renderReprendre();
   }
   function meta(par, le, att) {
@@ -1463,6 +1470,103 @@
     });
     el.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target.matches('input[data-champ]')) e.target.blur(); });
     el.addEventListener('click', function (e) { var b = e.target.closest('[data-tf]'); if (b) { el._filtre = b.getAttribute('data-tf'); renderRecette(el); } });
+  }
+
+  /* --- accès : comptes, mots de passe et adresses du labo, communs au groupe -----------------------
+     Sur le serveur du labo seulement. Un accès = une entrée « etat » (clé acces-xxxx) dont la note est un
+     petit JSON {c catégorie, t quoi, u adresse, l compte, p mot de passe, i infos} ; note vide = supprimé.
+     Une modification ne touche que son entrée, et si quelqu'un l'a changée depuis l'ouverture du
+     formulaire, rien n'est envoyé. Jamais dans le dépôt : reprendre_suivi.py ne recopie pas ces clés. */
+  var AC_CAT = ['Pare-feu OPNsense', 'Hôtes Hyper-V', 'Domaine et serveurs Windows', 'VM Linux (SSH)', 'Applications', 'Comptes de service', 'Clés et divers'];
+  var AC_CH = [['c', 'Catégorie'], ['t', 'Quoi'], ['u', 'Adresse'], ['l', 'Compte'], ['p', 'Mot de passe'], ['i', 'Infos']];
+  function titreAcces(note) { try { return (JSON.parse(note) || {}).t || ''; } catch (e) { return ''; } }
+  function accesListe() {
+    var E = (SY.V || VIDE()).etat || {}, L = [];
+    Object.keys(E).forEach(function (k) {
+      if (!/^acces-/.test(k) || !E[k].note) return;
+      var x; try { x = JSON.parse(E[k].note); } catch (e) { return; }
+      if (x && typeof x === 'object') L.push({ k: k, x: x, par: E[k].par || '', le: E[k].le || '', att: !!E[k].attente });
+    });
+    function rang(a) { var i = AC_CAT.indexOf(a.x.c); return i < 0 ? 99 : i; }
+    return L.sort(function (a, b) { return rang(a) - rang(b) || String(a.x.c || '').localeCompare(b.x.c || '') || String(a.x.t || '').localeCompare(b.x.t || ''); });
+  }
+  function ecrireAcces(k, x, leVu) {
+    if (!moiNom()) { ouvrirPanneau('Choisis d\'abord qui tu es : la modification portera ton nom.'); return false; }
+    var cur = ((SY.V || VIDE()).etat || {})[k];
+    if (leVu != null && cur && (cur.le || '') !== leVu) {
+      toast('<b>' + esc(cur.par || 'Quelqu\'un') + '</b> a modifié cet accès pendant que tu l\'éditais : rien n\'a été écrasé. Relis sa version, puis recommence.', 'warn');
+      return false;
+    }
+    var note = x ? JSON.stringify(x) : '';
+    if (note.length > 2000) { toast('Trop long (2000 caractères au plus) : raccourcis les infos.', 'warn'); return false; }
+    envoyer([{ op: 'etat', cle: k, note: note }]);
+    return true;
+  }
+  function lienAcces(u) { u = String(u || ''); return /^https?:\/\//.test(u) ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u) + '</a>' : esc(u); }
+  function formAcces(k, x, le) {
+    return '<form class="ac-form" data-k="' + esc(k) + '" data-le="' + esc(le || '') + '">' + AC_CH.map(function (c) {
+      var v = x[c[0]] || '', f;
+      if (c[0] === 'c') f = '<input name="c" list="ac-cats" value="' + esc(v) + '" required>';
+      else if (c[0] === 'i') f = '<textarea name="i" rows="2">' + esc(v) + '</textarea>';
+      else f = '<input name="' + c[0] + '" value="' + esc(v) + '" autocomplete="off" spellcheck="false"' + (c[0] === 't' ? ' required' : '') + '>';
+      return '<label class="fld"><span>' + c[1] + '</span>' + f + '</label>';
+    }).join('') + '<datalist id="ac-cats">' + AC_CAT.map(function (c) { return '<option value="' + esc(c) + '">'; }).join('') + '</datalist>' +
+      '<div class="ac-boutons"><button type="submit" class="btn petit">Enregistrer</button> <button type="button" class="btn ghost petit" data-ac="annuler">Annuler</button>' +
+      (k !== 'nouveau' ? ' <button type="button" class="btn ghost petit ac-suppr" data-ac="suppr">Supprimer</button>' : '') + '</div></form>';
+  }
+  function renderAcces(el) {
+    if (!el) { $$('[data-acces]').forEach(function (e) { if (libre(e)) renderAcces(e); }); return; }
+    if (!partage()) {
+      el.innerHTML = '<div class="note"><b>Sur le serveur du labo seulement</b><p>Les comptes et mots de passe ne sont jamais publiés dans le dépôt ni sur GitHub. Ouvre cette page depuis le guide servi dans le labo.</p></div>';
+      return;
+    }
+    var L = accesListe(), q = (el._q || '').toLowerCase(), ed = el._ed || null, vus = el._vus || (el._vus = {}), cats = [];
+    L.forEach(function (a) { var c = a.x.c || 'Divers'; if (cats.indexOf(c) < 0) cats.push(c); });
+    var h = '<div class="inv-bilan"><span class="bil">' + L.length + ' accès</span><input type="search" class="ac-q" placeholder="Chercher : machine, compte, adresse…" value="' + esc(el._q || '') + '" aria-label="Chercher un accès">' +
+      '<button type="button" class="btn petit" data-ac="ajout">Ajouter un accès</button></div>';
+    if (ed === 'nouveau') h += formAcces('nouveau', { c: AC_CAT[0] });
+    cats.forEach(function (c) {
+      var rows = L.filter(function (a) { return (a.x.c || 'Divers') === c && (!q || JSON.stringify(a.x).toLowerCase().indexOf(q) >= 0); });
+      if (!rows.length) return;
+      h += '<h3>' + esc(c) + '</h3><div class="tw"><table class="acces"><thead><tr><th>Quoi</th><th>Adresse</th><th>Compte</th><th>Mot de passe</th><th>Infos</th><th></th></tr></thead><tbody>' +
+        rows.map(function (a) {
+          if (ed === a.k) return '<tr><td colspan="6">' + formAcces(a.k, a.x, a.le) + '</td></tr>';
+          var p = a.x.p || '';
+          return '<tr data-k="' + esc(a.k) + '"><td><b>' + esc(a.x.t || '') + '</b>' + meta(a.par, a.le, a.att) + '</td><td class="mono">' + lienAcces(a.x.u) + '</td><td class="mono">' + esc(a.x.l || '') + '</td>' +
+            '<td class="mono ac-pw">' + (p ? '<span class="ac-p">' + (vus[a.k] ? esc(p) : '••••••••') + '</span> <button type="button" class="btn ghost petit" data-ac="voir">' + (vus[a.k] ? 'Masquer' : 'Voir') + '</button> <button type="button" class="btn ghost petit" data-ac="copier">Copier</button>' : '') + '</td>' +
+            '<td>' + esc(a.x.i || '') + '</td><td class="ac-act"><button type="button" class="btn ghost petit" data-ac="modif">Modifier</button></td></tr>';
+        }).join('') + '</tbody></table></div>';
+    });
+    if (!L.length && ed !== 'nouveau') h += '<p>Aucun accès pour l\'instant : « Ajouter un accès ».</p>';
+    el.innerHTML = h;
+    if (el._lie) return;
+    el._lie = true;
+    el.addEventListener('input', function (e) {
+      if (!e.target.matches('.ac-q')) return;
+      var pos = e.target.selectionStart; el._q = e.target.value; renderAcces(el);
+      var n = $('.ac-q', el); n.focus(); try { n.setSelectionRange(pos, pos); } catch (x) { /* ignoré */ }
+    });
+    el.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-ac]'); if (!b) return;
+      var a = b.getAttribute('data-ac'), tr = b.closest('tr[data-k]'), k = tr && tr.getAttribute('data-k'), f = b.closest('form');
+      if (a === 'ajout') { el._ed = 'nouveau'; renderAcces(el); $('.ac-form input[name="t"]', el).focus(); }
+      else if (a === 'annuler') { el._ed = null; renderAcces(el); }
+      else if (a === 'modif') { el._ed = k; renderAcces(el); }
+      else if (a === 'voir') { el._vus[k] = !el._vus[k]; renderAcces(el); }
+      else if (a === 'copier') {
+        var x = accesListe().filter(function (y) { return y.k === k; })[0]; if (!x || !navigator.clipboard) return;
+        navigator.clipboard.writeText(x.x.p).then(function () { toast('Mot de passe copié.', 'ok'); }, function () { toast('Copie refusée par le navigateur : « Voir » puis copier à la main.', 'warn'); });
+      } else if (a === 'suppr' && f && confirm('Supprimer cet accès pour tout le groupe ?')) {
+        if (ecrireAcces(f.getAttribute('data-k'), null, f.getAttribute('data-le'))) { el._ed = null; renderAcces(el); }
+      }
+    });
+    el.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var f = e.target, x = {}, k = f.getAttribute('data-k'), neuf = k === 'nouveau';
+      AC_CH.forEach(function (c) { var v = (f.elements[c[0]].value || '').trim(); if (v) x[c[0]] = v; });
+      if (neuf) k = 'acces-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      if (ecrireAcces(k, x, neuf ? null : f.getAttribute('data-le'))) { el._ed = null; renderAcces(el); }
+    });
   }
 
   /* --- lecture : moins de bruit, aller droit à ce qui reste ------------------------------------- */

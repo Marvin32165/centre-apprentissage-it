@@ -492,3 +492,18 @@ article.vm.replie > h3::after { content: " ▸"; color: var(--ink-faint); }
 @media (max-width: 920px) { body { overflow-x: hidden; } .nav-in { max-width: 100%; } .nav-d { min-width: 0; } .nav-d .sync { max-width: 46vw; } }
 @media (max-width: 920px) { .nav-d .moi { flex: 1 1 0; min-width: 0; } .nav-d .moi select { min-width: 0; } .nav-d .sync-w, .nav-d .theme { flex: 0 0 auto; } }
 .nav-d > .moi, .nav-d > .sync-w { order: 0; } .nav-d > .theme { order: 1; }
+
+/* --- accès (comptes et mots de passe du labo) ----------------------------- */
+table.acces { font-size: 13.5px; }
+table.acces td { vertical-align: top; }
+table.acces td.mono { word-break: break-all; }
+.ac-pw { white-space: nowrap; }
+.ac-p { user-select: all; }
+.ac-act { white-space: nowrap; text-align: right; }
+.ac-q { flex: 1 1 220px; font: 14px var(--font-ui); padding: 6px 10px; border: 1px solid var(--border-md); border-radius: var(--r); background: var(--paper); color: var(--ink); }
+.ac-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; padding: 12px; margin: 12px 0; border: 1px solid var(--accent-line); border-radius: var(--r); background: var(--accent-soft); }
+.ac-form .fld { display: flex; flex-direction: column; gap: 4px; margin: 0; font: 600 12.5px var(--font-ui); }
+.ac-form textarea { min-height: 0; }
+.ac-boutons { grid-column: 1 / -1; }
+.btn.ac-suppr { color: var(--no); border-color: var(--no); }
+@media (max-width: 640px) { .ac-pw { white-space: normal; } }
