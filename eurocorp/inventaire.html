@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inventaire — EUROCORP</title>
+<meta name="description" content="Noms, adresses et tailles réels des machines, comparés au plan et à l'énoncé ; modifiables, appliqués partout dans le guide.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="nav"></div>
+<main id="contenu">
+<div class="eyebrow">Inventaire</div><h1>Le réel, face au plan et à l'énoncé</h1>
+<p class="lead">Nom d'hôte, VM Hyper-V, adresse, taille de chaque machine ; WAN, LAN et hôte de chaque site. Change une valeur : elle remplace celle du plan <b>partout</b> dans le guide (pages, commandes, tableaux, schémas, menu Machine), en direct pour tout le groupe. Chaque case rappelle ce que prévoyait le plan et ce qu'impose l'énoncé (PDF du labo final, avec le numéro de section).</p>
+<div data-inventaire data-noinv></div>
+<div class="note bref"><b>Bon à savoir</b><p>Les cases cochées ne bougent pas quand une adresse change : elles sont repérées sur le texte du plan. Les fichiers du livrable (plan IP, inventaire, scripts) se régénèrent depuis ces valeurs avec <code>outils/reprendre_suivi.py</code> puis <code>generer.py</code>.</p></div>
+</main>
+<div id="pied"></div>
+<script src="assets/data.js"></script>
+<script src="assets/pages.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

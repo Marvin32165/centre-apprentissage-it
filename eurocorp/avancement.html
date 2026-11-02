@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Avancement — EUROCORP</title>
-<meta name="description" content="Planning, état et décisions.">
+<meta name="description" content="Équipe, activité, planning, état du labo et décisions.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Instrument+Sans:wght@500;600&family=IBM+Plex+Mono&display=swap">
 <link rel="stylesheet" href="assets/style.css">
@@ -13,10 +13,14 @@
 <div id="nav"></div>
 <main id="contenu">
 <div class="eyebrow">Avancement</div><h1>Où on en est, ce qui reste</h1>
-<h2><span class="num">1</span>Planning</h2><div data-render="planning"></div>
-<h2><span class="num">2</span>État</h2><div data-etat=""></div>
-<h2><span class="num">3</span>Ton suivi (cases cochées)</h2><div data-suivi></div>
-<h2><span class="num">4</span>Décisions à prendre (les tiennes)</h2>
+<p class="lead">Servi par le serveur du labo (IIS ou nginx), tout ici est commun au groupe : les cases cochées, l'état de chaque rubrique et de chaque machine, avec qui l'a changé et quand. Ailleurs (GitHub, fichier ouvert tel quel), c'est l'état publié dans le dépôt et tes cases restent dans ton navigateur.</p>
+<h2 id="equipe"><span class="num">1</span>Équipe</h2><div data-equipe></div>
+<h2 id="activite"><span class="num">2</span>Activité récente</h2><div data-journal="60"></div>
+<h2><span class="num">3</span>Planning</h2><div data-render="planning"></div>
+<h2><span class="num">4</span>État des rubriques</h2><div data-etat=""></div>
+<h2 id="machines"><span class="num">5</span>Machines : état et responsable</h2><div data-machines></div>
+<h2><span class="num">6</span>Étapes cochées, page par page</h2><div data-suivi></div>
+<h2><span class="num">7</span>Décisions à prendre (les tiennes)</h2>
 <div class="tw"><table><thead><tr><th>Décision</th><th>Proposition actuelle</th></tr></thead><tbody>
 <tr><td>Nom de domaine</td><td>eurocorp.lan : fait, créé sur DC01</td></tr>
 <tr><td>NLB : unicast ou multicast</td><td>À trancher ; conséquences dans tes notes IIS (MAC spoofing Hyper-V)</td></tr>

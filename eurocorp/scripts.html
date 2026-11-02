@@ -86,7 +86,7 @@ $Plan = @(
     @{ Nom=&#x27;BRU-EXCH01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.30&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=16; Vcpu=4; DisqueGo=200; Role=&#x27;Exchange Server SE&#x27; }
     @{ Nom=&#x27;BRU-DOCKER01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.10.40&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Docker — Zabbix (serveur + web + PostgreSQL)&#x27; }
     @{ Nom=&#x27;BRU-CLT01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
-    @{ Nom=&#x27;PAR-FW01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.20.1&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke (VM actuelle : 2-PARIS-OPNSENSE)&#x27; }
+    @{ Nom=&#x27;PAR-FW01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.20.1&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke&#x27; }
     @{ Nom=&#x27;PAR-DC01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.10&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;AD DS + DNS + DHCP (failover)&#x27; }
     @{ Nom=&#x27;PAR-SQL01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.20&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=100; Role=&#x27;SQL Server (base de SharePoint)&#x27; }
     @{ Nom=&#x27;PAR-SP01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.21&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=12; Vcpu=4; DisqueGo=100; Role=&#x27;SharePoint Server SE&#x27; }
@@ -187,7 +187,7 @@ $Plan = @(
     @{ Nom=&#x27;BRU-EXCH01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.10.30&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=16; Vcpu=4; DisqueGo=200; Role=&#x27;Exchange Server SE&#x27; }
     @{ Nom=&#x27;BRU-DOCKER01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;LINUX&#x27;; Ip=&#x27;172.17.10.40&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Docker — Zabbix (serveur + web + PostgreSQL)&#x27; }
     @{ Nom=&#x27;BRU-CLT01&#x27;; Site=&#x27;BRU&#x27;; Type=&#x27;CLIENT&#x27;; Ip=&#x27;DHCP&#x27;; Gw=&#x27;172.17.10.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;Client de test (optionnel)&#x27; }
-    @{ Nom=&#x27;PAR-FW01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.20.1&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke (VM actuelle : 2-PARIS-OPNSENSE)&#x27; }
+    @{ Nom=&#x27;PAR-FW01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;FW&#x27;; Ip=&#x27;172.17.20.1&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=2; Vcpu=2; DisqueGo=20; Role=&#x27;OPNsense — spoke&#x27; }
     @{ Nom=&#x27;PAR-DC01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.10&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=4; Vcpu=2; DisqueGo=60; Role=&#x27;AD DS + DNS + DHCP (failover)&#x27; }
     @{ Nom=&#x27;PAR-SQL01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.20&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=8; Vcpu=4; DisqueGo=100; Role=&#x27;SQL Server (base de SharePoint)&#x27; }
     @{ Nom=&#x27;PAR-SP01&#x27;; Site=&#x27;PAR&#x27;; Type=&#x27;WIN&#x27;; Ip=&#x27;172.17.20.21&#x27;; Gw=&#x27;172.17.20.1&#x27;; RamGo=12; Vcpu=4; DisqueGo=100; Role=&#x27;SharePoint Server SE&#x27; }

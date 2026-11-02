@@ -10,12 +10,14 @@
   function src(s) { return '<p class="srcl">Ton cours : ' + s + '</p>'; }
   function P() { return Array.prototype.slice.call(arguments).join(''); }
   function S(t, d) { return [t, d]; }
+  /* taille d'une VM (vCPU, RAM, disque) repérée pour l'inventaire : la page affiche la valeur réelle, la clé de la case garde data-p (le plan) */
+  function T(v, f, p) { p = p == null ? v[f] : p; return '<span class="iv" data-c="vm:' + esc(v.nom) + '" data-f="' + f + '" data-p="' + esc(p) + '">' + esc(p) + '</span>'; }
   function scr(n, cmd) { var sh = /\.sh/.test(cmd); return '<p class="srcl">Script : <a href="scripts.html#sc' + n + '"><code>' + (sh ? 'sudo ./' : '.\\') + cmd + '</code></a>' + (sh ? '' : ' (lance d\'abord avec <code>-WhatIf</code>)') + '</p>'; }
 
   /* ---------- étapes communes ---------- */
   function creerVM(v, st) {
     return S('Créer la VM depuis le disque parent', P(
-      '<p><b>Comment.</b> Hyper-V Manager → New → Virtual Machine : génération 2, démarrage ' + v.ram + ' Go, <b>mémoire dynamique décochée</b>, réseau = commutateur privé du site (LAN-' + st.id + '), « attacher un disque dur virtuel ultérieurement ». Ensuite Settings → Processor : ' + v.vcpu + ' ; SCSI → Hard Drive → Add → New → type <b>Differencing</b>, parent = <code>C:\\PARENT\\TEST-SYSPREP.vhdx</code>. Plus rapide : l\'outil « Script Hyper-V » de la page Outils.</p>',
+      '<p><b>Comment.</b> Hyper-V Manager → New → Virtual Machine : génération 2, démarrage ' + T(v, 'ram') + ' Go, <b>mémoire dynamique décochée</b>, réseau = commutateur privé du site (LAN-' + st.id + '), « attacher un disque dur virtuel ultérieurement ». Ensuite Settings → Processor : ' + T(v, 'vcpu') + ' ; SCSI → Hard Drive → Add → New → type <b>Differencing</b>, parent = <code>C:\\PARENT\\TEST-SYSPREP.vhdx</code>. Plus rapide : l\'outil « Script Hyper-V » de la page Outils.</p>',
       '<p><b>Pourquoi.</b> Le différentiel ne copie rien du parent : la VM démarre en quelques minutes et le parent reste intact.</p>',
       '<p><b>Vérifier.</b> La VM démarre sur l\'écran de première configuration (mot de passe administrateur).</p>', src('<code>hyperv</code> §1 et §4, <code>windows-serveur</code> §7'), scr('01', '01-New-EuroCorpVMs.ps1 -Site ' + st.id + ' -Seulement ' + v.nom)));
   }
@@ -33,7 +35,7 @@
   }
   function creerLinux(v, st) {
     return S('Créer la VM Ubuntu Server 24.04', P(
-      '<p><b>Comment.</b> Hyper-V → New VM : génération 2, ' + v.ram + ' Go fixes, ' + v.vcpu + ' vCPU, réseau LAN-' + st.id + ', ISO Ubuntu Server 24.04. Dans Settings → Security : décocher <b>Secure Boot</b> pour l\'installation. Installer avec OpenSSH Server.</p>',
+      '<p><b>Comment.</b> Hyper-V → New VM : génération 2, ' + T(v, 'ram') + ' Go fixes, ' + T(v, 'vcpu') + ' vCPU, réseau LAN-' + st.id + ', ISO Ubuntu Server 24.04. Dans Settings → Security : décocher <b>Secure Boot</b> pour l\'installation. Installer avec OpenSSH Server.</p>',
       '<p><b>Pourquoi.</b> Pas de disque parent Windows pour Linux : installation classique depuis l\'ISO. SSH permet de travailler à distance.</p>',
       '<p><b>Vérifier.</b> La VM redémarre sur Ubuntu et on se connecte en SSH.</p>', src('<code>hyperv</code> §1 (Secure Boot et Linux)'), scr('01', '01-New-EuroCorpVMs.ps1 -Site ' + st.id + ' -Seulement ' + v.nom + ' -LinuxIso <chemin-iso>')));
   }
@@ -93,7 +95,7 @@
       var hub = st.id === 'BRU';
       return {
         prep: [S('Préparer les commutateurs', P('<p><b>Comment.</b> Un commutateur <b>externe</b> (WAN, salle ' + D.meta.reseau_salle + ') et un commutateur <b>privé</b> par site (LAN-' + st.id + '). La VM OPNsense a deux cartes, une sur chacun.</p>', '<p><b>Pourquoi.</b> Le pare-feu est le seul point de passage entre le LAN du site et l\'extérieur.</p>', '<p><b>Vérifier.</b> Dans Settings de la VM, les deux cartes sont sur les bons commutateurs.</p>', src('<code>hyperv</code> §5'))),
-          S('Créer la VM OPNsense', '<p><b>Comment.</b> 2 vCPU, ' + v.ram + ' Go, disque ' + v.disque + ' Go, deux cartes réseau. Monter l\'ISO OPNsense. Si la VM ne démarre pas en génération 2, désactiver Secure Boot (Settings → Security) ou prendre la génération 1.</p><p><b>Vérifier.</b> La VM démarre sur l\'ISO.</p>')],
+          S('Créer la VM OPNsense', '<p><b>Comment.</b> ' + T(v, 'vcpu', 2) + ' vCPU, ' + T(v, 'ram') + ' Go, disque ' + T(v, 'disque') + ' Go, deux cartes réseau. Monter l\'ISO OPNsense. Si la VM ne démarre pas en génération 2, désactiver Secure Boot (Settings → Security) ou prendre la génération 1.</p><p><b>Vérifier.</b> La VM démarre sur l\'ISO.</p>')],
         inst: [S('Installer OPNsense', '<p><b>Comment.</b> Lancer l\'installation depuis l\'ISO, choisir le disque, redémarrer sans l\'ISO.</p><p><b>Vérifier.</b> La console affiche le menu OPNsense (interfaces WAN et LAN).</p>')],
         conf: [
           S('Interfaces et adresses', '<p><b>Comment.</b> Console → <i>Assign interfaces</i> (WAN = carte externe, LAN = carte privée), puis <i>Set interface IP address</i> : WAN <b>' + st.wan + '</b>/24 passerelle ' + D.meta.passerelle_salle + ', LAN <b>' + st.gw + '</b>/24.</p><p><b>Vérifier.</b> Depuis un serveur du LAN, <code>ping ' + st.gw + '</code> répond et l\'interface web s\'ouvre sur <code>https://' + st.gw + '</code>.</p>'),
@@ -257,7 +259,7 @@
   function fiche(v, st, k) {
     var dns = v.nom === 'BRU-DC01' ? 'lui-même (127.0.0.1)' : (/^PAR-DC01$/.test(v.nom) ? ip('BRU-DC01') + ' puis lui-même' : ip('BRU-DC01') + ' puis ' + ip('PAR-DC01'));
     var l = [['Rôle', esc(v.role)], ['Système', esc(v.os)], ['Adresse IP', '<code>' + esc(v.ip) + '</code> /24'], ['Passerelle', '<code>' + esc(st.gw) + '</code> (OPNsense de ' + esc(st.nom) + ')'],
-      ['DNS', /Ubuntu|OPNsense/.test(v.os) ? (/OPNsense/.test(v.os) ? 'les deux contrôleurs' : esc(ip('BRU-DC01'))) : dns], ['Dimensions', v.vcpu + ' vCPU · ' + v.ram + ' Go de RAM fixes · disque ' + v.disque + ' Go'],
+      ['DNS', /Ubuntu|OPNsense/.test(v.os) ? (/OPNsense/.test(v.os) ? 'les deux contrôleurs' : esc(ip('BRU-DC01'))) : dns], ['Dimensions', T(v, 'vcpu') + ' vCPU · ' + T(v, 'ram') + ' Go de RAM fixes · disque ' + T(v, 'disque') + ' Go'],
       ['Commutateur', /OPNsense/.test(v.os) ? '<code>WAN</code> (carte 1) puis <code>LAN-' + st.id + '</code> (carte 2)' : '<code>LAN-' + st.id + '</code>'], ['À avoir avant', DEP[k] || '—']];
     return S('Fiche de ' + v.nom, '<table><tbody>' + l.map(function (x) { return '<tr><th scope="row">' + x[0] + '</th><td>' + x[1] + '</td></tr>'; }).join('') + '</tbody></table><p><b>Flux qui concernent cette machine</b> (matrice de ' + D.flux.length + ' flux) :</p>' + fluxMachine(v) + '<p>Les étapes ci-dessous sont dans l\'ordre ; « Détail » reprend le pas à pas des pages 1 à 6 pour cette machine.</p>');
   }
@@ -276,7 +278,7 @@
         (sec[p[0]] || []).forEach(function (x) {
           if (s.only && s.only.indexOf(x[0]) < 0) return;
           if (s.skip && s.skip.indexOf(x[0]) >= 0) return;
-          var h = x[1];
+          var h = window.EURO_MACH.docker(s.t, x[1], v, k);
           if (s.subst) { h = h.replace(/BRU-DC01/g, v.nom).replace(/172\.17\.10\.10(?!\d)/g, v.ip); }
           h = h.replace(/LAN-BRU/g, 'LAN-' + st.id);
           if (s.subst) { if (/^(Répéter pour chaque serveur|Aller plus loin|Faire pareil sur les autres machines|Wazuh ne lit pas le réseau)/.test(x[0])) return; out.sup.push(S('Détail · ' + x[0], h)); }
@@ -306,7 +308,7 @@
       })();
       D.vms.filter(function (v) { return !v.virtuel && v.site === st.id; }).forEach(function (v) {
         var k = cle(v), plan = k ? enrichir(M[k](v, st), v, st, k) : null;
-        html += '<article class="vm" data-site="' + st.id + '" data-vm="' + esc(v.nom) + '"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + v.vcpu + ' vCPU, ' + v.ram + ' Go</small></h3>';
+        html += '<article class="vm" data-site="' + st.id + '" data-vm="' + esc(v.nom) + '"><h3>' + esc(v.nom) + ' <small>' + esc(v.role) + ' · ' + esc(v.ip) + ' · ' + T(v, 'vcpu') + ' vCPU, ' + T(v, 'ram') + ' Go</small></h3>';
         var n0 = 0;
         PH.forEach(function (p) {
           if (!plan || !plan[p[0]] || !plan[p[0]].length) return;
@@ -331,7 +333,8 @@
     filtre();
     function avancement() {
       Array.prototype.forEach.call(host.querySelectorAll('article.vm'), function (a) {
-        var cb = a.querySelectorAll('input.suivi'), n = 0; Array.prototype.forEach.call(cb, function (c) { if (c.checked) n++; });
+        var cb = Array.prototype.filter.call(a.querySelectorAll('li > input.suivi'), function (c) { return !c.parentNode.parentNode.closest('li'); }), n = 0;   // étapes principales (pas les sous-étapes)
+        cb.forEach(function (c) { if (c.checked) n++; });
         var h = a.querySelector('h3'), p = a.querySelector('.avance');
         if (!p) { p = document.createElement('span'); p.className = 'avance'; h.appendChild(p); }
         p.textContent = n + ' / ' + cb.length + ' étapes';
