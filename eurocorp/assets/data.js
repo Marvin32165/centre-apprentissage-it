@@ -567,7 +567,7 @@ window.EURO = {
    "id": "F14",
    "de": "PAR-SP01",
    "vers": "PAR-SQL01",
-   "proto": "TCP <port fixe SQL>, UDP 1434",
+   "proto": "TCP 1433, UDP 1434",
    "service": "SQL Server",
    "pourquoi": "Bases de contenu et de configuration (même LAN, pas besoin de traverser un tunnel)",
    "groupe": "Services Windows"

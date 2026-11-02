@@ -58,12 +58,17 @@
       '<p><b>Pourquoi.</b> Les autres machines et les agents joignent les serveurs par leur nom.</p>',
       '<p><b>Vérifier.</b> <code>nslookup ' + v.nom.toLowerCase() + '.' + DOM + '</code> depuis un autre site.</p>', src('<code>windows-serveur</code> §9')));
   }
-  /* une étape d'une section des pages 1 à 6 (sections.js), reprise telle quelle */
-  function secDocker(nom) {
-    var sec = (window.EURO_SEC || {})['Docker et Compose : les bases du labo'] || {}, r = null;
-    ['prep', 'inst', 'conf', 'verif'].forEach(function (p) { (sec[p] || []).forEach(function (x) { if (x[0] === nom) r = S('Détail · ' + nom, x[1]); }); });
+  /* une étape d'une section des pages 1 à 6 (sections.js), reprise telle quelle (même clé de case) ;
+     plus : un complément dans un encadré « Détail », qui n'entre pas dans la clé */
+  function secEtape(titre, nom, plus) {
+    var sec = (window.EURO_SEC || {})[titre] || {}, r = null;
+    ['prep', 'inst', 'conf', 'verif'].forEach(function (p) { (sec[p] || []).forEach(function (x) { if (x[0] === nom) r = S('Détail · ' + nom, x[1] + (plus ? dt(plus) : '')); }); });
     return r;
   }
+  function secDocker(nom) { return secEtape('Docker et Compose : les bases du labo', nom); }
+  function dt(h) { return '<div class="dt"><div class="dt-b">' + h + '</div></div>'; }
+  function plus(s, h) { return s ? S(s[0], s[1] + dt(h)) : s; }       // complément sans changer la clé de l'étape
+  var AV = ' <span class="badge b-ref">À valider</span>';
   var FIN = S('Machine terminée', '<p>Reporter les tests dans <code>09-Tests</code> (attendu / obtenu / date), noter ce qui a été fait dans <code>Infos.md</code> et dans <code>04-Windows</code>. Cocher seulement si les vérifications ci-dessus passent.</p>');
 
 
@@ -166,14 +171,27 @@
         verif: [S('Connexion depuis le futur serveur SharePoint', '<p><b>Comment.</b> Depuis PAR-SP01 : <code>Test-NetConnection PAR-SQL01 -Port 1433</code> ; connexion SSMS réussie.</p>'), FIN]
       };
     },
+    /* SharePoint : marche complète écrite ici. Les étapes « Détail » viennent de la page Services (mêmes clés
+       de case qu'avant), dans l'ordre préparation → installation → configuration → vérifications. */
     sp: function (v, st) {
+      var SQ = 'SQL Server et SharePoint (PAR-SQL01 / PAR-SP01)', sql = ip('PAR-SQL01');
       return {
-        prep: [creerVM(v, st), ipFixe(v, st, ip('BRU-DC01')), joindre(v),
-          S('Comptes de service gMSA pour SharePoint', '<p><b>Comment.</b> Même démarche que pour SQL (clé KDS déjà créée) : un groupe, un gMSA par compte de service (ferme, application web), le serveur SharePoint dans le groupe.</p>' + src('<code>sharepoint</code> §3'))],
-        inst: [S('Installer les prérequis puis SharePoint Server SE', '<p><b>Comment.</b> Monter l\'ISO, lancer « Install software prerequisites » (redémarrages possibles), puis « Install SharePoint Server ».</p><p><b>Vérifier.</b> L\'assistant d\'installation se termine.</p>')],
-        conf: [S('Créer la ferme', '<p><b>Comment.</b> Assistant de configuration (<i>Configuration Wizard</i>) : nouvelle ferme, serveur de base de données <b>PAR-SQL01</b>, nom de base de configuration, compte de ferme gMSA, phrase secrète de ferme (la noter dans Infos.md).</p>'),
-          S('Application web et collection de sites', '<p><b>Comment.</b> Administration centrale → Web applications → New ; puis une collection de sites (site d\'équipe) sur cette application.</p>')],
-        verif: [S('Ouvrir le site', '<p><b>Comment.</b> Depuis un client : ouvrir l\'adresse du site, s\'authentifier avec un compte du domaine (T14).</p>'), FIN]
+        prep: [creerVM(v, st), ipFixe(v, st, ip('PAR-DC01') + ' puis ' + ip('BRU-DC01')), joindre(v),
+          secEtape(SQ, 'Comptes de service', '<p>Fait le 02/11 : les quatre comptes sont dans l\'OU <code>EuroCorp\\User</code>, mots de passe dans la page <a href="acces.html">Accès</a>.</p>'),
+          secEtape(SQ, 'Dimensionnement'),
+          S('Prérequis côté SQL (PAR-SQL01)', P('<p><b>Comment.</b> Sur PAR-SQL01 : classement <code>Latin1_General_CI_AS_KS_WS</code>, <b>MAXDOP = 1</b>, connexions <code>' + NB + '\\sp_farm</code> et <code>' + NB + '\\sp_setup</code> avec les rôles <code>dbcreator</code> et <code>securityadmin</code>, TCP 1433 à l\'écoute. Contrôle sur PAR-SQL01 :</p>',
+            pre("sqlcmd -S .\\SHAREPOINT -E -Q \"SELECT SERVERPROPERTY('Collation'); SELECT value_in_use FROM sys.configurations WHERE name = 'max degree of parallelism'\""),
+            '<p>puis depuis PAR-SP01 :</p>', pre('Test-NetConnection ' + sql + ' -Port 1433'),
+            '<p><b>Pourquoi.</b> L\'assistant de la ferme crée ses bases sur PAR-SQL01 avec ces comptes : un seul point manquant (MAXDOP différent de 1, rôle absent, port fermé) et la création échoue.</p>',
+            '<p><b>Vérifier.</b> <code>Latin1_General_CI_AS_KS_WS</code>, <code>1</code>, puis <code>TcpTestSucceeded : True</code>.</p>'))],
+        inst: [plus(secEtape(SQ, 'Installer SharePoint sur PAR-SP01'), '<p>' + AV + ' Avant de lancer les prérequis, vérifie que ta version de SharePoint Server SE prend en charge Windows Server 2025. Les prérequis téléchargent des composants : PAR-SP01 doit sortir sur Internet.</p>')],
+        conf: [plus(secEtape(SQ, 'Assistant de configuration de la ferme'), '<p>Comptes sous la forme <code>' + NB + '\\sp_farm</code>. La phrase secrète va dans la page <a href="acces.html">Accès</a> : sans elle, impossible d\'ajouter un serveur à la ferme.</p>'),
+          secEtape(SQ, 'Comptes gérés et applications de service'),
+          secEtape(SQ, 'DNS et premier site')],
+        verif: [secEtape(SQ, 'SharePoint répond'),
+          S('Le site répond depuis les autres sites (F13)', P('<p><b>Comment.</b> Depuis un poste ou un serveur d\'un autre site :</p>', pre('Test-NetConnection sharepoint.' + DOM + ' -Port 80'),
+            '<p>puis ouvrir <code>http://sharepoint.' + DOM + '</code> avec un compte du domaine. La règle F13 (IPsec, tous les LAN → PAR-SP01, TCP 80 et 443) est sur PAR-FW01 ; le trafic de Londres et de Berlin traverse le hub de Bruxelles, dont le pare-feu doit aussi le laisser passer.</p>',
+            '<p><b>Vérifier.</b> <code>TcpTestSucceeded : True</code> et le site s\'ouvre depuis chaque site (T14, page <a href="recette.html">Recette</a>).</p>')), FIN]
       };
     },
     fs: function (v, st) {
@@ -271,13 +289,38 @@
         verif: [S('Premier rapport', '<p><b>Comment.</b> Lancer la tâche sur <b>une seule cible</b>, lire le rapport (onglets Results, Hosts) (T20). Un rapport « vide » après Host Discovery est normal : le filtre masque les résultats sans gravité.</p>' + src('<code>system-center/openvas</code> §3.4')), FIN]
       };
     },
+    /* poste client : marche complète écrite ici (la recette globale reste sur la page Recette). Les débuts
+       de texte des étapes déjà existantes ne changent pas : leurs cases restent cochées. */
     clt: function (v, st) {
+      var reseau = st.lan.split('/')[0].split('.').slice(0, 3).join('.'), dc = ip('BRU-DC01') + ', ' + ip('PAR-DC01');
+      var SV = [['Annuaire et DNS', '<code>nltest /dsgetdc:' + DOM + '</code> · <code>nslookup ' + DOM + '</code>', 'T07'],
+        ['Partages (LON-FS01)', '<code>\\\\lon-fs01\\Commun</code>, puis le partage de ton service', 'T11'],
+        ['Intranet IIS (NLB)', '<code>http://intranet.' + DOM + '</code>', 'T12'],
+        ['SharePoint', '<code>http://sharepoint.' + DOM + '</code>', 'T14'],
+        ['Messagerie (OWA)', '<code>https://mail.' + DOM + '/owa</code>', 'T13, T24'],
+        ['Redmine', '<code>https://helpdesk.' + DOM + '</code>', 'T16'],
+        ['Zabbix (administration)', '<code>http://zabbix.' + DOM + '</code>', 'T15'],
+        ['Wazuh (administration)', '<code>https://wazuh.' + DOM + '</code>', 'T19']];
       return {
-        prep: [creerVM(v, st), S('Réseau en DHCP', '<p><b>Comment.</b> Laisser la carte en DHCP : c\'est le but de ce poste.</p>')],
-        inst: [S('Installer Windows 11', '<p><b>Comment.</b> Installation standard depuis l\'ISO (TPM et Secure Boot virtuels activés dans Settings → Security).</p>')],
-        conf: [joindre(v), S('Session de test', '<p><b>Comment.</b> Ouvrir une session avec un compte du domaine de chaque service.</p>')],
-        verif: [S('Adresse reçue de ' + st.nom, '<p><b>Comment.</b> <code>ipconfig /renew</code> puis <code>ipconfig /all</code> : adresse dans <b>' + st.lan.split('/')[0].split('.').slice(0, 3).join('.') + '.100 – .199</b>, passerelle <b>' + st.gw + '</b>, DNS = contrôleur(s) du plan. ' + (st.id === 'BRU' || st.id === 'PAR' ? 'Le serveur DHCP est dans ton site (' + st.id + '-DC01), avec son failover.' : 'Pas de serveur DHCP dans ton site : l\'adresse vient de BRU-DC01 ou PAR-DC01 par le relais d\'OPNsense, à travers le tunnel.') + ' (T09)</p>'),
-          S('Les services accessibles depuis ' + st.nom, '<p><b>Comment.</b> Depuis ce poste, ouvre ou teste chaque service du labo :</p><ul>' + D.vms.filter(function (x) { return !x.virtuel && !/-CLT|-FW/.test(x.nom) && x.nom.indexOf(st.id + '-') !== 0; }).slice(0, 12).map(function (x) { return '<li><code>' + esc(x.nom) + '</code> (' + esc(x.ip) + ') — ' + esc(x.role) + '</li>'; }).join('') + '</ul><p>Partage du serveur de fichiers selon le groupe (T11), intranet (T12), Redmine (T16). Chaque service qui répond depuis ' + st.nom + ' prouve le tunnel, le DNS et la règle de pare-feu correspondants.</p>'), FIN]
+        prep: [S('Créer la VM depuis le disque parent', P('<p><b>Comment.</b> Hyper-V Manager → New → Virtual Machine : génération 2, ' + T(v, 'ram') + ' Go fixes (mémoire dynamique décochée), ' + T(v, 'vcpu') + ' vCPU, réseau LAN-' + st.id + '. Disque : <b>pas le parent des serveurs</b> (<code>C:\\PARENT\\TEST-SYSPREP.vhdx</code>, Windows Server) ; un parent Windows 11 généralisé si le groupe en a préparé un, sinon un disque dynamique neuf d\'au moins <b>64 Go</b> et l\'ISO Windows 11. Settings → Security : <b>Enable Trusted Platform Module</b>, Secure Boot avec le modèle <i>Microsoft Windows</i>.</p>',
+            '<p><b>Pourquoi.</b> Windows 11 refuse de s\'installer sans TPM 2.0, Secure Boot et 64 Go de disque. Un poste client ne se clone pas depuis le parent des serveurs.</p>',
+            (+v.disque < 64 ? '<p class="srcl">Le plan prévoit ' + esc(v.disque) + ' Go : c\'est sous le minimum de Windows 11.</p>' : ''),
+            '<p><b>Vérifier.</b> La VM démarre sur l\'installation de Windows 11 (ou sur son premier écran de configuration).</p>')),
+          plus(S('Réseau en DHCP', '<p><b>Comment.</b> Laisser la carte en DHCP : c\'est le but de ce poste.</p>'),
+            '<p>Rien à saisir sur la carte : adresse (' + reseau + '.100 – .199), passerelle (' + st.gw + ') et DNS (' + dc + ') viennent de l\'étendue du site. Vérifie seulement que la carte est sur le commutateur LAN-' + st.id + '.</p>')],
+        inst: [S('Installer Windows 11', P('<p><b>Comment.</b> Installation standard depuis l\'ISO (TPM et Secure Boot virtuels activés dans Settings → Security). Édition <b>Professionnelle</b> ou Entreprise : la Famille ne peut pas rejoindre un domaine. Sans clé : « Je n\'ai pas de clé de produit ».</p>',
+            '<p>' + AV + ' Si l\'assistant de premier démarrage exige un compte Microsoft, cherche l\'option de compte local ou de jonction à un domaine (son nom change selon la version de Windows 11).</p>',
+            '<p><b>Vérifier.</b> <code>winver</code> ; Paramètres → Système → Informations : édition Professionnelle.</p>'))],
+        conf: [plus(joindre(v), '<p>Ici, le DNS vient du DHCP : vérifie avec <code>ipconfig /all</code> qu\'il pointe bien vers les contrôleurs (' + dc + ') avant de joindre. Nom et jonction en une fois : <code>Add-Computer -DomainName ' + DOM + ' -NewName ' + esc(v.nom) + ' -Restart</code>.</p>'),
+          plus(S('Session de test', '<p><b>Comment.</b> Ouvrir une session avec un compte du domaine de chaque service.</p>'),
+            '<p>Les comptes de test sont dans l\'OU <code>EuroCorp\\User</code>. Pour le test des partages (T11), chaque compte doit être membre du groupe de son service (GP-Direction, GP-RH, GP-Finance, GP-IT : chaîne AGDLP de la page Identité).</p>')],
+        verif: [S('Adresse reçue de ' + st.nom, '<p><b>Comment.</b> <code>ipconfig /renew</code> puis <code>ipconfig /all</code> : adresse dans <b>' + reseau + '.100 – .199</b>, passerelle <b>' + st.gw + '</b>, DNS = contrôleur(s) du plan. ' + (st.id === 'BRU' || st.id === 'PAR' ? 'Le serveur DHCP est dans ton site (' + st.id + '-DC01), avec son failover.' : 'Pas de serveur DHCP dans ton site : l\'adresse vient de BRU-DC01 ou PAR-DC01 par le relais d\'OPNsense, à travers le tunnel.') + ' (T09)</p>'),
+          S('Failover DHCP (T10)', P('<p><b>Comment.</b> Repère le serveur qui a donné l\'adresse (« Serveur DHCP » dans <code>ipconfig /all</code>). Sur ce serveur : <code>Stop-Service DHCPServer</code>. Sur ce poste :</p>', pre('ipconfig /release\nipconfig /renew\nipconfig /all'),
+            '<p>Puis relance le service : <code>Start-Service DHCPServer</code>.</p>',
+            '<p><b>Vérifier.</b> Le poste a une adresse de la plage et le « Serveur DHCP » indiqué est le partenaire (l\'autre contrôleur). Note le résultat dans la page <a href="recette.html">Recette</a>.</p>')),
+          S('Les services accessibles depuis ' + st.nom, '<p><b>Comment.</b> Depuis ce poste, ouvre ou teste chaque service du labo :</p><div class="tw"><table><thead><tr><th>Service</th><th>À ouvrir ou lancer</th><th>Test</th></tr></thead><tbody>' +
+            SV.map(function (x) { return '<tr><td>' + x[0] + '</td><td>' + x[1] + '</td><td class="mono">' + x[2] + '</td></tr>'; }).join('') + '</tbody></table></div>' +
+            '<p>Chaque service qui répond depuis ' + st.nom + ' prouve le tunnel, le DNS et la règle de pare-feu correspondants. Zabbix et Wazuh ne sont ouverts qu\'aux postes d\'administration : un refus depuis un simple poste est normal. Résultats dans la page <a href="recette.html">Recette</a>.</p>'), FIN]
       };
     }
   };
@@ -314,14 +357,15 @@
     var SEC = window.EURO_SEC || {}, out = { prep: [], inst: [], conf: [], verif: [], sup: [] };
     PH.forEach(function (p) { out[p[0]] = (plan && plan[p[0]] ? plan[p[0]].filter(Boolean) : []); });
     if (k === 'wazuh') { out.prep.unshift(fiche(v, st, k)); return out; }   // marche complète, sans les sections génériques
-    if (['iis', 'exch', 'fs', 'sql', 'sp', 'zabbix', 'redmine', 'wazuh', 'greenbone'].indexOf(k) >= 0) {
+    var propre = k === 'sp' || k === 'clt';     // marche écrite en entier : des sections, seules supervision et sécurité
+    if (['iis', 'exch', 'fs', 'sql', 'zabbix', 'redmine', 'wazuh', 'greenbone'].indexOf(k) >= 0) {
       PH.forEach(function (p) { out[p[0]] = out[p[0]].filter(function (s) { return /^(Créer la VM|IP fixe|Joindre le domaine|Installer Docker et le plugin|Enregistrement DNS|Ajouter ce nœud|Machine terminée)/.test(s[0]); }); });
     }
     var fin = null;
     PH.forEach(function (p) { var l = out[p[0]]; if (l.length && l[l.length - 1][0] === 'Machine terminée') { fin = l.pop(); } });
     out.prep.unshift(fiche(v, st, k));
     sectionsPour(v, k).forEach(function (s) {
-      var sec = SEC[s.t]; if (!sec) return;
+      var sec = SEC[s.t]; if (!sec || (propre && !s.subst)) return;
       PH.forEach(function (p) {
         (sec[p[0]] || []).forEach(function (x) {
           if (s.only && s.only.indexOf(x[0]) < 0) return;
