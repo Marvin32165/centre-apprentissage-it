@@ -1503,16 +1503,17 @@
     return true;
   }
   function lienAcces(u) { u = String(u || ''); return /^https?:\/\//.test(u) ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(u) + '</a>' : esc(u); }
+  var AC_AIDE = { c: 'Choisis ou écris une catégorie', t: 'BER-FW01 (Berlin), Wazuh : dashboard…', u: 'https://…, IP, chemin', l: 'root, EUROCORP\\…', p: '', i: 'Depuis où, particularités, à vérifier…' };
   function formAcces(k, x, le) {
-    return '<form class="ac-form" data-k="' + esc(k) + '" data-le="' + esc(le || '') + '">' + AC_CH.map(function (c) {
-      var v = x[c[0]] || '', f;
-      if (c[0] === 'c') f = '<input name="c" list="ac-cats" value="' + esc(v) + '" required>';
-      else if (c[0] === 'i') f = '<textarea name="i" rows="2">' + esc(v) + '</textarea>';
-      else f = '<input name="' + c[0] + '" value="' + esc(v) + '" autocomplete="off" spellcheck="false"' + (c[0] === 't' ? ' required' : '') + '>';
-      return '<label class="fld"><span>' + c[1] + '</span>' + f + '</label>';
+    return '<form class="ac-form" data-k="' + esc(k) + '" data-le="' + esc(le || '') + '"><div class="ac-titre">' + (k === 'nouveau' ? 'Nouvel accès' : 'Modifier « ' + esc(x.t || '') + ' »') + '</div>' + AC_CH.map(function (c) {
+      var v = x[c[0]] || '', n = c[0], ph = AC_AIDE[n] ? ' placeholder="' + esc(AC_AIDE[n]) + '"' : '', f;
+      if (n === 'c') f = '<input name="c" list="ac-cats" value="' + esc(v) + '"' + ph + ' required>';
+      else if (n === 'i') f = '<textarea name="i" rows="3"' + ph + '>' + esc(v) + '</textarea>';
+      else f = '<input name="' + n + '" value="' + esc(v) + '"' + ph + ' autocomplete="off" spellcheck="false"' + (n === 't' ? ' required' : '') + (/[ulp]/.test(n) ? ' class="m"' : '') + '>';
+      return '<label class="fld f-' + n + '"><span>' + c[1] + '</span>' + f + '</label>';
     }).join('') + '<datalist id="ac-cats">' + AC_CAT.map(function (c) { return '<option value="' + esc(c) + '">'; }).join('') + '</datalist>' +
-      '<div class="ac-boutons"><button type="submit" class="btn petit">Enregistrer</button> <button type="button" class="btn ghost petit" data-ac="annuler">Annuler</button>' +
-      (k !== 'nouveau' ? ' <button type="button" class="btn ghost petit ac-suppr" data-ac="suppr">Supprimer</button>' : '') + '</div></form>';
+      '<div class="ac-boutons"><button type="submit" class="btn petit">Enregistrer</button><button type="button" class="btn ghost petit" data-ac="annuler">Annuler</button>' +
+      (k !== 'nouveau' ? '<button type="button" class="btn ghost petit ac-suppr" data-ac="suppr">Supprimer</button>' : '') + '</div></form>';
   }
   function renderAcces(el) {
     if (!el) { $$('[data-acces]').forEach(function (e) { if (libre(e)) renderAcces(e); }); return; }
@@ -1522,22 +1523,30 @@
     }
     var L = accesListe(), q = (el._q || '').toLowerCase(), ed = el._ed || null, vus = el._vus || (el._vus = {}), cats = [];
     L.forEach(function (a) { var c = a.x.c || 'Divers'; if (cats.indexOf(c) < 0) cats.push(c); });
-    var h = '<div class="inv-bilan"><span class="bil">' + L.length + ' accès</span><input type="search" class="ac-q" placeholder="Chercher : machine, compte, adresse…" value="' + esc(el._q || '') + '" aria-label="Chercher un accès">' +
-      '<button type="button" class="btn petit" data-ac="ajout">Ajouter un accès</button></div>';
+    var h = '<div class="ac-barre"><input type="search" class="ac-q" placeholder="Chercher : machine, compte, adresse…" value="' + esc(el._q || '') + '" aria-label="Chercher un accès">' +
+      '<span class="ac-total">' + L.length + ' accès</span><button type="button" class="btn petit" data-ac="ajout">Ajouter un accès</button></div>';
     if (ed === 'nouveau') h += formAcces('nouveau', { c: AC_CAT[0] });
+    var vu = 0;
     cats.forEach(function (c) {
       var rows = L.filter(function (a) { return (a.x.c || 'Divers') === c && (!q || JSON.stringify(a.x).toLowerCase().indexOf(q) >= 0); });
       if (!rows.length) return;
-      h += '<h3>' + esc(c) + '</h3><div class="tw"><table class="acces"><thead><tr><th>Quoi</th><th>Adresse</th><th>Compte</th><th>Mot de passe</th><th>Infos</th><th></th></tr></thead><tbody>' +
+      vu += rows.length;
+      h += '<h3 class="ac-cat">' + esc(c) + '<span class="ac-n">' + rows.length + '</span></h3><div class="tw ac-tw"><table class="acces">' +
+        '<colgroup><col class="c-t"><col class="c-u"><col class="c-l"><col class="c-p"><col class="c-i"><col class="c-a"></colgroup>' +
+        '<thead><tr><th>Quoi</th><th>Adresse</th><th>Compte</th><th>Mot de passe</th><th>Infos</th><th><span class="sr">Actions</span></th></tr></thead><tbody>' +
         rows.map(function (a) {
-          if (ed === a.k) return '<tr><td colspan="6">' + formAcces(a.k, a.x, a.le) + '</td></tr>';
+          if (ed === a.k) return '<tr class="ac-ed"><td colspan="6">' + formAcces(a.k, a.x, a.le) + '</td></tr>';
           var p = a.x.p || '';
-          return '<tr data-k="' + esc(a.k) + '"><td><b>' + esc(a.x.t || '') + '</b>' + meta(a.par, a.le, a.att) + '</td><td class="mono">' + lienAcces(a.x.u) + '</td><td class="mono">' + esc(a.x.l || '') + '</td>' +
-            '<td class="mono ac-pw">' + (p ? '<span class="ac-p">' + (vus[a.k] ? esc(p) : '••••••••') + '</span> <button type="button" class="btn ghost petit" data-ac="voir">' + (vus[a.k] ? 'Masquer' : 'Voir') + '</button> <button type="button" class="btn ghost petit" data-ac="copier">Copier</button>' : '') + '</td>' +
-            '<td>' + esc(a.x.i || '') + '</td><td class="ac-act"><button type="button" class="btn ghost petit" data-ac="modif">Modifier</button></td></tr>';
+          return '<tr data-k="' + esc(a.k) + '"><td class="ac-quoi"><b>' + esc(a.x.t || '') + '</b>' + meta(a.par, a.le, a.att) + '</td>' +
+            '<td class="mono" data-l="Adresse">' + (a.x.u ? lienAcces(a.x.u) : '<span class="ac-vide">—</span>') + '</td>' +
+            '<td class="mono" data-l="Compte">' + (a.x.l ? esc(a.x.l) : '<span class="ac-vide">—</span>') + '</td>' +
+            '<td class="ac-pw" data-l="Mot de passe">' + (p ? '<span class="ac-p mono' + (vus[a.k] ? ' vu' : '') + '">' + (vus[a.k] ? esc(p) : '••••••••') + '</span><span class="ac-bt">' +
+              '<button type="button" class="ac-b" data-ac="voir" aria-pressed="' + !!vus[a.k] + '">' + (vus[a.k] ? 'Masquer' : 'Voir') + '</button><button type="button" class="ac-b" data-ac="copier">Copier</button></span>' : '<span class="ac-vide">—</span>') + '</td>' +
+            '<td class="ac-info" data-l="Infos">' + esc(a.x.i || '') + '</td><td class="ac-act"><button type="button" class="ac-b" data-ac="modif">Modifier</button></td></tr>';
         }).join('') + '</tbody></table></div>';
     });
-    if (!L.length && ed !== 'nouveau') h += '<p>Aucun accès pour l\'instant : « Ajouter un accès ».</p>';
+    if (!L.length && ed !== 'nouveau') h += '<p class="ac-rien">Aucun accès pour l\'instant : « Ajouter un accès ».</p>';
+    else if (q && !vu) h += '<p class="ac-rien">Aucun accès ne correspond à « ' + esc(el._q) + ' ».</p>';
     el.innerHTML = h;
     if (el._lie) return;
     el._lie = true;
