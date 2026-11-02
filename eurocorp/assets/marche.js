@@ -41,9 +41,10 @@
   }
   function ipLinux(v, st) {
     return S('IP fixe sous Ubuntu', P(
-      '<p><b>Comment.</b> Éditer le fichier de <code>/etc/netplan/</code> :</p>', pre('network:\n  version: 2\n  ethernets:\n    eth0:            # nom réel : ip a\n      addresses: [' + v.ip + '/24]\n      routes:\n        - to: default\n          via: ' + st.gw + '\n      nameservers:\n        addresses: [' + ip('BRU-DC01') + ']\n        search: [' + DOM + ']'),
-      '<p>puis <code>sudo netplan apply</code> et <code>sudo hostnamectl set-hostname ' + v.nom.toLowerCase() + '</code>.</p>',
-      '<p><b>Vérifier.</b> <code>ip a</code>, <code>ping ' + st.gw + '</code>, <code>ping ' + ip('BRU-DC01') + '</code>.</p>', scr('20', '20-set-linux-network.sh ' + v.nom)));
+      '<p><b>Comment.</b> Éditer le fichier de <code>/etc/netplan/</code> :</p>', pre('network:\n  version: 2\n  ethernets:\n    eth0:            # nom réel : ip a\n      addresses: [' + v.ip + '/24]\n      routes:\n        - to: default\n          via: ' + st.gw + '\n      nameservers:\n        addresses: [' + ip('BRU-DC01') + ', ' + ip('PAR-DC01') + ']\n        search: [' + DOM + ']'),
+      '<p>puis <code>sudo netplan apply</code>, <code>sudo hostnamectl set-hostname ' + v.nom.toLowerCase() + '</code> et <code>sudo timedatectl set-timezone Europe/Paris</code>.</p>',
+      '<p><b>Pourquoi.</b> Deux contrôleurs en DNS : si Bruxelles tombe, Paris répond encore. Le fuseau aligne l\'heure des journaux sur celle des serveurs Windows.</p>',
+      '<p><b>Vérifier.</b> <code>ip a</code>, <code>ping ' + st.gw + '</code>, <code>ping ' + ip('BRU-DC01') + '</code>, <code>timedatectl</code> (fuseau Europe/Paris, horloge synchronisée).</p>', scr('20', '20-set-linux-network.sh ' + v.nom)));
   }
   function docker() {
     return S('Installer Docker et le plugin Compose', P(
@@ -56,6 +57,12 @@
       '<p><b>Comment.</b> Sur un DC : DNS Manager → zone <code>' + DOM + '</code> → New Host (A) : <code>' + v.nom.toLowerCase() + '</code> → <code>' + v.ip + '</code>. Ou l\'outil « DNS » de la page Outils.</p>',
       '<p><b>Pourquoi.</b> Les autres machines et les agents joignent les serveurs par leur nom.</p>',
       '<p><b>Vérifier.</b> <code>nslookup ' + v.nom.toLowerCase() + '.' + DOM + '</code> depuis un autre site.</p>', src('<code>windows-serveur</code> §9')));
+  }
+  /* une étape d'une section des pages 1 à 6 (sections.js), reprise telle quelle */
+  function secDocker(nom) {
+    var sec = (window.EURO_SEC || {})['Docker et Compose : les bases du labo'] || {}, r = null;
+    ['prep', 'inst', 'conf', 'verif'].forEach(function (p) { (sec[p] || []).forEach(function (x) { if (x[0] === nom) r = S('Détail · ' + nom, x[1]); }); });
+    return r;
   }
   var FIN = S('Machine terminée', '<p>Reporter les tests dans <code>09-Tests</code> (attendu / obtenu / date), noter ce qui a été fait dans <code>Infos.md</code> et dans <code>04-Windows</code>. Cocher seulement si les vérifications ci-dessus passent.</p>');
 
@@ -203,15 +210,55 @@
         verif: [S('Connexion, ticket, sauvegarde', '<p><b>Comment.</b> Connexion avec un compte du domaine, création d\'un ticket (T16), exécution de <code>backup-redmine.sh</code> : trois fichiers non vides (T17), restauration sur une copie (T18).</p>'), FIN]
       };
     },
+    /* Wazuh : marche complète et propre (Docker single-node, cahier des charges). La section générique
+       « Docker et Compose » (pensée pour Zabbix/Redmine : .env, outil Compose…) n'y est pas reprise. */
     wazuh: function (v, st) {
+      var dos = '/opt/wazuh/wazuh-docker/single-node', fq = 'wazuh.' + DOM, tag = 'v4.14.9', img = 'wazuh/wazuh-indexer:' + tag.slice(1);
+      var AV = ' <span class="badge b-ref">À valider</span>', DOC = src('documentation Wazuh, « Wazuh Docker deployment » (non rejoué en cours)' + AV);
       return {
         prep: [creerLinux(v, st), ipLinux(v, st), dnsA(v),
-          S('Choisir : tout-en-un ou Docker', '<p><b>Comment.</b> Ton cours installe Wazuh en <b>tout-en-un</b> (indexer + manager + dashboard sur la VM). Le cahier des charges parle de Docker : la procédure « single-node » de la documentation Wazuh. Choisis avant d\'installer ; l\'ancien guide est dans <code>05-Docker/wazuh/README.md</code>.</p>' + src('<code>system-center/XDR - SIEM</code> §3')), docker()],
-        inst: [S('Installer Wazuh', P('<p><b>Comment (méthode de ton cours).</b></p>', pre('mkdir wazuh && cd wazuh\ncurl -sO https://packages.wazuh.com/4.14/wazuh-install.sh\nsudo bash ./wazuh-install.sh -a'), '<p>L\'assistant affiche l\'adresse du dashboard, l\'utilisateur <code>admin</code> et un mot de passe <b>généré, affiché une seule fois</b> : le noter dans <code>Infos.md</code>.</p>', '<p><b>Vérifier.</b> « Installation finished » ; <code>https://' + v.nom.toLowerCase() + '.' + DOM + '</code> s\'ouvre (certificat auto-signé).</p>', src('<code>system-center/XDR - SIEM</code> §3')))],
-        conf: [S('Déployer l\'agent sur un Windows', P('<p><b>Comment.</b> Dashboard → Agents → Deploy new agent : package Windows MSI, adresse du serveur = FQDN du Wazuh, nom d\'agent vide (nom de la machine, unique, non modifiable). Lancer la commande affichée dans un PowerShell en administrateur, puis <code>NET START Wazuh</code>.</p>', '<p><b>Vérifier.</b> L\'agent est « active » dans Endpoints.</p>', src('<code>system-center/XDR - SIEM</code> §5'))),
-          S('Installer Sysmon', P('<p><b>Comment.</b> Créer <code>C:\\Tools</code>, y mettre Sysmon et <code>08-Supervision-Securite/sysmonconfig.xml</code>, puis :</p>', pre('cd C:\\Tools\n.\\Sysmon64.exe -accepteula -i .\\sysmonconfig.xml'), '<p><b>Vérifier.</b> Les événements sont dans Event Viewer → Applications and Services Logs → Microsoft → Windows → Sysmon → Operational.</p>', src('<code>system-center/XDR - SIEM</code> §6.1'))),
-          S('Envoyer le journal Sysmon à Wazuh', P('<p><b>Comment.</b> Dans <code>C:\\Program Files (x86)\\ossec-agent\\ossec.conf</code>, ajouter :</p>', pre('<localfile>\n  <location>Microsoft-Windows-Sysmon/Operational</location>\n  <log_format>eventchannel</log_format>\n</localfile>'), '<p>puis <code>Restart-Service Wazuh</code>.</p>', src('<code>system-center/XDR - SIEM</code> §6.2')))],
-        verif: [S('Événement retrouvé dans Wazuh', '<p><b>Comment.</b> Provoquer un événement (ouvrir un processus, créer un fichier) sur la machine surveillée, le retrouver dans le dashboard (T19).</p>'), FIN]
+          S('Nom de service ' + fq, P('<p><b>Comment.</b> Sur un DC :</p>', pre('Add-DnsServerResourceRecordA -ZoneName ' + DOM + ' -Name wazuh -IPv4Address ' + v.ip + ' -CreatePtr'),
+            '<p><b>Pourquoi.</b> Les agents et le navigateur visent <code>' + fq + '</code> : si le service change de machine, seul cet enregistrement bouge.</p>',
+            '<p><b>Vérifier.</b> <code>nslookup ' + fq + '</code> renvoie <code>' + v.ip + '</code>, depuis un autre site aussi.</p>')),
+          docker(), secDocker('Docker est installé sur la VM'),
+          S('Réglage du noyau pour l\'indexer', P('<p><b>Comment.</b></p>', pre('sudo sysctl -w vm.max_map_count=262144\necho "vm.max_map_count=262144" | sudo tee /etc/sysctl.d/99-wazuh.conf'),
+            '<p><b>Pourquoi.</b> L\'indexer (OpenSearch) refuse de démarrer si cette limite du noyau est trop basse. Le fichier de <code>sysctl.d</code> la garde après un redémarrage.</p>',
+            '<p><b>Vérifier.</b> <code>sysctl vm.max_map_count</code> renvoie <code>262144</code>, aussi après <code>sudo reboot</code>.</p>'))],
+        inst: [S('Récupérer le déploiement officiel (single-node)', P('<p><b>Comment.</b></p>', pre('sudo mkdir -p /opt/wazuh && cd /opt/wazuh\ngit ls-remote --tags https://github.com/wazuh/wazuh-docker.git | grep ' + tag + '   # le tag existe ?\nsudo git clone https://github.com/wazuh/wazuh-docker.git -b ' + tag + ' --depth=1\ncd wazuh-docker/single-node'),
+            '<p><b>Pourquoi.</b> Le cahier des charges impose Docker : on prend le compose maintenu par l\'éditeur. <b>Le dossier du projet est <code>' + dos + '</code></b> : toutes les commandes <code>docker compose</code> se lancent de là (Compose nomme conteneurs et volumes d\'après lui, ne pas le renommer).</p>',
+            '<p><b>Vérifier.</b> <code>ls</code> montre <code>docker-compose.yml</code>, <code>generate-indexer-certs.yml</code> et <code>config/</code>. Pas de <code>.env</code> ici : les réglages sont dans ces fichiers.</p>',
+            '<p><b>Piège.</b> La version du dépôt fixe celle du manager ; les agents devront être de la même version ou plus anciens.</p>',
+            '<p><b>Si tu suis ton cours (sans Docker).</b> <code>curl -sO https://packages.wazuh.com/4.14/wazuh-install.sh</code> puis <code>sudo bash ./wazuh-install.sh -a</code> installe tout sur la VM et affiche une seule fois le mot de passe <code>admin</code>. Hors cahier des charges : dans ce cas, les étapes Docker ci-dessous ne s\'appliquent pas.</p>',
+            src('<code>system-center/XDR - SIEM</code> §3 (variante du cours)'), DOC)),
+          S('Générer les certificats internes', P('<p><b>Comment.</b> Dans <code>' + dos + '</code> :</p>', pre('sudo docker compose -f generate-indexer-certs.yml run --rm generator'),
+            '<p><b>Pourquoi.</b> Indexer, manager et dashboard se parlent en TLS : ces certificats les authentifient entre eux.</p>',
+            '<p><b>Vérifier.</b> <code>ls config/wazuh_indexer_ssl_certs/</code> liste <code>root-ca.pem</code>, <code>admin.pem</code> et un certificat par composant.</p>', DOC)),
+          S('Changer les mots de passe par défaut (avant le premier démarrage)', P(
+            '<p><b>Comment.</b> Trois comptes ont un mot de passe connu de tous : <code>admin</code> (indexer et connexion au dashboard), <code>kibanaserver</code> (dashboard → indexer), <code>wazuh-wui</code> (dashboard → API du manager).</p>',
+            '<ol><li>Pour <code>admin</code> et <code>kibanaserver</code>, générer un hash par mot de passe :' + pre('sudo docker run --rm -ti ' + img + ' bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/hash.sh') + '</li>',
+            '<li>Dans <code>config/wazuh_indexer/internal_users.yml</code>, remplacer le <code>hash</code> de <code>admin</code> et de <code>kibanaserver</code>.</li>',
+            '<li>Dans <code>docker-compose.yml</code>, partout où elles apparaissent (services manager et dashboard) : <code>INDEXER_PASSWORD</code> = mot de passe de <code>admin</code>, <code>DASHBOARD_PASSWORD</code> = celui de <code>kibanaserver</code>, <code>API_PASSWORD</code> = celui de <code>wazuh-wui</code>. Un <code>$</code> s\'écrit <code>$$</code>.</li>',
+            '<li>Les comptes de démonstration <code>kibanaro</code>, <code>logstash</code>, <code>readall</code>, <code>snapshotrestore</code> ont eux aussi un mot de passe public (<code>readall</code> lit toutes les alertes) : leur mettre un hash d\'un mot de passe aléatoire qu\'on ne garde pas.</li>',
+            '<li>Ne pas publier l\'indexer ni l\'API : dans <code>docker-compose.yml</code>, mettre en commentaire les ports <code>9200:9200</code> et <code>55000:55000</code>. Les trois conteneurs se parlent par le réseau interne ; seuls 443 (F22), 1514 et 1515 (F21) restent ouverts.</li>',
+            '<li><code>sudo chmod 600 docker-compose.yml</code>, puis noter les trois mots de passe dans <code>Infos.md</code> (jamais dans le livrable). <code>sudo git diff</code> montre tout ce qui a changé par rapport au dépôt officiel.</li></ol>',
+            '<p><b>Pourquoi.</b> Fait avant le premier démarrage, l\'indexer charge directement les nouveaux comptes : rien d\'autre à faire.</p>',
+            '<p><b>Piège.</b> <code>API_PASSWORD</code> : 8 caractères au moins, avec majuscule, minuscule, chiffre et symbole, sinon l\'API refuse de démarrer. Changement <b>après</b> un premier démarrage : voir l\'étape suivante.</p>', DOC)),
+          S('Démarrer la pile', P('<p><b>Comment.</b> Dans <code>' + dos + '</code> :</p>', pre('sudo docker compose up -d\nsudo docker compose ps'),
+            '<p><b>Vérifier.</b> Trois conteneurs <code>Up</code> : <code>single-node-wazuh.indexer-1</code>, <code>…manager-1</code>, <code>…dashboard-1</code>. L\'indexer met une à deux minutes à répondre.</p>',
+            '<p><b>Mots de passe changés après un premier démarrage.</b> L\'indexer garde les anciens : <code>sudo docker compose down</code>, <code>up -d</code>, puis appliquer la configuration de sécurité :</p>',
+            pre('sudo docker exec -it single-node-wazuh.indexer-1 bash\nexport INSTALLATION_DIR=/usr/share/wazuh-indexer JAVA_HOME=/usr/share/wazuh-indexer/jdk\nC=$INSTALLATION_DIR/certs\nbash $INSTALLATION_DIR/plugins/opensearch-security/tools/securityadmin.sh -cd $INSTALLATION_DIR/opensearch-security/ -nhnv -cacert $C/root-ca.pem -cert $C/admin.pem -key $C/admin-key.pem -p 9200 -icl'), DOC))],
+        conf: [S('Première connexion au dashboard', P('<p><b>Comment.</b> <code>https://' + fq + '</code> (certificat auto-signé : avertissement normal), compte <code>admin</code> avec le <b>nouveau</b> mot de passe.</p>',
+            '<p><b>Vérifier.</b> La connexion passe ; l\'ancien mot de passe par défaut est refusé. Sans agent, le tableau de bord ne montre que le manager lui-même.</p>')),
+          S('Premier agent, puis Sysmon', P('<p><b>Comment.</b> Dashboard → Endpoints → <i>Deploy new agent</i> : système, adresse du manager <code>' + fq + '</code>, nom d\'agent vide (nom de la machine). Lancer la commande affichée en administrateur sur la machine cible. Sur un Windows : Sysmon et le bloc <code>&lt;localfile&gt;</code> de son journal, page <a href="exploitation.html">Exploitation</a>, « Détection avec Wazuh et Sysmon ».</p>',
+            '<p><b>Vérifier.</b> L\'agent est <b>active</b> dans Endpoints.</p>',
+            '<p><b>Piège.</b> Un agent plus récent que le manager est refusé : prendre la version de l\'étape « Récupérer le déploiement officiel » ou plus ancienne.</p>', src('<code>system-center/XDR - SIEM</code> §5 et §6')))],
+        verif: [S('Les trois conteneurs tournent', P('<p><b>Comment.</b></p>', pre('cd ' + dos + '\nsudo docker compose ps\nsudo docker compose logs --tail 50 wazuh.indexer'),
+            '<p><b>Vérifier.</b> Trois conteneurs <code>Up</code>, aucune erreur répétée dans les journaux. Ils redémarrent seuls après un <code>sudo reboot</code> de la VM.</p>')),
+          S('Le dashboard répond', P('<p><b>Comment.</b></p>', pre('curl -kI https://' + v.ip), '<p><b>Vérifier.</b> HTTP 200 ou 302 vers la page de connexion.</p>')),
+          S('Les agents des autres sites passent (F21, F22)', P('<p><b>Comment.</b> Sur BER-FW01, règles IPsec : TCP 1514 (événements) et 1515 (enrôlement) depuis tous les LAN vers <code>' + v.ip + '</code> (F21), TCP 443 depuis les postes d\'administration (F22). Puis, depuis un Windows d\'un autre site :</p>',
+            pre('Test-NetConnection ' + fq + ' -Port 1514\nTest-NetConnection ' + fq + ' -Port 1515'), '<p><b>Vérifier.</b> <code>TcpTestSucceeded : True</code> sur les deux ports.</p>')),
+          S('Un événement remonte (T19)', '<p><b>Comment.</b> Sur une machine qui a l\'agent, provoquer un événement (lancer un processus, créer un fichier surveillé, échec de connexion) et le retrouver dans le dashboard (Threat Hunting).</p><p><b>Vérifier.</b> L\'événement apparaît avec le nom de la machine et l\'heure exacte. Reporter le test dans <code>09-Tests</code>.</p>'),
+          S('Machine terminée', '<p>Reporter les tests dans <code>09-Tests</code> (attendu / obtenu / date), noter ce qui a été fait dans <code>Infos.md</code> et dans <code>05-Docker</code> et <code>08-Supervision-Securite</code> (comptes sans mot de passe). Cocher seulement si les vérifications ci-dessus passent.</p>')]
       };
     },
     greenbone: function (v, st) {
@@ -259,13 +306,14 @@
   function fiche(v, st, k) {
     var dns = v.nom === 'BRU-DC01' ? 'lui-même (127.0.0.1)' : (/^PAR-DC01$/.test(v.nom) ? ip('BRU-DC01') + ' puis lui-même' : ip('BRU-DC01') + ' puis ' + ip('PAR-DC01'));
     var l = [['Rôle', esc(v.role)], ['Système', esc(v.os)], ['Adresse IP', '<code>' + esc(v.ip) + '</code> /24'], ['Passerelle', '<code>' + esc(st.gw) + '</code> (OPNsense de ' + esc(st.nom) + ')'],
-      ['DNS', /Ubuntu|OPNsense/.test(v.os) ? (/OPNsense/.test(v.os) ? 'les deux contrôleurs' : esc(ip('BRU-DC01'))) : dns], ['Dimensions', T(v, 'vcpu') + ' vCPU · ' + T(v, 'ram') + ' Go de RAM fixes · disque ' + T(v, 'disque') + ' Go'],
+      ['DNS', /Ubuntu|OPNsense/.test(v.os) ? (/OPNsense/.test(v.os) ? 'les deux contrôleurs' : esc(ip('BRU-DC01')) + ' puis ' + esc(ip('PAR-DC01'))) : dns], ['Dimensions', T(v, 'vcpu') + ' vCPU · ' + T(v, 'ram') + ' Go de RAM fixes · disque ' + T(v, 'disque') + ' Go'],
       ['Commutateur', /OPNsense/.test(v.os) ? '<code>WAN</code> (carte 1) puis <code>LAN-' + st.id + '</code> (carte 2)' : '<code>LAN-' + st.id + '</code>'], ['À avoir avant', DEP[k] || '—']];
     return S('Fiche de ' + v.nom, '<table><tbody>' + l.map(function (x) { return '<tr><th scope="row">' + x[0] + '</th><td>' + x[1] + '</td></tr>'; }).join('') + '</tbody></table><p><b>Flux qui concernent cette machine</b> (matrice de ' + D.flux.length + ' flux) :</p>' + fluxMachine(v) + '<p>Les étapes ci-dessous sont dans l\'ordre ; « Détail » reprend le pas à pas des pages 1 à 6 pour cette machine.</p>');
   }
   function enrichir(plan, v, st, k) {
     var SEC = window.EURO_SEC || {}, out = { prep: [], inst: [], conf: [], verif: [], sup: [] };
-    PH.forEach(function (p) { out[p[0]] = (plan && plan[p[0]] ? plan[p[0]].slice() : []); });
+    PH.forEach(function (p) { out[p[0]] = (plan && plan[p[0]] ? plan[p[0]].filter(Boolean) : []); });
+    if (k === 'wazuh') { out.prep.unshift(fiche(v, st, k)); return out; }   // marche complète, sans les sections génériques
     if (['iis', 'exch', 'fs', 'sql', 'sp', 'zabbix', 'redmine', 'wazuh', 'greenbone'].indexOf(k) >= 0) {
       PH.forEach(function (p) { out[p[0]] = out[p[0]].filter(function (s) { return /^(Créer la VM|IP fixe|Joindre le domaine|Installer Docker et le plugin|Enregistrement DNS|Ajouter ce nœud|Machine terminée)/.test(s[0]); }); });
     }
