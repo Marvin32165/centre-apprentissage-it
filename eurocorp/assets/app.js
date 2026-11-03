@@ -81,7 +81,7 @@
   window.EURO_MACH = (function () {
   var T_VM = 'Créer les VM Windows depuis le parent';
   var SQL_ONLY = ['Le gMSA du moteur SQL', 'Sur PAR-SQL01 : prendre en compte le groupe', 'Disques de SQL', 'Dimensionnement', 'Installer SQL Server (instance nommée)', 'Écran critique : le classement (collation)', 'Comptes de service du moteur', 'Protocole et port', 'Pare-feu', 'Mémoire et parallélisme', 'Les services SQL tournent sous le gMSA', 'Classement correct'];
-  var SP_ONLY = ['Comptes de service', 'Dimensionnement', 'Installer SharePoint sur PAR-SP01', 'Assistant de configuration de la ferme', 'Comptes gérés et applications de service', 'DNS et premier site', 'SQL accessible depuis SharePoint', 'SharePoint répond'];
+  var SP_ONLY = ['Comptes de service', 'Dimensionnement', 'Installer SharePoint sur PAR-SP01', 'Assistant de configuration de la ferme', 'Compte géré du pool', 'Enregistrement DNS du site', "Application web de l'intranet", 'Collection de sites intranet', 'Bibliothèque documentaire', 'Droits par groupes AD', 'SQL accessible depuis SharePoint', 'La ferme et le site existent', 'SharePoint répond', 'Les droits suivent les groupes AD', 'Comptes de service documentés'];
   var AC_ONLY = ["Installer l'autorité de certification d'abord"];
   var SUP_WIN = ['Superviser avec Zabbix (agents Windows)', 'Détection avec Wazuh et Sysmon'];
   /* section commune Docker : rédigée avec l'exemple Zabbix (BRU-DOCKER01), elle suit la machine choisie */

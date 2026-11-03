@@ -177,21 +177,26 @@
       var SQ = 'SQL Server et SharePoint (PAR-SQL01 / PAR-SP01)', sql = ip('PAR-SQL01');
       return {
         prep: [creerVM(v, st), ipFixe(v, st, ip('PAR-DC01') + ' puis ' + ip('BRU-DC01')), joindre(v),
-          secEtape(SQ, 'Comptes de service', '<p>Fait le 02/11 : les quatre comptes sont dans l\'OU <code>EuroCorp\\User</code>, mots de passe dans la page <a href="acces.html">Accès</a>.</p>'),
+          secEtape(SQ, 'Comptes de service', '<p>Fait le 02/11 : <code>sp_farm</code>, <code>sp_setup</code>, <code>sp_services</code> (et <code>sp_search</code>, inutile pour l\'énoncé) sont dans l\'OU <code>EuroCorp\\User</code>, mots de passe dans la page <a href="acces.html">Accès</a>.</p>'),
           secEtape(SQ, 'Dimensionnement'),
           S('Prérequis côté SQL (PAR-SQL01)', P('<p><b>Comment.</b> Sur PAR-SQL01 : classement <code>Latin1_General_CI_AS_KS_WS</code>, <b>MAXDOP = 1</b>, connexions <code>' + NB + '\\sp_farm</code> et <code>' + NB + '\\sp_setup</code> avec les rôles <code>dbcreator</code> et <code>securityadmin</code>, TCP 1433 à l\'écoute. Contrôle sur PAR-SQL01 :</p>',
             pre("sqlcmd -S .\\SHAREPOINT -E -Q \"SELECT SERVERPROPERTY('Collation'); SELECT value_in_use FROM sys.configurations WHERE name = 'max degree of parallelism'\""),
             '<p>puis depuis PAR-SP01 :</p>', pre('Test-NetConnection ' + sql + ' -Port 1433'),
             '<p><b>Pourquoi.</b> L\'assistant de la ferme crée ses bases sur PAR-SQL01 avec ces comptes : un seul point manquant (MAXDOP différent de 1, rôle absent, port fermé) et la création échoue.</p>',
             '<p><b>Vérifier.</b> <code>Latin1_General_CI_AS_KS_WS</code>, <code>1</code>, puis <code>TcpTestSucceeded : True</code>.</p>'))],
-        inst: [plus(secEtape(SQ, 'Installer SharePoint sur PAR-SP01'), '<p>' + AV + ' Avant de lancer les prérequis, vérifie que ta version de SharePoint Server SE prend en charge Windows Server 2025. Les prérequis téléchargent des composants : PAR-SP01 doit sortir sur Internet.</p>')],
-        conf: [plus(secEtape(SQ, 'Assistant de configuration de la ferme'), '<p>Comptes sous la forme <code>' + NB + '\\sp_farm</code>. La phrase secrète va dans la page <a href="acces.html">Accès</a> : sans elle, impossible d\'ajouter un serveur à la ferme.</p>'),
-          secEtape(SQ, 'Comptes gérés et applications de service'),
-          secEtape(SQ, 'DNS et premier site')],
-        verif: [secEtape(SQ, 'SharePoint répond'),
+        inst: [plus(secEtape(SQ, 'Installer SharePoint sur PAR-SP01'), '<p>' + AV + ' Utilise l\'ISO de <b>SharePoint Server Subscription Edition</b> (énoncé §7) : la 2019, installée par erreur le 02/11, a été désinstallée le 03/11. Avant de lancer les prérequis, vérifie que ta version de la SE prend en charge Windows Server 2025. Les prérequis téléchargent des composants : PAR-SP01 doit sortir sur Internet.</p>')],
+        conf: [plus(secEtape(SQ, 'Assistant de configuration de la ferme'), '<p>Comptes sous la forme <code>' + NB + '\\sp_farm</code>. La phrase secrète va dans la page <a href="acces.html">Accès</a> : sans elle, impossible d\'ajouter un serveur à la ferme.</p><p>À refaire avec la SE : la ferme créée le 03/11 sur la 2019 a été supprimée (bases <code>SP_Config</code>, <code>SharePoint_AdminContent_…</code>, <code>WSS_UsageApplication</code>, <code>SP_Content_Intranet</code> supprimées sur <code>PAR-SQL01\\SHAREPOINT</code>).</p>'),
+          plus(secEtape(SQ, 'Compte géré du pool'), '<p>À refaire avec la SE (le compte géré disparaît avec la ferme). Le compte AD <code>sp_services</code> existe toujours ; <code>sp_search</code> n\'a pas d\'usage pour l\'énoncé. Pas d\'applications de service : Search, Managed Metadata et User Profile sont hors énoncé.</p>'),
+          plus(secEtape(SQ, 'Enregistrement DNS du site'), '<p>Fait (relevé le 03/11) : <code>sharepoint.' + DOM + '</code> → <code>' + ip('PAR-SP01') + '</code>.</p>'),
+          plus(secEtape(SQ, 'Application web de l\'intranet'), '<p>À refaire avec la SE : application web <code>SharePoint - 80</code>, <code>http://sharepoint.' + DOM + '/</code>, pool sous <code>' + NB + '\\sp_services</code>, base <code>SP_Content_Intranet</code>.</p>'),
+          plus(secEtape(SQ, 'Collection de sites intranet'), '<p>À refaire avec la SE : <i>Intranet EuroCorp</i> à la racine, administrateur <code>sp_setup</code>. Sur la 2019, créée par <code>New-SPSite</code>, les groupes avaient dû être ajoutés par <code>permsetup.aspx</code>.</p>'),
+          plus(secEtape(SQ, 'Bibliothèque documentaire'), '<p>À refaire avec la SE : <code>Procédures IT</code>, versioning activé.</p>'),
+          plus(secEtape(SQ, 'Droits par groupes AD'), '<p>À refaire avec la SE : Visitors (Read) ← <code>Domain Users</code> ; Members (Edit) ← un groupe métier (ex. <code>GG_IT</code>) ; Owners (Full Control) ← <code>sp_setup</code> et <code>Domain Admins</code>. Sur la 2019, <code>sp_setup</code> avait été mis nommément dans Members : à éviter, l\'énoncé demande des groupes AD seulement.</p>')],
+        verif: [secEtape(SQ, 'La ferme et le site existent'), secEtape(SQ, 'SharePoint répond'), secEtape(SQ, 'Les droits suivent les groupes AD'),
           S('Le site répond depuis les autres sites (F13)', P('<p><b>Comment.</b> Depuis un poste ou un serveur d\'un autre site :</p>', pre('Test-NetConnection sharepoint.' + DOM + ' -Port 80'),
             '<p>puis ouvrir <code>http://sharepoint.' + DOM + '</code> avec un compte du domaine. La règle F13 (IPsec, tous les LAN → PAR-SP01, TCP 80 et 443) est sur PAR-FW01 ; le trafic de Londres et de Berlin traverse le hub de Bruxelles, dont le pare-feu doit aussi le laisser passer.</p>',
-            '<p><b>Vérifier.</b> <code>TcpTestSucceeded : True</code> et le site s\'ouvre depuis chaque site (T14, page <a href="recette.html">Recette</a>).</p>')), FIN]
+            '<p><b>Vérifier.</b> <code>TcpTestSucceeded : True</code> et le site s\'ouvre depuis chaque site (T14, page <a href="recette.html">Recette</a>).</p>')),
+          secEtape(SQ, 'Comptes de service documentés'), FIN]
       };
     },
     fs: function (v, st) {

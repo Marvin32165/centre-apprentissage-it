@@ -250,7 +250,7 @@ window.EURO = {
    "disque": 100,
    "mem": "statique",
    "replica": "",
-   "statut": "afaire"
+   "statut": "encours"
   },
   {
    "nom": "PAR-SP01",
@@ -263,7 +263,7 @@ window.EURO = {
    "disque": 100,
    "mem": "statique",
    "replica": "",
-   "statut": "afaire"
+   "statut": "encours"
   },
   {
    "nom": "PAR-CLT01",
@@ -865,8 +865,8 @@ window.EURO = {
   {
    "cle": "sharepoint",
    "nom": "SharePoint + SQL Server (Paris)",
-   "statut": "afaire",
-   "note": ""
+   "statut": "encours",
+   "note": "Remise à zéro le 03/11 : la version installée le 02/11 était SharePoint Server 2019 (build 16.0.10337), l'énoncé (§7) impose la Subscription Edition. PAR-SP01 détaché de la ferme, SharePoint 2019 désinstallé, bases SharePoint supprimées sur PAR-SQL01\\SHAREPOINT (SQL, comptes sp_* et enregistrement DNS sharepoint conservés). Reste : ISO SharePoint SE à récupérer, installation, ferme, application web, collection de sites, bibliothèque, droits par groupes AD (un groupe métier dans Members, pas sp_setup), test T14 et tableau des comptes de service dans 04-Windows."
   },
   {
    "cle": "redmine",
@@ -2114,8 +2114,8 @@ window.EURO = {
   {
    "id": "T14",
    "test": "SharePoint",
-   "action": "ouvrir le site de la ferme",
-   "attendu": "page affichée",
+   "action": "ouvrir http://sharepoint.eurocorp.lan avec un compte du domaine (depuis un autre site), déposer un fichier dans la bibliothèque avec un membre du groupe AD autorisé, puis avec un simple utilisateur du domaine",
+   "attendu": "site affiché ; le membre du groupe AD dépose, le simple utilisateur lit seulement",
    "ref": "§7"
   },
   {
