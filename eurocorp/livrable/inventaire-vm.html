@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inventaire des VM et placement — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<!-- Fichier généré par sites/eurocorp/outils/generer.py depuis data/eurocorp.json — ne pas éditer à la main -->
+<h1 id="inventaire-des-vm-et-placement-sur-les-hotes">Inventaire des VM et placement sur les hôtes</h1>
+<p>Chaque site = un hôte Hyper-V (64 Go RAM, ~1 To SSD). VHDX <strong>dynamiques</strong>.</p>
+<h2 id="bruxelles-hote-bru-36-go-ram-520-go-de-disque-maximum-alloues">Bruxelles — hôte BRU (36 Go RAM, 520 Go de disque maximum alloués)</h2>
+<table>
+<thead>
+<tr>
+<th>VM</th>
+<th>VM Hyper-V</th>
+<th>Rôle</th>
+<th>IP</th>
+<th>OS</th>
+<th>vCPU</th>
+<th>RAM (Go)</th>
+<th>Disque (Go)</th>
+<th>Mémoire</th>
+<th>Réplication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BRU-FW01</td>
+<td>=</td>
+<td>OPNsense — hub IPsec</td>
+<td>172.17.10.1</td>
+<td>OPNsense</td>
+<td>4</td>
+<td>8</td>
+<td>20</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BRU-DC01</td>
+<td>DC-BXL</td>
+<td>AD DS + DNS + DHCP (failover)</td>
+<td>172.17.10.10</td>
+<td>Windows Server 2025</td>
+<td>2</td>
+<td>4</td>
+<td>60</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BRU-IIS01</td>
+<td>=</td>
+<td>IIS — nœud NLB 1</td>
+<td>172.17.10.21</td>
+<td>Windows Server 2025</td>
+<td>2</td>
+<td>4</td>
+<td>60</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BRU-IIS02</td>
+<td>=</td>
+<td>IIS — nœud NLB 2</td>
+<td>172.17.10.22</td>
+<td>Windows Server 2025</td>
+<td>2</td>
+<td>4</td>
+<td>60</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BRU-EXCH01</td>
+<td>=</td>
+<td>Exchange Server SE</td>
+<td>172.17.10.11</td>
+<td>Windows Server 2025</td>
+<td>4</td>
+<td>8</td>
+<td>200</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BRU-DOCKER01</td>
+<td>=</td>
+<td>Docker — Zabbix (serveur + web + PostgreSQL)</td>
+<td>172.17.10.40</td>
+<td>Ubuntu Server 24.04</td>
+<td>2</td>
+<td>4</td>
+<td>60</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BRU-CLT01</td>
+<td>=</td>
+<td>Client de test (optionnel)</td>
+<td>DHCP</td>
+<td>Windows 11</td>
+<td>2</td>
+<td>4</td>
+<td>60</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h2 id="paris-hote-par-30-go-ram-340-go-de-disque-maximum-alloues">Paris — hôte PAR (30 Go RAM, 340 Go de disque maximum alloués)</h2>
+<table>
+<thead>
+<tr>
+<th>VM</th>
+<th>VM Hyper-V</th>
+<th>Rôle</th>
+<th>IP</th>
+<th>OS</th>
+<th>vCPU</th>
+<th>RAM (Go)</th>
+<th>Disque (Go)</th>
+<th>Mémoire</th>
+<th>Réplication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PAR-FW01</td>
+<td>2-PARIS-OPNSENSE</td>
+<td>OPNsense — spoke</td>
+<td>172.17.20.1</td>
+<td>OPNsense</td>
+<td>2</td>
+<td>2</td>
+<td>20</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>PAR-DC01</td>
+<td>=</td>
+<td>AD DS + DNS + DHCP (failover)</td>
+<td>172.17.20.10</td>
+<td>Windows Server 2025</td>
+<td>2</td>
+<td>4</td>
+<td>60</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>PAR-SQL01</td>
+<td>=</td>
+<td>SQL Server (base de SharePoint)</td>
+<td>172.17.20.20</td>
+<td>Windows Server 2025</td>
+<td>4</td>
+<td>8</td>
+<td>100</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>PAR-SP01</td>
+<td>=</td>
+<td>SharePoint Server SE</td>
+<td>172.17.20.21</td>
+<td>Windows Server 2025</td>
+<td>4</td>
+<td>12</td>
+<td>100</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>PAR-CLT01</td>
+<td>=</td>
+<td>Client de test (optionnel)</td>
+<td>DHCP</td>
+<td>Windows 11</td>
+<td>2</td>
+<td>4</td>
+<td>60</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h2 id="londres-hote-lon-16-go-ram-300-go-de-disque-maximum-alloues">Londres — hôte LON (16 Go RAM, 300 Go de disque maximum alloués)</h2>
+<table>
+<thead>
+<tr>
+<th>VM</th>
+<th>VM Hyper-V</th>
+<th>Rôle</th>
+<th>IP</th>
+<th>OS</th>
+<th>vCPU</th>
+<th>RAM (Go)</th>
+<th>Disque (Go)</th>
+<th>Mémoire</th>
+<th>Réplication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LON-FW01</td>
+<td>=</td>
+<td>OPNsense — spoke</td>
+<td>172.17.30.1</td>
+<td>OPNsense</td>
+<td>2</td>
+<td>4</td>
+<td>40</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>LON-FS01</td>
+<td>=</td>
+<td>File Server (Direction, RH, Finance, IT, Commun)</td>
+<td>172.17.30.10</td>
+<td>Windows Server 2025</td>
+<td>2</td>
+<td>4</td>
+<td>160</td>
+<td>statique</td>
+<td>→ PAR (Hyper-V Replica)</td>
+</tr>
+<tr>
+<td>LON-DOCKER01</td>
+<td>=</td>
+<td>Docker — Redmine (+ MariaDB, nginx)</td>
+<td>172.17.30.40</td>
+<td>Ubuntu Server 24.04</td>
+<td>2</td>
+<td>4</td>
+<td>40</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>LON-CLT01</td>
+<td>=</td>
+<td>Client de test (optionnel)</td>
+<td>DHCP</td>
+<td>Windows 11</td>
+<td>2</td>
+<td>4</td>
+<td>60</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h2 id="berlin-hote-ber-24-go-ram-260-go-de-disque-maximum-alloues">Berlin — hôte BER (24 Go RAM, 260 Go de disque maximum alloués)</h2>
+<table>
+<thead>
+<tr>
+<th>VM</th>
+<th>VM Hyper-V</th>
+<th>Rôle</th>
+<th>IP</th>
+<th>OS</th>
+<th>vCPU</th>
+<th>RAM (Go)</th>
+<th>Disque (Go)</th>
+<th>Mémoire</th>
+<th>Réplication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BER-FW01</td>
+<td>=</td>
+<td>OPNsense — spoke</td>
+<td>172.17.40.1</td>
+<td>OPNsense</td>
+<td>2</td>
+<td>4</td>
+<td>40</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BER-DOCKER01</td>
+<td>=</td>
+<td>Docker — pile Wazuh (indexer, manager, dashboard)</td>
+<td>172.17.40.40</td>
+<td>Ubuntu Server 24.04</td>
+<td>4</td>
+<td>8</td>
+<td>100</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BER-DOCKER02</td>
+<td>=</td>
+<td>Docker — Greenbone Community Edition</td>
+<td>172.17.40.41</td>
+<td>Ubuntu Server 24.04</td>
+<td>4</td>
+<td>8</td>
+<td>60</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+<tr>
+<td>BER-CLT01</td>
+<td>=</td>
+<td>Client de test (optionnel)</td>
+<td>DHCP</td>
+<td>Windows 11</td>
+<td>2</td>
+<td>4</td>
+<td>60</td>
+<td>statique</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Mémoire <strong>statique</strong> pour les rôles sensibles (DC, Exchange, SQL, Docker) : leur consommation est prévisible et la mémoire dynamique ajoute de l'incertitude. Dynamique réservée aux serveurs IIS et aux clients de test. À justifier à la soutenance.</p>
+</blockquote>
+<h2 id="ecarts-au-plan-valeurs-relevees-sur-les-machines-ou-saisies-dans-linventaire-du-site">Écarts au plan (valeurs relevées sur les machines ou saisies dans l'inventaire du site)</h2>
+<table>
+<thead>
+<tr>
+<th>Machine / site</th>
+<th>Champ</th>
+<th>Plan</th>
+<th>Réel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BRU-DC01</td>
+<td>vmhv</td>
+<td>BRU-DC01</td>
+<td>DC-BXL</td>
+</tr>
+<tr>
+<td>BRU-EXCH01</td>
+<td>ip</td>
+<td>172.17.10.30</td>
+<td>172.17.10.11</td>
+</tr>
+<tr>
+<td>BRU-EXCH01</td>
+<td>ram</td>
+<td>16</td>
+<td>8</td>
+</tr>
+<tr>
+<td>PAR-FW01</td>
+<td>vmhv</td>
+<td>PAR-FW01</td>
+<td>2-PARIS-OPNSENSE</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Exigences de l'énoncé et contrôles : page Inventaire du site du labo.</p>
+</blockquote>
+
+</main>
+</body>
+</html>

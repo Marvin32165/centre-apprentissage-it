@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relevé par machine — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="releve-par-machine-03112026-lecture-seule">Relevé par machine (03/11/2026, lecture seule)</h1>
+<p>Légende : ✔ conforme / ⚠ à surveiller / ✘ manquant. Aucun secret.</p>
+<h2 id="hotes-hyper-v">Hôtes Hyper-V</h2>
+<table>
+<thead>
+<tr>
+<th>Hôte</th>
+<th>IP salle</th>
+<th>RAM libre</th>
+<th>Pare-feu Win</th>
+<th>Routes 172.17</th>
+<th>Replica</th>
+<th>VM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2-PARIS</td>
+<td>10.10.28.233</td>
+<td>16 / 64 Go</td>
+<td>✘ désactivé</td>
+<td>⚠ aucune</td>
+<td>désactivé</td>
+<td>6 (Ubuntu éteinte)</td>
+</tr>
+<tr>
+<td>2-BRUXELL</td>
+<td>.219</td>
+<td>18 / 64 Go</td>
+<td>✘ désactivé</td>
+<td>✔ 4</td>
+<td>désactivé</td>
+<td>6</td>
+</tr>
+<tr>
+<td>2-LONDRES</td>
+<td>.224</td>
+<td>39 / 64 Go</td>
+<td>✘ désactivé</td>
+<td>✔ 4</td>
+<td>désactivé</td>
+<td>4</td>
+</tr>
+<tr>
+<td>WIN-9QV2EBHPJER (Berlin)</td>
+<td>.201</td>
+<td>29 / 64 Go</td>
+<td>✘ désactivé</td>
+<td>✔ 4</td>
+<td>désactivé</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<h2 id="paris-172.17.20.024">Paris (172.17.20.0/24)</h2>
+<p>| VM | IP | Rôle / état | Remarques |
+|---|---|---|---|
+| OPNSense - Paris (PAR-FW01) | 10.10.28.112 / .20.1 | IPsec PAR-BRU établi (3 enfants), 23 règles | hostname <code>OPNsense.internal</code>, UTC, règle TEMP GUI, SSH root, LAN → any |
+| DC-PARIS (PAR-DC01) | .20.10 | AD DS + DNS + DHCP, GC, site PAR | ⚠ DFSR/SYSVOL en erreur ; 12 vCPU / 8 Go ; 2 checkpoints |
+| PAR-SQL01 | .20.20 | SQL 2022 instance SHAREPOINT | 4 disques ; max mem 5120 Mo |
+| PAR-SP01 | .20.21 | SharePoint 16.0.14326 SingleServerFarm | web app <code>sharepoint.eurocorp.lan</code> ; localhost 200 |
+| PAR-CLT01 | .20.150 (DHCP) | Windows 11 Pro, domaine | pare-feu actif |
+| 2-PARIS-UBUNTU | — | éteinte | accès inconnu |
+Agents Wazuh : DC01, SQL01, SP01, CLT01 (Active). Zabbix, Sysmon : aucun.</p>
+<h2 id="bruxelles-172.17.10.024-hub">Bruxelles (172.17.10.0/24, hub)</h2>
+<table>
+<thead>
+<tr>
+<th>VM</th>
+<th>IP</th>
+<th>Rôle / état</th>
+<th>Remarques</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPNsense (BRU-FW01)</td>
+<td>10.10.28.111 / .10.1</td>
+<td>3 tunnels établis, 34 règles</td>
+<td>UTC, « temp ssh » ouvert, mot de passe par défaut, 4 checkpoints</td>
+</tr>
+<tr>
+<td>DC-BXL (AD-BXL)</td>
+<td>.10.10</td>
+<td>AD DS + DNS + DHCP + AD CS, GC, FSMO</td>
+<td>⚠ DFSR ; non patché depuis 11/2025 ; 3 checkpoints</td>
+</tr>
+<tr>
+<td>EXCHANGE</td>
+<td>.10.11</td>
+<td>Exchange <strong>non installé</strong></td>
+<td>fuseau Pacifique ; 16 Go ; 3 checkpoints</td>
+</tr>
+<tr>
+<td>IIS01 / IIS02</td>
+<td>.10.21 / .22 (VIP .20)</td>
+<td>site par défaut ; NLB unicast</td>
+<td>disques dynamiques, 0 checkpoint</td>
+</tr>
+<tr>
+<td>ZABBIX (Docker)</td>
+<td>.10.40</td>
+<td>Zabbix 7.4 (serveur, web, PostgreSQL)</td>
+<td>dashboard <code>http://172.17.10.40/</code> ; 61 Go, 16 % ; 3 checkpoints ; conteneur de test restant</td>
+</tr>
+</tbody>
+</table>
+<h2 id="londres-172.17.30.024">Londres (172.17.30.0/24)</h2>
+<table>
+<thead>
+<tr>
+<th>VM</th>
+<th>IP</th>
+<th>Rôle / état</th>
+<th>Remarques</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LON-FW01</td>
+<td>10.10.28.113 / .30.1</td>
+<td>non consulté</td>
+<td>GUI sur le port 8444 (injoignable depuis Paris)</td>
+</tr>
+<tr>
+<td>LON-FS01</td>
+<td>.30.10</td>
+<td>partages Commun, Direction, Finance, IT, RH + DFS <code>Files</code>, FSRM</td>
+<td>disque D 127 Go ; Replica à faire</td>
+</tr>
+<tr>
+<td>LON-DOCKER01</td>
+<td>.30.40</td>
+<td>Redmine 7.0.2, guide (nginx + suivi)</td>
+<td>78 mises à jour ; ancienne pile <code>guide-api</code> arrêtée</td>
+</tr>
+<tr>
+<td>LON-CLT01</td>
+<td>.30.100 (DHCP)</td>
+<td>Windows 11 Pro, domaine</td>
+<td>pare-feu actif</td>
+</tr>
+</tbody>
+</table>
+<h2 id="berlin-172.17.40.024">Berlin (172.17.40.0/24)</h2>
+<table>
+<thead>
+<tr>
+<th>VM</th>
+<th>IP</th>
+<th>Rôle / état</th>
+<th>Remarques</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BER-FW01</td>
+<td>10.10.28.114 / .40.1</td>
+<td>non consulté</td>
+<td></td>
+</tr>
+<tr>
+<td>BER-DOCKER01</td>
+<td>.40.40</td>
+<td>Wazuh 4.14.9 (manager, indexer, dashboard)</td>
+<td>disque 48 Go à 70 % ; <code>vm.max_map_count</code> non persistant ; ufw inactif ; pas d'agent</td>
+</tr>
+<tr>
+<td>BER-DOCKER02</td>
+<td>.40.41</td>
+<td>Greenbone Community</td>
+<td>79 mises à jour ; agent Wazuh + docker-listener</td>
+</tr>
+<tr>
+<td>BER-CLT01</td>
+<td>.40.150 (DHCP)</td>
+<td>Windows 11 Pro, domaine</td>
+<td>pare-feu actif ; 18 Go libres</td>
+</tr>
+</tbody>
+</table>
+<h2 id="wazuh-agents-active-au-0311-14">Wazuh : agents Active au 03/11 (14)</h2>
+<p>PAR-DC01, PAR-SQL01, PAR-SP01, PAR-CLT01 ; AD-BXL, EXCHANGE, IIS01, IIS02, ZABBIX ; LON-FS01, LON-CLT01, LON-DOCKER01 ;
+BER-CLT01, BER-DOCKER02. Sans agent : 4 pare-feu, 4 hôtes, BER-DOCKER01 (manager), 2-PARIS-UBUNTU.</p>
+
+</main>
+</body>
+</html>

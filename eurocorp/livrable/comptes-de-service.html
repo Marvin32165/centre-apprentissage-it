@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comptes de service (sans mots de passe) — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="comptes-de-service-sharepoint-et-sql-sans-mots-de-passe">Comptes de service (SharePoint et SQL) — sans mots de passe</h1>
+<p>Relevé le 03/11/2026. Les mots de passe ne figurent <strong>jamais</strong> dans ce livrable (énoncé §7) : ils sont dans <code>notes/Infos.md</code> du dépôt <code>cours</code> et dans l'outil d'accès du groupe.</p>
+<table>
+<thead>
+<tr>
+<th>Compte</th>
+<th>Type</th>
+<th>Où il vit</th>
+<th>Rôle</th>
+<th>Où il sert</th>
+<th>Droits</th>
+<th>Mot de passe</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EUROCORP\sp_farm</code></td>
+<td>utilisateur de domaine</td>
+<td>OU <code>EuroCorp\User</code></td>
+<td>compte de la ferme SharePoint (base de configuration, Administration centrale)</td>
+<td>PAR-SP01, base sur PAR-SQL01</td>
+<td>SQL : <code>dbcreator</code> et <code>securityadmin</code></td>
+<td>n'expire jamais</td>
+</tr>
+<tr>
+<td><code>EUROCORP\sp_setup</code></td>
+<td>utilisateur de domaine</td>
+<td>OU <code>EuroCorp\User</code></td>
+<td>compte d'installation SharePoint et administrateur principal de la collection de sites</td>
+<td>PAR-SP01 (administrateur local), PAR-SQL01</td>
+<td>administrateur local de PAR-SP01 ; SQL : <code>dbcreator</code> et <code>securityadmin</code></td>
+<td>n'expire jamais</td>
+</tr>
+<tr>
+<td><code>EUROCORP\sp_services</code></td>
+<td>utilisateur de domaine</td>
+<td>OU <code>EuroCorp\User</code></td>
+<td>identité du pool d'applications de l'intranet</td>
+<td>PAR-SP01 (IIS)</td>
+<td>aucun droit SQL ni local relevé</td>
+<td>n'expire jamais</td>
+</tr>
+<tr>
+<td><code>EUROCORP\sp_search</code></td>
+<td>utilisateur de domaine</td>
+<td>OU <code>EuroCorp\User</code></td>
+<td>prévu pour la recherche ; <strong>sans usage</strong> (hors énoncé)</td>
+<td>aucun</td>
+<td>aucun</td>
+<td>n'expire jamais ; à supprimer</td>
+</tr>
+<tr>
+<td><code>EUROCORP\GMSA_SQL$</code></td>
+<td>compte de service géré (gMSA)</td>
+<td>OU <code>EuroCorp\GMSA</code></td>
+<td>identité du moteur SQL Server et de l'Agent</td>
+<td>PAR-SQL01 (services <code>MSSQL$SHAREPOINT</code> et <code>SQLAgent$SHAREPOINT</code>)</td>
+<td>SPN <code>MSSQLSvc/PAR-SQL01…:1433</code> et <code>…:SHAREPOINT</code></td>
+<td>géré par l'Active Directory ; récupérable par le groupe <code>GM_GMSA_SQL</code> (compte machine PAR-SQL01)</td>
+</tr>
+</tbody>
+</table>
+<p>Remarques :</p>
+<ul>
+<li>Les comptes SharePoint (<code>sp_farm</code>, <code>sp_services</code>, <code>sp_search</code>) seront de nouveau utilisés par l'installation de la Subscription Edition ; les comptes gérés SharePoint sont recréés avec la ferme.</li>
+<li>Compte d'administration utilisé pour les relevés : <code>EUROCORP\mjz</code> (<code>sysadmin</code> SQL), compte nominatif et non de service.</li>
+</ul>
+
+</main>
+</body>
+</html>

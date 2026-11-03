@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consultation : ce qui diverge — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="ce-qui-diverge-plan-enonce-guide-entre-sites">Ce qui diverge (plan, énoncé, guide, entre sites)</h1>
+<h2 id="noms-et-adresses">Noms et adresses</h2>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Plan / guide</th>
+<th>Réel</th>
+<th>Effet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DC de Bruxelles</td>
+<td><code>BRU-DC01</code></td>
+<td>VM <code>DC-BXL</code>, nom <code>AD-BXL</code></td>
+<td>Les commandes du guide citant <code>bru-dc01</code> échouent (le DNS ne la connaît pas)</td>
+</tr>
+<tr>
+<td>Exchange</td>
+<td>172.17.10.<strong>30</strong> (alias <code>SRV_EXCH</code>)</td>
+<td>172.17.10.<strong>11</strong></td>
+<td>Les règles F11 (OWA/Autodiscover) visent .30 : le flux vers .11 n'est pas ouvert</td>
+</tr>
+<tr>
+<td>Pare-feu</td>
+<td><code>PAR-FW01</code>, <code>BRU-FW01</code></td>
+<td>hostname <code>OPNsense.internal</code> (PAR et BRU)</td>
+<td>Nomenclature non respectée</td>
+</tr>
+<tr>
+<td>DC de Paris</td>
+<td>VM <code>PAR-DC01</code></td>
+<td>VM <code>DC-PARIS</code>, nom <code>PAR-DC01</code></td>
+<td>Nom de VM différent du nom d'hôte (déjà noté dans l'inventaire du site)</td>
+</tr>
+<tr>
+<td>Zabbix</td>
+<td><code>BRU-DOCKER01</code></td>
+<td>VM <code>ZABBIX</code> (172.17.10.40), nom <code>zabbix</code></td>
+<td>Nom de VM différent du plan</td>
+</tr>
+<tr>
+<td>DNS</td>
+<td><code>mail</code>, <code>autodiscover</code>, <code>intranet</code>, <code>sharepoint</code>, <code>helpdesk</code></td>
+<td><code>intranet</code>, <code>sharepoint</code>, <code>helpdesk</code> (172.17.30.40) créés ; <code>mail</code> absent (<code>autodiscover</code> non testé)</td>
+<td>OWA par nom impossible tant que <code>mail</code> n'existe pas</td>
+</tr>
+<tr>
+<td>DNS, enregistrement <code>@</code></td>
+<td>2 DC : 172.17.10.10 et 172.17.20.10</td>
+<td><strong>172.17.20.11</strong> en plus (daté du 30/10), jamais mis à jour</td>
+<td><code>eurocorp.lan</code> se résout aussi vers une adresse qui n'est pas un DC ; à supprimer</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ressources-des-vm-plan-reel">Ressources des VM (plan → réel)</h2>
+<ul>
+<li>DC-PARIS : 2 vCPU / 4 Go → <strong>12 vCPU / 8 Go</strong>. AD-BXL : 4 vCPU / 4 Go. PAR-FW01 : 2 / 2 Go → 4 / 8 Go.</li>
+<li>PAR-SP01 : 4 / 12 Go (conforme). PAR-SQL01 : 4 / 8 Go (conforme) ; disque système 127 Go (plan 100).</li>
+<li>Exchange : 16 Go alloués alors qu'Exchange n'est pas installé.</li>
+</ul>
+<h2 id="configuration">Configuration</h2>
+<ul>
+<li><strong>Fuseau horaire</strong> : PAR-FW01 et BRU-FW01 en UTC (plan : Europe/Paris) ; EXCHANGE en heure du Pacifique ; les autres machines en Europe/Paris.</li>
+<li><strong>Source d'heure</strong> : les DC (PAR-DC01, AD-BXL) prennent l'heure du service d'intégration Hyper-V ; seul LON-FS01 se synchronise sur AD-BXL.</li>
+<li><strong>Redirecteurs DNS</strong> : PAR-DC01 → 172.17.20.1, AD-BXL → 172.17.10.1 (le pare-feu local) ; pas de redirecteur commun.</li>
+<li><strong>DNS des serveurs</strong> : BER-DOCKER01 et BER-DOCKER02 ont 10.10.28.254 (passerelle de salle) comme DNS en plus des DC ; BER-DOCKER02 n'a pas PAR-DC01.</li>
+<li><strong>AD-BXL</strong> a le rôle AD CS (non listé dans les rôles imposés de Paris ; à confirmer côté Bruxelles).</li>
+<li><strong>GP-</strong>* : vides alors que la nomenclature AGDLP est exigée ; pas de GPO créée.</li>
+<li><strong>Mises à jour</strong> : Paris/Londres (octobre-novembre 2026) contre Bruxelles (novembre 2025).</li>
+<li><strong>NLB</strong> : cluster <code>intranet.eurocorp.lan</code> (172.17.10.20) en unicast avec deux cartes par serveur ; le guide laisse le choix unicast/multicast ouvert.</li>
+</ul>
+<h2 id="pare-feu-ecarts-avec-regles-limitees-au-strict-necessaire">Pare-feu (écarts avec « règles limitées au strict nécessaire »)</h2>
+<ul>
+<li>PAR-FW01 : règle « TEMP - accès GUI depuis WAN » (443 depuis 10.10.28.0/24), SSH activé avec connexion root, « Default allow LAN to any » toujours présente.</li>
+<li>BRU-FW01 : règle « temp ssh » (TCP 22 depuis n'importe quelle source vers le pare-feu), « Pass RPC 135 interne » (any → GRP2_FW:135), une règle sans description (LAN_SITES → 172.17.10.20:80), « Default allow LAN to any » ; mot de passe root par défaut.</li>
+<li>Paris n'a pas de règles de transit F09/F19/F21 (Bruxelles les a) : tant que LAN → any existe, les flux passent ; en la retirant, il faudra les écrire.</li>
+<li>Alias <code>SRV_SQL</code> utilisé dans les règles (adresse non vérifiée ici).</li>
+</ul>
+<h2 id="hyper-v-et-infrastructure">Hyper-V et infrastructure</h2>
+<ul>
+<li><strong>Replica</strong> : exigé par l'énoncé (LON-FS01 → Paris), <strong>non configuré</strong> nulle part.</li>
+<li><strong>Routes</strong> : 3 hôtes ont des routes permanentes vers les 4 LAN (conforme au fichier d'accès) ; l'hôte de Paris n'en a pas, alors que le fichier d'accès dit que tous en ont.</li>
+<li><strong>Cartes APIPA</strong> (169.254.x.x) sur les hôtes de Bruxelles, Londres et Berlin (adresse de lien local en plus de l'IP de salle).</li>
+<li><strong>Checkpoints</strong> présents à Bruxelles et à Paris, absents à Londres et Berlin : approche non homogène ; disques différentiels là où il y a des checkpoints.</li>
+<li><strong>VM Linux</strong> : BER-DOCKER01 100 Go de disque mais volume LVM de 48 Go ; LON-DOCKER01 héberge deux piles du guide (actuelle et ancienne).</li>
+</ul>
+<h2 id="supervision">Supervision</h2>
+<ul>
+<li><strong>Wazuh</strong> : 14 agents Active (plan : tous les serveurs) ; <strong>Sysmon absent</strong> (le guide l'exige) ; événements Docker non encore observés.</li>
+<li><strong>Zabbix</strong> : serveur en marche mais <strong>aucun agent</strong> déployé (le guide en prévoit sur tous les hôtes et serveurs) ; dashboard en HTTP seulement (port 80).</li>
+<li>Pare-feu OPNsense et hôtes Hyper-V : pas d'agent Wazuh (pas de syslog distant configuré).</li>
+</ul>
+<h2 id="suivi-du-site-commun">Suivi du site commun</h2>
+<ul>
+<li>BRU-EXCH01 : 4 étapes cochées par ogier (IP, domaine, prérequis, montage de l'ISO) : cohérent avec une installation d'Exchange
+commencée mais <strong>non terminée</strong> (aucun service MSExchange à ce jour). Le guide prévoit 172.17.10.30 pour cette VM ; elle est en .11.</li>
+<li>Pages de suivi : 1 338 étapes cochées sur 2 782 (marche) ; Zabbix/Sysmon (« Détail · … » des pages) et Exchange majoritairement vides.</li>
+</ul>
+
+</main>
+</body>
+</html>

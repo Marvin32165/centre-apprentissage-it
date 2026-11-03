@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RPO et RTO proposés — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="rpo-et-rto-cibles-proposition-10.2-a-valider-par-le-groupe">RPO et RTO cibles : proposition (§10.2), à valider par le groupe</h1>
+<p>État au 03/11/2026 : <strong>Hyper-V Replica n'est activé sur aucun hôte</strong> ; ces valeurs sont des objectifs à justifier, pas des mesures. Elles complètent <code>README.md</code> (tableaux à remplir).</p>
+<h2 id="vm-protegee-lon-fs01-file-server-de-londres-replication-vers-paris">VM protégée : LON-FS01 (File Server de Londres), réplication vers Paris</h2>
+<table>
+<thead>
+<tr>
+<th>Paramètre</th>
+<th>Proposition</th>
+<th>Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fréquence de réplication</td>
+<td><strong>5 minutes</strong> (choix proposé par Hyper-V entre 30 s, 5 min, 15 min)</td>
+<td>les partages changent peu ; 5 min limite la perte sans surcharger le lien IPsec Londres → Bruxelles → Paris</td>
+</tr>
+<tr>
+<td>RPO</td>
+<td><strong>≤ 5 minutes</strong> (maximum 15 min si un cycle échoue)</td>
+<td>égal à la fréquence de réplication</td>
+</tr>
+<tr>
+<td>RTO</td>
+<td><strong>≤ 30 minutes</strong></td>
+<td>temps du Planned Failover, du réglage IP (172.17.30.10 → réseau de Paris) et du contrôle des partages et du DFS</td>
+</tr>
+<tr>
+<td>Cible</td>
+<td>hôte de Paris (2-PARIS, 64 Go dont 24 Go libres)</td>
+<td>choix de l'énoncé : « Paris ou Bruxelles » ; Paris porte moins de charge que le hub</td>
+</tr>
+<tr>
+<td>Points de récupération</td>
+<td>2</td>
+<td>tolérer une corruption récente sans doubler le stockage</td>
+</tr>
+</tbody>
+</table>
+<p>Prérequis à faire : activer le serveur de réplication sur les deux hôtes (Kerberos ou certificats), ouvrir TCP 80 ou 443 entre les hôtes dans la matrice de flux, réplication initiale (hors heures de travail).
+Test à réaliser et à noter dans <code>09-Tests</code> : T21 (basculement de test), T28 (Planned Failover puis retour). Principe de retour arrière : Planned Failover vers Paris, puis réplication inverse et retour vers Londres.</p>
+<h2 id="autres-services-objectifs-proposes-non-encore-testes">Autres services (objectifs proposés, non encore testés)</h2>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Protection</th>
+<th>RPO</th>
+<th>RTO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Active Directory</td>
+<td>2 DC multi-maîtres (AD-BXL, PAR-DC01)</td>
+<td>≈ 0 (réplication continue)</td>
+<td>immédiat (l'autre DC répond) ; reprise des rôles FSMO si AD-BXL tombe</td>
+</tr>
+<tr>
+<td>DHCP</td>
+<td>failover LoadBalance AD-BXL / PAR-DC01</td>
+<td>0 (baux répliqués)</td>
+<td>immédiat</td>
+</tr>
+<tr>
+<td>Redmine</td>
+<td><code>backup-redmine.sh</code> (base + fichiers)</td>
+<td>24 h (sauvegarde quotidienne)</td>
+<td>≤ 1 h (restauration sur copie : test T18)</td>
+</tr>
+<tr>
+<td>Zabbix, Wazuh, Greenbone</td>
+<td>volumes Docker persistants, reconstruction par Compose</td>
+<td>historique uniquement</td>
+<td>≤ 2 h (redéploiement depuis les fichiers du livrable)</td>
+</tr>
+<tr>
+<td>SharePoint / SQL (Paris)</td>
+<td>sauvegarde SQL des bases de contenu, hors périmètre Replica</td>
+<td>à définir</td>
+<td>à définir</td>
+</tr>
+</tbody>
+</table>
+<h2 id="a-decider">À décider</h2>
+<p>RPO/RTO définitifs, hôte cible, et sauvegarde des bases SharePoint ; ces points restent des choix du groupe.</p>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consultation : reste à faire — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="ce-qui-reste-a-faire-etat-du-0311-apres-consultation">Ce qui reste à faire (état du 03/11, après consultation)</h1>
+<h2 id="bloquant-ou-a-traiter-en-priorite">Bloquant ou à traiter en priorité</h2>
+<ol>
+<li><strong>Installer Exchange</strong> sur <code>EXCHANGE</code> (172.17.10.11) : aucun service ni dossier Exchange. Tests T13 (messagerie) et T24 (OWA) impossibles
+tant qu'il manque. Corriger aussi son fuseau (Pacifique) et créer les DNS <code>mail</code>, <code>autodiscover</code> (voir <code>3-diverge.md</code>).</li>
+<li><strong>Réparer SYSVOL/DFSR</strong> entre PAR-DC01 et AD-BXL (dcdiag DFSREvent KO sur les deux, NETLOGON vide, état DFSR global « Eliminated » sur PAR-DC01).</li>
+<li><strong>Hyper-V Replica</strong> : activer sur les hôtes de Londres et Paris (cible possible), répliquer LON-FS01 ; tests T21 (basculement) et T28 (retour).</li>
+<li><strong>Zabbix</strong> : installer l'agent 2 (+ PSK) sur les VM Windows et les hôtes, créer les hôtes, modèles, déclencheurs, tableau de bord ; tests T15 et T25.</li>
+<li><strong>Wazuh</strong> : installer Sysmon et envoyer son journal ; prouver les événements Docker (<code>docker run --rm hello-world</code> ou redémarrage d'un conteneur) ; test T19.
+Persister <code>vm.max_map_count</code> (aucun fichier dans <code>/etc/sysctl.d/</code>) ; agrandir le volume de BER-DOCKER01 (48 Go sur 100 Go, 70 % utilisé).</li>
+</ol>
+<h2 id="securite-et-fin-de-projet">Sécurité et fin de projet</h2>
+<ol start="6">
+<li><strong>Pare-feu</strong> : retirer les règles temporaires (PAR : « TEMP accès GUI depuis WAN » ; BRU : « temp ssh » ouvert à tout le WAN ; règles « Default allow LAN to any » sur PAR et BRU)
+et compléter la matrice de flux avant de retirer LAN → any (flux F09, F19, F21 à écrire côté Paris).
+Changer le mot de passe root par défaut de BRU-FW01 ; limiter l'accès à l'interface web et au SSH aux seuls hôtes du groupe ; mettre <code>permitrootlogin</code> au strict nécessaire.</li>
+<li><strong>Pare-feu Windows</strong> : désactivé sur les 4 hôtes et les serveurs (DC, SQL, SP, IIS, Exchange, FS) ; l'activer avec les règles nécessaires avant le rendu.</li>
+<li><strong>Checkpoints / disques</strong> : supprimer les checkpoints de Paris (2 par VM) et de Bruxelles (3 à 4) ; fusionner les disques système différentiels de PAR-SP01 et PAR-SQL01 sur <code>SYSPREP.vhdx</code> (cahier des charges : VHDX dynamiques).</li>
+<li><strong>Mises à jour</strong> : serveurs de Bruxelles non patchés depuis novembre 2025 (AD-BXL, EXCHANGE, IIS) ; 78 et 79 paquets en attente sur LON-DOCKER01 et BER-DOCKER02.</li>
+<li><strong>Pare-feu des sites non consultés</strong> : relever LON-FW01 et BER-FW01 (hostname, fuseau, règles, tunnels).</li>
+</ol>
+<h2 id="annuaire-et-services">Annuaire et services</h2>
+<ol start="11">
+<li>Remplir les groupes <code>GP-*</code> (AGDLP incomplet) ; créer les GPO du projet (au moins une GPO appliquée à un poste) ; définir la source d'heure du domaine (les DC prennent l'heure d'Hyper-V).</li>
+<li>NLB : valider unicast/multicast (le guide en fait une décision) ; tester l'arrêt d'un nœud (T12).</li>
+<li>SharePoint : tester depuis un poste de chaque site (T14) ; finir la configuration (application web, compte géré, recherche).</li>
+<li>DHCP : test d'arrêt du principal (T10) ; test client (T09 déjà OK).</li>
+<li>Redmine, Greenbone : tâches de test T16 à T20, T26, T27 (sauvegarde/restauration Redmine, scan authentifié).</li>
+<li>Remonter à la recette du site les tests restants ; déposer les captures/résultats dans <code>09-Tests</code>.</li>
+</ol>
+<h2 id="hygiene">Hygiène</h2>
+<ol start="17">
+<li>Supprimer le conteneur de test <code>sweet_wilson</code> (hello-world) sur ZABBIX et l'ancienne pile <code>guide-web/guide-api</code> sur LON-DOCKER01 (arrêtée depuis 32 h).</li>
+<li>Supprimer sur les VM Linux les paquets <code>.deb</code> laissés par l'installation (dossiers personnels de vryke et bb7) et <code>Desktop\wazuh-deploy</code> sur l'hôte de Paris.</li>
+<li>Ajouter les routes statiques 172.17.x sur l'hôte de Paris (comme sur les autres hôtes).</li>
+<li>Ajouter le cas Linux à <code>06-PowerShell/Install-WazuhAgent.ps1</code>.</li>
+</ol>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consultation : ce qui a été révélé — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="ce-que-la-consultation-a-revele-faits-verifies-le-0311">Ce que la consultation a révélé (faits vérifiés le 03/11)</h1>
+<h2 id="infrastructure-et-hotes">Infrastructure et hôtes</h2>
+<ul>
+<li>Les 4 hôtes (2-PARIS, 2-BRUXELL, 2-LONDRES, WIN-9QV2EBHPJER) : Windows Server 2025, 64 Go de RAM, workgroup, pare-feu
+Windows <strong>désactivé</strong> sur les trois profils. Tous ont des vSwitch WAN (externe) et LAN (privé).</li>
+<li>Hôtes de Bruxelles, Londres, Berlin : routes statiques vers les 4 LAN (172.17.10/20/30/40 via les WAN .111/.112/.113/.114).
+L'hôte de Paris n'en a aucune.</li>
+<li>VM : 6 à Paris (dont Ubuntu éteinte), 6 à Bruxelles, 4 à Londres, 4 à Berlin. Mémoire statique partout.</li>
+<li><strong>Hyper-V Replica : désactivé sur les 4 hôtes</strong>, aucune VM répliquée.</li>
+<li>Checkpoints : Paris 2 par VM (créés après le nettoyage de l'après-midi), Bruxelles 3 (DC, Exchange, Zabbix) et 4 (OPNsense),
+Londres et Berlin 0. Les VM avec checkpoint ont des disques différentiels.</li>
+</ul>
+<h2 id="active-directory-dns-dhcp">Active Directory, DNS, DHCP</h2>
+<ul>
+<li>Forêt et domaine en niveau Windows 2025. 2 contrôleurs, tous deux catalogue global : <strong>AD-BXL</strong> (site BRU) et <strong>PAR-DC01</strong> (site PAR).
+Les 5 rôles FSMO sont sur AD-BXL. 15 utilisateurs. Sites BRU/PAR/LON/BER et sous-réseaux rattachés.</li>
+<li>Réplication AD : 0 échec sur 5 dans les deux sens. <code>Get-ADReplicationFailure -Target PAR-DC01</code> : aucune ligne.</li>
+<li><strong>SYSVOL/DFSR en erreur sur les deux contrôleurs</strong> : <code>dcdiag</code> DFSREvent en échec, NETLOGON vide (événements 5002/5014 vers 14:02).</li>
+<li>DHCP : 4 étendues (.100–.200) actives sur les deux DC, failover LoadBalance état Normal. PAR-CLT01 a reçu 172.17.20.150.</li>
+<li>DNS : zones intégrées (EUROCORP.LAN, _msdcs, 4 zones inverses). Enregistrements présents : <code>intranet</code> 172.17.10.20,
+<code>sharepoint</code> 172.17.20.21, <code>wazuh</code> 172.17.40.40, <code>ZABBIX</code> 172.17.10.40.</li>
+<li>Groupes <code>GP-*</code> créés mais <strong>vides</strong> (sauf GP-Commun : 4 membres). Aucune GPO hors défaut. OU EuroCorp (Groupe, User, Server, Clients, GMSA).</li>
+<li>AD-BXL porte aussi AD CS (autorité de certification) et le rôle Web-Server.</li>
+</ul>
+<h2 id="serveurs-applicatifs">Serveurs applicatifs</h2>
+<ul>
+<li><strong>PAR-SQL01</strong> : SQL Server 2022 (16.0.1000.6), instance SHAREPOINT, services en marche, mémoire max 5120 Mo ; disques C/D/L/T.</li>
+<li><strong>PAR-SP01</strong> : SharePoint 16.0.14326.20450 (SingleServerFarm), application web <code>http://sharepoint.eurocorp.lan/</code> ; <code>localhost</code> répond 200.</li>
+<li><strong>IIS01/IIS02</strong> : site par défaut démarré (80, 443) ; NLB <code>intranet.eurocorp.lan</code> 172.17.10.20, mode <strong>unicast</strong>, 2 cartes réseau par serveur.</li>
+<li><strong>LON-FS01</strong> : partages Commun, Direction, Finance, IT, RH + racine DFS <code>Files</code> ; rôles DFS Namespace et FSRM installés ; disque D 127 Go.</li>
+<li><strong>EXCHANGE</strong> : <strong>Exchange n'est pas (encore) installé</strong> (aucun service MSExchange, pas de dossier Exchange Server) ; prérequis et montage de l'ISO
+cochés par ogier sur le site ; la VM a 16 Go et 172.17.10.11.</li>
+<li><strong>Postes</strong> PAR-CLT01, LON-CLT01, BER-CLT01 : Windows 11 Pro, joints au domaine, pare-feu actif, DHCP.</li>
+</ul>
+<h2 id="pare-feu-opnsense">Pare-feu OPNsense</h2>
+<ul>
+<li><strong>PAR-FW01</strong> : WAN 10.10.28.112, LAN 172.17.20.1, tunnel <code>PAR-BRU</code> IKEv2 <strong>établi</strong> avec 3 enfants (BRU, LON, BER via le hub) ; 23 règles
+(matrice F02 à F27 en grande partie en place) ; alias complets (LAN_SITES, DC_AD, SRV_*…).</li>
+<li><strong>BRU-FW01</strong> : 3 tunnels (PAR, LON, BER) <strong>établis</strong> ; 34 règles dont les transits du hub (F09, F13, F19, F21, F22…).</li>
+<li>LON-FW01 et BER-FW01 : non consultés.</li>
+</ul>
+<h2 id="linux-et-conteneurs">Linux et conteneurs</h2>
+<ul>
+<li><strong>BER-DOCKER01</strong> (Wazuh) : Docker 29.9.2, 3 conteneurs Wazuh 4.14.9 en marche ; ports écoutés 22, 53, 443, 1514, 1515 (9200 et 55000 non publiés) ;
+disque 48 Go à 70 % ; pare-feu ufw inactif.</li>
+<li><strong>BER-DOCKER02</strong> (Greenbone) : pile Greenbone Community (22 conteneurs listés, les services en marche depuis 8 h, les autres terminés normalement).</li>
+<li><strong>LON-DOCKER01</strong> : Redmine 7.0.2 (app, nginx, MariaDB), guide du groupe (nginx + suivi Python, <strong>actifs</strong>), plus une ancienne pile <code>guide-web/guide-api</code>.</li>
+<li><strong>ZABBIX</strong> : Zabbix 7.4 (serveur, web, PostgreSQL) ; dashboard <code>http://172.17.10.40/</code> (port 80 seulement).</li>
+<li>Wazuh : <strong>14 agents Active</strong>, module <code>docker-listener</code> actif sur 3 VM ; événements Docker non encore prouvés ; Sysmon absent.</li>
+<li>Zabbix : <strong>aucun agent Zabbix</strong> installé sur les VM Windows (serveur seul).</li>
+</ul>
+
+</main>
+</body>
+</html>

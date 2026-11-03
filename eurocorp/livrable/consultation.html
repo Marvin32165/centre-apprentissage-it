@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consultation du 03/11 : synthèse — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="consultation-de-toutes-les-machines-2026-11-03-1700-a-1800">Consultation de toutes les machines : 2026-11-03 (17:00 à 18:00)</h1>
+<p>Lecture seule, depuis l'hôte de Paris (2-PARIS) : PowerShell Direct vers les VM Windows des 4 sites (via les hôtes de
+chaque site), SSH vers les 4 VM Linux, interface web des pare-feu OPNsense de Paris et Bruxelles (config lue en
+mémoire, non enregistrée). Aucun mot de passe dans ce dossier (ils sont dans <code>Infos.md</code>, la page Accès du guide et
+<code>Desktop\EUROCORP-acces-SSH.txt</code>).</p>
+<table>
+<thead>
+<tr>
+<th>Fichier</th>
+<th>Contenu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1-revele.md</code></td>
+<td>Ce que la consultation a montré (faits vérifiés, par thème)</td>
+</tr>
+<tr>
+<td><code>2-reste-a-faire.md</code></td>
+<td>Ce qui reste à faire, classé par priorité</td>
+</tr>
+<tr>
+<td><code>3-diverge.md</code></td>
+<td>Ce qui diverge du plan, de l'énoncé ou du guide, ou entre sites</td>
+</tr>
+<tr>
+<td><code>4-cases-cochees.md</code></td>
+<td>Les 77 étapes cochées sur le site commun (52 + 25 après les tests) et leur preuve</td>
+</tr>
+<tr>
+<td><code>5-tests-recette.md</code></td>
+<td>Les tests de la recette exécutés : OK, KO, partiel, avec ce qui a été obtenu</td>
+</tr>
+<tr>
+<td><code>6-paris-verification.md</code></td>
+<td>Vérification des étapes de Paris (hors DC) et ce qui reste ouvert</td>
+</tr>
+<tr>
+<td><code>7-conformite-enonce-paris.md</code></td>
+<td>Paris face à l'énoncé, section par section (✔ / ⚠ / ✘)</td>
+</tr>
+<tr>
+<td><code>releve-par-machine.md</code></td>
+<td>Fiche de chaque machine (hôtes, VM Windows, VM Linux, pare-feu)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="couverture">Couverture</h2>
+<ul>
+<li><strong>Consultées</strong> : 4 hôtes Hyper-V ; 13 VM Windows (PAR-DC01, PAR-SQL01, PAR-SP01, PAR-CLT01, AD-BXL, EXCHANGE, IIS01,
+IIS02, LON-FS01, LON-CLT01, BER-CLT01) ; 4 VM Linux (BER-DOCKER01, BER-DOCKER02, LON-DOCKER01, ZABBIX) ;
+2 pare-feu sur 4 (PAR-FW01, BRU-FW01).</li>
+<li><strong>Non consultées</strong> : LON-FW01 et BER-FW01 (interface web injoignable depuis l'hôte de Paris, délai dépassé) ;
+2-PARIS-UBUNTU (éteinte, accès inconnu).</li>
+<li><strong>Limites</strong> : VM Linux de Londres et Bruxelles lues partiellement (sortie tronquée aux 12 dernières lignes) ;
+le contenu métier (partages, mailboxes, sites web) n'a pas été testé fonctionnellement.</li>
+<li>Les ports TCP depuis l'hôte vers les LAN sont filtrés (attendu : l'hôte est sur le réseau de salle).</li>
+</ul>
+<h2 id="en-une-phrase">En une phrase</h2>
+<p>Les quatre sites sont en place (hôtes, AD à deux contrôleurs, IPsec hub-and-spoke, DHCP en failover, SQL, SharePoint,
+Wazuh sur 14 machines, Zabbix et Greenbone en marche), mais <strong>Exchange n'est pas encore installé</strong>, <strong>SYSVOL/DFSR est en erreur
+sur les deux contrôleurs</strong>, <strong>aucun agent Zabbix ni Sysmon n'est déployé</strong>, <strong>Hyper-V Replica est inactif partout</strong> et
+plusieurs règles temporaires des pare-feu sont encore ouvertes.</p>
+
+</main>
+</body>
+</html>

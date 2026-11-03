@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matrice des flux firewall — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<!-- Fichier généré par sites/eurocorp/outils/generer.py depuis data/eurocorp.json — ne pas éditer à la main -->
+<h1 id="matrice-des-flux-firewall">Matrice des flux firewall</h1>
+<p>Principe : <strong>tout est bloqué par défaut</strong>, on n'ouvre que ce qui suit. Pas de règle « LAN vers ANY » comme seule sécurité (cahier des charges, §4.3).</p>
+<h2 id="reseau">Réseau</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>De</th>
+<th>Vers</th>
+<th>Protocole / ports</th>
+<th>Service</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F01</td>
+<td>Hôtes WAN (4 OPNsense)</td>
+<td>Hôtes WAN (4 OPNsense)</td>
+<td>UDP 500, UDP 4500, ESP</td>
+<td>IPsec site-à-site</td>
+<td>Monter et maintenir les 3 tunnels BRU↔PAR/LON/BER</td>
+</tr>
+<tr>
+<td>F28</td>
+<td>Tous les LAN</td>
+<td>Internet via passerelle salle</td>
+<td>TCP/UDP 53, TCP 80, 443</td>
+<td>Sortie Internet (si fournie)</td>
+<td>Mises à jour et téléchargement d'images Docker ; passerelle communiquée à part</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ad-dns-dhcp">AD / DNS / DHCP</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>De</th>
+<th>Vers</th>
+<th>Protocole / ports</th>
+<th>Service</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F02</td>
+<td>Tous les LAN</td>
+<td>BRU-DC01, PAR-DC01</td>
+<td>TCP/UDP 53</td>
+<td>DNS</td>
+<td>Résolution des noms du domaine et des services</td>
+</tr>
+<tr>
+<td>F03</td>
+<td>Tous les LAN</td>
+<td>BRU-DC01, PAR-DC01</td>
+<td>TCP/UDP 88, TCP/UDP 464</td>
+<td>Kerberos</td>
+<td>Authentification des comptes de domaine</td>
+</tr>
+<tr>
+<td>F04</td>
+<td>Tous les LAN</td>
+<td>BRU-DC01, PAR-DC01</td>
+<td>TCP/UDP 389, TCP 636, TCP 3268</td>
+<td>LDAP / catalogue global</td>
+<td>Annuaire ; Redmine et Exchange interrogent l'AD</td>
+</tr>
+<tr>
+<td>F05</td>
+<td>Tous les LAN</td>
+<td>BRU-DC01, PAR-DC01</td>
+<td>TCP 445, TCP 135, RPC dynamique</td>
+<td>SMB / RPC</td>
+<td>Jonction au domaine, GPO, ouverture de session</td>
+</tr>
+<tr>
+<td>F06</td>
+<td>BRU-DC01</td>
+<td>PAR-DC01 (et inverse)</td>
+<td>TCP 135, 389, 445, 3268, RPC dynamique, UDP/TCP 53, 88</td>
+<td>Réplication AD</td>
+<td>Garder les deux DC synchronisés (repadmin /replsummary)</td>
+</tr>
+<tr>
+<td>F07</td>
+<td>LAN distants (relais OPNsense)</td>
+<td>BRU-DC01, PAR-DC01</td>
+<td>UDP 67/68 (relayé en unicast)</td>
+<td>DHCP relay</td>
+<td>Les sites distants reçoivent leurs baux depuis le DHCP central</td>
+</tr>
+<tr>
+<td>F08</td>
+<td>BRU-DC01</td>
+<td>PAR-DC01 (et inverse)</td>
+<td>TCP 647</td>
+<td>DHCP Failover</td>
+<td>Synchroniser les baux entre les deux serveurs DHCP</td>
+</tr>
+</tbody>
+</table>
+<h2 id="services-windows">Services Windows</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>De</th>
+<th>Vers</th>
+<th>Protocole / ports</th>
+<th>Service</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F09</td>
+<td>Tous les LAN</td>
+<td>LON-FS01</td>
+<td>TCP 445</td>
+<td>SMB</td>
+<td>Accès aux partages Direction/RH/Finance/IT/Commun</td>
+</tr>
+<tr>
+<td>F10</td>
+<td>Tous les LAN</td>
+<td>VIP NLB intranet (BRU-IIS01/02)</td>
+<td>TCP 80, 443</td>
+<td>HTTP(S)</td>
+<td>Page intranet publiée derrière NLB</td>
+</tr>
+<tr>
+<td>F11</td>
+<td>Tous les LAN</td>
+<td>BRU-EXCH01</td>
+<td>TCP 443</td>
+<td>OWA / Autodiscover</td>
+<td>OWA accessible depuis les quatre sites</td>
+</tr>
+<tr>
+<td>F12</td>
+<td>BRU-EXCH01</td>
+<td>BRU-DC01, PAR-DC01</td>
+<td>LDAP, Kerberos, RPC (cf. F03–F05)</td>
+<td>Exchange ↔ AD</td>
+<td>Exchange lit et écrit dans l'annuaire</td>
+</tr>
+<tr>
+<td>F13</td>
+<td>Tous les LAN</td>
+<td>PAR-SP01</td>
+<td>TCP 80, 443</td>
+<td>SharePoint</td>
+<td>Accès au site intranet et à la bibliothèque documentaire</td>
+</tr>
+<tr>
+<td>F14</td>
+<td>PAR-SP01</td>
+<td>PAR-SQL01</td>
+<td>TCP 1433, UDP 1434</td>
+<td>SQL Server</td>
+<td>Bases de contenu et de configuration (même LAN, pas besoin de traverser un tunnel)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="virtualisation">Virtualisation</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>De</th>
+<th>Vers</th>
+<th>Protocole / ports</th>
+<th>Service</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F15</td>
+<td>Hôte Hyper-V Londres (10.10.28.224)</td>
+<td>Hôte Hyper-V Paris (10.10.28.233)</td>
+<td>TCP 80 (Kerberos) ou 443 (certificat), par le réseau de salle</td>
+<td>Hyper-V Replica</td>
+<td>Répliquer LON-FS01 vers Paris : la réplication va d’hôte à hôte, pas de VM à VM</td>
+</tr>
+</tbody>
+</table>
+<h2 id="supervision">Supervision</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>De</th>
+<th>Vers</th>
+<th>Protocole / ports</th>
+<th>Service</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F16</td>
+<td>Agents Windows/Linux (tous sites)</td>
+<td>BRU-DOCKER01</td>
+<td>TCP 10051</td>
+<td>Zabbix (checks actifs)</td>
+<td>L'agent initie la connexion : un seul port à ouvrir vers le hub</td>
+</tr>
+<tr>
+<td>F17</td>
+<td>BRU-DOCKER01</td>
+<td>Services supervisés</td>
+<td>TCP 53, 80, 443, 25, 445… (checks simples)</td>
+<td>Zabbix (disponibilité de services)</td>
+<td>Tester DNS, IIS, Exchange et applications web critiques</td>
+</tr>
+<tr>
+<td>F18</td>
+<td>Postes d'administration</td>
+<td>BRU-DOCKER01</td>
+<td>TCP 80 (443 si TLS)</td>
+<td>Frontend Zabbix</td>
+<td>Tableau de bord</td>
+</tr>
+<tr>
+<td>F19</td>
+<td>Tous les LAN</td>
+<td>LON-DOCKER01</td>
+<td>TCP 80, 443</td>
+<td>Redmine</td>
+<td>Suivi des tâches et incidents (nginx redirige 80 → 443)</td>
+</tr>
+<tr>
+<td>F20</td>
+<td>LON-DOCKER01</td>
+<td>BRU-DC01, PAR-DC01</td>
+<td>TCP 389 (636 en prod)</td>
+<td>LDAP</td>
+<td>Authentification Redmine par les comptes AD</td>
+</tr>
+</tbody>
+</table>
+<h2 id="securite">Sécurité</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>De</th>
+<th>Vers</th>
+<th>Protocole / ports</th>
+<th>Service</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F21</td>
+<td>Agents Wazuh (Windows/Linux)</td>
+<td>BER-DOCKER01</td>
+<td>TCP 1514, TCP 1515</td>
+<td>Wazuh (événements, enrôlement)</td>
+<td>Collecte des événements de sécurité</td>
+</tr>
+<tr>
+<td>F22</td>
+<td>Postes d'administration</td>
+<td>BER-DOCKER01</td>
+<td>TCP 443</td>
+<td>Dashboard Wazuh</td>
+<td>Consulter les alertes</td>
+</tr>
+<tr>
+<td>F23</td>
+<td>BER-DOCKER02</td>
+<td>Cibles du scan (Windows, web, Linux)</td>
+<td>ICMP, TCP 445, 135, 22, 80, 443… (étendue du scan)</td>
+<td>Greenbone — scan</td>
+<td>Scan authentifié des cibles (SMB pour Windows, SSH pour Linux)</td>
+</tr>
+<tr>
+<td>F24</td>
+<td>Postes d'administration</td>
+<td>BER-DOCKER02</td>
+<td>TCP 443, TCP 9392</td>
+<td>Console Greenbone</td>
+<td>Créer targets/tâches et lire les rapports</td>
+</tr>
+</tbody>
+</table>
+<h2 id="administration">Administration</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>De</th>
+<th>Vers</th>
+<th>Protocole / ports</th>
+<th>Service</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F25</td>
+<td>Postes d'administration</td>
+<td>Serveurs Windows</td>
+<td>TCP 3389</td>
+<td>RDP</td>
+<td>Administration à distance (source limitée aux postes d'admin)</td>
+</tr>
+<tr>
+<td>F26</td>
+<td>Postes d'administration</td>
+<td>Hôtes Docker</td>
+<td>TCP 22</td>
+<td>SSH</td>
+<td>Administration et copie de fichiers (scp)</td>
+</tr>
+<tr>
+<td>F27</td>
+<td>Postes d’administration (alias ADMIN_PC)</td>
+<td>OPNsense (WAN, « This Firewall »)</td>
+<td>TCP 443</td>
+<td>Interface web OPNsense</td>
+<td>Administrer les pare-feux depuis le réseau de salle, source limitée à ADMIN_PC</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Ports usuels des services concernés : à <strong>valider en test</strong> (Test-NetConnection, journaux OPNsense) puis à resserrer (sources/destinations précises).</p>
+</blockquote>
+
+</main>
+</body>
+</html>

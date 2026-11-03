@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mémoire des VM et nomenclature — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="memoire-des-vm-et-nomenclature-justifications-10.1">Mémoire des VM et nomenclature : justifications (§10.1)</h1>
+<h2 id="memoire-statique-ou-dynamique-releve-du-03112026-statique-sur-toutes-les-vm">Mémoire statique ou dynamique (relevé du 03/11/2026 : statique sur toutes les VM)</h2>
+<p>| VM | RAM | Justification |
+|---|---|---|
+| PAR-SQL01 | 8 Go (SQL : max server memory 5 120 Mo) | SQL Server gère lui-même son cache ; la mémoire dynamique perturbe cette gestion. Mémoire statique recommandée pour SQL Server |
+| PAR-SP01 | 12 Go | SharePoint consomme beaucoup de mémoire au démarrage (IIS, recherche, cache) ; le guide SharePoint demande 12 à 16 Go fixes |
+| EXCHANGE | 16 Go | imposé par l'énoncé (§6.3) ; Exchange dimensionne ses caches à la RAM présente |
+| DC-PARIS, DC-BXL | 8 Go et 4 Go | contrôleurs : base AD en mémoire ; la charge est constante |
+| IIS01, IIS02 | 4 Go chacune | deux nœuds NLB identiques ; mémoire fixe pour un comportement comparable |
+| OPNsense, Docker (Zabbix, Redmine, Wazuh, Greenbone), postes Windows 11 | 4 à 8 Go | charge prévisible ; évite le gonflement de mémoire d'un conteneur au détriment des autres VM |
+Le total alloué par hôte reste inférieur aux 64 Go (Paris 40 Go actives, Bruxelles 40 Go, Londres 16 Go, Berlin 24 Go), il n'y a donc pas besoin de surallouer.
+Réserve : DC-PARIS est à 12 vCPU / 8 Go (le plan prévoyait 2 vCPU / 4 Go) ; à réduire avant la remise si la charge le permet.</p>
+<h2 id="nomenclature">Nomenclature</h2>
+<ul>
+<li>Machines : <code>&lt;SITE&gt;-&lt;RÔLE&gt;&lt;NN&gt;</code> en majuscules (PAR-DC01, PAR-SQL01, PAR-SP01, PAR-CLT01, PAR-FW01). Préfixes : BRU, PAR, LON, BER.</li>
+<li>vSwitch : un externe pour le WAN et un privé pour le LAN par site.</li>
+<li>VHDX : un fichier <code>&lt;VM&gt;.vhdx</code> par disque, dynamique ; disques de données nommés <code>-DATA</code>, <code>-LOGS</code>, <code>-TEMPDB</code> (PAR-SQL01).</li>
+<li><strong>Écarts constatés</strong> (à corriger avant la remise) : VM <code>OPNSense - Paris</code>, <code>DC-PARIS</code>, <code>2-PARIS-UBUNTU</code> à Paris ; <code>DC-BXL</code>, <code>EXCHANGE</code>, <code>IIS01</code>, <code>IIS02</code>, <code>OPNsense</code>, <code>ZABBIX</code> à Bruxelles ;
+vSwitch <code>2-OPNSENSE-PARIS</code>, <code>2-LAN-PARIS</code>, <code>BXL-WAN</code>, <code>VS-WAN</code>… Renommer les VM Hyper-V (le nom d'hôte Windows est déjà bon) et uniformiser les vSwitch.</li>
+<li>Image de départ : disque parent <code>SYSPREP.vhdx</code> (Windows Server 2025 généralisé) ; fusionner les disques des VM qui en dépendent avant la remise.</li>
+</ul>
+
+</main>
+</body>
+</html>

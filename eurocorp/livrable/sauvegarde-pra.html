@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sauvegarde, restauration et PRA — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="sauvegarde-restauration-pra">07 — Sauvegarde, restauration, PRA</h1>
+<blockquote>
+<p>Rédigé d'après <code>05-Docker/redmine/backup-redmine.sh</code> (lu) ; la partie Replica vient de mes connaissances générales, non vérifiée dans la documentation Microsoft. <strong>Aucune commande n'a été exécutée</strong> : tout est à valider sur les VM. Les décisions (RPO, RTO, fréquence) sont à toi.</p>
+</blockquote>
+<h2 id="redmine-lon-docker01">1. Redmine (LON-DOCKER01)</h2>
+<p><strong>Ce que sauvegarde le script</strong> (<code>backup-redmine.sh</code>, dossier de déploiement <code>/opt/redmine</code>) : la base MariaDB (<code>mariadb-dump</code>, compressée), les fichiers Redmine (volume <code>redmine-files</code>, archive tar.gz), une copie du <code>docker-compose.yml</code> et du <code>.env</code> ; il refuse une sauvegarde vide et garde <strong>7 jours</strong> (<code>RETENTION_DAYS</code>).</p>
+<p><strong>Planifier</strong> (cron root, ex. chaque nuit à 2 h — fréquence à choisir) :</p>
+<pre><code>0 2 * * * /opt/redmine/backup-redmine.sh &gt;&gt; /var/log/redmine-backup.log 2&gt;&amp;1
+</code></pre>
+<p><strong>Restaurer</strong> (à tester d'abord sur une copie) :</p>
+<ol>
+<li>Choisir la sauvegarde : <code>ls /opt/redmine/backups/</code>.</li>
+<li>Arrêter l'application, garder la base : <code>docker compose stop redmine nginx</code>.</li>
+<li>Base : <code>gunzip -c &lt;sauvegarde&gt;/redmine-db.sql.gz | docker exec -i redmine-db mariadb --user=&lt;MYSQL_USER&gt; --password=&lt;MYSQL_PASSWORD&gt; &lt;MYSQL_DATABASE&gt;</code> (valeurs du <code>.env</code>).</li>
+<li>Fichiers : <code>docker run --rm --volumes-from redmine-app -v &lt;sauvegarde&gt;:/backup alpine tar xzf /backup/redmine-files.tar.gz -C /usr/src/redmine/files</code>.</li>
+<li>Relancer : <code>docker compose up -d</code>, puis vérifier la connexion et un ticket existant.</li>
+</ol>
+<p><strong>Test de restauration obligatoire</strong> : sans lui, la sauvegarde n'est qu'une hypothèse. Noter la date et le résultat dans <code>09-Tests</code>.</p>
+<h2 id="hyper-v-replica-de-lon-fs01-vers-paris">2. Hyper-V Replica de LON-FS01 vers Paris</h2>
+<p>À remplir par toi après décision :</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Ta décision</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fréquence de réplication (30 s, 5 min, 15 min)</td>
+<td></td>
+<td>RPO = au plus cet intervalle</td>
+</tr>
+<tr>
+<td>RPO accepté</td>
+<td></td>
+<td>données perdues au pire</td>
+</tr>
+<tr>
+<td>RTO accepté</td>
+<td></td>
+<td>temps pour repartir à Paris</td>
+</tr>
+<tr>
+<td>Authentification (Kerberos / certificat)</td>
+<td></td>
+<td>Kerberos si les hôtes sont dans le domaine</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Étapes</strong> (à lancer à la main ou avec les cmdlets <code>Set-VMReplicationServer</code>, <code>Enable-VMReplication</code>, <code>Start-VMInitialReplication</code>) :</p>
+<ol>
+<li>Hôte de Paris : accepter les réplications entrantes et ouvrir le port (80 pour Kerberos).</li>
+<li>Hôte de Londres : activer la réplication de <code>LON-FS01</code>, puis lancer la réplication initiale.</li>
+<li>Vérifier : <code>Get-VMReplication</code> (État et Santé).</li>
+<li><strong>Test de basculement</strong> (sans interrompre la production) : créer la VM de test à Paris, vérifier qu'elle démarre et que les partages répondent, puis la supprimer.</li>
+<li><strong>Basculement planifié</strong> : arrêter la VM à Londres, <em>Planned Failover</em>, démarrer à Paris ; le retour se fait par <strong>réplication inversée</strong> puis un second basculement planifié.</li>
+</ol>
+<h2 id="scenarios-du-pra-a-completer">3. Scénarios du PRA (à compléter)</h2>
+<table>
+<thead>
+<tr>
+<th>Scénario</th>
+<th>Détection</th>
+<th>Action</th>
+<th>Durée visée</th>
+<th>Test fait ?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Panne de l'hôte de Londres</td>
+<td>Zabbix, ping</td>
+<td>basculer LON-FS01 à Paris</td>
+<td>RTO</td>
+<td></td>
+</tr>
+<tr>
+<td>Perte de Redmine</td>
+<td>utilisateurs, Zabbix</td>
+<td>restaurer la dernière sauvegarde</td>
+<td>RTO</td>
+<td></td>
+</tr>
+<tr>
+<td>Perte du tunnel Bruxelles-Londres</td>
+<td>ping LAN à LAN</td>
+<td>contrôler IPsec, journaux OPNsense</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Perte de BRU-DC01</td>
+<td>réplication AD, DHCP</td>
+<td>autres DC (PAR-DC01), DHCP failover</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="ou-est-la-sauvegarde">4. Où est la sauvegarde</h2>
+<p>Un PRA suppose que la copie ne soit pas sur la même machine que l'original : copier <code>backups/</code> vers un autre hôte (à décider : lequel).</p>
+
+</main>
+</body>
+</html>

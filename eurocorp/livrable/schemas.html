@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>EUROCORP : schémas logique et physique (groupe 2)</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #1b2a41; margin: 0; }
+  h1 { font-size: 18pt; margin: 0 0 4px; } h2 { font-size: 13pt; margin: 0 0 6px; }
+  p.n { font-size: 9pt; color: #44546a; margin: 2px 0 8px; }
+  section { page-break-after: always; } section:last-child { page-break-after: auto; }
+  svg { width: 100%; height: auto; }
+  text { font-family: "Segoe UI", Arial, sans-serif; }
+</style>
+</head>
+<body>
+
+<section>
+<h1>Schéma logique : réseau et services</h1>
+<p class="n">Groupe 2 : plage 172.17.0.0/16, WAN commun 10.10.28.0/24. Relevé du 03/11/2026. Bruxelles est le hub : Paris, Londres et Berlin se joignent par Bruxelles.</p>
+<svg viewBox="0 0 1100 640" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1100" height="640" fill="#ffffff"/>
+  <!-- WAN -->
+  <rect x="40" y="215" width="1020" height="46" rx="8" fill="#e8eef7" stroke="#2f5d9b" stroke-width="2"/>
+  <text x="550" y="244" font-size="15" text-anchor="middle" fill="#1b2a41" font-weight="600">WAN de salle 10.10.28.0/24 (transport IPsec, management des hôtes) : passerelle 10.10.28.254</text>
+  <!-- Firewalls -->
+  <g font-size="12" text-anchor="middle">
+    <rect x="445" y="150" width="210" height="52" rx="8" fill="#fde9d9" stroke="#c0504d" stroke-width="2"/>
+    <text x="550" y="172" font-weight="700">BRU-FW01 (OPNsense) : HUB</text><text x="550" y="190">WAN 10.10.28.111 | LAN 172.17.10.1</text>
+    <rect x="95" y="150" width="210" height="52" rx="8" fill="#fde9d9" stroke="#c0504d" stroke-width="2"/>
+    <text x="200" y="172" font-weight="700">PAR-FW01 (OPNsense)</text><text x="200" y="190">WAN 10.10.28.112 | LAN 172.17.20.1</text>
+    <rect x="795" y="150" width="210" height="52" rx="8" fill="#fde9d9" stroke="#c0504d" stroke-width="2"/>
+    <text x="900" y="172" font-weight="700">LON-FW01 (OPNsense)</text><text x="900" y="190">WAN 10.10.28.113 | LAN 172.17.30.1</text>
+    <rect x="445" y="283" width="210" height="52" rx="8" fill="#fde9d9" stroke="#c0504d" stroke-width="2"/>
+    <text x="550" y="305" font-weight="700">BER-FW01 (OPNsense)</text><text x="550" y="323">WAN 10.10.28.114 | LAN 172.17.40.1</text>
+  </g>
+  <!-- tunnels (ipsec) drawn along WAN -->
+  <path d="M200 202 L200 215" stroke="#2f5d9b" stroke-width="2"/><path d="M550 202 L550 215" stroke="#2f5d9b" stroke-width="2"/><path d="M900 202 L900 215" stroke="#2f5d9b" stroke-width="2"/><path d="M550 261 L550 283" stroke="#2f5d9b" stroke-width="2"/>
+  <path d="M305 176 L445 176" stroke="#2e8b57" stroke-width="3" stroke-dasharray="8 4"/>
+  <path d="M655 176 L795 176" stroke="#2e8b57" stroke-width="3" stroke-dasharray="8 4"/>
+  <text x="375" y="168" font-size="10.5" text-anchor="middle" fill="#2e8b57">IPsec PAR-BRU</text>
+  <text x="725" y="168" font-size="10.5" text-anchor="middle" fill="#2e8b57">IPsec BRU-LON</text>
+  <text x="670" y="313" font-size="11" text-anchor="start" fill="#2e8b57">IPsec BRU-BER (tunnel via le WAN)</text>
+  <!-- LAN boxes -->
+  <g font-size="11.5">
+    <rect x="30" y="20" width="340" height="112" rx="10" fill="#f2f7ee" stroke="#6a994e" stroke-width="2"/>
+    <text x="200" y="38" text-anchor="middle" font-weight="700" font-size="13">LAN Paris 172.17.20.0/24 (étendue .100–.200)</text>
+    <text x="42" y="58">PAR-DC01 .10 : AD DS, DNS, GC, DHCP failover</text>
+    <text x="42" y="74">PAR-SQL01 .20 : SQL Server 2022 (instance SHAREPOINT)</text>
+    <text x="42" y="90">PAR-SP01 .21 : SharePoint Subscription Edition</text>
+    <text x="42" y="106">PAR-CLT01 DHCP (.150) : poste Windows 11</text>
+    <text x="42" y="122">Wazuh : agents sur les 4 machines</text>
+    <rect x="400" y="20" width="300" height="112" rx="10" fill="#f2f7ee" stroke="#6a994e" stroke-width="2"/>
+    <text x="550" y="38" text-anchor="middle" font-weight="700" font-size="13">LAN Bruxelles 172.17.10.0/24 (hub)</text>
+    <text x="410" y="58">AD-BXL .10 : AD DS, DNS, GC, DHCP, FSMO</text>
+    <text x="410" y="74">EXCHANGE .11 (installation à finir)</text>
+    <text x="410" y="90">IIS01 .21 / IIS02 .22, VIP NLB .20 (intranet)</text>
+    <text x="410" y="106">ZABBIX .40 : Zabbix 7.4 (Docker)</text>
+    <text x="410" y="122">http://172.17.10.40/</text>
+    <rect x="730" y="20" width="340" height="112" rx="10" fill="#f2f7ee" stroke="#6a994e" stroke-width="2"/>
+    <text x="900" y="38" text-anchor="middle" font-weight="700" font-size="13">LAN Londres 172.17.30.0/24</text>
+    <text x="742" y="58">LON-FS01 .10 : partages, DFS « Files », FSRM</text>
+    <text x="742" y="74">LON-DOCKER01 .40 : Redmine 7 + guide du groupe</text>
+    <text x="742" y="90">LON-CLT01 DHCP (.100) : poste Windows 11</text>
+    <text x="742" y="106">Source Hyper-V Replica prévue vers Paris</text>
+    <text x="742" y="122">(non encore configuré)</text>
+    <rect x="30" y="360" width="400" height="125" rx="10" fill="#f2f7ee" stroke="#6a994e" stroke-width="2"/>
+    <text x="230" y="378" text-anchor="middle" font-weight="700" font-size="13">LAN Berlin 172.17.40.0/24</text>
+    <text x="42" y="398">BER-DOCKER01 .40 : Wazuh 4.14.9 (manager, indexer, dashboard)</text>
+    <text x="42" y="414">BER-DOCKER02 .41 : Greenbone Community Edition</text>
+    <text x="42" y="430">BER-CLT01 DHCP (.150) : poste Windows 11</text>
+    <text x="42" y="446">Dashboard Wazuh : https://wazuh.eurocorp.lan (443)</text>
+    <text x="42" y="462">Agents → 1514/1515 depuis tous les LAN</text>
+  </g>
+  <!-- legend -->
+  <rect x="470" y="395" width="590" height="215" rx="10" fill="#fafafa" stroke="#999"/>
+  <g font-size="11.5">
+    <text x="485" y="415" font-weight="700" font-size="13">Flux principaux (matrice de flux)</text>
+    <text x="485" y="435">AD : TCP/UDP 53, 88, 135, 389, 445, 464, 636, 3268 vers AD-BXL et PAR-DC01</text>
+    <text x="485" y="451">DHCP : relais 67 vers les DC, failover TCP 647 entre les deux DC</text>
+    <text x="485" y="467">Web : intranet 80/443 (IIS), SharePoint 80/443 (PAR-SP01), OWA 443 (EXCHANGE)</text>
+    <text x="485" y="483">SQL : 1433 (et UDP 1434) vers PAR-SQL01, SharePoint ↔ SQL dans le LAN</text>
+    <text x="485" y="499">Supervision : Zabbix 10051 (agents) / 10050 et checks ; Wazuh 1514, 1515, 443</text>
+    <text x="485" y="515">SMB : 445 vers LON-FS01 ; Redmine 80/443 vers LON-DOCKER01</text>
+    <text x="485" y="531">Greenbone : scans depuis BER-DOCKER02 vers tous les LAN</text>
+    <text x="485" y="547">IPsec : UDP 500, 4500 et ESP entre les WAN des 4 OPNsense</text>
+    <text x="485" y="571" font-weight="700">Domaine : eurocorp.lan (forêt et domaine Windows Server 2025)</text>
+    <text x="485" y="587">Sites AD : BRU, PAR, LON, BER avec leurs sous-réseaux</text>
+    <text x="485" y="603">Interdit en fin de projet : règle LAN → any généralisée</text>
+  </g>
+</svg>
+</section>
+
+<section>
+<h1>Schéma physique : hôtes Hyper-V et placement des VM</h1>
+<p class="n">Chaque hôte : Windows Server 2025, 64 Go de RAM, ≈ 1 To de SSD, réseau de salle 10.10.28.0/24. vSwitch externe (WAN) et privé (LAN du site). Mémoire statique sur toutes les VM. Relevé du 03/11/2026.</p>
+<svg viewBox="0 0 1100 640" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="1100" height="640" fill="#ffffff"/>
+  <g font-size="11.5">
+    <!-- Paris -->
+    <rect x="20" y="20" width="255" height="470" rx="10" fill="#eef3fa" stroke="#2f5d9b" stroke-width="2"/>
+    <text x="147" y="42" text-anchor="middle" font-weight="700" font-size="14">2-PARIS (10.10.28.233)</text>
+    <text x="147" y="58" text-anchor="middle">vSwitch : 2-OPNSENSE-PARIS, 2-LAN-PARIS</text>
+    <g>
+      <rect x="32" y="72" width="231" height="46" rx="6" fill="#fde9d9" stroke="#c0504d"/><text x="42" y="90" font-weight="700">OPNSense - Paris (PAR-FW01)</text><text x="42" y="107">4 vCPU / 8 Go / 20 Go | .112 et .20.1</text>
+      <rect x="32" y="126" width="231" height="46" rx="6" fill="#fff"  stroke="#2f5d9b"/><text x="42" y="144" font-weight="700">DC-PARIS (PAR-DC01)</text><text x="42" y="161">12 vCPU / 8 Go / 127 Go | .20.10</text>
+      <rect x="32" y="180" width="231" height="60" rx="6" fill="#fff"  stroke="#2f5d9b"/><text x="42" y="198" font-weight="700">PAR-SQL01</text><text x="42" y="215">4 vCPU / 8 Go | 127 + 60 + 40 + 30 Go</text><text x="42" y="231">.20.20 (D données, L journaux, T tempdb)</text>
+      <rect x="32" y="248" width="231" height="46" rx="6" fill="#fff"  stroke="#2f5d9b"/><text x="42" y="266" font-weight="700">PAR-SP01</text><text x="42" y="283">4 vCPU / 12 Go / 127 Go | .20.21</text>
+      <rect x="32" y="302" width="231" height="46" rx="6" fill="#fff"  stroke="#2f5d9b"/><text x="42" y="320" font-weight="700">PAR-CLT01</text><text x="42" y="337">2 vCPU / 4 Go / 60 Go | DHCP .150</text>
+      <rect x="32" y="356" width="231" height="46" rx="6" fill="#f5f5f5" stroke="#999" stroke-dasharray="4 3"/><text x="42" y="374" font-weight="700">2-PARIS-UBUNTU (éteinte)</text><text x="42" y="391">6 vCPU / 8 Go / 127 Go</text>
+    </g>
+    <text x="42" y="425">Alloué : 26 vCPU, 40 Go (32 et 48 avec Ubuntu)</text>
+    <text x="42" y="441">Cible Hyper-V Replica possible (non activé)</text>
+    <text x="42" y="457">Image parent : SYSPREP.vhdx</text>
+    <text x="42" y="473">Démarrage auto : StartIfRunning</text>
+    <!-- Bruxelles -->
+    <rect x="285" y="20" width="255" height="470" rx="10" fill="#eef3fa" stroke="#2f5d9b" stroke-width="2"/>
+    <text x="412" y="42" text-anchor="middle" font-weight="700" font-size="14">2-BRUXELL (10.10.28.219)</text>
+    <text x="412" y="58" text-anchor="middle">vSwitch : BXL-WAN (ext.), BXL-LAN (privé)</text>
+    <rect x="297" y="72" width="231" height="46" rx="6" fill="#fde9d9" stroke="#c0504d"/><text x="307" y="90" font-weight="700">OPNsense (BRU-FW01, hub)</text><text x="307" y="107">4 vCPU / 8 Go | .111 et .10.1</text>
+    <rect x="297" y="126" width="231" height="46" rx="6" fill="#fff" stroke="#2f5d9b"/><text x="307" y="144" font-weight="700">DC-BXL (AD-BXL)</text><text x="307" y="161">4 vCPU / 4 Go / 127 Go | .10.10</text>
+    <rect x="297" y="180" width="231" height="46" rx="6" fill="#fff" stroke="#2f5d9b"/><text x="307" y="198" font-weight="700">EXCHANGE</text><text x="307" y="215">4 vCPU / 16 Go | 127+40+20 Go | .10.11</text>
+    <rect x="297" y="234" width="231" height="46" rx="6" fill="#fff" stroke="#2f5d9b"/><text x="307" y="252" font-weight="700">IIS01 / IIS02 (NLB .10.20)</text><text x="307" y="269">2 × (2 vCPU / 4 Go / 127 Go) | .21 et .22</text>
+    <rect x="297" y="288" width="231" height="46" rx="6" fill="#fff" stroke="#2f5d9b"/><text x="307" y="306" font-weight="700">ZABBIX (Docker)</text><text x="307" y="323">2 vCPU / 4 Go / 127 Go | .10.40</text>
+    <text x="307" y="425">Total alloué : 18 vCPU, 40 Go sur 64 Go</text>
+    <!-- Londres -->
+    <rect x="550" y="20" width="255" height="470" rx="10" fill="#eef3fa" stroke="#2f5d9b" stroke-width="2"/>
+    <text x="677" y="42" text-anchor="middle" font-weight="700" font-size="14">2-LONDRES (10.10.28.224)</text>
+    <text x="677" y="58" text-anchor="middle">vSwitch : VS-WAN (ext.), VS-LAN-LON (privé)</text>
+    <rect x="562" y="72" width="231" height="46" rx="6" fill="#fde9d9" stroke="#c0504d"/><text x="572" y="90" font-weight="700">LON-FW01 (OPNsense)</text><text x="572" y="107">2 vCPU / 4 Go / 40 Go | .113 et .30.1</text>
+    <rect x="562" y="126" width="231" height="46" rx="6" fill="#fff" stroke="#2f5d9b"/><text x="572" y="144" font-weight="700">LON-FS01 (File Server)</text><text x="572" y="161">2 vCPU / 4 Go | 127 + 127 Go | .30.10</text>
+    <rect x="562" y="180" width="231" height="46" rx="6" fill="#fff" stroke="#2f5d9b"/><text x="572" y="198" font-weight="700">LON-DOCKER01 (Redmine)</text><text x="572" y="215">2 vCPU / 4 Go / 40 Go | .30.40</text>
+    <rect x="562" y="234" width="231" height="46" rx="6" fill="#fff" stroke="#2f5d9b"/><text x="572" y="252" font-weight="700">LON-CLT01</text><text x="572" y="269">2 vCPU / 4 Go / 60 Go | DHCP .100</text>
+    <text x="572" y="425">Total alloué : 8 vCPU, 16 Go sur 64 Go</text>
+    <!-- Berlin -->
+    <rect x="815" y="20" width="265" height="470" rx="10" fill="#eef3fa" stroke="#2f5d9b" stroke-width="2"/>
+    <text x="947" y="42" text-anchor="middle" font-weight="700" font-size="14">Hôte Berlin (10.10.28.201)</text>
+    <text x="947" y="58" text-anchor="middle">vSwitch : VS-WAN (ext.), VS-LAN-BER (privé)</text>
+    <rect x="827" y="72" width="241" height="46" rx="6" fill="#fde9d9" stroke="#c0504d"/><text x="837" y="90" font-weight="700">BER-FW01 (OPNsense)</text><text x="837" y="107">2 vCPU / 4 Go / 40 Go | .114 et .40.1</text>
+    <rect x="827" y="126" width="241" height="46" rx="6" fill="#fff" stroke="#2f5d9b"/><text x="837" y="144" font-weight="700">BER-DOCKER01 (Wazuh)</text><text x="837" y="161">4 vCPU / 8 Go / 100 Go | .40.40</text>
+    <rect x="827" y="180" width="241" height="46" rx="6" fill="#fff" stroke="#2f5d9b"/><text x="837" y="198" font-weight="700">BER-DOCKER02 (Greenbone)</text><text x="837" y="215">4 vCPU / 8 Go / 100 Go | .40.41</text>
+    <rect x="827" y="234" width="241" height="46" rx="6" fill="#fff" stroke="#2f5d9b"/><text x="837" y="252" font-weight="700">BER-CLT01</text><text x="837" y="269">2 vCPU / 4 Go / 60 Go | DHCP .150</text>
+    <text x="837" y="425">Total alloué : 12 vCPU, 24 Go sur 64 Go</text>
+  </g>
+  <rect x="20" y="505" width="1060" height="115" rx="10" fill="#fafafa" stroke="#999"/>
+  <g font-size="11.5">
+    <text x="35" y="527" font-weight="700" font-size="13">Choix et justifications</text>
+    <text x="35" y="547">Mémoire statique sur toutes les VM : charges prévisibles (AD, SQL, SharePoint, Exchange, Docker) et pas de surallocation entre VM de l'hôte.</text>
+    <text x="35" y="563">SQL Server (8 Go, max server memory 5 120 Mo) et SharePoint (12 Go) sur deux VM dédiées : mémoire statique exigée pour ces rôles.</text>
+    <text x="35" y="579">Disques VHDX dynamiques ; disque système cloné depuis une image sysprep (parent SYSPREP.vhdx), à fusionner avant la remise.</text>
+    <text x="35" y="595">Séparation des vSwitch : un externe (WAN, seule porte vers 10.10.28.0/24), un privé (LAN du site, derrière OPNsense). Aucun serveur sur le WAN.</text>
+    <text x="35" y="611">Les hôtes de Bruxelles, Londres et Berlin ont des routes statiques vers les 4 LAN ; les hôtes n'ont pas de carte sur le LAN de leur site (les LAN ne sont joignables qu'à travers les VM).</text>
+  </g>
+</svg>
+</section>
+</body>
+</html>
+

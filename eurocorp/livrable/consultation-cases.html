@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consultation : étapes cochées — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="etapes-cochees-sur-le-site-commun-0311-claude-consultation-du-0311">Étapes cochées sur le site commun (03/11, « Claude (consultation du 03/11) »)</h1>
+<p>Page <code>marche.html</code>, version du suivi 1945 : 52 étapes cochées (de 1 286 à 1 338 sur 2 782). Seules les étapes dont j'ai
+observé le résultat ont été cochées ; rien n'a été décoché. Les autres (Zabbix, Sysmon, Exchange, tests de panne) restent ouvertes.</p>
+<table>
+<thead>
+<tr>
+<th>Étapes cochées</th>
+<th>Machines</th>
+<th>Preuve</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>« Le manager répond » : <code>Resolve-DnsName wazuh.eurocorp.lan</code>, <code>Test-NetConnection wazuh.eurocorp.lan -Port 1514</code></td>
+<td>PAR-SQL01, PAR-SP01, PAR-DC01, BRU-DC01, BRU-IIS01, BRU-IIS02, BRU-EXCH01, LON-FS01</td>
+<td><code>wazuh.eurocorp.lan</code> résolu en 172.17.40.40 ; chaque agent connecté en TCP 1514 (<code>Connected to the server</code>)</td>
+</tr>
+<tr>
+<td>« L'agent est actif » : Endpoints en statut active, <code>agent_control -l</code></td>
+<td>mêmes 8 machines</td>
+<td><code>agent_control -l</code> du manager : agents 001 à 015 Active, version 4.14.9</td>
+</tr>
+<tr>
+<td><code>Sur PAR-DC01 : DNS préféré = lui-même (172.17.20.10), secondaire = 172.17.10.10</code></td>
+<td>PAR-DC01</td>
+<td><code>Get-DnsClientServerAddress</code> = 172.17.20.10, 172.17.10.10</td>
+</tr>
+<tr>
+<td><code>Sur BRU-DC01 : DNS préféré = lui-même, secondaire = 172.17.20.10</code></td>
+<td>BRU-DC01 (AD-BXL)</td>
+<td>DNS = 172.17.10.10, 172.17.20.10</td>
+</tr>
+<tr>
+<td><code>Move-ADDirectoryServer -Identity PAR-DC01 -Site PAR</code></td>
+<td>PAR-DC01</td>
+<td><code>nltest /dsgetsite</code> = PAR ; AD-BXL dans BRU</td>
+</tr>
+<tr>
+<td><code>Get-ADReplicationFailure -Target PAR-DC01 : aucune ligne</code></td>
+<td>PAR-DC01</td>
+<td>commande lancée : 0 ligne</td>
+</tr>
+</tbody>
+</table>
+<h2 id="deuxieme-passe-tests-executes-claude-tests-du-0311-version-1970-1-363-etapes-cochees">Deuxième passe : tests exécutés (« Claude (tests du 03/11) », version 1970 : 1 363 étapes cochées)</h2>
+<p>25 étapes de plus, cochées après exécution réelle :</p>
+<ul>
+<li><strong>PAR-DC01</strong> : <code>Test-NetConnection 172.17.10.1</code> (OK), <code>nslookup eurocorp.lan</code> (renvoie 172.17.10.10), <code>nltest /dsgetsite</code> (PAR),
+renouvellement de bail sur un poste Windows 11 (PAR-CLT01 garde 172.17.20.150), <code>Test-NetConnection 172.17.10.40 -Port 10051</code> (ouvert).</li>
+<li><strong>BRU-DC01 (AD-BXL)</strong> : <code>Get-ADDomain</code>, <code>Get-DhcpServerInDC</code>, <code>Get-DnsServerForwarder</code>, <code>ForestMode</code> / <code>DomainMode</code> (Windows2025),
+<code>Get-ADDomain | Select …</code>, <code>nslookup eurocorp.lan 127.0.0.1</code>, <code>Get-DhcpServerv4Failover</code> (LoadBalance, Normal, des deux côtés),
+<code>Get-DhcpServerv4Scope</code> (mêmes 4 étendues actives des deux côtés), <code>ipconfig /all</code> du poste (.150, passerelle et DNS corrects), renouvellement de bail.</li>
+<li><strong>PAR-SQL01, PAR-SP01, BRU-IIS01, BRU-EXCH01, LON-FS01</strong> : <code>Test-NetConnection 172.17.10.40 -Port 10051</code> (ouvert depuis chacun).</li>
+<li><strong>BRU-IIS01 et BRU-IIS02</strong> : <code>Resolve-DnsName intranet.eurocorp.lan</code> depuis un poste de Paris (172.17.10.20).</li>
+<li><strong>PAR-FW01</strong> : ping 172.17.x.1 depuis une VM du site ; <code>ipconfig /renew</code> depuis un poste de Londres (172.17.30.100).</li>
+</ul>
+<h2 id="non-cochees-malgre-une-preuve-partielle">Non cochées malgré une preuve partielle</h2>
+<ul>
+<li>DHCP : test d'arrêt du principal (T10), test client <code>ipconfig /release</code> : non exécutés.</li>
+<li><code>dcdiag : tous les tests « passed »</code> : <strong>faux</strong> (DFSREvent en échec).</li>
+<li>Agents Zabbix, Sysmon, Greenbone authentifié : rien d'installé / non testé.</li>
+<li>Postes clients, LON-DOCKER01, BER-DOCKER0x : leurs étapes sont déjà très cochées ; les lignes restantes demandent des tests non faits.</li>
+</ul>
+<p>Les clés du suivi sont par machine (suffixe <code>#n</code>) : cocher une étape n'en coche pas d'autres. Liste exacte des clés : <code>cases-cochees.json</code>
+(copie de travail, hors livrable).</p>
+
+</main>
+</body>
+</html>

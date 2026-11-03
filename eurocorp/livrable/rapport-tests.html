@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rapport des tests — EUROCORP</title>
+<link rel="stylesheet" href="../assets/style.css">
+<style>main{max-width:1100px;margin:0 auto;padding:1rem} table{border-collapse:collapse;display:block;overflow-x:auto} td,th{border:1px solid #c9b99a;padding:.3rem .5rem;vertical-align:top} th{background:#efe6d3} code{white-space:pre-wrap}</style>
+</head>
+<body>
+<main id="contenu">
+<p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<h1 id="rapport-des-tests-etat-du-2026-11-03-1845">09 — Rapport des tests (état du 2026-11-03, 18:45)</h1>
+<p>Source : page « Recette » du site commun du groupe (version du suivi 2007) et essais du 03/11 exécutés par PowerShell Direct depuis l'hôte de Paris
+(un poste par site : PAR-CLT01, LON-CLT01, BER-CLT01, plus les serveurs). Les colonnes « Obtenu » reprennent ce qui a été relevé ; rien n'est inventé.</p>
+<p><strong>Bilan : 11 réussi(s), 7 en échec, 5 partiel(s), 5 à faire sur 28.</strong></p>
+<p>Légende : ✅ OK, ❌ KO (échec constaté), 🟡 Partiel (une partie vérifiée), ⬜ À faire (non exécuté).</p>
+<table>
+<thead>
+<tr>
+<th>N°</th>
+<th>Test</th>
+<th>Commande / action</th>
+<th>Attendu</th>
+<th>Résultat</th>
+<th>Obtenu</th>
+<th>Date</th>
+<th>Énoncé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T01</td>
+<td>Ping LAN à LAN BRU-PAR</td>
+<td><code>ping 172.17.20.1</code> depuis un serveur du LAN de Bruxelles</td>
+<td>réponse</td>
+<td>✅ OK</td>
+<td>réponse — ping LAN ↔ LAN validé dans tous les sens</td>
+<td>2026-10-29</td>
+<td>§4.3</td>
+</tr>
+<tr>
+<td>T02</td>
+<td>Ping LAN à LAN BRU-LON</td>
+<td><code>ping 172.17.30.1</code> depuis Bruxelles</td>
+<td>réponse</td>
+<td>✅ OK</td>
+<td>réponse — ping LAN ↔ LAN validé dans tous les sens</td>
+<td>2026-10-29</td>
+<td>§4.3</td>
+</tr>
+<tr>
+<td>T03</td>
+<td>Ping LAN à LAN BRU-BER</td>
+<td><code>ping 172.17.40.1</code> depuis Bruxelles</td>
+<td>réponse</td>
+<td>✅ OK</td>
+<td>réponse — ping LAN ↔ LAN validé dans tous les sens</td>
+<td>2026-10-29</td>
+<td>§4.3</td>
+</tr>
+<tr>
+<td>T04</td>
+<td>Paris vers Londres (par Bruxelles)</td>
+<td><code>ping 172.17.30.1</code> depuis Paris</td>
+<td>réponse</td>
+<td>✅ OK</td>
+<td>ping 172.17.30.1 OK depuis PAR-CLT01 (03/11), idem 172.17.10.10 et 172.17.40.1</td>
+<td>11/03/2026 14:34:35</td>
+<td>§4.3</td>
+</tr>
+<tr>
+<td>T05</td>
+<td>Flux autorisé</td>
+<td><code>Test-NetConnection &lt;cible&gt; -Port 389</code> (flux F04)</td>
+<td><code>TcpTestSucceeded : True</code></td>
+<td>✅ OK</td>
+<td>Test-NetConnection 389 vers AD-BXL (172.17.10.10) et PAR-DC01 (172.17.20.10) : ouvert depuis PAR-CLT01, LON-CLT01 et BER-CLT01 (03/11). Idem 53, 445 ; Wazuh 1514/1515, Zabbix 10051, SQL 1433, FS 445 ouverts depuis les 4 sites</td>
+<td>11/03/2026 16:37:31</td>
+<td>§4.3</td>
+</tr>
+<tr>
+<td>T06</td>
+<td>Flux bloqué</td>
+<td>un port hors matrice</td>
+<td><code>False</code></td>
+<td>✅ OK</td>
+<td>Port hors matrice TCP 3389 : vers AD-BXL bloque depuis PAR-CLT01, LON-CLT01, BER-CLT01 ; ouvert seulement depuis le LAN de Bruxelles (03/11). 3389 vers PAR-SQL01 ferme depuis Londres et Berlin</td>
+<td>11/03/2026 16:37:31</td>
+<td>§4.3</td>
+</tr>
+<tr>
+<td>T07</td>
+<td>DNS</td>
+<td><code>nslookup bru-dc01.eurocorp.lan</code> depuis chaque site</td>
+<td>l'IP du serveur</td>
+<td>✅ OK</td>
+<td>Depuis PAR-CLT01, LON-CLT01, BER-CLT01 et les serveurs : ad-bxl = 172.17.10.10, intranet = 172.17.10.20, sharepoint = 172.17.20.21, wazuh = 172.17.40.40 (03/11). bru-dc01 et mail ne sont pas dans le DNS (le DC s appelle AD-BXL)</td>
+<td>11/03/2026 16:37:31</td>
+<td>§5.2</td>
+</tr>
+<tr>
+<td>T08</td>
+<td>Réplication AD</td>
+<td><code>Test-EuroCorpAD.ps1</code></td>
+<td>aucune anomalie</td>
+<td>✅ OK</td>
+<td>repadmin /replsummary : 0 échec sur 5 dans les deux sens avec AD-BXL (delta max 14 min). dcdiag Connectivity/Replications/Advertising/NetLogons/Services/DNS OK. Réserve : SYSVOL/DFSR, voir note machine PAR-DC01</td>
+<td>11/03/2026 14:34:35</td>
+<td>§5.1</td>
+</tr>
+<tr>
+<td>T09</td>
+<td>DHCP</td>
+<td>un client sans IP fixe obtient une adresse de .100–.199</td>
+<td>adresse reçue</td>
+<td>✅ OK</td>
+<td>Renouvellement de bail OK sur les 3 sites (03/11) : PAR-CLT01 172.17.20.150, LON-CLT01 172.17.30.100, BER-CLT01 172.17.40.150 ; passerelle .1 du site, DNS 172.17.10.10 et 172.17.20.10</td>
+<td>11/03/2026 16:37:31</td>
+<td>§5.3</td>
+</tr>
+<tr>
+<td>T10</td>
+<td>Failover DHCP</td>
+<td>arrêter le DHCP principal, renouveler le bail d'un client</td>
+<td>adresse reçue du partenaire</td>
+<td>🟡 Partiel</td>
+<td>Non testé par arrêt. État relevé : failover DHCP LoadBalance, State Normal, partenaire ad-bxl (03/11). Reste à arrêter le DHCP principal et renouveler un bail</td>
+<td>11/03/2026 14:34:35</td>
+<td>§5.3</td>
+</tr>
+<tr>
+<td>T11</td>
+<td>Partage de fichiers</td>
+<td>accès à un partage selon le groupe de l'utilisateur</td>
+<td>accès conforme aux droits</td>
+<td>🟡 Partiel</td>
+<td>Partiel (03/11) : \eurocorp.lan\Files (DFS, 5 dossiers Commun/Direction/Finance/IT/RH) et \LON-FS01\Commun accessibles depuis PAR-CLT01 avec un compte admin ; 5 quotas FSRM, 0 ecran. Droits par groupe GP-* non testes (groupes vides sauf GP-Commun)</td>
+<td>11/03/2026 16:37:31</td>
+<td>§6.1</td>
+</tr>
+<tr>
+<td>T12</td>
+<td>Site web (NLB)</td>
+<td>arrêter un nœud, recharger la page</td>
+<td>le site répond encore</td>
+<td>🟡 Partiel</td>
+<td>Partiel (03/11) : VIP 172.17.10.20 = 200 (page web02), IIS01 = web01, IIS02 = web02, depuis Paris. Arret d un noeud non teste ; Get-NlbClusterNode ne liste aucun noeud</td>
+<td>11/03/2026 16:37:31</td>
+<td>§6.2</td>
+</tr>
+<tr>
+<td>T13</td>
+<td>Messagerie</td>
+<td>envoyer un courrier entre deux boîtes</td>
+<td>reçu</td>
+<td>❌ KO</td>
+<td>KO 03/11 : Exchange n est pas installe sur EXCHANGE (172.17.10.11) : aucun service MSExchange, pas de dossier Exchange Server</td>
+<td>11/03/2026 16:37:31</td>
+<td>§6.3</td>
+</tr>
+<tr>
+<td>T14</td>
+<td>SharePoint</td>
+<td>ouvrir <a href="http://sharepoint.eurocorp.lan">http://sharepoint.eurocorp.lan</a> avec un compte du domaine (depuis un autre site), déposer un fichier dans la bibliothèque avec un membre du groupe AD autorisé, puis avec un simple utilisateur du domaine</td>
+<td>site affiché ; le membre du groupe AD dépose, le simple utilisateur lit seulement</td>
+<td>🟡 Partiel</td>
+<td>Partiel (03/11 18:00) : la collection de sites est maintenant <a href="https://sharepoint.eurocorp.lan">https://sharepoint.eurocorp.lan</a> (Intranet EuroCorp, groupes Members=GP-IT, Visitors=Domain Users+GP-Commun, Owners=GP-IT+sp_setup) ; 401 sans compte en http et https depuis Paris. Ouverture authentifiee et depot de fichier depuis un poste non testes</td>
+<td>11/03/2026 16:46:20</td>
+<td>§7</td>
+</tr>
+<tr>
+<td>T15</td>
+<td>Zabbix</td>
+<td>hôte de chaque site visible, données reçues</td>
+<td>valeurs récentes</td>
+<td>❌ KO</td>
+<td>KO 03/11 : serveur Zabbix 7.4 en marche (<a href="index.html">http://172.17.10.40/</a> = 200 depuis les 4 sites, 10051 ouvert) mais aucun agent Zabbix installe sur les VM Windows ni les hotes</td>
+<td>11/03/2026 16:37:31</td>
+<td>§9.1</td>
+</tr>
+<tr>
+<td>T16</td>
+<td>Redmine</td>
+<td>connexion HTTPS, création d'un ticket</td>
+<td>ticket créé</td>
+<td>🟡 Partiel</td>
+<td>Partiel (03/11) : <a href="index.html">https://172.17.30.40/</a> et <a href="index.html">https://helpdesk.eurocorp.lan/</a> = 200 depuis PAR-CLT01 ; Redmine 7.0.2 en marche (3 conteneurs). Connexion et creation de ticket non testees</td>
+<td>11/03/2026 16:37:31</td>
+<td>§9.2</td>
+</tr>
+<tr>
+<td>T17</td>
+<td>Sauvegarde Redmine</td>
+<td>exécuter <code>backup-redmine.sh</code></td>
+<td>3 fichiers non vides</td>
+<td>⬜ À faire</td>
+<td></td>
+<td></td>
+<td>§8.1</td>
+</tr>
+<tr>
+<td>T18</td>
+<td>Restauration Redmine</td>
+<td>restaurer sur une copie</td>
+<td>ticket retrouvé</td>
+<td>⬜ À faire</td>
+<td></td>
+<td></td>
+<td>§8.1</td>
+</tr>
+<tr>
+<td>T19</td>
+<td>Wazuh + Sysmon</td>
+<td>provoquer un événement, le retrouver dans Wazuh</td>
+<td>alerte vue</td>
+<td>❌ KO</td>
+<td>KO 03/11 : 14 agents Wazuh Active mais Sysmon non installe (aucun service Sysmon), donc pas d evenement sysmon</td>
+<td>11/03/2026 16:37:31</td>
+<td>§9.3</td>
+</tr>
+<tr>
+<td>T20</td>
+<td>Greenbone</td>
+<td>scan d'une seule cible</td>
+<td>rapport produit</td>
+<td>⬜ À faire</td>
+<td></td>
+<td></td>
+<td>§9.4</td>
+</tr>
+<tr>
+<td>T21</td>
+<td>Basculement Replica</td>
+<td>test de basculement de LON-FS01</td>
+<td>VM démarre à Paris</td>
+<td>❌ KO</td>
+<td>KO 03/11 : Hyper-V Replica desactive sur les 4 hotes, aucune VM repliquee (LON-FS01 inclus)</td>
+<td>11/03/2026 16:37:31</td>
+<td>§10.2</td>
+</tr>
+<tr>
+<td>T22</td>
+<td>Niveau fonctionnel</td>
+<td><code>(Get-ADForest).ForestMode</code> et <code>(Get-ADDomain).DomainMode</code></td>
+<td><code>Windows2025Forest</code> et <code>Windows2025Domain</code></td>
+<td>✅ OK</td>
+<td>Forêt Windows2025Forest, domaine Windows2025Domain (03/11)</td>
+<td>11/03/2026 14:34:35</td>
+<td>§5.1</td>
+</tr>
+<tr>
+<td>T23</td>
+<td>Site AD de chaque contrôleur</td>
+<td><code>nltest /dsgetsite</code> sur BRU-DC01 et PAR-DC01</td>
+<td>BRU puis PAR</td>
+<td>✅ OK</td>
+<td>nltest /dsgetsite sur PAR-DC01 = PAR ; AD-BXL est dans le site BRU ; sous-réseaux 172.17.10/20/30/40 rattachés à BRU/PAR/LON/BER</td>
+<td>11/03/2026 14:34:35</td>
+<td>§5.1</td>
+</tr>
+<tr>
+<td>T24</td>
+<td>OWA depuis les quatre sites</td>
+<td>ouvrir <code>https://mail.eurocorp.lan/owa</code> depuis un poste de chaque site</td>
+<td>page de connexion, puis la boîte</td>
+<td>❌ KO</td>
+<td>KO 03/11 : <a href="https://172.17.10.11/owa">https://172.17.10.11/owa</a> injoignable depuis Paris (Exchange non installe)</td>
+<td>11/03/2026 16:37:31</td>
+<td>§6.3</td>
+</tr>
+<tr>
+<td>T25</td>
+<td>Alerte Zabbix</td>
+<td>arrêter un service surveillé (site IIS ou DNS)</td>
+<td>problème dans Monitoring → Problems, résolu au redémarrage</td>
+<td>❌ KO</td>
+<td>KO 03/11 : pas d agent Zabbix, aucune alerte possible sur un service surveille</td>
+<td>11/03/2026 16:37:31</td>
+<td>§9.1</td>
+</tr>
+<tr>
+<td>T26</td>
+<td>Suivi dans Redmine</td>
+<td>projet EUROCORP : tâches assignées aux membres, un incident documenté</td>
+<td>un tiers comprend l'état du projet</td>
+<td>⬜ À faire</td>
+<td></td>
+<td></td>
+<td>§9.2</td>
+</tr>
+<tr>
+<td>T27</td>
+<td>Scan authentifié Greenbone</td>
+<td>tâche avec identifiants sur un serveur Windows</td>
+<td>rapport avec vulnérabilités et remédiations</td>
+<td>⬜ À faire</td>
+<td></td>
+<td></td>
+<td>§9.4</td>
+</tr>
+<tr>
+<td>T28</td>
+<td>Retour Replica (failback)</td>
+<td>Planned Failover vers Paris puis retour vers Londres</td>
+<td>réplication de nouveau Londres → Paris, état Normal</td>
+<td>❌ KO</td>
+<td>KO 03/11 : Hyper-V Replica desactive (voir T21)</td>
+<td>11/03/2026 16:37:31</td>
+<td>§10.2</td>
+</tr>
+</tbody>
+</table>
+<h2 id="lecture">Lecture</h2>
+<ul>
+<li><strong>Réseau, AD, DNS, DHCP (T01 à T09, T22, T23)</strong> : validés ; une réserve sur T08 (SYSVOL/DFSR en erreur, dcdiag DFSREvent).</li>
+<li><strong>En échec</strong> : Exchange non installé (T13, T24), aucun agent Zabbix (T15, T25), Sysmon absent (T19), Hyper-V Replica désactivé (T21, T28).</li>
+<li><strong>Partiels</strong> : partages (droits par groupe à tester), NLB (arrêt d'un nœud), SharePoint (ouverture authentifiée), Redmine (ticket).</li>
+<li><strong>Non exécutés</strong> : T10 (arrêt du DHCP principal), T17/T18 (sauvegarde/restauration Redmine), T20/T27 (Greenbone), T26.</li>
+<li>Captures d'écran : à déposer dans �9-Tests/captures/ lors de la soutenance.</li>
+</ul>
+
+</main>
+</body>
+</html>
