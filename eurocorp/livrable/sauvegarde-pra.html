@@ -10,6 +10,7 @@
 <body>
 <main id="contenu">
 <p><a href="index.html">← Livrable EUROCORP (groupe 2)</a> · <a href="../index.html">Guide du labo</a></p>
+<div id="corps">
 <h1 id="sauvegarde-restauration-pra">07 — Sauvegarde, restauration, PRA</h1>
 <blockquote>
 <p>Rédigé d'après <code>05-Docker/redmine/backup-redmine.sh</code> (lu) ; la partie Replica vient de mes connaissances générales, non vérifiée dans la documentation Microsoft. <strong>Aucune commande n'a été exécutée</strong> : tout est à valider sur les VM. Les décisions (RPO, RTO, fréquence) sont à toi.</p>
@@ -114,6 +115,8 @@
 <h2 id="ou-est-la-sauvegarde">4. Où est la sauvegarde</h2>
 <p>Un PRA suppose que la copie ne soit pas sur la même machine que l'original : copier <code>backups/</code> vers un autre hôte (à décider : lequel).</p>
 
+</div>
 </main>
+<script src="livrable.js" defer></script>
 </body>
 </html>
