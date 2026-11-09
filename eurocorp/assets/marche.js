@@ -335,7 +335,7 @@
     fw: 'Commutateurs <code>WAN</code> et <code>LAN-xx</code> créés sur l\'hôte. Pour monter un tunnel, le pare-feu de l\'autre extrémité doit être installé.',
     dc: 'BRU-DC01 : aucune, c\'est le premier serveur du domaine (après le pare-feu et le tunnel). PAR-DC01 : BRU-DC01 en ligne et tunnel Bruxelles–Paris validé.',
     iis: 'BRU-DC01 (domaine et DNS). BRU-IIS02 : BRU-IIS01 doit exister avant la création du cluster NLB.',
-    exch: 'BRU-DC01 (annuaire et autorité de certification), 16 Go de RAM libres sur l\'hôte, disques pour bases et journaux.',
+    exch: 'Annuaire et autorité de certification : AD-BXL, AC d\'entreprise <code>EUROCORP-AD-BXL-CA</code> (en place). PrepareSchema et PrepareAD faits le 09/11 (organisation <code>EuroCorp</code>). 16 Go de RAM libres sur l\'hôte de Bruxelles, disques pour bases et journaux. Ensuite : DNS <code>mail</code> / <code>autodiscover</code> et flux F11 (443 depuis tous les LAN).',
     sql: 'BRU-DC01 (domaine, clé racine KDS pour le gMSA) et tunnel Bruxelles–Paris pour joindre le domaine.',
     sp: 'PAR-SQL01 installé avec la bonne collation, domaine, comptes de service créés.',
     fs: 'BRU-DC01 (domaine), groupes AGDLP créés (page Identité), tunnel Bruxelles–Londres.',
