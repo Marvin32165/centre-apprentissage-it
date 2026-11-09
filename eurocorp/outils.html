@@ -27,11 +27,11 @@
 <h2><span class="num">3</span>Créer des utilisateurs AD</h2>
 <p>Colle une liste « prénom;nom;service ». L'outil écrit un script <code>New-ADUser</code> à relire. Le mot de passe est demandé au lancement, il n'est jamais dans le script.</p>
 <div class="fld"><label for="ad-dom">Domaine (UPN)</label><input id="ad-dom" value="eurocorp.lan"></div>
-<div class="fld"><label for="ad-ou">Unité d'organisation (DN) — à valider</label><input id="ad-ou" value="OU=Utilisateurs,DC=eurocorp,DC=lan"></div>
+<div class="fld"><label for="ad-ou">Unité d'organisation (DN) — à valider</label><input id="ad-ou" value="OU=Users,OU=PAR,OU=EuroCorp,DC=eurocorp,DC=lan"></div>
 <label for="ad-csv"><b>Liste</b></label><textarea id="ad-csv" spellcheck="false">Alice;Martin;Direction
 Bob;Durand;Informatique</textarea>
 <div class="code"><div class="cap"><span>Script généré</span><button class="copy" type="button">Copier</button></div><pre id="ad-out"></pre></div>
-<p><b>Reste à toi :</b> créer l'OU avant, vérifier le nommage des comptes, tester sur un seul utilisateur.</p>
+<p><b>Reste à toi :</b> choisir l'OU <code>Users</code> du site de chaque utilisateur (une liste par site), vérifier le nommage des comptes, tester sur un seul utilisateur. Le livrable contient aussi <code>New-EuroCorpUsers.ps1</code> (CSV avec une colonne Site, ajout aux groupes).</p>
 <h2><span class="num">4</span>Et si on retirait des VM ?</h2>
 <p>Décoche une VM ou change sa RAM : le total se recalcule pour l'hôte choisi, contre sa RAM du point 1. Rien n'est enregistré dans le plan : c'est un brouillon pour décider.</p>
 <div class="fld"><label for="wi-site">Hôte</label><select id="wi-site"><option value="BRU">Bruxelles</option><option value="PAR">Paris</option><option value="LON">Londres</option><option value="BER">Berlin</option></select></div><div id="wi-out" aria-live="polite"></div><div class="tw"><table><thead><tr><th>Garder</th><th>VM</th><th>Rôle</th><th>RAM (Go)</th></tr></thead><tbody id="wi-rows"></tbody></table></div>

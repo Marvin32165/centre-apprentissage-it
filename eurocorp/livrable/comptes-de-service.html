@@ -29,7 +29,7 @@
 <tr>
 <td><code>EUROCORP\sp_farm</code></td>
 <td>utilisateur de domaine</td>
-<td>OU <code>EuroCorp\User</code></td>
+<td>OU <code>EuroCorp\ServiceAccounts</code></td>
 <td>compte de la ferme SharePoint (base de configuration, Administration centrale)</td>
 <td>PAR-SP01, base sur PAR-SQL01</td>
 <td>SQL : <code>dbcreator</code> et <code>securityadmin</code></td>
@@ -38,7 +38,7 @@
 <tr>
 <td><code>EUROCORP\sp_setup</code></td>
 <td>utilisateur de domaine</td>
-<td>OU <code>EuroCorp\User</code></td>
+<td>OU <code>EuroCorp\ServiceAccounts</code></td>
 <td>compte d'installation SharePoint et administrateur principal de la collection de sites</td>
 <td>PAR-SP01 (administrateur local), PAR-SQL01</td>
 <td>administrateur local de PAR-SP01 ; SQL : <code>dbcreator</code> et <code>securityadmin</code></td>
@@ -47,25 +47,25 @@
 <tr>
 <td><code>EUROCORP\sp_services</code></td>
 <td>utilisateur de domaine</td>
-<td>OU <code>EuroCorp\User</code></td>
+<td>OU <code>EuroCorp\ServiceAccounts</code></td>
 <td>identité du pool d'applications de l'intranet</td>
 <td>PAR-SP01 (IIS)</td>
 <td>aucun droit SQL ni local relevé</td>
 <td>n'expire jamais</td>
 </tr>
 <tr>
-<td><code>EUROCORP\sp_search</code></td>
+<td><code>EUROCORP\svc-redmine</code></td>
 <td>utilisateur de domaine</td>
-<td>OU <code>EuroCorp\User</code></td>
-<td>prévu pour la recherche ; <strong>sans usage</strong> (hors énoncé)</td>
-<td>aucun</td>
-<td>aucun</td>
-<td>n'expire jamais ; à supprimer</td>
+<td>OU <code>EuroCorp\ServiceAccounts</code></td>
+<td>lecture de l'annuaire pour l'authentification Redmine (bind par UPN, base <code>DC=eurocorp,DC=lan</code>, LDAPS 636 vers <code>ad-bxl</code>)</td>
+<td>LON-DOCKER01 (conteneur <code>redmine-app</code>)</td>
+<td>aucun droit particulier</td>
+<td>à relever</td>
 </tr>
 <tr>
 <td><code>EUROCORP\GMSA_SQL$</code></td>
 <td>compte de service géré (gMSA)</td>
-<td>OU <code>EuroCorp\GMSA</code></td>
+<td>OU <code>EuroCorp\ServiceAccounts\GMSA</code> (avec le groupe <code>GM_GMSA_SQL</code>)</td>
 <td>identité du moteur SQL Server et de l'Agent</td>
 <td>PAR-SQL01 (services <code>MSSQL$SHAREPOINT</code> et <code>SQLAgent$SHAREPOINT</code>)</td>
 <td>SPN <code>MSSQLSvc/PAR-SQL01…:1433</code> et <code>…:SHAREPOINT</code></td>
@@ -75,8 +75,12 @@
 </table>
 <p>Remarques :</p>
 <ul>
-<li>Les comptes SharePoint (<code>sp_farm</code>, <code>sp_services</code>, <code>sp_search</code>) seront de nouveau utilisés par l'installation de la Subscription Edition ; les comptes gérés SharePoint sont recréés avec la ferme.</li>
-<li>Compte d'administration utilisé pour les relevés : <code>EUROCORP\mjz</code> (<code>sysadmin</code> SQL), compte nominatif et non de service.</li>
+<li><p>09/11/2026 : comptes de service regroupés dans <code>EuroCorp\ServiceAccounts</code>, séparés des utilisateurs pour ne pas recevoir leurs GPO (moindre privilège, §5.1) ; script <code>06-PowerShell/scripts/15-Move-EuroCorpOuSites.ps1</code>. Vérifié après déplacement : <code>Test-ADServiceAccount GMSA_SQL</code> = True, services SQL démarrés, SharePoint répond 200. <code>sp_search</code> n'existe plus dans l'annuaire (relevé du 09/11).</p>
+</li>
+<li><p>Les comptes SharePoint (<code>sp_farm</code>, <code>sp_services</code>, <code>sp_search</code>) seront de nouveau utilisés par l'installation de la Subscription Edition ; les comptes gérés SharePoint sont recréés avec la ferme.</p>
+</li>
+<li><p>Compte d'administration utilisé pour les relevés : <code>EUROCORP\mjz</code> (<code>sysadmin</code> SQL), compte nominatif et non de service.</p>
+</li>
 </ul>
 
 </div>

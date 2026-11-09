@@ -15,7 +15,7 @@
 <div class="eyebrow">Scripts</div><h1>Les scripts du labo</h1>
 <p class="lead">Dans l'ordre où on les lance. Les premiers servent dès que le parent Sysprep est prêt : créer les VM du site, puis régler chaque VM. Chaque script se déplie ; <b>Copier</b> met tout dans le presse-papiers.</p>
 <div class="note warn"><b>À savoir</b><p>Ces scripts sont écrits d'après le plan mais <b>n'ont jamais été exécutés</b>. Lance chacun d'abord avec <code>-WhatIf</code> (il affiche ce qu'il ferait sans rien faire), puis sur <b>une seule</b> machine. Aucun mot de passe n'est dans un script : ils sont demandés au lancement.</p></div>
-<div class="note bref"><b>En bref</b><p>Sur l'hôte : <code>00</code> commutateurs, <code>01</code> VM du site. Dans chaque VM : <code>02</code> réseau et nom, <code>03</code> domaine. Sur les contrôleurs : <code>04</code> à <code>10</code>. Services : <code>11</code> à <code>14</code>. Linux : <code>20</code> à <code>22</code>. Le dossier du livrable : <code>exercices/eurocorp-lab/06-PowerShell/scripts/</code>.</p></div>
+<div class="note bref"><b>En bref</b><p>Sur l'hôte : <code>00</code> commutateurs, <code>01</code> VM du site. Dans chaque VM : <code>02</code> réseau et nom, <code>03</code> domaine. Sur les contrôleurs : <code>04</code> à <code>10</code>, puis <code>15</code> (OU par site). Services : <code>11</code> à <code>14</code>. Linux : <code>20</code> à <code>22</code>. Le dossier du livrable : <code>exercices/eurocorp-lab/06-PowerShell/scripts/</code>.</p></div>
 <h2 id="sc00"><span class="num">00</span>Commutateurs virtuels de l&#x27;hôte</h2><p><b>Où :</b> Sur l&#x27;hôte Hyper-V (PowerShell administrateur).</p><p>Crée le commutateur externe WAN (salle) et le commutateur privé LAN-&lt;site&gt;. À lancer une fois par hôte.</p>
 <details class="scr"><summary>Voir le script <code>00-New-EuroCorpSwitches.ps1</code></summary><div class="code"><div class="cap"><span>00-New-EuroCorpSwitches.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
 .SYNOPSIS
@@ -239,9 +239,10 @@ if ($env:COMPUTERNAME -ne $Nom) {
 .SYNOPSIS
   Joint le serveur au domaine EUROCORP. Prérequis : 02-Initialize-EuroCorpServer.ps1 fait, BRU-DC01 en ligne.
 .PARAMETER OU
-  DN de l&#x27;UO de destination (ex. &quot;OU=Serveurs,OU=EuroCorp,DC=eurocorp,DC=lan&quot;). Vide = conteneur Computers.
+  DN de l&#x27;UO de destination : OU=Servers ou OU=Workstations du site, ex. &quot;OU=Servers,OU=PAR,OU=EuroCorp,DC=eurocorp,DC=lan&quot;.
+  Vide = conteneur Computers (à déplacer ensuite dans l&#x27;OU du site).
 .EXAMPLE
-  .\03-Join-EuroCorpDomain.ps1 -OU &quot;OU=Serveurs,OU=EuroCorp,DC=eurocorp,DC=lan&quot;
+  .\03-Join-EuroCorpDomain.ps1 -OU &quot;OU=Servers,OU=PAR,OU=EuroCorp,DC=eurocorp,DC=lan&quot;
 #&gt;
 [CmdletBinding(SupportsShouldProcess)]
 param(
@@ -472,8 +473,8 @@ function Nouvelle-Uo($nom, $chemin) {
     return $dn
 }
 $eurocorp = Nouvelle-Uo &#x27;EuroCorp&#x27; $Racine
-$ouGroupes = Nouvelle-Uo &#x27;Groupes&#x27; $eurocorp
-foreach ($u in &#x27;Utilisateurs&#x27;,&#x27;Serveurs&#x27;,&#x27;Postes&#x27;) { Nouvelle-Uo $u $eurocorp | Out-Null }
+$ouGroupes = Nouvelle-Uo &#x27;Groups&#x27; $eurocorp
+# OU par site (Users / Workstations / Servers), Admins, ServiceAccounts : script 15-Move-EuroCorpOuSites.ps1
 
 function Nouveau-Groupe($nom, $portee) {
     if (-not (Get-ADGroup -Filter &quot;Name -eq &#x27;$nom&#x27;&quot;)) {
@@ -511,9 +512,10 @@ $ErrorActionPreference = &#x27;Stop&#x27;
 if (-not (Get-KdsRootKey)) {
     if ($PSCmdlet.ShouldProcess(&#x27;KDS&#x27;, &#x27;Créer la clé racine&#x27;)) { Add-KdsRootKey -EffectiveTime ((Get-Date).AddHours(-10)) | Out-Null }
 }
-$ou = &quot;OU=GMSA,$Racine&quot;
+$parent = &quot;OU=ServiceAccounts,OU=EuroCorp,$Racine&quot;   # structure : script 15-Move-EuroCorpOuSites.ps1
+$ou = &quot;OU=GMSA,$parent&quot;
 if (-not (Get-ADOrganizationalUnit -Filter &quot;DistinguishedName -eq &#x27;$ou&#x27;&quot;)) {
-    if ($PSCmdlet.ShouldProcess($ou, &#x27;Créer l&#x27;&#x27;UO&#x27;)) { New-ADOrganizationalUnit -Name GMSA -Path $Racine }
+    if ($PSCmdlet.ShouldProcess($ou, &#x27;Créer l&#x27;&#x27;UO&#x27;)) { New-ADOrganizationalUnit -Name GMSA -Path $parent }
 }
 if (-not (Get-ADGroup -Filter &quot;Name -eq &#x27;GM_GMSA_SQL&#x27;&quot;)) {
     if ($PSCmdlet.ShouldProcess(&#x27;GM_GMSA_SQL&#x27;, &#x27;Créer le groupe&#x27;)) { New-ADGroup -Name GM_GMSA_SQL -GroupScope Global -GroupCategory Security -Path $ou }
@@ -522,7 +524,7 @@ if (-not (Get-ADGroup -Filter &quot;Name -eq &#x27;GM_GMSA_SQL&#x27;&quot;)) {
 if ($PSCmdlet.ShouldProcess($Serveur, &#x27;Ajouter au groupe&#x27;)) { Add-ADGroupMember -Identity GM_GMSA_SQL -Members (Get-ADComputer $Serveur) }
 if (-not (Get-ADServiceAccount -Filter &quot;Name -eq &#x27;GMSA_SQL&#x27;&quot;)) {
     if ($PSCmdlet.ShouldProcess(&#x27;GMSA_SQL&#x27;, &#x27;Créer le compte&#x27;)) {
-        New-ADServiceAccount GMSA_SQL -DNSHostName &quot;gmsa_sql.$Domaine&quot; -PrincipalsAllowedToRetrieveManagedPassword GM_GMSA_SQL
+        New-ADServiceAccount GMSA_SQL -DNSHostName &quot;gmsa_sql.$Domaine&quot; -PrincipalsAllowedToRetrieveManagedPassword GM_GMSA_SQL -Path $ou
     }
 }
 Write-Host @&quot;
@@ -668,6 +670,154 @@ if ($Role -eq &#x27;Cible&#x27;) {
 }
 # Test de basculement, SUR L&#x27;HÔTE DE PARIS (copie isolée, la production n&#x27;est pas touchée) :
 #   Start-VMFailover -VMName LON-FS01 -AsTest      ... vérifier ...      Stop-VMFailover -VMName LON-FS01
+</pre></div></details>
+<h2 id="sc15"><span class="num">15</span>Structure d&#x27;OU par site</h2><p><b>Où :</b> Sur un contrôleur (exécuté sur PAR-DC01 le 09/11/2026), après 09 et 10.</p><p>État cible des OU (énoncé §5.1 : sites, utilisateurs, postes, serveurs) : EuroCorp\&lt;site&gt;\Users, Workstations, Servers, plus Admins, ServiceAccounts\GMSA et Groups ; range chaque objet dont le site est établi. Relançable sans risque : ne fait que ce qui manque. Les OU d&#x27;Exchange et Domain Controllers ne sont jamais touchées.</p>
+<details class="scr"><summary>Voir le script <code>15-Move-EuroCorpOuSites.ps1</code></summary><div class="code"><div class="cap"><span>15-Move-EuroCorpOuSites.ps1</span><button class="copy" type="button">Copier</button></div><pre>&lt;#
+.SYNOPSIS
+  Structure d&#x27;OU EUROCORP (etat cible, relancable sans risque : ne fait que ce qui manque).
+
+  Enonce §5.1 : « structure d&#x27;OU adaptee aux sites, utilisateurs, postes et serveurs »
+      EuroCorp\&lt;BRU|PAR|LON|BER&gt;\Users | Workstations | Servers
+  Ajouts justifies par le « principe du moindre privilege » (§5.1) et les groupes AD (§5.1, §6.1, §7) :
+      EuroCorp\Groups                 groupes de securite (AGDLP), communs aux sites
+      EuroCorp\Admins                 comptes d&#x27;administration nominatifs (aucune GPO utilisateur standard)
+      EuroCorp\ServiceAccounts        comptes de service (§7 : documentes sans mot de passe)
+      EuroCorp\ServiceAccounts\GMSA   comptes de service geres et leurs groupes d&#x27;acces
+
+  Ne touche jamais : Domain Controllers, Microsoft Exchange Security Groups, Microsoft Exchange System Objects
+  (deplacement non supporte, casse les CU d&#x27;Exchange), CN=Builtin.
+.PARAMETER Serveur
+  DC sur lequel ecrire. Ensuite : repadmin /syncall &lt;DC&gt; /AdeP
+.PARAMETER SupprimerAnciennes
+  Supprime les anciennes OU (Server, Clients, User) si elles sont vides.
+.EXAMPLE
+  .\15-Move-EuroCorpOuSites.ps1 -WhatIf -SupprimerAnciennes
+#&gt;
+[CmdletBinding(SupportsShouldProcess)]
+param(
+    [string]$Serveur = &#x27;PAR-DC01&#x27;,
+    [switch]$SupprimerAnciennes
+)
+$ErrorActionPreference = &#x27;Stop&#x27;
+Import-Module ActiveDirectory
+$racine   = (Get-ADDomain -Server $Serveur).DistinguishedName
+$eurocorp = &quot;OU=EuroCorp,$racine&quot;
+$sites    = &#x27;BRU&#x27;,&#x27;PAR&#x27;,&#x27;LON&#x27;,&#x27;BER&#x27;
+$prevues  = @{}   # OU creees/renommees/deplacees dans cette execution (y compris en -WhatIf)
+
+function Existe($dn) {
+    $prevues.ContainsKey($dn) -or [bool](Get-ADOrganizationalUnit -Server $Serveur -Filter &quot;DistinguishedName -eq &#x27;$dn&#x27;&quot;)
+}
+function Renommer($ancien, $nouveau, $parent) {
+    $a = &quot;OU=$ancien,$parent&quot;; $n = &quot;OU=$nouveau,$parent&quot;
+    if ((Existe $a) -and -not (Existe $n)) {
+        if ($PSCmdlet.ShouldProcess($a, &quot;Renommer en $nouveau&quot;)) {
+            Rename-ADObject -Server $Serveur -Identity $a -NewName $nouveau
+        }
+        $prevues[$n] = $true
+    }
+}
+function Assurer-Uo($nom, $parent) {
+    $dn = &quot;OU=$nom,$parent&quot;
+    if (-not (Existe $dn)) {
+        if ($PSCmdlet.ShouldProcess($dn, &#x27;Creer l&#x27;&#x27;OU (protegee)&#x27;)) {
+            New-ADOrganizationalUnit -Server $Serveur -Name $nom -Path $parent -ProtectedFromAccidentalDeletion $true
+        }
+        $prevues[$dn] = $true
+    }
+    $dn
+}
+
+# 1. Renommages (noms en anglais) - un renommage ne change ni le GUID ni les droits des objets
+foreach ($s in $sites) {
+    $p = &quot;OU=$s,$eurocorp&quot;
+    Renommer &#x27;Utilisateurs&#x27; &#x27;Users&#x27;        $p
+    Renommer &#x27;Postes&#x27;       &#x27;Workstations&#x27; $p
+    Renommer &#x27;Serveurs&#x27;     &#x27;Servers&#x27;      $p
+}
+Renommer &#x27;Groupe&#x27; &#x27;Groups&#x27; $eurocorp
+
+# 2. OU cibles
+foreach ($s in $sites) {
+    $p = Assurer-Uo $s $eurocorp
+    foreach ($t in &#x27;Users&#x27;,&#x27;Workstations&#x27;,&#x27;Servers&#x27;) { Assurer-Uo $t $p | Out-Null }
+}
+Assurer-Uo &#x27;Groups&#x27; $eurocorp | Out-Null
+Assurer-Uo &#x27;Admins&#x27; $eurocorp | Out-Null
+$svc = Assurer-Uo &#x27;ServiceAccounts&#x27; $eurocorp
+
+# 3. OU GMSA : racine du domaine -&gt; EuroCorp\ServiceAccounts (protection retiree le temps du deplacement)
+$gmsaAncien = &quot;OU=GMSA,$racine&quot;; $gmsaCible = &quot;OU=GMSA,$svc&quot;
+if ((Existe $gmsaAncien) -and -not (Existe $gmsaCible)) {
+    if ($PSCmdlet.ShouldProcess($gmsaAncien, &quot;Deplacer l&#x27;OU vers $svc&quot;)) {
+        Set-ADOrganizationalUnit -Server $Serveur -Identity $gmsaAncien -ProtectedFromAccidentalDeletion $false
+        Move-ADObject -Server $Serveur -Identity $gmsaAncien -TargetPath $svc
+        Set-ADOrganizationalUnit -Server $Serveur -Identity $gmsaCible -ProtectedFromAccidentalDeletion $true
+    }
+    $prevues[$gmsaCible] = $true
+}
+
+# 4. Placements etablis (source de chaque decision en commentaire)
+$placements = @(
+    @{ Sam=&#x27;PAR-SQL01$&#x27;;   Cible=&quot;OU=Servers,OU=PAR,$eurocorp&quot; }       # prefixe PAR, 172.17.20.20 (§7)
+    @{ Sam=&#x27;PAR-SP01$&#x27;;    Cible=&quot;OU=Servers,OU=PAR,$eurocorp&quot; }       # prefixe PAR (§7)
+    @{ Sam=&#x27;PAR-CLT01$&#x27;;   Cible=&quot;OU=Workstations,OU=PAR,$eurocorp&quot; }  # prefixe PAR
+    @{ Sam=&#x27;BRU-EXCH01$&#x27;;  Cible=&quot;OU=Servers,OU=BRU,$eurocorp&quot; }       # §6.3, 172.17.10.11
+    @{ Sam=&#x27;IIS01$&#x27;;       Cible=&quot;OU=Servers,OU=BRU,$eurocorp&quot; }       # §6.2, 172.17.10.21
+    @{ Sam=&#x27;IIS02$&#x27;;       Cible=&quot;OU=Servers,OU=BRU,$eurocorp&quot; }       # §6.2, 172.17.10.22
+    @{ Sam=&#x27;LON-FS01$&#x27;;    Cible=&quot;OU=Servers,OU=LON,$eurocorp&quot; }       # §6.1, 172.17.30.10
+    @{ Sam=&#x27;LON-CLT01$&#x27;;   Cible=&quot;OU=Workstations,OU=LON,$eurocorp&quot; }  # prefixe LON, 172.17.30.100
+    @{ Sam=&#x27;BER-CLT01$&#x27;;   Cible=&quot;OU=Workstations,OU=BER,$eurocorp&quot; }  # prefixe BER, 172.17.40.150
+    @{ Sam=&#x27;CP&#x27;;           Cible=&quot;OU=Users,OU=PAR,$eurocorp&quot; }         # « Client CP. Paris »
+    @{ Sam=&#x27;AE&#x27;;           Cible=&quot;OU=Admins,$eurocorp&quot; }               # « ADMIN EXCHANGE »
+    @{ Sam=&#x27;aro&#x27;;          Cible=&quot;OU=Admins,$eurocorp&quot; }               # compte admin d&#x27;un membre du groupe
+    @{ Sam=&#x27;mjz&#x27;;          Cible=&quot;OU=Admins,$eurocorp&quot; }               # compte admin (sysadmin SQL)
+    @{ Sam=&#x27;ove&#x27;;          Cible=&quot;OU=Admins,$eurocorp&quot; }               # compte admin d&#x27;un membre du groupe
+    @{ Sam=&#x27;sp_farm&#x27;;      Cible=$svc }                                # SharePoint (PAR-SP01)
+    @{ Sam=&#x27;sp_setup&#x27;;     Cible=$svc }                                # SharePoint (PAR-SP01)
+    @{ Sam=&#x27;sp_services&#x27;;  Cible=$svc }                                # SharePoint (PAR-SP01)
+    @{ Sam=&#x27;svc-redmine&#x27;;  Cible=$svc }                                # Redmine (LON-DOCKER01), bind par UPN
+    @{ Sam=&#x27;GMSA_SQL$&#x27;;    Cible=$gmsaCible }                          # SQL Server (PAR-SQL01)
+    @{ Sam=&#x27;GM_GMSA_SQL&#x27;;  Cible=$gmsaCible }                          # groupe autorise a lire le mot de passe du gMSA
+)
+# Traduit un emplacement actuel en son equivalent apres renommage (pour que -WhatIf n&#x27;annonce pas de faux deplacements)
+function Traduire($dn) {
+    $dn -replace &#x27;OU=Utilisateurs,&#x27;, &#x27;OU=Users,&#x27; -replace &#x27;OU=Postes,&#x27;, &#x27;OU=Workstations,&#x27; `
+        -replace &#x27;OU=Serveurs,&#x27;, &#x27;OU=Servers,&#x27; -replace &quot;^OU=GMSA,$([regex]::Escape($racine))$&quot;, $gmsaCible
+}
+foreach ($p in $placements) {
+    $obj = Get-ADObject -Server $Serveur -LDAPFilter &quot;(sAMAccountName=$($p.Sam))&quot;
+    if (-not $obj) { Write-Warning &quot;$($p.Sam) introuvable&quot;; continue }
+    $parent = Traduire (($obj.DistinguishedName -split &#x27;(?&lt;!\\),&#x27;, 2)[1])
+    if ($parent -eq $p.Cible) { Write-Verbose &quot;$($p.Sam) deja en place&quot;; continue }
+    if ($PSCmdlet.ShouldProcess($obj.DistinguishedName, &quot;Deplacer vers $($p.Cible)&quot;)) {
+        Move-ADObject -Server $Serveur -Identity $obj.ObjectGUID -TargetPath $p.Cible
+    }
+}
+
+# 5. Anciennes OU, supprimees seulement si vides
+if ($SupprimerAnciennes) {
+    foreach ($nom in &#x27;Server&#x27;,&#x27;Clients&#x27;,&#x27;User&#x27;) {
+        $dn = &quot;OU=$nom,$eurocorp&quot;
+        if (-not (Existe $dn)) { continue }
+        $restants = @(Get-ADObject -Server $Serveur -SearchBase $dn -SearchScope OneLevel -Filter * |
+            Where-Object { -not ($_.ObjectClass -in &#x27;user&#x27;,&#x27;computer&#x27;,&#x27;group&#x27; -and
+                (Get-ADObject $_ -Server $Serveur -Properties sAMAccountName).sAMAccountName -in $placements.Sam) })
+        if ($restants.Count) { Write-Warning &quot;$dn conservee : $($restants.Count) objet(s) sans place definie&quot;; continue }
+        if ($PSCmdlet.ShouldProcess($dn, &#x27;Retirer la protection et supprimer l&#x27;&#x27;OU vide&#x27;)) {
+            Set-ADOrganizationalUnit -Server $Serveur -Identity $dn -ProtectedFromAccidentalDeletion $false
+            Remove-ADOrganizationalUnit -Server $Serveur -Identity $dn -Confirm:$false
+        }
+    }
+}
+
+# 6. Ce qui reste sans place (decision du groupe)
+if (Existe &quot;OU=User,$eurocorp&quot;) {
+    &quot;`nComptes encore dans OU=User (site a decider par le groupe) :&quot;
+    Get-ADUser -Server $Serveur -SearchBase &quot;OU=User,$eurocorp&quot; -SearchScope OneLevel -Filter * -ErrorAction SilentlyContinue |
+        Where-Object SamAccountName -notin $placements.Sam | Sort-Object SamAccountName |
+        ForEach-Object { &quot;  $($_.SamAccountName)  ($($_.Name))&quot; }
+}
 </pre></div></details>
 <h2 id="sc20"><span class="num">20</span>VM Linux : réseau (netplan)</h2><p><b>Où :</b> Dans chaque VM Ubuntu Docker, après l&#x27;installation (sudo).</p><p>Écrit /etc/netplan/50-eurocorp.yaml d&#x27;après le plan : IP fixe, passerelle, DNS = contrôleurs, domaine de recherche.</p>
 <details class="scr"><summary>Voir le script <code>20-set-linux-network.sh</code></summary><div class="code"><div class="cap"><span>20-set-linux-network.sh</span><button class="copy" type="button">Copier</button></div><pre>#!/usr/bin/env bash
