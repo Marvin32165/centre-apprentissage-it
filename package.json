@@ -12,6 +12,7 @@
     "contrastes": "node outils/contrastes.mjs",
     "parcours": "node outils/parcours.mjs",
     "garde": "node outils/garde.mjs",
+    "hooks": "git config core.hooksPath outils/hooks",
     "controles": "npm run --silent index && npm run --silent garde && npm run --silent verif && npm run --silent verif:local && npm run --silent accessibilite && npm run --silent contrastes && npm run --silent parcours"
   },
   "devDependencies": {

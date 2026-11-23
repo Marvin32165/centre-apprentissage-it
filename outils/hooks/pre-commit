@@ -1,0 +1,16 @@
+#!/bin/sh
+# Hook Git commun à tous les agents (Claude Code, ChatGPT / Codex) et à Marvin.
+# Installé par « npm run hooks » (git config core.hooksPath outils/hooks).
+# 1. Garde-fous rapides, toujours. 2. Audit rapide (390 et 1280 px) si une page, un style ou un script du site change
+#    et que Playwright est installé. Contourner exceptionnellement : git commit --no-verify (le dire dans le plan).
+racine=$(git rev-parse --show-toplevel) || exit 1
+cd "$racine" || exit 1
+node outils/garde.mjs || { echo "Commit refusé : corriger les garde-fous ci-dessus."; exit 1; }
+if git diff --cached --name-only | grep -Eq '(\.html$|^assets/)'; then
+  if [ -d node_modules/playwright ]; then
+    node outils/verif.mjs --largeurs=390,1280 || { echo "Commit refusé : npm run verif:rapide signale des problèmes."; exit 1; }
+  else
+    echo "Audit rapide ignoré : outils non installés (npm install puis npx playwright install chromium)."
+  fi
+fi
+exit 0
