@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prépa stage — Service desk UMONS</title>
+<meta name="description" content="Deux semaines pour revoir les bases et se préparer à un stage de service desk à la DSI de l'UMONS.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f5fa8'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='system-ui' font-weight='700'%3ESD%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body data-accueil>
+<main class="page">
+  <section class="hero">
+    <div class="surtitre">Prépa stage · 23 novembre → 4 décembre</div>
+    <h1>Service desk à l'UMONS : deux semaines pour être prêt</h1>
+    <p class="chapeau">Dix jours de 4 à 5 heures pour revoir les bases et travailler exactement ce que le stage demande : les appels, les tickets Jira, le dépannage à distance et sur place, les salles informatiques, la réception des colis et l'installation de PC.</p>
+    <div class="decompte" id="decompte"></div>
+  </section>
+
+  <section class="bloc" style="margin-top:8px">
+    <h2>Comment utiliser ce site</h2>
+    <ul>
+      <li><strong>Un jour = une page.</strong> Chaque page commence par un plan horaire, puis alterne théorie, labo pratique, mises en situation, quiz et fiche mémo.</li>
+      <li><strong>Coche chaque bloc</strong> quand il est fait. Ta progression reste dans ce navigateur, sur cet appareil.</li>
+      <li><strong>Les mises en situation</strong> se lisent en deux temps : réponds d'abord dans ta tête ou à voix haute, puis ouvre la réponse.</li>
+      <li><strong>Les encadrés « À l'UMONS »</strong> signalent ce qui dépend des outils et des règles internes : c'est la liste des questions à poser à ton tuteur.</li>
+    </ul>
+    <p style="margin:0;color:var(--doux);font-size:15px">Ce que dit ta convention : gestion des appels, tickets dans Jira, dépannage à distance, interventions sur site, projets de salles informatiques, réception des colis, installation et intégration de PC. Puis, selon ta progression, des projets de maintenance du pôle opération ou avec des experts (N4).</p>
+  </section>
+
+  <div id="jours"></div>
+  <div class="semaine">Annexe</div>
+  <div id="annexes"></div>
+
+  <p style="margin-top:32px;font-size:14px;color:var(--doux)">
+    Progression enregistrée dans ce navigateur uniquement.
+    <button type="button" class="btn" id="raz" style="margin-left:6px;font-size:13px;padding:4px 12px">Remettre à zéro</button>
+  </p>
+</main>
+<script src="assets/programme.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

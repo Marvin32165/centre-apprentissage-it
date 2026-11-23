@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jour 1 — Le métier de service desk</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-jour="1">
+<main class="page">
+  <div class="surtitre">Jour 1 · lundi 23 novembre</div>
+  <h1>Le métier de service desk</h1>
+  <p class="chapeau">Avant les outils, le cadre : à quoi sert un service desk, comment on trie les demandes, qui fait quoi et quand on passe la main. C'est le vocabulaire que ton équipe utilisera dès le premier jour.</p>
+
+  <section class="bloc" id="plan">
+    <h2>Plan de la journée</h2>
+    <ol class="plan">
+      <li><span class="h">30 min</span><span>Le rôle du service desk et les niveaux de support</span></li>
+      <li><span class="h">45 min</span><span>Incident, demande, problème, changement</span></li>
+      <li><span class="h">45 min</span><span>Priorité, SLA et cycle de vie d'un ticket</span></li>
+      <li><span class="h">30 min</span><span>L'escalade : quand et comment passer la main</span></li>
+      <li><span class="h">1 h</span><span>Labo : trier 20 demandes réelles d'université</span></li>
+      <li><span class="h">30 min</span><span>Mises en situation, quiz, fiche mémo</span></li>
+    </ol>
+  </section>
+
+  <section class="bloc" id="role">
+    <span class="duree">30 min</span>
+    <h2>1. Le rôle du service desk</h2>
+    <p>Le service desk est le <strong>point de contact unique</strong> entre les utilisateurs et le service informatique. Toute demande y entre, qu'elle arrive par téléphone, par mail, par le portail de tickets ou au guichet. Personne n'a besoin de savoir qui gère le Wi-Fi ou les imprimantes : on appelle le service desk, et c'est lui qui oriente.</p>
+    <p>Sa mission tient en trois verbes :</p>
+    <ul>
+      <li><strong>Enregistrer</strong> : chaque demande devient un ticket, même celle résolue en deux minutes. Ce qui n'est pas tracé n'existe pas (pas de statistiques, pas d'historique, pas de preuve).</li>
+      <li><strong>Résoudre</strong> ce qui peut l'être au premier contact : mot de passe, compte bloqué, configuration simple, question d'utilisation.</li>
+      <li><strong>Orienter</strong> le reste vers la bonne équipe, avec un ticket assez complet pour qu'elle n'ait pas à rappeler l'utilisateur.</li>
+    </ul>
+
+    <h3>Les niveaux de support</h3>
+    <div class="tableau"><table>
+      <tr><th>Niveau</th><th>Qui</th><th>Exemples</th></tr>
+      <tr><td><strong>N0</strong></td><td>L'utilisateur lui-même</td><td>FAQ, tutoriels, portail de réinitialisation du mot de passe</td></tr>
+      <tr><td><strong>N1</strong></td><td>Service desk : <em>toi</em></td><td>Prise d'appel, diagnostic de base, mots de passe, procédures connues</td></tr>
+      <tr><td><strong>N2</strong></td><td>Techniciens de proximité, support poste de travail</td><td>Intervention sur site, réinstallation, panne matérielle, logiciel métier</td></tr>
+      <tr><td><strong>N3</strong></td><td>Administrateurs, ingénieurs</td><td>Serveurs, réseau, Active Directory, messagerie, sécurité</td></tr>
+      <tr><td><strong>N4</strong></td><td>Experts ou fournisseurs externes</td><td>Éditeur d'un logiciel, constructeur, prestataire, expert interne pointu</td></tr>
+    </table></div>
+    <div class="note"><p>La numérotation varie d'une organisation à l'autre. Ta convention parle de « projets avec des experts (N4) » : à l'UMONS, N4 désigne donc des experts. Retiens le principe, pas les numéros : plus on monte, plus c'est spécialisé et plus le temps de ces personnes est rare. Ton travail au N1 protège ce temps.</p></div>
+
+    <h3>Le taux de résolution au premier contact</h3>
+    <p>L'indicateur phare d'un service desk est le <strong>FCR</strong> (<em>First Contact Resolution</em>) : la part des demandes résolues pendant le premier échange, sans transfert ni rappel. Un bon FCR veut dire des utilisateurs satisfaits et des équipes N2/N3 disponibles. Le FCR monte avec trois choses : connaître les procédures, savoir questionner, et documenter ce qu'on a appris.</p>
+
+    <div class="umons"><p>L'UMONS dessert toute une « communauté » (le mot est dans ta convention) : étudiants, chercheurs, enseignants, personnel administratif et technique, sur plusieurs campus à Mons. Les besoins et les droits ne sont pas les mêmes : un étudiant n'a pas de PC fourni, un membre du personnel oui. Demande à ton tuteur quels publics vous servez, par quels canaux (téléphone, mail, portail, guichet) et aux heures d'ouverture.</p></div>
+  </section>
+
+  <section class="bloc" id="types">
+    <span class="duree">45 min</span>
+    <h2>2. Incident, demande, problème, changement</h2>
+    <p>Ces quatre mots viennent d'<strong>ITIL</strong>, le référentiel de bonnes pratiques utilisé par la plupart des services informatiques (la version actuelle est ITIL 4). Jira Service Management les reprend directement dans ses types de tickets. Les confondre fait mal classer les tickets, et un ticket mal classé arrive dans la mauvaise file.</p>
+
+    <h3>Incident</h3>
+    <p>Une <strong>interruption non planifiée</strong> d'un service, ou une <strong>baisse de sa qualité</strong>. Quelque chose qui marchait ne marche plus, ou marche mal.</p>
+    <ul><li>« Je n'ai plus Internet. » · « Outlook plante à l'ouverture. » · « L'imprimante du 2e étage imprime des pages blanches. »</li></ul>
+    <p><strong>Objectif : rétablir le service le plus vite possible</strong>, quitte à contourner. Si redémarrer le service d'impression remet l'imprimante en route, l'incident est résolu, même si on ne sait pas encore pourquoi elle s'était bloquée.</p>
+
+    <h3>Demande de service</h3>
+    <p>Une demande <strong>standard</strong>, prévue et souvent pré-approuvée. Rien n'est cassé : l'utilisateur veut quelque chose.</p>
+    <ul><li>« J'ai besoin d'un accès au dossier partagé de mon service. » · « Pouvez-vous installer SPSS ? » · « Un nouveau collègue arrive lundi. »</li></ul>
+    <p><strong>Objectif : la traiter selon la procédure</strong>, avec les validations prévues (par exemple l'accord du responsable pour un accès).</p>
+
+    <h3>Problème</h3>
+    <p>La <strong>cause</strong>, souvent inconnue au départ, d'un ou de plusieurs incidents. Quand dix personnes appellent pour la même erreur, il y a dix incidents et un problème.</p>
+    <p>Ce n'est pas toi qui le résous au N1, mais tu as un rôle clé : <strong>repérer la répétition</strong>. Trois appels pour la même chose en une heure, c'est le moment de prévenir ton responsable ou le N2, et de relier les tickets entre eux.</p>
+
+    <h3>Changement</h3>
+    <p>L'ajout, la modification ou la suppression d'un élément du système d'information : mise à jour d'un serveur, remplacement des PC d'une salle, nouvelle règle de pare-feu. Un changement est <strong>planifié et approuvé</strong>, parce qu'il peut provoquer des incidents. Au service desk, tu dois surtout <strong>savoir qu'il a lieu</strong> : si une maintenance est prévue ce soir, les appels de demain matin auront peut-être la même origine.</p>
+
+    <div class="tableau"><table>
+      <tr><th>Phrase de l'utilisateur</th><th>Type</th></tr>
+      <tr><td>« Mon PC ne démarre plus. »</td><td>Incident</td></tr>
+      <tr><td>« Je voudrais un deuxième écran. »</td><td>Demande</td></tr>
+      <tr><td>« Comment on partage un fichier OneDrive ? »</td><td>Demande (d'information)</td></tr>
+      <tr><td>« Le Wi-Fi coupe toutes les dix minutes depuis lundi, tout le bâtiment est touché. »</td><td>Incident (et probablement un problème derrière)</td></tr>
+      <tr><td>« Mon mot de passe a expiré. »</td><td>Demande en général (procédure standard) ; certaines organisations la classent en incident</td></tr>
+    </table></div>
+    <div class="astuce"><p>Le test rapide : « Est-ce que ça marchait avant ? » Si oui, c'est un incident. Si l'utilisateur veut quelque chose de nouveau, c'est une demande.</p></div>
+  </section>
+
+  <section class="bloc" id="priorite">
+    <span class="duree">45 min</span>
+    <h2>3. Priorité, SLA et cycle de vie d'un ticket</h2>
+    <h3>Priorité = impact × urgence</h3>
+    <p>On ne traite pas les tickets dans l'ordre d'arrivée, ni selon qui crie le plus fort. La priorité se calcule avec deux critères :</p>
+    <ul>
+      <li><strong>Impact</strong> : combien de personnes ou quelle importance de service est touché ? Une personne, un service, un bâtiment, toute l'université.</li>
+      <li><strong>Urgence</strong> : à quelle vitesse ça devient grave ? Peut-il travailler autrement ? Y a-t-il une échéance (examen, cours qui commence, paie, défense de thèse) ?</li>
+    </ul>
+    <div class="tableau"><table>
+      <tr><th>Impact ↓ / Urgence →</th><th>Élevée</th><th>Moyenne</th><th>Faible</th></tr>
+      <tr><th>Élevé (beaucoup de monde)</th><td><strong>P1 Critique</strong></td><td>P2 Haute</td><td>P3 Moyenne</td></tr>
+      <tr><th>Moyen (un service)</th><td>P2 Haute</td><td>P3 Moyenne</td><td>P4 Basse</td></tr>
+      <tr><th>Faible (une personne)</th><td>P3 Moyenne</td><td>P4 Basse</td><td>P4 Basse</td></tr>
+    </table></div>
+    <p>Exemple : un enseignant dont le vidéoprojecteur ne marche pas, cours dans dix minutes devant 200 étudiants. Impact : une salle, mais 200 personnes attendent. Urgence : immédiate. C'est une priorité haute, même si une seule personne appelle.</p>
+    <div class="attention"><p>Le titre de l'appelant ne change pas la priorité en théorie. En pratique, beaucoup d'organisations ont des règles pour certaines fonctions (rectorat, direction). Ne décide pas seul : applique la règle de la maison et demande en cas de doute.</p></div>
+
+    <h3>SLA</h3>
+    <p>Un <strong>SLA</strong> (<em>Service Level Agreement</em>, accord de niveau de service) fixe des délais par priorité, par exemple : prise en charge sous 15 min et résolution sous 4 h pour un P2. Jira affiche ces délais sous forme de compteurs dans le ticket. Deux délais sont presque toujours suivis :</p>
+    <ul>
+      <li><strong>Délai de première réponse</strong> : le temps avant que quelqu'un réponde réellement à l'utilisateur.</li>
+      <li><strong>Délai de résolution</strong> : le temps avant que le ticket soit résolu. Le compteur s'arrête souvent quand le ticket est « en attente du client ».</li>
+    </ul>
+
+    <h3>Cycle de vie d'un ticket</h3>
+    <p>Les noms exacts dépendent de la configuration de Jira, mais le schéma est toujours proche de celui-ci :</p>
+    <ol>
+      <li><strong>Ouvert / À trier</strong> : le ticket vient d'arriver.</li>
+      <li><strong>En cours</strong> : un agent l'a pris (il est « assigné »).</li>
+      <li><strong>En attente du client</strong> : on attend une information ou un test de l'utilisateur.</li>
+      <li><strong>En attente d'un tiers / escaladé</strong> : une autre équipe ou un fournisseur doit agir.</li>
+      <li><strong>Résolu</strong> : la solution est appliquée, l'utilisateur est prévenu.</li>
+      <li><strong>Fermé</strong> : après confirmation de l'utilisateur ou un délai sans réponse.</li>
+    </ol>
+    <div class="note"><p>« Résolu » n'est pas « fermé ». On résout quand la solution est en place, mais on laisse à l'utilisateur la possibilité de dire « non, ça ne marche toujours pas ». Ne ferme jamais un ticket sans avoir prévenu la personne.</p></div>
+  </section>
+
+  <section class="bloc" id="escalade">
+    <span class="duree">30 min</span>
+    <h2>4. L'escalade : quand et comment passer la main</h2>
+    <p>Escalader n'est pas un échec : c'est une partie normale du travail. Ce qui compte, c'est d'escalader <strong>au bon moment</strong> et <strong>proprement</strong>.</p>
+    <h3>Deux sortes d'escalade</h3>
+    <ul>
+      <li><strong>Fonctionnelle</strong> : vers une équipe plus compétente sur le sujet (N2, réseau, système). C'est la plus fréquente.</li>
+      <li><strong>Hiérarchique</strong> : vers un responsable, quand il faut une décision, un arbitrage, ou que la situation devient sensible (utilisateur très mécontent, demande hors procédure, sécurité).</li>
+    </ul>
+    <h3>Quand escalader</h3>
+    <ul>
+      <li>Tu as épuisé la procédure connue et les vérifications de base.</li>
+      <li>Il faut des droits que tu n'as pas (et c'est normal en stage).</li>
+      <li>Il faut se déplacer et ce n'est pas ton rôle à ce moment-là.</li>
+      <li>Le délai du SLA approche.</li>
+      <li>Plusieurs personnes signalent la même panne : incident de masse probable.</li>
+      <li>Tu suspectes un incident de sécurité : phishing cliqué, compte compromis, rançongiciel. <strong>Celui-là, tout de suite.</strong></li>
+    </ul>
+    <h3>Comment escalader proprement</h3>
+    <p>L'équipe qui reçoit ton ticket ne doit pas avoir à rappeler l'utilisateur pour reposer les mêmes questions. Un ticket escaladé contient :</p>
+    <ul class="check">
+      <li>qui, où, comment le joindre, depuis quand ;</li>
+      <li>le symptôme exact (message d'erreur recopié ou capture) ;</li>
+      <li>ce qui a déjà été testé, avec le résultat de chaque test ;</li>
+      <li>l'impact et l'urgence (« cours à 14 h », « tout le service compta ») ;</li>
+      <li>pourquoi tu escalades (« nécessite les droits admin AD », « matériel à remplacer »).</li>
+    </ul>
+    <p>Et tu préviens l'utilisateur : « Je transmets à l'équipe X, qui vous recontactera. Votre numéro de ticket est le SD-1234. »</p>
+  </section>
+
+  <section class="bloc" id="labo">
+    <span class="duree">1 h</span>
+    <h2>Labo : trier 20 demandes</h2>
+    <p>Prends une feuille ou un tableur avec quatre colonnes : <strong>Type</strong> (incident, demande, problème potentiel, sécurité), <strong>Impact</strong>, <strong>Urgence</strong>, <strong>Priorité</strong>, et une cinquième : <strong>Je résous au N1 ou j'escalade vers qui ?</strong> Remplis-le pour chaque ligne avant de regarder la correction.</p>
+    <ol class="etapes">
+      <li>Un étudiant a oublié son mot de passe et doit rendre un travail sur Moodle ce soir.</li>
+      <li>Une secrétaire voudrait que son imprimante personnelle soit remplacée par un modèle couleur.</li>
+      <li>Trois appels en 20 min : « Teams ne se connecte plus » dans des bâtiments différents.</li>
+      <li>Un professeur reçoit un mail « Votre boîte est pleine, cliquez ici » et a saisi son mot de passe.</li>
+      <li>Le PC de l'accueil du bâtiment est très lent depuis ce matin.</li>
+      <li>Un chercheur demande l'installation de MATLAB sur son portable de service.</li>
+      <li>Salle informatique : 4 PC sur 24 n'affichent rien, examen pratique demain à 8 h 30.</li>
+      <li>Un nouveau membre du personnel commence lundi, il lui faut un compte et un PC.</li>
+      <li>« Comment je mets une réponse automatique d'absence dans Outlook ? »</li>
+      <li>Le Wi-Fi ne marche pas sur le portable personnel d'une étudiante, il marche chez ses amis.</li>
+      <li>Un colis de 10 PC est arrivé à l'accueil.</li>
+      <li>Une doctorante a supprimé par erreur un dossier de son lecteur réseau.</li>
+      <li>Le vidéoprojecteur d'un auditoire ne s'allume pas, cours dans 5 min.</li>
+      <li>Un utilisateur demande les droits administrateur sur son PC « pour aller plus vite ».</li>
+      <li>Message « Votre compte est verrouillé » à la connexion Windows.</li>
+      <li>Toute la Faculté signale « Aucun accès Internet ».</li>
+      <li>Un écran du personnel a une ligne verticale rose.</li>
+      <li>Un utilisateur veut savoir quand son PC sera remplacé (ticket ouvert il y a 3 semaines).</li>
+      <li>Un PC de salle informatique affiche un message demandant une rançon.</li>
+      <li>Un membre du personnel part à la retraite vendredi.</li>
+    </ol>
+    <details class="cas"><summary>Voir la correction</summary>
+      <div class="reponse">
+        <ol>
+          <li>Demande (mot de passe), impact faible, urgence haute (échéance) → P3, résolu au N1 selon la procédure de vérification d'identité.</li>
+          <li>Demande, faible/faible → P4, à orienter selon la procédure d'achat ou de matériel. Pas une urgence.</li>
+          <li>Incident, impact élevé et croissant → P1/P2, <strong>escalade immédiate</strong> et signalement d'un incident de masse, tickets reliés.</li>
+          <li><strong>Sécurité</strong>, urgence maximale : compte compromis. Escalade immédiate à l'équipe sécurité/système selon la procédure ; en général on bloque le compte ou on force le changement de mot de passe. Ne pas attendre.</li>
+          <li>Incident, un poste mais poste d'accueil (impact moyen) → P3. Diagnostic de base au N1, puis intervention N2 si besoin.</li>
+          <li>Demande, P4. Vérifier la licence (logiciel payant) et la procédure d'installation logicielle.</li>
+          <li>Incident, salle entière bientôt utilisée, échéance → P2. Escalade vers l'équipe salles/proximité, avec l'heure de l'examen dans le ticket.</li>
+          <li>Demande planifiée (arrivée), P3 avec échéance lundi. Procédure d'arrivée : compte, groupes, PC, accès.</li>
+          <li>Demande d'information, P4, résolue au N1 en guidant l'utilisateur. Idéalement, un lien vers un tutoriel.</li>
+          <li>Incident sur appareil personnel, P4. Vérifier l'identifiant et la configuration eduroam ; le support des appareils personnels est souvent limité.</li>
+          <li>Pas un ticket utilisateur : tâche de réception (contrôle du bon de livraison, inventaire). Tu le verras le jour 9.</li>
+          <li>Incident, P3 (urgence selon le contenu). Restauration via les versions précédentes ou les sauvegardes : en général N2/N3.</li>
+          <li>Incident, P2 : impact sur tout un cours, urgence immédiate. Intervention sur site tout de suite selon l'organisation (équipe audiovisuel ou proximité).</li>
+          <li>Demande, à refuser poliment selon la politique de sécurité, ou à orienter vers le responsable. Ne jamais accorder de droits soi-même.</li>
+          <li>Demande/incident simple, P3, N1 : déverrouillage après vérification d'identité, et recherche de la cause (appareil qui tente un ancien mot de passe).</li>
+          <li>Incident majeur, P1, escalade immédiate au réseau et au responsable. Message type aux appelants suivants.</li>
+          <li>Incident matériel, P4 (on peut travailler), remplacement de l'écran par le N2.</li>
+          <li>Suivi d'un ticket existant : <strong>pas de nouveau ticket</strong>, commentaire sur le ticket existant et relance de l'équipe en charge.</li>
+          <li><strong>Sécurité, P1</strong> : débrancher le câble réseau, ne pas éteindre, escalade immédiate à la sécurité. Le jour 8 détaille la conduite à tenir.</li>
+          <li>Demande planifiée (départ) : procédure de départ, désactivation du compte, récupération du matériel, à la date prévue.</li>
+        </ol>
+      </div>
+    </details>
+  </section>
+
+  <section class="bloc" id="cas">
+    <span class="duree">15 min</span>
+    <h2>Mises en situation</h2>
+    <details class="cas"><summary>« C'est urgent, je suis directeur de département ! »</summary>
+      <div class="enonce"><p>Un directeur appelle : son deuxième écran ne s'allume plus et il veut quelqu'un tout de suite. Il peut travailler sur l'écran du portable.</p></div>
+      <div class="reponse"><p>On reste poli et on traite la demande sérieusement : vérifications rapides au téléphone (câble, source de l'écran, touches Windows + P). Si ça ne suffit pas, on crée le ticket avec la priorité qui découle de l'impact et de l'urgence (ici basse ou moyenne, il peut travailler) et on donne un délai honnête. Si une règle interne prévoit un traitement prioritaire pour certaines fonctions, on l'applique ; sinon, on en parle au responsable plutôt que de court-circuiter la file.</p></div>
+    </details>
+    <details class="cas"><summary>Le troisième appel identique</summary>
+      <div class="enonce"><p>Tu prends ton troisième appel en une demi-heure pour « impossible d'accéder au lecteur réseau P: ». Les deux premiers sont dans des tickets séparés.</p></div>
+      <div class="reponse"><p>Tu suspectes un incident de masse. Tu préviens tout de suite ton responsable ou le N2/N3 concerné, tu relies les trois tickets (ou tu les rattaches à un ticket principal), et tu demandes s'il y a une maintenance en cours. Aux appelants suivants, tu dis que le problème est connu et en cours de traitement, et tu les ajoutes au ticket principal.</p></div>
+    </details>
+    <details class="cas"><summary>Le ticket qu'on ne peut pas fermer</summary>
+      <div class="enonce"><p>Tu as réinstallé l'imprimante d'un utilisateur, qui ne répond plus à tes messages depuis 4 jours. Le ticket est « en attente du client ».</p></div>
+      <div class="reponse"><p>On applique la règle de la maison : souvent une relance, puis une résolution automatique ou manuelle après un délai, avec un message qui explique que la personne peut rouvrir le ticket si le problème revient. On n'abandonne pas un ticket ouvert indéfiniment, et on ne le ferme pas sans prévenir.</p></div>
+    </details>
+  </section>
+
+  <section class="bloc" id="quiz">
+    <span class="duree">10 min</span>
+    <h2>Quiz</h2>
+    <div id="quiz-zone"></div>
+  </section>
+
+  <section class="bloc" id="memo">
+    <span class="duree">5 min</span>
+    <h2>Fiche mémo</h2>
+    <ul>
+      <li><strong>Service desk</strong> = point de contact unique : enregistrer, résoudre, orienter.</li>
+      <li><strong>Incident</strong> : ça marchait, ça ne marche plus → rétablir vite. <strong>Demande</strong> : besoin standard → procédure. <strong>Problème</strong> : la cause de plusieurs incidents. <strong>Changement</strong> : modification planifiée.</li>
+      <li><strong>Priorité = impact × urgence</strong>, pas l'ordre d'arrivée ni le grade.</li>
+      <li><strong>SLA</strong> : délais de première réponse et de résolution par priorité.</li>
+      <li><strong>Résolu ≠ fermé</strong> : on prévient toujours l'utilisateur.</li>
+      <li><strong>Escalader</strong> : au bon moment, avec un ticket complet (qui, quoi, depuis quand, testé, impact, pourquoi).</li>
+      <li><strong>Sécurité</strong> et <strong>panne de masse</strong> : escalade immédiate.</li>
+    </ul>
+    <div class="umons"><p>Questions pour ton tuteur : les canaux et horaires du service desk, les priorités et SLA utilisés dans Jira, les équipes vers qui escalader et comment, la procédure en cas d'incident de sécurité.</p></div>
+  </section>
+</main>
+<script>
+window.QUIZ = [
+  { q: "Une imprimante qui fonctionnait hier imprime aujourd'hui des pages blanches. C'est…", c: ["Un incident", "Une demande de service", "Un changement", "Un problème"], a: 0, why: "Un service qui marchait et ne marche plus (ou mal) : c'est un incident." },
+  { q: "Quel est l'objectif premier de la gestion des incidents ?", c: ["Rétablir le service le plus vite possible", "Trouver la cause racine", "Remplacer le matériel", "Documenter la configuration"], a: 0, why: "On rétablit d'abord, quitte à contourner. La cause racine relève de la gestion des problèmes." },
+  { q: "Dix utilisateurs signalent la même erreur. Combien y a-t-il de problèmes, au sens ITIL ?", c: ["Probablement un seul, derrière dix incidents", "Dix", "Aucun", "Deux"], a: 0, why: "Un problème est la cause d'un ou plusieurs incidents." },
+  { q: "La priorité d'un ticket se calcule à partir de…", c: ["L'impact et l'urgence", "L'ordre d'arrivée", "Le titre de l'appelant", "Le temps estimé de résolution"], a: 0, why: "Priorité = impact × urgence." },
+  { q: "Que signifie FCR ?", c: ["Résolution au premier contact", "Fermeture complète requise", "Formulaire de changement rapide", "Fréquence des cas récurrents"], a: 0, why: "First Contact Resolution : le pourcentage de demandes résolues dès le premier échange." },
+  { q: "Un ticket « résolu »…", c: ["Laisse à l'utilisateur la possibilité de signaler que ça ne marche pas", "Est définitivement clos", "N'a pas besoin d'être communiqué", "Repart automatiquement au N2"], a: 0, why: "Résolu ≠ fermé : la fermeture vient après confirmation ou un délai." },
+  { q: "Un utilisateur a saisi son mot de passe sur un lien de phishing. Que fais-tu ?", c: ["J'escalade immédiatement selon la procédure sécurité", "Je crée un ticket en priorité basse", "Je lui conseille de changer son mot de passe la semaine prochaine", "Je supprime le mail et c'est tout"], a: 0, why: "Compte potentiellement compromis : escalade immédiate." },
+  { q: "Un utilisateur rappelle pour un ticket ouvert il y a 2 semaines. Tu…", c: ["Commentes et relances le ticket existant", "Crées un nouveau ticket", "Fermes l'ancien ticket", "Lui demandes d'envoyer un mail"], a: 0, why: "Pas de doublon : on suit le ticket existant." }
+];
+</script>
+<script src="../assets/programme.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

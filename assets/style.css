@@ -1,0 +1,200 @@
+/* Prépa stage — feuille de style unique. Lecture sur téléphone d'abord. */
+:root {
+  --fond: #f6f5f1;
+  --carte: #ffffff;
+  --texte: #1d1f23;
+  --doux: #5d6470;
+  --ligne: #e2e0d8;
+  --accent: #1f5fa8;
+  --accent-doux: #e7eef8;
+  --ok: #1e7a4c;
+  --ok-doux: #e3f2ea;
+  --alerte: #a8471f;
+  --alerte-doux: #fbeee6;
+  --code: #f0eee8;
+  --rayon: 12px;
+  --largeur: 760px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fond: #15171b;
+    --carte: #1e2127;
+    --texte: #e8e6e1;
+    --doux: #a3a9b3;
+    --ligne: #30343c;
+    --accent: #7fb0ec;
+    --accent-doux: #1f2a3a;
+    --ok: #6fcf9a;
+    --ok-doux: #1b2e24;
+    --alerte: #f0a37f;
+    --alerte-doux: #33231b;
+    --code: #262a31;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 64px; }
+body {
+  margin: 0;
+  background: var(--fond);
+  color: var(--texte);
+  font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+a { color: var(--accent); }
+img { max-width: 100%; }
+
+/* ── Barre du haut ── */
+.barre {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--fond) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--ligne);
+}
+.barre-in {
+  max-width: var(--largeur); margin: 0 auto; padding: 10px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.barre a { text-decoration: none; font-weight: 600; }
+.barre .titre { flex: 1; min-width: 0; font-size: 15px; color: var(--doux); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.barre .compte { font-size: 14px; color: var(--doux); font-variant-numeric: tabular-nums; }
+.jauge { height: 3px; background: var(--ligne); }
+.jauge > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+
+/* ── Mise en page ── */
+.page { max-width: var(--largeur); margin: 0 auto; padding: 20px 16px 80px; }
+h1 { font-size: 30px; line-height: 1.2; margin: 8px 0 8px; letter-spacing: -.01em; }
+h2 { font-size: 23px; line-height: 1.25; margin: 0 0 12px; }
+h3 { font-size: 18px; margin: 22px 0 8px; }
+.surtitre { font-size: 14px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; }
+.chapeau { font-size: 18px; color: var(--doux); margin: 0 0 20px; }
+p, ul, ol { margin: 0 0 14px; }
+li { margin: 4px 0; }
+strong { font-weight: 650; }
+
+.bloc {
+  background: var(--carte); border: 1px solid var(--ligne); border-radius: var(--rayon);
+  padding: 20px 18px; margin: 18px 0;
+}
+.bloc.fait { border-color: color-mix(in srgb, var(--ok) 45%, var(--ligne)); }
+.bloc .duree { float: right; font-size: 13px; color: var(--doux); background: var(--fond); border-radius: 99px; padding: 2px 10px; margin-left: 8px; }
+.valider {
+  display: flex; align-items: center; gap: 10px; margin-top: 18px; padding-top: 14px;
+  border-top: 1px dashed var(--ligne); font-size: 15px; color: var(--doux); cursor: pointer; user-select: none;
+}
+.valider input { width: 22px; height: 22px; accent-color: var(--ok); margin: 0; }
+.bloc.fait .valider { color: var(--ok); font-weight: 600; }
+
+/* ── Encadrés ── */
+.note, .attention, .astuce, .umons {
+  border-radius: 10px; padding: 12px 14px; margin: 14px 0; font-size: 16px;
+}
+.note { background: var(--accent-doux); }
+.astuce { background: var(--ok-doux); }
+.attention { background: var(--alerte-doux); }
+.umons { background: var(--fond); border: 1px solid var(--ligne); }
+.note > :last-child, .attention > :last-child, .astuce > :last-child, .umons > :last-child { margin-bottom: 0; }
+.note::before, .attention::before, .astuce::before, .umons::before {
+  display: block; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px;
+}
+.note::before { content: "À retenir"; color: var(--accent); }
+.astuce::before { content: "Astuce de terrain"; color: var(--ok); }
+.attention::before { content: "Attention"; color: var(--alerte); }
+.umons::before { content: "À l'UMONS — à vérifier sur place"; color: var(--doux); }
+
+/* ── Code ── */
+code { font: 15px/1.4 ui-monospace, "Cascadia Mono", Consolas, monospace; background: var(--code); padding: 1px 5px; border-radius: 5px; }
+pre { position: relative; background: var(--code); border-radius: 10px; padding: 12px 14px; overflow-x: auto; margin: 0 0 14px; }
+pre code { background: none; padding: 0; font-size: 14px; white-space: pre; }
+.copier {
+  position: absolute; top: 6px; right: 6px; font: 600 12px system-ui; border: 1px solid var(--ligne);
+  background: var(--carte); color: var(--doux); border-radius: 6px; padding: 3px 8px; cursor: pointer;
+}
+
+/* ── Tableaux ── */
+.tableau { overflow-x: auto; margin: 0 0 14px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--ligne); }
+th { font-weight: 650; background: var(--fond); }
+
+/* ── Plan de la journée ── */
+.plan { list-style: none; padding: 0; margin: 0; counter-reset: p; }
+.plan li { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--ligne); }
+.plan li:last-child { border-bottom: 0; }
+.plan .h { flex: 0 0 64px; font-variant-numeric: tabular-nums; color: var(--doux); font-size: 15px; }
+
+/* ── Mises en situation ── */
+details.cas { border: 1px solid var(--ligne); border-radius: 10px; margin: 12px 0; background: var(--fond); }
+details.cas > summary { cursor: pointer; padding: 12px 14px; font-weight: 600; list-style: none; }
+details.cas > summary::-webkit-details-marker { display: none; }
+details.cas > summary::before { content: "▸ "; color: var(--accent); }
+details.cas[open] > summary::before { content: "▾ "; }
+details.cas .enonce { padding: 0 14px; }
+details.cas .reponse { padding: 12px 14px; border-top: 1px dashed var(--ligne); background: var(--carte); border-radius: 0 0 10px 10px; }
+details.cas .reponse::before { content: "Ce qu'on attend"; display: block; font-size: 13px; font-weight: 700; color: var(--ok); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+
+/* ── Étapes de labo ── */
+ol.etapes { padding-left: 22px; }
+ol.etapes > li { margin: 10px 0; }
+.check { list-style: none; padding: 0; }
+.check li { padding-left: 28px; position: relative; }
+.check li::before { content: "☐"; position: absolute; left: 2px; color: var(--accent); }
+
+/* ── Quiz ── */
+.q { margin: 0 0 22px; }
+.q .enonce { font-weight: 600; margin-bottom: 8px; }
+.q button.choix {
+  display: block; width: 100%; text-align: left; font: inherit; font-size: 16px; color: var(--texte);
+  background: var(--fond); border: 1px solid var(--ligne); border-radius: 10px; padding: 10px 12px; margin: 6px 0; cursor: pointer;
+}
+.q button.choix:disabled { cursor: default; }
+.q button.bon { background: var(--ok-doux); border-color: var(--ok); }
+.q button.faux { background: var(--alerte-doux); border-color: var(--alerte); }
+.q .pourquoi { font-size: 15px; color: var(--doux); margin-top: 6px; display: none; }
+.q.repondu .pourquoi { display: block; }
+.score { font-weight: 700; font-size: 18px; }
+.btn {
+  display: inline-block; font: 600 15px system-ui; border: 1px solid var(--accent); color: var(--accent);
+  background: transparent; border-radius: 99px; padding: 8px 16px; cursor: pointer; text-decoration: none;
+}
+.btn.plein { background: var(--accent); color: var(--carte); }
+
+/* ── Accueil ── */
+.hero { padding: 8px 0 4px; }
+.decompte { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0 8px; }
+.decompte div { background: var(--carte); border: 1px solid var(--ligne); border-radius: var(--rayon); padding: 10px 14px; flex: 1 1 140px; }
+.decompte b { display: block; font-size: 26px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.decompte span { font-size: 14px; color: var(--doux); }
+.semaine { font-size: 14px; font-weight: 700; color: var(--doux); text-transform: uppercase; letter-spacing: .06em; margin: 28px 0 6px; }
+a.jour {
+  display: flex; gap: 14px; align-items: center; text-decoration: none; color: var(--texte);
+  background: var(--carte); border: 1px solid var(--ligne); border-radius: var(--rayon); padding: 14px; margin: 10px 0;
+}
+a.jour.aujourdhui { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+a.jour .num {
+  flex: 0 0 46px; height: 46px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--accent-doux); color: var(--accent); font-weight: 700; font-size: 18px;
+}
+a.jour.termine .num { background: var(--ok-doux); color: var(--ok); }
+a.jour .corps { flex: 1; min-width: 0; }
+a.jour .t { font-weight: 650; display: block; }
+a.jour .r { font-size: 15px; color: var(--doux); display: block; }
+a.jour .m { font-size: 13px; color: var(--doux); display: block; margin-top: 4px; }
+.mini { height: 4px; background: var(--ligne); border-radius: 99px; margin-top: 6px; overflow: hidden; }
+.mini > i { display: block; height: 100%; background: var(--ok); width: 0; }
+
+/* ── Bas de page jour ── */
+.suite { display: flex; justify-content: space-between; gap: 10px; margin-top: 28px; flex-wrap: wrap; }
+.suite a { flex: 1 1 200px; background: var(--carte); border: 1px solid var(--ligne); border-radius: var(--rayon); padding: 12px 14px; text-decoration: none; }
+.suite a small { display: block; color: var(--doux); font-size: 13px; }
+.suite a.apres { text-align: right; }
+footer.pied { max-width: var(--largeur); margin: 0 auto; padding: 0 16px 40px; font-size: 13px; color: var(--doux); }
+
+@media (min-width: 700px) {
+  h1 { font-size: 36px; }
+  .bloc { padding: 24px 26px; }
+}
+@media print {
+  .barre, .valider, .copier, .suite { display: none; }
+  .bloc { break-inside: avoid; border: 0; padding: 0; }
+  details.cas { open: true; }
+}
