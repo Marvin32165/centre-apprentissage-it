@@ -1,0 +1,24 @@
+// Parcours de régression dans Chromium : node outils/parcours-lot-13.mjs
+import {chromium} from 'playwright';
+import {readFile} from 'node:fs/promises';
+import {createServer} from 'node:http';
+import {pathToFileURL} from 'node:url';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+const root=process.cwd();
+const server=createServer(async(req,res)=>{try{let p=decodeURIComponent(new URL(req.url,'http://localhost').pathname);if(p.endsWith('/'))p+='index.html';const f=path.resolve(root,'.'+p);if(!f.startsWith(root+path.sep))throw Error();const ext=path.extname(f);res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml'})[ext]||'application/octet-stream');res.end(await readFile(f))}catch{res.statusCode=404;res.end('404')}});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch();let failures=0;
+async function test(label,fn){try{await fn();console.log('OK '+label)}catch(e){failures++;console.log('ÉCHEC '+label+': '+e.message)}}
+for(const mode of ['serveur','file']){
+ const ctx=await browser.newContext({viewport:{width:1280,height:900},reducedMotion:'reduce'});const p=await ctx.newPage();let errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text())});
+ const base=mode==='file'?pathToFileURL(root+'/').href:`http://127.0.0.1:${server.address().port}/`;
+ await test(mode+' progression et tampon',async()=>{await p.goto(base+'stage/j1.html');await p.evaluate(()=>{localStorage.setItem('it.done.stage-j1','1')});await p.reload();assert.equal(await p.locator('.cloture button').getAttribute('aria-pressed'),'true');assert.ok(await p.locator('.tampon-mot').textContent()==='RÉSOLU');await p.locator('.cloture button').click();assert.equal(await p.evaluate(()=>localStorage.getItem('it.done.stage-j1')),null);await p.locator('.cloture button').click();await p.reload();assert.equal(await p.locator('.cloture button').getAttribute('aria-pressed'),'true')});
+ await test(mode+' minuteur, pause, bloc suivant et reprise',async()=>{const go=p.locator('.seance-go');await go.click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).marche),true);await go.click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).marche),false);await p.locator('.seance-next').click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).bloc),1);await p.reload();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).bloc),1)});
+ await test(mode+' quiz et correction cachée',async()=>{const qs=await p.evaluate(()=>window.IT_QUIZZES['stage-j1'].questions.map(q=>q.reponse));for(let i=0;i<qs.length;i++)await p.locator(`.quiz input[name=q${i}][value="${qs[i]}"]`).check();await p.locator('.quiz button[type=submit]').click();assert.match(await p.locator('.quiz .score').innerText(),new RegExp(qs.length+' / '+qs.length));assert.ok(await p.locator('.quiz details').count()>0);assert.equal(await p.locator('.quiz details[open]').count(),0)});
+ await test(mode+' filtres des modules',async()=>{await p.goto(base+'modules/index.html');const cards=p.locator('.mod-card');const total=await cards.count();assert.ok(total>1);await p.locator('.puce').nth(1).click();assert.ok(await cards.count()<total);await p.locator('.filtre-q input').fill('termeintrouvable987');assert.equal(await cards.count(),0);await p.getByRole('button',{name:'Tout afficher'}).click();assert.equal(await cards.count(),total)});
+ await test(mode+' atlas avec domaine',async()=>{await p.goto(base+'themes.html?domaine=reseau');assert.match(await p.locator('#domaine h2').innerText(),/réseau/i);assert.equal(await p.locator('.tuile[aria-pressed=true]').count(),1)});
+ await test(mode+' montage guidé',async()=>{await p.goto(base+'atelier/montage.html?s=bureautique-intel');await p.getByRole('button',{name:/Commencer le montage/}).click();for(let i=0;i<18;i++){const b=p.getByRole('button',{name:'Montre-moi'});if(!(await b.count()))break;await b.click();}assert.match(await p.locator('.at-etape').innerText(),/Fin du chapitre/)});
+ for(let i=1;i<=9;i++)await test(mode+` impression J${i} : une page A4`,async()=>{await p.goto(base+`stage/j${i}.html`);await p.emulateMedia({media:'print'});const pdf=await p.pdf({format:'A4',printBackground:true});const count=(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;assert.equal(count,1);await p.emulateMedia({media:'screen'})});
+ await test(mode+' console',async()=>assert.deepEqual(errors,[]));await ctx.close();
+}
+await browser.close();await new Promise(r=>server.close(r));console.log(failures+' échec(s)');if(failures)process.exitCode=1;
