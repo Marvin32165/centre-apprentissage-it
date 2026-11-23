@@ -112,6 +112,7 @@ Reste : rien pour ce lot. Règles inchangées ; seul l'affichage a bougé : `ate
 - [ ] 13.4 Impression : fiches mémo J1 à J9 et bilan de l’atelier en A4 ; justification pour J10.
 - [ ] 13.5 Conformité : contrôle de chaque point de la refonte et justification des écarts.
 - [ ] 13.6 Peaufinage : page 404, favicon, métadonnées et états vides.
+  Justifié : retrait des polices Google, les polices de repli locales assurent le fonctionnement sans dépendance externe.
 - [ ] 13.7 Ménage : code mort, documentation, index et audit final.
 - [ ] 13.8 Rapport final, fusion et livraison.
 
