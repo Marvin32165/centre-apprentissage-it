@@ -104,8 +104,8 @@ Reste : rien pour ce lot. `assets/modules-ui.js` génère le parcours (`prerequi
 Reste : rien pour ce lot. Règles inchangées ; seul l'affichage a bougé : `atelier.js` construit la double page (cahier des charges = première double page, notes en marge, lettres et légende de la planche, folios, page qui tourne), `atelier-pannes.js` les « Observations » (examen à cocher, observations en marge, diagnostic ✓/✗, rabat), `atelier-art.js` remplace les dégradés par des hachures (les aplats sombres sont regravés par le CSS `.livre .at-svg`), `atelier-index.js` génère table des matières et index. Les liens « étape précédente / suivante » des folios sont des titres non cliquables (le moteur avance par la réussite des étapes). Bilan des évaluations imprimable (bouton « Imprimer le bilan »). Correction au passage : un reste de commentaire cassait `#atelier [hidden]` depuis le lot 8.
 
 ## Lot 13 — Vérification finale et peaufinage
-- [ ] 13.1 Audit complet : serveur et file://, quatre largeurs, deux thèmes, corrections et captures.
-  Justifié : audit à reprendre ; Chromium ne démarre pas (socket interdite) et son téléchargement Playwright est bloqué.
+- [x] 13.1 Audit complet : serveur et file://, quatre largeurs, deux thèmes, corrections et captures.
+  Fait : audit GitHub Actions, 27 pages × 4 largeurs × 2 thèmes sur serveur et en file://, zéro problème et avertissement ; six captures conservées.
 - [ ] 13.2 Accessibilité : contrastes, clavier, ARIA, titres et mouvement réduit.
 - [ ] 13.3 Fonctionnel : progression, quiz, minuteur, recherche, modules et atelier, serveur et file://.
 - [ ] 13.4 Impression : fiches mémo J1 à J9 et bilan de l’atelier en A4 ; justification pour J10.
