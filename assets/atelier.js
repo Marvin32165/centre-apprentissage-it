@@ -149,6 +149,7 @@
   var lettreSel = null, dernierEtape = null;
   function voirCahier(on) {
     brief.hidden = !on; layout.hidden = on;
+    if (!on) renderScene();
     var f = on ? brief.querySelector("#cahier-titre") : corps.querySelector("h2");
     if (f) { f.setAttribute("tabindex", "-1"); f.focus({ preventScroll: true }); }
   }
@@ -269,6 +270,59 @@
     return pass[0].join("") + pass[1].join("") + pass[2].join("") + pass[3].join("") + out;
   }
 
+  /* Les éléments SVG restent inchangés visuellement : un rectangle transparent
+     agrandit leur zone de contact à 44 px, selon le zoom et la taille de l'écran. */
+  function agrandirZones(svg) {
+    var m = svg.getScreenCTM();
+    if (!m) return;
+    var sx = Math.hypot(m.a, m.b), sy = Math.hypot(m.c, m.d);
+    if (!sx || !sy) return;
+    var vb = svg.viewBox.baseVal;
+    Array.prototype.forEach.call(svg.querySelectorAll('[data-slot], [data-bouton], [data-lettre]'), function (g) {
+      var b;
+      try { b = g.getBBox(); } catch (e) { return; }
+      if (!b.width || !b.height || b.x + b.width <= vb.x || b.y + b.height <= vb.y || b.x >= vb.x + vb.width || b.y >= vb.y + vb.height) return;
+      g.setAttribute('data-zone-originale', [b.x, b.y, b.width, b.height].join(','));
+      var w = Math.min(vb.width, Math.max(b.width, 46 / sx)), h = Math.min(vb.height, Math.max(b.height, 46 / sy));
+      var x = Math.max(vb.x, Math.min(b.x + (b.width - w) / 2, vb.x + vb.width - w));
+      var y = Math.max(vb.y, Math.min(b.y + (b.height - h) / 2, vb.y + vb.height - h));
+      var r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', w); r.setAttribute('height', h);
+      r.setAttribute('fill', 'transparent'); r.setAttribute('pointer-events', 'all'); r.setAttribute('class', 'zone-tactile');
+      g.appendChild(r);
+    });
+  }
+  function pointSVG(svg, e) {
+    var m = svg && svg.getScreenCTM();
+    if (!m) return null;
+    var pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    return pt.matrixTransform(m.inverse());
+  }
+  function dansRectangle(pt, r) {
+    return pt.x >= r.x && pt.x <= r.x + r.width && pt.y >= r.y && pt.y <= r.y + r.height;
+  }
+  /* Quand les zones agrandies se chevauchent, la cible dessinée la plus proche
+     du point touché gagne ; cela évite qu'une barrette masque sa voisine. */
+  function cibleAuPoint(svg, e, selecteur) {
+    var pt = pointSVG(svg, e), meilleur = null, distance = Infinity, aire = Infinity;
+    if (!pt) return null;
+    Array.prototype.forEach.call(svg.querySelectorAll(selecteur), function (g) {
+      var zone = g.querySelector('.zone-tactile'), raw = (g.getAttribute('data-zone-originale') || '').split(',').map(Number);
+      if (!zone || raw.length !== 4) return;
+      var r = { x: +zone.getAttribute('x'), y: +zone.getAttribute('y'), width: +zone.getAttribute('width'), height: +zone.getAttribute('height') };
+      if (!dansRectangle(pt, r)) return;
+      var dx = Math.max(raw[0] - pt.x, 0, pt.x - raw[0] - raw[2]);
+      var dy = Math.max(raw[1] - pt.y, 0, pt.y - raw[1] - raw[3]);
+      var d = dx * dx + dy * dy, a = raw[2] * raw[3];
+      if (d < distance || (d === distance && a < aire)) { meilleur = g; distance = d; aire = a; }
+    });
+    return meilleur;
+  }
+  function dansZoneOriginale(g, e) {
+    var pt = pointSVG(g.ownerSVGElement, e), a = (g.getAttribute('data-zone-originale') || '').split(',').map(Number);
+    return !!pt && a.length === 4 && dansRectangle(pt, { x: a[0], y: a[1], width: a[2], height: a[3] });
+  }
+
   var VB = { cote: "0 0 860 620", zoom: "100 150 350 350", face: "0 0 420 610", arriere: "0 0 420 610" };
   function renderScene() {
     var slotsBoitier = disp.slots.filter(function (s) { return s.vue === "cote" || s.vue === "zoom"; });
@@ -290,6 +344,7 @@
       b.setAttribute("tabindex", on ? "0" : "-1");
     });
     renderLettres();
+    agrandirZones(vue === "arriere" ? svgArr : (vue === "face" ? svgFace : svgCote));
     bSwitch.textContent = "Interrupteur : " + (st.switchOn ? "I" : "O");
     bSwitch.setAttribute("aria-pressed", st.switchOn ? "true" : "false");
   }
@@ -339,7 +394,12 @@
   }
   scene.addEventListener("click", function (e) {
     var lt = e.target.closest("[data-lettre]");
-    if (lt) { e.stopImmediatePropagation(); var id = lt.getAttribute("data-lettre"); lettreSel = lettreSel === id ? null : id; renderScene(); return; }
+    if (lt) {
+      var cible = sel && sel.type === "tray" && !dansZoneOriginale(lt, e) ? cibleAuPoint(lt.ownerSVGElement, e, ".slot-cible") : null;
+      e.stopImmediatePropagation();
+      if (cible) { tryPlace(sel.id, cible.getAttribute("data-slot")); return; }
+      var id = lt.getAttribute("data-lettre"); lettreSel = lettreSel === id ? null : id; renderScene(); return;
+    }
     var g = e.target.closest("[data-slot]");
     if (g && !TEST) {
       var sid = g.getAttribute("data-slot"), l = steps(), i = cur();
@@ -677,6 +737,9 @@
     }
     var g = e.target.closest("[data-slot]");
     if (!g) return;
+    var svg = g.ownerSVGElement;
+    if (sel && sel.type === "tray") g = cibleAuPoint(svg, e, ".slot-cible") || g;
+    else if (g.classList.contains("pose")) g = cibleAuPoint(svg, e, ".pose[data-slot]") || g;
     var id = g.getAttribute("data-slot");
     if (sel && sel.type === "tray" && R.candidats(sc, st, sel.id).some(function (s) { return s.id === id; })) { tryPlace(sel.id, id); return; }
     if (st.placed[id]) {
@@ -713,7 +776,10 @@
       justDragged = true; setTimeout(function () { justDragged = false; }, 60);
       var t = ev.type === "pointerup" ? document.elementFromPoint(ev.clientX, ev.clientY) : null;
       var g = t && t.closest && t.closest("[data-slot]");
-      if (g && scene.contains(g)) tryPlace(id, g.getAttribute("data-slot"));
+      var svg = t && t.closest && t.closest("svg");
+      var cible = svg && cibleAuPoint(svg, ev, ".slot-cible");
+      if (cible) tryPlace(id, cible.getAttribute("data-slot"));
+      else if (g && scene.contains(g)) tryPlace(id, g.getAttribute("data-slot"));
       else { msg("Pièce relâchée hors d'un emplacement. Elle reste sélectionnée.", "info"); renderAll(); }
     }
     document.addEventListener("pointermove", move);
@@ -902,6 +968,11 @@
   }
   bFin.addEventListener("click", terminer);
 
+  function redimensionnerScene() {
+    if (!scene.isConnected) { window.removeEventListener("resize", redimensionnerScene); return; }
+    renderScene();
+  }
+  window.addEventListener("resize", redimensionnerScene);
   load();
   msg(TEST ? "Test noté : lis le cahier des charges, monte le PC sans aide, allume-le pour vérifier, puis termine le test." : "Bienvenue ! Lis le cahier des charges, puis suis les étapes : touche une pièce du bac, puis son emplacement.", "info");
   renderAll();
