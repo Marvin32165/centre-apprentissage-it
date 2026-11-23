@@ -151,7 +151,8 @@ Reste : rien pour ce lot. Prochaine étape suggérée : module « Microsoft 365 
 
 ## Lot 15 — Outillage commun des agents (Claude Code et ChatGPT / Codex)
 Idées reprises du dépôt `claude-tools` (chef, evidence-reviewer, hooks, skills), adaptées pour marcher avec les deux agents : procédures en Markdown, garde-fous en script Node et en CI, enveloppes propres à Claude Code en option.
-- [ ] 15.1 Procédures communes dans `docs/procedures/` : nouveau module, relecture des sources, test en situation (« chef ») ; renvoi depuis `AGENTS.md`.
+- [x] 15.1 Procédures communes dans `docs/procedures/` : nouveau module, relecture des sources, test en situation (« chef ») ; renvoi depuis `AGENTS.md`.
+  Fait : trois procédures (critères de « fini » vérifiables, tableau de verdicts, trois tours au plus) ; `AGENTS.md` y renvoie, avec deux prompts types et la règle de relecture croisée entre les deux outils.
 - [ ] 15.2 Garde-fous `npm run garde` (moteurs de l'atelier, index à jour, ressources externes, `alert`/`confirm`/`fetch`, IP et adresses e-mail), ajouté à `controles` et à `audit.yml`.
 - [ ] 15.3 Hook Git `pre-commit` facultatif (`npm run hooks`) : garde-fous avant chaque commit, quel que soit l'agent.
 - [ ] 15.4 Enveloppes Claude Code dans `.claude/` : skills qui renvoient aux procédures, agents relecteurs, hook de protection des fichiers et rappel du plan après compaction.
