@@ -303,16 +303,14 @@
           var labels = fs.querySelectorAll(".opt");
           Array.prototype.forEach.call(labels, function (lab, j) {
             lab.querySelector("input").disabled = true;
-            if (j === qu.reponse) lab.classList.add("bon");
-            else if (j === chosen) lab.classList.add("faux");
+            if (j === chosen) lab.classList.add(ok ? "bon" : "faux");
           });
           fs.appendChild(el("p", { "class": "verdict " + (ok ? "bon" : "faux") }, ok ? "Bonne réponse." : "Pas tout à fait."));
-          if (qu.explication) {
-            var d = el("details", { "class": "correction" });
-            d.appendChild(el("summary", null, "Voir la correction"));
-            d.appendChild(el("p", null, qu.explication));
-            fs.appendChild(d);
-          }
+          var d = el("details", { "class": "correction" });
+          d.appendChild(el("summary", null, "Voir la correction"));
+          d.appendChild(el("p", null, "Réponse : " + qu.options[qu.reponse]));
+          if (qu.explication) d.appendChild(el("p", null, qu.explication));
+          fs.appendChild(d);
         });
         var txt = score + " / " + quiz.questions.length;
         store.set("quiz." + id, txt);

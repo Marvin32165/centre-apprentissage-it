@@ -47,6 +47,12 @@ for (const theme of ['light','dark']) {
   const leg=p.locator('.legende button').first(); assert.ok(await leg.count()); await leg.focus(); await p.keyboard.press('Enter'); assert.equal(await p.locator('.legende button').first().evaluate(e=>e===document.activeElement),true);
   await p.getByRole('button',{name:'Relire le cahier des charges'}).click(); assert.equal(await p.locator('#cahier-titre').evaluate(e=>e===document.activeElement),true); await p.getByRole('button',{name:/Commencer le montage/}).click(); await p.getByRole('button',{name:'Montre-moi'}).click(); assert.equal(await p.locator('.livre-page.tourne').count(),0);
  });
+ await test(theme+' mesure de la cible EPS sur la planche',async()=>{
+  await p.evaluate(()=>localStorage.removeItem('it.atelier.bureautique-intel'));await p.goto(base+'atelier/montage.html?s=bureautique-intel');await p.getByRole('button',{name:/Commencer le montage/}).click();
+  for(let i=0;i<10;i++)await p.getByRole('button',{name:'Montre-moi'}).click();
+  await p.getByRole('tab',{name:/Câbles/}).click();await p.locator('.at-piece[data-id="cab-eps"]').click();
+  const box=await p.locator('.slot-cible[data-slot="con-eps"] .slot-hit').boundingBox();assert.ok(box);console.log('Cible EPS '+theme+' : '+Math.round(box.width)+' × '+Math.round(box.height)+' px');
+ });
  await ctx.close();
 }
 function htmlPages(dir='.') { return readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?(['.git','.github','node_modules','outils'].includes(e.name)?[]:htmlPages(path.join(dir,e.name))):e.name.endsWith('.html')?[path.join(dir,e.name)]:[]) }
