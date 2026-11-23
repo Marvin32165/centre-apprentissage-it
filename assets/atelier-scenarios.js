@@ -295,13 +295,17 @@
     choix: { titre: "Respect du cahier des charges", conseil: "Relis le besoin du client ligne par ligne avant de choisir : nombre de cœurs, capacité, graphique intégré ou carte dédiée, type de disque. Chaque pièce répond à une ligne du cahier des charges.", lien: "../stage/j9.html#salles", libelle: "Prépa, jour 9 : salles informatiques" }
   };
 
-  /* Module du site qui approfondit chaque thème (lot 7). Le matériel n'a pas encore son propre module :
-     on renvoie au module « Support poste Windows » (démarrage, matériel ou Windows ?) en attendant. */
+  /* Module du site qui approfondit chaque thème (lot 14 : module « Matériel et PC »). */
+  var MP = "../modules/materiel-pc.html", LIB = "Module « Matériel et PC » : ";
   A.moduleRevoir = {
-    demarrage: { href: "../modules/support-windows.html#demarrage", libelle: "Module « Support poste Windows » : le poste ne démarre pas" },
+    demarrage: { href: MP + "#post", libelle: LIB + "avant Windows, POST et configuration minimale" },
     methode: { href: "../modules/support-windows.html#axes", libelle: "Module « Support poste Windows » : quatre axes pour localiser une panne" },
-    general: { href: "../modules/support-windows.html", libelle: "Module « Support poste Windows »" }
+    general: { href: MP, libelle: "Module « Matériel et PC »" }
   };
-  ["compat", "memoire", "alim", "refroidissement", "stockage", "cablage", "video", "ordre"].forEach(function (k) { if (A.revoir[k]) A.revoir[k].module = A.moduleRevoir.demarrage; });
-  if (A.revoir.choix) A.revoir.choix.module = A.moduleRevoir.general;
+  var sections = {
+    compat: ["compatibilite", "compatibilité des pièces"], memoire: ["memoire", "la mémoire"], alim: ["alimentation", "l'alimentation"],
+    cablage: ["alimentation", "les connecteurs d'alimentation"], refroidissement: ["refroidissement", "le refroidissement"],
+    stockage: ["stockage", "le stockage"], video: ["connectique", "écrans et sorties vidéo"], ordre: ["post", "configuration minimale"], choix: ["compatibilite", "compatibilité des pièces"]
+  };
+  Object.keys(sections).forEach(function (k) { if (A.revoir[k]) A.revoir[k].module = { href: MP + "#" + sections[k][0], libelle: LIB + sections[k][1] }; });
 })();

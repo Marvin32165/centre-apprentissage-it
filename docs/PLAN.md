@@ -7,7 +7,7 @@
 
 **À vérifier sur place (UMONS).** 66 questions pour le tuteur : 48 dans la prépa (encadré ambre en fin de chaque jour J1 à J9, imprimé sur la fiche mémo, rappel au J10) et 18 dans les modules ; s’y ajoutent les étiquettes « À l’UMONS » en ligne (canaux et horaires du service desk, matrice de priorité et SLA Jira, équipes d’escalade, procédures de sécurité, vérification d’identité, outils de prise en main à distance, déploiement et inventaire).
 
-**Idées pour la suite.** Module « Matériel et PC » (l’atelier y renvoie encore vers le support Windows) ; modules Microsoft 365 et dépannage à distance ; export/import de la progression `it.*` (fichier) pour changer d’appareil ; mode révision express (fiches mémo seules) pour la semaine du stage ; après le 7/12, un journal de stage privé hors de ce dépôt public.
+**Idées pour la suite.** Module « Matériel et PC » : fait au lot 14 ; modules Microsoft 365 et dépannage à distance ; export/import de la progression `it.*` (fichier) pour changer d’appareil ; mode révision express (fiches mémo seules) pour la semaine du stage ; après le 7/12, un journal de stage privé hors de ce dépôt public.
 
 Un lot = une session d'agent (Claude Code ou ChatGPT / Codex, nouvelle conversation). Règles communes : `AGENTS.md`. Lancer avec :
 `Lis AGENTS.md et docs/PLAN.md, puis fais le lot N.`
@@ -138,6 +138,16 @@ Reste : rien pour ce lot. Règles inchangées ; seul l'affichage a bougé : `ate
   Fait : rapport en tête de ce fichier, fusion dans `main`.
 
 Reste : rien pour ce lot. Prochaine étape : un module par lot (voir « Ensuite »).
+
+## Lot 14 — Module « Matériel et PC »
+- [x] 14.1 Page `modules/materiel-pc.html` : identifier un poste, compatibilité, POST, mémoire, stockage, alimentation, refroidissement, connectique, diagnostic constructeur ; labo, mises en situation, fiche mémo, questions pour le tuteur.
+  Fait : 9 sections sourcées (Microsoft Learn, JEDEC, PCI-SIG, USB-IF, VESA, constructeurs), labo « carte d'identité de ta machine », 4 cas, 6 questions pour le tuteur ; bips, LED et touches de diagnostic renvoyés au manuel du modèle (rien d'inventé).
+- [x] 14.2 Données : entrée dans `assets/modules.js`, quiz `module-materiel-pc`, unité dans `data.js`, liens « à revoir » de l'atelier (`A.moduleRevoir`) vers les sections du module.
+  Fait : module niveau 1 (≈ 3 h 30) dans le domaine Matériel, désormais marqué « stage » (installation et intégration de PC) ; quiz de 6 questions ; chaque thème « à revoir » des montages et des pannes pointe vers sa section (`#compatibilite`, `#memoire`, `#stockage`, `#alimentation`, `#refroidissement`, `#connectique`, `#post`) ; la méthode reste sur « Support poste Windows ».
+- [x] 14.3 Index de recherche, `npm run controles`, fusion dans `main`.
+  Fait : index régénéré (236 entrées) ; `npm run controles` = 29 pages × 4 largeurs × 2 thèmes, serveur et `file://`, 0 problème, 0 avertissement ; accessibilité, contrastes et parcours sans échec.
+
+Reste : rien pour ce lot. Prochaine étape suggérée : module « Microsoft 365 et messagerie » ou « Dépannage à distance » (domaine Support).
 
 ## Ensuite
 Un module par lot, en commençant par les besoins du stage. Ajouter ici les nouveaux lots au fil de l'eau.

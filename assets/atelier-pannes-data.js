@@ -315,5 +315,5 @@
   A.revoir.cmos = { titre: "BIOS/UEFI : pile, version, compatibilité", conseil: "La pile CMOS (CR2032) mémorise date, heure et réglages. Une carte peut avoir un BIOS trop ancien pour un processeur récent : le constructeur publie la liste de compatibilité. Une mise à jour de BIOS ne se coupe jamais en cours.", lien: "../stage/j9.html#demarrage", libelle: "Prépa, jour 9 : BIOS/UEFI" };
   A.revoir.methode.module = A.moduleRevoir.methode;
   A.revoir.securite.module = A.moduleRevoir.demarrage;
-  A.revoir.cmos.module = A.moduleRevoir.demarrage;
+  A.revoir.cmos.module = { href: "../modules/materiel-pc.html#compatibilite", libelle: "Module « Matériel et PC » : compatibilité et version du BIOS" };
 })();

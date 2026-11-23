@@ -85,3 +85,24 @@ window.IT_QUIZZES["module-ad-support"] = { titre: "Quiz : Active Directory pour 
     options: ["Tu retires le poste du domaine et le rejoins","Tu redémarres le DC","Tu supprimes le compte utilisateur","Tu notes le poste et son OU et tu escalades"], reponse: 3,
     explication: "La réparation du canal sécurisé demande des droits et une procédure : retirer le poste du domaine ferait perdre ses OU et ses groupes." }
 ] };
+
+window.IT_QUIZZES["module-materiel-pc"] = { titre: "Quiz : matériel et PC", questions: [
+  { q: "Où trouver le numéro de série d'un poste sans retourner la machine ?",
+    options: ["Dans Win32_BIOS (SerialNumber) ou msinfo32","Dans le Gestionnaire des tâches","Dans l'adresse IP","Dans le nom d'utilisateur"], reponse: 0,
+    explication: "Get-CimInstance Win32_BIOS renvoie SerialNumber, le numéro qu'attend le constructeur pour la garantie ; msinfo32 l'affiche aussi sur beaucoup de modèles." },
+  { q: "Un utilisateur veut ajouter une barrette DDR4 dans un PC dont la carte mère accepte la DDR5. Que se passe-t-il ?",
+    options: ["Elle fonctionne, mais plus lentement","Elle n'entre pas : l'encoche n'est pas au même endroit","Elle fonctionne après une mise à jour du BIOS","Elle fonctionne seulement en simple canal"], reponse: 1,
+    explication: "DDR4 et DDR5 ne sont pas interchangeables : le détrompeur diffère. On ne force jamais un connecteur." },
+  { q: "Un SSD M.2 NVMe n'est pas détecté dans le slot M.2 d'un vieux portable. Quelle est la cause la plus probable ?",
+    options: ["Il faut un câble SATA","Le SSD doit être formaté avant d'être posé","Le slot ne gère que le M.2 SATA, pas le NVMe","Le portable doit être en mode Legacy"], reponse: 2,
+    explication: "Un slot M.2 peut être SATA seulement, NVMe seulement, ou les deux : c'est écrit dans le manuel du modèle." },
+  { q: "Une tour reste sur un écran noir et émet une série de bips. Que fais-tu de ces bips ?",
+    options: ["J'ignore les bips, ils sont normaux","Je les traduis avec un tableau universel","Je réinstalle Windows","Je note le motif exact et je le lis dans le manuel du modèle"], reponse: 3,
+    explication: "La signification des bips et des LED dépend du constructeur et du modèle : on note le motif et on le lit dans sa documentation." },
+  { q: "Un portable ralentit après quelques minutes d'effort, puis s'éteint net, ventilateur à fond. Hypothèse principale ?",
+    options: ["Une surchauffe : le processeur bride puis la protection thermique coupe","Un profil utilisateur abîmé","Un problème de DNS","Une licence Windows expirée"], reponse: 0,
+    explication: "Lenteur sous charge puis coupure nette avec un ventilateur qui souffle fort : c'est le schéma de la protection thermique." },
+  { q: "Que montre « powercfg /batteryreport » pour juger l'usure d'une batterie ?",
+    options: ["La température du processeur","La capacité d'origine et la capacité actuelle à pleine charge","La vitesse du port USB-C","Le numéro de série du chargeur"], reponse: 1,
+    explication: "Le rapport compare Design capacity et Full charge capacity, et montre l'historique d'autonomie." }
+] };

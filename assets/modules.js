@@ -26,10 +26,10 @@ window.IT_MODULES = {
       desc: "Les cadres qui organisent le travail d'une DSI : pratiques ITIL, outils de tickets, méthode de travail.",
       liens: [{ href: "stage/j1.html", label: "Prépa, jour 1 : le métier de service desk" }, { href: "stage/j3.html", label: "Prépa, jour 3 : Jira" }],
       aVenir: ["Outils de tickets et de projet", "Méthodes agiles", "Gestion de parc et d'inventaire"] },
-    { id: "materiel", titre: "Matériel",
+    { id: "materiel", stage: true, titre: "Matériel",
       desc: "Composants, démarrage, montage et pannes d'un PC.",
       liens: [{ href: "atelier/index.html", label: "Atelier hardware" }, { href: "stage/j9.html", label: "Prépa, jour 9 : matériel et PC" }],
-      aVenir: ["Module de cours « Matériel et PC »"] },
+      aVenir: ["Portables : démontage et pièces de service", "Imprimantes et scanners en réseau", "Serveurs et stockage en baie"] },
     { id: "securite", titre: "Sécurité",
       desc: "Reconnaître une menace, protéger les comptes et les données, réagir à un incident.",
       liens: [{ href: "stage/j2.html#identite", label: "Prépa, jour 2 : ingénierie sociale" }, { href: "stage/j8.html#securite", label: "Prépa, jour 8 : incident de sécurité" }],
@@ -75,6 +75,13 @@ window.IT_MODULES = {
       tags: ["active directory", "ad ds", "kerberos", "gpo", "groupes", "verrouillage", "mot de passe", "powershell", "dns", "domaine"],
       prepa: [{ href: "stage/j6.html", label: "Jour 6 : Active Directory côté support" }],
       liens: [],
-      suite: [] }
+      suite: [] },
+    { id: "materiel-pc", titre: "Matériel et PC : identifier, vérifier, diagnostiquer",
+      domaine: "materiel", niveau: 1, duree: 210, prerequis: [],
+      resume: "Relever l'identité d'un poste, vérifier la compatibilité des pièces, lire le POST, tester mémoire, disque et batterie, repérer une surchauffe, choisir le bon câble.",
+      tags: ["matériel", "hardware", "pc", "portable", "ram", "ddr5", "ssd", "nvme", "m.2", "smart", "alimentation", "batterie", "usb-c", "post", "bips", "garantie"],
+      prepa: [{ href: "stage/j9.html", label: "Jour 9 : matériel et PC" }],
+      liens: [{ href: "atelier/index.html", label: "Atelier : montages" }, { href: "atelier/pannes.html", label: "Atelier : pannes matérielles" }],
+      suite: ["support-windows"] }
   ]
 };
