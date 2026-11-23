@@ -76,7 +76,6 @@
     search.appendChild(icon("search"));
     search.appendChild(el("span", { "class": "txt" }, "Rechercher une notion…"));
     search.appendChild(el("kbd", null, "/"));
-    if (!window.IT_RECHERCHE) { search.setAttribute("aria-disabled", "true"); search.title = "Recherche bientôt disponible"; }
     bar.appendChild(search);
 
     var themeBtn = el("button", { type: "button", "class": "icon-btn theme-btn" });
@@ -174,7 +173,8 @@
     node.textContent = "";
     if (!total) { node.appendChild(el("span", null, "Contenu à venir")); return; }
     var pct = Math.round((done / total) * 100);
-    node.appendChild(el("span", null, done + " / " + total + " terminé" + (done > 1 ? "s" : "") + " (" + pct + " %)"));
+    var fmt = node.getAttribute("data-progress-format");
+    node.appendChild(el("span", null, fmt ? fmt.replace("{d}", done).replace("{t}", total) : done + " / " + total + " terminé" + (done > 1 ? "s" : "") + " (" + pct + " %)"));
     var track = el("div", { "class": "track", role: "progressbar", "aria-valuemin": "0", "aria-valuemax": "100", "aria-valuenow": String(pct) });
     var fill = el("div", { "class": "fill" });
     fill.style.width = pct + "%";
@@ -343,6 +343,164 @@
     });
   }
 
+  /* ---------- Reprise : dernière section vue sur une page de jour (it.reprise) ---------- */
+  function titreSection(h) {
+    var c = h.cloneNode(true);
+    Array.prototype.forEach.call(c.querySelectorAll(".sec, .duree"), function (n) { n.remove(); });
+    var t = c.textContent.replace(/\s+/g, " ").trim();
+    if (t.length > 42) t = t.slice(0, 40).replace(/\s\S*$/, "") + "…";
+    return (h.getAttribute("data-sec") ? "§" + h.getAttribute("data-sec") + " " : "") + "« " + t + " »";
+  }
+  function initReprise() {
+    var m = /stage\/j(\d+)\.html$/.exec(location.pathname);
+    if (!m || !("IntersectionObserver" in window)) return;
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        store.set("reprise", JSON.stringify({ jour: +m[1], url: "stage/j" + m[1] + ".html#" + e.target.id, titre: titreSection(e.target) }));
+      });
+    }, { rootMargin: "0px 0px -70% 0px" });
+    Array.prototype.forEach.call(document.querySelectorAll("main h2[id]"), function (h) { io.observe(h); });
+  }
+
+  /* ---------- Recherche rapide (/, Ctrl+K, bouton de l'en-tête) ----------
+     Index : assets/recherche.js (généré par outils/index-recherche.mjs), chargé à la première ouverture. */
+  var R = null;
+  var GROUPES = ["Commandes", "Notions", "Modules", "Atelier"];
+  var EXEMPLES = ["dns", "mot de passe", "bips", "gpupdate", "priorité"];
+  function norm(s) { return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+  function chargerIndex(cb) {
+    if (window.IT_RECHERCHE) return cb(true);
+    var sc = el("script", { src: root + "assets/recherche.js" });
+    sc.onload = function () { cb(!!window.IT_RECHERCHE); };
+    sc.onerror = function () { cb(false); };
+    document.head.appendChild(sc);
+  }
+  function construireRecherche() {
+    var voile = el("div", { "class": "rech-voile", hidden: "" });
+    var dlg = el("div", { "class": "rech", role: "dialog", "aria-modal": "true", "aria-label": "Rechercher dans la plateforme" });
+    var champ = el("div", { "class": "rech-champ" });
+    champ.appendChild(icon("search"));
+    var lab = el("label", { "class": "sr-only", "for": "rech-q" }, "Rechercher une commande, une notion, un module ou une panne");
+    var input = el("input", { id: "rech-q", type: "search", role: "combobox", "aria-expanded": "true", "aria-controls": "rech-res", "aria-autocomplete": "list", autocomplete: "off", spellcheck: "false", placeholder: "Une commande, une notion, une panne…" });
+    var fermer = el("button", { type: "button", "class": "rech-fermer", "aria-label": "Fermer la recherche" }, "Échap");
+    champ.appendChild(lab); champ.appendChild(input); champ.appendChild(fermer);
+    var res = el("div", { "class": "rech-res", id: "rech-res", role: "listbox", "aria-label": "Résultats" });
+    var statut = el("p", { "class": "sr-only", "aria-live": "polite" });
+    var pied = el("p", { "class": "rech-pied", "aria-hidden": "true" });
+    pied.innerHTML = "<span><kbd>↑</kbd><kbd>↓</kbd> naviguer</span><span><kbd>Entrée</kbd> ouvrir</span><span class=\"rech-local\">Index local, sans réseau</span>";
+    dlg.appendChild(champ); dlg.appendChild(res); dlg.appendChild(pied); dlg.appendChild(statut);
+    voile.appendChild(dlg);
+    body.appendChild(voile);
+    R = { voile: voile, input: input, res: res, statut: statut, fermer: fermer, options: [], actif: -1, opener: null };
+    input.addEventListener("input", rendreResultats);
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); activer(R.actif + (e.key === "ArrowDown" ? 1 : -1)); }
+      else if (e.key === "Enter" && R.actif >= 0 && R.options[R.actif]) { e.preventDefault(); R.options[R.actif].click(); }
+    });
+    voile.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { e.preventDefault(); fermerRecherche(); }
+      else if (e.key === "Tab") { e.preventDefault(); (document.activeElement === input ? fermer : input).focus(); }
+    });
+    voile.addEventListener("mousedown", function (e) { if (e.target === voile) fermerRecherche(); });
+    fermer.addEventListener("click", fermerRecherche);
+  }
+  function activer(i) {
+    var n = R.options.length;
+    if (!n) { R.actif = -1; R.input.removeAttribute("aria-activedescendant"); return; }
+    i = (i + n) % n;
+    R.options.forEach(function (o, k) { o.setAttribute("aria-selected", k === i ? "true" : "false"); });
+    R.actif = i;
+    R.input.setAttribute("aria-activedescendant", R.options[i].id);
+    R.options[i].scrollIntoView({ block: "nearest" });
+  }
+  function rendreResultats() {
+    var q = norm(R.input.value.trim());
+    R.res.textContent = ""; R.options = []; R.actif = -1;
+    if (!q) {
+      var vide = el("div", { "class": "rech-vide" });
+      vide.appendChild(el("p", null, "Tape une commande, une notion, un module ou une panne. Par exemple :"));
+      var ex = el("p", { "class": "rech-exemples" });
+      EXEMPLES.forEach(function (x) {
+        var b = el("button", { type: "button", "class": "rech-ex" }, x);
+        b.addEventListener("click", function () { R.input.value = x; rendreResultats(); R.input.focus(); });
+        ex.appendChild(b);
+      });
+      vide.appendChild(ex);
+      R.res.appendChild(vide);
+      R.statut.textContent = "";
+      activer(-1);
+      return;
+    }
+    var mots = q.split(/\s+/);
+    var trouves = (window.IT_RECHERCHE || []).map(function (e) {
+      var t = norm(e.t), hay = t + " " + norm(e.o) + " " + norm(e.m);
+      for (var i = 0; i < mots.length; i++) if (hay.indexOf(mots[i]) < 0) return null;
+      return { e: e, s: t.indexOf(q) === 0 ? 0 : t.indexOf(q) >= 0 ? 1 : mots.every(function (m) { return t.indexOf(m) >= 0; }) ? 2 : 3 };
+    }).filter(Boolean);
+    var total = 0;
+    GROUPES.forEach(function (g, gi) {
+      var liste = trouves.filter(function (x) { return x.e.g === g; }).sort(function (a, b) { return a.s - b.s; }).slice(0, g === "Notions" ? 8 : 6);
+      if (!liste.length) return;
+      var grp = el("div", { role: "group", "aria-labelledby": "rech-g" + gi });
+      grp.appendChild(el("p", { "class": "rech-groupe", id: "rech-g" + gi }, g));
+      liste.forEach(function (x) {
+        var o = el("a", { "class": "rech-item", role: "option", id: "rech-o" + R.options.length, href: root + x.e.u, tabindex: "-1", "aria-selected": "false" });
+        o.appendChild(el("span", { "class": "rech-tag" }, x.e.tag));
+        var txt = el("span", { "class": "rech-txt" });
+        txt.appendChild(el("span", { "class": "rech-titre" + (x.e.g === "Commandes" ? " cmd" : "") }, x.e.t));
+        txt.appendChild(el("span", { "class": "rech-orig" }, x.e.o));
+        o.appendChild(txt);
+        var idx = R.options.length;
+        o.addEventListener("mousemove", function () { if (R.actif !== idx) activer(idx); });
+        o.addEventListener("click", function () { fermerRecherche(true); });
+        R.options.push(o);
+        grp.appendChild(o);
+        total++;
+      });
+      R.res.appendChild(grp);
+    });
+    if (!total) {
+      var rien = el("div", { "class": "rech-vide" });
+      rien.appendChild(el("p", null, "Rien pour « " + R.input.value.trim() + " ». Essaie « dns », « bips » ou « mot de passe »."));
+      R.res.appendChild(rien);
+    }
+    R.statut.textContent = total ? total + " résultat" + (total > 1 ? "s" : "") : "Aucun résultat";
+    activer(0);
+  }
+  function ouvrirRecherche(opener) {
+    if (!R) construireRecherche();
+    if (!R.voile.hidden) return;
+    R.opener = opener || document.activeElement;
+    R.voile.hidden = false;
+    document.documentElement.classList.add("rech-ouverte");
+    R.input.focus();
+    chargerIndex(function (ok) {
+      if (!ok) { R.res.textContent = ""; R.res.appendChild(el("p", { "class": "rech-vide" }, "L'index de recherche n'a pas pu être chargé.")); return; }
+      rendreResultats();
+    });
+  }
+  function fermerRecherche(navigation) {
+    if (!R || R.voile.hidden) return;
+    R.voile.hidden = true;
+    document.documentElement.classList.remove("rech-ouverte");
+    if (navigation !== true && R.opener && R.opener.focus) R.opener.focus();
+  }
+  function initRecherche() {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-recherche]"), function (b) {
+      b.addEventListener("click", function () { ouvrirRecherche(b); });
+    });
+    document.addEventListener("keydown", function (e) {
+      var t = e.target, tag = t && t.tagName;
+      var saisie = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable);
+      if (saisie || e.altKey) return;
+      if ((e.key === "/" && !e.ctrlKey && !e.metaKey) || ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K"))) {
+        e.preventDefault();
+        ouvrirRecherche(document.activeElement);
+      }
+    });
+  }
+
   /* ---------- Démarrage ---------- */
   applyTheme(currentTheme());
   buildChrome();
@@ -352,6 +510,8 @@
   initCountdown();
   initCopy();
   initQuizzes();
+  initReprise();
+  initRecherche();
 
   window.IT = { store: store, el: el, icon: icon, isDone: isDone, renderProgress: renderProgress };
 })();

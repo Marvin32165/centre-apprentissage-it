@@ -136,6 +136,18 @@ for (const cle of liensVus) {
   }
 }
 
+// Index de recherche : chaque lien doit mener à une page et une ancre existantes
+{
+  const ctxR = { window: {} };
+  (await import("node:vm")).runInNewContext(fs.readFileSync(path.join(RACINE, "assets/recherche.js"), "utf8"), ctxR);
+  for (const e of ctxR.window.IT_RECHERCHE || []) {
+    const [chemin, ancre] = e.u.split("#");
+    const fichier = chemin.split("?")[0];
+    if (!fs.existsSync(path.join(RACINE, fichier))) { note(problemes, "assets/recherche.js", "index", `page introuvable : ${e.u}`); continue; }
+    if (ancre && !idsStatiques(fichier).has(ancre)) note(problemes, "assets/recherche.js", "index", `ancre morte : ${e.u}`);
+  }
+}
+
 await navigateur.close();
 srv?.close();
 console.log(`${PAGES.length} pages × ${LARGEURS.length} largeurs × ${THEMES.length} thèmes (${args.file ? "file://" : "serveur"})`);
