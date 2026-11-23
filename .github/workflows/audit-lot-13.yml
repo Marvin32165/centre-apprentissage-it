@@ -4,6 +4,9 @@ on:
     branches: [lot-13]
   pull_request:
     branches: [main]
+concurrency:
+  group: audit-lot-13
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -21,7 +24,6 @@ jobs:
         run: node outils/accessibilite-lot-13.mjs
       - name: Mesure des contrastes
         run: node outils/contrastes-lot-13.mjs
-        continue-on-error: true
       - name: Parcours et impression
         run: node outils/parcours-lot-13.mjs
       - name: Audit serveur et fichiers
