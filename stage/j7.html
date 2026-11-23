@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jour 7 — Messagerie et Microsoft 365 · Prépa stage</title>
+<meta name="description" content="Outlook, Teams, OneDrive et authentification multifacteur côté support : la question « et sur le web ? », profils, boîtes partagées.">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/prepa.js" defer></script>
+<script src="../assets/app.js" defer></script>
+</head>
+<body data-root="../" data-nav="stage">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Prépa stage · Jour 7 · mardi 1er décembre</p>
+<h1>Messagerie et <em>Microsoft 365</em></h1>
+<p class="lead">Outlook qui ne s'ouvre plus, Teams sans son, OneDrive qui ne synchronise pas, double authentification perdue avec un téléphone : ce sont des appels quotidiens. Aujourd'hui, tu apprends à distinguer un problème du poste, du compte ou du service, et à utiliser la version web comme outil de test.</p>
+<h2 id="plan">Plan de la journée <span class="duree">≈ 5 h</span></h2>
+<ol class="plan-horaire">
+  <li><span class="h">30 min</span><span>Microsoft 365 : compte, licence, services, client ou web</span></li>
+  <li><span class="h">45 min</span><span>Outlook : profil, fichier OST, boîte partagée</span></li>
+  <li><span class="h">30 min</span><span>Teams et OneDrive</span></li>
+  <li><span class="h">30 min</span><span>L'authentification multifacteur (MFA)</span></li>
+  <li><span class="h">1 h 30</span><span>Labo : profils, mode sans échec, version web, MFA</span></li>
+  <li><span class="h">50 min</span><span>Mises en situation, quiz, fiche mémo</span></li>
+</ol>
+
+<aside class="callout umons"><p>L'UMONS utilise-t-elle Microsoft 365 ou un autre système de messagerie, avec quelles applications, quelle méthode de MFA, quelles boîtes partagées et quelles règles de conservation ? Tout cela est à vérifier sur place. Ce jour décrit les principes de Microsoft 365 ; adapte-les à ce que ton tuteur te montrera.</p></aside>
+
+<h2 id="notions">1. Les notions utiles</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Notion</th><th>En clair</th></tr></thead>
+<tbody>
+<tr><td><strong>Microsoft 365</strong></td><td>Une suite de services en ligne (messagerie Exchange Online, Teams, OneDrive, SharePoint, applications Office) liés à un compte professionnel ou scolaire.</td></tr>
+<tr><td><strong>Microsoft Entra ID</strong></td><td>Le service d'identité en ligne de Microsoft 365 (anciennement Azure Active Directory) : il gère la connexion, la MFA et les licences.</td></tr>
+<tr><td><strong>Licence</strong></td><td>Le droit d'utiliser un service. Sans licence, un compte peut exister mais ne pas avoir de boîte aux lettres ni d'application.</td></tr>
+<tr><td><strong>Client lourd / application web</strong></td><td>Outlook installé sur le poste, ou Outlook sur le web : même compte, mais des logiciels différents.</td></tr>
+<tr><td><strong>Boîte partagée</strong></td><td>Une boîte aux lettres commune à une équipe (ex. un guichet), sans mot de passe propre, accessible par des droits.</td></tr>
+</tbody></table></div>
+<h3>La question magique : « Et sur le web ? »</h3>
+<p>Quand « la messagerie ne marche pas », demande à l'utilisateur d'ouvrir la même boîte dans un <strong>navigateur</strong> (Outlook sur le web). Le résultat te dit où chercher :</p>
+<ul>
+  <li><strong>Ça marche sur le web, pas dans Outlook</strong> → problème du <strong>poste</strong> : profil, cache, module complémentaire, mise à jour.</li>
+  <li><strong>Ça ne marche pas non plus sur le web</strong> → problème du <strong>compte ou du service</strong> : mot de passe, licence, MFA, droits, panne du service.</li>
+  <li><strong>Ça marche pour l'un mais pas pour le collègue</strong> → un problème propre à l'utilisateur, ou un incident de masse si plusieurs sont touchés.</li>
+</ul>
+<aside class="callout source"><p>Microsoft Learn et Microsoft Support : documentation d'Outlook (profils, fichiers de données, boîtes partagées), d'OneDrive, de Teams, de Microsoft Entra ID (authentification multifacteur). L'état du service est consultable par les administrateurs dans le centre d'administration Microsoft 365 (« État du service »).</p></aside>
+
+<h2 id="outlook">2. Outlook</h2>
+<h3>Profil, mode mis en cache et fichier OST</h3>
+<p>Un <strong>profil Outlook</strong> regroupe les comptes et paramètres de l'utilisateur. En <strong>mode mis en cache</strong>, une copie de la boîte aux lettres est conservée sur le poste dans un fichier <strong>.ost</strong> : l'affichage est rapide, et la boîte se resynchronise avec le serveur. Ce fichier n'est <strong>qu'une copie</strong> : le supprimer ou le recréer ne détruit pas les messages du serveur.</p>
+<aside class="callout attention"><p>Un fichier <strong>.pst</strong> est différent : c'est une archive locale <em>qui contient des messages que le serveur n'a pas</em>. Ne supprime jamais un .pst sans accord, et avant toute intervention, vérifie où se trouvent les archives de l'utilisateur.</p></aside>
+<h3>Les pannes classiques et les réflexes</h3>
+<ul>
+  <li><strong>Outlook se bloque ou ne démarre pas</strong> : lancer en mode sans échec (<code>outlook.exe /safe</code>, depuis Exécuter) pour écarter les modules complémentaires.</li>
+  <li><strong>Mot de passe demandé en boucle</strong> : mot de passe changé, identifiants en cache obsolètes (Gestionnaire d'identifiants Windows), MFA, ou compte verrouillé (jour 6).</li>
+  <li><strong>Courriels qui n'arrivent pas, dossiers pas à jour</strong> : vérifier le mode « Travail hors connexion », la connexion Internet, l'espace de la boîte, puis tester sur le web.</li>
+  <li><strong>Profil corrompu</strong> : créer un <strong>nouveau profil</strong> (Panneau de configuration → Courrier → Afficher les profils → Ajouter), l'essayer, puis le définir par défaut s'il fonctionne. L'ancien reste en réserve.</li>
+  <li><strong>Boîte pleine</strong> : l'utilisateur ne peut plus envoyer ni recevoir ; vérifier le quota et proposer vidage et archivage selon les règles du service.</li>
+</ul>
+<h3>Boîte partagée</h3>
+<p>Un utilisateur y accède grâce à des <strong>droits</strong> attribués par les administrateurs : « Contrôle total » (lecture de la boîte) et « Envoyer en tant que » ou « Envoyer de la part de » (pour écrire au nom de la boîte). La boîte apparaît généralement toute seule dans Outlook (<em>mappage automatique</em>) après l'ajout du droit, parfois avec un délai. Pour dépanner :</p>
+<ul>
+  <li>Les droits ont-ils bien été donnés (et validés par le responsable) ?</li>
+  <li>L'utilisateur a-t-il relancé Outlook, et attendu un peu ?</li>
+  <li>La boîte s'ouvre-t-elle sur le web (« Ouvrir une autre boîte aux lettres ») ?</li>
+</ul>
+
+<h2 id="teams-onedrive">3. Teams et OneDrive</h2>
+<h3>Teams</h3>
+<ul>
+  <li><strong>Pas de son ou de micro</strong> : choisir le bon périphérique dans les paramètres de Teams, puis dans Windows (Paramètres → Son), vérifier les autorisations de confidentialité du micro et de la caméra, et tester avec un autre périphérique.</li>
+  <li><strong>Comportement étrange ou mises à jour de l'application</strong> : fermer complètement Teams (y compris dans la zone de notification), le relancer, puis tester la version web. La procédure de vidage du cache dépend de la version de l'application : suis la page à jour de Microsoft Learn.</li>
+  <li><strong>« Je ne vois pas l'équipe »</strong> : l'utilisateur est-il membre de l'équipe ? C'est un droit, géré par le propriétaire de l'équipe.</li>
+</ul>
+<h3>OneDrive</h3>
+<ul>
+  <li>L'<strong>icône nuage</strong> de la zone de notification indique l'état : à jour, synchronisation en cours, en pause, erreur. Cliquer dessus donne le message.</li>
+  <li>Causes fréquentes : <strong>espace plein</strong>, <strong>nom de fichier invalide</strong> (caractères interdits, chemin trop long), <strong>fichier ouvert</strong> par une autre application, compte déconnecté ou mot de passe changé.</li>
+  <li><strong>Fichiers à la demande</strong> : un fichier avec un nuage n'est pas sur le disque ; sans connexion, il n'est pas accessible.</li>
+  <li>En dernier recours, la <strong>réinitialisation</strong> de l'application (commande <code>onedrive.exe /reset</code>, depuis le dossier d'installation) force une nouvelle synchronisation, <strong>sans supprimer les fichiers</strong> du serveur : fais-la seulement en suivant la procédure.</li>
+</ul>
+<aside class="callout astuce"><p>Pour OneDrive comme pour Outlook, <strong>l'accès web</strong> (office.com) est ton témoin : si le fichier ou la boîte est là-bas, rien n'est perdu.</p></aside>
+
+<h2 id="mfa">4. L'authentification multifacteur (MFA)</h2>
+<p>La MFA demande, en plus du mot de passe, une <strong>deuxième preuve</strong> : une notification dans l'application d'authentification, un code, une clé de sécurité, un SMS. Elle bloque l'immense majorité des piratages par mot de passe volé.</p>
+<ul>
+  <li><strong>Nouveau téléphone, ancien téléphone perdu</strong> : l'utilisateur n'a plus sa deuxième preuve. L'administrateur doit autoriser la réinscription de la méthode (procédure ou outil dédiés) <strong>après vérification d'identité renforcée</strong>.</li>
+  <li><strong>Notifications MFA reçues sans connexion en cours</strong> : un tiers connaît peut-être le mot de passe. Il ne faut <strong>jamais approuver</strong> : changement de mot de passe et signalement immédiat à la sécurité.</li>
+  <li><strong>Code qui ne marche pas</strong> : l'heure du téléphone est-elle correcte (codes basés sur l'heure) ? La bonne application, le bon compte ?</li>
+</ul>
+<aside class="callout attention"><p>N'accepte <strong>jamais</strong> de contourner ou désactiver la MFA « parce que c'est urgent » : c'est précisément ce que cherche un attaquant qui se fait passer pour l'utilisateur.</p></aside>
+<aside class="callout umons"><p>Méthodes de MFA acceptées à l'UMONS, procédure en cas de perte du téléphone, personnes habilitées à réinitialiser une méthode : à vérifier sur place.</p></aside>
+
+<h2 id="labo">Labo : profils, mode sans échec, version web, MFA <span class="duree">1 h 30</span></h2>
+<p>Tu n'as pas besoin d'un abonnement d'entreprise : un <strong>compte Microsoft personnel gratuit</strong> (ou, si tu y as accès, un compte de test) suffit pour la plupart des manipulations. N'utilise aucun compte qui contient des données sensibles et ne reproduis jamais ici un compte réel de l'UMONS.</p>
+<ol>
+  <li>Ouvre ta boîte dans le <strong>navigateur</strong> (outlook.com), repère les différences avec l'application Outlook de bureau si tu en disposes.</li>
+  <li>Si tu as Outlook : <code>outlook.exe /safe</code> ; compare avec le démarrage normal et liste les modules complémentaires (Fichier → Options → Compléments).</li>
+  <li>Crée un <strong>second profil</strong> par le Panneau de configuration → Courrier, ajoute le compte, ouvre-le, puis supprime-le.</li>
+  <li>Ouvre OneDrive : repère les états de l'icône, crée un fichier dont le nom contient un caractère interdit (ex. <code>:</code> ne passera pas sous Windows) et lis le message d'erreur ; télécharge un fichier « en ligne seulement » puis libère de l'espace.</li>
+  <li>Active la <strong>vérification en deux étapes</strong> sur ton compte de test avec l'application d'authentification, note comment on la réinitialise (« j'ai perdu mon appareil ») et ce que cela demande comme preuves.</li>
+  <li>Écris dans un fichier texte l'<strong>arbre de décision</strong> : « Outlook ne marche pas » → question 1 → question 2… jusqu'à une action ou une escalade.</li>
+</ol>
+<details class="correction"><summary>Voir des repères pour contrôler tes résultats</summary>
+<ul>
+  <li>En mode sans échec, seuls les modules essentiels sont chargés : si le problème disparaît, un complément est la cause.</li>
+  <li>Un nouveau profil recrée un fichier OST propre, avec la boîte resynchronisée depuis le serveur ; l'ancien profil n'est pas touché.</li>
+  <li>Sous Windows, les caractères <code>\ / : * ? " &lt; &gt; |</code> sont interdits dans un nom de fichier ; OneDrive affiche une erreur et ne synchronise pas ce fichier.</li>
+  <li>Arbre type : (1) web OK ? non → compte (mot de passe, licence, MFA, panne) ; oui → poste. (2) Poste : sans échec OK ? oui → compléments ; non → nouveau profil, mise à jour, réparation d'Office, escalade.</li>
+</ul>
+</details>
+
+<h2 id="cas">Mises en situation</h2>
+<h3>1. Outlook demande le mot de passe en boucle</h3>
+<p>Un technicien administratif a changé son mot de passe ce matin. Depuis, Outlook réclame le mot de passe toutes les minutes. Sur le téléphone, la messagerie marche.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Le téléphone marche, donc le compte est bon (ou le téléphone n'a pas encore l'ancien mot de passe verrouillé). Cause probable : identifiants obsolètes en cache sur le poste. On teste sur le web, on supprime les entrées Office / Outlook du Gestionnaire d'identifiants, on redémarre Outlook. Si l'invite continue, on teste un nouveau profil, puis on escalade avec ce qui a déjà été essayé.</p>
+</details>
+<h3>2. « Je ne vois plus la boîte du secrétariat »</h3>
+<p>Une assistante a été ajoutée hier à la boîte partagée du secrétariat. Elle ne la voit pas dans Outlook.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>On vérifie que le droit a bien été donné (ticket, validation), puis qu'elle a fermé et rouvert Outlook ; le mappage automatique peut mettre du temps. On teste sur le web via « Ouvrir une autre boîte aux lettres » : si ça marche, c'est un souci d'affichage du poste ; sinon le droit n'est pas actif et on transmet à l'équipe qui gère la messagerie.</p>
+</details>
+<h3>3. Un nouveau téléphone</h3>
+<p>Un professeur a perdu son téléphone, ne peut plus approuver la connexion, et doit donner un cours dans vingt minutes. Il demande qu'on désactive la MFA « juste pour aujourd'hui ».</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>On ne désactive pas la MFA. On vérifie son identité selon la procédure renforcée, puis on déclenche la réinitialisation de sa méthode MFA via l'équipe habilitée, ou on lui indique l'alternative prévue (autre méthode déjà enregistrée, accès temporaire fourni par la procédure). On informe de l'urgence dans le ticket, et on recommande d'enregistrer une seconde méthode.</p>
+</details>
+<h3>4. Notifications MFA inattendues</h3>
+<p>Une étudiante dit : « Je reçois sans arrêt des demandes d'approbation sur mon téléphone, je n'ai rien fait. »</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Quelqu'un tente de se connecter avec son mot de passe. Elle ne doit <strong>rien approuver</strong>. On l'aide à changer son mot de passe et on escalade au plus vite à la sécurité (compte potentiellement exposé), en notant les heures des notifications.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="stage-j7"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Test n° 1</strong> : « et sur le web ? » Web OK = poste ; web KO = compte ou service.</li>
+  <li><strong>Outlook</strong> : mode sans échec, nouveau profil, identifiants en cache, quota. <strong>OST</strong> = copie ; <strong>PST</strong> = archive à ne pas détruire.</li>
+  <li><strong>Boîte partagée</strong> : droits d'abord, délai d'affichage, test sur le web.</li>
+  <li><strong>OneDrive</strong> : icône, espace, nom de fichier, fichier ouvert ; l'accès web montre que rien n'est perdu.</li>
+  <li><strong>MFA</strong> : jamais désactivée à la demande ; réinitialisation après vérification renforcée ; notification inattendue = ne pas approuver + escalade.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Quels services de messagerie et de collaboration sont utilisés (Microsoft 365, autre) et pour quels publics ?</li>
+  <li>Quelle méthode de MFA est utilisée, et quelle est la procédure en cas de perte d'appareil ?</li>
+  <li>Qui gère les boîtes partagées et les droits associés ?</li>
+  <li>Comment vérifier l'état d'un service (page d'état, outil de supervision) avant d'ouvrir un ticket ?</li>
+  <li>Quelles règles de conservation et d'archivage des courriels s'appliquent ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="stage-j7"> Jour 7 terminé</label></p>
+<nav class="jours-nav" aria-label="Navigation entre les jours">
+  <a class="btn ghost" href="j6.html">← Jour 6</a>
+  <a class="btn ghost" href="j8.html">Jour 8 →</a>
+</nav>
+</div>
+</main>
+</body>
+</html>

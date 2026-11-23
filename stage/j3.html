@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jour 3 — Jira · Prépa stage</title>
+<meta name="description" content="Anatomie d'un ticket Jira Service Management, statuts, bien rédiger, commentaires publics et internes, base de connaissances.">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/prepa.js" defer></script>
+<script src="../assets/app.js" defer></script>
+</head>
+<body data-root="../" data-nav="stage">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Prépa stage · Jour 3 · mercredi 25 novembre</p>
+<h1><em>Jira</em> : le ticket, de l'ouverture à la clôture</h1>
+<p class="lead">Un ticket bien rédigé fait gagner du temps à tout le monde : à toi, à l'équipe suivante, et à l'utilisateur. Aujourd'hui, tu apprends à lire un ticket Jira Service Management, à en écrire de bons et à alimenter une base de connaissances.</p>
+
+<h2 id="plan">Plan de la journée <span class="duree">≈ 4 h 30</span></h2>
+<ol class="plan-horaire">
+  <li><span class="h">30 min</span><span>Jira Service Management : portail, file d'attente, vue agent</span></li>
+  <li><span class="h">40 min</span><span>Anatomie d'un ticket et statuts</span></li>
+  <li><span class="h">40 min</span><span>Bien rédiger : résumé, description, étapes déjà faites</span></li>
+  <li><span class="h">30 min</span><span>Commentaires publics et notes internes</span></li>
+  <li><span class="h">20 min</span><span>La base de connaissances</span></li>
+  <li><span class="h">1 h 15</span><span>Labo : un mini-service desk dans Jira Service Management</span></li>
+  <li><span class="h">15 min</span><span>Mises en situation, quiz, fiche mémo</span></li>
+</ol>
+
+<aside class="callout umons"><p>Ton stage utilise Jira, mais la configuration exacte (types de demande, champs obligatoires, statuts, SLA, noms des files) est propre à la DSI. Ce qui suit décrit Jira Service Management tel qu'on le trouve de façon courante ; confirme chaque point avec ton tuteur sur place.</p></aside>
+
+<h2 id="jsm">1. Jira Service Management en bref</h2>
+<p>Jira Service Management (JSM) est l'outil de tickets d'Atlassian pour les services informatiques. Il présente <strong>deux faces</strong> :</p>
+<ul>
+  <li>Le <strong>portail</strong> : ce que voit l'utilisateur (le « client » ou « demandeur »). Il choisit un <strong>type de demande</strong> (« Signaler un incident », « Demander un logiciel », etc.), remplit un formulaire, suit ses tickets et lit les articles de la base de connaissances.</li>
+  <li>La <strong>vue agent</strong> : ce que voit le service desk. Les tickets arrivent dans des <strong>files d'attente</strong> (<em>queues</em>) ; l'agent les ouvre, change le statut, commente, assigne, relie.</li>
+</ul>
+<p>Un ticket peut aussi naître d'un <strong>courriel</strong> envoyé à l'adresse du service, ou être créé par l'agent après un appel (c'est ton cas le plus fréquent).</p>
+
+<h2 id="anatomie">2. Anatomie d'un ticket</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Champ</th><th>À quoi il sert</th></tr></thead>
+<tbody>
+<tr><td><strong>Clé</strong> (ex. <code>SD-123</code>)</td><td>Identifiant unique : c'est ce que tu donnes à l'utilisateur.</td></tr>
+<tr><td><strong>Résumé</strong></td><td>Le titre. Il doit être lisible dans une liste.</td></tr>
+<tr><td><strong>Description</strong></td><td>Le détail : contexte, message d'erreur, ce qui a été testé.</td></tr>
+<tr><td><strong>Type de ticket</strong></td><td>Incident, demande de service, problème, changement…</td></tr>
+<tr><td><strong>Demandeur</strong> (<em>reporter</em>)</td><td>La personne qui a le besoin. Peut différer de celle qui a appelé.</td></tr>
+<tr><td><strong>Responsable</strong> (<em>assignee</em>)</td><td>La personne ou l'équipe qui traite le ticket maintenant.</td></tr>
+<tr><td><strong>Priorité</strong></td><td>Déduite de l'impact et de l'urgence (jour 1).</td></tr>
+<tr><td><strong>Statut</strong></td><td>L'étape du cycle de vie (voir plus bas).</td></tr>
+<tr><td><strong>SLA</strong></td><td>Compteurs de première réponse et de résolution, selon configuration.</td></tr>
+<tr><td><strong>Pièces jointes</strong></td><td>Captures d'écran, journaux. Jamais de mots de passe.</td></tr>
+<tr><td><strong>Liens</strong></td><td>Relier à un autre ticket (doublon, lié, bloque, ticket principal…).</td></tr>
+<tr><td><strong>Étiquettes / composants</strong></td><td>Classer pour retrouver et faire des statistiques (selon configuration).</td></tr>
+<tr><td><strong>Activité</strong></td><td>Historique des commentaires, notes internes et changements : tout est tracé.</td></tr>
+</tbody></table></div>
+
+<h3>Les statuts</h3>
+<p>Un statut décrit où en est le ticket ; le <strong>flux de travail</strong> (<em>workflow</em>) définit les passages autorisés d'un statut à l'autre (les <em>transitions</em>). Voici des exemples courants, sans garantie que ta DSI utilise les mêmes noms :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Statut (exemple)</th><th>Sens</th></tr></thead>
+<tbody>
+<tr><td>Ouvert / Nouveau</td><td>Le ticket vient d'arriver, personne ne l'a pris.</td></tr>
+<tr><td>En cours</td><td>Un agent y travaille.</td></tr>
+<tr><td>En attente du client</td><td>On attend la réponse de l'utilisateur ; le compteur SLA est souvent en pause.</td></tr>
+<tr><td>En attente d'un tiers / Escaladé</td><td>Une autre équipe ou un fournisseur doit agir.</td></tr>
+<tr><td>Résolu</td><td>La solution est en place, l'utilisateur est prévenu.</td></tr>
+<tr><td>Fermé / Annulé</td><td>Terminé après confirmation, ou abandonné (avec raison notée).</td></tr>
+</tbody></table></div>
+<aside class="callout source"><p>Documentation Atlassian (Atlassian Support) : « Jira Service Management Cloud », rubriques sur les files d'attente, les flux de travail, les SLA et les types de demande.</p></aside>
+
+<h2 id="rediger">3. Bien rédiger un ticket</h2>
+<p>Pose-toi la question : <strong>« Si quelqu'un d'autre ouvre ce ticket dans trois jours, sans m'appeler, peut-il agir ? »</strong></p>
+<h3>Le résumé</h3>
+<p>Une phrase courte qui dit <strong>quoi, où, quel symptôme</strong>. Évite « Problème », « Urgent », « PC ».</p>
+<div class="table-wrap"><table>
+<thead><tr><th>À éviter</th><th>À préférer</th></tr></thead>
+<tbody>
+<tr><td>Imprimante</td><td>Imprimante du 2e étage, bâtiment A : pages blanches</td></tr>
+<tr><td>Ne marche pas</td><td>Outlook se ferme à l'ouverture sur le poste de Mme X (depuis ce matin)</td></tr>
+<tr><td>URGENT !!!</td><td>Salle B204 : 4 PC sur 24 sans affichage, examen demain 8 h 30</td></tr>
+<tr><td>Mot de passe</td><td>Déverrouillage du compte de M. Y après vérification d'identité</td></tr>
+</tbody></table></div>
+<h3>La description : un plan simple</h3>
+<pre data-copy><code>Symptôme : ce que voit l'utilisateur (message d'erreur recopié)
+Contexte : qui, où (poste, bâtiment), depuis quand, ça marchait avant ?
+Impact : une personne, un service ? Échéance ?
+Déjà essayé : ce qui a été testé et le résultat de chaque test
+Contact : comment et quand joindre la personne
+Action prévue : ce que tu fais ou à qui tu passes la main</code></pre>
+<h3>Les règles d'or</h3>
+<ul>
+  <li><strong>Des faits, pas des opinions</strong> : « le message dit 0x80070005 » plutôt que « Windows bugue ».</li>
+  <li><strong>Un ticket = un sujet</strong>. Deux problèmes distincts, deux tickets (liés si besoin).</li>
+  <li><strong>Pas de données sensibles</strong> : jamais de mot de passe, de code de vérification ou de donnée personnelle inutile, ni dans la description, ni dans les commentaires, ni dans les pièces jointes.</li>
+  <li><strong>Une capture d'écran vaut dix lignes</strong>, à condition qu'elle ne montre rien de sensible.</li>
+  <li><strong>Relis-toi</strong> : orthographe, noms, numéros de salle. Un ticket est un document de travail et une trace.</li>
+</ul>
+
+<h2 id="commentaires">4. Commentaires publics et notes internes</h2>
+<p>Dans JSM, un commentaire peut être :</p>
+<ul>
+  <li><strong>Public</strong> (« Répondre au client ») : l'utilisateur le voit et reçoit en général une notification. C'est la réponse officielle.</li>
+  <li><strong>Interne</strong> (« Ajouter une note interne ») : seuls les agents le voient. C'est l'endroit des échanges techniques, des pistes testées, des consignes pour l'équipe suivante.</li>
+</ul>
+<aside class="callout attention"><p>Vérifie le bouton <em>avant</em> d'envoyer : une note technique ou un jugement envoyé au client en commentaire public ne se rattrape pas. Et même en note interne, écris comme si le texte pouvait être relu par la hiérarchie ou par l'utilisateur lors d'une réclamation : factuel et courtois.</p></aside>
+<div class="table-wrap"><table>
+<thead><tr><th>Commentaire public (client)</th><th>Note interne (équipe)</th></tr></thead>
+<tbody>
+<tr><td>« Bonjour, j'ai bien reçu votre demande. Pouvez-vous me dire si le message d'erreur apparaît aussi sur un autre poste ? »</td><td>« Testé : pilote réinstallé, sans effet. Même symptôme sur le poste voisin → piste serveur d'impression, à voir avec N2. »</td></tr>
+<tr><td>« Votre problème est résolu. Merci de nous dire si vous constatez encore l'erreur d'ici vendredi. »</td><td>« Cause : service Spouleur bloqué. Redémarré. À surveiller, si récurrent → ticket problème. »</td></tr>
+</tbody></table></div>
+<h3>Bien commenter</h3>
+<ul>
+  <li><strong>Public</strong> : remercie, explique ce qui a été fait, dis ce que l'utilisateur doit faire ensuite et à quelle échéance. Pas de jargon, pas de reproche.</li>
+  <li><strong>Interne</strong> : dis ce que tu as testé et ce que tu en déduis, pour que personne ne refasse la même chose.</li>
+  <li>Mets <strong>chaque appel ou contact</strong> en commentaire (heure, résumé), pour garder l'historique.</li>
+</ul>
+
+<h2 id="kb">5. La base de connaissances</h2>
+<p>Une base de connaissances (<em>knowledge base</em>, KB) rassemble des articles que l'on peut réutiliser : la réponse au problème qui revient. Dans l'écosystème Atlassian, JSM s'associe à <strong>Confluence</strong> pour héberger les articles et les montrer dans le portail et dans le ticket (selon la configuration).</p>
+<p>Elle sert à deux publics :</p>
+<ul>
+  <li>Les <strong>utilisateurs</strong> (N0) : articles publics qui évitent d'ouvrir un ticket (« Configurer eduroam », « Réinitialiser mon mot de passe »).</li>
+  <li>Les <strong>agents</strong> : procédures internes, plus techniques.</li>
+</ul>
+<h3>Un bon article</h3>
+<ul>
+  <li><strong>Titre</strong> : le symptôme tel que l'utilisateur le dirait (« Je ne reçois plus mes courriels sur mon téléphone »).</li>
+  <li><strong>Cause</strong> probable en une phrase.</li>
+  <li><strong>Solution</strong> en étapes numérotées, une action par étape, avec captures.</li>
+  <li><strong>Quand escalader</strong> et vers qui.</li>
+  <li><strong>Mots-clés</strong> pour que la recherche le trouve.</li>
+  <li><strong>Date et auteur</strong>, pour savoir quand le revoir.</li>
+</ul>
+<p>Avant d'écrire, <strong>cherche</strong> : ne crée pas un doublon. Après avoir résolu un ticket, relie l'article au ticket pour mesurer ce qui est réellement utile.</p>
+<aside class="callout umons"><p>Où se trouve la base de connaissances de la DSI (Confluence ? autre ?), qui peut y écrire, et quel modèle d'article utiliser : à demander à ton tuteur.</p></aside>
+
+<h2 id="labo">Labo : un mini-service desk dans Jira Service Management <span class="duree">1 h 15</span></h2>
+<p>Tu reprends le site de test créé au jour 1. Toutes les données sont <strong>fictives</strong>.</p>
+<ol>
+  <li><strong>Types de demande</strong> : dans les paramètres du projet, repère la liste des types de demande et ce qu'ils créent (incident, demande…). Ajoute-en un : « Problème d'impression ».</li>
+  <li><strong>Un ticket par le portail</strong> : crée-le comme un utilisateur, avec un résumé volontairement flou (« Ça marche pas »). Passe côté agent et note ce qui manque.</li>
+  <li><strong>Amélioration</strong> : réécris le résumé, complète la description avec le plan vu plus haut.</li>
+  <li><strong>Un commentaire public et une note interne</strong> sur ce ticket. Vérifie dans l'activité comment ils sont distingués.</li>
+  <li><strong>Statuts</strong> : fais passer le ticket par « En attente du client », puis « En cours », puis « Résolu ». Observe l'effet sur le compteur SLA si le projet en affiche un.</li>
+  <li><strong>Lien</strong> : crée un second ticket pour un même incident et relie-le au premier (type « Duplicate » ou « Relates », selon ce qui est proposé).</li>
+  <li><strong>Un article</strong> : si Confluence est disponible, crée un article de base de connaissances « Imprimante : pages blanches » avec le plan ci-dessus. Sinon, rédige-le dans un fichier texte.</li>
+</ol>
+<h3>Exercice de réécriture</h3>
+<p>Voici trois tickets mal rédigés. Réécris le résumé et la description de chacun, <em>avant</em> d'ouvrir la correction.</p>
+<ol>
+  <li>Résumé : « Urgent !!! » — Description : « mon pc ne marche pas, venez vite ».</li>
+  <li>Résumé : « Problème de connexion » — Description : « Ça a planté hier. »</li>
+  <li>Résumé : « Imprimante » — Description : « Elle ne veut pas imprimer. Le technicien d'avant avait dit que c'était à cause du serveur. »</li>
+</ol>
+<details class="correction"><summary>Voir la correction</summary>
+<ol>
+  <li><strong>Résumé</strong> : « PC portable de M. X (bât. B, bureau 12) ne démarre plus depuis ce matin ». <strong>Description</strong> : symptôme (écran noir ? message ?), depuis quand, ce qui a été essayé (câble, batterie), impact (échéance ?), numéro où joindre la personne. Le « venez vite » est remplacé par une priorité déduite de l'impact et de l'urgence.</li>
+  <li><strong>Résumé</strong> : « Perte de connexion au lecteur réseau P: sur le poste de Mme Y depuis hier ». <strong>Description</strong> : message d'erreur exact, Wi-Fi ou câble, d'autres personnes touchées ?, ce qui a changé, ce qui a été testé (redémarrage, autre poste).</li>
+  <li><strong>Résumé</strong> : « Impression impossible depuis le poste de M. Z sur l'imprimante du 2e étage ». <strong>Description</strong> : message affiché, depuis quand, autres utilisateurs ? Le commentaire « le technicien d'avant avait dit… » est une hypothèse non vérifiée : on la met en note interne comme piste, pas en fait, et on la cite avec sa source si elle est utile.</li>
+</ol>
+</details>
+
+<h2 id="cas">Mises en situation</h2>
+<h3>1. Le commentaire envoyé au mauvais endroit</h3>
+<p>Tu viens d'écrire : « Le client ne sait visiblement pas se servir de son PC, on va devoir tout lui réexpliquer. » Tu t'aperçois que c'était un commentaire <em>public</em>.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Tu préviens immédiatement ton responsable, tu ne caches pas l'erreur et tu suis la procédure de la maison pour corriger (selon les droits, supprimer ou modifier le commentaire, puis envoyer un message public respectueux). Tu notes l'incident dans une note interne. Surtout, tu retiens le réflexe : vérifier le bouton avant d'envoyer, et ne jamais écrire dans un ticket ce que tu ne dirais pas à l'utilisateur en face.</p>
+</details>
+<h3>2. Le doublon</h3>
+<p>Un utilisateur te rappelle pour un problème dont il a déjà ouvert un ticket la veille. Un collègue te dit : « Ouvre-lui un nouveau ticket, ce sera plus rapide. »</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Tu retrouves le ticket existant et tu y ajoutes un commentaire (heure de l'appel, ce que l'utilisateur dit, éventuellement une relance de l'équipe en charge). Un doublon sépare l'historique, brouille les statistiques et peut faire traiter deux fois le même sujet. Si un doublon existe déjà, tu le relies au ticket principal.</p>
+</details>
+<h3>3. Le ticket qui revient de l'équipe suivante</h3>
+<p>Le N2 te renvoie un ticket avec le commentaire : « Manque d'informations, merci de compléter. » Ton ticket tenait en une ligne.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Tu complètes le ticket avec le plan de description (symptôme, contexte, impact, déjà essayé, contact), au besoin en rappelant l'utilisateur, puis tu le renvoies avec une note interne claire. Tu en retiens que l'escalade n'est utile que si le ticket est exploitable sans nouvel appel.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="stage-j3"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>JSM</strong> : portail (utilisateur) et vue agent (files d'attente, statuts, commentaires).</li>
+  <li><strong>Un ticket</strong> : clé, résumé, description, type, demandeur, responsable, priorité, statut, SLA, liens, historique.</li>
+  <li><strong>Résumé</strong> : quoi, où, quel symptôme. <strong>Description</strong> : symptôme, contexte, impact, déjà essayé, contact, action prévue.</li>
+  <li><strong>Un ticket = un sujet</strong>. Pas de doublon : on relie ou on commente.</li>
+  <li><strong>Public</strong> = ce que voit l'utilisateur. <strong>Interne</strong> = échanges techniques. Vérifier avant d'envoyer.</li>
+  <li><strong>Jamais de mot de passe</strong> ou de code dans un ticket.</li>
+  <li><strong>KB</strong> : titre = symptôme, cause, étapes numérotées, quand escalader, mots-clés. Chercher avant d'écrire.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Quels types de demande et quelles files d'attente existent dans le Jira de la DSI ?</li>
+  <li>Quels champs sont obligatoires, et quels statuts sont utilisés ?</li>
+  <li>Quels délais SLA, et comment le compteur est-il mis en pause ?</li>
+  <li>Où est la base de connaissances et qui peut y écrire ?</li>
+  <li>Quel modèle de description ou d'article est recommandé ?</li>
+  <li>Comment relier un incident à un problème dans votre configuration ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="stage-j3"> Jour 3 terminé</label></p>
+<nav class="jours-nav" aria-label="Navigation entre les jours">
+  <a class="btn ghost" href="j2.html">← Jour 2</a>
+  <a class="btn" href="j4.html">Jour 4 : Windows →</a>
+</nav>
+</div>
+</main>
+</body>
+</html>

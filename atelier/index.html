@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atelier hardware — Apprentissage IT</title>
+<meta name="description" content="Atelier de montage et de dépannage de PC virtuel.">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/atelier-index.js" defer></script>
+</head>
+<body data-root="../" data-nav="atelier">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Atelier hardware</p>
+<h1>Atelier hardware</h1>
+<p class="lead">Monter un PC virtuel pièce par pièce, comprendre pourquoi il démarre (ou non), puis diagnostiquer des pannes.</p>
+<div class="callout astuce">
+  <p><strong>Tactile :</strong> touche une pièce du bac, puis l'emplacement en surbrillance. <strong>Souris :</strong> glisse la pièce sur la scène. Quatre angles de vue : côté, zoom sur la carte mère, face, arrière.</p>
+</div>
+<ul>
+  <li>Compatibilité vérifiée à chaque pose : socket, mémoire DDR4 / DDR5, format, puissance et connecteurs, M.2.</li>
+  <li>Ordre des étapes : entretoises et cache I/O avant la carte, pâte avant le ventirad, mémoire en A2 / B2, EPS branché.</li>
+  <li>Démarrage simulé (POST) avec symptômes et explication de ce qui se passe.</li>
+  <li>Mode test : sans aide, noté sur 100 (démarrage, cahier des charges, gestes).</li>
+</ul>
+<aside class="callout source"><p>Théorie : <a href="../stage/j9.html">jour 9 de la prépa</a> (composants, BIOS/UEFI, déploiement). Fiches de processeurs : Intel ARK ; mémoire : JEDEC ; Windows 11 : Microsoft Learn.</p></aside>
+</div>
+<h2>Scénarios</h2>
+<p>Chaque scénario existe en deux modes : <strong>apprentissage</strong> (étapes guidées, indices, explications) et <strong>test</strong> (sans aide, noté sur 100, avec un rapport des points à revoir).</p>
+<div class="grid cols-3">
+  <div class="card">
+    <h3>PC bureautique Intel</h3>
+    <p>Monter un PC de bureau en suivant les étapes guidées : indices, explications, démarrage simulé. Débutant, environ 30 minutes.</p>
+    <p class="at-liens"><a class="btn" href="montage.html?s=bureautique-intel">Apprentissage</a> <a class="btn ghost" href="montage.html?s=bureautique-intel&amp;m=test">Test noté</a></p>
+    <p class="muted at-score-ligne" data-score="bureautique-intel" data-unit="atelier-s1"></p>
+  </div>
+  <div class="card">
+    <h3>PC de salle informatique</h3>
+    <p>Le poste modèle d'une salle de TP : Windows 11, SSD SATA du stock, pièces inadaptées à écarter. Intermédiaire, environ 30 minutes.</p>
+    <p class="at-liens"><a class="btn" href="montage.html?s=salle-info">Apprentissage</a> <a class="btn ghost" href="montage.html?s=salle-info&amp;m=test">Test noté</a></p>
+    <p class="muted at-score-ligne" data-score="salle-info" data-unit="atelier-s2"></p>
+  </div>
+  <div class="card">
+    <h3>PC gamer AMD</h3>
+    <p>Socket AM5, DDR5, carte graphique et alimentation avec marge. Intermédiaire, environ 40 minutes.</p>
+    <p class="at-liens"><a class="btn" href="montage.html?s=gamer-amd">Apprentissage</a> <a class="btn ghost" href="montage.html?s=gamer-amd&amp;m=test">Test noté</a></p>
+    <p class="muted at-score-ligne" data-score="gamer-amd" data-unit="atelier-s3"></p>
+  </div>
+  <div class="card">
+    <h3>Station de travail</h3>
+    <p>16 cœurs, 64 Go, deux disques, ventirad et alimentation à la hauteur. Avancé, environ 45 minutes.</p>
+    <p class="at-liens"><a class="btn" href="montage.html?s=station">Apprentissage</a> <a class="btn ghost" href="montage.html?s=station&amp;m=test">Test noté</a></p>
+    <p class="muted at-score-ligne" data-score="station" data-unit="atelier-s4"></p>
+  </div>
+  <div class="card">
+    <h3>PC mini-ITX</h3>
+    <p>Petit boîtier : alimentation SFX, ventirad bas, deux emplacements mémoire. Avancé, environ 35 minutes.</p>
+    <p class="at-liens"><a class="btn" href="montage.html?s=mini-itx">Apprentissage</a> <a class="btn ghost" href="montage.html?s=mini-itx&amp;m=test">Test noté</a></p>
+    <p class="muted at-score-ligne" data-score="mini-itx" data-unit="atelier-s5"></p>
+  </div>
+  <div class="card">
+    <h3>Mise à niveau d'un PC</h3>
+    <p>Un PC existant : mémoire, SSD, alimentation à remplacer, carte graphique à ajouter. Intermédiaire, environ 25 minutes.</p>
+    <p class="at-liens"><a class="btn" href="montage.html?s=mise-a-niveau">Apprentissage</a> <a class="btn ghost" href="montage.html?s=mise-a-niveau&amp;m=test">Test noté</a></p>
+    <p class="muted at-score-ligne" data-score="mise-a-niveau" data-unit="atelier-s6"></p>
+  </div>
+  <div class="card">
+    <h3>PC en panne</h3>
+    <p>Quatorze dossiers : un symptôme, des outils d'inspection (LED, bips, test de l'alimentation, pièce témoin, UEFI), un diagnostic, puis la bonne réparation. Débutant à avancé.</p>
+    <p class="at-liens"><a class="btn" href="pannes.html">Voir les dossiers</a></p>
+    <p class="muted at-score-ligne" data-unit="atelier-pannes"></p>
+  </div>
+</div>
+<h2>Évaluation finale</h2>
+<div class="card">
+  <h3>Quatre montages enchaînés, sans aide</h3>
+  <p>PC de salle informatique, PC gamer AMD, PC mini-ITX et mise à niveau, notés sur 100. À la fin : un rapport des points à revoir, avec des liens vers la théorie. Environ une heure ; ta progression est enregistrée.</p>
+  <p class="at-liens"><a class="btn" href="evaluation.html">Commencer l'évaluation</a></p>
+  <p class="muted at-score-ligne" data-score="evaluation" data-unit="atelier-eval"></p>
+</div>
+<div class="card">
+  <h3>Évaluation des pannes : cinq dossiers tirés au sort</h3>
+  <p>Diagnostic, réparation, observation et sécurité, notés sur 100, sans aide. Le rapport indique les points à revoir.</p>
+  <p class="at-liens"><a class="btn" href="pannes-eval.html">Commencer l'évaluation des pannes</a></p>
+  <p class="muted at-score-ligne" data-score="pannes-eval" data-unit="atelier-pannes-eval"></p>
+</div>
+</main>
+</body>
+</html>

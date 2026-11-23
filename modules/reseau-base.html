@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Réseau de base — Modules · Apprentissage IT</title>
+<meta name="description" content="Réseau de base : couches, adresses IP et masques, passerelle, DNS, DHCP, ports, et les commandes qui montrent où une requête s'arrête.">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Réseau</p>
+<h1>Réseau <em>de base</em> : du câble à la page web</h1>
+<p class="lead">Le jour 5 de la prépa apprend à dépanner le réseau côté utilisateur. Ce module donne les <strong>raisons</strong> derrière les commandes : pourquoi deux machines se parlent ou non, ce que fait la passerelle, où intervient le DNS, ce que fait le DHCP, et comment un port ferme une porte. À la fin, un message d'erreur réseau devient une piste, plus un mystère.</p>
+<div data-module-meta="reseau-base"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>décrire le trajet d'une requête (page web, partage de fichiers) et le placer sur les couches TCP/IP ;</li>
+  <li>dire, avec une adresse et un masque, si deux machines sont dans le même réseau, et pourquoi la passerelle compte ;</li>
+  <li>expliquer le rôle du DNS et du DHCP, et reconnaître leurs pannes à leurs symptômes ;</li>
+  <li>choisir la commande adaptée (<code>ping</code>, <code>Test-NetConnection</code>, <code>Resolve-DnsName</code>, <code>tracert</code>…) selon la couche suspectée ;</li>
+  <li>observer un échange DHCP et DNS dans une capture réseau.</li>
+</ul>
+<aside class="callout umons"><p>Plan d'adressage de l'UMONS, plages DHCP, serveurs DNS, VLAN, règles du pare-feu, fonctionnement d'eduroam et du VPN : tout cela est propre à la DSI et <strong>à vérifier sur place</strong>. Les adresses de ce module sont des exemples privés.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="couches">1. Les couches : ranger les pannes</h2>
+<p>Un échange réseau se décrit en couches empilées ; chaque couche s'appuie sur celle d'en dessous. Pour le dépannage, retiens quatre étages du modèle TCP/IP (le modèle OSI, à sept couches, sert surtout de vocabulaire) :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Étage</th><th>Rôle</th><th>Exemples</th><th>Outil de test</th></tr></thead>
+<tbody>
+<tr><td><strong>Application</strong></td><td>Le service que l'on veut utiliser.</td><td>HTTP/HTTPS, DNS, SMB, SMTP, RDP</td><td>Navigateur, <code>Test-NetConnection -Port</code></td></tr>
+<tr><td><strong>Transport</strong></td><td>Conversations entre programmes, identifiées par un <em>port</em>.</td><td>TCP, UDP</td><td><code>Test-NetConnection -Port</code>, <code>netstat</code></td></tr>
+<tr><td><strong>Internet</strong> (réseau)</td><td>Adresser et acheminer entre réseaux.</td><td>IPv4, IPv6, ICMP</td><td><code>ping</code>, <code>tracert</code>, <code>route print</code></td></tr>
+<tr><td><strong>Accès réseau</strong></td><td>Liaison locale : câble, Wi-Fi, adresses physiques (MAC).</td><td>Ethernet, Wi-Fi (802.11), VLAN</td><td>Voyants, <code>Get-NetAdapter</code>, <code>arp -a</code></td></tr>
+</tbody></table></div>
+<p>La logique de dépannage en découle : <strong>du bas vers le haut</strong> (le câble branché, l'adresse correcte, la passerelle joignable, un nom qui se résout, un port ouvert), en s'arrêtant à la première étape qui échoue. C'est la méthode « du plus proche au plus lointain » du <a href="../stage/j5.html#methode">jour 5</a>.</p>
+<aside class="callout source"><p>RFC 1122 (« Requirements for Internet Hosts — Communication Layers ») pour la pile TCP/IP ; Microsoft Learn pour les cmdlets <code>Test-NetConnection</code>, <code>Get-NetAdapter</code>, <code>Resolve-DnsName</code>.</p></aside>
+
+<h2 id="adresses">2. Adresses, masques et passerelle</h2>
+<p>Une adresse IPv4 s'écrit sur 32 bits, en quatre nombres de 0 à 255. Elle est toujours accompagnée d'un <strong>masque</strong>, qui dit quelle partie désigne le <em>réseau</em> et laquelle désigne la <em>machine</em>. Deux écritures du même masque : <code>255.255.255.0</code> ou <code>/24</code> (24 bits à 1, notation CIDR).</p>
+<p><strong>Règle d'or :</strong> deux machines sont dans le <strong>même réseau</strong> si, une fois le masque appliqué, leurs adresses donnent le même numéro de réseau. Dans ce cas elles se parlent directement. Sinon, elles passent par la <strong>passerelle par défaut</strong> (le routeur), qui doit être, elle, dans le <em>même</em> réseau que la machine.</p>
+<h3>Calculer un réseau (méthode du « bloc »)</h3>
+<p>Prenons <code>192.168.10.77/26</code>. Le masque /26 laisse 6 bits pour les machines : un « bloc » de 2<sup>6</sup> = 64 adresses. Les blocs commencent à 0, 64, 128, 192. Le 77 tombe dans le bloc 64–127 :</p>
+<ul>
+  <li>adresse du <strong>réseau</strong> : <code>192.168.10.64</code> (première adresse du bloc) ;</li>
+  <li>adresse de <strong>diffusion</strong> (broadcast) : <code>192.168.10.127</code> (dernière) ;</li>
+  <li>machines utilisables : <code>.65</code> à <code>.126</code>, soit 64 − 2 = <strong>62</strong>.</li>
+</ul>
+<h3>Plages à reconnaître</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Plage</th><th>Nom</th><th>Remarque</th></tr></thead>
+<tbody>
+<tr><td><code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code></td><td>Adresses privées (RFC 1918)</td><td>Non routées sur Internet : le <strong>NAT</strong> les traduit en une adresse publique.</td></tr>
+<tr><td><code>169.254.0.0/16</code></td><td>Lien local automatique (APIPA, RFC 3927)</td><td>Windows s'en donne une quand le DHCP ne répond pas : signe que le DHCP est injoignable.</td></tr>
+<tr><td><code>127.0.0.0/8</code></td><td>Boucle locale</td><td><code>127.0.0.1</code> : la machine elle-même ; teste la pile réseau locale.</td></tr>
+</tbody></table></div>
+<aside class="callout retenir"><p>« J'ai une adresse en 169.254.x.x » = « je n'ai pas obtenu d'adresse du DHCP ». « J'ai une adresse valide mais pas d'accès hors du réseau local » = pense <strong>passerelle</strong> (absente, mauvaise, ou hors du réseau de la machine).</p></aside>
+<aside class="callout source"><p>RFC 1918 (adressage privé), RFC 3927 (adresses de lien local IPv4), RFC 4632 (CIDR).</p></aside>
+
+<h2 id="ipv6">IPv6, en deux lignes</h2>
+<p>IPv6 utilise des adresses de 128 bits écrites en hexadécimal (par exemple <code>2001:db8::1</code>, plage réservée à la documentation). Une machine possède presque toujours une adresse de <strong>lien local</strong> en <code>fe80::/10</code>. Le raisonnement reste le même : réseau, passerelle, DNS. Tu verras les deux versions dans <code>ipconfig</code>.</p>
+
+<h2 id="dns">3. Le DNS : le répertoire des noms</h2>
+<p>On tape un <em>nom</em> (<code>exemple.org</code>), les machines se parlent avec des <em>adresses</em>. Le <strong>DNS</strong> fait la traduction. Le poste interroge son serveur DNS (donné par le DHCP ou configuré) ; celui-ci répond depuis son cache ou interroge d'autres serveurs.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Type</th><th>Contenu</th></tr></thead>
+<tbody>
+<tr><td><code>A</code> / <code>AAAA</code></td><td>Adresse IPv4 / IPv6 d'un nom.</td></tr>
+<tr><td><code>CNAME</code></td><td>Alias : un nom qui renvoie vers un autre nom.</td></tr>
+<tr><td><code>MX</code></td><td>Serveur de messagerie d'un domaine.</td></tr>
+<tr><td><code>PTR</code></td><td>Résolution inverse : de l'adresse vers le nom.</td></tr>
+<tr><td><code>TXT</code></td><td>Texte libre (vérifications de domaine, politiques de messagerie).</td></tr>
+<tr><td><code>SRV</code></td><td>Localise un service (par exemple le contrôleur de domaine : voir le <a href="ad-support.html">module Active Directory</a>).</td></tr>
+</tbody></table></div>
+<pre data-copy><code>nslookup exemple.org
+Resolve-DnsName exemple.org -Type A
+Resolve-DnsName exemple.org -Type MX
+ipconfig /displaydns
+ipconfig /flushdns</code></pre>
+<p>Chaque réponse porte une durée de vie (<strong>TTL</strong>) : pendant ce temps, les caches la gardent. Après un changement côté serveur, un poste peut donc encore utiliser l'ancienne réponse ; <code>ipconfig /flushdns</code> vide le cache du poste.</p>
+<aside class="callout astuce"><p><strong>Le test qui sépare DNS et réseau :</strong> si <code>ping</code> d'une <em>adresse</em> répond mais pas du <em>nom</em> correspondant, le réseau marche et le DNS non. Interroge alors un autre serveur DNS pour comparer : <code>nslookup exemple.org adresse-du-serveur</code>.</p></aside>
+<aside class="callout source"><p>RFC 1034 et RFC 1035 (concepts et spécification du DNS) ; Microsoft Learn : « Resolve-DnsName », « nslookup ».</p></aside>
+
+<h2 id="dhcp">4. Le DHCP : la distribution des adresses</h2>
+<p>Le <strong>DHCP</strong> donne automatiquement à un poste : une adresse, un masque, la passerelle, les serveurs DNS, pour une durée appelée <strong>bail</strong>. Les quatre messages (« DORA ») : <em>Discover</em> (le poste cherche un serveur, en diffusion), <em>Offer</em> (offre), <em>Request</em> (demande), <em>Acknowledge</em> (confirmation). À la moitié du bail, le poste tente de le renouveler.</p>
+<ul>
+  <li>Le poste écoute sur le <strong>port UDP 68</strong>, le serveur sur le <strong>port UDP 67</strong>.</li>
+  <li>Comme la demande est une <strong>diffusion</strong>, elle ne franchit pas un routeur sans <strong>relais DHCP</strong> : un réseau sans relais ni serveur local ne donne pas d'adresse.</li>
+  <li>Une réservation lie une adresse à une adresse MAC (pratique pour une imprimante).</li>
+</ul>
+<pre data-copy><code>ipconfig /all
+ipconfig /release
+ipconfig /renew</code></pre>
+<aside class="callout attention"><p>Deux appareils qui reçoivent la même adresse (<strong>conflit d'adresses</strong>) : cela arrive quand quelqu'un fixe une adresse à la main dans la plage distribuée par le DHCP. Windows prévient d'un conflit ; l'issue est de chercher l'appareil qui l'utilise, pas de changer au hasard.</p></aside>
+<aside class="callout source"><p>RFC 2131 (« Dynamic Host Configuration Protocol ») ; Microsoft Learn : « ipconfig ».</p></aside>
+
+<h2 id="ports">5. Les ports : choisir la bonne porte</h2>
+<p>Une adresse désigne la machine, un <strong>port</strong> désigne le service. Un pare-feu peut laisser passer un port et en bloquer un autre : « je joins la machine mais pas le service » est un problème de port, pas d'adresse.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Service</th><th>Port</th><th>Service</th><th>Port</th></tr></thead>
+<tbody>
+<tr><td>HTTP / HTTPS</td><td>TCP 80 / 443</td><td>SSH</td><td>TCP 22</td></tr>
+<tr><td>DNS</td><td>UDP et TCP 53</td><td>Bureau à distance (RDP)</td><td>TCP 3389</td></tr>
+<tr><td>DHCP (serveur / client)</td><td>UDP 67 / 68</td><td>Partages Windows (SMB)</td><td>TCP 445</td></tr>
+<tr><td>Kerberos</td><td>TCP et UDP 88</td><td>LDAP / LDAPS</td><td>TCP 389 / 636</td></tr>
+<tr><td>Messagerie sortante</td><td>TCP 25, 587</td><td>Heure (NTP)</td><td>UDP 123</td></tr>
+</tbody></table></div>
+<pre data-copy><code>Test-NetConnection exemple.org -Port 443
+Test-NetConnection 192.168.50.10 -Port 445
+netstat -ano</code></pre>
+<p><code>Test-NetConnection</code> fait trois choses : il résout le nom, teste la joignabilité et essaie de se connecter au port. <code>netstat -ano</code> liste les connexions et les ports en écoute avec le numéro du processus (retrouvable dans le Gestionnaire des tâches).</p>
+<aside class="callout retenir"><p>Un <code>ping</code> qui ne répond pas ne prouve pas qu'une machine est éteinte : un pare-feu peut bloquer l'<strong>ICMP</strong> tout en laissant passer le service. Et un ping qui répond ne prouve pas que le <em>service</em> fonctionne : teste le port.</p></aside>
+<aside class="callout source"><p>Registre officiel des ports de l'IANA (« Service Name and Transport Protocol Port Number Registry »).</p></aside>
+
+<h2 id="local">6. Réseau local : commutateur, VLAN, Wi-Fi</h2>
+<ul>
+  <li>Un <strong>commutateur</strong> (<em>switch</em>) relie les machines d'un réseau local et apprend quelle adresse MAC se trouve sur quelle prise ; un concentrateur (<em>hub</em>) répète tout à tous et n'existe plus guère.</li>
+  <li>Un <strong>VLAN</strong> découpe un commutateur en plusieurs réseaux logiques séparés (norme IEEE 802.1Q) : un poste dans le mauvais VLAN obtient une mauvaise adresse ou n'accède pas aux ressources. C'est l'équipe réseau qui gère les VLAN ; toi, tu repères le symptôme (« adresse d'un autre réseau que celle des voisins »).</li>
+  <li>Le <strong>Wi-Fi</strong> (IEEE 802.11) est une liaison partagée par radio : signal faible, interférences, trop d'appareils. Dans une organisation, l'authentification se fait souvent par compte individuel (IEEE 802.1X), comme eduroam (voir <a href="../stage/j5.html#eduroam">jour 5</a>).</li>
+</ul>
+<pre data-copy><code>Get-NetAdapter
+Get-NetIPConfiguration
+arp -a
+route print</code></pre>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo guidé : observer DHCP et DNS dans une capture <span class="duree">≈ 60 min</span></h2>
+<p>Reprends le réseau isolé du jour 5 (une VM serveur avec DHCP et DNS, une VM client Windows 11). Installe <strong>Wireshark</strong> (logiciel libre) sur le client.</p>
+<ol>
+  <li>Sur le client : <code>ipconfig /release</code>. Lance une capture sur la carte du réseau isolé (filtre d'affichage : <code>dhcp</code>, ou <code>bootp</code> dans les anciennes versions).</li>
+  <li>Lance <code>ipconfig /renew</code>. Dans la capture, repère les quatre messages : Discover, Offer, Request, ACK. Ouvre l'Offer et lis : adresse proposée, masque, routeur, serveur DNS, durée du bail.</li>
+  <li>Change le filtre en <code>dns</code>. Lance <code>nslookup</code> pour un nom connu du serveur, puis <code>Resolve-DnsName</code> pour le même nom. Repère la question et la réponse ; lis le type et le TTL.</li>
+  <li>Lance <code>ping</code> sur l'adresse de la passerelle puis sur celle d'une autre machine. Filtre : <code>icmp</code>, puis <code>arp</code> : que voit-on avant le premier ping ?</li>
+  <li>Teste un port : <code>Test-NetConnection</code> vers le serveur sur le port 53, puis sur un port sans service (par exemple 8081). Compare.</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois observer</summary>
+<ul>
+  <li>Les quatre messages DHCP dans l'ordre Discover, Offer, Request, ACK ; le Discover part en diffusion (adresse de destination 255.255.255.255) depuis 0.0.0.0, avec les ports 68 → 67.</li>
+  <li>L'Offer contient les options distribuées : routeur, serveur DNS, durée du bail.</li>
+  <li>Une requête DNS (type A) et une réponse portant l'adresse et un TTL ; en UDP, port destination 53.</li>
+  <li>Avant le premier ping vers une machine du même réseau, des échanges ARP (« qui a cette adresse ? ») pour trouver son adresse MAC.</li>
+  <li><code>Test-NetConnection</code> : TcpTestSucceeded à True sur le port 53 du serveur (si le service DNS écoute en TCP), False sur un port sans service.</li>
+</ul>
+</details>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="exercices">Exercices de calcul</h2>
+<ol>
+  <li>Donne l'adresse de réseau, l'adresse de diffusion et le nombre de machines utilisables pour <code>10.20.30.200/27</code>.</li>
+  <li>Les machines <code>172.16.5.10/24</code> et <code>172.16.6.20/24</code> se parlent-elles sans routeur ?</li>
+  <li>Un poste a l'adresse <code>192.168.1.50</code>, le masque <code>255.255.255.0</code> et la passerelle <code>192.168.2.1</code>. Que se passe-t-il pour Internet ?</li>
+  <li>Convertis <code>255.255.255.192</code> en notation CIDR et donne la taille d'un bloc.</li>
+</ol>
+<details class="correction"><summary>Voir les corrections</summary>
+<ol>
+  <li>/27 : blocs de 32 (0, 32, …, 192, 224). 200 est dans 192–223 : réseau <code>10.20.30.192</code>, diffusion <code>10.20.30.223</code>, utilisables <code>.193</code> à <code>.222</code>, soit 30 machines.</li>
+  <li>Non : /24 donne les réseaux <code>172.16.5.0</code> et <code>172.16.6.0</code>, différents. Elles ont besoin d'un routeur entre elles.</li>
+  <li>La passerelle <code>192.168.2.1</code> n'est pas dans le réseau <code>192.168.1.0/24</code> du poste : il ne peut pas l'atteindre directement. Le poste communique localement, mais pas vers l'extérieur. Corriger la passerelle (ou l'adresse).</li>
+  <li>192 = 11000000 : 2 bits à 1 de plus que 255.255.255.0, soit 26 bits : <code>/26</code>. Bloc de 64 adresses, 62 utilisables.</li>
+</ol>
+</details>
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « Je joins l'adresse mais pas le nom »</h3>
+<p><code>ping 192.168.50.10</code> répond, <code>ping serveur</code> répond « hôte introuvable ». Quelle couche suspectes-tu et que fais-tu ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Le réseau fonctionne (l'adresse répond) : la <strong>résolution de noms</strong> est en cause. On vérifie quel serveur DNS le poste utilise (<code>ipconfig /all</code>), on teste avec <code>nslookup serveur</code> puis avec un autre serveur DNS, on regarde le suffixe DNS (nom court contre nom complet) et on vide le cache. Si le serveur DNS ne répond pas, on escalade en donnant les tests faits.</p>
+</details>
+<h3>2. Une salle sans adresse</h3>
+<p>Dans une salle, tous les postes branchés sur un nouveau commutateur affichent une adresse en 169.254.x.x ; ceux de la salle voisine sont normaux.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Les postes n'obtiennent pas de réponse DHCP : trois pistes. (1) Le commutateur ou ses ports sont dans <strong>un VLAN</strong> sans accès au DHCP ; (2) le <strong>relais DHCP</strong> n'a pas été configuré pour ce réseau ; (3) un problème physique de liaison montante. Tu signales à l'équipe réseau avec les éléments : lieu, nouveau commutateur, adresses 169.254, postes voisins normaux. Tu ne mets pas d'adresses fixes « pour dépanner » : ce serait un contournement fragile et un risque de conflit.</p>
+</details>
+<h3>3. Le site marche, pas le partage</h3>
+<p>Un utilisateur ouvre les pages web, mais pas <code>\\serveur\dossier</code>. Le nom se résout, le <code>ping</code> répond.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Il faut tester le <strong>port</strong> des partages : <code>Test-NetConnection serveur -Port 445</code>. S'il échoue : pare-feu, VPN absent (hors campus), ou service arrêté côté serveur. S'il réussit : le problème est plutôt d'<strong>authentification ou de droits</strong> (compte, groupe : voir le <a href="ad-support.html">module Active Directory</a>).</p>
+</details>
+<h3>4. Où se situe la panne ?</h3>
+<p>Ordonne ces tests du plus proche au plus lointain : ouvrir une page web ; <code>ping</code> de la passerelle ; <code>ipconfig</code> ; <code>ping</code> d'une adresse publique ; <code>nslookup</code> ; voyants de la prise.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>1. Voyants de la prise (liaison physique) ; 2. <code>ipconfig</code> (adresse, masque, passerelle, DNS) ; 3. <code>ping</code> de la passerelle (réseau local) ; 4. <code>ping</code> d'une adresse publique (sortie du réseau, sans DNS) ; 5. <code>nslookup</code> (résolution de noms) ; 6. page web (application). Chaque étape élimine une couche.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-reseau-base"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Dépanner</strong> : liaison → adresse → passerelle → sortie → nom → port → application.</li>
+  <li><strong>Même réseau ?</strong> Applique le masque aux deux adresses ; sinon, passerelle (qui doit être dans le réseau du poste).</li>
+  <li><strong>Bloc</strong> : 2<sup>(32 − préfixe)</sup> adresses ; réseau = début du bloc, diffusion = fin, utilisables = bloc − 2.</li>
+  <li><strong>169.254.x.x</strong> : pas de DHCP. <strong>Adresse OK sans sortie</strong> : passerelle. <strong>Adresse OK, nom KO</strong> : DNS.</li>
+  <li><strong>Ports</strong> : 53 DNS, 67/68 DHCP, 80/443 web, 445 partages, 3389 RDP, 88 Kerberos, 389/636 LDAP.</li>
+  <li><strong>Commandes</strong> : <code>ipconfig /all</code>, <code>ping</code>, <code>tracert</code>, <code>nslookup</code> / <code>Resolve-DnsName</code>, <code>Test-NetConnection -Port</code>, <code>netstat -ano</code>.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Quels réseaux, VLAN et plages DHCP existent (postes, salles, Wi-Fi, invités) ?</li>
+  <li>Quels serveurs DNS les postes utilisent-ils, et que se passe-t-il hors du campus (VPN) ?</li>
+  <li>Quels outils de diagnostic le service desk peut-il utiliser (capture réseau autorisée ou non) ?</li>
+  <li>À qui signale-t-on un problème de commutateur, de VLAN ou de relais DHCP ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-reseau-base"> Module terminé</label></p>
+<div data-module-suite="reseau-base"></div>
+</div>
+</main>
+</body>
+</html>

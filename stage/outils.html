@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boîte à outils · Prépa stage</title>
+<meta name="description" content="Commandes, phrases utiles au téléphone, modèle de ticket et matrice de priorité pour le service desk.">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/prepa.js" defer></script>
+<script src="../assets/app.js" defer></script>
+</head>
+<body data-root="../" data-nav="stage">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Prépa stage · Boîte à outils</p>
+<h1>La <em>boîte à outils</em> du service desk</h1>
+<p class="lead">Un aide-mémoire à garder sous la main : commandes classiques, phrases utiles au téléphone, modèle de ticket. Tout est un point de départ : à compléter avec ce que ton tuteur te montrera.</p>
+<nav class="toc" aria-label="Sommaire"><a href="#commandes">Commandes</a> · <a href="#phrases">Phrases</a> · <a href="#ticket">Modèle de ticket</a> · <a href="#priorite">Priorité</a></nav>
+
+<h2 id="commandes">1. Commandes</h2>
+<aside class="callout attention"><p>Une commande qui modifie le système ou l'annuaire ne se lance que dans le cadre de ta procédure et de tes droits. Les commandes de lecture sont sans risque.</p></aside>
+<h3>Poste Windows (jour 4)</h3>
+<pre data-copy><code>winver
+msinfo32
+systeminfo
+taskmgr
+eventvwr.msc
+devmgmt.msc
+services.msc
+sfc /scannow
+DISM /Online /Cleanup-Image /RestoreHealth
+chkdsk C: /scan
+shutdown /r /t 0</code></pre>
+<h3>Réseau (jour 5)</h3>
+<pre data-copy><code>ipconfig /all
+ipconfig /release
+ipconfig /renew
+ipconfig /flushdns
+ping 127.0.0.1
+tracert nom-du-serveur
+nslookup nom-du-serveur
+Test-NetConnection -ComputerName nom-du-serveur -Port 443
+net use</code></pre>
+<h3>Active Directory et GPO (jour 6)</h3>
+<pre data-copy><code>whoami /groups
+gpupdate /force
+gpresult /r
+gpresult /h rapport.html
+Get-ADUser -Identity identifiant -Properties LockedOut,Enabled,PasswordExpired
+Search-ADAccount -LockedOut
+Unlock-ADAccount -Identity identifiant</code></pre>
+<h3>Messagerie (jour 7), distance (jour 8), matériel (jour 9)</h3>
+<pre data-copy><code>outlook.exe /safe
+mstsc
+manage-bde -status
+Get-Tpm
+Confirm-SecureBootUEFI</code></pre>
+<p>Rappels : <kbd>Windows</kbd> + <kbd>R</kbd> ouvre « Exécuter », <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>Échap</kbd> ouvre le Gestionnaire des tâches, <kbd>Windows</kbd> + <kbd>X</kbd> donne le menu des outils d'administration.</p>
+
+<h2 id="phrases">2. Phrases utiles au téléphone</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Moment</th><th>Phrase</th></tr></thead>
+<tbody>
+<tr><td>Accueil</td><td>« Service desk, bonjour. Je vous écoute. » <em>(À adapter à la formule de la maison, à vérifier sur place.)</em></td></tr>
+<tr><td>Identification</td><td>« Pouvez-vous me donner votre nom, votre service et un numéro où vous joindre ? »</td></tr>
+<tr><td>Écoute</td><td>« Si je comprends bien, vous voulez… et le problème, c'est… C'est bien cela ? »</td></tr>
+<tr><td>Cadrage</td><td>« Depuis quand ? Cela a-t-il déjà fonctionné ? Que s'est-il passé juste avant ? Quel est le message exact ? Est-ce que d'autres personnes sont touchées ? »</td></tr>
+<tr><td>Vérification d'identité</td><td>« Avant toute action sur votre compte, je dois vous poser quelques questions de vérification. C'est pour protéger votre compte. »</td></tr>
+<tr><td>Accord</td><td>« Je vais prendre la main sur votre écran. Êtes-vous d'accord ? Vous pouvez interrompre à tout moment. »</td></tr>
+<tr><td>Pendant la manipulation</td><td>« Je lance… Cela prend une minute. Je vous dis ce que je vois. »</td></tr>
+<tr><td>Je ne sais pas</td><td>« Je ne veux pas vous dire quelque chose d'inexact. Je vérifie et je vous rappelle avant… » (puis on rappelle.)</td></tr>
+<tr><td>Escalade</td><td>« Je transmets votre demande à l'équipe qui s'en occupe, avec tout ce que nous avons vérifié. Vous serez recontacté. Votre numéro de ticket est… »</td></tr>
+<tr><td>Utilisateur énervé</td><td>« Je comprends que ce soit gênant. Voyons ce que je peux faire tout de suite. »</td></tr>
+<tr><td>Pression pour contourner</td><td>« Je comprends l'urgence, mais cette vérification est obligatoire pour tout le monde. »</td></tr>
+<tr><td>Clôture</td><td>« Est-ce que cela fonctionne maintenant ? Y a-t-il autre chose ? Si le problème revient, rappelez en donnant le numéro de ticket. »</td></tr>
+</tbody></table></div>
+<aside class="callout attention"><p>Ne dis jamais : « ça, ce n'est pas mon problème », « vous n'auriez pas dû », « c'est impossible », ni ne promets un délai que tu ne contrôles pas.</p></aside>
+
+<h2 id="ticket">3. Modèle de ticket</h2>
+<p>Un bon ticket permet à quelqu'un qui n'a pas pris l'appel de reprendre le dossier sans rappeler l'utilisateur. Copie le modèle et adapte-le aux champs de l'outil (Jira ou autre).</p>
+<pre data-copy><code>Titre : [Application / sujet] — [symptôme court] ([lieu ou poste])
+
+Demandeur : [nom, service, téléphone]
+Poste / compte concerné : [nom du poste, identifiant]
+Date et heure du début : [ ... ]
+
+Symptôme (mots de l'utilisateur) :
+[ce qu'il attendait, ce qui se passe, message d'erreur exact]
+
+Contexte :
+[depuis quand, changement récent, autres personnes touchées]
+
+Impact / urgence :
+[qui est bloqué, échéance]  → Priorité : [ ... ]
+
+Actions réalisées :
+1. [action] → [résultat]
+2. [action] → [résultat]
+
+Accord pour prise en main à distance : [oui/non, heure]
+
+Résolution ou prochaine étape :
+[solution appliquée / escalade vers ... avec ... / en attente de ...]
+
+Confirmation de l'utilisateur : [oui/non, heure]</code></pre>
+<h3>Exemple de titre</h3>
+<ul>
+  <li><strong>Mauvais</strong> : « Problème PC » ; « Urgent !!! »</li>
+  <li><strong>Bon</strong> : « Outlook — se ferme au démarrage (bureau 204, PC-TEST01) ».</li>
+</ul>
+<aside class="callout attention"><p>Jamais de <strong>mot de passe</strong>, de <strong>clé de récupération</strong> ou de donnée personnelle inutile dans un ticket.</p></aside>
+
+<h2 id="priorite">4. Priorité : impact × urgence</h2>
+<p>La <strong>priorité</strong> se déduit de l'<strong>impact</strong> (combien de personnes ou quelle fonction essentielle sont touchées) et de l'<strong>urgence</strong> (pour quand faut-il que ce soit réglé). Les niveaux et délais exacts (SLA) sont propres à l'organisation : <strong>à vérifier sur place</strong>.</p>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>Urgence haute</th><th>Urgence moyenne</th><th>Urgence basse</th></tr></thead>
+<tbody>
+<tr><td><strong>Impact élevé</strong> (plusieurs personnes, service critique)</td><td>Critique</td><td>Haute</td><td>Moyenne</td></tr>
+<tr><td><strong>Impact moyen</strong> (un service)</td><td>Haute</td><td>Moyenne</td><td>Basse</td></tr>
+<tr><td><strong>Impact faible</strong> (une personne)</td><td>Moyenne</td><td>Basse</td><td>Basse</td></tr>
+</tbody></table></div>
+<aside class="callout source"><p>ITIL : la priorité est le résultat de l'impact et de l'urgence ; la matrice exacte est choisie par l'organisation. Ce tableau n'est qu'un exemple pédagogique.</p></aside>
+
+<nav class="jours-nav" aria-label="Navigation">
+  <a class="btn ghost" href="j10.html">← Jour 10</a>
+  <a class="btn ghost" href="index.html">Programme</a>
+</nav>
+</div>
+</main>
+</body>
+</html>

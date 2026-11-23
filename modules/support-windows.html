@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support poste Windows — Modules · Apprentissage IT</title>
+<meta name="description" content="Support poste Windows : localiser une panne, lire les journaux, comprendre un écran bleu, réparer sans casser.">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Support et service desk</p>
+<h1>Support poste <em>Windows</em></h1>
+<p class="lead">Un poste « ne marche pas » : mais où, exactement ? Ce module t'apprend à localiser la panne (matériel, démarrage, Windows, profil, réseau), à lire ce que Windows consigne déjà, à comprendre un écran bleu et à réparer sans rien casser. Il prolonge le jour 4 de la prépa sans le recopier.</p>
+<div data-module-meta="support-windows"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>placer une panne sur la chaîne de démarrage, puis sur l'un des quatre axes (matériel, Windows, profil, réseau) ;</li>
+  <li>retrouver une cause dans l'Observateur d'événements et en PowerShell, et lire un code d'arrêt d'écran bleu ;</li>
+  <li>distinguer une lenteur de disque, de mémoire, de processeur ou de démarrage ;</li>
+  <li>décider quand réparer, quand redémarrer autrement (mode sans échec, WinRE) et quand escalader, avec un ticket complet.</li>
+</ul>
+<aside class="callout umons"><p>Les droits du service desk sur les postes (administrateur local ou non), les outils de prise en main et de gestion de parc, la sauvegarde avant intervention et la règle « réparer ou réinstaller » : à demander à ton tuteur. Tout ce qui suit se pratique sur <strong>ta propre machine virtuelle</strong>.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="axes">1. Quatre axes pour localiser une panne</h2>
+<p>Avant de lancer la moindre commande, pose quatre questions. Chacune <strong>élimine</strong> une famille de causes à moindre coût :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Test</th><th>Si le problème disparaît…</th><th>…la cause est plutôt</th></tr></thead>
+<tbody>
+<tr><td>Un <strong>autre utilisateur</strong> ouvre une session sur le même poste</td><td>oui</td><td>le <strong>profil</strong> ou les réglages de l'utilisateur</td></tr>
+<tr><td>Le <strong>même utilisateur</strong> ouvre une session sur un autre poste</td><td>oui</td><td>le <strong>poste</strong> (matériel, Windows, logiciel)</td></tr>
+<tr><td>Le poste démarre en <strong>mode sans échec</strong></td><td>oui</td><td>un <strong>pilote</strong>, un service ou une application tierce</td></tr>
+<tr><td>Le poste est <strong>hors réseau</strong> (câble ou Wi-Fi coupé)</td><td>oui</td><td>le <strong>réseau</strong>, un partage, une stratégie, un service distant</td></tr>
+</tbody></table></div>
+<p>Ce petit tableau fait gagner un temps considérable : si le problème suit l'utilisateur, inutile de réinstaller le poste ; s'il suit le poste, inutile de toucher au profil. La démarche complète en sept étapes est au <a href="../stage/j8.html#methode">jour 8</a> ; ici on se concentre sur le <em>poste Windows</em>.</p>
+<aside class="callout retenir"><p><strong>Changer une seule chose à la fois</strong>, puis vérifier. Si tu changes trois réglages et que « ça marche », tu ne sais plus ce qui a réparé, ni quoi noter dans le ticket.</p></aside>
+
+<h2 id="demarrage">2. Le poste ne démarre pas : matériel, firmware ou Windows ?</h2>
+<p>Le démarrage est une chaîne : chaque maillon passe la main au suivant, donc <strong>l'endroit où ça s'arrête</strong> désigne le maillon fautif.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Étape</th><th>Ce qui se passe</th><th>Symptôme si elle échoue</th></tr></thead>
+<tbody>
+<tr><td>1. Alimentation</td><td>Le courant arrive, la carte mère démarre.</td><td>Aucune LED, aucun ventilateur.</td></tr>
+<tr><td>2. Firmware (UEFI/BIOS) et test de démarrage (POST)</td><td>Le matériel de base est testé : processeur, mémoire, affichage.</td><td>Ventilateurs qui tournent mais pas d'image, bips, LED de diagnostic.</td></tr>
+<tr><td>3. Recherche d'un disque de démarrage</td><td>Le firmware lit l'ordre de démarrage et appelle le gestionnaire de démarrage de Windows.</td><td>Message du type « aucun périphérique de démarrage », ou retour répété au firmware.</td></tr>
+<tr><td>4. Chargement de Windows</td><td>Le système et les pilotes de démarrage sont chargés (logo Windows).</td><td>Redémarrage en boucle, « Réparation automatique », écran bleu.</td></tr>
+<tr><td>5. Ouverture de session</td><td>Authentification, chargement du profil, stratégies, programmes de démarrage.</td><td>Profil temporaire, écran noir après la connexion, grande lenteur.</td></tr>
+</tbody></table></div>
+<p>Les étapes 1 et 2 sont du <strong>matériel</strong> : le <a href="../atelier/pannes.html">simulateur de pannes de l'atelier</a> t'entraîne à les reconnaître (LED, bips, pièce témoin). Les étapes 3 à 5 relèvent de Windows et de ses outils de récupération (<a href="../stage/j4.html#winre">WinRE, jour 4</a>).</p>
+<aside class="callout attention"><p><strong>BitLocker.</strong> Sur un poste chiffré, un changement de matériel ou de réglage du firmware peut faire demander la <strong>clé de récupération</strong> au démarrage. Ne désactive pas le démarrage sécurisé ni le TPM « pour essayer » : suis la procédure et demande la clé au bon endroit (<a href="../stage/j9.html#demarrage">jour 9</a>).</p></aside>
+<aside class="callout source"><p>Microsoft Learn : « Windows Recovery Environment (Windows RE) », « BitLocker recovery overview », documentation sur le démarrage de Windows et sur la résolution des erreurs d'écran bleu.</p></aside>
+
+<h2 id="journaux">3. Lire les journaux : ce que Windows a déjà noté</h2>
+<p>L'Observateur d'événements (<code>eventvwr</code>) regroupe les <strong>journaux Windows</strong> : <em>Application</em>, <em>Sécurité</em>, <em>Installation</em>, <em>Système</em>. Chaque événement a une <strong>source</strong>, un <strong>ID</strong> et un <strong>niveau</strong> (critique, erreur, avertissement, information). Le réflexe : se placer sur l'<strong>heure du problème</strong>, filtrer par niveau « critique » et « erreur », lire les événements juste avant l'incident.</p>
+<p>La même chose en PowerShell, utile pour copier le résultat dans un ticket :</p>
+<pre data-copy><code>Get-WinEvent -FilterHashtable @{LogName='System'; Level=1,2; StartTime=(Get-Date).AddHours(-24)} -MaxEvents 20 | Format-Table TimeCreated,Id,ProviderName -AutoSize
+Get-WinEvent -FilterHashtable @{LogName='System'; Id=41,6008,1001} -MaxEvents 10 | Format-List TimeCreated,Id,Message</code></pre>
+<p>Dans <code>-FilterHashtable</code>, <code>Level</code> vaut 1 (critique), 2 (erreur), 3 (avertissement) ou 4 (information). Quelques événements à connaître :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Journal · ID</th><th>Ce qu'il indique</th></tr></thead>
+<tbody>
+<tr><td>Système · <strong>41</strong> (Kernel-Power)</td><td>Le système a redémarré sans s'être arrêté proprement : coupure de courant, blocage, écran bleu, bouton maintenu.</td></tr>
+<tr><td>Système · <strong>6008</strong></td><td>Le dernier arrêt était inattendu (avec la date).</td></tr>
+<tr><td>Système · <strong>1001</strong> (BugCheck)</td><td>Un écran bleu a eu lieu : le message contient le code d'arrêt.</td></tr>
+<tr><td>Système · <strong>7034</strong> (Service Control Manager)</td><td>Un service s'est arrêté de façon inattendue : son nom est dans le message.</td></tr>
+<tr><td>Application · <strong>1000</strong> (Application Error)</td><td>Une application a planté : nom du programme et du module fautif.</td></tr>
+</tbody></table></div>
+<aside class="callout astuce"><p>Un événement isolé n'est pas une preuve : cherche la <strong>répétition</strong> et la <strong>coïncidence avec l'heure du problème</strong>. Le <em>Moniteur de fiabilité</em> (<code>perfmon /rel</code>) montre sur une frise les plantages, mises à jour et installations des dernières semaines : pratique pour dire « ça a commencé après telle mise à jour ».</p></aside>
+<aside class="callout source"><p>Microsoft Learn : « Get-WinEvent » (module Microsoft.PowerShell.Diagnostics, paramètre <code>-FilterHashtable</code>), documentation de l'Observateur d'événements et du Moniteur de fiabilité.</p></aside>
+
+<h2 id="ecran-bleu">4. L'écran bleu : noter, pas deviner</h2>
+<p>Un écran bleu (<em>bugcheck</em>) est un arrêt volontaire de Windows quand il détecte une erreur dont il ne peut pas se remettre. Il affiche un <strong>code d'arrêt</strong> (en majuscules, comme <code>CRITICAL_PROCESS_DIED</code>) et parfois un nom de fichier. C'est la meilleure information que tu aies : <strong>note-la mot pour mot</strong> (photo de l'écran si besoin).</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Code d'arrêt</th><th>Piste raisonnable (à confirmer, pas à affirmer)</th></tr></thead>
+<tbody>
+<tr><td><code>INACCESSIBLE_BOOT_DEVICE</code></td><td>Windows n'accède plus au volume de démarrage : disque, câble, pilote de stockage, mode du contrôleur dans le firmware.</td></tr>
+<tr><td><code>MEMORY_MANAGEMENT</code></td><td>Problème de mémoire : barrette défectueuse ou pilote fautif ; lancer le diagnostic mémoire.</td></tr>
+<tr><td><code>CRITICAL_PROCESS_DIED</code></td><td>Un processus système indispensable s'est arrêté : fichiers système abîmés, pilote, disque.</td></tr>
+<tr><td><code>KERNEL_SECURITY_CHECK_FAILURE</code>, <code>SYSTEM_SERVICE_EXCEPTION</code>, <code>IRQL_NOT_LESS_OR_EQUAL</code></td><td>Souvent un pilote ou un logiciel de bas niveau récemment installé ou mis à jour.</td></tr>
+</tbody></table></div>
+<p>Démarche : (1) noter le code et l'heure ; (2) demander ce qui a changé juste avant (mise à jour, nouveau matériel, nouveau logiciel) ; (3) lire les événements 41 et 1001 ; (4) selon la piste, tester la mémoire (<code>mdsched.exe</code>), l'état du disque, les fichiers système (<code>DISM</code> puis <code>sfc</code>, <a href="../stage/j4.html#reparer">jour 4</a>) ; (5) si un pilote est suspecté, démarrer en mode sans échec et le revenir en arrière ou le désinstaller.</p>
+<pre data-copy><code>Get-PhysicalDisk | Select-Object FriendlyName,MediaType,HealthStatus,OperationalStatus
+Get-Volume | Select-Object DriveLetter,FileSystemLabel,Size,SizeRemaining,HealthStatus</code></pre>
+<p>Windows écrit un fichier de vidage lors de l'écran bleu (dossier <code>C:\Windows\Minidump</code> et fichier <code>C:\Windows\MEMORY.DMP</code>, selon la configuration). Le service desk ne les analyse pas : il <strong>les signale et les joint au ticket</strong> si l'équipe de niveau supérieur le demande.</p>
+<aside class="callout attention"><p>Un <code>HealthStatus</code> « Healthy » n'est pas une garantie : un disque qui commence à lâcher peut encore se déclarer sain. S'il y a des erreurs de disque dans les journaux (source « Disk » ou « Ntfs »), <strong>sauvegarde avant tout</strong> et escalade.</p></aside>
+
+<h2 id="lenteur">5. La lenteur : trouver le goulot</h2>
+<p>« Mon PC est lent » n'est pas un symptôme, c'est un ressenti. Transforme-le en mesure : <strong>qu'est-ce qui est saturé ?</strong> Le Gestionnaire des tâches (<kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>Échap</kbd>) donne la réponse en trente secondes.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Ce qui est saturé</th><th>Causes fréquentes</th><th>À faire</th></tr></thead>
+<tbody>
+<tr><td><strong>Disque</strong> à 100 % en continu</td><td>Mise à jour ou analyse antivirus en cours, disque mécanique, disque en fin de vie, mémoire insuffisante qui force à écrire sur le disque.</td><td>Identifier le processus, attendre la fin d'une tâche normale, contrôler l'état du disque, escalader si les erreurs persistent.</td></tr>
+<tr><td><strong>Mémoire</strong> proche de 100 %</td><td>Trop d'applications ouvertes, onglets de navigateur, fuite de mémoire d'une application.</td><td>Fermer ou redémarrer l'application fautive ; si c'est chronique, signaler que la machine manque de mémoire.</td></tr>
+<tr><td><strong>Processeur</strong> à 100 %</td><td>Processus bloqué, analyse, mise à jour, logiciel indésirable.</td><td>Repérer le processus (colonne processeur), comprendre à quoi il sert avant de le terminer.</td></tr>
+<tr><td>Rien n'est saturé, mais l'<strong>ouverture de session</strong> est longue</td><td>Trop de programmes au démarrage, profil volumineux, lecteur réseau ou stratégie qui attend un serveur injoignable.</td><td>Onglet « Applications de démarrage » ; tester hors réseau pour voir si la durée change.</td></tr>
+</tbody></table></div>
+<aside class="callout retenir"><p>Ne termine jamais un processus que tu ne reconnais pas sans avoir cherché ce qu'il est : certains sont des composants de Windows ou de sécurité. Dans le doute, note son nom et escalade.</p></aside>
+
+<h2 id="applications">6. Une application qui plante ou ne démarre plus</h2>
+<ol>
+  <li><strong>Reproduire et noter</strong> : message exact, moment, déjà arrivé ? Le plantage est-il visible dans le journal <em>Application</em> (ID 1000) ?</li>
+  <li><strong>Un autre utilisateur ?</strong> Si l'application marche pour un autre compte, c'est le profil (réglages de l'application) : voir <a href="../stage/j4.html#profils">jour 4</a>.</li>
+  <li><strong>Réparer l'application</strong> : Paramètres → Applications → Applications installées → l'application → Options avancées (ou Modifier) → <em>Réparer</em>, puis seulement <em>Réinitialiser</em> (qui efface les données locales de l'application : prévenir l'utilisateur).</li>
+  <li><strong>Démarrage minimal</strong> : un logiciel tiers (antivirus, utilitaire) entre en conflit ? Démarre avec les seuls services Microsoft (<code>msconfig</code> → Services → « Masquer tous les services Microsoft » → désactiver le reste) et réactive-les un par un ; <strong>remets le démarrage normal à la fin</strong>.</li>
+  <li><strong>Mises à jour de l'application et de Windows</strong> : un correctif existe peut-être déjà.</li>
+</ol>
+<pre data-copy><code>winget list
+Get-HotFix | Sort-Object InstalledOn -Descending | Select-Object -First 10 HotFixID,Description,InstalledOn</code></pre>
+<p><code>winget list</code> énumère les applications installées (l'outil <code>winget</code> est fourni avec Windows 11 et les versions récentes de Windows 10), <code>Get-HotFix</code> les correctifs Windows récents : deux façons de répondre à « qu'est-ce qui a changé ? ».</p>
+<aside class="callout umons"><p>Dans un parc géré, l'installation, la désinstallation et la réparation d'applications passent souvent par un outil central (catalogue de logiciels, déploiement automatique). Ce que le service desk a le droit de faire lui-même : à vérifier sur place.</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo guidé : fabriquer des indices, puis les retrouver <span class="duree">≈ 60 min</span></h2>
+<p>Dans la VM Windows 11 du jour 4, fais un point de contrôle, puis suis ces étapes <strong>dans l'ordre</strong>. À chaque étape, essaie de prévoir le résultat avant de le voir.</p>
+<ol>
+  <li><strong>Écrire un événement.</strong> Dans une invite de commandes administrateur :
+<pre data-copy><code>eventcreate /T ERROR /ID 500 /L APPLICATION /SO LaboSupport /D "Evenement de test du module support"</code></pre>
+  Ouvre <code>eventvwr</code> → Journaux Windows → Application et retrouve-le (source <em>LaboSupport</em>, ID 500). Puis retrouve-le en PowerShell : <code>Get-WinEvent -FilterHashtable @{LogName='Application'; ProviderName='LaboSupport'}</code>.</li>
+  <li><strong>Saturer le processeur.</strong> Dans une fenêtre PowerShell, tape <code>while ($true) { }</code> (elle ne rend plus la main). Dans le Gestionnaire des tâches, trouve le processus, observe la colonne processeur, puis reviens dans la fenêtre et arrête avec <kbd>Ctrl</kbd> + <kbd>C</kbd>.</li>
+  <li><strong>Le Moniteur de fiabilité.</strong> Lance <code>perfmon /rel</code> et repère la frise : quelles informations sont disponibles pour aujourd'hui ?</li>
+  <li><strong>Le mode sans échec.</strong> Lance <code>msconfig</code> → onglet <em>Démarrer</em> → <em>Démarrage sécurisé</em> → <em>Minimal</em>, redémarre, constate l'aspect du bureau, puis <strong>remets le démarrage normal</strong> de la même façon et redémarre.</li>
+  <li><strong>Provoquer un arrêt anormal.</strong> Sur la VM uniquement : utilise <em>Désactiver</em> (arrêt brutal) dans Hyper-V pendant que Windows tourne, puis redémarre. Cherche ensuite les événements 41 et 6008 dans le journal Système.</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois constater</summary>
+<ul>
+  <li>Étape 1 : un événement de niveau « Erreur », source LaboSupport, ID 500, avec ton texte. C'est la preuve que les journaux sont une trace fiable <em>et</em> que n'importe quelle application peut y écrire.</li>
+  <li>Étape 2 : <code>powershell.exe</code> en tête de la colonne processeur. Dans une VM à un seul cœur, l'usage approche 100 % ; avec plusieurs cœurs, il est partagé.</li>
+  <li>Étape 3 : la frise indique, par jour, les événements d'applications, de Windows et de mises à jour, avec un indice de stabilité.</li>
+  <li>Étape 4 : bureau avec la mention « Mode sans échec » dans les coins ; résolution réduite ; la plupart des pilotes tiers ne sont pas chargés.</li>
+  <li>Étape 5 : événement 41 (Kernel-Power) et 6008 qui signalent un arrêt inattendu. Les deux se lisent comme « Windows n'a pas été arrêté proprement », sans dire pourquoi : c'est à toi de relier à une cause.</li>
+</ul>
+</details>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « Il se bloque tous les matins à 8 h 40 »</h3>
+<p>Un agent se plaint que son PC se fige pendant dix minutes chaque matin, puis redevient normal. Aucun message d'erreur. Comment procèdes-tu ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Un phénomène <strong>régulier</strong> à heure fixe évoque une tâche planifiée ou une analyse automatique (antivirus, sauvegarde, mise à jour, inventaire) qui sature le disque ou le processeur. Tu viens à 8 h 40 avec le Gestionnaire des tâches ouvert pour voir <strong>quel processus</strong> sature quoi ; tu regardes les journaux autour de cette heure et les tâches planifiées (<code>taskschd.msc</code>). Si c'est une tâche gérée centralement, tu ne la modifies pas : tu notes le processus, l'heure et la ressource saturée, et tu escalades à l'équipe qui gère ce logiciel.</p>
+</details>
+<h3>2. Écran bleu après une mise à jour</h3>
+<p>Un poste affiche <code>INACCESSIBLE_BOOT_DEVICE</code> au redémarrage qui a suivi une mise à jour, puis boucle sur « Réparation automatique ». Quelles sont tes trois premières actions ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<ol>
+  <li>Noter le code et l'heure, demander ce qui s'est passé juste avant (mise à jour, coupure, changement de matériel) ; ne rien supprimer.</li>
+  <li>Entrer dans WinRE (<a href="../stage/j4.html#winre">jour 4</a>) et utiliser les options prévues : désinstaller la dernière mise à jour qualité, restauration du système si elle existe. Si le poste est chiffré, prépare la clé de récupération avant.</li>
+  <li>Si cela échoue ou si le firmware ne voit plus le disque (autre symptôme : le disque n'apparaît pas), escalader avec le code, l'heure, la mise à jour concernée et ce qui a été tenté. Toute réinstallation relève de la procédure et de la sauvegarde.</li>
+</ol>
+</details>
+<h3>3. Cela marche chez Léa, pas chez Tom, sur le même poste</h3>
+<p>Dans une salle, un logiciel démarre pour Léa mais affiche une erreur pour Tom, sur le même PC et le même jour.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Le problème <strong>suit l'utilisateur</strong> : le poste n'est pas en cause. Pistes : droits (groupe manquant), profil abîmé, réglage d'application propre au compte, lecteur réseau ou licence liée au compte. On compare les groupes et on essaie avec un nouveau profil (<a href="../stage/j6.html">jour 6</a> pour les groupes). On n'est pas obligé de réinstaller le logiciel pour cela.</p>
+</details>
+<h3>4. Le ticket qui ne se lit pas</h3>
+<p>Voici un brouillon de ticket : « PC lent, redémarré, pas mieux ». Réécris-le pour qu'un collègue de niveau 2 puisse continuer sans rappeler l'utilisateur.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Un bon ticket contient : <strong>qui</strong> (compte, poste), <strong>quoi</strong> (symptôme précis et depuis quand), <strong>mesures</strong> (disque à 100 % ? lequel processus ? événements trouvés, avec ID et heure), <strong>ce qui a été essayé</strong> et le résultat, <strong>ce qui a changé récemment</strong>, <strong>la prochaine étape</strong> proposée. Exemple : « Poste PC-0123, compte de l'utilisateur concerné. Lenteur depuis lundi, surtout à l'ouverture de session (≈ 4 min). Gestionnaire des tâches : disque à 100 % pendant 5 min après connexion, processus d'analyse en cause. Journal Système : aucune erreur disque. Redémarrage et vérification des programmes au démarrage faits sans effet. Mise à jour Windows installée jeudi. À vérifier : état du disque. »</p>
+</details>
+<p>Pour t'entraîner sur le matériel : <a class="btn ghost" href="../atelier/pannes.html">Atelier — pannes</a></p>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-support-windows"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Quatre axes</strong> : autre utilisateur, autre poste, mode sans échec, hors réseau.</li>
+  <li><strong>Démarrage</strong> : alimentation → POST → disque de démarrage → Windows → session. Là où ça s'arrête désigne le maillon fautif.</li>
+  <li><strong>Journaux</strong> : heure du problème, niveaux critique et erreur ; ID 41, 6008, 1001, 7034, 1000.</li>
+  <li><strong>Écran bleu</strong> : noter le code d'arrêt, ce qui a changé, lire 41 et 1001 ; ne rien deviner.</li>
+  <li><strong>Lenteur</strong> : disque, mémoire, processeur, démarrage : mesurer avant de conclure.</li>
+  <li><strong>Application</strong> : réparer avant de réinitialiser, tester avec un autre compte, démarrage minimal, remettre le démarrage normal.</li>
+  <li><strong>Disque suspect</strong> : sauvegarder d'abord, escalader ensuite.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Le service desk est-il administrateur local des postes ? Avec quels outils de prise en main ?</li>
+  <li>Réparer ou réinstaller : quelle règle, quelle sauvegarde avant intervention, où est la clé de récupération BitLocker ?</li>
+  <li>Quelles tâches planifiées ou analyses centrales tournent sur les postes, et à quelle heure ?</li>
+  <li>Qui reçoit les fichiers de vidage d'un écran bleu, et comment les transmettre ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-support-windows"> Module terminé</label></p>
+<div data-module-suite="support-windows"></div>
+</div>
+</main>
+</body>
+</html>
