@@ -23,7 +23,7 @@ for (const theme of ['light','dark']) {
  });
  await test(theme+' recherche au clavier',async()=>{
   await p.locator('.fil-btn').focus(); await p.keyboard.press('/'); const q=p.locator('#rech-q'); await q.waitFor(); assert.equal(await q.evaluate(e=>e===document.activeElement),true);
-  await p.keyboard.press('Tab'); assert.equal(await p.locator('.rech-fermer').evaluate(e=>e===document.activeElement),true); await p.keyboard.press('Tab'); assert.equal(await p.locator('.rech-ex').first().evaluate(e=>e===document.activeElement),true); await q.focus(); await p.keyboard.press('Shift+Tab'); assert.equal(await p.locator('.rech-ex').last().evaluate(e=>e===document.activeElement),true); await q.focus();
+  await p.locator('.rech-ex').first().waitFor(); await p.keyboard.press('Tab'); assert.equal(await p.locator('.rech-fermer').evaluate(e=>e===document.activeElement),true); await p.keyboard.press('Tab'); assert.equal(await p.locator('.rech-ex').first().evaluate(e=>e===document.activeElement),true); await q.focus(); await p.keyboard.press('Shift+Tab'); assert.equal(await p.locator('.rech-ex').last().evaluate(e=>e===document.activeElement),true); await q.focus();
   await q.fill('dns'); await p.waitForSelector('.rech-item'); const first=await q.getAttribute('aria-activedescendant'); await p.keyboard.press('ArrowDown'); assert.notEqual(await q.getAttribute('aria-activedescendant'),first); await p.keyboard.press('ArrowUp'); assert.equal(await q.getAttribute('aria-activedescendant'),first);
   await p.keyboard.press('Escape'); assert.equal(await p.locator('.fil-btn').evaluate(e=>e===document.activeElement),true);
   await p.keyboard.press('Control+k'); assert.equal(await q.evaluate(e=>e===document.activeElement),true); await p.keyboard.press('Escape');
