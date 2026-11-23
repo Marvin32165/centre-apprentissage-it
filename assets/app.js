@@ -79,19 +79,28 @@
     bar.appendChild(search);
 
     var themeBtn = el("button", { type: "button", "class": "icon-btn theme-btn" });
+    var themeLigne = el("button", { type: "button", "class": "theme-ligne" });
     function refreshThemeBtn() {
       var t = currentTheme(), next = THEMES[(THEMES.indexOf(t) + 1) % THEMES.length];
+      var label = "Thème " + THEME_LABEL[t] + ". Passer au thème " + THEME_LABEL[next] + ".";
       themeBtn.textContent = "";
       themeBtn.appendChild(icon(THEME_ICON[t]));
-      themeBtn.setAttribute("aria-label", "Thème " + THEME_LABEL[t] + ". Passer au thème " + THEME_LABEL[next] + ".");
+      themeBtn.setAttribute("aria-label", label);
       themeBtn.title = "Thème " + THEME_LABEL[t];
+      themeLigne.textContent = "";
+      themeLigne.appendChild(icon(THEME_ICON[t]));
+      themeLigne.appendChild(el("span", null, "Thème : " + THEME_LABEL[t]));
+      themeLigne.setAttribute("aria-label", label);
     }
-    themeBtn.addEventListener("click", function () {
+    function cycleTheme() {
       var next = THEMES[(THEMES.indexOf(currentTheme()) + 1) % THEMES.length];
       store.set("theme", next);
       applyTheme(next);
       refreshThemeBtn();
-    });
+    }
+    themeBtn.addEventListener("click", cycleTheme);
+    themeLigne.addEventListener("click", cycleTheme);
+    nav.appendChild(themeLigne);
     refreshThemeBtn();
     bar.appendChild(themeBtn);
 
