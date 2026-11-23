@@ -160,6 +160,9 @@ Idées reprises du dépôt `claude-tools` (chef, evidence-reviewer, hooks, skill
 - [x] 15.4 Enveloppes Claude Code dans `.claude/` : skills qui renvoient aux procédures, agents relecteurs, hook de protection des fichiers et rappel du plan après compaction.
   Fait : skills `/nouveau-module`, `/relecture-sources`, `/test-chef` (en-tête au standard Agent Skills) et agents `relecteur-sources`, `chef`, qui renvoient tous à `docs/procedures/` ; hooks en Node (pas de jq, marche sous Windows) : blocage des moteurs, de `recherche.js`, de `node_modules`/`.git` et de tout fichier hors du dépôt, refus d'arrêt si `garde` échoue, rappel du lot en cours après compaction ; testés à la main (4 cas de blocage, arrêt, rappel).
 - [ ] 15.5 `npm run controles`, coche du lot, fusion dans `main`.
+  Fait partiellement : `npm run controles` = 0 problème, 0 avertissement, 0 échec (29 pages, serveur et `file://`, garde-fous compris). Reste la fusion dans `main` : le travail est sur la branche `claude/exciting-newton-tg7h18` (la session n'avait pas le droit de pousser `lot-15` ni `main`), à fusionner avec l'accord de Marvin.
+
+Reste : la fusion ; puis, une fois par clone, `npm run hooks`. Prochain lot conseillé : module « Dépannage à distance » avec `/nouveau-module` (ou la procédure dans ChatGPT), relu par l'autre outil.
 
 ## Ensuite
 Un module par lot, en commençant par les besoins du stage. Ajouter ici les nouveaux lots au fil de l'eau.
