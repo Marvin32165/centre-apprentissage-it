@@ -62,7 +62,7 @@ kbd { background: var(--surface); border: 1px solid var(--line); border-bottom-w
 /* Mise en page */
 .wrap { width: 100%; max-width: 72rem; margin: 0 auto; padding: 0 var(--gutter); }
 .prose { max-width: 46rem; }
-.page { padding: 2rem 0 3.5rem; }
+.page { padding-top: 2rem; padding-bottom: 3.5rem; }
 .skip { position: absolute; left: -999px; top: 0; background: var(--accent); color: var(--on-accent); padding: 0.7rem 1rem; font-family: var(--font-ui); z-index: 100; }
 .skip:focus { left: 0; }
 .grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
@@ -311,3 +311,35 @@ details.correction[open] > summary::before { content: "−"; background: var(--a
 .done { font-size: 0.82rem; letter-spacing: 0.04em; font-family: var(--font-code); }
 .plan-jours { border-radius: var(--r-m); counter-reset: j; border-left: 4px solid var(--accent); }
 .plan-jours li { counter-increment: j; }
+
+/* ==========================================================================
+   Version chaleureuse : plus de hachures ni de grille ; bois brun, filets
+   pleins rouille, grain de papier.
+   ========================================================================== */
+:root { --bar: #2C1F16; --hatch: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bar: #221810; } }
+:root[data-theme="dark"] { --bar: #221810; }
+
+body {
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% 0, color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .15 0 0 0 .11 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: auto, 160px 160px; background-position: 0 0, 0 0;
+}
+.site-header::after, .site-footer::before { height: 4px; background: var(--bar-accent); }
+.site-header { box-shadow: 0 2px 10px rgba(44, 31, 22, 0.25); }
+hr, .stripe, .stripe.rouille { height: 0; border: 0; border-top: 1px solid var(--line); background: none; opacity: 1; margin: 2rem 0; }
+.stripe.rouille { border-top: 3px double var(--accent); }
+.progress .track { height: 8px; border-radius: 4px; background: var(--line); }
+.progress .fill { border-radius: 4px; background: var(--green); }
+.countdown .num { text-shadow: none; }
+.countdown { box-shadow: 0 6px 18px rgba(44, 31, 22, 0.18); }
+.bloc, .card, .quiz { box-shadow: 0 1px 0 rgba(120, 90, 60, 0.08), 0 3px 10px rgba(80, 55, 35, 0.06); border-radius: var(--r-l); }
+.btn, button.btn { box-shadow: 0 2px 0 color-mix(in srgb, var(--accent) 60%, #000), 0 4px 10px rgba(80, 55, 35, 0.18); border-radius: var(--r-m); }
+.btn:hover { transform: translateY(1px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent) 60%, #000), 0 2px 6px rgba(80, 55, 35, 0.18); }
+.btn:active { transform: translateY(2px); box-shadow: none; }
+.btn.ghost { box-shadow: none; }
+pre { border-top-width: 3px; border-radius: var(--r-m); }
+.table-wrap { border-top-color: var(--accent); }
+th { border-bottom-color: var(--accent); }
+.plan-jours { border-left-width: 4px; }
