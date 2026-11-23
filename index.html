@@ -11,76 +11,80 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/style.css">
 <script src="assets/data.js" defer></script>
+<script src="assets/modules.js" defer></script>
 <script src="assets/app.js" defer></script>
+<script src="assets/accueil.js" defer></script>
 </head>
 <body data-root="" data-nav="accueil">
-<main id="contenu" class="wrap page">
+<main id="contenu" class="wrap page accueil">
 
-  <section class="hero">
-    <div class="hero-grid">
-      <div>
-        <p class="kicker">Plateforme d'apprentissage IT</p>
-        <h1>Apprendre l'informatique, <em>pas à pas</em>, pour de vrai.</h1>
-        <p class="lead">Une base de connaissances qui grandit module après module. Pour commencer : se préparer au stage « Service desk – Support et Services » à la DSI de l'UMONS.</p>
-        <p><a class="btn" href="stage/index.html">Commencer la prépa stage</a></p>
-      </div>
-      <aside class="bloc countdown" aria-label="Décompte avant le stage">
-        <p class="kicker">Début du stage</p>
-        <div data-countdown></div>
-      </aside>
+  <section class="mission" aria-label="Aujourd'hui">
+    <div class="mission-texte" data-mission>
+      <p class="kicker point">Prépa stage · 10 jours</p>
+      <h1>Aujourd'hui, le métier de <em>service desk</em>.</h1>
+      <p class="lead">ITIL, priorités, SLA et escalade : le vocabulaire que ton équipe utilisera dès le premier jour.</p>
+      <p class="mission-actions"><a class="btn" href="stage/j1.html">Commencer la prépa</a> <a class="btn ghost" href="stage/index.html">Voir le programme</a></p>
+    </div>
+    <aside class="ticket" aria-label="Décompte avant le stage" data-ticket>
+      <p class="ticket-tete"><span>Ticket STAGE-0712</span> <span class="ticket-etat">● Ouvert</span></p>
+      <p class="ticket-decompte"><span class="ticket-num">—</span> <span class="ticket-lbl">avant le premier appel, le lundi 7 décembre 2026</span></p>
+      <dl class="ticket-grille">
+        <div><dt>Où</dt><dd>DSI de l'UMONS, Mons</dd></div>
+        <div><dt>Poste</dt><dd>Service desk</dd></div>
+        <div><dt>Début</dt><dd>Lundi 7 décembre</dd></div>
+        <div><dt>Horaires</dt><dd>8 h 30 – 16 h</dd></div>
+      </dl>
+      <div class="progress sombre" data-progress="stage" data-progress-format="Prépa : {d} / {t} jours résolus"></div>
+    </aside>
+  </section>
+
+  <section class="frise-zone" aria-labelledby="frise-titre">
+    <div class="titre-ligne">
+      <h2 id="frise-titre">Deux semaines jusqu'au premier jour</h2>
+      <p class="label">23 nov. → 7 déc. 2026</p>
+    </div>
+    <div class="frise-defile" tabindex="0" role="region" aria-label="Frise des jours de préparation, défilement horizontal">
+      <ol class="frise" data-frise></ol>
     </div>
   </section>
 
-  <dl class="specs" aria-label="Le stage en bref">
-    <div><dt>Lieu</dt><dd>DSI de l'UMONS, Mons</dd></div>
-    <div><dt>Poste</dt><dd>Service desk</dd></div>
-    <div><dt>Début</dt><dd>7 décembre 2026</dd></div>
-    <div><dt>Horaires</dt><dd>8 h 30 – 16 h</dd></div>
-  </dl>
-
-  <section>
-    <h2>Les rubriques</h2>
-    <div class="grid cols-2">
-      <a class="card" href="stage/index.html">
-        <h3>Prépa stage</h3>
-        <p>Dix jours pour arriver prêt au service desk : théorie, labos, mises en situation.</p>
+  <section aria-labelledby="rub-titre">
+    <h2 id="rub-titre">Toute la plateforme</h2>
+    <div class="rubriques">
+      <a class="card rub" href="stage/index.html">
+        <p class="rub-tete"><span class="kicker">Prépa stage</span><span class="label" data-compteur="stage"></span></p>
+        <h3>Dix jours pour arriver prêt</h3>
+        <p>Théorie sourcée, labos chez soi, appels simulés, tickets à trier, boîte à outils.</p>
         <div class="progress" data-progress="stage"></div>
       </a>
-      <a class="card" href="modules/index.html">
-        <h3>Modules</h3>
+      <a class="card rub" href="modules/index.html">
+        <p class="rub-tete"><span class="kicker">Modules</span><span class="label" data-compteur="modules"></span></p>
+        <h3>Cours ciblés</h3>
         <p>Des cours ciblés, du support poste au réseau en passant par Active Directory.</p>
         <div class="progress" data-progress="modules"></div>
       </a>
-      <a class="card" href="themes.html">
-        <h3>Thèmes</h3>
-        <p>Les grands domaines de l'IT, avec des liens vers les modules.</p>
-        <div class="progress" data-progress="themes"></div>
+      <a class="card rub" href="themes.html">
+        <p class="rub-tete"><span class="kicker">Thèmes</span><span class="label" data-compteur="themes"></span></p>
+        <h3>L'IT rangée par domaine</h3>
+        <p>Les grands domaines de l'IT : ce qui existe, ce qui arrive, où le trouver.</p>
       </a>
-      <a class="card" href="atelier/index.html">
-        <h3>Atelier hardware</h3>
+      <a class="card rub livre" href="atelier/index.html">
+        <p class="rub-tete"><span class="kicker">Atelier hardware</span><span class="label" data-compteur="atelier"></span></p>
+        <h3><em>Le Livre du montage</em></h3>
         <p>Monter, diagnostiquer et réparer un PC virtuel, pièce par pièce.</p>
         <div class="progress" data-progress="atelier"></div>
       </a>
     </div>
   </section>
 
-  <section>
-    <h2>Ta progression</h2>
-    <div class="bloc">
-      <div class="progress" data-progress="all"></div>
-    </div>
-  </section>
-
-  <section class="prose">
-    <h2>Comment on apprend ici</h2>
-    <ol>
-      <li><strong>Je montre</strong> : une théorie courte, qui cite sa source officielle.</li>
-      <li><strong>On fait ensemble</strong> : un labo guidé, faisable chez soi.</li>
-      <li><strong>Tu fais seul</strong> : une mise en situation, dont la correction reste cachée jusqu'à ce que tu aies essayé.</li>
+  <section class="methode" aria-labelledby="meth-titre">
+    <h2 id="meth-titre">Comment on apprend ici</h2>
+    <ol class="trois">
+      <li><span class="romain" aria-hidden="true">I.</span><h3>Je montre</h3><p>Une théorie courte, qui cite sa source officielle.</p></li>
+      <li><span class="romain" aria-hidden="true">II.</span><h3>On fait ensemble</h3><p>Un labo guidé, faisable chez soi.</p></li>
+      <li><span class="romain" aria-hidden="true">III.</span><h3>Tu fais seul</h3><p>Une mise en situation, dont la correction reste cachée jusqu'à ce que tu aies essayé.</p></li>
     </ol>
-    <div class="callout umons">
-      <p>Tout ce qui dépend du fonctionnement interne de l'UMONS est signalé ainsi : ce sont des hypothèses à confirmer avec le tuteur.</p>
-    </div>
+    <aside class="callout umons"><p>Tout ce qui dépend du fonctionnement interne de l'UMONS est signalé ainsi : ce sont des hypothèses à confirmer avec le tuteur.</p></aside>
   </section>
 
 </main>

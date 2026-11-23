@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contrôle de la recherche — Apprentissage IT</title>
+<meta name="robots" content="noindex">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/recherche.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="controle-recherche.js" defer></script>
+</head>
+<body data-root="../" data-nav="">
+<main id="contenu" class="wrap page"><div class="prose">
+<p class="kicker">Guide interne</p>
+<h1>Contrôle de la <em>recherche</em></h1>
+<p class="lead">Cette page ouvre chaque page citée par l'index (<code>assets/recherche.js</code>) et vérifie que chaque ancre existe. Elle fonctionne via un serveur (GitHub Pages ou serveur local), pas en <code>file://</code>.</p>
+<p>Pour régénérer l'index : <code>node outils/index-recherche.mjs</code>. L'audit <code>node outils/verif.mjs</code> refait ce contrôle sans navigateur.</p>
+<p><button type="button" class="btn" data-controle>Lancer le contrôle</button></p>
+<p class="muted" aria-live="polite" data-controle-etat></p>
+<div class="table-wrap"><table>
+<thead><tr><th>Lien</th><th>Titre</th><th>État</th></tr></thead>
+<tbody data-controle-liste></tbody>
+</table></div>
+</div></main>
+</body>
+</html>
