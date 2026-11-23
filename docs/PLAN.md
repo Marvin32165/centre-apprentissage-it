@@ -65,5 +65,44 @@ Reste : rien pour ce lot. 14 dossiers dans `assets/atelier-pannes-data.js` (donn
 Reste : rien pour ce lot. Catalogue dans `assets/modules.js` (source unique : domaines, niveaux, modules), rendu par `assets/modules-ui.js` (catalogue filtrable `modules/index.html?domaine=…&q=…`, en-tête et suite de chaque module, page des thèmes), quiz dans `assets/modules-quiz.js`, gabarit dans `docs/gabarit-module.html`. Modules `support-windows`, `itil`, `reseau-base`, `ad-support` (`units` `module-<id>`). Liens « à revoir » de l'atelier : `A.moduleRevoir` dans `atelier-scenarios.js` (le matériel renvoie vers `support-windows` en attendant un module Matériel).
 Choix par défaut : les 9 domaines de `themes.html` regroupent les 5 parcours des notes (réseau et Linux, Windows, téléphonie, virtualisation/sécurité, cloud/supervision/méthode) sans copier leur contenu ; les sujets non écrits sont marqués « à venir » ; le catalogue ne liste que les modules existants ; durées en minutes = estimations ; niveau 1 à 3 ; prérequis = modules seulement (la prépa est en « approfondit »). Travail fait sur la branche de session, pas sur `lot-7`.
 
+## Lot 8 — Refonte : socle commun
+Lire `docs/REFONTE.md` (§ 1) avant de commencer ; la maquette de référence y est liée.
+- [ ] Réécrire `assets/style.css` en une seule couche (jetons, typographie, composants) ; supprimer les couches « Asimov » et « chaleureuse ».
+- [ ] En-tête et pied de page dans `assets/app.js` : logo tampon incliné (corriger l'espace de « Apprentissage IT »), menu sans numéros, bouton de recherche (inactif jusqu'au lot 9), bouton de thème en icône.
+- [ ] Encadrés ramenés à trois niveaux, boutons sans capitales, tableaux et `<details>` restylés ; mettre à jour `docs/composants.html`.
+- [ ] Mettre à jour la section « Direction artistique » de `CLAUDE.md` : renvoyer vers `docs/REFONTE.md`, retirer la mention du skin Asimov.
+- [ ] Vérifier toutes les pages existantes en 390 et 1280 px, clair et sombre, sans erreur console.
+
+## Lot 9 — Refonte : accueil et recherche
+- [ ] `index.html` en tableau de mission : jour du jour calculé, reprise (`it.reprise`), carte-ticket du décompte, frise du 23/11 au 7/12, 4 cartes de rubriques, « Comment on apprend ici » (`REFONTE.md` § 2.1).
+- [ ] Recherche rapide (`/`, Ctrl+K, bouton) avec index `assets/recherche.js` et page de contrôle des ancres dans `docs/` (§ 2.3).
+
+## Lot 10 — Refonte : pages de jour
+- [ ] Mise en page 3 colonnes et tiroirs mobiles, sommaire actif, barre de lecture, `§N` dans les h2 (§ 2.2) — par le CSS et `app.js`, en touchant le moins possible au HTML des jours.
+- [ ] Minuteur de séance (`it.seance.jN`), pastille flottante sur mobile.
+- [ ] Mises en situation en tickets, matrice interactive du J1, clôture du jour avec tampon RÉSOLU.
+- [ ] Fiche mémo imprimable (`@media print`, § 2.4) ; tester l'aperçu d'impression du J1.
+
+## Lot 11 — Refonte : modules et thèmes
+- [ ] `modules/index.html` : parcours conseillé généré, filtres en puces, cartes avec jauge de niveau (§ 2.5) ; restyler l'en-tête des pages de module.
+- [ ] `themes.html` en atlas : tuiles à pastilles, panneau du domaine, `?domaine=` (§ 2.6).
+
+## Lot 12 — Refonte : atelier « Le Livre du montage »
+- [ ] Habillage livre commun (bureau, double page, titres courants, lettrines, notes en marge, folios, page qui tourne, version mobile) — `REFONTE.md` § 3.1. Le moteur de l'atelier ne change pas.
+- [ ] Frontispice et table des matières (`atelier/index.html`).
+- [ ] Planches gravées : restyler `assets/atelier-art.js` (traits, hachures, lettres et légende cliquable) et le bac.
+- [ ] Observations de pannes (examen en marge, diagnostic, rabat), évaluations et bilan imprimable, index final.
+
+## Lot 13 — Vérification finale et peaufinage
+À faire seulement quand les lots 8 à 12 sont cochés et fusionnés.
+- [ ] Audit automatique (Playwright + Chromium, script hors des pages publiées, par exemple `outils/verif.mjs`) sur **toutes** les pages : 390, 768, 1280 et 1440 px ; clair et sombre ; zéro erreur ou avertissement console ; zéro lien ou ancre mort ; zéro débordement horizontal ; captures enregistrées pour revue.
+- [ ] Accessibilité : contrastes AA mesurés, cibles ≥ 44 px, parcours complet au clavier (focus visible, tiroirs, recherche, dialogue, atelier), `aria-*` cohérents, `prefers-reduced-motion` respecté, titres hiérarchisés.
+- [ ] Fonctionnel : progression `it.*` (dont l'ancienne progression des lots 1 à 7, à migrer si les clés ont changé), quiz, minuteur, tampon, recherche (index complet), filtres, atlas, atelier (montages, pannes, évaluations, mode test) de bout en bout ; ouverture en local (`file://`) et via un serveur.
+- [ ] Impression : fiche mémo de chaque jour et bilan de l'atelier en A4.
+- [ ] Conformité : chaque point de `docs/REFONTE.md` est respecté ; les écarts sont corrigés ou justifiés en une ligne ici.
+- [ ] Peaufinage : tout ce qui améliore nettement la qualité (finitions, cohérence, micro-interactions sobres, états vides, page 404 pour GitHub Pages, favicon au logo tampon, métadonnées Open Graph), sans inventer de contenu ni ajouter de dépendance.
+- [ ] Ménage : plus de CSS ni de JS mort, `docs/composants.html` à jour, `CLAUDE.md` à jour.
+- [ ] Rapport final en tête de ce fichier : ce qui a été fait, captures clés, points « à vérifier sur place » restants, idées pour la suite.
+
 ## Ensuite
 Un module par lot, en commençant par les besoins du stage. Ajouter ici les nouveaux lots au fil de l'eau.
