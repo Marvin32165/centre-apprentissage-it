@@ -116,10 +116,8 @@ Reste : rien pour ce lot. Règles inchangées ; seul l'affichage a bougé : `ate
   Justifié : les folios « étape précédente / suivante » restent des titres non cliquables ; le moteur avance par la réussite des étapes.
   Justifié : la règle universelle `prefers-reduced-motion` utilise `!important` pour neutraliser toutes les animations et transitions.
   Justifié : les filtres « niveau » et « progression » ont été retirés conformément aux filtres par domaine prévus par la refonte.
-  Justifié : les polices distantes sont remplacées par des polices installées ou de repli afin de respecter la contrainte sans dépendance externe.
   Justifié : l’index de recherche est généré depuis les contenus plutôt qu’écrit à la main pour limiter les ancres périmées, sans fetch local.
 - [ ] 13.6 Peaufinage : page 404, favicon, métadonnées et états vides.
-  Fait partiellement : 404, favicon et métadonnées ajoutés ; validation finale à terminer. Justifié : retrait des polices Google, les polices de repli locales assurent le fonctionnement sans dépendance externe.
 - [ ] 13.7 Ménage : code mort, documentation, index et audit final.
 - [ ] 13.8 Rapport final, fusion et livraison.
 
