@@ -142,7 +142,8 @@ Reste : rien pour ce lot. Prochaine étape : un module par lot (voir « Ensuite 
 ## Lot 14 — Module « Matériel et PC »
 - [x] 14.1 Page `modules/materiel-pc.html` : identifier un poste, compatibilité, POST, mémoire, stockage, alimentation, refroidissement, connectique, diagnostic constructeur ; labo, mises en situation, fiche mémo, questions pour le tuteur.
   Fait : 9 sections sourcées (Microsoft Learn, JEDEC, PCI-SIG, USB-IF, VESA, constructeurs), labo « carte d'identité de ta machine », 4 cas, 6 questions pour le tuteur ; bips, LED et touches de diagnostic renvoyés au manuel du modèle (rien d'inventé).
-- [ ] 14.2 Données : entrée dans `assets/modules.js`, quiz `module-materiel-pc`, unité dans `data.js`, liens « à revoir » de l'atelier (`A.moduleRevoir`) vers les sections du module.
+- [x] 14.2 Données : entrée dans `assets/modules.js`, quiz `module-materiel-pc`, unité dans `data.js`, liens « à revoir » de l'atelier (`A.moduleRevoir`) vers les sections du module.
+  Fait : module niveau 1 (≈ 3 h 30) dans le domaine Matériel, désormais marqué « stage » (installation et intégration de PC) ; quiz de 6 questions ; chaque thème « à revoir » des montages et des pannes pointe vers sa section (`#compatibilite`, `#memoire`, `#stockage`, `#alimentation`, `#refroidissement`, `#connectique`, `#post`) ; la méthode reste sur « Support poste Windows ».
 - [ ] 14.3 Index de recherche, `npm run controles`, fusion dans `main`.
 
 ## Ensuite
