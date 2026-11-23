@@ -6,29 +6,10 @@
   if (!host || !A || !R || !Art) return;
 
   var params = new URLSearchParams(location.search);
-  var scId = params.get("s") || host.getAttribute("data-scenario") || "bureautique-intel";
-  var sc = A.scenarios[scId];
-  if (!sc) { host.textContent = "Scénario introuvable."; return; }
-  var disp = A.dispositions[sc.disposition];
   var P = A.pieces;
   var store = (window.IT && window.IT.store) || { get: function () { return null; }, set: function () {}, del: function () {} };
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var KEY = "atelier." + sc.id;
-
-  var st = R.nouvelEtat(sc);
-  st.indices = {}; st.aides = 0;
-  var hist = [];
-  var sel = null;                 /* { type: "tray", id } ou { type: "slot", id } */
-  var vue = "cote";
-  var onglet = "composant";
-  var msgTxt = "", msgNiv = "info";
-  var postTimer = null, confirmTimer = null, justDragged = false;
-
-  var VUES = [["cote", "Côté"], ["zoom", "Zoom carte"], ["face", "Face"], ["arriere", "Arrière"]];
-  var CATS = [["composant", "Composants"], ["accessoire", "Accessoires"], ["cable", "Câbles"]];
-  var ARR_FIL = { "mains": [20, 604], "mon-board": [6, 80], "mon-gpu": [6, 240] };
-
-  /* ---------- Utilitaires ---------- */
+  var EVAL = host.getAttribute("data-eval") === "1";
   function el(tag, attrs, text) {
     var n = document.createElement(tag);
     if (attrs) for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) n.setAttribute(k, attrs[k]);
@@ -36,24 +17,50 @@
     return n;
   }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+  /* Un montage = un scénario dans un mode (apprentissage ou test). L'évaluation enchaîne plusieurs montages. */
+  function demarrer(scId, ctx) {
+  ctx = ctx || {};
+  var sc = A.scenarios[scId];
+  if (!sc) { host.textContent = "Scénario introuvable."; return; }
+  var disp = A.dispositions[sc.disposition];
+  var TEST = ctx.mode === "test";
+  var KEY = "atelier." + sc.id + (ctx.cle ? "." + ctx.cle : (TEST ? ".test" : ""));
+
+  var st = R.nouvelEtat(sc, TEST ? "test" : "apprentissage");
+  st.indices = {}; st.aides = 0;
+  var hist = [];
+  var sel = null;                 /* { type: "tray", id } ou { type: "slot", id } */
+  var vue = "cote";
+  var onglet = "composant";
+  var msgTxt = "", msgNiv = "info";
+  var postTimer = null, confirmTimer = null, finTimer = null, justDragged = false, fini = false;
+
+  var VUES = [["cote", "Côté"], ["zoom", "Zoom carte"], ["face", "Face"], ["arriere", "Arrière"]];
+  var CATS = [["composant", "Composants"], ["accessoire", "Accessoires"], ["cable", "Câbles"]];
+  var ARR_FIL = { "mains": [20, 604], "mon-board": [6, 80], "mon-gpu": [6, 240] };
+
+  /* ---------- Utilitaires ---------- */
   function slotById(id) { return R.slotDef(sc, id); }
   function steps() { return R.etapes(sc, st); }
   function cur() { return R.etapeCourante(sc, st); }
 
   /* ---------- Sauvegarde ---------- */
   function save() {
-    store.set(KEY, JSON.stringify({ placed: st.placed, switchOn: st.switchOn, indices: st.indices, aides: st.aides, erreurs: st.erreurs }));
+    store.set(KEY, JSON.stringify({ placed: st.placed, switchOn: st.switchOn, indices: st.indices, aides: st.aides, erreurs: st.erreurs, errT: st.errT, echecs: st.echecs }));
   }
   function load() {
     var raw = store.get(KEY);
     if (!raw) return;
     try {
       var d = JSON.parse(raw), used = {};
+      st.placed = {};
       Object.keys(d.placed || {}).forEach(function (s) {
         var it = d.placed[s];
         if (slotById(s) && sc.inventaire.indexOf(it) >= 0 && !used[it]) { st.placed[s] = it; used[it] = 1; }
       });
       st.switchOn = !!d.switchOn; st.indices = d.indices || {}; st.aides = d.aides || 0; st.erreurs = d.erreurs || 0;
+      st.errT = d.errT || {}; st.echecs = d.echecs || [];
     } catch (e) { /* sauvegarde illisible : on repart de zéro */ }
   }
 
@@ -62,18 +69,30 @@
   host.insertAdjacentHTML("afterbegin", Art.DEFS);
 
   var head = el("header", { "class": "at-head" });
-  head.innerHTML = '<p class="kicker">Atelier hardware · Scénario 1</p><h1></h1><div class="at-badges"></div><div class="progress at-progress" aria-live="polite"></div>';
+  var num = /-s(\d+)$/.exec(sc.unite || "");
+  head.innerHTML = '<p class="kicker"></p><h1></h1><div class="at-badges"></div><div class="progress at-progress" aria-live="polite"></div><p class="at-modes"></p>';
+  head.querySelector(".kicker").textContent = "Atelier hardware" + (ctx.eval ? " · Évaluation finale, scénario " + (ctx.eval.i + 1) + " / " + ctx.eval.n : (num ? " · Scénario " + num[1] : ""));
   head.querySelector("h1").textContent = sc.titre;
   var badges = head.querySelector(".at-badges");
-  [["Apprentissage", "mode"], [sc.niveau, ""], [sc.duree, ""]].forEach(function (b) { badges.appendChild(el("span", { "class": "badge" + (b[1] ? " mode" : "") }, b[0])); });
+  [[TEST ? "Test noté" : "Apprentissage", "mode"], [sc.niveau, ""], [sc.duree, ""]].forEach(function (b) { badges.appendChild(el("span", { "class": "badge" + (b[1] ? " mode" : "") }, b[0])); });
+  if (!ctx.eval) {
+    var lm = el("a", { href: "montage.html?s=" + sc.id + (TEST ? "" : "&m=test") }, TEST ? "Passer en mode apprentissage (guidé)" : "Passer en mode test (sans aide, noté)");
+    head.querySelector(".at-modes").appendChild(lm);
+  }
   host.appendChild(head);
 
   var brief = el("details", { "class": "bloc at-brief", open: "" });
   brief.innerHTML = '<summary>Cahier des charges</summary><p class="at-client"></p><ul class="at-besoins"></ul><p class="at-materiel"></p>' +
-    '<aside class="callout source"><p>Les pièces sont des modèles génériques : leurs caractéristiques sont réalistes mais simplifiées. Référence pour les fiches de processeurs : Intel ARK (ark.intel.com) ; normes mémoire : JEDEC (DDR4, DDR5) ; exigences de Windows 11 : Microsoft Learn. Théorie : <a href="../stage/j9.html">jour 9 de la prépa</a> (matériel et PC).</p></aside>';
+    '<aside class="callout source"><p>Les pièces sont des modèles génériques : leurs caractéristiques sont réalistes mais simplifiées. Référence pour les fiches de processeurs : Intel ARK (ark.intel.com) et AMD ; normes mémoire : JEDEC (DDR4, DDR5) ; exigences de Windows 11 : Microsoft Learn. Théorie : <a href="../stage/j9.html">jour 9 de la prépa</a> (matériel et PC).</p></aside>';
   brief.querySelector(".at-client").textContent = sc.brief.client;
   sc.brief.besoin.forEach(function (b) { brief.querySelector(".at-besoins").appendChild(el("li", null, b)); });
   brief.querySelector(".at-materiel").textContent = sc.brief.materiel;
+  [["source", sc.brief.source], ["umons", sc.brief.umons]].forEach(function (x) {
+    if (!x[1]) return;
+    var a = el("aside", { "class": "callout " + x[0] });
+    a.appendChild(el("p", null, x[1]));
+    brief.appendChild(a);
+  });
   host.appendChild(brief);
 
   var layout = el("div", { "class": "at-layout" });
@@ -107,7 +126,9 @@
   var bSwitch = el("button", { type: "button", "class": "btn ghost", "aria-pressed": "false" }, "Interrupteur : O");
   var bPower = el("button", { type: "button", "class": "btn" }, "Allumer le PC");
   var bReset = el("button", { type: "button", "class": "btn ghost" }, "Recommencer");
-  [bUndo, bHint, bSwitch, bPower, bReset].forEach(function (b) { actions.appendChild(b); });
+  var bFin = el("button", { type: "button", "class": "btn" }, "Terminer le test");
+  bHint.hidden = TEST; bFin.hidden = !TEST;
+  [bUndo, bHint, bSwitch, bPower, bFin, bReset].forEach(function (b) { actions.appendChild(b); });
   main.appendChild(actions);
 
   var msgBox = el("p", { "class": "at-msg", role: "status", "aria-live": "polite" });
@@ -140,7 +161,7 @@
   }
   function guideSlots() {
     var i = cur(), out = {};
-    if (i >= sc.etapes.length) return out;
+    if (TEST || i >= sc.etapes.length) return out;
     var e = sc.etapes[i];
     if ((st.indices[e.id] || 0) > e.indices.length) (e.solution || []).forEach(function (p) { if (!st.placed[p[0]]) out[p[0]] = p[1]; });
     return out;
@@ -165,7 +186,7 @@
       var it = st.placed[s.id], p = it && P[it];
       var sx = s.x, sy = s.y;
       if (!p) {
-        if (sc.mode !== "test" && dispo(s) && !cand[s.id]) pass[0].push('<rect class="slot-vide' + (guide[s.id] ? " guide" : "") + '" x="' + sx + '" y="' + sy + '" width="' + s.w + '" height="' + s.h + '" rx="3"/>');
+        if (!TEST && dispo(s) && !cand[s.id]) pass[0].push('<rect class="slot-vide' + (guide[s.id] ? " guide" : "") + '" x="' + sx + '" y="' + sy + '" width="' + s.w + '" height="' + s.h + '" rx="3"/>');
         return;
       }
       var cls = "pose" + (sel && sel.type === "slot" && sel.id === s.id ? " sel" : "");
@@ -309,6 +330,7 @@
 
   /* ---------- Étapes ---------- */
   function renderEtape() {
+    if (TEST) { renderTest(); return; }
     var l = steps(), i = cur();
     secEtape.textContent = "";
     var done = l.filter(function (x) { return x.fait; }).length;
@@ -344,7 +366,21 @@
     secEtape.appendChild(d);
   }
 
+  function renderTest() {
+    secEtape.textContent = "";
+    secListe.hidden = true;
+    head.querySelector(".at-progress").textContent = "";
+    secEtape.appendChild(el("p", { "class": "kicker" }, "Test noté · sans aide"));
+    secEtape.appendChild(el("h2", null, "Monte le PC du cahier des charges"));
+    secEtape.appendChild(el("p", null, "Pas d'indices, pas d'ordre imposé, pas d'alerte : les erreurs se voient au démarrage. Allume le PC autant de fois que nécessaire, puis termine le test."));
+    var ul = el("ul", { "class": "at-bareme" });
+    ["Démarrage : 40 points (10 de moins par démarrage raté)", "Cahier des charges : 50 points, répartis sur les critères", "Gestes : 10 points (2 de moins par pose refusée)"].forEach(function (t) { ul.appendChild(el("li", null, t)); });
+    secEtape.appendChild(ul);
+    secEtape.appendChild(el("p", { "class": "muted at-compteurs" }, "Démarrages ratés : " + st.echecs.length + " · Poses refusées : " + st.erreurs));
+  }
+
   function renderListe() {
+    if (TEST) return;
     var l = steps(), i = cur();
     secListe.textContent = "";
     secListe.appendChild(el("h2", null, "Toutes les étapes"));
@@ -372,6 +408,7 @@
   }
 
   function indice() {
+    if (TEST || fini) return;
     var i = cur(); if (i >= sc.etapes.length) return;
     var e = sc.etapes[i], n = (st.indices[e.id] || 0);
     if (n <= e.indices.length) st.indices[e.id] = n + 1;
@@ -379,8 +416,10 @@
     msg(n < e.indices.length ? "Indice : " + e.indices[n] : "Les pièces et les emplacements de l'étape sont surlignés.", "info");
   }
   function montre() {
+    if (TEST || fini) return;
     var i = cur(); if (i >= sc.etapes.length) return;
     var e = sc.etapes[i], noms = [];
+    (e.retire || []).forEach(function (r) { if (st.placed[r[0]] === r[1]) R.retirerTout(sc, st, r[0]); });
     (e.solution || []).forEach(function (pr) {
       if (st.placed[pr[0]]) return;
       var r = R.place(sc, st, pr[1], pr[0]);
@@ -399,9 +438,11 @@
     st.post = null;
     secPost.hidden = true;
     if (postTimer) { clearTimeout(postTimer); postTimer = null; }
+    bPower.disabled = false;
     save();
   }
   function tryPlace(itemId, slotId) {
+    if (fini) return;
     var avant = cur();
     var r = R.place(sc, st, itemId, slotId);
     var p = P[itemId];
@@ -414,6 +455,7 @@
     sel = null;
     changed();
     var apres = cur(), txt;
+    if (TEST) { msg("« " + p.nom + " » posé.", "ok"); renderAll(); return; }
     if (r.niveau === "attention" && r.msg) txt = "Posé, mais attention : " + r.msg;
     else txt = "« " + p.nom + " » posé. " + (p.pose || "");
     if (apres > avant && apres < sc.etapes.length) txt += " Étape terminée ✓. Suite : " + sc.etapes[apres].titre + ".";
@@ -422,6 +464,7 @@
     renderAll();
   }
   function retirer(slotId) {
+    if (fini) return;
     var it = st.placed[slotId];
     var r = R.remove(sc, st, slotId);
     if (!r.ok) { msg(r.msg, "bloque"); renderAll(); return; }
@@ -431,6 +474,7 @@
     renderAll();
   }
   function annuler() {
+    if (fini) return;
     var h = hist.pop();
     if (!h) { msg("Rien à annuler.", "info"); return; }
     if (h.op === "place") delete st.placed[h.slot];
@@ -441,6 +485,7 @@
     renderAll();
   }
   function basculer() {
+    if (fini) return;
     hist.push({ op: "switch", val: st.switchOn });
     st.switchOn = !st.switchOn;
     changed();
@@ -455,7 +500,7 @@
     }
     clearTimeout(confirmTimer);
     bReset.removeAttribute("data-confirm"); bReset.textContent = "Recommencer";
-    st = R.nouvelEtat(sc); st.indices = {}; st.aides = 0; hist = []; sel = null; vue = "cote";
+    st = R.nouvelEtat(sc, TEST ? "test" : "apprentissage"); st.indices = {}; st.aides = 0; hist = []; sel = null; vue = "cote";
     store.del(KEY); secPost.hidden = true;
     msg("Montage remis à zéro. Les pièces sont toutes dans le bac.", "info");
     renderAll();
@@ -520,8 +565,10 @@
 
   /* ---------- Démarrage simulé ---------- */
   function allumer() {
+    if (fini) return;
     var res = R.simulerPOST(sc, st);
     st.post = res;
+    if (TEST && res.code !== "ok") { st.echecs.push({ theme: res.theme || null, titre: res.titre }); save(); }
     if (postTimer) clearTimeout(postTimer);
     bPower.disabled = true;
     secPost.hidden = false;
@@ -549,6 +596,12 @@
     }
     secPost.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "nearest" });
     msg("Démarrage en cours…", "info");
+    if (TEST) {
+      /* Test : pas de journal détaillé, seulement ce qu'on observerait devant la machine. */
+      ecran.appendChild(el("div", { "class": "ligne" }, "Mise sous tension…"));
+      postTimer = setTimeout(function () { resultatPost(res, ecran, rest); bPower.disabled = false; renderAll(); }, reduced ? 0 : 700);
+      return;
+    }
     suite();
   }
 
@@ -560,13 +613,14 @@
       res.uefi.forEach(function (r) { u.appendChild(el("p", null, r[0] + " : " + r[1])); });
       ecran.appendChild(u);
     }
-    rest.appendChild(el("h3", { "class": "at-verdict " + (bon ? "bon" : (res.code === "avert" ? "att" : "faux")) }, res.titre));
+    if (TEST && !bon) ecran.appendChild(el("div", { "class": "ligne ko" }, res.ecran));
+    rest.appendChild(el("h3", { "class": "at-verdict " + (bon ? "bon" : (res.code === "avert" ? "att" : "faux")) }, TEST && !bon ? "Le démarrage n'est pas correct" : res.titre));
     var dl = el("dl", { "class": "at-sympt" });
     [["Ventilateurs", res.ventilos], ["Écran", res.ecran], ["LED", res.leds]].concat(res.bips ? [["Bips", res.bips]] : []).forEach(function (r) {
       dl.appendChild(el("dt", null, r[0])); dl.appendChild(el("dd", null, r[1]));
     });
     rest.appendChild(dl);
-    if (res.explication.length || (res.correction && res.correction.length)) {
+    if (!TEST && (res.explication.length || (res.correction && res.correction.length))) {
       var d = el("details", { "class": "correction" });
       d.appendChild(el("summary", null, bon ? "Voir l'explication" : "Voir l'explication et la correction"));
       res.explication.forEach(function (t) { d.appendChild(el("p", null, t)); });
@@ -578,7 +632,7 @@
       }
       rest.appendChild(d);
     }
-    if (res.remarques && res.remarques.length) {
+    if (!TEST && res.remarques && res.remarques.length) {
       rest.appendChild(el("p", { "class": "at-label" }, "Remarques"));
       var ur = el("ul");
       res.remarques.forEach(function (t) { ur.appendChild(el("li", null, t)); });
@@ -586,7 +640,10 @@
     }
     var m = bon ? "Démarrage réussi." : res.titre + ". Ouvre l'explication, corrige puis rallume.";
     var niv = bon ? "ok" : "bloque";
-    if (bon) {
+    if (TEST) {
+      m = bon ? "Le PC démarre. Vérifie chaque ligne du cahier des charges, puis termine le test." : "Le démarrage a échoué : observe les symptômes, diagnostique, corrige puis rallume.";
+      niv = bon ? "ok" : "bloque";
+    } else if (bon) {
       var b = R.bilan(sc, st);
       rest.appendChild(el("p", { "class": "at-label" }, "Bilan par rapport au cahier des charges"));
       var ulb = el("ul", { "class": "at-bilan" });
@@ -634,7 +691,225 @@
     tabsVue.children[(i + k + VUES.length) % VUES.length].focus();
   });
 
+  /* ---------- Fin du test : note et rapport ---------- */
+  function terminer() {
+    if (fini) return;
+    if (bFin.getAttribute("data-confirm") !== "1") {
+      bFin.setAttribute("data-confirm", "1"); bFin.textContent = "Confirmer : terminer ?";
+      finTimer = setTimeout(function () { bFin.removeAttribute("data-confirm"); bFin.textContent = "Terminer le test"; }, 3500);
+      return;
+    }
+    clearTimeout(finTimer);
+    var post = R.simulerPOST(sc, st), n = R.noter(sc, st, post);
+    var seuil = A.evaluation.seuil || 75;
+    var rec = {
+      id: sc.id, titre: sc.titre, total: n.total, demarrage: n.demarrage, cahier: n.cahier, gestes: n.gestes, seuil: seuil,
+      post: { code: post.code, titre: post.titre, explication: post.explication, correction: post.correction },
+      items: n.bilan.items.map(function (x) { return { label: x.label, ok: x.ok, detail: x.detail }; }),
+      revoir: R.pointsARevoir(sc, st, post, n.bilan), echecs: st.echecs.length, erreurs: st.erreurs
+    };
+    fini = true;
+    if (postTimer) clearTimeout(postTimer);
+    store.del(KEY);
+    if (ctx.eval) {
+      var ev = evalLire() || { i: 0, res: [], demarre: true };
+      ev.res[ctx.eval.i] = rec; ev.i = Math.max(ev.i, ctx.eval.i + 1);
+      evalEcrire(ev);
+    } else {
+      var best = parseInt(store.get("score." + sc.id), 10);
+      if (isNaN(best) || n.total > best) store.set("score." + sc.id, String(n.total));
+      if (n.total >= seuil) store.set("done." + sc.unite, "1");
+    }
+    [layout, actions, msgBox, secPost, brief].forEach(function (x) { x.hidden = true; });
+    var rapport = el("section", { "class": "at-rapport", "aria-label": "Rapport du test" });
+    rapport.appendChild(rapportScenario(rec));
+    var act = el("div", { "class": "at-etape-actions" });
+    if (ctx.eval) {
+      var suivant = el("button", { type: "button", "class": "btn" }, ctx.eval.i + 1 < ctx.eval.n ? "Scénario suivant →" : "Voir le rapport final");
+      suivant.addEventListener("click", function () { lancerEval(); });
+      act.appendChild(suivant);
+    } else {
+      var again = el("button", { type: "button", "class": "btn" }, "Refaire le test");
+      again.addEventListener("click", function () { demarrer(scId, ctx); });
+      act.appendChild(again);
+      act.appendChild(el("a", { "class": "btn ghost", href: "montage.html?s=" + sc.id }, "Mode apprentissage"));
+      act.appendChild(el("a", { "class": "btn ghost", href: "index.html" }, "Retour à l'atelier"));
+    }
+    rapport.appendChild(act);
+    head.after(rapport);
+    rapport.setAttribute("tabindex", "-1");
+    rapport.focus({ preventScroll: true });
+    window.scrollTo(0, 0);
+  }
+  bFin.addEventListener("click", terminer);
+
   load();
-  msg("Bienvenue ! Lis le cahier des charges, puis suis les étapes : touche une pièce du bac, puis son emplacement.", "info");
+  msg(TEST ? "Test noté : lis le cahier des charges, monte le PC sans aide, allume-le pour vérifier, puis termine le test." : "Bienvenue ! Lis le cahier des charges, puis suis les étapes : touche une pièce du bac, puis son emplacement.", "info");
   renderAll();
+  }   /* fin de demarrer */
+
+  /* ---------- Rapport d'un scénario noté ---------- */
+  function rapportScenario(rec) {
+    var box = el("div", { "class": "at-rap" });
+    var ok = rec.total >= rec.seuil;
+    box.appendChild(el("p", { "class": "kicker" }, "Rapport · " + rec.titre));
+    var top = el("div", { "class": "at-score" });
+    top.appendChild(el("span", { "class": "n" }, String(rec.total)));
+    top.appendChild(el("span", { "class": "sur" }, "/ 100"));
+    top.appendChild(el("span", { "class": "verdict " + (ok ? "bon" : "faux") }, ok ? "Réussi" : "À retravailler (seuil : " + rec.seuil + ")"));
+    box.appendChild(top);
+    var dl = el("dl", { "class": "at-sympt" });
+    [["Démarrage", rec.demarrage + " / 40" + (rec.echecs ? " (" + rec.echecs + " démarrage(s) raté(s))" : "")], ["Cahier des charges", rec.cahier + " / 50"], ["Gestes", rec.gestes + " / 10" + (rec.erreurs ? " (" + rec.erreurs + " pose(s) refusée(s))" : "")]].forEach(function (r) {
+      dl.appendChild(el("dt", null, r[0])); dl.appendChild(el("dd", null, r[1]));
+    });
+    box.appendChild(dl);
+    box.appendChild(el("h3", null, "Cahier des charges"));
+    var ul = el("ul", { "class": "at-bilan" });
+    rec.items.forEach(function (x) {
+      var li = el("li", { "class": x.ok ? "ok" : "ko" });
+      li.appendChild(el("span", { "aria-hidden": "true" }, x.ok ? "✓ " : "✗ "));
+      li.appendChild(document.createTextNode(x.label + " — " + x.detail));
+      ul.appendChild(li);
+    });
+    box.appendChild(ul);
+    box.appendChild(el("h3", null, "Démarrage du PC dans son état final"));
+    box.appendChild(el("p", { "class": "at-verdict " + (rec.post.code === "ok" ? "bon" : (rec.post.code === "avert" ? "att" : "faux")) }, rec.post.titre));
+    if (rec.post.code !== "ok" && (rec.post.explication.length || (rec.post.correction || []).length)) {
+      var d = el("details", { "class": "correction" });
+      d.appendChild(el("summary", null, "Voir l'explication et la correction"));
+      rec.post.explication.forEach(function (t) { d.appendChild(el("p", null, t)); });
+      if ((rec.post.correction || []).length) {
+        d.appendChild(el("p", { "class": "at-label" }, "Pour corriger :"));
+        var uc = el("ul");
+        rec.post.correction.forEach(function (t) { uc.appendChild(el("li", null, t)); });
+        d.appendChild(uc);
+      }
+      box.appendChild(d);
+    }
+    box.appendChild(blocRevoir(rec.revoir, null));
+    return box;
+  }
+
+  /* Points à revoir : un conseil et un lien par thème. */
+  function blocRevoir(liste, prefixes) {
+    var box = el("div", { "class": "at-revoir" });
+    box.appendChild(el("h3", null, "Points à revoir"));
+    if (!liste.length) { box.appendChild(el("p", null, "Rien à signaler : tous les critères sont atteints et aucune pose n'a été refusée.")); return box; }
+    liste.forEach(function (x) {
+      var th = A.revoir[x.theme] || A.revoir.choix;
+      var c = el("div", { "class": "at-revoir-item" });
+      c.appendChild(el("h4", null, th.titre));
+      var ul = el("ul");
+      x.raisons.forEach(function (r) { ul.appendChild(el("li", null, r)); });
+      c.appendChild(ul);
+      c.appendChild(el("p", null, th.conseil));
+      var p = el("p", { "class": "at-lien" });
+      p.appendChild(el("a", { href: th.lien }, th.libelle));
+      p.appendChild(document.createTextNode(" · "));
+      p.appendChild(el("a", { href: "../modules/index.html" }, "Modules (en préparation)"));
+      c.appendChild(p);
+      box.appendChild(c);
+    });
+    return box;
+  }
+
+  /* ---------- Évaluation finale ---------- */
+  var EV_KEY = "atelier.eval";
+  function evalLire() {
+    try { var o = JSON.parse(store.get(EV_KEY) || "null"); return o && typeof o === "object" ? o : null; } catch (e) { return null; }
+  }
+  function evalEcrire(ev) { store.set(EV_KEY, JSON.stringify(ev)); }
+  function evalEffacer() {
+    store.del(EV_KEY);
+    A.evaluation.scenarios.forEach(function (id) { store.del("atelier." + id + ".eval"); });
+  }
+  function entete(titre, kicker) {
+    host.textContent = "";
+    var h = el("header", { "class": "at-head" });
+    h.appendChild(el("p", { "class": "kicker" }, kicker));
+    h.appendChild(el("h1", null, titre));
+    host.appendChild(h);
+    window.scrollTo(0, 0);
+    return h;
+  }
+  function lancerEval() {
+    var ev = evalLire(), n = A.evaluation.scenarios.length;
+    if (!ev || !ev.demarre) { introEval(); return; }
+    if (ev.i >= n) { rapportFinal(ev); return; }
+    demarrer(A.evaluation.scenarios[ev.i], { mode: "test", cle: "eval", eval: { i: ev.i, n: n } });
+  }
+  function introEval() {
+    var E = A.evaluation;
+    entete(E.titre, "Atelier hardware · Évaluation");
+    var b = el("div", { "class": "prose" });
+    b.appendChild(el("p", { "class": "lead" }, "Quatre montages enchaînés, sans aide et notés. À la fin : un rapport avec ce qu'il faut revoir, et où le réviser."));
+    var ol = el("ol");
+    E.scenarios.forEach(function (id) {
+      var sc = A.scenarios[id];
+      ol.appendChild(el("li", null, sc.titre + " — " + sc.niveau + ", " + sc.duree + " en apprentissage"));
+    });
+    b.appendChild(ol);
+    var c = el("div", { "class": "callout retenir" });
+    c.appendChild(el("p", null, "Chaque scénario est noté sur 100 : démarrage 40, cahier des charges 50, gestes 10. Il n'y a pas d'indices, pas d'ordre imposé et aucune alerte. Seuil de réussite : " + E.seuil + " de moyenne. Ta progression est enregistrée dans ce navigateur : tu peux fermer la page et reprendre."));
+    b.appendChild(c);
+    var c2 = el("div", { "class": "callout astuce" });
+    c2.appendChild(el("p", null, "Conseil : fais d'abord les scénarios en mode apprentissage (page de l'atelier). Les mêmes montages sont ici sans filet."));
+    b.appendChild(c2);
+    var act = el("div", { "class": "at-etape-actions" });
+    var go = el("button", { type: "button", "class": "btn" }, "Commencer");
+    go.addEventListener("click", function () { evalEffacer(); evalEcrire({ i: 0, res: [], demarre: true }); lancerEval(); });
+    act.appendChild(go);
+    act.appendChild(el("a", { "class": "btn ghost", href: "index.html" }, "Retour à l'atelier"));
+    b.appendChild(act);
+    host.appendChild(b);
+  }
+  function rapportFinal(ev) {
+    var E = A.evaluation, n = E.scenarios.length;
+    var rec = ev.res.filter(Boolean);
+    var moy = Math.round(rec.reduce(function (a, r) { return a + r.total; }, 0) / (rec.length || 1));
+    var ok = moy >= E.seuil;
+    var best = parseInt(store.get("score." + E.id), 10);
+    if (isNaN(best) || moy > best) store.set("score." + E.id, String(moy));
+    if (ok) store.set("done." + E.unite, "1");
+    entete("Rapport de l'évaluation finale", "Atelier hardware · Évaluation");
+    var box = el("div", { "class": "at-rap" });
+    var top = el("div", { "class": "at-score" });
+    top.appendChild(el("span", { "class": "n" }, String(moy)));
+    top.appendChild(el("span", { "class": "sur" }, "/ 100 de moyenne"));
+    top.appendChild(el("span", { "class": "verdict " + (ok ? "bon" : "faux") }, ok ? "Réussi" : "À retravailler (seuil : " + E.seuil + ")"));
+    box.appendChild(top);
+    var table = el("table", { "class": "at-table" });
+    table.innerHTML = "<thead><tr><th>Scénario</th><th>Note</th><th>Démarrage</th><th>Cahier</th><th>Gestes</th></tr></thead>";
+    var tb = el("tbody");
+    rec.forEach(function (r) {
+      var tr = el("tr");
+      [r.titre, r.total + " / 100", r.demarrage + " / 40", r.cahier + " / 50", r.gestes + " / 10"].forEach(function (t) { tr.appendChild(el("td", null, t)); });
+      tb.appendChild(tr);
+    });
+    table.appendChild(tb);
+    box.appendChild(table);
+    /* Points à revoir fusionnés par thème, avec le scénario d'origine. */
+    var par = {}, ordre = [];
+    rec.forEach(function (r) {
+      r.revoir.forEach(function (x) {
+        if (!par[x.theme]) { par[x.theme] = []; ordre.push(x.theme); }
+        x.raisons.forEach(function (t) { par[x.theme].push(r.titre + " : " + t); });
+      });
+    });
+    box.appendChild(blocRevoir(ordre.map(function (t) { return { theme: t, raisons: par[t] }; }), null));
+    var det = el("details", { "class": "correction" });
+    det.appendChild(el("summary", null, "Détail de chaque scénario"));
+    rec.forEach(function (r) { det.appendChild(rapportScenario(r)); });
+    box.appendChild(det);
+    var act = el("div", { "class": "at-etape-actions" });
+    var again = el("button", { type: "button", "class": "btn" }, "Recommencer l'évaluation");
+    again.addEventListener("click", function () { evalEffacer(); evalEcrire({ i: 0, res: [], demarre: true }); lancerEval(); });
+    act.appendChild(again);
+    act.appendChild(el("a", { "class": "btn ghost", href: "index.html" }, "Retour à l'atelier"));
+    box.appendChild(act);
+    host.appendChild(box);
+  }
+
+  if (EVAL) lancerEval();
+  else demarrer(params.get("s") || host.getAttribute("data-scenario") || "bureautique-intel", { mode: params.get("m") === "test" ? "test" : "apprentissage" });
 })();
