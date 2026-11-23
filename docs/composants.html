@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <script src="../assets/data.js" defer></script>
 <script>
@@ -78,6 +78,22 @@ ping 127.0.0.1</code></pre>
 <p>La fiche est générée à partir du contenu du jour et imprimée en A4 ; le jour 10 n'en possède pas. <a href="../stage/j1.html#memo">Voir la fiche du jour 1</a>.</p>
 <h3>Le Livre du montage</h3>
 <p>Les pages de l'atelier réunissent cahier des charges, planche, légende, bac et notes en marge. <a href="../atelier/index.html">Voir le livre de l'atelier</a>.</p>
+
+<h2 id="jour">6. Pages de jour (construits par <code>assets/jour.js</code>)</h2>
+<p>Ces blocs ne s'écrivent pas à la main : <code>jour.js</code> les construit à partir du HTML des jours (plan horaire, tableau impact × urgence, <code>h3</code> de « Mises en situation », section <code>#memo</code>, case <code>data-done</code>). Rendu statique pour référence :</p>
+<article class="ticket-cas"><header class="cas-tete"><span class="cas-id">CAS-01</span><span class="cas-jour">Jour 1</span><span class="cas-statut">À trier</span></header>
+<div class="cas-corps"><h3>Titre de la mise en situation</h3><p>Énoncé du cas.</p>
+<details class="correction"><summary>J'ai répondu : voir la résolution</summary><p class="cas-resolution">Résolution</p><p>Correction cachée.</p></details></div></article>
+<section class="cloture faite" aria-label="Clôture du jour (exemple)"><div class="cloture-txt"><p class="cloture-q">Jour 1 résolu le 23.11.2026.</p></div><div class="tampon" aria-hidden="true"><span class="tampon-mot">RÉSOLU</span><span class="tampon-date">Jour 1 · 23.11.2026</span></div><button type="button" class="btn ghost">Rouvrir le jour 1</button></section>
+<p>Autres pièces de <code>jour.js</code> : minuteur <code>.seance</code> (état <code>it.seance.jN</code>, pastille <code>.seance-pastille</code> sur mobile), matrice <code>.matrice</code>, tiroirs <code>.tiroir</code>, fiche A4 <code>.fiche-print</code> (visible seulement à l'impression).</p>
+
+<h2 id="livre">7. Le Livre du montage (atelier)</h2>
+<p>Pages claires même en thème sombre ; polices IM Fell. Les notes en marge remplacent les encadrés.</p>
+<div class="livre-double" style="grid-template-columns:minmax(0,1fr)"><section class="livre-page gauche" aria-label="Exemple de page">
+<p class="titre-courant"><span>Chap. I — Exemple</span><span>Étape 1 sur 15</span></p>
+<div class="livre-corps"><h2>Titre d'étape</h2><p class="texte at-client">Texte justifié avec lettrine, comme le premier paragraphe d'une étape ou du cahier des charges.</p><p class="ornement" aria-hidden="true">✣</p>
+<p class="note-marge"><span class="note-tit">Indice 1</span>Une note en marge, filet rouille ; vert si juste, rouge si erreur.</p></div>
+<div class="folio-ligne"><span class="voisin">‹ étape précédente</span><span class="folio">3</span></div></section></div>
 </div></main>
 </body>
 </html>

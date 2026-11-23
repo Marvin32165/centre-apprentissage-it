@@ -1,5 +1,14 @@
 # Plan de travail
 
+## Rapport final de la refonte (lots 8 à 13)
+**Fait.** Socle « Poste de garde » en une seule feuille de style (jetons, typographie, encadrés à trois niveaux, en-tête sombre au logo tampon) ; accueil en tableau de mission (jour du jour, reprise, ticket-décompte, frise) ; recherche rapide (`/`, Ctrl+K, 221 entrées) ; pages de jour en trois colonnes avec tiroirs, minuteur, matrice, tickets, tampon RÉSOLU et fiche mémo A4 ; modules (parcours, puces, jauges) et atlas des thèmes ; atelier « Le Livre du montage » (double page, notes en marge, planches gravées, observations, table des matières et index) ; 404, favicon, Open Graph. Contrôles : `npm run controles` = 28 pages × 4 largeurs × 2 thèmes, serveur et `file://`, 0 problème, plus clavier, contrastes AA, parcours et impression.
+
+**Captures clés.** [Accueil](captures/accueil-clair.jpg) · [Accueil mobile sombre](captures/accueil-mobile-sombre.jpg) · [Jour 1](captures/jour-1.jpg) · [Jour 1 mobile](captures/jour-1-mobile.jpg) · [Modules](captures/modules.jpg) · [Atelier](captures/atelier.jpg).
+
+**À vérifier sur place (UMONS).** 66 questions pour le tuteur : 48 dans la prépa (encadré ambre en fin de chaque jour J1 à J9, imprimé sur la fiche mémo, rappel au J10) et 18 dans les modules ; s’y ajoutent les étiquettes « À l’UMONS » en ligne (canaux et horaires du service desk, matrice de priorité et SLA Jira, équipes d’escalade, procédures de sécurité, vérification d’identité, outils de prise en main à distance, déploiement et inventaire).
+
+**Idées pour la suite.** Module « Matériel et PC » (l’atelier y renvoie encore vers le support Windows) ; modules Microsoft 365 et dépannage à distance ; export/import de la progression `it.*` (fichier) pour changer d’appareil ; mode révision express (fiches mémo seules) pour la semaine du stage ; après le 7/12, un journal de stage privé hors de ce dépôt public.
+
 Un lot = une session d'agent (Claude Code ou ChatGPT / Codex, nouvelle conversation). Règles communes : `AGENTS.md`. Lancer avec :
 `Lis AGENTS.md et docs/PLAN.md, puis fais le lot N.`
 Si un lot est coupé par la limite d'utilisation : `Lis AGENTS.md et docs/PLAN.md, et reprends le lot N à la première sous-étape non cochée (branche lot-N).`
@@ -106,20 +115,29 @@ Reste : rien pour ce lot. Règles inchangées ; seul l'affichage a bougé : `ate
 ## Lot 13 — Vérification finale et peaufinage
 - [x] 13.1 Audit complet : serveur et file://, quatre largeurs, deux thèmes, corrections et captures.
   Fait : audit GitHub Actions, 27 pages × 4 largeurs × 2 thèmes sur serveur et en file://, zéro problème et avertissement ; six captures conservées.
-- [ ] 13.2 Accessibilité : contrastes, clavier, ARIA, titres et mouvement réduit.
+- [x] 13.2 Accessibilité : contrastes, clavier, ARIA, titres et mouvement réduit.
+  Fait : `npm run accessibilite` (focus visible, tiroirs et retour du focus, recherche au clavier, mouvement réduit, commandes de l’atelier, références ARIA de toutes les pages) et `npm run contrastes` (0 couple sous AA), clair et sombre.
   Fait partiellement : contrastes des textes visibles au chargement contrôlés, bouton de l’atelier corrigé ; recherche, tiroirs et premiers parcours clavier vérifiés ; compléter ARIA et atelier avant de cocher.
-- [ ] 13.3 Fonctionnel : progression, quiz, minuteur, recherche, modules et atelier, serveur et file://.
+- [x] 13.3 Fonctionnel : progression, quiz, minuteur, recherche, modules et atelier, serveur et file://.
+  Fait : `npm run parcours` en serveur et en file:// (progression et tampon, minuteur et reprise, quiz, chaque destination de la recherche, filtres, atlas, montage guidé, mode test, dossier de panne, deux évaluations) : 0 échec ; test du tampon rendu robuste au rechargement.
   Fait partiellement : progression, quiz, minuteur, filtres, atlas et montage guidé testés dans les deux modes ; compléter la recherche, le mode test et les évaluations.
-- [ ] 13.4 Impression : fiches mémo J1 à J9 et bilan de l’atelier en A4 ; justification pour J10.
+- [x] 13.4 Impression : fiches mémo J1 à J9 et bilan de l’atelier en A4 ; justification pour J10.
+  Fait : J1 à J9 sur une page A4 chacun, bilans des deux évaluations en A4 (contrôlés par `npm run parcours`).
   Fait partiellement : J1 à J9 tiennent chacun sur une page A4 dans les deux modes. Justifié : J10 est une révision et ne contient pas de section fiche mémo.
-- [ ] 13.5 Conformité : contrôle de chaque point de la refonte et justification des écarts.
+- [x] 13.5 Conformité : contrôle de chaque point de la refonte et justification des écarts.
+  Fait : relecture de REFONTE.md ; ajout de l’anneau SVG de progression sur les cartes de l’accueil (§ 1, Progression). Justifié aussi : l’atelier garde le site en clair/sombre autour du livre (seul le bureau fonce).
   Justifié : les folios « étape précédente / suivante » restent des titres non cliquables ; le moteur avance par la réussite des étapes.
   Justifié : la règle universelle `prefers-reduced-motion` utilise `!important` pour neutraliser toutes les animations et transitions.
   Justifié : les filtres « niveau » et « progression » ont été retirés conformément aux filtres par domaine prévus par la refonte.
   Justifié : l’index de recherche est généré depuis les contenus plutôt qu’écrit à la main pour limiter les ancres périmées, sans fetch local.
-- [ ] 13.6 Peaufinage : page 404, favicon, métadonnées et états vides.
-- [ ] 13.7 Ménage : code mort, documentation, index et audit final.
-- [ ] 13.8 Rapport final, fusion et livraison.
+- [x] 13.6 Peaufinage : page 404, favicon, métadonnées et états vides.
+  Fait : 404.html (avec polices), favicon `assets/favicon.svg`, Open Graph sur toutes les pages. Annulé : le retrait des polices Google (contraire à la DA) et la règle CSS qui transformait tous les liens en boîtes de 44 px (cartes centrées, mots coupés) ; l’audit exempte de nouveau les liens dans une phrase (WCAG 2.5.8).
+- [x] 13.7 Ménage : code mort, documentation, index et audit final.
+  Fait : CSS mort retiré (`.grid.cols-3`), `docs/composants.html` complété (tickets, tampon, livre), règles communes déplacées dans `AGENTS.md` (Claude Code et ChatGPT), `package.json` des outils (`npm run controles`), scripts renommés sans « lot-13 », workflow `audit.yml` sur toutes les branches `lot-*`, index régénéré, captures refaites.
+- [x] 13.8 Rapport final, fusion et livraison.
+  Fait : rapport en tête de ce fichier, fusion dans `main`.
+
+Reste : rien pour ce lot. Prochaine étape : un module par lot (voir « Ensuite »).
 
 ## Ensuite
 Un module par lot, en commençant par les besoins du stage. Ajouter ici les nouveaux lots au fil de l'eau.

@@ -14,6 +14,7 @@
   --font-text: "Newsreader", Georgia, "Times New Roman", serif;
   --font-ui: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-code: "IBM Plex Mono", Consolas, "Courier New", monospace;
+  --fell: "IM Fell English", Georgia, "Times New Roman", serif; --fell-sc: "IM Fell English SC", "IM Fell English", Georgia, serif; --gravure: #E3B49A;
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
   --r-s: 4px; --r-m: 6px; --r-l: 10px;
   --shadow-float: 0 18px 48px -16px rgba(27, 23, 19, 0.55);
@@ -53,7 +54,6 @@ body {
 main { flex: 1; }
 img, svg { max-width: 100%; height: auto; }
 a { color: var(--accent); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
-@media screen { :where(a[href]) { display: inline-flex; align-items: center; min-width: 44px; min-height: 44px; max-width: 100%; overflow-wrap: anywhere; } }
 a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: var(--r-s); }
 ::selection { background: var(--accent-soft); color: var(--ink); }
@@ -92,8 +92,7 @@ kbd { padding: 0.08em 0.42em; background: var(--surface); border: 1px solid var(
 .page { padding-top: var(--s6); padding-bottom: var(--s8); }
 @media (min-width: 52rem) { .page { padding-top: var(--s7); } }
 .grid { display: grid; gap: var(--s4); grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 40rem) { .grid.cols-2, .grid.cols-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 62rem) { .grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 40rem) { .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* ---------- En-tête ---------- */
 .site-header { position: sticky; top: 0; z-index: 50; background: var(--bar); color: var(--bar-ink); border-bottom: 3px solid var(--bar-accent); font-family: var(--font-ui); }
@@ -324,8 +323,14 @@ a.case:hover { border-color: var(--accent); }
 .case.stage .case-date, .case.stage .case-sujet { color: var(--bar-soft); }
 .rubriques { display: grid; gap: var(--s4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
 .rub { min-height: 13rem; gap: 10px; }
-.rub-tete { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.rub-tete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s2) var(--s3); }
+.rub-tete .kicker, .rub-tete .label { white-space: nowrap; }
 .rub-tete .kicker, .rub-tete .label { margin: 0; }
+.rub-tete .kicker { margin-right: auto; }
+.anneau { width: 28px; height: 28px; flex: none; }
+.anneau-fond, .anneau-val { fill: none; stroke-width: 3.2; }
+.anneau-fond { stroke: var(--line); }
+.anneau-val { stroke: var(--green); }
 .card.livre { background-color: var(--paper); background-image: repeating-linear-gradient(0deg, transparent 0 27px, color-mix(in srgb, var(--line) 55%, transparent) 27px 28px); }
 .trois { list-style: none; margin: 0 0 var(--s5); padding: 0; display: grid; gap: var(--s6); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
 .trois li { margin: 0; }
@@ -718,8 +723,7 @@ body.at-dragging { cursor: grabbing; }
 
 
 /* ---------- Atelier : « Le Livre du montage » (REFONTE.md § 3) ---------- */
-body.livre { --fell: "IM Fell English", Georgia, "Times New Roman", serif; --fell-sc: "IM Fell English SC", "IM Fell English", Georgia, serif; --gravure: #E3B49A;
-  background: radial-gradient(ellipse 80% 60% at 50% 30%, #3B2A1E, #1E150F) fixed; }
+body.livre { background: radial-gradient(ellipse 80% 60% at 50% 30%, #3B2A1E, #1E150F) fixed; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body.livre { background: radial-gradient(ellipse 80% 60% at 50% 30%, #2A1D14, #0E0907) fixed; } }
 :root[data-theme="dark"] body.livre { background: radial-gradient(ellipse 80% 60% at 50% 30%, #2A1D14, #0E0907) fixed; }
 body.livre main { --ink: #EDE6DA; --ink-soft: #D3C7B6; --ink-pale: #BBAF9F; --accent: #E3916A; --accent-soft: rgba(227, 145, 106, 0.16); --on-accent: #1B1713; --line: rgba(237, 230, 218, 0.22); --surface: rgba(237, 230, 218, 0.06); --green: #94B98C; --red: #E88D79; --amber: #D9AE66; color: var(--ink); }
