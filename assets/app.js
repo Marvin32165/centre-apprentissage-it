@@ -92,6 +92,16 @@
     });
   }
 
+  /* Pastille « terminé » à côté d'un jour : <span data-fait="id"></span> */
+  function renderFait() {
+    var nodes = document.querySelectorAll("[data-fait]");
+    Array.prototype.forEach.call(nodes, function (n) {
+      n.textContent = "";
+      n.className = "";
+      if (isDone(n.getAttribute("data-fait"))) { n.className = "fait"; n.textContent = "✓ terminé"; }
+    });
+  }
+
   function rubriqueStats(r) {
     var units = r.units || [];
     var n = 0;
@@ -112,6 +122,7 @@
   }
 
   function renderProgress() {
+    renderFait();
     var nodes = document.querySelectorAll("[data-progress]");
     Array.prototype.forEach.call(nodes, function (node) {
       var key = node.getAttribute("data-progress");

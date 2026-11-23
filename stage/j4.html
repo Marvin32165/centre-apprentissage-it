@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jour 4 — Windows 10/11 côté poste · Prépa stage</title>
+<meta name="description" content="Outils de diagnostic Windows, profils utilisateur, mises à jour, sfc et DISM, environnement de récupération (WinRE).">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/prepa.js" defer></script>
+<script src="../assets/app.js" defer></script>
+</head>
+<body data-root="../" data-nav="stage">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Prépa stage · Jour 4 · jeudi 26 novembre</p>
+<h1><em>Windows</em> 10 et 11 côté poste</h1>
+<p class="lead">La majorité des appels concernent un poste Windows qui ralentit, refuse de se mettre à jour ou ne démarre plus. Aujourd'hui, tu apprends les outils de diagnostic, la logique des profils et des mises à jour, et les réparations qu'on peut tenter sans tout réinstaller.</p>
+
+<h2 id="plan">Plan de la journée <span class="duree">≈ 5 h</span></h2>
+<ol class="plan-horaire">
+  <li><span class="h">40 min</span><span>Les outils de diagnostic intégrés</span></li>
+  <li><span class="h">30 min</span><span>Profils utilisateur</span></li>
+  <li><span class="h">35 min</span><span>Mises à jour Windows</span></li>
+  <li><span class="h">40 min</span><span>Réparer : sfc, DISM, chkdsk</span></li>
+  <li><span class="h">30 min</span><span>WinRE : l'environnement de récupération</span></li>
+  <li><span class="h">1 h 30</span><span>Labo : une VM Windows 11 dans Hyper-V, on casse puis on répare</span></li>
+  <li><span class="h">15 min</span><span>Mises en situation, quiz, fiche mémo</span></li>
+</ol>
+<aside class="callout attention"><p>Windows 10 n'est plus pris en charge par Microsoft depuis le 14 octobre 2025, sauf programme de mises à jour de sécurité étendues. Dans une organisation, tu verras sans doute les deux versions : demande à ton tuteur quel parc tu auras en charge.</p></aside>
+<aside class="callout umons"><p>Les droits dont dispose le service desk sur les postes (administrateur local ou non), les outils de gestion de parc et les procédures de réinstallation de l'UMONS : à demander à ton tuteur. Ce que tu apprends ici se fait sur <strong>ta propre machine virtuelle</strong>.</p></aside>
+
+<h2 id="outils">1. Les outils de diagnostic intégrés</h2>
+<p>Avant de chercher la cause, <strong>regarde ce que Windows te dit déjà</strong>. Tous ces outils sont installés d'origine. Ouvre-les avec <kbd>Windows</kbd> + <kbd>R</kbd> (Exécuter) en tapant la commande.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Outil</th><th>Commande</th><th>Ce qu'on y cherche</th></tr></thead>
+<tbody>
+<tr><td>Gestionnaire des tâches</td><td><kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>Échap</kbd></td><td>Quel processus consomme processeur, mémoire, disque ? Programmes au démarrage.</td></tr>
+<tr><td>Moniteur de ressources</td><td><code>resmon</code></td><td>Détail disque / réseau par processus.</td></tr>
+<tr><td>Observateur d'événements</td><td><code>eventvwr</code></td><td>Erreurs et avertissements : journaux « Système » et « Application ».</td></tr>
+<tr><td>Gestionnaire de périphériques</td><td><code>devmgmt.msc</code></td><td>Pilotes manquants ou en erreur (point d'exclamation jaune).</td></tr>
+<tr><td>Gestion des disques</td><td><code>diskmgmt.msc</code></td><td>Disques, partitions, espace libre.</td></tr>
+<tr><td>Services</td><td><code>services.msc</code></td><td>Service arrêté, démarré, type de démarrage.</td></tr>
+<tr><td>Informations système</td><td><code>msinfo32</code></td><td>Version de Windows, BIOS/UEFI, mémoire, état du démarrage sécurisé.</td></tr>
+<tr><td>Version de Windows</td><td><code>winver</code></td><td>Version et build installés.</td></tr>
+<tr><td>Gestion de l'ordinateur</td><td><code>compmgmt.msc</code></td><td>Entrée commune vers la plupart des outils ci-dessus.</td></tr>
+</tbody></table></div>
+<h3>Quelques commandes utiles (invite de commandes ou PowerShell)</h3>
+<pre data-copy><code>hostname
+whoami
+systeminfo
+tasklist
+Get-ComputerInfo
+Get-WinEvent -LogName System -MaxEvents 20</code></pre>
+<p>Les trois premières donnent : le nom du poste, le compte connecté et un résumé du système. <code>Get-WinEvent</code> (PowerShell) affiche les derniers événements du journal Système, comme l'Observateur d'événements, en ligne de commande.</p>
+<aside class="callout astuce"><p>Un poste lent : regarde dans l'ordre <strong>le disque</strong> (utilisation à 100 % ?), <strong>la mémoire</strong>, <strong>le processeur</strong>, puis <strong>les programmes au démarrage</strong>. Une cause évidente (une mise à jour en cours, un antivirus qui analyse) évite bien des recherches.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : documentation de <code>systeminfo</code>, <code>tasklist</code> et <code>Get-WinEvent</code> (références de commandes Windows et PowerShell).</p></aside>
+
+<h2 id="profils">2. Profils utilisateur</h2>
+<p>Un <strong>profil</strong> contient tout ce qui est propre à un utilisateur : bureau, documents, réglages d'applications, fond d'écran. Sur un poste, il se trouve dans <code>C:\Users\nom_utilisateur</code>. Le profil est créé à la <strong>première ouverture de session</strong> à partir du profil par défaut (<code>C:\Users\Default</code>).</p>
+<h3>Types de profils</h3>
+<ul>
+  <li><strong>Local</strong> : stocké sur ce poste uniquement.</li>
+  <li><strong>Itinérant</strong> (<em>roaming</em>) : copié depuis et vers un serveur, pour suivre l'utilisateur d'un poste à l'autre.</li>
+  <li><strong>Temporaire</strong> : Windows ouvre une session avec un profil provisoire quand le vrai profil ne peut pas être chargé ; tout ce qui est modifié est perdu à la déconnexion.</li>
+</ul>
+<h3>Symptômes d'un profil abîmé</h3>
+<ul>
+  <li>Message du type « Nous ne pouvons pas nous connecter à votre compte » ou « Impossible de charger votre profil ».</li>
+  <li>Bureau vide, documents « disparus », fond d'écran par défaut, menu Démarrer qui ne s'ouvre plus.</li>
+  <li>Applications qui oublient leurs réglages à chaque ouverture.</li>
+</ul>
+<aside class="callout retenir"><p>Un profil temporaire <strong>n'a pas effacé les données</strong> : elles sont presque toujours dans l'ancien dossier du profil. Ne supprime donc rien et ne promets pas de « tout retrouver » : escalade selon la procédure, en précisant le message exact et le compte concerné.</p></aside>
+<aside class="callout umons"><p>À l'UMONS, la gestion des profils (itinérants ? redirection de dossiers vers un serveur ? OneDrive ?) conditionne la réparation. À demander à ton tuteur, ainsi que la procédure de sauvegarde avant intervention.</p></aside>
+
+<h2 id="maj">3. Mises à jour Windows</h2>
+<p>Les mises à jour de sécurité et de qualité arrivent régulièrement. Elles sont à l'origine de nombreux appels : redémarrage non prévu, lenteur, échec d'installation.</p>
+<h3>Où regarder</h3>
+<ul>
+  <li><strong>Paramètres → Windows Update</strong> : état, mises à jour en attente, <strong>historique des mises à jour</strong> (réussites et échecs, avec un code d'erreur), possibilité de <strong>désinstaller</strong> une mise à jour récente.</li>
+  <li><strong>services.msc</strong> : le service « Windows Update » est-il arrêté ou désactivé ?</li>
+  <li><strong>Espace disque</strong> : une mise à jour a besoin de place libre.</li>
+</ul>
+<h3>Que faire quand une mise à jour échoue</h3>
+<ol>
+  <li>Noter le <strong>code d'erreur</strong> de l'historique.</li>
+  <li>Vérifier l'espace disque et l'heure / le fuseau horaire du poste.</li>
+  <li>Redémarrer, puis relancer la recherche de mises à jour.</li>
+  <li>Utiliser l'<strong>utilitaire de résolution des problèmes</strong> Windows Update (Paramètres → Système → Résolution des problèmes).</li>
+  <li>Réparer l'image système (<code>DISM</code> puis <code>sfc</code>, voir la section suivante).</li>
+  <li>Si cela persiste : escalader avec le code d'erreur et ce qui a été tenté.</li>
+</ol>
+<aside class="callout attention"><p>Dans un parc géré, les mises à jour sont souvent déployées par un outil central (WSUS, Intune, Configuration Manager…) : l'utilisateur n'a pas la main sur les versions installées. Ne force pas de mise à jour sans l'accord de l'équipe qui gère le parc.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : « Résoudre les problèmes de Windows Update » et « Historique des mises à jour Windows » (documentation pour Windows 10 et 11).</p></aside>
+
+<h2 id="reparer">4. Réparer : sfc, DISM, chkdsk</h2>
+<p>Trois outils, trois niveaux de réparation. Ils s'exécutent dans une invite de commandes ou un PowerShell <strong>« en tant qu'administrateur »</strong>.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Outil</th><th>Rôle</th><th>Commande</th></tr></thead>
+<tbody>
+<tr><td><strong>DISM</strong></td><td>Vérifier et réparer l'<em>image</em> Windows (la source des composants système).</td><td><code>DISM /Online /Cleanup-Image /RestoreHealth</code></td></tr>
+<tr><td><strong>sfc</strong></td><td>Vérifier les fichiers système et les remplacer par des copies saines.</td><td><code>sfc /scannow</code></td></tr>
+<tr><td><strong>chkdsk</strong></td><td>Vérifier le système de fichiers du disque.</td><td><code>chkdsk C: /scan</code></td></tr>
+</tbody></table></div>
+<pre data-copy><code>DISM /Online /Cleanup-Image /CheckHealth
+DISM /Online /Cleanup-Image /ScanHealth
+DISM /Online /Cleanup-Image /RestoreHealth
+sfc /scannow</code></pre>
+<h3>Dans quel ordre ?</h3>
+<p>La documentation de Microsoft indique, quand <code>sfc</code> ne parvient pas à réparer, d'exécuter <code>DISM</code> pour restaurer l'image, puis de relancer <code>sfc</code>. Une pratique courante est donc : <strong>DISM <code>/RestoreHealth</code>, puis <code>sfc /scannow</code></strong>, puis redémarrer.</p>
+<h3>Lire le résultat de sfc</h3>
+<ul>
+  <li><em>« La Protection des ressources Windows n'a trouvé aucune violation d'intégrité »</em> : rien à réparer de ce côté.</li>
+  <li><em>« …a trouvé des fichiers corrompus et les a réparés »</em> : redémarre et teste.</li>
+  <li><em>« …a trouvé des fichiers corrompus mais n'a pas pu en réparer certains »</em> : lance DISM puis recommence ; sinon, escalade avec le journal.</li>
+</ul>
+<p>Les journaux sont dans <code>C:\Windows\Logs\CBS\CBS.log</code> (sfc) et <code>C:\Windows\Logs\DISM\dism.log</code> (DISM).</p>
+<aside class="callout attention"><p><code>chkdsk</code> avec réparation (<code>/f</code>, <code>/r</code>) peut nécessiter un redémarrage et durer longtemps. Sur un disque qui montre des signes de défaillance (bruits, erreurs répétées), la priorité est la <strong>sauvegarde</strong> des données, pas la réparation.</p></aside>
+<aside class="callout source"><p>Microsoft Learn / Microsoft Support : « Utiliser l'outil Vérificateur des fichiers système », « Réparer une image Windows » (DISM), référence de <code>chkdsk</code>.</p></aside>
+
+<h2 id="winre">5. WinRE : l'environnement de récupération</h2>
+<p><strong>WinRE</strong> (<em>Windows Recovery Environment</em>) est un mini-Windows installé sur une partition de récupération. Il permet de réparer un poste qui ne démarre plus.</p>
+<h3>Comment y accéder</h3>
+<ul>
+  <li><strong>Depuis Windows</strong> : maintenir <kbd>Maj</kbd> en cliquant sur <em>Redémarrer</em>, ou la commande <code>shutdown /r /o /t 0</code>.</li>
+  <li><strong>Automatiquement</strong> : après plusieurs échecs de démarrage consécutifs, Windows lance la réparation automatique, qui conduit à WinRE.</li>
+  <li><strong>Depuis un support d'installation</strong> Windows : « Réparer l'ordinateur » à la place d'« Installer maintenant ».</li>
+</ul>
+<h3>Ce qu'on y trouve (Options avancées)</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Option</th><th>À quoi elle sert</th></tr></thead>
+<tbody>
+<tr><td>Réparation du démarrage</td><td>Tente de corriger automatiquement les problèmes de démarrage.</td></tr>
+<tr><td>Restauration du système</td><td>Revient à un point de restauration antérieur, si la protection était activée.</td></tr>
+<tr><td>Désinstaller les mises à jour</td><td>Supprime la dernière mise à jour de qualité ou de fonctionnalités.</td></tr>
+<tr><td>Invite de commandes</td><td>Outils en ligne de commande (<code>sfc</code>, <code>DISM</code>, <code>chkdsk</code>) sur l'installation hors ligne.</td></tr>
+<tr><td>Paramètres de démarrage</td><td>Dont le mode sans échec.</td></tr>
+<tr><td>Réinitialiser ce PC</td><td>Réinstalle Windows, en conservant ou non les fichiers. <strong>Dernier recours.</strong></td></tr>
+</tbody></table></div>
+<p>La commande <code>reagentc /info</code> indique si WinRE est activé sur le poste et où il est installé.</p>
+<aside class="callout attention"><p>Avant « Réinitialiser ce PC » ou toute réinstallation, vérifie qu'il y a une sauvegarde et que la procédure de la maison l'autorise. Sur un poste d'organisation, le master ou l'outil de déploiement fait normalement ce travail (jour 9).</p></aside>
+<aside class="callout source"><p>Microsoft Learn : « Windows Recovery Environment (Windows RE) » et « Options de démarrage avancées » (documentation Windows 10 et 11).</p></aside>
+
+<h2 id="labo">Labo : une VM Windows 11, on casse puis on répare <span class="duree">1 h 30</span></h2>
+<p>Tout se fait dans une <strong>machine virtuelle</strong>, jamais sur ton vrai poste. Tu as besoin d'un Windows 10 ou 11 en édition <strong>Pro, Enterprise ou Éducation</strong> (Hyper-V n'est pas inclus dans l'édition Famille).</p>
+<h3>Préparer le labo</h3>
+<ol>
+  <li><strong>Active Hyper-V</strong> : dans PowerShell (administrateur), <code>Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All</code>, puis redémarre.</li>
+  <li><strong>Obtiens un Windows 11 de test</strong> : une ISO officielle ou une version d'évaluation de Windows 11 Enterprise (durée limitée précisée sur la page) via le Centre d'évaluation de Microsoft.</li>
+  <li><strong>Crée la VM</strong> dans le Gestionnaire Hyper-V, génération 2 ; dans les paramètres de sécurité, active le démarrage sécurisé et le <strong>module TPM</strong> (requis par Windows 11) ; 4 Go de mémoire minimum, 64 Go de disque.</li>
+  <li>Installe Windows, crée un compte local de test, puis <strong>crée un point de contrôle</strong> (<em>checkpoint</em>) nommé « propre ». Il te permettra de revenir à l'état de départ à tout moment.</li>
+</ol>
+<h3>Exercices</h3>
+<ol>
+  <li><strong>Visite guidée</strong> : ouvre chaque outil du tableau de la section 1, trouve la version exacte de Windows (<code>winver</code>), l'espace disque libre, le dernier événement d'erreur du journal Système.</li>
+  <li><strong>Profil</strong> : crée un second compte local, ouvre-lui une session, puis regarde <code>C:\Users</code>. Que contient son dossier ?</li>
+  <li><strong>Mise à jour</strong> : ouvre l'historique de Windows Update et le service « Windows Update » dans <code>services.msc</code>. Arrête le service, essaie de rechercher des mises à jour, observe le message, puis redémarre le service.</li>
+  <li><strong>Réparer</strong> : lance <code>DISM /Online /Cleanup-Image /CheckHealth</code>, puis <code>sfc /scannow</code>. Repère les deux journaux et ouvre-les.</li>
+  <li><strong>WinRE</strong> : redémarre avec <code>shutdown /r /o /t 0</code> et parcours les options avancées sans rien valider ; ouvre l'invite de commandes WinRE et trouve la lettre du disque Windows (elle diffère souvent de <code>C:</code>). Puis <code>reagentc /info</code> depuis Windows.</li>
+  <li><strong>Casser puis réparer</strong> : reviens au point de contrôle « propre », arrête la VM de force deux fois de suite pendant le démarrage, et observe l'arrivée de la réparation automatique, puis de WinRE.</li>
+</ol>
+<details class="correction"><summary>Voir des repères pour contrôler tes résultats</summary>
+<ul>
+  <li><strong>Profil</strong> : un nouveau dossier au nom du compte apparaît à la première ouverture de session ; il contient Bureau, Documents, Téléchargements, etc.</li>
+  <li><strong>Mise à jour</strong> : avec le service arrêté, la recherche échoue ou reste bloquée ; au redémarrage du service, elle fonctionne de nouveau. Dans un cas réel, un service Windows Update arrêté est la première chose à vérifier.</li>
+  <li><strong>DISM / sfc</strong> : sur une VM neuve, <code>CheckHealth</code> indique en général qu'aucune corruption n'est détectée, et <code>sfc</code> ne trouve aucune violation d'intégrité.</li>
+  <li><strong>WinRE</strong> : le disque système est souvent vu avec une autre lettre que <code>C:</code> ; <code>dir</code> sur les lettres disponibles permet de retrouver <code>\Windows</code>.</li>
+  <li><strong>Interruptions</strong> : après plusieurs échecs, le message « Préparation de la réparation automatique » apparaît, puis l'écran de récupération.</li>
+</ul>
+</details>
+
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « Mon PC est super lent depuis ce matin »</h3>
+<p>Une utilisatrice appelle : son PC met dix minutes à démarrer et les applications se figent. Que demandes-tu, que regardes-tu, dans quel ordre ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Questions : depuis quand, après quoi (mise à jour, nouveau logiciel), tous les logiciels ou un seul, redémarrage déjà essayé. Si tu peux la guider : Gestionnaire des tâches → onglet Performances puis Processus : disque à 100 %, mémoire saturée, processus gourmand. Vérifie l'espace libre, les programmes au démarrage, les mises à jour en cours. Si le disque semble en cause (erreurs, lenteur constante), priorité à la sauvegarde puis escalade au N2 pour diagnostic matériel. Note tout dans le ticket.</p>
+</details>
+<h3>2. « Je me connecte et mon bureau est vide »</h3>
+<p>Un enseignant se connecte et trouve un bureau vide et un fond d'écran par défaut. Il panique : « J'ai tout perdu ! »</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Tu le rassures : c'est probablement un profil temporaire, et ses données existent sans doute toujours. Tu notes le message exact, le nom du poste et du compte, tu lui demandes de ne rien enregistrer sur ce profil et de ne pas supprimer de dossier, et tu escalades au N2 avec ces éléments. Tu ne tentes pas de réparation du profil toi-même sans procédure validée ni sauvegarde.</p>
+</details>
+<h3>3. Poste bloqué sur « Réparation automatique »</h3>
+<p>Un PC affiche en boucle « Préparation de la réparation automatique » après une mise à jour. L'utilisateur est en panique et pense qu'il faut tout réinstaller.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Pas de réinstallation d'emblée. Selon la procédure et les droits, on tente dans WinRE : Réparation du démarrage, puis « Désinstaller les mises à jour » (dernière mise à jour de qualité), puis Restauration du système si un point existe ; l'invite de commandes permet <code>sfc /scannow /offbootdir=C:\ /offwindir=C:\Windows</code> adapté aux lettres vues dans WinRE. En cas d'échec : escalade au N2 pour une réinstallation, en sauvegardant d'abord les données si c'est possible. Tu préviens l'utilisateur du délai.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="stage-j4"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Regarder avant de chercher</strong> : Gestionnaire des tâches, Observateur d'événements (<code>eventvwr</code>), Gestionnaire de périphériques (<code>devmgmt.msc</code>), Services (<code>services.msc</code>), <code>msinfo32</code>, <code>winver</code>.</li>
+  <li><strong>Profil</strong> : <code>C:\Users\nom</code>. Profil temporaire = données probablement intactes ; on ne supprime rien, on escalade.</li>
+  <li><strong>Windows Update</strong> : historique, code d'erreur, espace disque, service, utilitaire de résolution.</li>
+  <li><strong>Réparer</strong> : <code>DISM /Online /Cleanup-Image /RestoreHealth</code> puis <code>sfc /scannow</code> (en administrateur), puis redémarrer. <code>chkdsk C: /scan</code> pour le disque.</li>
+  <li><strong>WinRE</strong> : <kbd>Maj</kbd> + Redémarrer ou <code>shutdown /r /o /t 0</code> ; Réparation du démarrage, Restauration, Désinstaller les mises à jour, Invite de commandes. Réinitialiser = dernier recours.</li>
+  <li><strong>Toujours</strong> : sauvegarde avant action destructive, VM pour s'entraîner.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Quel parc ? Windows 10, 11, ou les deux ? Quelles éditions ?</li>
+  <li>Le service desk a-t-il des droits d'administrateur local ? Quel outil de prise de contrôle ou de gestion de parc ?</li>
+  <li>Les profils sont-ils itinérants, redirigés ou sauvegardés sur OneDrive ?</li>
+  <li>Qui déploie les mises à jour, et peut-on en retarder ou en désinstaller une ?</li>
+  <li>Quelle est la procédure de réinstallation d'un poste ?</li>
+  <li>BitLocker est-il activé sur les postes (il faut alors la clé de récupération pour accéder à WinRE) ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="stage-j4"> Jour 4 terminé</label></p>
+<nav class="jours-nav" aria-label="Navigation entre les jours">
+  <a class="btn ghost" href="j3.html">← Jour 3</a>
+  <a class="btn" href="j5.html">Jour 5 : réseau →</a>
+</nav>
+</div>
+</main>
+</body>
+</html>

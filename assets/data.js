@@ -9,7 +9,8 @@ window.IT_DATA = {
   rubriques: [
     { id: "accueil", titre: "Accueil", href: "index.html" },
     { id: "stage", titre: "Prépa stage", href: "stage/index.html",
-      desc: "Dix jours pour arriver prêt au service desk : théorie, labos, mises en situation.", units: [] },
+      desc: "Dix jours pour arriver prêt au service desk : théorie, labos, mises en situation.",
+      units: ["stage-j1", "stage-j2", "stage-j3", "stage-j4", "stage-j5", "stage-j6", "stage-j7", "stage-j8", "stage-j9", "stage-j10"] },
     { id: "modules", titre: "Modules", href: "modules/index.html",
       desc: "Des cours ciblés, du support poste au réseau en passant par Active Directory.", units: [] },
     { id: "themes", titre: "Thèmes", href: "themes.html",

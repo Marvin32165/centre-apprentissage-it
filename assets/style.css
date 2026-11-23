@@ -343,3 +343,15 @@ pre { border-top-width: 3px; border-radius: var(--r-m); }
 .table-wrap { border-top-color: var(--accent); }
 th { border-bottom-color: var(--accent); }
 .plan-jours { border-left-width: 4px; }
+
+/* ==========================================================================
+   Prépa stage : plan horaire, durée, navigation entre les jours
+   ========================================================================== */
+.duree { display: inline-block; font-family: var(--font-code); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em; padding: 0.1rem 0.55rem; border: 1px solid var(--line); border-radius: var(--r-s); color: var(--ink-pale); vertical-align: middle; white-space: nowrap; }
+.plan-horaire { list-style: none; padding: 0; margin: 0 0 1.5rem; border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--r-m); background: var(--surface); }
+.plan-horaire li { display: grid; grid-template-columns: 5.2rem 1fr; gap: 0.8rem; margin: 0; padding: 0.65rem 1rem; border-bottom: 1px solid var(--line); font-family: var(--font-ui); font-size: 0.95rem; }
+.plan-horaire li:last-child { border-bottom: 0; }
+.plan-horaire .h { font-family: var(--font-code); font-size: 0.8rem; color: var(--accent); padding-top: 0.12rem; }
+.jours-nav { display: flex; flex-wrap: wrap; gap: 0.7rem; justify-content: space-between; margin: 2rem 0 0; padding-top: 1.2rem; border-top: 1px solid var(--line); }
+.plan-jours a { font-weight: 600; }
+.plan-jours .fait { color: var(--green); font-family: var(--font-ui); font-size: 0.8rem; font-weight: 600; margin-left: 0.4rem; }
