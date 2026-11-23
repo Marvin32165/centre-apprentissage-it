@@ -149,5 +149,13 @@ Reste : rien pour ce lot. Prochaine étape : un module par lot (voir « Ensuite 
 
 Reste : rien pour ce lot. Prochaine étape suggérée : module « Microsoft 365 et messagerie » ou « Dépannage à distance » (domaine Support).
 
+## Lot 15 — Outillage commun des agents (Claude Code et ChatGPT / Codex)
+Idées reprises du dépôt `claude-tools` (chef, evidence-reviewer, hooks, skills), adaptées pour marcher avec les deux agents : procédures en Markdown, garde-fous en script Node et en CI, enveloppes propres à Claude Code en option.
+- [ ] 15.1 Procédures communes dans `docs/procedures/` : nouveau module, relecture des sources, test en situation (« chef ») ; renvoi depuis `AGENTS.md`.
+- [ ] 15.2 Garde-fous `npm run garde` (moteurs de l'atelier, index à jour, ressources externes, `alert`/`confirm`/`fetch`, IP et adresses e-mail), ajouté à `controles` et à `audit.yml`.
+- [ ] 15.3 Hook Git `pre-commit` facultatif (`npm run hooks`) : garde-fous avant chaque commit, quel que soit l'agent.
+- [ ] 15.4 Enveloppes Claude Code dans `.claude/` : skills qui renvoient aux procédures, agents relecteurs, hook de protection des fichiers et rappel du plan après compaction.
+- [ ] 15.5 `npm run controles`, coche du lot, fusion dans `main`.
+
 ## Ensuite
 Un module par lot, en commençant par les besoins du stage. Ajouter ici les nouveaux lots au fil de l'eau.
