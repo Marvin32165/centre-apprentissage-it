@@ -7,7 +7,7 @@ window.IT_DATA = {
     periodes: "du 7 au 18 décembre 2026, puis du 4 janvier au 5 février 2027, de 8 h 30 à 16 h"
   },
   rubriques: [
-    { id: "accueil", titre: "Accueil", href: "index.html" },
+    { id: "accueil", titre: "Accueil", menu: "Aujourd'hui", href: "index.html" },
     { id: "stage", titre: "Prépa stage", href: "stage/index.html",
       desc: "Dix jours pour arriver prêt au service desk : théorie, labos, mises en situation.",
       units: ["stage-j1", "stage-j2", "stage-j3", "stage-j4", "stage-j5", "stage-j6", "stage-j7", "stage-j8", "stage-j9", "stage-j10"] },
@@ -16,7 +16,7 @@ window.IT_DATA = {
       units: ["module-support-windows", "module-itil", "module-reseau-base", "module-ad-support"] },
     { id: "themes", titre: "Thèmes", href: "themes.html",
       desc: "Les grands domaines de l'IT, avec des liens vers les modules.", units: [] },
-    { id: "atelier", titre: "Atelier hardware", href: "atelier/index.html",
+    { id: "atelier", titre: "Atelier hardware", menu: "Atelier", href: "atelier/index.html",
       desc: "Monter, diagnostiquer et réparer un PC virtuel, pièce par pièce.", units: ["atelier-s1", "atelier-s2", "atelier-s3", "atelier-s4", "atelier-s5", "atelier-s6", "atelier-eval", "atelier-pannes", "atelier-pannes-eval"] }
   ]
 };

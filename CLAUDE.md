@@ -16,7 +16,8 @@ Rubriques : Accueil · Prépa stage · Modules · Thèmes · Atelier hardware (v
 ## Direction artistique (celle des notes de Marvin)
 Clair : papier `#F3EEE5`, surface `#F9F6F0`, bordure `#DDD3C3`, encre `#1B1713`, encre douce `#544A40`, encre pâle `#6B5F52`, accent rouille `#9C3F1D` (soft `#F1E2D6`), vert `#3F6140`, rouge `#9A3524`, ambre `#7C561A`.
 Sombre : papier `#13100D`, surface `#1A1612`, bordure `#312A23`, encre `#EDE6DA`, encre douce `#BBAF9F`, accent `#E3916A`, vert `#94B98C`, rouge `#E88D79`, ambre `#D9AE66`.
-Polices : Newsreader (titres, texte), Instrument Sans (interface), IBM Plex Mono (code), via Google Fonts avec repli Georgia / system-ui / Consolas. Rayons de 3 à 6 px, style sobre et éditorial, avec une touche « fiche technique » inspirée du skin AWP | Asimov : étiquettes en capitales mono, repères de coin, numérotation, hachures rouille, en-tête et décompte sombres (sans perdre les teintes brunes). Mobile d'abord, contrastes AA, cibles tactiles ≥ 44 px.
+Polices : Newsreader (titres, texte), Instrument Sans (interface), IBM Plex Mono (code, étiquettes), via Google Fonts avec repli Georgia / system-ui / Consolas ; IM Fell English pour l'atelier seulement. Barre sombre `#2C1F16` (sombre : `#0E0B08`).
+Identités « Poste de garde » (plateforme) et « Le Livre du montage » (atelier) : le détail (jetons, typographie, composants, pages) est dans `docs/REFONTE.md`, qui fait foi. Composants de référence : `docs/composants.html`. Mobile d'abord, contrastes AA, cibles tactiles ≥ 44 px, `prefers-reduced-motion` respecté.
 
 ## Règles techniques
 - HTML, CSS et JS natifs, sans dépendance externe ni étape de build. Une seule feuille de style commune (`assets/style.css`), un script commun (`assets/app.js`), des données dans `assets/*.js`.

@@ -20,33 +20,46 @@ window.IT_QUIZZES = { demo: { titre: "Quiz de démonstration", questions: [
 <main id="contenu" class="wrap page"><div class="prose">
 <p class="kicker">Guide interne</p>
 <h1>Composants <em>communs</em></h1>
-<p class="lead">Page de référence pour les lots suivants (bloc, encadrés, code, tableau, correction, quiz, cases « fait »).</p>
+<p class="lead">Référence de l'identité « Poste de garde » (voir <code>docs/REFONTE.md</code>) : une seule feuille de style, des jetons, trois niveaux d'encadrés.</p>
 
-<div class="bloc"><p>Un <strong>bloc</strong> avec repères de coin. Texte courant en Newsreader, <code>code en ligne</code>, <kbd>Ctrl</kbd> + <kbd>C</kbd>.</p></div>
+<h2 id="typo">1. Typographie</h2>
+<p class="kicker">Étiquette · IBM Plex Mono 12 px</p>
+<p>Texte courant en Newsreader 18,5 px, interligne 1,7, colonne de 46rem au plus. <code>code en ligne</code>, <kbd>Ctrl</kbd> + <kbd>K</kbd>. Les h2 qui commencent par « 1. » reçoivent un numéro <span class="sec">§1</span> en italique rouille.</p>
+<h3>Titre de niveau 3</h3>
+<p class="label">Étiquette neutre · compteurs, dates</p>
 
-<aside class="callout retenir"><p>La priorité d'un ticket vient de l'impact et de l'urgence.</p></aside>
-<aside class="callout astuce"><p>Reformule toujours le problème avant de chercher la cause.</p></aside>
+<h2 id="encadres">2. Encadrés : trois niveaux</h2>
+<aside class="callout retenir"><p><strong>Retenir</strong> : la priorité d'un ticket vient de l'impact et de l'urgence.</p></aside>
+<aside class="callout astuce"><p>L'astuce prend le style de « Retenir » avec sa propre étiquette.</p></aside>
 <aside class="callout attention"><p>Ne jamais demander un mot de passe à l'utilisateur.</p></aside>
-<aside class="callout umons"><p>Procédure d'escalade interne : à confirmer avec le tuteur.</p></aside>
-<aside class="callout source"><p>Microsoft Learn — documentation officielle de la commande.</p></aside>
+<aside class="callout umons"><p>Étiquette en ligne : la procédure d'escalade interne est à confirmer avec le tuteur.</p></aside>
+<aside class="callout source"><p>Étiquette en ligne : Microsoft Learn, documentation officielle de la commande.</p></aside>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place"><ul><li>Bloc ambre en contour, réservé aux questions pour le tuteur.</li></ul></aside>
 
+<h2 id="code">3. Code, tableau, correction</h2>
 <pre data-copy><code>ipconfig /all
 ping 127.0.0.1</code></pre>
-
 <div class="table-wrap"><table>
 <thead><tr><th>Commande</th><th>Usage</th></tr></thead>
 <tbody><tr><td><code>ipconfig</code></td><td>Afficher la configuration IP</td></tr><tr><td><code>gpupdate</code></td><td>Forcer l'application des GPO</td></tr></tbody>
 </table></div>
-
 <details class="correction"><summary>Voir la correction</summary><p>Contenu de la correction, caché par défaut.</p></details>
 
+<h2 id="quiz">4. Quiz et progression</h2>
 <div data-quiz="demo"></div>
-
 <ul class="checklist bloc">
 <li><label class="done"><input type="checkbox" data-done="demo-1"> Fait : lire la théorie</label></li>
 <li><label class="done"><input type="checkbox" data-done="demo-2"> Fait : faire le labo</label></li>
 </ul>
-<p><a class="btn" href="../index.html">Bouton</a> <a class="btn ghost" href="../index.html">Secondaire</a> <span class="badge">Badge</span> <span class="badge soon">Bientôt</span></p>
+<div class="progress" data-progress="all"></div>
+
+<h2 id="boutons">5. Boutons, cartes, pastilles</h2>
+<p><a class="btn" href="../index.html">Bouton principal</a> <a class="btn ghost" href="../index.html">Secondaire</a></p>
+<p><span class="badge">Pastille</span> <span class="badge soon">Bientôt</span> <span class="duree">≈ 30 min</span> <span class="stamp" style="color:var(--accent);border-color:var(--accent)">IT</span></p>
+<div class="grid cols-2">
+<a class="card" href="../modules/index.html"><p class="kicker">Carte</p><h3>Titre de carte</h3><p>Fond surface, bordure, rayon 10 ; le survol passe la bordure en rouille.</p></a>
+<div class="card"><p class="kicker">Carte statique</p><h3>Sans lien</h3><p>Pas d'ombre au repos.</p></div>
+</div>
 </div></main>
 </body>
 </html>
