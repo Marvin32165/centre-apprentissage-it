@@ -352,12 +352,21 @@
     var tabs = el("div", { "class": "at-tabs petit", role: "tablist", "aria-label": "Catégories" });
     CATS.forEach(function (c) {
       var n = restantes.filter(function (id) { return P[id].cat === c[0]; }).length;
-      var b = el("button", { type: "button", role: "tab", "class": "at-tab", "aria-selected": onglet === c[0] ? "true" : "false" }, c[1] + " (" + n + ")");
-      b.addEventListener("click", function () { onglet = c[0]; renderBac(); });
+      var b = el("button", { type: "button", role: "tab", "class": "at-tab", "aria-selected": onglet === c[0] ? "true" : "false", "aria-controls": "at-grille-pieces", tabindex: onglet === c[0] ? "0" : "-1" }, c[1] + " (" + n + ")");
+      b.addEventListener("click", function () { onglet = c[0]; renderBac(); secBac.querySelector('[role="tab"][aria-selected="true"]').focus(); });
       tabs.appendChild(b);
     });
+    tabs.addEventListener("keydown", function (e) {
+      var delta = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!delta) return;
+      e.preventDefault();
+      var i = CATS.map(function (c) { return c[0]; }).indexOf(onglet);
+      onglet = CATS[(i + delta + CATS.length) % CATS.length][0];
+      renderBac();
+      secBac.querySelector('[role="tab"][aria-selected="true"]').focus();
+    });
     secBac.appendChild(tabs);
-    var grid = el("div", { "class": "at-grid" });
+    var grid = el("div", { "class": "at-grid", id: "at-grille-pieces", role: "tabpanel", "aria-label": "Pièces de la catégorie sélectionnée" });
     var liste = restantes.filter(function (id) { return P[id].cat === onglet; });
     if (!liste.length) grid.appendChild(el("p", { "class": "muted" }, "Tout est posé dans cette catégorie."));
     liste.forEach(function (id) {
