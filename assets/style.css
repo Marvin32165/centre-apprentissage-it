@@ -491,3 +491,23 @@ body.at-dragging { cursor: grabbing; }
 .at-lien { font-family: var(--font-ui); font-size: 0.88rem; }
 .at-lien a { display: inline-block; padding: 0.4rem 0; }
 @media (prefers-reduced-motion: reduce) { .slot-hit { animation: none; } .at-scene.shake { animation: none; } }
+
+/* Atelier : pannes (lot 6) */
+.pn-ticket .at-client { font-size: 1.08rem; font-style: italic; }
+.pn-scene .at-svg { max-height: 62vh; }
+.pn-outils h2, .pn-carnet-box h2, .pn-diag h2 { margin: 0 0 0.5rem; }
+.pn-note { font-size: 0.88rem; margin: 0 0 0.6rem; }
+.pn-outils-liste { display: grid; gap: 0.4rem; margin-bottom: 0.8rem; }
+.pn-outil { flex-direction: column; align-items: flex-start; text-align: left; gap: 0.1rem; width: 100%; min-height: 44px; }
+.pn-outil .n { font-weight: 600; }
+.pn-outil .aide { font-size: 0.78rem; font-weight: 400; color: var(--ink-pale); text-transform: none; letter-spacing: 0; font-family: var(--font-ui); }
+.pn-temoin, .pn-champ { display: grid; gap: 0.35rem; margin-bottom: 0.8rem; }
+.pn-temoin label, .pn-champ label { font-family: var(--font-code); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.pn-temoin select, .pn-champ select { min-height: 44px; width: 100%; padding: 0 0.6rem; font-family: var(--font-ui); font-size: 0.92rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-s); }
+.pn-carnet { margin: 0; padding: 0; list-style: none; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--surface); }
+.pn-carnet li { display: grid; gap: 0.15rem; margin: 0; padding: 0.55rem 0.8rem; border-bottom: 1px solid var(--line); font-family: var(--font-ui); font-size: 0.9rem; }
+.pn-carnet li:last-child { border-bottom: 0; }
+.pn-carnet li:first-child { background: var(--accent-soft); }
+.pn-carnet strong { font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
+.pn-corrige .at-ecran { margin: 0.5rem 0; }
+.pn-corrige .at-ecran .ligne { white-space: normal; }
