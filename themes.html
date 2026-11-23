@@ -17,14 +17,16 @@
 </head>
 <body data-root="" data-nav="themes">
 <main id="contenu" class="wrap page">
-<div class="prose">
-<p class="kicker">Thèmes</p>
-<h1>Thèmes</h1>
-<p class="lead">L'informatique rangée par domaine, du support au cloud. Chaque domaine renvoie vers les modules disponibles, vers les jours de la prépa et l'atelier qui s'y rapportent, et annonce les sujets prévus : ils ne sont pas encore écrits.</p>
-<p>Les domaines servent de fil rouge : le stage au service desk touche surtout <a href="#support">Support</a>, <a href="#reseau">Réseau</a>, <a href="#windows">Windows et annuaire</a> et <a href="#gestion">Gestion des services</a>. Les autres domaines viendront, un module à la fois.</p>
-<p><a class="btn" href="modules/index.html">Catalogue des modules</a></p>
-</div>
-<div id="themes-liste" class="themes-liste"><p>Les thèmes s'affichent avec JavaScript.</p></div>
+<p class="kicker" data-themes-kicker>Thèmes</p>
+<h1>L'atlas de l'informatique, <em>du support au cloud</em>.</h1>
+<p class="lead">L'informatique rangée par domaine. Chaque domaine montre ce qui existe déjà (modules, jours de la prépa, atelier) et annonce les sujets prévus : ils ne sont pas encore écrits. Ceux qui servent le stage au service desk sont marqués.</p>
+<ul class="atlas-legende" aria-label="Légende">
+  <li><span class="pip" aria-hidden="true"></span>Disponible</li>
+  <li><span class="pip vide" aria-hidden="true"></span>À venir</li>
+  <li><span class="badge-stage">STAGE</span>Utile au stage</li>
+</ul>
+<div id="themes-liste" class="atlas"><p>Les thèmes s'affichent avec JavaScript.</p></div>
+<p class="atlas-pied"><a class="btn ghost" href="modules/index.html">Catalogue des modules</a></p>
 </main>
 </body>
 </html>

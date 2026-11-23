@@ -8,21 +8,21 @@ window.IT_MODULES = {
     { id: 2, titre: "Niveau 2 · Approfondissement" },
     { id: 3, titre: "Niveau 3 · Avancé" }
   ],
-  /* Domaines = thèmes de themes.html. `aVenir` : sujets envisagés, pas encore écrits (aucun contenu n'existe pour eux). */
+  /* Domaines = thèmes de themes.html. `stage` : domaine utile au stage (pastille STAGE de l'atlas). `aVenir` : sujets envisagés, pas encore écrits (aucun contenu n'existe pour eux). */
   domaines: [
-    { id: "support", titre: "Support et service desk",
+    { id: "support", stage: true, titre: "Support et service desk",
       desc: "Prendre un appel, diagnostiquer un poste, réparer ou escalader proprement : le cœur du stage.",
       liens: [{ href: "stage/index.html", label: "Prépa stage (10 jours)" }, { href: "stage/outils.html", label: "Boîte à outils" }],
       aVenir: ["Microsoft 365 et messagerie, en profondeur", "Dépannage à distance", "Imprimantes et périphériques"] },
-    { id: "reseau", titre: "Réseau",
+    { id: "reseau", stage: true, titre: "Réseau",
       desc: "Adresses, DNS, DHCP, ports : comprendre le chemin d'une requête pour trouver où elle s'arrête.",
       liens: [{ href: "stage/j5.html", label: "Prépa, jour 5 : le réseau côté utilisateur" }],
       aVenir: ["Sous-réseaux et plan d'adressage", "Dépannage réseau par couches", "Commutation et routage (équipements Cisco)", "Téléphonie sur IP"] },
-    { id: "windows", titre: "Windows et annuaire",
+    { id: "windows", stage: true, titre: "Windows et annuaire",
       desc: "Comptes, groupes et stratégies : ce que l'annuaire d'une organisation décide, et comment le lire.",
       liens: [{ href: "stage/j6.html", label: "Prépa, jour 6 : Active Directory côté support" }],
       aVenir: ["Windows Server : rôles de base", "PowerShell pour l'administration", "Stockage et partages", "Services web et bureaux à distance"] },
-    { id: "gestion", titre: "Gestion des services et méthode",
+    { id: "gestion", stage: true, titre: "Gestion des services et méthode",
       desc: "Les cadres qui organisent le travail d'une DSI : pratiques ITIL, outils de tickets, méthode de travail.",
       liens: [{ href: "stage/j1.html", label: "Prépa, jour 1 : le métier de service desk" }, { href: "stage/j3.html", label: "Prépa, jour 3 : Jira" }],
       aVenir: ["Outils de tickets et de projet", "Méthodes agiles", "Gestion de parc et d'inventaire"] },
