@@ -409,7 +409,13 @@
     });
     voile.addEventListener("keydown", function (e) {
       if (e.key === "Escape") { e.preventDefault(); fermerRecherche(); }
-      else if (e.key === "Tab") { e.preventDefault(); (document.activeElement === input ? fermer : input).focus(); }
+      else if (e.key === "Tab") {
+        var focusables = Array.prototype.filter.call(dlg.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href]:not([tabindex="-1"])'), function (n) { return n.getClientRects().length; });
+        if (!focusables.length) { e.preventDefault(); return; }
+        var position = focusables.indexOf(document.activeElement);
+        if (e.shiftKey && position <= 0) { e.preventDefault(); focusables[focusables.length - 1].focus(); }
+        else if (!e.shiftKey && (position < 0 || position === focusables.length - 1)) { e.preventDefault(); focusables[0].focus(); }
+      }
     });
     voile.addEventListener("mousedown", function (e) { if (e.target === voile) fermerRecherche(); });
     fermer.addEventListener("click", fermerRecherche);
