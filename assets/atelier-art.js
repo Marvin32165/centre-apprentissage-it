@@ -78,7 +78,7 @@
   });
   def("alim-s", 330, 80, function (w, h, o) {
     var g = R(0, 0, 330, 80, "url(#g-dark)", 'rx="5" stroke="#15120F"') + R(0, 66, 330, 14, "rgba(0,0,0,.3)", 'rx="5"');
-    g += R(12, 12, 130, 52, "#C9C2B4", 'rx="3"') + T(20, 30, 11, "ALIMENTATION ATX", "#1B1713", 'font-weight="700"') + T(20, 46, 14, (o && o.label) || "", "#9C3F1D", 'font-weight="700"') + T(80, 46, 9, "80+ Bronze", "#544A40");
+    g += R(12, 12, 130, 52, "#C9C2B4", 'rx="3"') + T(20, 30, 11, "ALIMENTATION " + ((o && o.fmt) || "ATX"), "#1B1713", 'font-weight="700"') + T(20, 46, 14, (o && o.label) || "", "#9C3F1D", 'font-weight="700"') + T(80, 46, 9, "80+ Bronze", "#544A40");
     g += C(230, 40, 28, "#15120F", 'stroke="#5B554E"');
     for (var r = 8; r <= 24; r += 8) g += C(230, 40, r, "none", 'stroke="#5B554E"');
     g += L(230, 12, 230, 68, "#3B3733") + L(202, 40, 258, 40, "#3B3733");
@@ -99,7 +99,8 @@
   });
 
   /* ---- Carte mère ---- */
-  def("board", 330, 330, function () {
+  def("board", 330, 330, function (w, h, o) {
+    var mini = !!(o && o.dimm2);
     var g = R(0, 0, 330, 330, "url(#g-pcb)", 'rx="4" stroke="#0F140F" stroke-width="1.5"');
     /* pistes décoratives */
     for (var i = 0; i < 10; i++) g += L(150 + i * 3, 150, 150 + i * 3, 205, "rgba(255,255,255,.05)", 1);
@@ -116,8 +117,8 @@
     for (var a = 0; a < 9; a++) for (var b = 0; b < 9; b++) g += C(70 + a * 7.5, 70 + b * 7.5, 1.2, "#C8A24A");
     g += '<polygon points="56,144 66,144 56,134" fill="#E3916A"/>' + L(144, 70, 150, 70, "#6D6B66", 3);
     /* DIMM */
-    for (var d = 0; d < 4; d++) g += R(170 + d * 30, 30, 20, 120, "#14110F", 'rx="2" stroke="#4A4540"') + R(171 + d * 30, 28, 18, 4, "#E8E4DA") + R(171 + d * 30, 148, 18, 4, "#E8E4DA") + R(178 + d * 30, 36, 4, 108, "#2B2723");
-    ["A1", "A2", "B1", "B2"].forEach(function (n, k) { g += T(171 + k * 30, 166, 9, n, "#D9D4C8", 'class="lbl-zoom"'); });
+    for (var d = 0; d < 4; d++) if (!mini || d % 2) g += R(170 + d * 30, 30, 20, 120, "#14110F", 'rx="2" stroke="#4A4540"') + R(171 + d * 30, 28, 18, 4, "#E8E4DA") + R(171 + d * 30, 148, 18, 4, "#E8E4DA") + R(178 + d * 30, 36, 4, 108, "#2B2723");
+    ["A1", "A2", "B1", "B2"].forEach(function (n, k) { if (!mini || k % 2) g += T(171 + k * 30, 166, 9, n, "#D9D4C8", 'class="lbl-zoom"'); });
     /* 24 broches */
     g += R(298, 170, 20, 100, "#E8E4DA", 'rx="2" stroke="#8D8B85"');
     for (var p = 0; p < 12; p++) g += R(302, 175 + p * 8, 5, 5, "#14110F") + R(310, 175 + p * 8, 5, 5, "#14110F");
@@ -132,7 +133,7 @@
     /* chipset, PCIe, batterie */
     g += R(210, 215, 56, 34, "url(#g-metal)", 'rx="2" stroke="#6D6B66"');
     for (var c = 216; c < 262; c += 6) g += L(c, 217, c, 247, "rgba(0,0,0,.22)", 1);
-    g += R(14, 272, 300, 12, "#14110F", 'rx="2" stroke="#4A4540"') + R(14, 296, 140, 10, "#14110F", 'rx="2" stroke="#4A4540"') + T(18, 267, 8, "PCIe x16", "#D9D4C8", 'class="lbl-zoom"') +
+    g += R(14, 272, 300, 12, "#14110F", 'rx="2" stroke="#4A4540"') + (mini ? "" : R(14, 296, 140, 10, "#14110F", 'rx="2" stroke="#4A4540"')) + T(18, 267, 8, "PCIe x16", "#D9D4C8", 'class="lbl-zoom"') +
       C(200, 296, 11, "url(#g-metal)", 'stroke="#6D6B66"') + C(200, 296, 6, "#B9B6AF");
     /* embases du bord bas */
     g += R(20, 312, 40, 14, "#E8E4DA", 'rx="1" stroke="#8D8B85"') + R(90, 306, 40, 18, "#4A6FA5", 'rx="1" stroke="#2C456B"') + R(160, 312, 50, 12, "#14110F", 'rx="1" stroke="#4A4540"') +
@@ -185,8 +186,8 @@
       R(58, 4, 38, 14, "#26231F", 'rx="1" stroke="#5B554E"') + R(100, 4, 38, 14, "#26231F", 'rx="1" stroke="#5B554E"') + T(62, 14, 6, "NAND", "#9A8E7E");
     return g + '<path d="M150 6 a5 5 0 0 0 0 10 Z" fill="#6A645C"/>' + C(144, 11, 3.5, "url(#g-metal)", 'stroke="#6D6B66"');
   });
-  def("sata-ssd", 110, 40, function () {
-    return R(0, 0, 110, 40, "url(#g-metal)", 'rx="4" stroke="#6D6B66"') + R(8, 8, 74, 24, "#C9C2B4", 'rx="2"') + T(12, 20, 8, "SSD 2,5″ SATA", "#1B1713", 'font-weight="700"') + T(12, 29, 8, "500 Go", "#9C3F1D") +
+  def("sata-ssd", 110, 40, function (w, h, o) {
+    return R(0, 0, 110, 40, "url(#g-metal)", 'rx="4" stroke="#6D6B66"') + R(8, 8, 74, 24, "#C9C2B4", 'rx="2"') + T(12, 20, 8, (o && o.t1) || "SSD 2,5″ SATA", "#1B1713", 'font-weight="700"') + T(12, 29, 8, (o && o.t2) || "500 Go", "#9C3F1D") +
       R(94, 8, 16, 24, "#14110F") + R(96, 12, 4, 6, "#C8A24A") + R(102, 12, 6, 6, "#C8A24A");
   });
 

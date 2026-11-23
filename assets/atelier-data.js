@@ -11,11 +11,25 @@
 
   /* Accessoires */
   add("entretoises-matx", {
-    nom: "Kit d'entretoises micro-ATX", type: "entretoises", cat: "accessoire",
+    nom: "Kit d'entretoises micro-ATX", type: "entretoises", cat: "accessoire", format: "mATX",
     art: { icon: "entretoises", scene: "entretoises-s" },
     resume: "6 entretoises en laiton et leurs vis",
     specs: [["Format", "micro-ATX"], ["Contenu", "6 entretoises + vis"]],
     pose: "Les entretoises surélèvent la carte mère : sans elles, les soudures de la carte toucheraient le plateau métallique et provoqueraient un court-circuit. Elles se placent en face des trous de la carte (ici, format micro-ATX)."
+  });
+  add("entretoises-atx", {
+    nom: "Kit d'entretoises ATX", type: "entretoises", cat: "accessoire", format: "ATX",
+    art: { icon: "entretoises", scene: "entretoises-s" },
+    resume: "9 entretoises en laiton et leurs vis",
+    specs: [["Format", "ATX"], ["Contenu", "9 entretoises + vis"]],
+    pose: "Une carte ATX a plus de trous qu'une carte micro-ATX : le kit ATX comporte les entretoises supplémentaires. Pose uniquement celles qui sont en face d'un trou de la carte."
+  });
+  add("entretoises-itx", {
+    nom: "Kit d'entretoises mini-ITX", type: "entretoises", cat: "accessoire", format: "ITX",
+    art: { icon: "entretoises", scene: "entretoises-s" },
+    resume: "4 entretoises en laiton et leurs vis",
+    specs: [["Format", "mini-ITX"], ["Contenu", "4 entretoises + vis"]],
+    pose: "Une carte mini-ITX (17 × 17 cm) n'a que quatre trous de fixation : seules les entretoises en face de ces trous sont posées."
   });
   add("cache-io", {
     nom: "Cache I/O (plaque arrière)", type: "cache-io", cat: "accessoire",
@@ -35,17 +49,31 @@
   /* Composants */
   add("psu-450", {
     nom: "Alimentation ATX 450 W", type: "alim", cat: "composant", format: "ATX", w: 450, pcie: 1,
-    art: { icon: "alim-i", scene: "alim-s" }, o: { label: "450 W" },
+    art: { icon: "alim-i", scene: "alim-s" }, o: { label: "450 W", fmt: "ATX" },
     resume: "ATX, 450 W, 24 broches + EPS + PCIe + SATA",
     specs: [["Format", "ATX"], ["Puissance", "450 W"], ["Connecteurs", "24 broches, EPS 4+4, PCIe 6+2, SATA"]],
     pose: "L'alimentation se fixe par l'arrière avec 4 vis. Son ventilateur se tourne vers une grille d'aération si le boîtier en a une. Elle fournit toutes les tensions de la machine."
   });
   add("psu-300", {
     nom: "Alimentation ATX 300 W", type: "alim", cat: "composant", format: "ATX", w: 300, pcie: 0,
-    art: { icon: "alim-i", scene: "alim-s" }, o: { label: "300 W" },
+    art: { icon: "alim-i", scene: "alim-s" }, o: { label: "300 W", fmt: "ATX" },
     resume: "ATX, 300 W, sans connecteur PCIe",
     specs: [["Format", "ATX"], ["Puissance", "300 W"], ["Connecteurs", "24 broches, EPS 4+4, SATA (pas de PCIe)"]],
     pose: "Une alimentation de 300 W suffit pour un PC de bureau sans carte graphique, mais elle n'a pas de connecteur PCIe : impossible d'alimenter une carte graphique puissante."
+  });
+  add("psu-650", {
+    nom: "Alimentation ATX 650 W", type: "alim", cat: "composant", format: "ATX", w: 650, pcie: 2,
+    art: { icon: "alim-i", scene: "alim-s" }, o: { label: "650 W", fmt: "ATX" },
+    resume: "ATX, 650 W, 24 broches + EPS + PCIe + SATA",
+    specs: [["Format", "ATX"], ["Puissance", "650 W"], ["Connecteurs", "24 broches, EPS 4+4, PCIe 6+2 (plusieurs), SATA"]],
+    pose: "Une alimentation de 650 W laisse de la marge à une machine avec carte graphique : elle travaille loin de sa limite et supporte une évolution."
+  });
+  add("psu-sfx-450", {
+    nom: "Alimentation SFX 450 W", type: "alim", cat: "composant", format: "SFX", w: 450, pcie: 1,
+    art: { icon: "alim-i", scene: "alim-s" }, o: { label: "450 W", fmt: "SFX" },
+    resume: "SFX (compacte), 450 W, 24 broches + EPS + PCIe + SATA",
+    specs: [["Format", "SFX (125 × 63,5 × 100 mm)"], ["Puissance", "450 W"], ["Connecteurs", "24 broches, EPS 4+4, PCIe 6+2, SATA"]],
+    pose: "Le format SFX est plus petit que l'ATX : c'est celui des boîtiers compacts. Un boîtier prévu pour une alimentation SFX n'accepte pas une alimentation ATX, trop grande."
   });
   add("fan-120-a", {
     nom: "Ventilateur 120 mm (1/2)", type: "ventilateur", cat: "composant",
@@ -75,11 +103,27 @@
     art: { icon: "board", scene: "board" },
     resume: "LGA 1700, ATX, DDR5",
     specs: [["Socket", "LGA 1700"], ["Format", "ATX"], ["Mémoire", "DDR5"]],
-    pose: "Carte mère ATX."
+    pose: "Présente la carte en alignant ses ports avec le cache I/O, puis visse-la sur chaque entretoise. Une carte ATX a plus de trous qu'une carte micro-ATX : vérifie que chaque entretoise a sa vis."
+  });
+  add("mb-b650-atx", {
+    nom: "Carte mère B650 (ATX, DDR5)", type: "carte-mere", cat: "composant",
+    format: "ATX", socket: "AM5", ddr: "DDR5",
+    art: { icon: "board", scene: "board" },
+    resume: "AM5, ATX, DDR5, 1 × M.2",
+    specs: [["Socket", "AM5"], ["Format", "ATX"], ["Mémoire", "DDR5, 4 emplacements"], ["Stockage", "1 × M.2 NVMe, 4 × SATA"], ["Vidéo", "HDMI et DisplayPort (graphique du processeur)"], ["Diagnostic", "4 LED de debug (CPU, DRAM, VGA, BOOT)"]],
+    pose: "Présente la carte en alignant ses ports avec le cache I/O, puis visse-la sur chaque entretoise. Le socket AM5 est un socket à contacts (LGA) : on ne touche pas aux contacts de la carte."
+  });
+  add("mb-b660-itx", {
+    nom: "Carte mère B660 (mini-ITX, DDR4)", type: "carte-mere", cat: "composant",
+    format: "ITX", socket: "LGA1700", ddr: "DDR4",
+    art: { icon: "board", scene: "board" }, o: { dimm2: true },
+    resume: "LGA 1700, mini-ITX, DDR4, 2 emplacements mémoire",
+    specs: [["Socket", "LGA 1700"], ["Format", "mini-ITX (17 × 17 cm)"], ["Mémoire", "DDR4, 2 emplacements (un par canal)"], ["Stockage", "1 × M.2 NVMe, 4 × SATA"], ["Vidéo", "HDMI et DisplayPort (graphique du processeur)"], ["Extension", "1 × PCIe x16"]],
+    pose: "Une carte mini-ITX est petite : 4 trous, 2 emplacements mémoire, un seul port PCIe. Le plateau d'un boîtier compact est étroit : on visse en tenant la carte à deux mains."
   });
   add("cpu-12400", {
     nom: "Intel Core i5-12400", type: "cpu", cat: "composant",
-    socket: "LGA1700", pmax: 117, igpu: true,
+    socket: "LGA1700", pmax: 117, tdp: 65, coeurs: 6, igpu: true,
     art: { icon: "cpu", scene: "cpu" }, o: { label: "i5-12400", sub: "LGA1700" },
     resume: "LGA 1700, 6 cœurs, 65 W, graphique intégré",
     specs: [["Socket", "LGA 1700"], ["Cœurs / threads", "6 / 12"], ["Puissance de base", "65 W (jusqu'à 117 W en turbo)"], ["Graphique intégré", "oui (UHD 730)"], ["Mémoire", "DDR4 ou DDR5 selon la carte"]],
@@ -87,7 +131,7 @@
   });
   add("cpu-12400f", {
     nom: "Intel Core i5-12400F", type: "cpu", cat: "composant",
-    socket: "LGA1700", pmax: 117, igpu: false,
+    socket: "LGA1700", pmax: 117, tdp: 65, coeurs: 6, igpu: false,
     art: { icon: "cpu", scene: "cpu" }, o: { label: "i5-12400F", sub: "LGA1700" },
     resume: "LGA 1700, 6 cœurs, 65 W, sans graphique intégré",
     specs: [["Socket", "LGA 1700"], ["Cœurs / threads", "6 / 12"], ["Puissance de base", "65 W (jusqu'à 117 W en turbo)"], ["Graphique intégré", "non (suffixe F)"]],
@@ -96,25 +140,80 @@
   });
   add("cpu-r5-7600", {
     nom: "AMD Ryzen 5 7600", type: "cpu", cat: "composant",
-    socket: "AM5", pmax: 88, igpu: true,
+    socket: "AM5", pmax: 88, tdp: 65, coeurs: 6, igpu: true,
     art: { icon: "cpu", scene: "cpu" }, o: { label: "Ryzen 5", sub: "AM5" },
     resume: "Socket AM5, 6 cœurs, 65 W, DDR5 uniquement",
     specs: [["Socket", "AM5"], ["Cœurs / threads", "6 / 12"], ["TDP", "65 W"], ["Mémoire", "DDR5 uniquement"]],
     pose: "Processeur AMD."
   });
+  add("cpu-12100", {
+    nom: "Intel Core i3-12100", type: "cpu", cat: "composant",
+    socket: "LGA1700", pmax: 89, tdp: 60, coeurs: 4, igpu: true,
+    art: { icon: "cpu", scene: "cpu" }, o: { label: "i3-12100", sub: "LGA1700" },
+    resume: "LGA 1700, 4 cœurs, 60 W, graphique intégré",
+    specs: [["Socket", "LGA 1700"], ["Cœurs / threads", "4 / 8"], ["Puissance de base", "60 W (jusqu'à 89 W en turbo)"], ["Graphique intégré", "oui (UHD 730)"]],
+    pose: "Même pose que tout processeur LGA : triangle contre triangle, sans forcer."
+  });
+  add("cpu-12100f", {
+    nom: "Intel Core i3-12100F", type: "cpu", cat: "composant",
+    socket: "LGA1700", pmax: 89, tdp: 58, coeurs: 4, igpu: false,
+    art: { icon: "cpu", scene: "cpu" }, o: { label: "i3-12100F", sub: "LGA1700" },
+    resume: "LGA 1700, 4 cœurs, 58 W, sans graphique intégré",
+    specs: [["Socket", "LGA 1700"], ["Cœurs / threads", "4 / 8"], ["Puissance de base", "58 W (jusqu'à 89 W en turbo)"], ["Graphique intégré", "non (suffixe F)"]],
+    alerte: "Le suffixe F signifie « sans graphique intégré ». Sans carte graphique dédiée, ce PC n'aura pas d'image, et le cahier des charges ne prévoit pas de carte graphique.",
+    pose: "Même pose que tout processeur LGA : triangle contre triangle, sans forcer."
+  });
+  add("cpu-12700", {
+    nom: "Intel Core i7-12700", type: "cpu", cat: "composant",
+    socket: "LGA1700", pmax: 180, tdp: 65, coeurs: 12, igpu: true,
+    art: { icon: "cpu", scene: "cpu" }, o: { label: "i7-12700", sub: "LGA1700" },
+    resume: "LGA 1700, 12 cœurs, 65 W (180 W en turbo), graphique intégré",
+    specs: [["Socket", "LGA 1700"], ["Cœurs / threads", "12 / 20"], ["Puissance de base", "65 W (jusqu'à 180 W en turbo)"], ["Graphique intégré", "oui (UHD 770)"]],
+    pose: "Même pose que tout processeur LGA : triangle contre triangle, sans forcer."
+  });
+  add("cpu-12900k", {
+    nom: "Intel Core i9-12900K", type: "cpu", cat: "composant",
+    socket: "LGA1700", pmax: 241, tdp: 125, coeurs: 16, igpu: true,
+    art: { icon: "cpu", scene: "cpu" }, o: { label: "i9-12900K", sub: "LGA1700" },
+    resume: "LGA 1700, 16 cœurs, 125 W (241 W en turbo), graphique intégré",
+    specs: [["Socket", "LGA 1700"], ["Cœurs / threads", "16 / 24"], ["Puissance de base", "125 W (jusqu'à 241 W en turbo)"], ["Graphique intégré", "oui (UHD 770)"], ["Refroidissement", "pas de ventirad fourni"]],
+    pose: "Même pose que tout processeur LGA. Ce modèle chauffe beaucoup en charge : il demande un vrai ventirad et une alimentation correctement dimensionnée."
+  });
+  add("cpu-r5-5600", {
+    nom: "AMD Ryzen 5 5600", type: "cpu", cat: "composant",
+    socket: "AM4", pmax: 88, tdp: 65, coeurs: 6, igpu: false,
+    art: { icon: "cpu", scene: "cpu" }, o: { label: "Ryzen 5", sub: "AM4" },
+    resume: "Socket AM4, 6 cœurs, 65 W, DDR4, sans graphique intégré",
+    specs: [["Socket", "AM4"], ["Cœurs / threads", "6 / 12"], ["TDP", "65 W"], ["Mémoire", "DDR4"], ["Graphique intégré", "non"]],
+    pose: "Processeur AMD d'ancienne génération : socket AM4, broches sous le processeur."
+  });
   add("cooler-tower", {
-    nom: "Ventirad tour (LGA 1700)", type: "ventirad", cat: "composant", sockets: ["LGA1700"],
+    nom: "Ventirad tour (LGA 1700)", type: "ventirad", cat: "composant", sockets: ["LGA1700"], tdp: 150, h: 155,
     art: { icon: "cooler-i", scene: "cooler-s" },
     resume: "Dissipateur + ventilateur, sans pâte pré-appliquée",
-    specs: [["Fixation", "LGA 1700"], ["Ventilateur", "120 mm, 4 broches (PWM)"], ["Pâte", "non pré-appliquée"]],
+    specs: [["Fixation", "LGA 1700"], ["Hauteur", "environ 155 mm"], ["Dissipation (modèle générique)", "environ 150 W"], ["Ventilateur", "120 mm, 4 broches (PWM)"], ["Pâte", "non pré-appliquée"]],
     pose: "Le ventirad se visse sur la plaque arrière, par petits tours en croix, pour une pression régulière sur le processeur. Son ventilateur se branche sur CPU_FAN."
   });
   add("cooler-am5", {
-    nom: "Ventirad AMD (AM5)", type: "ventirad", cat: "composant", sockets: ["AM5"],
+    nom: "Ventirad AMD (AM5)", type: "ventirad", cat: "composant", sockets: ["AM5"], tdp: 120, h: 150,
     art: { icon: "cooler-i", scene: "cooler-s" },
     resume: "Dissipateur pour socket AM5",
-    specs: [["Fixation", "AM5"]],
-    pose: "Ventirad AMD."
+    specs: [["Fixation", "AM5"], ["Hauteur", "environ 150 mm"], ["Dissipation (modèle générique)", "environ 120 W"]],
+    pose: "Le ventirad se visse sur le support de fixation du socket AM5, par petits tours en croix. Son ventilateur se branche sur CPU_FAN."
+  });
+  add("cooler-boxed", {
+    nom: "Ventirad d'entrée de gamme (LGA 1700)", type: "ventirad", cat: "composant", sockets: ["LGA1700"], tdp: 65, h: 60,
+    art: { icon: "cooler-i", scene: "cooler-s" },
+    resume: "Petit ventirad, pour processeurs de 65 W",
+    specs: [["Fixation", "LGA 1700"], ["Hauteur", "environ 60 mm"], ["Dissipation (modèle générique)", "environ 65 W"], ["Pâte", "non pré-appliquée"]],
+    pose: "Ce petit ventirad suffit à un processeur de 65 W ou moins. Sur un processeur plus puissant, il sature : le processeur ralentit pour ne pas surchauffer."
+  });
+  add("cooler-lp", {
+    nom: "Ventirad low-profile (LGA 1700)", type: "ventirad", cat: "composant", sockets: ["LGA1700"], tdp: 65, h: 47,
+    art: { icon: "cooler-i", scene: "cooler-s" },
+    resume: "Très bas (≈ 47 mm), pour boîtiers compacts",
+    specs: [["Fixation", "LGA 1700"], ["Hauteur", "environ 47 mm"], ["Dissipation (modèle générique)", "environ 65 W"], ["Pâte", "non pré-appliquée"]],
+    pose: "Un ventirad low-profile a une faible hauteur pour passer sous le panneau d'un boîtier compact. Il dissipe moins de chaleur qu'un ventirad tour."
   });
   add("ram-ddr4-a", {
     nom: "Barrette DDR4-3200 8 Go (1/2)", type: "ram", cat: "composant", ddr: "DDR4", go: 8,
@@ -135,27 +234,57 @@
     art: { icon: "dimm", scene: "dimm-s" }, o: { label: "DDR5 16 Go", ddr: "DDR5" },
     resume: "DDR5, 16 Go",
     specs: [["Type", "DDR5-5600 UDIMM"], ["Capacité", "16 Go"]],
-    pose: "Barrette DDR5."
+    pose: "Ouvre les clips, aligne l'encoche de la barrette avec le détrompeur de l'emplacement, puis appuie aux deux extrémités jusqu'au « clic » des clips."
+  });
+  ["b", "c", "d"].forEach(function (k, i) {
+    add("ram-ddr5-" + k, {
+      nom: "Barrette DDR5-5600 16 Go (" + (i + 2) + ")", type: "ram", cat: "composant", ddr: "DDR5", go: 16,
+      art: { icon: "dimm", scene: "dimm-s" }, o: { label: "DDR5 16 Go", ddr: "DDR5" },
+      resume: "DDR5, 16 Go",
+      specs: [["Type", "DDR5-5600 UDIMM"], ["Capacité", "16 Go"]],
+      pose: "Ouvre les clips, aligne l'encoche de la barrette avec le détrompeur de l'emplacement, puis appuie aux deux extrémités jusqu'au « clic » des clips."
+    });
+  });
+  add("ram-ddr5-32", {
+    nom: "Barrette DDR5-5600 32 Go (unique)", type: "ram", cat: "composant", ddr: "DDR5", go: 32,
+    art: { icon: "dimm", scene: "dimm-s" }, o: { label: "DDR5 32 Go", ddr: "DDR5" },
+    resume: "DDR5, 32 Go (une seule barrette)",
+    specs: [["Type", "DDR5-5600 UDIMM"], ["Capacité", "32 Go (une barrette)"]],
+    pose: "Une seule grosse barrette donne la capacité, mais un seul canal mémoire est utilisé : la bande passante est inférieure à celle de deux barrettes."
   });
   add("ssd-nvme", {
-    nom: "SSD M.2 NVMe 500 Go", type: "ssd-m2", cat: "composant", go: 500,
+    nom: "SSD M.2 NVMe 500 Go", type: "ssd-m2", cat: "composant", go: 500, ssd: true,
     art: { icon: "m2", scene: "m2" },
     resume: "M.2 NVMe, 500 Go, sans câble",
     specs: [["Format", "M.2 2280, PCIe NVMe"], ["Capacité", "500 Go"]],
     pose: "Insère le SSD dans le connecteur M.2 en biais, rabats-le puis fixe-le avec la petite vis à l'autre extrémité. Aucun câble à brancher."
   });
   add("ssd-sata", {
-    nom: "SSD SATA 2,5″ 500 Go", type: "ssd-sata", cat: "composant", go: 500,
+    nom: "SSD SATA 2,5″ 500 Go", type: "ssd-sata", cat: "composant", go: 500, ssd: true,
     art: { icon: "sata-ssd", scene: "sata-ssd" },
     resume: "SATA, 500 Go, demande 2 câbles",
     specs: [["Format", "2,5″ SATA"], ["Capacité", "500 Go"]],
     pose: "Un SSD SATA se fixe dans son support, puis demande deux câbles : données (vers la carte mère) et alimentation (vers l'alimentation)."
   });
+  add("ssd-nvme-1to", {
+    nom: "SSD M.2 NVMe 1 To", type: "ssd-m2", cat: "composant", go: 1000, ssd: true,
+    art: { icon: "m2", scene: "m2" },
+    resume: "M.2 NVMe, 1 To, sans câble",
+    specs: [["Format", "M.2 2280, PCIe NVMe"], ["Capacité", "1 To"]],
+    pose: "Insère le SSD dans le connecteur M.2 en biais, rabats-le puis fixe-le avec la petite vis à l'autre extrémité. Aucun câble à brancher."
+  });
+  add("hdd-sata", {
+    nom: "Disque dur 2,5″ SATA 1 To", type: "hdd-sata", cat: "composant", go: 1000, ssd: false,
+    art: { icon: "sata-ssd", scene: "sata-ssd" }, o: { t1: "HDD 2,5″ SATA", t2: "1 To · 5400 tr/min" },
+    resume: "Disque dur mécanique, 1 To, 2 câbles",
+    specs: [["Format", "2,5″ SATA, mécanique"], ["Capacité", "1 To"], ["Vitesse de rotation", "5400 tr/min"]],
+    pose: "Un disque dur mécanique contient des plateaux qui tournent : il est plus lent qu'un SSD, plus sensible aux chocs et produit du bruit. Il demande deux câbles : données et alimentation."
+  });
   add("gpu-8pin", {
-    nom: "Carte graphique dédiée (1 × 8 broches)", type: "gpu", cat: "composant", w: 160, pcie: 1,
+    nom: "Carte graphique dédiée (1 × 8 broches)", type: "gpu", cat: "composant", w: 160, pcie: 1, l: 300,
     art: { icon: "gpu-i", scene: "gpu" },
     resume: "PCIe x16, environ 160 W",
-    specs: [["Interface", "PCIe x16"], ["Consommation", "environ 160 W"], ["Alimentation", "1 × 8 broches (PCIe)"]],
+    specs: [["Interface", "PCIe x16"], ["Longueur", "environ 300 mm"], ["Consommation", "environ 160 W"], ["Alimentation", "1 × 8 broches (PCIe)"]],
     alerte: "Le cahier des charges ne prévoit pas de carte graphique : le processeur a un graphique intégré. Une carte dédiée coûte plus cher, consomme plus et n'apporte rien en bureautique.",
     pose: "La carte graphique s'enfonce dans le port PCIe x16 jusqu'au « clic » du loquet, puis se visse à l'arrière du boîtier. Ses sorties vidéo se trouvent à l'arrière."
   });
@@ -227,7 +356,7 @@
       { id: "con-fpanel", nom: "F_PANEL (façade)", accepte: ["cab-facade"], x: 270, y: 472, w: 50, h: 12, z: 8, vue: "zoom", requiert: ["board"], fil: [800, 560] },
       { id: "con-usb3", nom: "Embase USB 3", accepte: ["cab-usb3"], x: 200, y: 466, w: 40, h: 18, z: 8, vue: "zoom", requiert: ["board"], fil: [800, 540] },
       { id: "con-audio", nom: "Embase audio HD", accepte: ["cab-audio"], x: 130, y: 472, w: 40, h: 14, z: 8, vue: "zoom", requiert: ["board"], fil: [800, 575] },
-      { id: "bay-ssd", nom: "Support de disque 2,5″", accepte: ["ssd-sata"], x: 520, y: 424, w: 120, h: 40, z: 3, vue: "cote" },
+      { id: "bay-ssd", nom: "Support de disque 2,5″", accepte: ["ssd-sata", "hdd-sata"], x: 520, y: 424, w: 120, h: 40, z: 3, vue: "cote" },
       { id: "sata-data", nom: "SATA : données", accepte: ["cab-sata-data"], x: 646, y: 422, w: 22, h: 16, z: 8, vue: "cote", requiert: ["bay-ssd", "board"], fil: [428, 470] },
       { id: "sata-pwr", nom: "SATA : alimentation", accepte: ["cab-sata-pwr"], x: 646, y: 446, w: 30, h: 16, z: 8, vue: "cote", requiert: ["bay-ssd", "psu"], fil: CAB },
       { id: "mains", nom: "Prise de l'alimentation", accepte: ["cab-secteur"], x: 92, y: 448, w: 72, h: 44, z: 8, vue: "arriere", requiert: ["psu"] },
@@ -260,13 +389,28 @@
     }
   };
 
+  /* Autres boîtiers : même schéma de scène, contraintes différentes (formats, alimentation, hauteur, longueur de carte). */
+  function cloneDispo(base, nom, f) {
+    var d = JSON.parse(JSON.stringify(base));
+    d.nom = nom;
+    if (f) f(d);
+    return d;
+  }
+  D["tour-atx"] = cloneDispo(D["tour-matx"], "Boîtier tour ATX");
+  D["compact-itx"] = cloneDispo(D["tour-matx"], "Boîtier compact mini-ITX", function (d) {
+    var retire = { "dimm-a1": 1, "dimm-b1": 1, "fan-front": 1, "h-sys2": 1 };
+    d.slots = d.slots.filter(function (s) { return !retire[s.id]; });
+    d.slots.forEach(function (s) { if (s.id === "dimm-a2") s.nom = "DIMM A (canal A)"; if (s.id === "dimm-b2") s.nom = "DIMM B (canal B)"; });
+  });
+
   /* ---------- Scénarios ---------- */
   A.scenarios = A.scenarios || {};
   A.scenarios["bureautique-intel"] = {
     id: "bureautique-intel", unite: "atelier-s1",
     titre: "PC bureautique Intel", niveau: "Débutant", duree: "≈ 30 min", mode: "apprentissage",
     disposition: "tour-matx",
-    boitier: { nom: "Tour micro-ATX", formats: ["mATX", "ITX"], alim: ["ATX"] },
+    boitier: { nom: "Tour micro-ATX", formats: ["mATX", "ITX"], alim: ["ATX"], lGpu: 400, hVentirad: 165 },
+    exige: { igpu: true, sansGpu: true },
     brief: {
       client: "Un service administratif commande un PC de bureau pour Windows 11 : tableur, navigateur, visioconférence. Le budget est serré.",
       besoin: [

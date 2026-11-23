@@ -359,6 +359,7 @@ th { border-bottom-color: var(--accent); }
 /* ==========================================================================
    Atelier hardware : scène, bac de pièces, étapes, démarrage simulé
    ========================================================================== */
+#atelier [hidden] { display: none !important; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .badge.mode { background: var(--accent); color: var(--on-accent); }
 .at-head { margin-bottom: 1rem; }
@@ -464,4 +465,29 @@ body.at-dragging { cursor: grabbing; }
 .at-bilan .ok { color: var(--green); }
 .at-bilan .ko { color: var(--red); }
 .at-reussi { font-weight: 700; color: var(--green); font-family: var(--font-ui); }
+
+/* Atelier : modes, test noté, rapport, évaluation */
+.at-modes { margin: 0.2rem 0 0; font-family: var(--font-ui); font-size: 0.9rem; }
+.at-modes a { display: inline-flex; align-items: center; min-height: 44px; }
+.at-bareme { font-family: var(--font-ui); font-size: 0.92rem; padding-left: 1.2rem; }
+.at-compteurs { font-family: var(--font-code); font-size: 0.78rem; }
+.at-liens { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.6rem 0 0.2rem; }
+.at-score-ligne { min-height: 1.2rem; margin: 0.3rem 0 0; font-family: var(--font-code); font-size: 0.78rem; }
+.at-rapport { margin-bottom: 1.5rem; padding: 1rem 1.1rem; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--r-m); }
+.at-rapport:focus { outline: none; }
+.at-rap h3 { margin: 1.4rem 0 0.5rem; }
+.at-score { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem; margin: 0.3rem 0 0.8rem; }
+.at-score .n { font-family: var(--font-code); font-size: 3rem; font-weight: 500; line-height: 1; color: var(--ink); }
+.at-score .sur { font-family: var(--font-code); font-size: 1rem; color: var(--ink-pale); }
+.at-score .verdict { font-family: var(--font-ui); font-weight: 700; margin-left: 0.5rem; }
+.at-score .verdict.bon { color: var(--green); }
+.at-score .verdict.faux { color: var(--red); }
+.at-table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 0.9rem; margin: 0.5rem 0 1rem; }
+.at-table th, .at-table td { text-align: left; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--line); }
+.at-revoir-item { margin: 0 0 1rem; padding: 0.7rem 0.9rem; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--r-s); }
+.at-revoir-item h4 { margin: 0 0 0.3rem; font-size: 1.05rem; }
+.at-revoir-item ul { margin: 0 0 0.5rem; padding-left: 1.2rem; font-family: var(--font-ui); font-size: 0.9rem; }
+.at-revoir-item p { margin: 0 0 0.4rem; font-size: 0.95rem; }
+.at-lien { font-family: var(--font-ui); font-size: 0.88rem; }
+.at-lien a { display: inline-block; padding: 0.4rem 0; }
 @media (prefers-reduced-motion: reduce) { .slot-hit { animation: none; } .at-scene.shake { animation: none; } }
