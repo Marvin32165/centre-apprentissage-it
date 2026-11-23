@@ -157,7 +157,8 @@ Idées reprises du dépôt `claude-tools` (chef, evidence-reviewer, hooks, skill
   Fait : `outils/garde.mjs` (sans navigateur, < 1 s) contrôle les moteurs depuis `main` (sauf ligne « Moteur autorisé : … »), l'index (`index-recherche.mjs --verifier`), Google Fonts seul en externe et présent sur chaque page, `alert`/`confirm`/`prompt`/`fetch`, clés `it.`, IP publiques, e-mails réels et secrets ; 0 problème sur le site, 6 violations volontaires toutes détectées ; ajouté à `controles` et à `audit.yml` (historique complet pour comparer à `main`).
 - [x] 15.3 Hook Git `pre-commit` facultatif (`npm run hooks`) : garde-fous avant chaque commit, quel que soit l'agent.
   Fait : `outils/hooks/pre-commit` lance `garde` à chaque commit, et l'audit 390/1280 px si une page ou `assets/` change et que Playwright est installé ; `npm run hooks` l'active (`core.hooksPath`, une fois par clone) ; `--no-verify` réservé aux urgences, à signaler dans le plan.
-- [ ] 15.4 Enveloppes Claude Code dans `.claude/` : skills qui renvoient aux procédures, agents relecteurs, hook de protection des fichiers et rappel du plan après compaction.
+- [x] 15.4 Enveloppes Claude Code dans `.claude/` : skills qui renvoient aux procédures, agents relecteurs, hook de protection des fichiers et rappel du plan après compaction.
+  Fait : skills `/nouveau-module`, `/relecture-sources`, `/test-chef` (en-tête au standard Agent Skills) et agents `relecteur-sources`, `chef`, qui renvoient tous à `docs/procedures/` ; hooks en Node (pas de jq, marche sous Windows) : blocage des moteurs, de `recherche.js`, de `node_modules`/`.git` et de tout fichier hors du dépôt, refus d'arrêt si `garde` échoue, rappel du lot en cours après compaction ; testés à la main (4 cas de blocage, arrêt, rappel).
 - [ ] 15.5 `npm run controles`, coche du lot, fusion dans `main`.
 
 ## Ensuite
