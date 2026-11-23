@@ -19,12 +19,15 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Vérifications clavier
         run: node outils/accessibilite-lot-13.mjs
-        continue-on-error: true
       - name: Audit serveur et fichiers
         run: |
-          node outils/verif.mjs --captures="$RUNNER_TEMP/captures" > "$RUNNER_TEMP/audit-serveur.txt" 2>&1 || true
-          node outils/verif.mjs --file > "$RUNNER_TEMP/audit-file.txt" 2>&1 || true
+          set +e
+          node outils/verif.mjs --captures="$RUNNER_TEMP/captures" > "$RUNNER_TEMP/audit-serveur.txt" 2>&1
+          serveur=$?
+          node outils/verif.mjs --file > "$RUNNER_TEMP/audit-file.txt" 2>&1
+          fichier=$?
           cat "$RUNNER_TEMP/audit-serveur.txt" "$RUNNER_TEMP/audit-file.txt"
+          test "$serveur" -eq 0 && test "$fichier" -eq 0
       - uses: actions/upload-artifact@v4
         if: always()
         with:
