@@ -10,18 +10,22 @@
   function L(x1, y1, x2, y2, stroke, sw, extra) { return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + stroke + '" stroke-width="' + (sw || 1) + '" ' + (extra || "") + "/>"; }
   function def(id, w, h, fn) { F[id] = { w: w, h: h, fn: fn }; }
 
-  /* Défs partagés (insérés une fois dans la page). */
+  /* Défs partagés (insérés une fois dans la page). Gravure du « Livre du montage » : les anciens dégradés
+     (g-*) sont devenus des hachures à l'encre sur papier ; h-* servent aux surcharges CSS des aplats. */
   var DEFS = '<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>' +
-    '<linearGradient id="g-metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D6D4CE"/><stop offset=".5" stop-color="#9C9A95"/><stop offset="1" stop-color="#C4C2BC"/></linearGradient>' +
-    '<linearGradient id="g-metal-h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B8B6B0"/><stop offset=".45" stop-color="#E4E2DC"/><stop offset="1" stop-color="#8F8D88"/></linearGradient>' +
-    '<linearGradient id="g-dark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A4540"/><stop offset="1" stop-color="#1F1C19"/></linearGradient>' +
-    '<linearGradient id="g-pcb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34402F"/><stop offset="1" stop-color="#1D261D"/></linearGradient>' +
-    '<linearGradient id="g-brass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9A7430"/><stop offset=".4" stop-color="#E7CE86"/><stop offset="1" stop-color="#8C6A2B"/></linearGradient>' +
-    '<linearGradient id="g-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F0D98C"/><stop offset="1" stop-color="#B58D36"/></linearGradient>' +
-    '<linearGradient id="g-case" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5A534B"/><stop offset="1" stop-color="#2F2B27"/></linearGradient>' +
-    '<linearGradient id="g-tray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6A645C"/><stop offset="1" stop-color="#47423C"/></linearGradient>' +
-    '<radialGradient id="g-hub" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#6B655E"/><stop offset="1" stop-color="#1E1B18"/></radialGradient>' +
-    '<filter id="f-ombre" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#000" flood-opacity=".38"/></filter>' +
+    '<pattern id="g-metal" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#F7F1E6"/><line x1="0" y1="0" x2="0" y2="6" stroke="#1B1713" stroke-width="0.8" stroke-opacity="0.28"/></pattern>' +
+    '<pattern id="g-metal-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><rect width="6" height="6" fill="#F7F1E6"/><line x1="0" y1="0" x2="0" y2="6" stroke="#1B1713" stroke-width="0.8" stroke-opacity="0.25"/></pattern>' +
+    '<pattern id="g-dark" width="3.2" height="3.2" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3.2" height="3.2" fill="#F7F1E6"/><line x1="0" y1="0" x2="0" y2="3.2" stroke="#1B1713" stroke-width="0.9" stroke-opacity="0.5"/><line x1="0" y1="1.6" x2="3.2" y2="1.6" stroke="#1B1713" stroke-width="0.9" stroke-opacity="0.5"/></pattern>' +
+    '<pattern id="g-pcb" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#F7F1E6"/><line x1="0" y1="0" x2="0" y2="4" stroke="#1B1713" stroke-width="0.8" stroke-opacity="0.34"/></pattern>' +
+    '<pattern id="g-brass" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#E3B49A"/><line x1="0" y1="0" x2="0" y2="4" stroke="#1B1713" stroke-width="0.7" stroke-opacity="0.3"/></pattern>' +
+    '<pattern id="g-gold" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><rect width="4" height="4" fill="#E3B49A"/><line x1="0" y1="0" x2="0" y2="4" stroke="#1B1713" stroke-width="0.7" stroke-opacity="0.28"/></pattern>' +
+    '<pattern id="g-case" width="3.6" height="3.6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3.6" height="3.6" fill="#F7F1E6"/><line x1="0" y1="0" x2="0" y2="3.6" stroke="#1B1713" stroke-width="0.9" stroke-opacity="0.42"/><line x1="0" y1="1.8" x2="3.6" y2="1.8" stroke="#1B1713" stroke-width="0.9" stroke-opacity="0.42"/></pattern>' +
+    '<pattern id="g-tray" width="4.5" height="4.5" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><rect width="4.5" height="4.5" fill="#F7F1E6"/><line x1="0" y1="0" x2="0" y2="4.5" stroke="#1B1713" stroke-width="0.8" stroke-opacity="0.32"/></pattern>' +
+    '<pattern id="g-hub" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="3" fill="#F7F1E6"/><line x1="0" y1="0" x2="0" y2="3" stroke="#1B1713" stroke-width="0.9" stroke-opacity="0.5"/><line x1="0" y1="1.5" x2="3" y2="1.5" stroke="#1B1713" stroke-width="0.9" stroke-opacity="0.5"/></pattern>' +
+    '<pattern id="h-dense" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#F7F1E6"/><line x1="0" y1="0" x2="0" y2="4" stroke="#1B1713" stroke-width="0.8" stroke-opacity="0.42"/><line x1="0" y1="2" x2="4" y2="2" stroke="#1B1713" stroke-width="0.8" stroke-opacity="0.3"/></pattern>' +
+    '<pattern id="h-moyen" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="4" fill="#F7F1E6"/><line x1="0" y1="0" x2="0" y2="4" stroke="#1B1713" stroke-width="0.8" stroke-opacity="0.35"/></pattern>' +
+    '<pattern id="h-fin" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><rect width="6" height="6" fill="#F7F1E6"/><line x1="0" y1="0" x2="0" y2="6" stroke="#1B1713" stroke-width="0.7" stroke-opacity="0.25"/></pattern>' +
+    '<filter id="f-ombre"><feOffset dx="0" dy="0"/></filter>' +
     "</defs></svg>";
 
   /* Ventilateur de face (80 × 80). */

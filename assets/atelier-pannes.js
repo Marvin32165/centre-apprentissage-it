@@ -1,6 +1,7 @@
 /* Atelier hardware — lot 6 : pannes. Interface : catalogue, dossier de panne (apprentissage ou test noté), évaluation. */
 (function () {
   "use strict";
+  var ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV"];
   var A = window.IT_ATELIER, T = window.IT_PANNES, Art = window.IT_ATELIER_ART;
   var host = document.getElementById("pannes");
   if (!host || !A || !T || !Art) return;
@@ -43,30 +44,39 @@
     c.appendChild(el("p", null, "Deux modes : « apprentissage » (indices, explications, corrigé caché) et « test noté » (sans aide, sur 100 : diagnostic 40, réparation 30, observation utile 20, sécurité 10). Avant toute intervention, mets le PC hors tension."));
     b.appendChild(c);
     host.appendChild(b);
-    var g = el("div", { "class": "grid cols-3" });
+    var livre = el("div", { "class": "livre-double observations-table" });
+    var pg = el("section", { "class": "livre-page gauche", "aria-labelledby": "obs-titre" });
+    pg.appendChild(el("p", { "class": "titre-courant" })).appendChild(el("span", null, "Chap. VII — Observations"));
+    var corps = el("div", { "class": "livre-corps" });
+    corps.appendChild(el("h2", { id: "obs-titre" }, "Quatorze dossiers"));
+    corps.appendChild(el("p", { "class": "texte" }, "Chaque dossier part d'un ticket réel dans sa forme : un symptôme décrit par l'utilisateur. On examine, on note ce qu'on observe, on pose un diagnostic, puis on répare. Le rabat de chaque dossier explique le pourquoi."));
+    corps.appendChild(el("p", { "class": "ornement", "aria-hidden": "true" }, "✣"));
+    corps.appendChild(el("h3", { "class": "petites-caps" }, "Épreuve IX"));
+    corps.appendChild(el("p", null, "Cinq dossiers tirés au sort, sans aide, notés sur 100. À la fin : un bilan des points à revoir."));
+    corps.appendChild(el("p")).appendChild(el("a", { "class": "btn", href: "pannes-eval.html" }, "Commencer l'évaluation"));
+    pg.appendChild(corps);
+    var pd = el("section", { "class": "livre-page droite", "aria-label": "Liste des dossiers" });
+    pd.appendChild(el("p", { "class": "titre-courant" })).appendChild(el("span", null, "Table des observations"));
+    var ol = el("ol", { "class": "toc-livre" });
     Object.keys(A.pannes).forEach(function (id, i) {
       var p = A.pannes[id], fait = store.get("panne." + id) === "1", best = parseInt(store.get("score.panne." + id), 10);
-      var card = el("div", { "class": "card" });
-      card.appendChild(el("p", { "class": "kicker" }, "Dossier " + (i + 1) + " · " + p.niveau));
-      card.appendChild(el("h3", null, p.titre));
-      card.appendChild(el("p", { "class": "muted" }, p.contexte));
-      var l = el("p", { "class": "at-liens" });
-      l.appendChild(el("a", { "class": "btn", href: "pannes.html?p=" + id }, "Apprentissage"));
-      l.appendChild(el("a", { "class": "btn ghost", href: "pannes.html?p=" + id + "&m=test" }, "Test noté"));
-      card.appendChild(l);
-      var t = [];
-      if (!isNaN(best)) t.push("Meilleur test : " + best + " / 100");
-      if (fait) t.push("Résolue ✓");
-      card.appendChild(el("p", { "class": "muted at-score-ligne" }, t.join(" · ")));
-      g.appendChild(card);
+      var li = el("li");
+      var a = el("a", { href: "pannes.html?p=" + id });
+      a.appendChild(el("span", { "class": "toc-num" }, ROM[i + 1] + "."));
+      a.appendChild(el("span", { "class": "toc-t" }, p.titre));
+      a.appendChild(el("span", { "class": "toc-pts", "aria-hidden": "true" }));
+      a.appendChild(el("span", { "class": "toc-p" }, fait ? "✓" : p.niveau.charAt(0)));
+      a.setAttribute("aria-label", "Dossier " + (i + 1) + " : " + p.titre + ", " + p.niveau + (fait ? ", résolu" : "") + (!isNaN(best) ? ", meilleur test " + best + " sur 100" : ""));
+      li.appendChild(a);
+      var t = el("a", { "class": "toc-test", href: "pannes.html?p=" + id + "&m=test" }, "test" + (!isNaN(best) ? " · " + best : ""));
+      t.setAttribute("aria-label", "Dossier " + (i + 1) + " en test noté");
+      li.appendChild(t);
+      ol.appendChild(li);
     });
-    host.appendChild(g);
-    var ev = el("div", { "class": "card" });
-    ev.appendChild(el("h3", null, "Évaluation : cinq pannes tirées au sort"));
-    ev.appendChild(el("p", null, "Cinq dossiers enchaînés, sans aide, notés sur 100. À la fin : un rapport des points à revoir."));
-    ev.appendChild(el("p", { "class": "at-liens" })).appendChild(el("a", { "class": "btn", href: "pannes-eval.html" }, "Commencer l'évaluation"));
-    host.appendChild(el("h2", null, "Évaluation"));
-    host.appendChild(ev);
+    pd.appendChild(ol);
+    pd.appendChild(el("p", { "class": "legende-toc" }, "D, I, A : débutant, intermédiaire, avancé · ✓ résolu"));
+    livre.appendChild(pg); livre.appendChild(pd);
+    host.appendChild(livre);
   }
 
   /* ---------- Un dossier de panne ---------- */
@@ -101,18 +111,29 @@
     if (!ctx.eval) head.querySelector(".at-modes").appendChild(el("a", { href: "pannes.html?p=" + id + (TEST ? "" : "&m=test") }, TEST ? "Passer en mode apprentissage (indices)" : "Passer en mode test (sans aide, noté)"));
     host.appendChild(head);
 
-    var ticket = el("section", { "class": "bloc pn-ticket", "aria-label": "Ticket reçu" });
-    ticket.appendChild(el("p", { "class": "kicker" }, "Ticket reçu au service desk"));
-    ticket.appendChild(el("p", { "class": "at-client" }, p.ticket));
-    ticket.appendChild(el("p", { "class": "muted" }, "Contexte : " + p.contexte));
+    var ticket = el("section", { "class": "pn-ticket", "aria-label": "Ticket reçu" });
+    ticket.appendChild(el("h2", { "class": "petites-caps" }, "Le ticket"));
+    ticket.appendChild(el("blockquote", { "class": "citation" }, p.ticket));
+    ticket.appendChild(el("p", { "class": "texte" }, p.contexte));
     var src = el("aside", { "class": "callout source" });
     src.appendChild(el("p", null, "Les LED de debug, les bips et la liste des processeurs compatibles dépendent de la carte mère : la source de référence est son manuel et la page de support du constructeur. Tolérances des tensions d'une alimentation : spécification ATX (±5 % sur +12 V, +5 V, +3,3 V). Théorie : jour 9 de la prépa (matériel et PC) et jour 8 (méthode de diagnostic)."));
     ticket.appendChild(src);
-    host.appendChild(ticket);
-
-    var layout = el("div", { "class": "at-layout" });
-    var main = el("div", { "class": "at-main" }), side = el("div", { "class": "at-side" });
-    layout.appendChild(main); layout.appendChild(side); host.appendChild(layout);
+    var layout = el("div", { "class": "livre-double at-layout observations" });
+    var pageG = el("section", { "class": "livre-page gauche", "aria-label": "Page d'observation" });
+    var pageD = el("section", { "class": "livre-page droite", "aria-label": "Planche du symptôme et diagnostic" });
+    var tc = el("p", { "class": "titre-courant" });
+    tc.appendChild(el("span", null, ctx.eval ? "Épreuve IX — dossier " + (ctx.eval.i + 1) + " sur " + ctx.eval.n : "Chap. VII — Observations"));
+    tc.appendChild(el("span", null, "Dossier " + (ctx.eval ? ctx.eval.i + 1 : num)));
+    var corps = el("div", { "class": "livre-corps" });
+    var marge = el("aside", { "class": "livre-marge", "aria-label": "Observations notées en marge" });
+    pageG.appendChild(tc); pageG.appendChild(corps); pageG.appendChild(marge);
+    corps.appendChild(ticket);
+    var tcD = el("p", { "class": "titre-courant" });
+    tcD.appendChild(el("span", null, "Planche du symptôme"));
+    pageD.appendChild(tcD);
+    var main = el("div", { "class": "at-main" }), side = corps;
+    pageD.appendChild(main);
+    layout.appendChild(pageG); layout.appendChild(pageD); host.appendChild(layout);
 
     var scene = el("div", { "class": "at-scene pn-scene" });
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -126,19 +147,21 @@
     var bGive = el("button", { type: "button", "class": "btn ghost" }, TEST ? "Terminer le test" : "Voir la solution");
     [bTension, bPower].concat(TEST ? [] : [bHint]).concat([bGive]).forEach(function (b) { actions.appendChild(b); });
     main.appendChild(actions);
-    var msgBox = el("p", { "class": "at-msg", role: "status", "aria-live": "polite" });
-    main.appendChild(msgBox);
+    var msgBox = el("p", { "class": "at-msg note-marge", role: "status", "aria-live": "polite" });
+    marge.appendChild(msgBox);
     var secPost = el("section", { "class": "at-post bloc", hidden: "", "aria-label": "Démarrage du PC" });
     main.appendChild(secPost);
 
-    var secOutils = el("section", { "class": "bloc pn-outils", "aria-label": "Outils d'inspection" });
+    var secOutils = el("section", { "class": "pn-outils", "aria-label": "Examen" });
     var secCarnet = el("section", { "class": "pn-carnet-box", "aria-label": "Carnet de bord" });
-    var secDiag = el("section", { "class": "bloc pn-diag", "aria-label": "Diagnostic et intervention" });
+    var secDiag = el("section", { "class": "pn-diag", "aria-label": "Diagnostic et intervention" });
     var secIndices = el("section", { "class": "pn-indices", "aria-label": "Indices" });
     var secCorrige = el("section", { "class": "pn-corrige", "aria-label": "Corrigé" });
-    [secOutils, secCarnet, secDiag, secIndices, secCorrige].forEach(function (s) { side.appendChild(s); });
+    corps.appendChild(secOutils);
+    marge.appendChild(secIndices); marge.appendChild(secCarnet);
+    pageD.appendChild(secDiag); pageD.appendChild(secCorrige);
 
-    function msg(t, niv) { msgBox.className = "at-msg " + (niv || "info"); msgBox.textContent = t; }
+    function msg(t, niv) { msgBox.className = "at-msg note-marge " + (niv || "info"); msgBox.textContent = t; }
 
     /* Scène : face avant du PC, bouton marche et LED. */
     function renderScene() {
@@ -153,12 +176,14 @@
     /* Outils */
     function renderOutils() {
       secOutils.textContent = "";
-      secOutils.appendChild(el("h2", null, "Outils d'inspection"));
+      secOutils.appendChild(el("h2", { "class": "petites-caps" }, "Examen · choisis tes outils"));
       secOutils.appendChild(el("p", { "class": "muted pn-note" }, "Ouvrir le boîtier, tester ou remplacer une pièce : PC hors tension. Observer les LED, les bips ou l'UEFI : PC sous tension."));
       var l = el("div", { "class": "pn-outils-liste" });
       A.pannesOutils.forEach(function (o) {
         if (o.id === "temoin") return;
-        var b = el("button", { type: "button", "class": "btn ghost pn-outil", "data-outil": o.id });
+        var vu = run.journal.some(function (j) { return j.o === T.nomOutil(o.id); });
+        var b = el("button", { type: "button", "class": "pn-outil" + (vu ? " vu" : ""), "data-outil": o.id, "aria-pressed": String(vu) });
+        b.appendChild(el("span", { "class": "coche", "aria-hidden": "true" }, vu ? "✓" : "○"));
         b.appendChild(el("span", { "class": "n" }, o.nom));
         b.appendChild(el("span", { "class": "aide" }, o.aide + (o.hors ? " (hors tension)" : " (sous tension)")));
         b.addEventListener("click", function () { utiliser(o.id); });
@@ -181,17 +206,16 @@
       if (!r.ok) { msg(r.texte, r.niveau); return; }
       var nom = T.nomOutil(id) + (id === "temoin" ? " (" + (A.pannesTemoins.filter(function (t) { return t[0] === arg; })[0] || [0, arg])[1] + ")" : "");
       run.journal.push({ o: nom, t: r.texte });
-      save(); msg(nom + " : résultat ajouté au carnet de bord.", "info"); renderCarnet();
+      save(); msg(nom + " : observation notée en marge.", "info"); renderCarnet(); renderOutils();
     }
     function renderCarnet() {
       secCarnet.textContent = "";
-      secCarnet.appendChild(el("h2", null, "Carnet de bord"));
-      if (!run.journal.length) { secCarnet.appendChild(el("p", { "class": "muted" }, "Rien noté pour l'instant. Allume le PC pour voir le symptôme, puis utilise les outils.")); return; }
-      var ol = el("ol", { "class": "pn-carnet", "aria-live": "polite" });
+      if (!run.journal.length) { secCarnet.appendChild(el("p", { "class": "note-marge vide" }, "Rien noté pour l'instant. Allume le PC pour voir le symptôme, puis examine.")); return; }
+      var ol = el("ol", { "class": "pn-carnet", "aria-label": "Observations" });
       run.journal.slice().reverse().forEach(function (e) {
-        var li = el("li");
-        li.appendChild(el("strong", null, e.o));
-        li.appendChild(el("span", null, e.t));
+        var li = el("li", { "class": "note-marge" });
+        li.appendChild(el("span", { "class": "note-tit" }, e.o));
+        li.appendChild(document.createTextNode(e.t));
         ol.appendChild(li);
       });
       secCarnet.appendChild(ol);
@@ -200,7 +224,7 @@
     /* Diagnostic et intervention */
     function renderDiag() {
       secDiag.textContent = "";
-      secDiag.appendChild(el("h2", null, "Diagnostic et réparation"));
+      secDiag.appendChild(el("h2", { "class": "petites-caps" }, "Diagnostic · quelle est la cause ?"));
       var d1 = el("div", { "class": "pn-champ" });
       d1.appendChild(el("label", { "for": "pn-cause" }, "Cause de la panne"));
       var s1 = el("select", { id: "pn-cause" });
@@ -219,7 +243,19 @@
       });
       d1.appendChild(s1); d1.appendChild(b1);
       secDiag.appendChild(d1);
-      if (run.diag.length) secDiag.appendChild(el("p", { "class": "muted" }, "Dernier diagnostic posé : " + T.causeNom(run.diag[run.diag.length - 1]) + "."));
+      if (run.diag.length && TEST) secDiag.appendChild(el("p", { "class": "muted" }, "Dernier diagnostic posé : " + T.causeNom(run.diag[run.diag.length - 1]) + "."));
+      else if (run.diag.length) {
+        var ul = el("ul", { "class": "diag-liste" });
+        run.diag.forEach(function (c) {
+          var ok = c === p.cause;
+          var li = el("li", { "class": ok ? "juste" : "faux" });
+          li.appendChild(el("span", { "class": "marque", "aria-hidden": "true" }, ok ? "✓" : "✗"));
+          li.appendChild(el("span", { "class": "diag-nom" }, T.causeNom(c)));
+          li.appendChild(el("span", { "class": "sr-only" }, ok ? " : juste" : " : fausse piste"));
+          ul.appendChild(li);
+        });
+        secDiag.appendChild(ul);
+      }
       var d2 = el("div", { "class": "pn-champ" });
       d2.appendChild(el("label", { "for": "pn-inter" }, "Intervention (PC hors tension)"));
       var s2 = el("select", { id: "pn-inter" });
@@ -244,16 +280,18 @@
     function renderIndices() {
       secIndices.textContent = "";
       if (TEST || !run.indices) return;
-      var ol = el("ol", { "class": "at-hints" });
-      for (var k = 0; k < Math.min(run.indices, p.indices.length); k++) ol.appendChild(el("li", null, p.indices[k]));
-      secIndices.appendChild(el("p", { "class": "at-label" }, "Indices"));
-      secIndices.appendChild(ol);
+      for (var k = 0; k < Math.min(run.indices, p.indices.length); k++) {
+        var n = el("p", { "class": "note-marge indice" });
+        n.appendChild(el("span", { "class": "note-tit" }, "Indice " + (k + 1)));
+        n.appendChild(document.createTextNode(p.indices[k]));
+        secIndices.appendChild(n);
+      }
     }
     function renderCorrige() {
       secCorrige.textContent = "";
       if (TEST || !(run.resolu || run.abandon)) return;
-      var d = el("details", { "class": "correction", open: "" });
-      d.appendChild(el("summary", null, "Corrigé de ce dossier"));
+      var d = el("details", { "class": "correction rabat" });
+      d.appendChild(el("summary", null, "Soulever le rabat : pourquoi ?"));
       d.appendChild(el("p", null, "Cause : " + T.causeNom(p.cause) + ". Intervention : " + A.pannesInter[p.fix].nom + "."));
       var po = T.post(p, T.nouveau(p, "apprentissage"));
       d.appendChild(el("p", { "class": "at-label" }, "Ce qui se passait au démarrage"));
@@ -491,7 +529,8 @@
     if (isNaN(best) || moy > best) store.set("score." + E.id, String(moy));
     if (ok) store.set("done." + E.unite, "1");
     entete("Rapport de l'évaluation des pannes", "Atelier hardware · Évaluation des pannes");
-    var box = el("div", { "class": "at-rap" });
+    var box = el("div", { "class": "at-rap bilan" });
+    box.appendChild(el("p", { "class": "titre-courant" })).appendChild(el("span", null, "Bilan"));
     var top = el("div", { "class": "at-score" });
     top.appendChild(el("span", { "class": "n" }, String(moy)));
     top.appendChild(el("span", { "class": "sur" }, "/ 100 de moyenne"));
@@ -523,6 +562,9 @@
     var again = el("button", { type: "button", "class": "btn" }, "Recommencer l'évaluation");
     again.addEventListener("click", commencerEval);
     act.appendChild(again);
+    var bImp = el("button", { type: "button", "class": "btn ghost" }, "Imprimer le bilan");
+    bImp.addEventListener("click", function () { window.print(); });
+    act.appendChild(bImp);
     act.appendChild(el("a", { "class": "btn ghost", href: "pannes.html" }, "Retour aux dossiers"));
     box.appendChild(act);
     host.appendChild(box);

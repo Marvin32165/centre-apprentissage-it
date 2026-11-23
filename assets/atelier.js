@@ -81,25 +81,79 @@
   }
   host.appendChild(head);
 
-  var brief = el("details", { "class": "bloc at-brief", open: "" });
-  brief.innerHTML = '<summary>Cahier des charges</summary><p class="at-client"></p><ul class="at-besoins"></ul><p class="at-materiel"></p>' +
-    '<aside class="callout source"><p>Les pièces sont des modèles génériques : leurs caractéristiques sont réalistes mais simplifiées. Référence pour les fiches de processeurs : Intel ARK (ark.intel.com) et AMD ; normes mémoire : JEDEC (DDR4, DDR5) ; exigences de Windows 11 : Microsoft Learn. Théorie : <a href="../stage/j9.html">jour 9 de la prépa</a> (matériel et PC).</p></aside>';
-  brief.querySelector(".at-client").textContent = sc.brief.client;
-  sc.brief.besoin.forEach(function (b) { brief.querySelector(".at-besoins").appendChild(el("li", null, b)); });
-  brief.querySelector(".at-materiel").textContent = sc.brief.materiel;
+  /* ---------- Habillage « Le Livre du montage » : chapitre, cahier des charges, double page ---------- */
+  var ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
+  var chap = ctx.eval ? "Épreuve VIII, " + (ctx.eval.i + 1) : "Chap. " + (num ? ROM[+num[1]] : "I");
+  function titreCourant(gauche, droite) {
+    var t = el("p", { "class": "titre-courant" });
+    t.appendChild(el("span", null, gauche));
+    if (droite != null) t.appendChild(el("span", null, droite));
+    return t;
+  }
+
+  var brief = el("div", { "class": "livre-double cahier" });
+  var cG = el("section", { "class": "livre-page gauche", "aria-labelledby": "cahier-titre" });
+  cG.appendChild(titreCourant(chap + " — " + sc.titre, "Cahier des charges"));
+  var cCorps = el("div", { "class": "livre-corps" });
+  cCorps.appendChild(el("h2", { id: "cahier-titre", tabindex: "-1" }, "Cahier des charges"));
+  cCorps.appendChild(el("p", { "class": "texte at-client" }, sc.brief.client));
+  var ulb = el("ul", { "class": "at-besoins" });
+  sc.brief.besoin.forEach(function (x) { ulb.appendChild(el("li", null, x)); });
+  cCorps.appendChild(ulb);
+  cCorps.appendChild(el("p", { "class": "at-materiel" }, sc.brief.materiel));
+  cCorps.appendChild(el("p", { "class": "ornement", "aria-hidden": "true" }, "✣"));
+  var srcA = el("aside", { "class": "callout source" });
+  srcA.innerHTML = '<p>Les pièces sont des modèles génériques : leurs caractéristiques sont réalistes mais simplifiées. Référence pour les fiches de processeurs : Intel ARK (ark.intel.com) et AMD ; normes mémoire : JEDEC (DDR4, DDR5) ; exigences de Windows 11 : Microsoft Learn. Théorie : <a href="../stage/j9.html">jour 9 de la prépa</a> (matériel et PC).</p>';
+  cCorps.appendChild(srcA);
   [["source", sc.brief.source], ["umons", sc.brief.umons]].forEach(function (x) {
     if (!x[1]) return;
     var a = el("aside", { "class": "callout " + x[0] });
     a.appendChild(el("p", null, x[1]));
-    brief.appendChild(a);
+    cCorps.appendChild(a);
   });
+  cG.appendChild(cCorps);
+  cG.appendChild(el("p", { "class": "folio" }, "1"));
+  var cD = el("section", { "class": "livre-page droite", "aria-label": "Planche d'ouverture du chapitre" });
+  cD.appendChild(titreCourant("Planche d'ouverture"));
+  var cFig = el("figure", { "class": "livre-figure" });
+  cFig.innerHTML = '<svg class="at-svg" viewBox="0 0 860 620" role="img" aria-label="Gravure : le boîtier vide, vu de côté, panneau retiré">' + Art.coteFond() + "</svg>";
+  cFig.appendChild(el("figcaption", null, "Fig. 1. — Le boîtier, vu de côté, avant le montage."));
+  cD.appendChild(cFig);
+  var cAct = el("p", { "class": "cahier-actions" });
+  var bCommencer = el("button", { type: "button", "class": "btn" }, TEST ? "Commencer le test ›" : "Commencer le montage ›");
+  cAct.appendChild(bCommencer);
+  cD.appendChild(cAct);
+  cD.appendChild(el("p", { "class": "folio" }, "2"));
+  brief.appendChild(cG); brief.appendChild(cD);
   host.appendChild(brief);
 
-  var layout = el("div", { "class": "at-layout" });
-  var main = el("div", { "class": "at-main" });
-  var side = el("div", { "class": "at-side" });
-  layout.appendChild(main); layout.appendChild(side);
+  var layout = el("div", { "class": "livre-double at-layout" });
+  var pageG = el("section", { "class": "livre-page gauche", "aria-label": "Page de texte" });
+  var pageD = el("section", { "class": "livre-page droite", "aria-label": "Planche illustrée" });
+  layout.appendChild(pageG); layout.appendChild(pageD);
   host.appendChild(layout);
+  var tcG = el("p", { "class": "titre-courant" });
+  var tcD = el("p", { "class": "titre-courant" });
+  var corps = el("div", { "class": "livre-corps" });
+  var marge = el("aside", { "class": "livre-marge", "aria-label": "Notes en marge" });
+  var margeIndices = el("div", { "class": "marge-indices" });
+  var folioG = el("div", { "class": "folio-ligne" }), folioD = el("div", { "class": "folio-ligne" });
+  var bCahier = el("button", { type: "button", "class": "lien-livre" }, "Relire le cahier des charges");
+  pageG.appendChild(tcG); pageG.appendChild(corps);
+  if (!TEST) pageG.appendChild(marge);
+  pageG.appendChild(folioG);
+  var main = el("div", { "class": "at-main" });
+  var side = corps;
+  pageD.appendChild(tcD); pageD.appendChild(main);
+  var fig = el("div", { "class": "livre-fig" });
+  var lettreSel = null, dernierEtape = null;
+  function voirCahier(on) {
+    brief.hidden = !on; layout.hidden = on;
+    var f = on ? brief.querySelector("#cahier-titre") : corps.querySelector("h2");
+    if (f) { f.setAttribute("tabindex", "-1"); f.focus({ preventScroll: true }); }
+  }
+  bCommencer.addEventListener("click", function () { voirCahier(false); });
+  bCahier.addEventListener("click", function () { voirCahier(true); });
 
   /* onglets de vue */
   var tabsVue = el("div", { "class": "at-tabs", role: "tablist", "aria-label": "Angle de vue" });
@@ -119,6 +173,7 @@
   }
   scene.appendChild(svgCote); scene.appendChild(svgFace); scene.appendChild(svgArr);
   main.appendChild(scene);
+  main.appendChild(fig);
 
   var actions = el("div", { "class": "at-actions" });
   var bUndo = el("button", { type: "button", "class": "btn ghost" }, "Annuler");
@@ -131,14 +186,15 @@
   [bUndo, bHint, bSwitch, bPower, bFin, bReset].forEach(function (b) { actions.appendChild(b); });
   main.appendChild(actions);
 
-  var msgBox = el("p", { "class": "at-msg", role: "status", "aria-live": "polite" });
-  main.appendChild(msgBox);
+  var msgBox = el("p", { "class": "at-msg note-marge", role: "status", "aria-live": "polite" });
+  if (TEST) main.appendChild(msgBox); else { marge.appendChild(msgBox); marge.appendChild(margeIndices); }
 
-  var secEtape = el("section", { "class": "at-etape bloc", "aria-label": "Étape en cours" });
+  var secEtape = el("section", { "class": "at-etape", "aria-label": "Étape en cours" });
   var secSel = el("section", { "class": "at-sel", "aria-label": "Pièce sélectionnée" });
   var secBac = el("section", { "class": "at-bac", "aria-label": "Bac de pièces" });
   var secListe = el("section", { "class": "at-liste", "aria-label": "Toutes les étapes" });
-  side.appendChild(secEtape); side.appendChild(secSel); side.appendChild(secBac); side.appendChild(secListe);
+  corps.appendChild(secEtape); corps.appendChild(secSel); corps.appendChild(secListe); corps.appendChild(bCahier);
+  pageD.appendChild(secBac); pageD.appendChild(folioD);
 
   var secPost = el("section", { "class": "at-post bloc", id: "at-post", hidden: "", "aria-label": "Démarrage du PC" });
   host.appendChild(secPost);
@@ -146,7 +202,7 @@
   /* ---------- Messages ---------- */
   function msg(txt, niv, html) {
     msgTxt = txt; msgNiv = niv || "info";
-    msgBox.className = "at-msg " + msgNiv;
+    msgBox.className = "at-msg note-marge " + msgNiv;
     if (html) msgBox.innerHTML = html; else msgBox.textContent = txt;
   }
 
@@ -233,16 +289,65 @@
       b.setAttribute("aria-selected", on ? "true" : "false");
       b.setAttribute("tabindex", on ? "0" : "-1");
     });
+    renderLettres();
     bSwitch.textContent = "Interrupteur : " + (st.switchOn ? "I" : "O");
     bSwitch.setAttribute("aria-pressed", st.switchOn ? "true" : "false");
   }
+
+  /* ---------- Planche : lettres A, B, C… et légende cliquable ---------- */
+  var NOM_VUE = { cote: "le boîtier vu de côté", zoom: "la carte mère de près", face: "la face avant", arriere: "l'arrière du boîtier" };
+  function renderLettres() {
+    fig.textContent = "";
+    var l = steps(), i = cur();
+    var etape = !TEST && i < l.length ? l[i].def : null;
+    var svgVue = vue === "arriere" ? svgArr : (vue === "face" ? null : svgCote);
+    var lettres = [];
+    if (etape && svgVue) {
+      (etape.slots || []).forEach(function (id) {
+        var s = slotById(id);
+        if (!s) return;
+        var surVue = vue === "arriere" ? s.vue === "arriere" : (s.vue === "cote" || s.vue === "zoom");
+        if (surVue) lettres.push(s);
+      });
+    }
+    var svgTxt = "";
+    lettres.forEach(function (s, k) {
+      var L = String.fromCharCode(65 + k), on = lettreSel === s.id;
+      var r = vue === "zoom" ? 7 : 11, cx = s.x + Math.min(14, s.w / 2), cy = s.y + Math.min(14, s.h / 2);
+      if (on) svgTxt += '<rect class="surligne" x="' + (s.x - 3) + '" y="' + (s.y - 3) + '" width="' + (s.w + 6) + '" height="' + (s.h + 6) + '" rx="3"/>';
+      svgTxt += '<g class="lettre' + (on ? " on" : "") + '" data-lettre="' + s.id + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + r + '"/><text x="' + cx + '" y="' + (cy + r * 0.38) + '" font-size="' + (r * 1.15) + '" text-anchor="middle">' + L + "</text></g>";
+    });
+    if (svgTxt && svgVue) svgVue.insertAdjacentHTML("beforeend", svgTxt);
+    var cap = el("p", { "class": "figcaption" }, "Fig. " + (etape ? i + 2 : 1) + ". — " + NOM_VUE[vue].charAt(0).toUpperCase() + NOM_VUE[vue].slice(1) + (etape ? " : " + etape.titre.toLowerCase() + "." : "."));
+    fig.appendChild(cap);
+    if (lettres.length) {
+      var ol = el("ol", { "class": "legende", "aria-label": "Légende de la planche" });
+      lettres.forEach(function (s, k) {
+        var b = el("button", { type: "button", "class": "leg", "aria-pressed": String(lettreSel === s.id) });
+        b.appendChild(el("span", { "class": "leg-l" }, String.fromCharCode(65 + k)));
+        b.appendChild(document.createTextNode(s.nom));
+        b.addEventListener("click", function () { lettreSel = lettreSel === s.id ? null : s.id; renderScene(); });
+        var li = el("li"); li.appendChild(b); ol.appendChild(li);
+      });
+      fig.appendChild(ol);
+    }
+  }
+  scene.addEventListener("click", function (e) {
+    var lt = e.target.closest("[data-lettre]");
+    if (lt) { e.stopImmediatePropagation(); var id = lt.getAttribute("data-lettre"); lettreSel = lettreSel === id ? null : id; renderScene(); return; }
+    var g = e.target.closest("[data-slot]");
+    if (g && !TEST) {
+      var sid = g.getAttribute("data-slot"), l = steps(), i = cur();
+      if (i < l.length && (l[i].def.slots || []).indexOf(sid) >= 0) lettreSel = sid;
+    }
+  });
 
   /* ---------- Bac de pièces ---------- */
   function renderBac() {
     var restantes = R.restantes(sc, st), guide = guideSlots(), glow = {};
     Object.keys(guide).forEach(function (k) { glow[guide[k]] = true; });
     secBac.textContent = "";
-    var h = el("h2", null, "Bac de pièces");
+    var h = el("h3", { "class": "petites-caps" }, "Le bac · choisis une pièce");
     secBac.appendChild(h);
     var tabs = el("div", { "class": "at-tabs petit", role: "tablist", "aria-label": "Catégories" });
     CATS.forEach(function (c) {
@@ -336,18 +441,30 @@
     var done = l.filter(function (x) { return x.fait; }).length;
     drawProgress(done, l.length);
     if (i >= l.length) {
-      secEtape.appendChild(el("p", { "class": "kicker" }, "Scénario terminé"));
+      habillerEtape(l, i);
+      margeIndices.textContent = "";
+      secEtape.appendChild(el("h2", null, "Fin du chapitre"));
       secEtape.appendChild(el("p", null, "Toutes les étapes sont faites. Tu peux modifier le montage pour voir ce qui change au démarrage, ou recommencer."));
       return;
     }
     var e = l[i].def, n = st.indices[e.id] || 0;
-    secEtape.appendChild(el("p", { "class": "kicker" }, "Étape " + (i + 1) + " / " + l.length));
+    habillerEtape(l, i);
     secEtape.appendChild(el("h2", null, e.titre));
-    secEtape.appendChild(el("p", null, e.texte));
-    var hints = el("ol", { "class": "at-hints" });
-    for (var k = 0; k < Math.min(n, e.indices.length); k++) hints.appendChild(el("li", null, e.indices[k]));
-    if (n > e.indices.length) hints.appendChild(el("li", { "class": "sol" }, "Les pièces et emplacements concernés sont surlignés."));
-    if (hints.children.length) secEtape.appendChild(hints);
+    secEtape.appendChild(el("p", { "class": "texte" }, e.texte));
+    secEtape.appendChild(el("p", { "class": "ornement", "aria-hidden": "true" }, "✣"));
+    margeIndices.textContent = "";
+    for (var k = 0; k < Math.min(n, e.indices.length); k++) {
+      var ni = el("p", { "class": "note-marge indice" });
+      ni.appendChild(el("span", { "class": "note-tit" }, "Indice " + (k + 1)));
+      ni.appendChild(document.createTextNode(e.indices[k]));
+      margeIndices.appendChild(ni);
+    }
+    if (n > e.indices.length) {
+      var ns = el("p", { "class": "note-marge indice" });
+      ns.appendChild(el("span", { "class": "note-tit" }, "Solution"));
+      ns.appendChild(document.createTextNode("Les pièces et emplacements concernés sont surlignés."));
+      margeIndices.appendChild(ns);
+    }
     var row = el("div", { "class": "at-etape-actions" });
     var bi = el("button", { type: "button", "class": "btn ghost" }, n >= e.indices.length + 1 ? "Indice (tout est montré)" : "Indice");
     bi.addEventListener("click", indice);
@@ -361,18 +478,43 @@
     }
     secEtape.appendChild(row);
     var d = el("details", { "class": "correction" });
-    d.appendChild(el("summary", null, "Pourquoi cette étape ?"));
+    d.className = "correction plus-loin";
+    d.appendChild(el("summary", null, "Pour aller plus loin : pourquoi cette étape ?"));
     d.appendChild(el("p", null, e.pourquoi));
     secEtape.appendChild(d);
   }
 
+  function habillerEtape(l, i) {
+    var fin = i >= l.length, page = 2 * (Math.min(i, l.length - 1) + 1) + 1;
+    tcG.textContent = ""; tcD.textContent = "";
+    tcG.appendChild(el("span", null, chap + " — " + sc.titre));
+    tcG.appendChild(el("span", null, fin ? "Fin du chapitre" : "Étape " + (i + 1) + " sur " + l.length));
+    tcD.appendChild(el("span", null, "Planche " + (ROM[Math.min(i, l.length - 1) + 1] || String(i + 1))));
+    folioG.textContent = ""; folioD.textContent = "";
+    folioG.appendChild(el("span", { "class": "voisin" }, i > 0 ? "‹ " + l[Math.min(i, l.length) - 1].def.titre.toLowerCase() : ""));
+    folioG.appendChild(el("span", { "class": "folio" }, String(page)));
+    folioD.appendChild(el("span", { "class": "folio" }, String(page + 1)));
+    folioD.appendChild(el("span", { "class": "voisin" }, !fin && i + 1 < l.length ? l[i + 1].def.titre.toLowerCase() + " ›" : ""));
+    if (dernierEtape !== null && dernierEtape !== i && !reduced) {
+      pageD.classList.remove("tourne"); void pageD.offsetWidth; pageD.classList.add("tourne");
+      setTimeout(function () { pageD.classList.remove("tourne"); }, 750);
+    }
+    if (dernierEtape !== i) lettreSel = null;
+    dernierEtape = i;
+  }
+
   function renderTest() {
+    tcG.textContent = ""; tcD.textContent = "";
+    tcG.appendChild(el("span", null, chap + " — " + sc.titre));
+    tcG.appendChild(el("span", null, "Test noté"));
+    tcD.appendChild(el("span", null, "Planche du montage"));
+    folioG.innerHTML = '<span class="voisin"></span><span class="folio">3</span>';
+    folioD.innerHTML = '<span class="folio">4</span><span class="voisin"></span>';
     secEtape.textContent = "";
     secListe.hidden = true;
     head.querySelector(".at-progress").textContent = "";
-    secEtape.appendChild(el("p", { "class": "kicker" }, "Test noté · sans aide"));
     secEtape.appendChild(el("h2", null, "Monte le PC du cahier des charges"));
-    secEtape.appendChild(el("p", null, "Pas d'indices, pas d'ordre imposé, pas d'alerte : les erreurs se voient au démarrage. Allume le PC autant de fois que nécessaire, puis termine le test."));
+    secEtape.appendChild(el("p", { "class": "texte" }, "Pas d'indices, pas d'ordre imposé, pas d'alerte : les erreurs se voient au démarrage. Allume le PC autant de fois que nécessaire, puis termine le test."));
     var ul = el("ul", { "class": "at-bareme" });
     ["Démarrage : 40 points (10 de moins par démarrage raté)", "Cahier des charges : 50 points, répartis sur les critères", "Gestes : 10 points (2 de moins par pose refusée)"].forEach(function (t) { ul.appendChild(el("li", null, t)); });
     secEtape.appendChild(ul);
@@ -383,7 +525,7 @@
     if (TEST) return;
     var l = steps(), i = cur();
     secListe.textContent = "";
-    secListe.appendChild(el("h2", null, "Toutes les étapes"));
+    secListe.appendChild(el("h3", { "class": "petites-caps" }, "Table des étapes"));
     var ol = el("ol", { "class": "at-etapes" });
     l.forEach(function (x, k) {
       var li = el("li", { "class": x.fait ? "fait" : (k === i ? "courante" : "") });
@@ -674,7 +816,7 @@
 
   /* ---------- Rendu global ---------- */
   function renderAll() {
-    renderScene(); renderBac(); renderSel(); renderEtape(); renderListe();
+    renderEtape(); renderScene(); renderBac(); renderSel(); renderListe();
     bUndo.disabled = !hist.length;
   }
 
@@ -873,7 +1015,8 @@
     if (isNaN(best) || moy > best) store.set("score." + E.id, String(moy));
     if (ok) store.set("done." + E.unite, "1");
     entete("Rapport de l'évaluation finale", "Atelier hardware · Évaluation");
-    var box = el("div", { "class": "at-rap" });
+    var box = el("div", { "class": "at-rap bilan" });
+    box.appendChild(el("p", { "class": "titre-courant" })).appendChild(el("span", null, "Bilan"));
     var top = el("div", { "class": "at-score" });
     top.appendChild(el("span", { "class": "n" }, String(moy)));
     top.appendChild(el("span", { "class": "sur" }, "/ 100 de moyenne"));
@@ -906,6 +1049,9 @@
     var again = el("button", { type: "button", "class": "btn" }, "Recommencer l'évaluation");
     again.addEventListener("click", function () { evalEffacer(); evalEcrire({ i: 0, res: [], demarre: true }); lancerEval(); });
     act.appendChild(again);
+    var bImp = el("button", { type: "button", "class": "btn ghost" }, "Imprimer le bilan");
+    bImp.addEventListener("click", function () { window.print(); });
+    act.appendChild(bImp);
     act.appendChild(el("a", { "class": "btn ghost", href: "index.html" }, "Retour à l'atelier"));
     box.appendChild(act);
     host.appendChild(box);
