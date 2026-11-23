@@ -29,12 +29,14 @@ jobs:
       - name: Audit serveur et fichiers
         run: |
           set +e
-          node outils/verif.mjs --captures="$RUNNER_TEMP/captures" > "$RUNNER_TEMP/audit-serveur.txt" 2>&1
+          node outils/verif.mjs > "$RUNNER_TEMP/audit-serveur.txt" 2>&1
           serveur=$?
           node outils/verif.mjs --file > "$RUNNER_TEMP/audit-file.txt" 2>&1
           fichier=$?
-          cat "$RUNNER_TEMP/audit-serveur.txt" "$RUNNER_TEMP/audit-file.txt"
-          test "$serveur" -eq 0 && test "$fichier" -eq 0
+          node outils/verif.mjs --pages=index.html,stage/j1.html,modules/index.html,themes.html,atelier/index.html,atelier/pannes.html --largeurs=390,1280 --captures="$RUNNER_TEMP/captures" > "$RUNNER_TEMP/audit-captures.txt" 2>&1
+          captures=$?
+          cat "$RUNNER_TEMP/audit-serveur.txt" "$RUNNER_TEMP/audit-file.txt" "$RUNNER_TEMP/audit-captures.txt"
+          test "$serveur" -eq 0 && test "$fichier" -eq 0 && test "$captures" -eq 0
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -42,4 +44,5 @@ jobs:
           path: |
             ${{ runner.temp }}/audit-serveur.txt
             ${{ runner.temp }}/audit-file.txt
+            ${{ runner.temp }}/audit-captures.txt
             ${{ runner.temp }}/captures

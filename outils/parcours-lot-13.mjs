@@ -18,7 +18,7 @@ for(const mode of ['serveur','file']){
  await test(mode+' chaque destination de la recherche',async()=>{
   await p.goto(base+'index.html');await p.locator('[data-recherche]').click();await p.waitForFunction(()=>Array.isArray(window.IT_RECHERCHE));const entries=await p.evaluate(()=>[...new Map(window.IT_RECHERCHE.map(e=>[e.u,e])).values()]);
   for(const e of entries){
-   await p.goto(base+'index.html');await p.locator('[data-recherche]').click();await p.waitForFunction(()=>Array.isArray(window.IT_RECHERCHE));await p.locator('#rech-q').fill(e.t);
+   await p.goto(base+'index.html');await p.locator('[data-recherche]').click();await p.waitForFunction(()=>Array.isArray(window.IT_RECHERCHE));await p.locator('#rech-q').fill(e.t+' '+e.o);
    const pos=await p.locator('.rech-item').evaluateAll((els,u)=>els.findIndex(a=>a.getAttribute('href')===u),e.u);assert.notEqual(pos,-1,'Résultat inaccessible : '+e.t+' → '+e.u);
    await p.locator('.rech-item').nth(pos).click();await p.waitForURL(new URL(e.u,base).href);assert.ok(await p.evaluate(()=>!location.hash||!!document.getElementById(decodeURIComponent(location.hash.slice(1)))),e.u);
   }

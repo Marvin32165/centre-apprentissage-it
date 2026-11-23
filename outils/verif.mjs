@@ -88,9 +88,9 @@ for (const theme of THEMES) {
         document.querySelectorAll("a[href], button, input, select, summary, [tabindex]:not([tabindex='-1'])").forEach((n) => {
           const b = n.getBoundingClientRect(), cs = getComputedStyle(n);
           if (!b.width || cs.visibility === "hidden") return;
-          const enLigne = n.tagName === "A" && cs.display === "inline" && n.closest("p, li, td, dd, figcaption");
-          if (enLigne || n.type === "radio" || n.type === "checkbox") return;
-          if (b.height < 43.5 || b.width < 43.5) petites.push((n.textContent || n.getAttribute("aria-label") || n.tagName).trim().slice(0, 30) + ` (${Math.round(b.width)}×${Math.round(b.height)})`);
+          const label = (n.type === "radio" || n.type === "checkbox") && n.labels && n.labels[0];
+          const cible = label ? label.getBoundingClientRect() : b;
+          if (cible.height < 43.5 || cible.width < 43.5) petites.push((n.textContent || n.getAttribute("aria-label") || n.tagName).trim().slice(0, 30) + ` (${Math.round(cible.width)}×${Math.round(cible.height)})`);
         });
         const ids = [...document.querySelectorAll("[id]")].map((n) => n.id);
         const doublons = ids.filter((v, i) => ids.indexOf(v) !== i);

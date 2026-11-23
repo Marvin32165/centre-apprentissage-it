@@ -18,22 +18,24 @@ const W = ctx.window, D = W.IT_DATA, M = W.IT_MODULES, A = W.IT_ATELIER;
 
 const entrees = [];
 const ajoute = (g, tag, titre, origine, url, mots = "") => entrees.push({ g, tag, t: titre, o: origine, u: url, m: mots.slice(0, 220) });
-const IGNORES = new Set(["plan", "quiz", "memo", "objectifs", "cas", "suite", "sources", "tuteur"]);
 
 // Sections (h2 avec id) des pages de contenu, avec les h3 et le début du texte comme mots-clés
-function sections(fichier, origine, tag) {
+function sections(fichier, origine, tag, groupe = "Notions") {
   const h = lire(fichier);
   const corps = h.slice(h.indexOf("<main"));
   const parts = corps.split(/(?=<h2\b)/);
   for (const p of parts) {
     const m = /^<h2 id="([^"]+)"[^>]*>([\s\S]*?)<\/h2>/.exec(p);
-    if (!m || IGNORES.has(m[1])) continue;
+    if (!m) continue;
     const titre = texte(m[2].replace(/<span class="duree">[\s\S]*?<\/span>/, "")).replace(/^\d+\.\s+/, "");
     const h3 = [...p.matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>/g)].map((x) => texte(x[1]));
     const p1 = /<p>([\s\S]*?)<\/p>/.exec(p);
-    ajoute("Notions", tag, titre, origine, fichier + "#" + m[1], h3.join(" · ") + " " + (p1 ? texte(p1[1]) : ""));
+    ajoute(groupe, tag, titre, origine, fichier + "#" + m[1], h3.join(" · ") + " " + (p1 ? texte(p1[1]) : ""));
   }
 }
+sections("index.html", "Accueil", "page");
+sections("atelier/index.html", "Atelier · table et index", "page", "Atelier");
+sections("docs/composants.html", "Guide · composants", "page");
 D.stage.jours.forEach((j) => sections(j.href, `Prépa · jour ${j.n} · ${j.court}`, "jour"));
 sections("stage/outils.html", "Prépa · boîte à outils", "outils");
 M.modules.forEach((mo) => sections(`modules/${mo.id}.html`, `Module · ${mo.titre.split(" : ")[0]}`, "module"));

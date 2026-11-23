@@ -53,6 +53,7 @@ body {
 main { flex: 1; }
 img, svg { max-width: 100%; height: auto; }
 a { color: var(--accent); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+@media screen { :where(a[href]) { display: inline-flex; align-items: center; min-width: 44px; min-height: 44px; max-width: 100%; overflow-wrap: anywhere; } }
 a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: var(--r-s); }
 ::selection { background: var(--accent-soft); color: var(--ink); }
