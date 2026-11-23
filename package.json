@@ -11,7 +11,8 @@
     "accessibilite": "node outils/accessibilite.mjs",
     "contrastes": "node outils/contrastes.mjs",
     "parcours": "node outils/parcours.mjs",
-    "controles": "npm run --silent index && npm run --silent verif && npm run --silent verif:local && npm run --silent accessibilite && npm run --silent contrastes && npm run --silent parcours"
+    "garde": "node outils/garde.mjs",
+    "controles": "npm run --silent index && npm run --silent garde && npm run --silent verif && npm run --silent verif:local && npm run --silent accessibilite && npm run --silent contrastes && npm run --silent parcours"
   },
   "devDependencies": {
     "playwright": "1.63.0"

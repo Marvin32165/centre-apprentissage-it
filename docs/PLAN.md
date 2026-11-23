@@ -153,7 +153,8 @@ Reste : rien pour ce lot. Prochaine étape suggérée : module « Microsoft 365 
 Idées reprises du dépôt `claude-tools` (chef, evidence-reviewer, hooks, skills), adaptées pour marcher avec les deux agents : procédures en Markdown, garde-fous en script Node et en CI, enveloppes propres à Claude Code en option.
 - [x] 15.1 Procédures communes dans `docs/procedures/` : nouveau module, relecture des sources, test en situation (« chef ») ; renvoi depuis `AGENTS.md`.
   Fait : trois procédures (critères de « fini » vérifiables, tableau de verdicts, trois tours au plus) ; `AGENTS.md` y renvoie, avec deux prompts types et la règle de relecture croisée entre les deux outils.
-- [ ] 15.2 Garde-fous `npm run garde` (moteurs de l'atelier, index à jour, ressources externes, `alert`/`confirm`/`fetch`, IP et adresses e-mail), ajouté à `controles` et à `audit.yml`.
+- [x] 15.2 Garde-fous `npm run garde` (moteurs de l'atelier, index à jour, ressources externes, `alert`/`confirm`/`fetch`, IP et adresses e-mail), ajouté à `controles` et à `audit.yml`.
+  Fait : `outils/garde.mjs` (sans navigateur, < 1 s) contrôle les moteurs depuis `main` (sauf ligne « Moteur autorisé : … »), l'index (`index-recherche.mjs --verifier`), Google Fonts seul en externe et présent sur chaque page, `alert`/`confirm`/`prompt`/`fetch`, clés `it.`, IP publiques, e-mails réels et secrets ; 0 problème sur le site, 6 violations volontaires toutes détectées ; ajouté à `controles` et à `audit.yml` (historique complet pour comparer à `main`).
 - [ ] 15.3 Hook Git `pre-commit` facultatif (`npm run hooks`) : garde-fous avant chaque commit, quel que soit l'agent.
 - [ ] 15.4 Enveloppes Claude Code dans `.claude/` : skills qui renvoient aux procédures, agents relecteurs, hook de protection des fichiers et rappel du plan après compaction.
 - [ ] 15.5 `npm run controles`, coche du lot, fusion dans `main`.
