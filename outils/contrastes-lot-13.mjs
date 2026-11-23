@@ -14,9 +14,15 @@ for(const theme of ['light','dark']){
    const mix=(a,b)=>[0,1,2].map(i=>a[i]*a[3]+b[i]*(1-a[3])).concat(1);
    const lum=a=>a.slice(0,3).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4}).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);
    const out=[];for(const e of document.querySelectorAll('body *')){
-    if(![...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()))continue;
+    if(e.closest('.sr-only')||![...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim()))continue;
     const s=getComputedStyle(e), r=e.getBoundingClientRect();if(!r.width||!r.height||s.visibility!=='visible'||s.display==='none'||+s.opacity===0)continue;
-    let bg=[255,255,255,1],chain=[],gradient=false;for(let n=e;n;n=n.parentElement){let c=getComputedStyle(n);if(c.backgroundImage!=='none')gradient=true;chain.push(rgb(c.backgroundColor))} for(const c of chain.reverse())bg=mix(c,bg);
+    let bg=[255,255,255,1],chain=[],gradient=false;for(let n=e;n;n=n.parentElement){let c=getComputedStyle(n);if(c.backgroundImage!=='none')gradient=true;
+      // La barre de copie est superposée au fond de son frère <pre>.
+      if(n.matches('.code-block')&&e.closest('.copy-btn')) chain.push(rgb(getComputedStyle(n.querySelector('pre')).backgroundColor));
+      // Le bureau est un dégradé sombre : sa couleur la plus claire est le cas défavorable pour le texte clair.
+      else if(n.matches('body.livre')) chain.push([59,42,30,1]);
+      else chain.push(rgb(c.backgroundColor));
+    } for(const c of chain.reverse())bg=mix(c,bg);
     const fg=mix(rgb(s.color),bg),l1=lum(fg),l2=lum(bg),ratio=(Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05),size=parseFloat(s.fontSize),large=size>=24||(size>=18.66&&parseInt(s.fontWeight,10)>=700);
     if(ratio<(large?3:4.5))out.push({tag:e.tagName.toLowerCase(),cls:typeof e.className==='string'?e.className:'',txt:e.textContent.trim().slice(0,35),ratio:ratio.toFixed(2),gradient});
    }return out;
