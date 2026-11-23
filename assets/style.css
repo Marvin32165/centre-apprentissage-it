@@ -745,6 +745,7 @@ body.livre .wrap.page { max-width: 84rem; }
   border-radius: 6px; box-shadow: 0 24px 40px -18px rgba(0, 0, 0, 0.6); font-family: var(--font-text); font-size: 1.0625rem; line-height: 1.62; color-scheme: light;
 }
 .livre-page a { color: var(--accent); }
+.livre-page a.btn:not(.ghost) { color: var(--on-accent); }
 .livre-page :focus-visible { outline-color: var(--accent); }
 @media (min-width: 64rem) {
   .livre-double { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.5)); }
