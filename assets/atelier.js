@@ -806,7 +806,8 @@
       var p = el("p", { "class": "at-lien" });
       p.appendChild(el("a", { href: th.lien }, th.libelle));
       p.appendChild(document.createTextNode(" · "));
-      p.appendChild(el("a", { href: "../modules/index.html" }, "Modules (en préparation)"));
+      var m = th.module || A.moduleRevoir.general;
+      p.appendChild(el("a", { href: m.href }, m.libelle));
       c.appendChild(p);
       box.appendChild(c);
     });

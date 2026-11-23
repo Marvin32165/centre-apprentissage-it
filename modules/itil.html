@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ITIL 4 pour le service desk — Modules · Apprentissage IT</title>
+<meta name="description" content="ITIL 4 pour le service desk : système de valeur, chaîne de valeur, incident majeur, problème et erreur connue, changement, indicateurs.">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Gestion des services et méthode</p>
+<h1><em>ITIL 4</em> pour le service desk</h1>
+<p class="lead">Le jour 1 de la prépa donne les quatre définitions (incident, demande, problème, changement), la priorité et l'escalade. Ce module va plus loin : d'où viennent ces pratiques, comment elles s'enchaînent dans une DSI, ce que fait vraiment un incident majeur, un problème, un changement, et comment on mesure un service desk sans se mentir.</p>
+<div data-module-meta="itil"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>situer le service desk dans le système de valeur de service et la chaîne de valeur d'ITIL 4 ;</li>
+  <li>distinguer une panne ordinaire d'un incident majeur, et un incident d'un problème (avec contournement et erreur connue) ;</li>
+  <li>reconnaître les trois types de changement et savoir pourquoi un changement peut être refusé ou différé ;</li>
+  <li>lire des indicateurs (résolution au premier contact, délais, respect des SLA, satisfaction) et repérer ceux qui trompent ;</li>
+  <li>retrouver ces notions dans Jira Service Management.</li>
+</ul>
+<aside class="callout source"><p>ITIL® 4 Foundation (publication officielle, AXELOS puis PeopleCert) : système de valeur de service, quatre dimensions, sept principes directeurs, chaîne de valeur et pratiques. ITIL est une marque déposée : ce module est un résumé pédagogique, pas la publication officielle.</p></aside>
+<aside class="callout umons"><p>Quel cadre l'UMONS applique-t-elle exactement, avec quels termes (« incident », « demande », « changement ») et quels délais cibles ? Les noms de statuts, les files et les SLA réels sont <strong>à vérifier sur place</strong> avec ton tuteur : ce module apprend le vocabulaire commun, pas les règles locales.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="svs">1. ITIL 4 en une page : le système de valeur de service</h2>
+<p>ITIL 4 décrit comment une organisation crée de la <strong>valeur</strong> pour ses utilisateurs grâce à des services informatiques. Il ne prescrit pas un outil : il propose un ensemble cohérent de pratiques à adapter. Quatre éléments à connaître.</p>
+<h3>Les quatre dimensions</h3>
+<p>Tout service s'étudie sous quatre angles ; en oublier un explique beaucoup d'échecs :</p>
+<ul>
+  <li><strong>Organisations et personnes</strong> : rôles, compétences, culture.</li>
+  <li><strong>Information et technologie</strong> : outils, données, connaissances.</li>
+  <li><strong>Partenaires et fournisseurs</strong> : prestataires, éditeurs, contrats.</li>
+  <li><strong>Flux de valeur et processus</strong> : comment le travail circule, étape par étape.</li>
+</ul>
+<h3>Les sept principes directeurs</h3>
+<p>Se concentrer sur la valeur · Commencer là où l'on est · Progresser par itérations avec du retour · Collaborer et favoriser la visibilité · Penser et travailler de façon globale · Rester simple et pratique · Optimiser et automatiser.</p>
+<p>Au service desk, deux principes se vivent tous les jours : <em>se concentrer sur la valeur</em> (l'utilisateur veut travailler, pas un ticket « résolu ») et <em>rester simple et pratique</em> (un formulaire de vingt champs obligatoires fait contourner l'outil).</p>
+<h3>La chaîne de valeur</h3>
+<p>Six activités, que l'on combine selon la demande :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Activité</th><th>Sens</th><th>Où le service desk la touche</th></tr></thead>
+<tbody>
+<tr><td><strong>Planifier</strong></td><td>Orientations, priorités, vision commune.</td><td>Peu : il en reçoit le cadre.</td></tr>
+<tr><td><strong>Améliorer</strong></td><td>Amélioration continue des services et pratiques.</td><td>Il fournit des données : motifs d'appel, doublons, suggestions.</td></tr>
+<tr><td><strong>Impliquer</strong> (<em>engage</em>)</td><td>Comprendre les besoins, garder de bonnes relations avec les parties prenantes.</td><td><strong>Au centre</strong> : accueil, suivi, communication, satisfaction.</td></tr>
+<tr><td><strong>Concevoir et faire la transition</strong></td><td>Préparer un nouveau service ou un changement, le mettre en production.</td><td>Il est informé, forme les utilisateurs, prépare la documentation.</td></tr>
+<tr><td><strong>Obtenir ou construire</strong></td><td>Acquérir ou fabriquer les composants.</td><td>Il peut réceptionner et inventorier du matériel (<a href="../stage/j9.html#salles">jour 9</a>).</td></tr>
+<tr><td><strong>Fournir et soutenir</strong> (<em>deliver and support</em>)</td><td>Faire fonctionner le service et l'entretenir.</td><td><strong>Au centre</strong> : incidents, demandes, premiers diagnostics.</td></tr>
+</tbody></table></div>
+<aside class="callout retenir"><p>Le service desk vit surtout dans deux activités : <strong>Impliquer</strong> (la relation avec l'utilisateur) et <strong>Fournir et soutenir</strong> (le fonctionnement au quotidien). Les pratiques ci-dessous sont des outils que ces activités mobilisent.</p></aside>
+
+<h2 id="incident">2. Gestion des incidents, en détail</h2>
+<p>Objectif : <strong>rétablir le service normal le plus vite possible</strong>, en limitant l'impact. Le déroulé complet d'un incident :</p>
+<ol>
+  <li><strong>Enregistrer</strong> : tout incident, même résolu en deux minutes au téléphone, a une trace (c'est la matière première de l'amélioration).</li>
+  <li><strong>Catégoriser et prioriser</strong> : impact et urgence (<a href="../stage/j1.html#priorite">jour 1</a>), service concerné.</li>
+  <li><strong>Diagnostiquer</strong> au bon niveau, avec la base de connaissances.</li>
+  <li><strong>Escalader</strong> si le délai ou la compétence l'exige : escalade <em>fonctionnelle</em> (vers un niveau plus expert) ou <em>hiérarchique</em> (vers la décision).</li>
+  <li><strong>Résoudre</strong>, éventuellement par un <strong>contournement</strong> (rétablir le travail sans traiter la cause).</li>
+  <li><strong>Clôturer</strong> après confirmation, avec la solution consignée.</li>
+</ol>
+<h3>Incident majeur</h3>
+<p>Un <strong>incident majeur</strong> est un incident à impact très élevé, qui sort du circuit ordinaire : il a sa <strong>procédure dédiée</strong>, une équipe mobilisée, une personne qui coordonne et une communication régulière vers les utilisateurs. Les critères exacts (nombre d'utilisateurs, service critique, durée) sont <strong>définis par chaque organisation</strong>.</p>
+<aside class="callout astuce"><p>Pendant un incident majeur, le rôle du N1 change : plus de diagnostic individuel. Les appels identiques sont <strong>rattachés</strong> à l'incident en cours (pas de nouveaux tickets séparés), l'information donnée est celle de la communication officielle, et on ne promet pas d'heure de rétablissement qu'on ne connaît pas.</p></aside>
+<aside class="callout umons"><p>Existe-t-il à la DSI une procédure d'incident majeur, qui l'annonce et par quel canal (message, page d'état, affichage) ? À vérifier sur place.</p></aside>
+
+<h2 id="probleme">3. Gestion des problèmes : chercher la cause, pas seulement éteindre le feu</h2>
+<p>Un <strong>problème</strong> est la <em>cause</em> d'un ou plusieurs incidents (<a href="../stage/j1.html#types">jour 1</a>). La gestion des problèmes travaille à l'inverse de la gestion des incidents : elle accepte de prendre du temps pour <strong>comprendre et supprimer la cause</strong>.</p>
+<ul>
+  <li><strong>Contournement</strong> (<em>workaround</em>) : une manière d'éviter l'impact en attendant la correction.</li>
+  <li><strong>Erreur connue</strong> (<em>known error</em>) : un problème dont la cause est identifiée et pour lequel un contournement existe ou une correction est prévue. On la documente dans la base de connaissances : le N1 pourra ainsi proposer le contournement dès l'appel suivant.</li>
+</ul>
+<h3>Quand un incident devient un problème</h3>
+<ul>
+  <li>Le <strong>même incident revient</strong> (même service, même symptôme, même période).</li>
+  <li>Un incident majeur vient d'être résolu <strong>sans que la cause soit connue</strong>.</li>
+  <li>Une <strong>tendance</strong> apparaît dans les chiffres (une imprimante, une salle, une application dont les tickets augmentent).</li>
+</ul>
+<p>Le rôle du service desk : <strong>repérer et signaler</strong> (lier les tickets, noter les points communs : lieu, heure, version), puis appliquer le contournement publié. Il n'ouvre pas une enquête de fond à lui seul.</p>
+
+<h2 id="changement">4. Facilitation des changements</h2>
+<p>Dans ITIL 4, cette pratique s'appelle <em>change enablement</em> : permettre que les changements réussissent, en équilibrant <strong>vitesse</strong> et <strong>maîtrise du risque</strong>. Un <strong>changement</strong> est l'ajout, la modification ou le retrait de ce qui peut affecter les services. Trois types :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Type</th><th>Principe</th><th>Exemple</th></tr></thead>
+<tbody>
+<tr><td><strong>Standard</strong></td><td>Faible risque, bien connu, procédure documentée : pré-autorisé.</td><td>Installer un poste selon l'image validée ; ajouter un utilisateur à un groupe de façon courante.</td></tr>
+<tr><td><strong>Normal</strong></td><td>Évalué et autorisé avant réalisation, selon le risque (le niveau d'autorité dépend de l'organisation).</td><td>Migrer un serveur de fichiers ; modifier une stratégie qui touche une salle entière.</td></tr>
+<tr><td><strong>Urgent</strong> (<em>emergency</em>)</td><td>À réaliser vite pour traiter un incident majeur ou un risque pressant ; circuit accéléré, mais jamais sans trace.</td><td>Corriger en urgence une faille activement exploitée.</td></tr>
+</tbody></table></div>
+<p>Ce qui compte pour toi : <strong>tu n'effectues pas un changement « normal » de ta propre initiative</strong>, même simple en apparence. Une action qui <em>semble</em> sans risque (retirer une règle, modifier un partage) peut en avoir pour des centaines d'utilisateurs. Tu la fais passer par la demande ou le changement adéquat.</p>
+<aside class="callout attention"><p>« Je fais vite, je note après » est la source de nombreux incidents causés par des changements. Si ce que tu t'apprêtes à faire dépasse l'utilisateur qui appelle, <strong>tu t'arrêtes et tu demandes</strong>.</p></aside>
+
+<h2 id="autres">5. Les pratiques voisines du service desk</h2>
+<ul>
+  <li><strong>Gestion des connaissances</strong> : une réponse qui n'est écrite nulle part sera réinventée dix fois. Un bon article : titre en mots d'utilisateur, symptôme, cause, étapes numérotées, quand escalader, date de revue.</li>
+  <li><strong>Gestion des niveaux de service</strong> : fixer et suivre les engagements (voir les indicateurs plus bas).</li>
+  <li><strong>Gestion de la configuration et des actifs</strong> : savoir ce qui existe (postes, licences, liens entre services) ; un inventaire juste accélère chaque diagnostic.</li>
+  <li><strong>Surveillance et gestion des événements</strong> : détecter avant l'utilisateur ; un événement n'est pas encore un incident.</li>
+  <li><strong>Amélioration continue</strong> : transformer les constats (tickets qui reviennent, articles manquants) en actions.</li>
+</ul>
+
+<h2 id="indicateurs">6. Mesurer sans se mentir</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Indicateur</th><th>Ce qu'il montre</th><th>Le piège</th></tr></thead>
+<tbody>
+<tr><td><strong>Résolution au premier contact</strong></td><td>Part des demandes résolues sans transmission ni rappel.</td><td>Clôturer vite pour « gagner » : l'utilisateur rappelle, le ticket est rouvert.</td></tr>
+<tr><td><strong>Délai de réponse et de résolution</strong> (respect des SLA)</td><td>Rapidité par rapport à l'engagement.</td><td>Mettre un ticket « en attente » pour arrêter l'horloge sans raison valable.</td></tr>
+<tr><td><strong>Volume et tendance</strong></td><td>Où va l'activité (par motif, lieu, service).</td><td>Une catégorisation approximative rend les chiffres faux.</td></tr>
+<tr><td><strong>Tickets rouverts</strong></td><td>Qualité de la résolution.</td><td>Les utilisateurs découragés ne rouvrent pas : ils appellent un collègue.</td></tr>
+<tr><td><strong>Satisfaction</strong></td><td>Ressenti de l'utilisateur après le ticket.</td><td>Peu de réponses : ne représente que ceux qui répondent.</td></tr>
+</tbody></table></div>
+<aside class="callout retenir"><p><strong>Quand un indicateur devient un objectif, il cesse d'être un bon indicateur</strong> (loi de Goodhart). Un chiffre ne dit jamais « on travaille bien » ; il pose une question à creuser : pourquoi ce motif revient-il autant ? pourquoi ces tickets sont-ils rouverts ?</p></aside>
+
+<h2 id="jira">7. Où retrouver tout cela dans Jira Service Management</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Notion ITIL</th><th>Dans l'outil</th></tr></thead>
+<tbody>
+<tr><td>Incident, demande de service, problème, changement</td><td>Types de demande / types de ticket proposés selon le modèle de projet (ITSM) ; les noms exacts dépendent de la configuration.</td></tr>
+<tr><td>Priorité (impact × urgence)</td><td>Champs <em>priorité</em>, éventuellement <em>impact</em> et <em>urgence</em> selon la configuration.</td></tr>
+<tr><td>SLA, délai cible</td><td>Objectifs de niveau de service avec chronomètre, qui peut se mettre en pause sur certains statuts.</td></tr>
+<tr><td>Escalade fonctionnelle</td><td>Assignation à une autre équipe ou à une autre file.</td></tr>
+<tr><td>Base de connaissances</td><td>Articles liés au service, proposés au demandeur et à l'agent (<a href="../stage/j3.html#kb">jour 3</a>).</td></tr>
+<tr><td>Lien incident ↔ problème</td><td>Liens entre tickets (« est causé par », « est lié à »).</td></tr>
+</tbody></table></div>
+<aside class="callout source"><p>Atlassian : documentation de Jira Service Management (types de demande, SLA, liens entre tickets). Les intitulés dépendent de la version et de la configuration locale.</p></aside>
+<aside class="callout umons"><p>Quel projet, quels types de ticket, quels statuts et quels SLA sont réellement configurés à la DSI ? Fais-toi montrer un ticket complet de bout en bout. À vérifier sur place.</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Atelier guidé : trois incidents, un problème <span class="duree">≈ 45 min</span></h2>
+<p>Dans ton Jira Service Management d'essai (jour 3) ou sur papier, voici trois tickets sans lien apparent :</p>
+<ol>
+  <li>« Salle B204 : le lecteur S: manque sur trois PC » (lundi, 9 h).</li>
+  <li>« Salle B204 : impossible d'ouvrir le dossier du cours » (mardi, 14 h).</li>
+  <li>« Salle B204 : lenteur à l'ouverture de session » (mercredi, 8 h 30).</li>
+</ol>
+<p>Fais ensemble avec moi, étape par étape : (1) classe chaque ticket (incident ou demande) ; (2) cherche ce qu'ils ont en commun ; (3) décide si tu ouvres un <strong>problème</strong> ; (4) écris la fiche : titre, tickets liés, hypothèse, contournement possible ; (5) formule le message à l'utilisateur de la salle.</p>
+<details class="correction"><summary>Voir la solution guidée</summary>
+<ol>
+  <li>Trois <strong>incidents</strong> : des services qui marchaient (lecteur, dossier, session) ne fonctionnent plus normalement.</li>
+  <li>Point commun : <strong>la même salle</strong> et un <strong>accès à un serveur de fichiers</strong> (lecteur réseau, dossier, ouverture de session qui attend un partage ou une stratégie).</li>
+  <li>Oui : trois incidents en trois jours, même lieu, cause probablement commune → on ouvre un <strong>problème</strong> et on lie les trois tickets.</li>
+  <li>Fiche : « Salle B204 : accès aux ressources réseau instable ». Hypothèses (à vérifier, pas à affirmer) : problème de résolution de noms ou de connexion au serveur de fichiers côté salle, stratégie appliquée à la salle. Contournement : accès au dossier par un autre chemin validé, ou autre salle disponible.</li>
+  <li>Message : « Nous avons constaté plusieurs signalements pour cette salle et traitons la cause. En attendant, voici le contournement. Nous vous écrirons dès que ce sera corrigé. » Pas de promesse de délai non connu.</li>
+</ol>
+<p>On ne cherche pas à savoir si cette hypothèse est vraie : l'exercice porte sur la <strong>méthode</strong>.</p>
+</details>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<h3>1. Incident majeur ou non ?</h3>
+<p>Trois situations : (a) une imprimante d'étage est en panne ; (b) la messagerie est inaccessible pour toute l'université ; (c) un enseignant ne peut pas ouvrir son fichier de cours le jour d'un examen. Classe-les, et dis ce qui change dans ta façon de répondre.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>(b) est le candidat typique à l'<strong>incident majeur</strong> : impact très large sur un service essentiel ; on suit la procédure dédiée, on rattache les appels à l'incident en cours, on relaie la communication officielle. (a) est un incident ordinaire de faible impact. (c) est un <strong>incident à forte urgence</strong> mais à impact individuel : il est traité vite, par la voie normale, sans activer d'incident majeur. La décision de déclarer un incident majeur appartient à la procédure locale, pas au N1 seul.</p>
+</details>
+<h3>2. « Simple et rapide »</h3>
+<p>Un responsable te demande de désactiver un contrôle sur tous les postes d'une salle « juste pour aujourd'hui ». Tu en as les droits techniques.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Avoir le droit technique ne vaut pas autorisation. C'est un <strong>changement</strong> qui touche beaucoup de postes et peut avoir des effets de sécurité : il passe par la demande ou le changement adéquat, avec validation. Tu expliques poliment ce circuit, tu proposes la voie la plus courte possible (changement urgent si le besoin l'est) et tu notes la demande dans le ticket.</p>
+</details>
+<h3>3. Les chiffres du mois</h3>
+<p>Le taux de résolution au premier contact monte de 55 % à 80 % en un mois. Le nombre de tickets rouverts a doublé. Que conclus-tu ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>On ne peut pas conclure à une amélioration : la hausse de la résolution au premier contact avec la hausse des réouvertures suggère que des tickets sont <strong>clôturés trop vite</strong>. On regarde les tickets rouverts, on vérifie qu'on confirme la résolution auprès de l'utilisateur, et on compare avec la satisfaction. C'est l'effet Goodhart : l'indicateur a été optimisé au détriment de la qualité.</p>
+</details>
+<h3>4. Rédiger une erreur connue</h3>
+<p>Un problème est identifié : « Un lecteur réseau disparaît après une mise en veille prolongée ; la reconnexion manuelle fonctionne ; la correction viendra avec la prochaine mise à jour d'un composant. » Écris l'article pour la base de connaissances.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Titre : « Le lecteur réseau S: a disparu après la mise en veille ». Symptôme (mots de l'utilisateur). Cause connue : une coupure de connexion au réveil (erreur connue, correction prévue avec la prochaine mise à jour). Contournement : ouvrir l'explorateur → ce PC → relancer la connexion du lecteur, ou se déconnecter puis se reconnecter. À escalader si le contournement échoue ou si d'autres lecteurs sont touchés. Date de revue. Ticket(s) de problème lié(s).</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-itil"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Quatre dimensions</strong> : personnes, information et technologie, partenaires, flux et processus.</li>
+  <li><strong>Chaîne de valeur</strong> : planifier, améliorer, impliquer, concevoir et faire la transition, obtenir ou construire, fournir et soutenir. Le desk : surtout « impliquer » et « fournir et soutenir ».</li>
+  <li><strong>Incident</strong> : rétablir vite ; contournement accepté. <strong>Incident majeur</strong> : procédure dédiée, appels rattachés, communication officielle.</li>
+  <li><strong>Problème</strong> : la cause. Contournement + cause connue = erreur connue, à documenter.</li>
+  <li><strong>Changement</strong> : standard (pré-autorisé), normal (évalué), urgent (circuit accéléré, avec trace). Pas de changement de ta propre initiative.</li>
+  <li><strong>Indicateurs</strong> : une question à creuser, pas un objectif à gonfler.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Quels sont les critères et la procédure d'un incident majeur à la DSI ?</li>
+  <li>Quels types de ticket, statuts et SLA sont configurés ? Quelle est la règle de mise en attente ?</li>
+  <li>Qui décide d'ouvrir un problème, et comment lie-t-on les tickets ?</li>
+  <li>Quels changements sont « standard » pour le service desk (pré-autorisés) ?</li>
+  <li>Quels indicateurs sont suivis et partagés avec l'équipe ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-itil"> Module terminé</label></p>
+<div data-module-suite="itil"></div>
+</div>
+</main>
+</body>
+</html>

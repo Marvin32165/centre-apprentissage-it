@@ -511,3 +511,38 @@ body.at-dragging { cursor: grabbing; }
 .pn-carnet strong { font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); }
 .pn-corrige .at-ecran { margin: 0.5rem 0; }
 .pn-corrige .at-ecran .ligne { white-space: normal; }
+
+/* Modules, thèmes et gabarit de module (lot 7) */
+.filtres { display: grid; gap: 0.8rem; margin: 0 0 1.25rem; padding: 1rem 1.1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); }
+@media (min-width: 40rem) { .filtres { grid-template-columns: 2fr 1.3fr 1.3fr 1fr; } .filtres-bas { grid-column: 1 / -1; } }
+.filtres .champ { display: grid; gap: 0.3rem; }
+.filtres label { font-family: var(--font-code); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.filtres input, .filtres select { min-height: 44px; width: 100%; padding: 0 0.6rem; font-family: var(--font-ui); font-size: 0.95rem; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-s); }
+.filtres-bas { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; }
+.filtres-bas .compte { margin: 0; font-family: var(--font-ui); font-size: 0.9rem; color: var(--ink-soft); }
+.filtres-bas [hidden] { display: none; }
+.mod-meta { font-family: var(--font-code); font-size: 0.7rem !important; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent) !important; margin: 0 0 0.5rem !important; }
+.mod-card h3::before { content: none !important; }
+.mod-card h3 { margin-top: 0; }
+.mod-pre { font-family: var(--font-ui); font-size: 0.88rem !important; }
+.mod-etat { margin: auto 0 0 !important; padding-top: 0.6rem; border-top: 1px dashed var(--line); font-family: var(--font-ui); font-size: 0.85rem !important; color: var(--ink-pale) !important; }
+.mod-etat.fait, .fait { color: var(--green) !important; font-weight: 600; }
+.mod-vide { grid-column: 1 / -1; color: var(--ink-soft); }
+.mod-prepa { font-family: var(--font-ui); font-size: 0.92rem; margin: 0.9rem 0 1.5rem; }
+.phase { display: inline-block; margin: 2rem 0 0; padding: 0.15rem 0.6rem; font-family: var(--font-code); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--paper); background: var(--accent); border-radius: 2px; }
+.phase + h2 { margin-top: 0.5rem; }
+.theme { scroll-margin-top: 8rem; }
+.theme-num { margin: 0 0 0.3rem; font-family: var(--font-code); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.theme h2 { margin-top: 0; }
+.theme h3 { margin: 1rem 0 0.4rem; font-family: var(--font-code); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-pale); font-weight: 500; }
+.theme-modules { list-style: none; padding: 0; }
+.theme-modules li { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.7rem; margin: 0 0 0.5rem; }
+.theme-modules a { font-weight: 600; padding: 0.3rem 0; }
+.a-venir { color: var(--ink-soft); }
+.theme-tout { font-family: var(--font-ui); font-size: 0.9rem; }
+.theme-sommaire { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; list-style: none; padding: 0; margin: 0 0 1.5rem; font-family: var(--font-ui); font-size: 0.92rem; }
+.theme-sommaire a { display: inline-block; padding: 0.55rem 0; }
+.objectifs { margin: 0 0 1.5rem; }
+.themes-liste { display: grid; gap: 1rem; grid-template-columns: 1fr; margin-top: 1.5rem; }
+@media (min-width: 52rem) { .themes-liste { grid-template-columns: repeat(2, 1fr); align-items: start; } }
+.themes-liste .bloc { margin: 0; }

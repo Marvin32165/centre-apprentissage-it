@@ -294,4 +294,14 @@
     ordre: { titre: "Ordre de montage", conseil: "Entretoises du bon format et cache I/O avant la carte mère ; carte avant le processeur ; pâte avant le ventirad ; une pièce ne se branche que si ce dont elle dépend est en place.", lien: "../stage/j9.html#composants", libelle: "Prépa, jour 9 : les composants" },
     choix: { titre: "Respect du cahier des charges", conseil: "Relis le besoin du client ligne par ligne avant de choisir : nombre de cœurs, capacité, graphique intégré ou carte dédiée, type de disque. Chaque pièce répond à une ligne du cahier des charges.", lien: "../stage/j9.html#salles", libelle: "Prépa, jour 9 : salles informatiques" }
   };
+
+  /* Module du site qui approfondit chaque thème (lot 7). Le matériel n'a pas encore son propre module :
+     on renvoie au module « Support poste Windows » (démarrage, matériel ou Windows ?) en attendant. */
+  A.moduleRevoir = {
+    demarrage: { href: "../modules/support-windows.html#demarrage", libelle: "Module « Support poste Windows » : le poste ne démarre pas" },
+    methode: { href: "../modules/support-windows.html#axes", libelle: "Module « Support poste Windows » : quatre axes pour localiser une panne" },
+    general: { href: "../modules/support-windows.html", libelle: "Module « Support poste Windows »" }
+  };
+  ["compat", "memoire", "alim", "refroidissement", "stockage", "cablage", "video", "ordre"].forEach(function (k) { if (A.revoir[k]) A.revoir[k].module = A.moduleRevoir.demarrage; });
+  if (A.revoir.choix) A.revoir.choix.module = A.moduleRevoir.general;
 })();

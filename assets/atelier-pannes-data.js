@@ -313,4 +313,7 @@
   A.revoir.methode = { titre: "Méthode de diagnostic", conseil: "Observer d'abord (symptômes, LED, bips), faire une hypothèse, changer une seule chose à la fois, tester avec une pièce témoin, puis vérifier que la panne a disparu. Ne conclure à la carte mère ou au processeur qu'après avoir écarté tout le reste.", lien: "../stage/j8.html#methode", libelle: "Prépa, jour 8 : la méthode de diagnostic" };
   A.revoir.securite = { titre: "Sécurité avant d'ouvrir un PC", conseil: "PC éteint, interrupteur de l'alimentation sur O et câble secteur débranché, électricité statique déchargée (partie métallique du boîtier ou bracelet antistatique), composants tenus par les bords. On n'ouvre jamais une alimentation.", lien: "../stage/j9.html#composants", libelle: "Prépa, jour 9 : les composants" };
   A.revoir.cmos = { titre: "BIOS/UEFI : pile, version, compatibilité", conseil: "La pile CMOS (CR2032) mémorise date, heure et réglages. Une carte peut avoir un BIOS trop ancien pour un processeur récent : le constructeur publie la liste de compatibilité. Une mise à jour de BIOS ne se coupe jamais en cours.", lien: "../stage/j9.html#demarrage", libelle: "Prépa, jour 9 : BIOS/UEFI" };
+  A.revoir.methode.module = A.moduleRevoir.methode;
+  A.revoir.securite.module = A.moduleRevoir.demarrage;
+  A.revoir.cmos.module = A.moduleRevoir.demarrage;
 })();

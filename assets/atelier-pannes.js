@@ -440,7 +440,8 @@
       var l = el("p", { "class": "at-lien" });
       l.appendChild(el("a", { href: th.lien }, th.libelle));
       l.appendChild(document.createTextNode(" · "));
-      l.appendChild(el("a", { href: "../modules/index.html" }, "Modules (en préparation)"));
+      var m = th.module || A.moduleRevoir.general;
+      l.appendChild(el("a", { href: m.href }, m.libelle));
       c.appendChild(l);
       box.appendChild(c);
     });
