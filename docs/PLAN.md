@@ -104,15 +104,15 @@ Reste : rien pour ce lot. `assets/modules-ui.js` génère le parcours (`prerequi
 Reste : rien pour ce lot. Règles inchangées ; seul l'affichage a bougé : `atelier.js` construit la double page (cahier des charges = première double page, notes en marge, lettres et légende de la planche, folios, page qui tourne), `atelier-pannes.js` les « Observations » (examen à cocher, observations en marge, diagnostic ✓/✗, rabat), `atelier-art.js` remplace les dégradés par des hachures (les aplats sombres sont regravés par le CSS `.livre .at-svg`), `atelier-index.js` génère table des matières et index. Les liens « étape précédente / suivante » des folios sont des titres non cliquables (le moteur avance par la réussite des étapes). Bilan des évaluations imprimable (bouton « Imprimer le bilan »). Correction au passage : un reste de commentaire cassait `#atelier [hidden]` depuis le lot 8.
 
 ## Lot 13 — Vérification finale et peaufinage
-À faire seulement quand les lots 8 à 12 sont cochés et fusionnés.
-- [ ] Audit automatique (Playwright + Chromium, script hors des pages publiées, par exemple `outils/verif.mjs`) sur **toutes** les pages : 390, 768, 1280 et 1440 px ; clair et sombre ; zéro erreur ou avertissement console ; zéro lien ou ancre mort ; zéro débordement horizontal ; captures enregistrées pour revue.
-- [ ] Accessibilité : contrastes AA mesurés, cibles ≥ 44 px, parcours complet au clavier (focus visible, tiroirs, recherche, dialogue, atelier), `aria-*` cohérents, `prefers-reduced-motion` respecté, titres hiérarchisés.
-- [ ] Fonctionnel : progression `it.*` (dont l'ancienne progression des lots 1 à 7, à migrer si les clés ont changé), quiz, minuteur, tampon, recherche (index complet), filtres, atlas, atelier (montages, pannes, évaluations, mode test) de bout en bout ; ouverture en local (`file://`) et via un serveur.
-- [ ] Impression : fiche mémo de chaque jour et bilan de l'atelier en A4.
-- [ ] Conformité : chaque point de `docs/REFONTE.md` est respecté ; les écarts sont corrigés ou justifiés en une ligne ici.
-- [ ] Peaufinage : tout ce qui améliore nettement la qualité (finitions, cohérence, micro-interactions sobres, états vides, page 404 pour GitHub Pages, favicon au logo tampon, métadonnées Open Graph), sans inventer de contenu ni ajouter de dépendance.
-- [ ] Ménage : plus de CSS ni de JS mort, `docs/composants.html` à jour, `CLAUDE.md` à jour.
-- [ ] Rapport final en tête de ce fichier : ce qui a été fait, captures clés, points « à vérifier sur place » restants, idées pour la suite.
+- [ ] 13.1 Audit complet : serveur et file://, quatre largeurs, deux thèmes, corrections et captures.
+  Justifié : audit à reprendre ; Chromium ne démarre pas (socket interdite) et son téléchargement Playwright est bloqué.
+- [ ] 13.2 Accessibilité : contrastes, clavier, ARIA, titres et mouvement réduit.
+- [ ] 13.3 Fonctionnel : progression, quiz, minuteur, recherche, modules et atelier, serveur et file://.
+- [ ] 13.4 Impression : fiches mémo J1 à J9 et bilan de l’atelier en A4 ; justification pour J10.
+- [ ] 13.5 Conformité : contrôle de chaque point de la refonte et justification des écarts.
+- [ ] 13.6 Peaufinage : page 404, favicon, métadonnées et états vides.
+- [ ] 13.7 Ménage : code mort, documentation, index et audit final.
+- [ ] 13.8 Rapport final, fusion et livraison.
 
 ## Ensuite
 Un module par lot, en commençant par les besoins du stage. Ajouter ici les nouveaux lots au fil de l'eau.
