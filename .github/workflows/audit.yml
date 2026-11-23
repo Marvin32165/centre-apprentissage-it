@@ -1,0 +1,50 @@
+name: Audit des pages
+# Lancé sur chaque branche de lot, sur les demandes de fusion vers main et à la main.
+on:
+  push:
+    branches: ['lot-*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+concurrency:
+  group: audit-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Vérifications clavier
+        run: npm run --silent accessibilite
+      - name: Mesure des contrastes
+        run: npm run --silent contrastes
+      - name: Parcours et impression
+        run: npm run --silent parcours
+      - name: Audit serveur et fichiers
+        run: |
+          set +e
+          node outils/verif.mjs > "$RUNNER_TEMP/audit-serveur.txt" 2>&1
+          serveur=$?
+          node outils/verif.mjs --file > "$RUNNER_TEMP/audit-file.txt" 2>&1
+          fichier=$?
+          node outils/verif.mjs --pages=index.html,stage/j1.html,modules/index.html,themes.html,atelier/index.html,atelier/pannes.html --largeurs=390,1280 --captures="$RUNNER_TEMP/captures" > "$RUNNER_TEMP/audit-captures.txt" 2>&1
+          captures=$?
+          cat "$RUNNER_TEMP/audit-serveur.txt" "$RUNNER_TEMP/audit-file.txt" "$RUNNER_TEMP/audit-captures.txt"
+          test "$serveur" -eq 0 && test "$fichier" -eq 0 && test "$captures" -eq 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audit
+          path: |
+            ${{ runner.temp }}/audit-serveur.txt
+            ${{ runner.temp }}/audit-file.txt
+            ${{ runner.temp }}/audit-captures.txt
+            ${{ runner.temp }}/captures

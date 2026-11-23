@@ -150,7 +150,21 @@
     themes: (M && M.domaines ? M.domaines.length : 0) + " domaines",
     atelier: compte("atelier") + " / " + units("atelier").length
   };
+  var ratios = {
+    stage: [faits, J.length],
+    modules: [compte("modules"), units("modules").length],
+    atelier: [compte("atelier"), units("atelier").length]
+  };
   Array.prototype.forEach.call(document.querySelectorAll("[data-compteur]"), function (n) {
-    n.textContent = textes[n.getAttribute("data-compteur")] || "";
+    var k = n.getAttribute("data-compteur");
+    n.textContent = textes[k] || "";
+    var r = ratios[k];
+    if (!r || !r[1]) return;
+    /* Anneau de progression de la rubrique (décoratif : le compteur texte donne la valeur). */
+    var pct = Math.round(r[0] / r[1] * 100);
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "anneau"); svg.setAttribute("viewBox", "0 0 36 36"); svg.setAttribute("aria-hidden", "true");
+    svg.innerHTML = '<circle class="anneau-fond" cx="18" cy="18" r="15.9155"/><circle class="anneau-val" cx="18" cy="18" r="15.9155" stroke-dasharray="' + pct + ' 100" transform="rotate(-90 18 18)"/>';
+    n.parentNode.insertBefore(svg, n);
   });
 })();

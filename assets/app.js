@@ -205,32 +205,6 @@
   }
 
   /* ---------- Décompte jusqu'au début du stage ---------- */
-  function parseDate(s) { var p = (s || "").split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
-  function fmt(d) {
-    return d.toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  }
-  function initCountdown() {
-    var node = document.querySelector("[data-countdown]");
-    if (!node || !DATA.stage.debut) return;
-    var start = parseDate(DATA.stage.debut), end = parseDate(DATA.stage.fin);
-    var now = new Date(); now = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    var days = Math.round((start - now) / 86400000);
-    var num, lbl;
-    if (days > 0) {
-      num = "J−" + days;
-      lbl = (days === 1 ? "Dernier jour de préparation avant le début du stage : " : "jours avant le début du stage : ") + fmt(start) + ".";
-    } else if (now <= end) {
-      num = "En cours";
-      lbl = "Le stage a commencé le " + fmt(start) + " et se termine le " + fmt(end) + ".";
-    } else {
-      num = "Terminé";
-      lbl = "Le stage s'est terminé le " + fmt(end) + ".";
-    }
-    node.textContent = "";
-    node.appendChild(el("div", { "class": "num" }, num));
-    node.appendChild(el("p", { "class": "lbl" }, lbl));
-  }
-
   /* ---------- Boutons copier ---------- */
   function copyText(text) {
     if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
@@ -329,16 +303,14 @@
           var labels = fs.querySelectorAll(".opt");
           Array.prototype.forEach.call(labels, function (lab, j) {
             lab.querySelector("input").disabled = true;
-            if (j === qu.reponse) lab.classList.add("bon");
-            else if (j === chosen) lab.classList.add("faux");
+            if (j === chosen) lab.classList.add(ok ? "bon" : "faux");
           });
           fs.appendChild(el("p", { "class": "verdict " + (ok ? "bon" : "faux") }, ok ? "Bonne réponse." : "Pas tout à fait."));
-          if (qu.explication) {
-            var d = el("details", { "class": "correction" });
-            d.appendChild(el("summary", null, "Voir la correction"));
-            d.appendChild(el("p", null, qu.explication));
-            fs.appendChild(d);
-          }
+          var d = el("details", { "class": "correction" });
+          d.appendChild(el("summary", null, "Voir la correction"));
+          d.appendChild(el("p", null, "Réponse : " + qu.options[qu.reponse]));
+          if (qu.explication) d.appendChild(el("p", null, qu.explication));
+          fs.appendChild(d);
         });
         var txt = score + " / " + quiz.questions.length;
         store.set("quiz." + id, txt);
@@ -409,7 +381,13 @@
     });
     voile.addEventListener("keydown", function (e) {
       if (e.key === "Escape") { e.preventDefault(); fermerRecherche(); }
-      else if (e.key === "Tab") { e.preventDefault(); (document.activeElement === input ? fermer : input).focus(); }
+      else if (e.key === "Tab") {
+        var focusables = Array.prototype.filter.call(dlg.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href]:not([tabindex="-1"])'), function (n) { return n.getClientRects().length; });
+        if (!focusables.length) { e.preventDefault(); return; }
+        var position = focusables.indexOf(document.activeElement);
+        if (e.shiftKey && position <= 0) { e.preventDefault(); focusables[focusables.length - 1].focus(); }
+        else if (!e.shiftKey && (position < 0 || position === focusables.length - 1)) { e.preventDefault(); focusables[0].focus(); }
+      }
     });
     voile.addEventListener("mousedown", function (e) { if (e.target === voile) fermerRecherche(); });
     fermer.addEventListener("click", fermerRecherche);
@@ -516,7 +494,6 @@
   initSections();
   initDone();
   renderProgress();
-  initCountdown();
   initCopy();
   initQuizzes();
   initReprise();
