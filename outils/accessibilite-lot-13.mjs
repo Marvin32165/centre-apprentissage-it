@@ -11,6 +11,10 @@ for (const theme of ['light','dark']) {
  const ctx = await browser.newContext({viewport:{width:390,height:844}, reducedMotion:'reduce'});
  await ctx.addInitScript(t=>{try{localStorage.setItem('it.theme',t)}catch{}},theme);
  const p=await ctx.newPage(); await p.goto(base+'stage/j1.html');
+ await test(theme+' focus visible et références ARIA',async()=>{
+  await p.keyboard.press('Tab'); const focus=await p.evaluate(()=>{const e=document.activeElement,c=getComputedStyle(e);return {visible:e.matches(':focus-visible'),width:parseFloat(c.outlineWidth),style:c.outlineStyle}}); assert.equal(focus.visible,true); assert.ok(focus.width>=2&&focus.style!=='none');
+  const broken=await p.evaluate(()=>[...document.querySelectorAll('[aria-controls],[aria-labelledby],[aria-describedby]')].flatMap(e=>['aria-controls','aria-labelledby','aria-describedby'].flatMap(a=>(e.getAttribute(a)||'').split(/\s+/).filter(Boolean).filter(id=>!document.getElementById(id)).map(id=>a+'='+id)))); assert.deepEqual(broken,[]);
+ });
  await test(theme+' tiroirs et retour du focus',async()=>{
   for(const selector of ['.sommaire-btn','.fil-btn']){
    const b=p.locator(selector); await b.focus(); await p.keyboard.press('Enter');
@@ -28,6 +32,10 @@ for (const theme of ['light','dark']) {
   await p.keyboard.press('Escape'); assert.equal(await p.locator('.fil-btn').evaluate(e=>e===document.activeElement),true);
   await p.keyboard.press('Control+k'); assert.equal(await q.evaluate(e=>e===document.activeElement),true); await p.keyboard.press('Escape');
  });
+ await test(theme+' Entrée ouvre le résultat actif',async()=>{
+  await p.keyboard.press('/'); const q=p.locator('#rech-q'); await q.fill('dns'); await p.locator('.rech-item').first().waitFor(); const target=await p.locator('.rech-item').first().getAttribute('href'); const expected=new URL(target,p.url()).href; await p.keyboard.press('Enter'); await p.waitForURL(expected); assert.ok(await p.evaluate(()=>!location.hash||!!document.getElementById(decodeURIComponent(location.hash.slice(1)))));
+ });
+ await p.goto(base+'stage/j1.html');
  await test(theme+' mouvement réduit',async()=>{ assert.equal(await p.evaluate(()=>matchMedia('(prefers-reduced-motion: reduce)').matches),true); const durations=await p.evaluate(()=>[...document.querySelectorAll('*')].filter(e=>getComputedStyle(e).animationName!=='none').map(e=>getComputedStyle(e).animationDuration)); assert.ok(durations.every(d=>parseFloat(d)<=0.01)); });
  await p.goto(base+'atelier/montage.html?s=bureautique-intel');
  await test(theme+' commandes de l’atelier',async()=>{
