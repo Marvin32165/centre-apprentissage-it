@@ -22,6 +22,8 @@ jobs:
       - name: Mesure des contrastes
         run: node outils/contrastes-lot-13.mjs
         continue-on-error: true
+      - name: Parcours et impression
+        run: node outils/parcours-lot-13.mjs
       - name: Audit serveur et fichiers
         run: |
           set +e
