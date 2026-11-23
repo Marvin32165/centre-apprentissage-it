@@ -686,8 +686,6 @@ body.at-dragging { cursor: grabbing; }
 .at-modes a { display: inline-flex; align-items: center; min-height: 44px; }
 .at-bareme { font-family: var(--font-ui); font-size: 0.92rem; padding-left: 1.2rem; }
 .at-compteurs { font-family: var(--font-code); font-size: 0.78rem; }
-.at-liens { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.6rem 0 0.2rem; }
-.at-score-ligne { min-height: 1.2rem; margin: 0.3rem 0 0; font-family: var(--font-code); font-size: 0.78rem; }
 .at-rapport { margin-bottom: 1.5rem; padding: 1rem 1.1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); }
 .at-rapport:focus { outline: none; }
 .at-rap h3 { margin: 1.4rem 0 0.5rem; }

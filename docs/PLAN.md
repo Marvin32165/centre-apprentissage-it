@@ -107,12 +107,14 @@ Reste : rien pour ce lot. Règles inchangées ; seul l'affichage a bougé : `ate
 - [x] 13.1 Audit complet : serveur et file://, quatre largeurs, deux thèmes, corrections et captures.
   Fait : audit GitHub Actions, 27 pages × 4 largeurs × 2 thèmes sur serveur et en file://, zéro problème et avertissement ; six captures conservées.
 - [ ] 13.2 Accessibilité : contrastes, clavier, ARIA, titres et mouvement réduit.
-  Fait partiellement : contrastes des jetons principaux et tests clavier automatisés en clair/sombre ; compléter les couples réels, l’atelier, les ARIA et le parcours complet avant de cocher.
+  Fait partiellement : contrastes des textes visibles au chargement contrôlés, bouton de l’atelier corrigé ; recherche, tiroirs et premiers parcours clavier vérifiés ; compléter ARIA et atelier avant de cocher.
 - [ ] 13.3 Fonctionnel : progression, quiz, minuteur, recherche, modules et atelier, serveur et file://.
+  Fait partiellement : progression, quiz, minuteur, filtres, atlas et montage guidé testés dans les deux modes ; compléter la recherche, le mode test et les évaluations.
 - [ ] 13.4 Impression : fiches mémo J1 à J9 et bilan de l’atelier en A4 ; justification pour J10.
+  Fait partiellement : J1 à J9 tiennent chacun sur une page A4 dans les deux modes. Justifié : J10 est une révision et ne contient pas de section fiche mémo.
 - [ ] 13.5 Conformité : contrôle de chaque point de la refonte et justification des écarts.
 - [ ] 13.6 Peaufinage : page 404, favicon, métadonnées et états vides.
-  Justifié : retrait des polices Google, les polices de repli locales assurent le fonctionnement sans dépendance externe.
+  Fait partiellement : 404, favicon et métadonnées ajoutés ; validation finale à terminer. Justifié : retrait des polices Google, les polices de repli locales assurent le fonctionnement sans dépendance externe.
 - [ ] 13.7 Ménage : code mort, documentation, index et audit final.
 - [ ] 13.8 Rapport final, fusion et livraison.
 

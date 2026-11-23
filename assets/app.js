@@ -205,32 +205,6 @@
   }
 
   /* ---------- Décompte jusqu'au début du stage ---------- */
-  function parseDate(s) { var p = (s || "").split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
-  function fmt(d) {
-    return d.toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  }
-  function initCountdown() {
-    var node = document.querySelector("[data-countdown]");
-    if (!node || !DATA.stage.debut) return;
-    var start = parseDate(DATA.stage.debut), end = parseDate(DATA.stage.fin);
-    var now = new Date(); now = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    var days = Math.round((start - now) / 86400000);
-    var num, lbl;
-    if (days > 0) {
-      num = "J−" + days;
-      lbl = (days === 1 ? "Dernier jour de préparation avant le début du stage : " : "jours avant le début du stage : ") + fmt(start) + ".";
-    } else if (now <= end) {
-      num = "En cours";
-      lbl = "Le stage a commencé le " + fmt(start) + " et se termine le " + fmt(end) + ".";
-    } else {
-      num = "Terminé";
-      lbl = "Le stage s'est terminé le " + fmt(end) + ".";
-    }
-    node.textContent = "";
-    node.appendChild(el("div", { "class": "num" }, num));
-    node.appendChild(el("p", { "class": "lbl" }, lbl));
-  }
-
   /* ---------- Boutons copier ---------- */
   function copyText(text) {
     if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
@@ -522,7 +496,6 @@
   initSections();
   initDone();
   renderProgress();
-  initCountdown();
   initCopy();
   initQuizzes();
   initReprise();

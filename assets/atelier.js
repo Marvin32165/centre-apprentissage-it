@@ -326,7 +326,12 @@
         var b = el("button", { type: "button", "class": "leg", "aria-pressed": String(lettreSel === s.id) });
         b.appendChild(el("span", { "class": "leg-l" }, String.fromCharCode(65 + k)));
         b.appendChild(document.createTextNode(s.nom));
-        b.addEventListener("click", function () { lettreSel = lettreSel === s.id ? null : s.id; renderScene(); });
+        b.addEventListener("click", function () {
+          lettreSel = lettreSel === s.id ? null : s.id;
+          renderScene();
+          var boutons = fig.querySelectorAll(".leg");
+          if (boutons[k]) boutons[k].focus();
+        });
         var li = el("li"); li.appendChild(b); ol.appendChild(li);
       });
       fig.appendChild(ol);
@@ -386,6 +391,8 @@
     var id = b.getAttribute("data-id");
     if (sel && sel.type === "tray" && sel.id === id) { sel = null; msg("Sélection annulée.", "info"); } else selectTray(id);
     renderAll();
+    var piece = Array.prototype.find.call(secBac.querySelectorAll(".at-piece"), function (n) { return n.getAttribute("data-id") === id; });
+    if (piece) piece.focus();
   });
 
   function selectTray(id, opts) {
@@ -837,6 +844,7 @@
   tabsVue.addEventListener("keydown", function (e) {
     var k = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
     if (!k) return;
+    e.preventDefault();
     var i = VUES.map(function (v) { return v[0]; }).indexOf(vue);
     setVue(VUES[(i + k + VUES.length) % VUES.length][0]);
     tabsVue.children[(i + k + VUES.length) % VUES.length].focus();

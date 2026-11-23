@@ -27,8 +27,8 @@ window.IT_QUIZZES = { demo: { titre: "Quiz de démonstration", questions: [
 <p class="lead">Référence de l'identité « Poste de garde » (voir <code>docs/REFONTE.md</code>) : une seule feuille de style, des jetons, trois niveaux d'encadrés.</p>
 
 <h2 id="typo">1. Typographie</h2>
-<p class="kicker">Étiquette · IBM Plex Mono 12 px</p>
-<p>Texte courant en Newsreader 18,5 px, interligne 1,7, colonne de 46rem au plus. <code>code en ligne</code>, <kbd>Ctrl</kbd> + <kbd>K</kbd>. Les h2 qui commencent par « 1. » reçoivent un numéro <span class="sec">§1</span> en italique rouille.</p>
+<p class="kicker">Étiquette · police monospace locale</p>
+<p>Texte courant en police à empattements locale, 18,5 px, interligne 1,7, colonne de 46rem au plus. <code>code en ligne</code>, <kbd>Ctrl</kbd> + <kbd>K</kbd>. Les h2 qui commencent par « 1. » reçoivent un numéro <span class="sec">§1</span> en italique rouille.</p>
 <h3>Titre de niveau 3</h3>
 <p class="label">Étiquette neutre · compteurs, dates</p>
 
@@ -64,6 +64,19 @@ ping 127.0.0.1</code></pre>
 <a class="card" href="../modules/index.html"><p class="kicker">Carte</p><h3>Titre de carte</h3><p>Fond surface, bordure, rayon 10 ; le survol passe la bordure en rouille.</p></a>
 <div class="card"><p class="kicker">Carte statique</p><h3>Sans lien</h3><p>Pas d'ombre au repos.</p></div>
 </div>
+<h2 id="composants-specifiques">6. Composants des journées et de l'atelier</h2>
+<h3>Minuteur de séance</h3>
+<p>Le panneau sombre lit les durées du plan horaire, affiche le bloc courant et conserve son état dans <code>it.seance.jN</code>. <a href="../stage/j1.html#plan">Voir le minuteur du jour 1</a>.</p>
+<h3>Ticket de mise en situation</h3>
+<p>Un ticket <code>CAS-01</code> regroupe le contexte et une résolution dans un <code>details</code> fermé. <a href="../stage/j1.html#cas">Voir les tickets du jour 1</a>.</p>
+<h3>Tampon de clôture</h3>
+<p>La clôture affiche le tampon RÉSOLU, conserve <code>it.done.stage-jN</code> et sa date dans <code>it.cloture.jN</code>. <a href="../stage/j1.html#memo">Voir la clôture du jour 1</a>.</p>
+<h3>Matrice de priorité</h3>
+<p>Les neuf cases présentent l'impact et l'urgence avec une explication annoncée après sélection. <a href="../stage/j1.html#priorite">Voir la matrice du jour 1</a>.</p>
+<h3>Fiche mémo imprimable</h3>
+<p>La fiche est générée à partir du contenu du jour et imprimée en A4 ; le jour 10 n'en possède pas. <a href="../stage/j1.html#memo">Voir la fiche du jour 1</a>.</p>
+<h3>Le Livre du montage</h3>
+<p>Les pages de l'atelier réunissent cahier des charges, planche, légende, bac et notes en marge. <a href="../atelier/index.html">Voir le livre de l'atelier</a>.</p>
 </div></main>
 </body>
 </html>
