@@ -1,4 +1,4 @@
-// Parcours de régression dans Chromium : node outils/parcours-lot-13.mjs
+// Parcours de régression dans Chromium : node outils/parcours.mjs
 import {chromium} from 'playwright';
 import {readFile} from 'node:fs/promises';
 import {createServer} from 'node:http';

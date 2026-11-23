@@ -1,0 +1,19 @@
+{
+  "name": "centre-apprentissage-it",
+  "private": true,
+  "description": "Outils de contrôle du site (le site lui-même n'a aucune dépendance ni étape de build).",
+  "type": "module",
+  "scripts": {
+    "index": "node outils/index-recherche.mjs",
+    "verif": "node outils/verif.mjs",
+    "verif:local": "node outils/verif.mjs --file",
+    "verif:rapide": "node outils/verif.mjs --largeurs=390,1280",
+    "accessibilite": "node outils/accessibilite.mjs",
+    "contrastes": "node outils/contrastes.mjs",
+    "parcours": "node outils/parcours.mjs",
+    "controles": "npm run --silent index && npm run --silent verif && npm run --silent verif:local && npm run --silent accessibilite && npm run --silent contrastes && npm run --silent parcours"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}

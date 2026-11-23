@@ -1,11 +1,13 @@
-name: Audit du lot 13
+name: Audit des pages
+# Lancé sur chaque branche de lot, sur les demandes de fusion vers main et à la main.
 on:
   push:
-    branches: [lot-13]
+    branches: ['lot-*']
   pull_request:
     branches: [main]
+  workflow_dispatch:
 concurrency:
-  group: audit-lot-13
+  group: audit-${{ github.ref }}
   cancel-in-progress: true
 permissions:
   contents: read
@@ -18,14 +20,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: npm install --no-save playwright
+      - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
       - name: Vérifications clavier
-        run: node outils/accessibilite-lot-13.mjs
+        run: npm run --silent accessibilite
       - name: Mesure des contrastes
-        run: node outils/contrastes-lot-13.mjs
+        run: npm run --silent contrastes
       - name: Parcours et impression
-        run: node outils/parcours-lot-13.mjs
+        run: npm run --silent parcours
       - name: Audit serveur et fichiers
         run: |
           set +e
@@ -40,7 +42,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: audit-lot-13
+          name: audit
           path: |
             ${{ runner.temp }}/audit-serveur.txt
             ${{ runner.temp }}/audit-file.txt

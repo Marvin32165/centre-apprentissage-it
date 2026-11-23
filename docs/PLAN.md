@@ -1,8 +1,8 @@
 # Plan de travail
 
-Un lot = une session Claude Code (nouvelle conversation, modèle Sonnet). Lancer avec :
-`Lis CLAUDE.md et docs/PLAN.md, puis fais le lot N.`
-Si un lot est coupé par la limite d'utilisation : `Lis CLAUDE.md et docs/PLAN.md, et reprends le lot N là où il s'est arrêté.`
+Un lot = une session d'agent (Claude Code ou ChatGPT / Codex, nouvelle conversation). Règles communes : `AGENTS.md`. Lancer avec :
+`Lis AGENTS.md et docs/PLAN.md, puis fais le lot N.`
+Si un lot est coupé par la limite d'utilisation : `Lis AGENTS.md et docs/PLAN.md, et reprends le lot N à la première sous-étape non cochée (branche lot-N).`
 
 Ordre conseillé : lots 1 à 3 d'abord (la prépa sert avant le 7/12), puis l'atelier.
 
