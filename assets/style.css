@@ -943,7 +943,7 @@ details.rabat[open] { background: #F3EBDD; }
 .index-liste li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 var(--s2); margin: 0; padding: 2px 0; break-inside: avoid; }
 .index-liste .index-lettre { margin-top: var(--s2); font-family: var(--fell-sc); color: var(--accent); }
 .index-refs { font-family: var(--fell); }
-.index-refs a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 28px; margin: -6px 0; padding: 0 4px; }
+.index-refs a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; margin: -6px 0; padding: 0 4px; }
 .index-sous { flex-basis: 100%; font-family: var(--fell); font-style: italic; font-size: 0.84375rem; color: var(--ink-pale); }
 
 /* ---------- Mouvement réduit ---------- */

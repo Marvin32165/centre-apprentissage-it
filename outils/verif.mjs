@@ -90,7 +90,7 @@ for (const theme of THEMES) {
           if (!b.width || cs.visibility === "hidden") return;
           const enLigne = n.tagName === "A" && cs.display === "inline" && n.closest("p, li, td, dd, figcaption");
           if (enLigne || n.type === "radio" || n.type === "checkbox") return;
-          if (b.height < 43.5 || b.width < 24) petites.push((n.textContent || n.getAttribute("aria-label") || n.tagName).trim().slice(0, 30) + ` (${Math.round(b.width)}×${Math.round(b.height)})`);
+          if (b.height < 43.5 || b.width < 43.5) petites.push((n.textContent || n.getAttribute("aria-label") || n.tagName).trim().slice(0, 30) + ` (${Math.round(b.width)}×${Math.round(b.height)})`);
         });
         const ids = [...document.querySelectorAll("[id]")].map((n) => n.id);
         const doublons = ids.filter((v, i) => ids.indexOf(v) !== i);
@@ -153,4 +153,4 @@ srv?.close();
 console.log(`${PAGES.length} pages × ${LARGEURS.length} largeurs × ${THEMES.length} thèmes (${args.file ? "file://" : "serveur"})`);
 console.log(`Problèmes : ${problemes.length}`); problemes.forEach((m) => console.log("  ✗ " + m));
 console.log(`Avertissements : ${avertissements.length}`); avertissements.slice(0, args.tout ? 9999 : 40).forEach((m) => console.log("  · " + m));
-process.exit(problemes.length ? 1 : 0);
+process.exit(problemes.length || avertissements.length ? 1 : 0);
