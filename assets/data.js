@@ -16,7 +16,7 @@ window.IT_DATA = {
     { id: "themes", titre: "Thèmes", href: "themes.html",
       desc: "Les grands domaines de l'IT, avec des liens vers les modules.", units: [] },
     { id: "atelier", titre: "Atelier hardware", href: "atelier/index.html",
-      desc: "Monter, diagnostiquer et réparer un PC virtuel, pièce par pièce.", units: [] }
+      desc: "Monter, diagnostiquer et réparer un PC virtuel, pièce par pièce.", units: ["atelier-s1"] }
   ]
 };
 window.IT_QUIZZES = window.IT_QUIZZES || {};
