@@ -420,6 +420,8 @@ h2 .duree { margin-left: var(--s2); vertical-align: 0.3em; }
 .memo-carte p { margin: 0 0 var(--s3); font-size: 0.875rem; line-height: 1.5; color: var(--ink-soft); }
 .memo-carte .label { margin-bottom: 6px; }
 .memo-carte .btn { width: 100%; }
+.revision-fiche { margin-block: var(--s3); }
+.revision-fiche h3 { margin-top: 0; }
 .memo-tuteur { display: block; margin-top: var(--s3); padding: 10px 0; font-size: 0.875rem; color: var(--amber); }
 .tiroir-voile { position: fixed; inset: 0; z-index: 150; background: rgba(27, 23, 19, 0.45); }
 .tiroir-voile[hidden] { display: none; }

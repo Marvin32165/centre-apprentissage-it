@@ -208,7 +208,9 @@ Suivre `docs/procedures/nouveau-module.md` (sous-étapes 18.1 à 18.4). Domaine 
 - [ ] 18.1 Page · [ ] 18.2 Données · [ ] 18.3 Relecture croisée · [ ] 18.4 Contrôles et fusion
 
 ## Lot 19 — Révision express et progression portable
-- [ ] 19.1 Page `stage/revision.html` : les fiches mémo J1 à J9 seules (lues depuis les sections `#memo` des pages, ou dupliquées en données si la lecture en `file://` l'impose, sans `fetch`), puis un quiz mélangé tiré des quiz existants ; lien depuis `stage/index.html` et l'accueil.
+Justifié : fait avant le lot 17 (relecture réservée à ChatGPT) et le lot 18, parce qu'il ne demande pas de relecture croisée et sert dès maintenant.
+- [x] 19.1 Page `stage/revision.html` : les fiches mémo J1 à J9 seules (lues depuis les sections `#memo` des pages, ou dupliquées en données si la lecture en `file://` l'impose, sans `fetch`), puis un quiz mélangé tiré des quiz existants ; lien depuis `stage/index.html` et l'accueil.
+  Fait : `stage/revision.html` (9 fiches et quiz de 10 questions tirées dans `stage-j1` à `stage-j9`, bouton « Nouveau tirage ») ; fiches **générées** dans `assets/revision.js` par `outils/revision.mjs` depuis les sections `#memo` (inclus dans `npm run index`, contrôlé par `garde`, protégé par le hook) ; liens depuis `stage/index.html` et l'accueil (fin de prépa et pendant le stage) ; vérifiée en `file://` à 390 px.
 - [ ] 19.2 Export et import de la progression : bouton qui télécharge un fichier JSON des clés `it.*` (Blob, sans serveur) et import par `<input type="file">` avec vérification du contenu, message dans la page (jamais `alert`) ; dans le pied de page ou sur l'accueil.
 - [ ] 19.3 `npm run index`, `npm run controles` (ajouter les deux parcours à `outils/parcours.mjs`), coche, fusion.
 

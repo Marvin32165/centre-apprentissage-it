@@ -27,7 +27,7 @@ function fichiers(dir = "") {
 }
 const tous = fichiers();
 const html = tous.filter((f) => f.endsWith(".html"));
-const scriptsSite = tous.filter((f) => /^assets\/.+\.js$/.test(f) && f !== "assets/recherche.js");
+const scriptsSite = tous.filter((f) => /^assets\/.+\.js$/.test(f) && !["assets/recherche.js", "assets/revision.js"].includes(f));
 const ligne = (txt, i) => txt.slice(0, i).split("\n").length;
 
 // 1. Moteurs de l'atelier : pas de modification sans autorisation écrite dans le plan.
@@ -47,6 +47,8 @@ else {
 // 2. Index de recherche à jour.
 const idx = spawnSync(process.execPath, ["outils/index-recherche.mjs", "--verifier"], { cwd: R, encoding: "utf8" });
 if (idx.status !== 0) pb("assets/recherche.js", "index pas à jour ou généré à la main — lancer npm run index");
+const rev = spawnSync(process.execPath, ["outils/revision.mjs", "--verifier"], { cwd: R, encoding: "utf8" });
+if (rev.status !== 0) pb("assets/revision.js", "fiches de révision pas à jour ou modifiées à la main — lancer npm run index");
 
 // 3. Ressources externes : seulement Google Fonts (la police fait partie de la DA et ne doit pas disparaître).
 const HOTES_OK = /^https:\/\/fonts\.(googleapis|gstatic)\.com(\/|$)/;

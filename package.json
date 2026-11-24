@@ -4,7 +4,7 @@
   "description": "Outils de contrôle du site (le site lui-même n'a aucune dépendance ni étape de build).",
   "type": "module",
   "scripts": {
-    "index": "node outils/index-recherche.mjs",
+    "index": "node outils/index-recherche.mjs && node outils/revision.mjs",
     "verif": "node outils/verif.mjs",
     "verif:local": "node outils/verif.mjs --file",
     "verif:rapide": "node outils/verif.mjs --largeurs=390,1280",
