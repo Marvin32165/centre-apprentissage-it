@@ -193,7 +193,7 @@ Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul 
 3. Claude Code : corriger d'après ces rapports, puis contrôles et coche (17.2–17.3, 18.4, 20.4, 23.4, 24.4).
 4. Lot 21 (ChatGPT relit les 5 premiers modules), puis lot 25 après le 18/12.
 
-**Changement de rythme (24/11)** : à partir du mercredi 25/11, séances de 3 à 4 h par jour en semaine seulement. Les dates restent (J3 le 25/11 … J10 le 4/12) ; chaque plan horaire est ramené à ≈ 3 h 30 (blocs raccourcis, même contenu ; un labo qui déborde se termine au début de la séance suivante).
+**Changement de rythme (24/11)** : à partir du mercredi 25/11, séances de 3 à 4 h par jour en semaine seulement. Le lot 26 fixe le calendrier des huit séances et précise le programme des deux séances doubles.
 
 ## Lot 26 — Calendrier : la prépa commence le mercredi 25/11 (URGENT, à faire en premier)
 Décision de Marvin (25/11) : la prépa commence **mercredi 25/11 avec le jour 1**, en semaine seulement, séances de 3 à 4 h ; il n'y a que 8 jours ouvrables avant le stage, donc **J1 + J2 le mercredi 25/11** et **J9 + J10 le vendredi 4/12** (J10 réduit à la révision express). Calendrier : J1 et J2 le 25/11, J3 le 26/11, J4 le 27/11, J5 le 30/11, J6 le 1/12, J7 le 2/12, J8 le 3/12, J9 et J10 le 4/12. Modèle conseillé : Sol, effort `medium`. Ne pas toucher aux moteurs de l'atelier.
@@ -203,7 +203,8 @@ Décision de Marvin (25/11) : la prépa commence **mercredi 25/11 avec le jour 1
   Fait : mission avec deux liens les jours doubles, 13 cases dans la frise et lien vers le premier jour à terminer. Les quatre dates et le retour après progression ont été testés en serveur et en `file://`.
 - [x] 26.3 Pages : sur `stage/j1.html` et `j2.html`, un encadré `callout astuce` en tête du plan : « Séance double du mercredi 25/11 : ≈ 1 h 45 par jour ; fais la théorie, les mises en situation et le quiz, garde les labos pour plus tard » (pas de nouveau fait, pas de durée inventée au-delà) ; même principe sur `j9.html` (≈ 3 h, labo raccourci) et `j10.html` (≈ 45 min : `revision.html`, puis la check-list du premier jour ; les appels simulés pendant la première semaine de stage, le soir). Texte de `stage/index.html` (rythme) à jour.
   Fait : en-têtes du J1 au J10 alignés, consignes express pour J1 et J2 avec parcours complet au minuteur, labo raccourci au J9, programme du J10 en 45 min et rythme de la prépa affiché dans `stage/index.html`. Index de recherche régénéré.
-- [ ] 26.4 `docs/REFONTE.md` § 2.1 : remplacer « du 23/11 au 4/12 » et l'exemple « Lundi 23 novembre » par le nouveau calendrier (décision de Marvin, pas un désaccord).
+- [x] 26.4 `docs/REFONTE.md` § 2.1 : remplacer « du 23/11 au 4/12 » et l'exemple « Lundi 23 novembre » par le nouveau calendrier (décision de Marvin, pas un désaccord).
+  Fait : section 2.1 de `docs/REFONTE.md` alignée sur les huit séances, les dates doubles et les 13 cases. La note de rythme renvoie au calendrier actuel.
 - [ ] 26.5 `npm run index`, `npm run controles` (le parcours « progression et tampon » ou d'autres tests peuvent dépendre des dates : les adapter sans les affaiblir), coche, fusion dans `main`.
 
 ## Lot 16 — Relecture des faits : prépa J1 à J5

@@ -47,20 +47,22 @@ Mêmes couleurs, même logo, mêmes règles (HTML/CSS/JS natifs, sans build, loc
 ## 2. Plateforme « Poste de garde »
 
 ### 2.1 Accueil = tableau de mission (`index.html`)
-- Calculer le **jour du jour** d'après la date : du 23/11 au 4/12, les jours ouvrables donnent J1…J10 (week-ends = repos). Avant : « Commencer la prépa » ; après le 4/12 : « Réviser » ; à partir du 7/12 : « Ton stage a commencé ».
+- Calculer le **jour du jour** d'après la date. Huit séances en semaine : J1 et J2 le 25/11, J3 le 26/11, J4 le 27/11, J5 le 30/11, J6 le 1/12, J7 le 2/12, J8 le 3/12, J9 et J10 le 4/12. Avant : « Commencer la prépa » ; après le 4/12 : « Réviser » ; à partir du 7/12 : « Ton stage a commencé ».
 - Colonne gauche :
-  - kicker « Lundi 23 novembre · Jour 1 sur 10 » avec une pastille ;
-  - h1 « Aujourd'hui, le métier de *service desk*. » ;
+  - kicker « Jeudi 26 novembre · Jour 3 sur 10 » avec une pastille ;
+  - h1 « Aujourd'hui, *Jira*, de l'ouverture à la clôture. » ;
   - chapeau du jour ;
   - boutons « Commencer la séance » et « Voir le plan du jour » ;
+  - les 25/11 et 4/12, titre avec les deux jours et un bouton par jour ;
   - ligne « Reprise : § 2 … », à partir de la dernière section vue (clé `it.reprise`).
 - Colonne droite : **carte-ticket sombre** « Ticket STAGE-0712 · ● Ouvert » :
   - le décompte en mono 96 px rouille clair avec « jours avant le premier appel » ;
   - une grille 2×2 : Où / Poste / Début / Horaires ;
   - la progression de la prépa.
-- **Frise** du 23/11 au 7/12 (15 cases, défilement horizontal sur mobile) :
+- **Frise** du 25/11 au 7/12 (13 cases, défilement horizontal sur mobile) :
   - jour courant plein rouille ;
   - jours faits avec ✓ ;
+  - séance double dans une seule case, avec un lien vers le premier jour à terminer et un ✓ quand les deux sont faits ;
   - week-ends hachurés « Repos » ;
   - 7/12 en case sombre « Stage ».
 - « Toute la plateforme » : 4 cartes (Prépa, Modules, Thèmes, Atelier) avec leur compteur réel. La carte Atelier a le fond « papier ligné » et le titre en italique *Le Livre du montage*.
