@@ -164,5 +164,52 @@ Idées reprises du dépôt `claude-tools` (chef, evidence-reviewer, hooks, skill
 
 Reste : rien pour ce lot ; une fois par clone, `npm run hooks`. Prochain lot conseillé : module « Dépannage à distance » avec `/nouveau-module` (ou la procédure dans ChatGPT), relu par l'autre outil.
 
-## Ensuite
-Un module par lot, en commençant par les besoins du stage. Ajouter ici les nouveaux lots au fil de l'eau.
+## Ensuite — plan des lots 16 à 25
+Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance du **7/12** : les lots 16 à 20 passent avant le stage, les suivants pendant (le site sert alors de référence au poste).
+
+**Règle de croisement** : tout le contenu actuel a été écrit par Claude, il est donc relu par ChatGPT (lots 16, 17, 21). Pour un nouveau module, un outil l'écrit et l'autre le relit (étape N.3 de `docs/procedures/nouveau-module.md`). Les relectures sont écrites dans `docs/relectures/<page>.md` pour que l'autre outil les retrouve.
+
+**Modèle et effort.** Côté ChatGPT / Codex, prends le modèle de raisonnement le plus récent que propose le sélecteur (le guide d'OpenAI conseillait `gpt-5.5` en novembre 2026, à vérifier) et règle l'effort de raisonnement (`low` · `medium` · `high` · `xhigh` selon le modèle). La relecture des sources demande la **recherche web activée**. Côté Claude Code : Opus pour le contenu et les relectures, Sonnet suffit pour l'interface. Les durées sont des estimations.
+
+| Lot | Contenu | Avant le 7/12 | Qui fait | Effort | Taille |
+|---|---|---|---|---|---|
+| 16 | Relecture des faits, prépa J1 à J5 | oui | ChatGPT relit (web), Claude corrige | `high` | 2 conversations |
+| 17 | Relecture des faits, prépa J6 à J10 + boîte à outils | oui | ChatGPT relit (web), Claude corrige | `high` | 2 conversations |
+| 18 | Module « Dépannage à distance » | oui | l'un écrit, l'autre relit | `high` (rédaction), `xhigh` si disponible pour la relecture | 2 à 3 |
+| 19 | Révision express + export / import de la progression | oui | ChatGPT / Codex | `medium` | 1 |
+| 20 | Module « Microsoft 365 et messagerie » | si le temps le permet | l'un écrit, l'autre relit | `high` | 2 à 3 |
+| 21 | Relecture des 5 modules existants | non | ChatGPT relit, Claude corrige | `high` | 2 |
+| 22 | Entraînement aux tickets (qualifier, prioriser, rédiger) | non | ChatGPT / Codex | `medium` (JS), `high` (cas) | 1 à 2 |
+| 23 | Module « Imprimantes et périphériques » | non | l'un écrit, l'autre relit | `high` | 2 |
+| 24 | Module « Sous-réseaux et plan d'adressage » | non | l'un écrit, l'autre relit | `high` | 2 |
+| 25 | Retour du terrain : mise à jour des « à vérifier sur place » | après le 18/12 | Marvin dicte, n'importe quel agent | `low` | 1 |
+
+Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
+
+## Lot 16 — Relecture des faits : prépa J1 à J5
+- [ ] 16.1 Relire `stage/j1.html` à `j5.html` avec leurs quiz (`assets/prepa.js`), selon `docs/procedures/relecture-sources.md` ; un rapport par page dans `docs/relectures/`.
+- [ ] 16.2 Corriger chaque « faux » et traiter chaque « non vérifié » (autre conversation, de préférence l'autre outil) ; noter dans chaque rapport ce qui a été corrigé.
+- [ ] 16.3 `npm run controles`, coche, fusion.
+
+## Lot 17 — Relecture des faits : prépa J6 à J10 et boîte à outils
+- [ ] 17.1 Relire `stage/j6.html` à `j10.html` et `stage/outils.html` (même procédure, rapports dans `docs/relectures/`).
+- [ ] 17.2 Corrections (autre conversation).
+- [ ] 17.3 `npm run controles`, coche, fusion.
+
+## Lot 18 — Module « Dépannage à distance »
+Suivre `docs/procedures/nouveau-module.md` (sous-étapes 18.1 à 18.4). Domaine Support, approfondit `stage/j8.html`, à retirer de `aVenir`. Pistes, chacune à sourcer : Assistance rapide et Bureau à distance (Microsoft Learn), consentement et vérification d'identité avant toute prise en main, journalisation dans le ticket, méthode de diagnostic à distance, quand passer sur site. Outil réellement utilisé à l'UMONS : « à vérifier sur place ».
+- [ ] 18.1 Page · [ ] 18.2 Données · [ ] 18.3 Relecture croisée · [ ] 18.4 Contrôles et fusion
+
+## Lot 19 — Révision express et progression portable
+- [ ] 19.1 Page `stage/revision.html` : les fiches mémo J1 à J9 seules (lues depuis les sections `#memo` des pages, ou dupliquées en données si la lecture en `file://` l'impose, sans `fetch`), puis un quiz mélangé tiré des quiz existants ; lien depuis `stage/index.html` et l'accueil.
+- [ ] 19.2 Export et import de la progression : bouton qui télécharge un fichier JSON des clés `it.*` (Blob, sans serveur) et import par `<input type="file">` avec vérification du contenu, message dans la page (jamais `alert`) ; dans le pied de page ou sur l'accueil.
+- [ ] 19.3 `npm run index`, `npm run controles` (ajouter les deux parcours à `outils/parcours.mjs`), coche, fusion.
+
+## Lot 20 — Module « Microsoft 365 et messagerie »
+`docs/procedures/nouveau-module.md`. Approfondit `stage/j7.html` (Outlook, profils, OST, boîtes partagées, Teams, OneDrive, MFA), sources Microsoft Learn ; la configuration du tenant UMONS est « à vérifier sur place ».
+- [ ] 20.1 Page · [ ] 20.2 Données · [ ] 20.3 Relecture croisée · [ ] 20.4 Contrôles et fusion
+
+## Lots 21 à 25
+Ils seront détaillés en sous-étapes au début de chaque lot, à partir du tableau ci-dessus. Pour le 22, utiliser les composants tickets existants (`CAS-0N` de `assets/jour.js`) sans toucher aux moteurs de l'atelier. Pour le 25, n'écrire que ce qui est public : aucune procédure interne, aucune IP, aucun nom.
+
+Après le 7/12 : le journal de stage reste privé, **hors de ce dépôt**.
