@@ -3,6 +3,8 @@
 Page relue `stage/j7.html` au commit [`58592e0`](https://github.com/Marvin32165/centre-apprentissage-it/commit/58592e0a37ab37c72eb0300d25a13d3abcc0dd61). Quiz relu dans `assets/prepa.js` (`stage-j7`, 8 questions).
 Date de relecture : 24 novembre 2026. Outil : ChatGPT / Codex.
 
+Relecture actualisée au commit [`bfb5760`](https://github.com/Marvin32165/centre-apprentissage-it/commit/bfb57600c17ed514aef57fd1da1e241647ff2533) après le lot 26. Le calendrier place le J7 au mercredi 2 décembre. L’en-tête est la seule modification de la page depuis la première relecture. Le quiz est identique.
+
 Relecture documentaire. Le labo n’a pas été exécuté avec les applications ou des comptes de test. La messagerie, les méthodes de MFA, les boîtes, les habilitations et la conservation à l’UMONS sont explicitement renvoyées au tuteur. Aucun nom personnel, secret ni adresse IP réelle n’a été repéré. Les durées totalisent 3 h 30.
 
 | Affirmation (section) | Verdict | URL de la source ouverte | Correction nécessaire |
@@ -37,4 +39,4 @@ Relecture documentaire. Le labo n’a pas été exécuté avec les applications 
 | Labo. Le compte Microsoft personnel permet de pratiquer la validation en deux étapes. | correct | [How to use two-step verification with your Microsoft account](https://support.microsoft.com/en-gb/accounts-billing/security/how-to-use-two-step-verification-with-your-microsoft-account?nochrome=true) · [Profils Outlook classique](https://support.microsoft.com/en-us/outlook/create-an-outlook-profile) | Distinguer la récupération personnelle des opérations d’administration Microsoft Entra. Donner un parcours avec et sans Outlook classique et rappeler de conserver un moyen de récupération de secours. |
 | §2 à §4, labo, situations, quiz et mémo. L’unique encadré source, en §1, regroupe les thèmes sans lien direct. | non vérifié | Dépôt à la révision relue, ou aucune preuve primaire disponible. | Ajouter les liens vers les pages Microsoft précises dans les sections qui en dépendent, avec renvois pour les exercices et le quiz. |
 
-**Bilan : 10 faux, 1 non vérifiés, 18 corrects (29 points examinés).**
+**Bilan : 10 faux, 1 non vérifié, 18 corrects (29 points examinés).**

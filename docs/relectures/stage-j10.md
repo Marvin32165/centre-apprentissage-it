@@ -3,7 +3,9 @@
 Page relue `stage/j10.html` au commit [`58592e0`](https://github.com/Marvin32165/centre-apprentissage-it/commit/58592e0a37ab37c72eb0300d25a13d3abcc0dd61). Quiz relu dans `assets/prepa.js` (`stage-j10`, 12 questions).
 Date de relecture : 24 novembre 2026. Outil : ChatGPT / Codex.
 
-Relecture documentaire des dix corrections et des douze réponses du quiz. Les scénarios décrivent des cas fictifs sans nom personnel ni secret. « PC 12 », la salle et les fonctions sont des éléments de scénario. Les durées totalisent 3 h 30. La date et l’horaire de stage concordent avec AGENTS.md, qui les attribue à la convention. La convocation elle-même n’était pas disponible. Les accès, équipes, procédures et horaires du service sont présentés comme des questions pour le tuteur.
+Relecture actualisée au commit [`bfb5760`](https://github.com/Marvin32165/centre-apprentissage-it/commit/bfb57600c17ed514aef57fd1da1e241647ff2533) après le lot 26. Le plan du vendredi 4 décembre totalise 45 min, avec 25 min pour la révision express et 20 min pour la check-list. Les trois liens de l’encadré pointent vers la page de révision, la check-list et les appels. Le report des appels aux soirs de la première semaine de stage concerne le programme. Les simulations, le quiz final et la check-list ont le même contenu que lors de la première relecture.
+
+Relecture documentaire des dix corrections et des douze réponses du quiz. Les scénarios décrivent des cas fictifs sans nom personnel ni secret. « PC 12 », la salle et les fonctions sont des éléments de scénario. La date et l’horaire de stage concordent avec AGENTS.md, qui les attribue à la convention. La convocation elle-même n’était pas disponible. Les accès, équipes, procédures et horaires du service sont présentés comme des questions pour le tuteur.
 
 | Affirmation (section) | Verdict | URL de la source ouverte | Correction nécessaire |
 |---|---|---|---|

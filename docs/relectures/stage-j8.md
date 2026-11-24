@@ -3,6 +3,8 @@
 Page relue `stage/j8.html` au commit [`58592e0`](https://github.com/Marvin32165/centre-apprentissage-it/commit/58592e0a37ab37c72eb0300d25a13d3abcc0dd61). Quiz relu dans `assets/prepa.js` (`stage-j8`, 8 questions).
 Date de relecture : 24 novembre 2026. Outil : ChatGPT / Codex.
 
+Relecture actualisée au commit [`bfb5760`](https://github.com/Marvin32165/centre-apprentissage-it/commit/bfb57600c17ed514aef57fd1da1e241647ff2533) après le lot 26. Le calendrier place le J8 au jeudi 3 décembre. L’en-tête est la seule modification de la page depuis la première relecture. Le quiz est identique.
+
 Relecture documentaire. Les mécanismes et prérequis du labo ont été confrontés aux guides Microsoft, sans exécuter le labo. Les outils, règles d’accord, champs à tracer et circuit sécurité de l’UMONS sont renvoyés au tuteur. Aucun nom personnel, secret ni adresse IP réelle n’a été repéré. Les durées totalisent 3 h 30.
 
 | Affirmation (section) | Verdict | URL de la source ouverte | Correction nécessaire |
@@ -26,4 +28,4 @@ Relecture documentaire. Les mécanismes et prérequis du labo ont été confront
 | Labo et Q2. `Test-NetConnection -ComputerName ADRESSE -Port 3389` teste une connexion TCP et renvoie `TcpTestSucceeded`. | correct | [Test-NetConnection](https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection) · [Port RDP par défaut](https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remotepc/change-listening-port) | Expliquer qu’un vrai résultat confirme l’établissement TCP, pas les droits, l’authentification ou la disponibilité complète du service RDP. Un faux résultat ne distingue pas le réseau, le pare-feu, le port ou le service. |
 | §2, §4, labo, situations, quiz et mémo. Aucune source directe par section. Les deux encadrés (§1 et §3) nomment des références sans URL. | non vérifié | Dépôt à la révision relue, ou aucune preuve primaire disponible. | Ajouter des liens vers les guides Microsoft, PeopleCert/CompTIA et les sources de réponse aux incidents aux endroits concernés. Relier les corrigés à ces références. |
 
-**Bilan : 5 faux, 1 non vérifiés, 12 corrects (18 points examinés).**
+**Bilan : 5 faux, 1 non vérifié, 12 corrects (18 points examinés).**

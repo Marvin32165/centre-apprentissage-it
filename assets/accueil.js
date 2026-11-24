@@ -14,13 +14,18 @@
   var force = /[?&]date=(\d{4}-\d{2}-\d{2})/.exec(location.search);
   var now = force ? parse(force[1]) : new Date();
   var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var dateAuj = iso(today);
   var debutPrepa = parse(S.prepaDebut), debutStage = parse(S.debut), finStage = parse(S.fin);
   var J = S.jours, dernier = parse(J[J.length - 1].date);
-  var jourDuJour = null;
-  J.forEach(function (j) { if (j.date === iso(today)) jourDuJour = j; });
-  var prochain = null;
-  J.forEach(function (j) { if (!prochain && parse(j.date) > today) prochain = j; });
-  var faits = J.filter(function (j) { return IT.isDone("stage-j" + j.n); }).length;
+  var parDate = {};
+  J.forEach(function (j) {
+    if (!parDate[j.date]) parDate[j.date] = [];
+    parDate[j.date].push(j);
+  });
+  var joursDuJour = parDate[dateAuj] || [];
+  var prochain = J.find(function (j) { return j.date > dateAuj; });
+  function estTermine(j) { return IT.isDone("stage-j" + j.n); }
+  var faits = J.filter(estTermine).length;
 
   /* ---------- Reprise (dernière section vue sur une page de jour) ---------- */
   var reprise = null;
@@ -31,15 +36,25 @@
   if (m) {
     var kicker, h1, chapeau, actions = [], infos = [];
     if (today < debutPrepa) {
-      kicker = "La prépa commence le " + jourLong(debutPrepa).toLowerCase() + " · 10 jours";
+      kicker = "La prépa commence le " + jourLong(debutPrepa).toLowerCase() + " · " + J.length + " jours de cours";
       h1 = "Bientôt, " + J[0].sujet + ".";
       chapeau = J[0].chapeau;
       actions = [["Commencer la prépa", J[0].href, true], ["Voir le programme", "stage/index.html"]];
-    } else if (jourDuJour) {
+    } else if (joursDuJour.length > 1) {
+      var numeros = joursDuJour.map(function (j) { return j.n; }).join(" et ");
+      var premier = joursDuJour.find(function (j) { return !estTermine(j); }) || joursDuJour[0];
+      kicker = jourLong(today) + " · Séance double";
+      h1 = "Aujourd'hui, <em>jours " + numeros + "</em>.";
+      chapeau = joursDuJour.map(function (j) { return j.court + " (" + j.duree + ")"; }).join(" · ") + ".";
+      actions = joursDuJour.map(function (j) {
+        return [(estTermine(j) ? "Revoir le jour " : "Commencer le jour ") + j.n, j.href, j === premier];
+      });
+    } else if (joursDuJour.length === 1) {
+      var jourDuJour = joursDuJour[0];
       kicker = jourLong(today) + " · Jour " + jourDuJour.n + " sur " + J.length;
       h1 = "Aujourd'hui, " + jourDuJour.sujet + ".";
       chapeau = jourDuJour.chapeau + " " + jourDuJour.duree.replace("≈", "Environ") + ", en " + jourDuJour.blocs + " blocs.";
-      actions = [[IT.isDone("stage-j" + jourDuJour.n) ? "Revoir la séance" : "Commencer la séance", jourDuJour.href, true], ["Voir le plan du jour", jourDuJour.href + "#plan"]];
+      actions = [[estTermine(jourDuJour) ? "Revoir la séance" : "Commencer la séance", jourDuJour.href, true], ["Voir le plan du jour", jourDuJour.href + "#plan"]];
       infos.push(jourDuJour.blocs + " blocs · " + jourDuJour.duree);
     } else if (today < dernier && prochain) {
       kicker = jourLong(today) + " · Repos";
@@ -49,8 +64,8 @@
     } else if (today < debutStage) {
       kicker = jourLong(today) + " · Prépa terminée";
       h1 = "Aujourd'hui, on <em>révise</em>.";
-      chapeau = "Les dix jours sont derrière toi. Relis les fiches mémo de la révision express, refais les appels simulés du jour 10 et garde la boîte à outils sous la main.";
-      actions = [["Révision express", "stage/revision.html", true], ["Jour 10 : appels simulés", "stage/j10.html"]];
+      chapeau = "Relis les fiches mémo dans la révision express et vérifie ta check-list du premier jour. Garde les appels simulés pour les soirs de ta première semaine de stage.";
+      actions = [["Révision express", "stage/revision.html", true], ["Check-list du premier jour", "stage/j10.html#checklist"]];
     } else {
       kicker = jourLong(today) + (today <= finStage ? " · Stage en cours" : " · Stage terminé");
       h1 = today <= finStage ? "Ton <em>stage</em> a commencé." : "Ton <em>stage</em> est terminé.";
@@ -101,25 +116,29 @@
     }
   }
 
-  /* ---------- Frise du 23/11 au 7/12 ---------- */
+  /* ---------- Frise du 25/11 au 7/12 ---------- */
   var f = document.querySelector("[data-frise]");
   if (f) {
-    var parDate = {};
-    J.forEach(function (j) { parDate[j.date] = j; });
     for (var d = new Date(debutPrepa); d <= debutStage; d.setDate(d.getDate() + 1)) {
-      var cle = iso(d), j = parDate[cle];
+      var cle = iso(d), jours = parDate[cle];
       var jj = d.toLocaleDateString("fr-BE", { weekday: "short" }).replace(".", "") + " " + d.getDate();
       var li = el("li");
-      var estAuj = cle === iso(today);
+      var estAuj = cle === dateAuj;
       var node, cls = "case";
-      if (j) {
-        var fait = IT.isDone("stage-j" + j.n);
-        node = el("a", { href: j.href });
-        cls += (estAuj ? " auj" : "") + (fait ? " fait" : "");
+      if (jours) {
+        var suivant = jours.find(function (j) { return !estTermine(j); });
+        var fait = !suivant;
+        node = el("a", { href: (suivant || jours[0]).href });
+        cls += (estAuj ? " auj" : "") + (fait ? " fait" : "") + (jours.length > 1 ? " case-double" : "");
+        var noms = jours.map(function (j) { return "J" + j.n; }).join(" + ");
+        var sujets = jours.map(function (j) { return j.court; }).join(" et ");
+        var description = jours.map(function (j) {
+          return "jour " + j.n + ", " + j.court + (estTermine(j) ? ", terminé" : "");
+        }).join(" ; ");
         node.appendChild(el("span", { "class": "case-date" }, jj));
-        node.appendChild(el("span", { "class": "case-n" }, "J" + j.n + (fait ? " ✓" : "")));
-        node.appendChild(el("span", { "class": "case-sujet" }, j.court));
-        node.setAttribute("aria-label", jj + " : jour " + j.n + ", " + j.court + (fait ? ", terminé" : "") + (estAuj ? ", aujourd'hui" : ""));
+        node.appendChild(el("span", { "class": "case-n" }, noms + (fait ? " ✓" : "")));
+        node.appendChild(el("span", { "class": "case-sujet" }, sujets));
+        node.setAttribute("aria-label", jj + " : " + description + (estAuj ? ", aujourd'hui" : ""));
       } else if (cle === S.debut) {
         node = el("div");
         cls += " stage" + (estAuj ? " auj" : "");

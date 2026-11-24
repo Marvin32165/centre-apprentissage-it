@@ -3,6 +3,8 @@
 Page relue `stage/outils.html` au commit [`58592e0`](https://github.com/Marvin32165/centre-apprentissage-it/commit/58592e0a37ab37c72eb0300d25a13d3abcc0dd61).
 Date de relecture : 24 novembre 2026. Outil : ChatGPT / Codex.
 
+Relecture actualisée au commit [`bfb5760`](https://github.com/Marvin32165/centre-apprentissage-it/commit/bfb57600c17ed514aef57fd1da1e241647ff2533) après le lot 26. Le fichier est identique à la version de la première relecture.
+
 Relecture documentaire des commandes et conseils opérationnels. La page ne charge pas de quiz. Les commandes n’ont pas été exécutées sur une installation Windows. Les exemples utilisent des noms de poste, références de lieu et champs fictifs, sans donnée personnelle, secret ni IP publique réelle. La formule d’accueil, la matrice de priorité et les délais de l’UMONS sont présentés comme des éléments à confirmer sur place. Le modèle est générique.
 
 | Affirmation (section) | Verdict | URL de la source ouverte | Correction nécessaire |

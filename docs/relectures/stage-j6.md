@@ -3,6 +3,8 @@
 Page relue `stage/j6.html` au commit [`58592e0`](https://github.com/Marvin32165/centre-apprentissage-it/commit/58592e0a37ab37c72eb0300d25a13d3abcc0dd61). Quiz relu dans `assets/prepa.js` (`stage-j6`, 8 questions).
 Date de relecture : 24 novembre 2026. Outil : ChatGPT / Codex.
 
+Relecture actualisée au commit [`bfb5760`](https://github.com/Marvin32165/centre-apprentissage-it/commit/bfb57600c17ed514aef57fd1da1e241647ff2533) après le lot 26. Le calendrier place le J6 au mardi 1er décembre. L’en-tête est la seule modification de la page depuis la première relecture. Le quiz est identique.
+
 Relecture documentaire. Les résultats du labo n’ont pas été reproduits sur des VM. Les droits du service desk, l’outil d’administration, la vérification d’identité, les OU et les politiques de compte de l’UMONS sont renvoyés au tuteur. Les données de labo utilisent une plage privée et des identifiants d’exemple. Aucun secret ni nom complet attribué à une personne réelle n’a été repéré. Les durées totalisent 3 h 30.
 
 | Affirmation (section) | Verdict | URL de la source ouverte | Correction nécessaire |
@@ -35,4 +37,4 @@ Relecture documentaire. Les résultats du labo n’ont pas été reproduits sur 
 | Labo. Si les DC sont injoignables, une connexion interactive peut encore réussir avec les informations mises en cache. | correct | [Cached domain logon information](https://learn.microsoft.com/en-us/troubleshoot/windows-server/user-profiles-and-logon/cached-domain-logon-information) · [Locating Active Directory Domain Controllers in Windows and Windows Server](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/dc-locator) | Préciser « si le cache est autorisé et contient une connexion antérieure ». Choisir un DNS qui ne résout pas le domaine de labo et distinguer connexion locale et accès aux ressources. |
 | §2, §3, §4, labo, situations, quiz et mémo. Chaque section technique doit permettre de retrouver sa source. Le seul encadré source est en §1 et donne des intitulés sans URL. | non vérifié | Dépôt à la révision relue, ou aucune preuve primaire disponible. | Ajouter des encadrés avec liens directs pour les sections techniques et renvoyer à ces liens depuis les exercices et le quiz. L’encadré actuel n’étaye pas ces sections à lui seul. |
 
-**Bilan : 5 faux, 1 non vérifiés, 21 corrects (27 points examinés).**
+**Bilan : 5 faux, 1 non vérifié, 21 corrects (27 points examinés).**
