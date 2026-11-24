@@ -146,6 +146,11 @@ kbd { padding: 0.08em 0.42em; background: var(--surface); border: 1px solid var(
 .site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s2) var(--s4); padding-top: 22px; padding-bottom: 22px; }
 .site-footer p { margin: 0; }
 .site-footer a { color: var(--bar-ink); }
+.pied-progression { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); flex-basis: 100%; }
+.pied-btn { min-height: 44px; padding: 0 14px; border: 1px solid var(--bar-soft); border-radius: 4px; background: transparent; color: var(--bar-ink); font: inherit; cursor: pointer; }
+.pied-btn:hover { border-color: var(--bar-ink); }
+.pied-btn:focus-visible { outline: 2px solid var(--bar-ink); outline-offset: 2px; }
+.pied-statut { flex-basis: 100%; min-height: 1em; }
 
 /* ---------- Boutons ---------- */
 .btn, button.btn {
