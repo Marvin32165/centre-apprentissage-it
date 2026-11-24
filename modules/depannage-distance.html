@@ -46,12 +46,12 @@
 <thead><tr><th>Outil</th><th>Quand</th><th>Ce qu'il faut</th></tr></thead>
 <tbody>
 <tr><td><strong>Assistance rapide</strong> (<em>Quick Assist</em>)</td><td>L'utilisateur est devant son poste et accepte de partager son écran.</td><td>Côté support : un compte Microsoft ou Microsoft Entra ID. Côté utilisateur : aucune authentification, il saisit un code. Passe par Internet (port 443).</td></tr>
-<tr><td><strong>Bureau à distance</strong> (RDP, <code>mstsc</code>)</td><td>Se connecter à un poste ou un serveur avec un compte autorisé, par exemple pour administrer.</td><td>Un poste hôte en édition Pro (pas Famille), le Bureau à distance activé, un compte autorisé, le port TCP 3389 joignable.</td></tr>
+<tr><td><strong>Bureau à distance</strong> (RDP, <code>mstsc</code>)</td><td>Se connecter à un poste ou un serveur avec un compte autorisé, par exemple pour administrer.</td><td>Un poste hôte en édition Pro, Entreprise ou Éducation (pas Famille), le Bureau à distance activé, un compte autorisé, le port TCP 3389 joignable.</td></tr>
 <tr><td><strong>Outil de l'organisation</strong> (par exemple Remote Help d'Intune)</td><td>C'est souvent l'outil prévu en entreprise : contrôle d'accès, rôles, journal des sessions.</td><td>À vérifier sur place.</td></tr>
 </tbody></table></div>
 <p>Microsoft recommande aux organisations qui utilisent un autre outil, comme Remote Help, de désactiver ou de retirer Assistance rapide. Ne sois donc pas surpris s'il est absent des postes de l'UMONS.</p>
 <aside class="callout attention"><p>La commande <code>mstsc</code> a une option <code>/noConsentPrompt</code> qui permet d'observer la session d'un utilisateur <strong>sans son accord</strong>. Qu'elle existe ne veut pas dire qu'on peut s'en servir : au service desk, on obtient toujours le consentement de l'utilisateur avant de voir son écran, sauf procédure écrite contraire.</p></aside>
-<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a> (comptes, réseau, Remote Help) ; Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/how-to-use-remote-desktop-5fe128d5-8fb1-7a23-3b8a-41e636865e8c">How to use Remote Desktop</a> (éditions) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/mstsc">mstsc</a>, <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/clients/change-listening-port">port d'écoute du Bureau à distance</a> (3389 par défaut).</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a> (comptes, réseau, Remote Help) ; Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/how-to-use-remote-desktop-5fe128d5-8fb1-7a23-3b8a-41e636865e8c">How to use Remote Desktop</a> ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remotepc/remote-desktop-allow-access">Enable Remote Desktop on your PC</a> (éditions) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/mstsc">mstsc</a>, <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/clients/change-listening-port">port d'écoute du Bureau à distance</a> (3389 par défaut).</p></aside>
 
 <h2 id="assistance-rapide">2. Assistance rapide pas à pas</h2>
 <p>Les libellés ci-dessous sont ceux de la documentation anglaise ; l'interface française peut les traduire.</p>
@@ -68,14 +68,14 @@
 <ul>
   <li>Avec le contrôle, tu as les <strong>mêmes droits que l'utilisateur</strong>, pas plus. Certaines invites (contrôle de compte d'utilisateur, UAC) demandent que <strong>l'utilisateur</strong> réponde lui-même.</li>
   <li><strong>Aucun journal</strong> n'est créé sur ton poste ni sur celui de l'utilisateur. Microsoft garde seulement des données minimales (heures, erreurs, fonctions utilisées), au plus trois jours. La trace de la session, c'est donc <strong>ton ticket</strong>.</li>
-  <li>Assistance rapide s'installe et se déploie depuis le Microsoft Store ; il est présent par défaut sous Windows 11 (selon Microsoft), sauf si l'organisation l'a retiré.</li>
+  <li>Assistance rapide se trouve dans le menu Démarrer (Windows 11 : <strong>Toutes les applications</strong> ; Windows 10 : <strong>Accessoires Windows</strong>) ; sa version actuelle s'installe et se déploie depuis le Microsoft Store, et une organisation peut l'avoir retiré. Sa présence sur un poste donné se vérifie : ne la suppose pas.</li>
 </ul>
-<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/solve-pc-problems-over-a-remote-connection-b077e31a-16f4-2529-1a47-21f6a9040bf3">Solve PC problems remotely using Quick Assist</a> (étapes des deux côtés) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a> (UAC, journalisation, installation) ; Microsoft Security : <a href="https://www.microsoft.com/en-us/security/blog/2024/05/15/threat-actors-misusing-quick-assist-in-social-engineering-attacks-leading-to-ransomware/">article du 15 mai 2024</a> (raccourci clavier, présence par défaut sous Windows 11).</p></aside>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/solve-pc-problems-over-a-remote-connection-b077e31a-16f4-2529-1a47-21f6a9040bf3">Solve PC problems remotely using Quick Assist</a> (étapes des deux côtés) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a> (UAC, journalisation, installation) ; Microsoft Security : <a href="https://www.microsoft.com/en-us/security/blog/2024/05/15/threat-actors-misusing-quick-assist-in-social-engineering-attacks-leading-to-ransomware/">article du 15 mai 2024</a> (raccourci clavier).</p></aside>
 
 <h2 id="bureau-distance">3. Le Bureau à distance</h2>
 <h3>Côté poste distant (l'hôte)</h3>
 <ul>
-  <li>Il doit être en édition <strong>Pro</strong> (Windows 11 Pro, Windows 10 Pro) : une édition Famille ne peut pas recevoir de connexion. Le poste depuis lequel tu te connectes, lui, peut être de n'importe quelle édition, voire un autre système.</li>
+  <li>Il doit être en édition <strong>Pro</strong>, <strong>Entreprise</strong> ou <strong>Éducation</strong> (ou un Windows Server) : une édition Famille ne peut pas recevoir de connexion. Le poste depuis lequel tu te connectes, lui, peut être de n'importe quelle édition, voire un autre système.</li>
   <li>Activation : <strong>Paramètres → Système → Bureau à distance</strong>, activer, puis confirmer. Le <strong>nom du PC</strong> affiché sur cette page sert à la connexion.</li>
   <li>Le service écoute par défaut sur le <strong>port TCP 3389</strong> (valeur <code>PortNumber</code> sous <code>HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp</code>). Dans une organisation, on ne change pas ce réglage soi-même.</li>
 </ul>
@@ -95,7 +95,7 @@ mstsc /v:PC-LABO /w:1600 /h:900</code></pre>
 <tr><td><code>/shadow:ID</code>, <code>/control</code></td><td>Observer (et contrôler) une session existante : réservé aux procédures qui le prévoient.</td></tr>
 </tbody></table></div>
 <p><code>Test-NetConnection … -Port 3389</code> (jour 5) dit si le port répond : s'il ne répond pas, inutile d'insister avec <code>mstsc</code>, la cause est le réseau, le pare-feu ou un Bureau à distance désactivé.</p>
-<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/how-to-use-remote-desktop-5fe128d5-8fb1-7a23-3b8a-41e636865e8c">How to use Remote Desktop</a> ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/mstsc">mstsc</a>, <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/clients/change-listening-port">Change Remote Desktop listening port</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection">Test-NetConnection</a>.</p></aside>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/how-to-use-remote-desktop-5fe128d5-8fb1-7a23-3b8a-41e636865e8c">How to use Remote Desktop</a> ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remotepc/remote-desktop-allow-access">Enable Remote Desktop on your PC</a> (éditions hôtes), <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/mstsc">mstsc</a>, <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/clients/change-listening-port">Change Remote Desktop listening port</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection">Test-NetConnection</a>.</p></aside>
 
 <h2 id="powershell">4. Agir sans prendre la main : PowerShell à distance</h2>
 <p>Pour lire une information sur un poste sans déranger l'utilisateur, PowerShell peut exécuter des commandes sur un autre ordinateur, si les deux machines ont été <strong>configurées pour le travail à distance</strong> (ce que décide l'organisation).</p>
@@ -109,7 +109,7 @@ Invoke-Command -ComputerName PC-LABO -ScriptBlock { Get-Culture }</code></pre>
 <aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_remote">about_Remote</a> (Enter-PSSession, Invoke-Command) ; les prérequis sont dans <a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_remote_requirements">about_Remote_Requirements</a>.</p></aside>
 
 <h2 id="faux-support">5. Le faux support</h2>
-<p>En 2024, Microsoft a décrit des attaques où un groupe criminel (Storm-1811) appelait des employés en se faisant passer pour le support informatique, puis envoyait des messages Teams signés « Help Desk » ou « IT Support ». Le déroulé :</p>
+<p>En mai 2024, l'équipe de renseignement sur les menaces de Microsoft a publié l'analyse d'attaques où un groupe criminel, qu'elle nomme Storm-1811, appelait des employés en se faisant passer pour le support informatique, puis envoyait des messages Teams signés « Help Desk » ou « IT Support ». Le déroulé :</p>
 <ol>
   <li>un appel ou un message « du support », pour une prétendue correction ;</li>
   <li>la demande d'ouvrir Assistance rapide avec <kbd>Ctrl</kbd> + <kbd>Windows</kbd> + <kbd>Q</kbd> et de saisir un code fourni par l'attaquant ;</li>
@@ -136,10 +136,11 @@ Invoke-Command -ComputerName PC-LABO -ScriptBlock { Get-Culture }</code></pre>
   <li>l'utilisateur refuse la prise en main, ou il n'est pas là pour donner son accord ;</li>
   <li>il faut des droits que tu n'as pas, ou la procédure l'impose.</li>
 </ul>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a> (accord de l'utilisateur, contrôle retirable, invites UAC, absence de journal sur les postes, d'où la note dans le ticket) ; Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/solve-pc-problems-over-a-remote-connection-b077e31a-16f4-2529-1a47-21f6a9040bf3">Solve PC problems remotely using Quick Assist</a> (fin de session). La trame et la liste « sur place » sont une méthode d'exercice, pas une norme : la procédure de la DSI passe avant (à vérifier sur place).</p></aside>
 
 <span class="phase">On fait ensemble</span>
 <h2 id="labo">Labo guidé : ton PC et ta VM <span class="duree">≈ 50 min</span></h2>
-<p>Il te faut la VM Windows 11 du jour 4 (en édition Pro, pour le Bureau à distance), reliée à un commutateur virtuel qui la rend joignable depuis ton PC, et un compte Microsoft pour le rôle de support dans Assistance rapide.</p>
+<p>Règles utilisées : §2 (Assistance rapide), §3 (Bureau à distance, test du port), §6 (note de ticket). Il te faut la VM Windows 11 du jour 4 (en édition Pro, Entreprise ou Éducation, pour le Bureau à distance), reliée à un commutateur virtuel qui la rend joignable depuis ton PC, et un compte Microsoft pour le rôle de support dans Assistance rapide.</p>
 <ol>
   <li><strong>Bureau à distance</strong> : dans la VM, active le Bureau à distance (Paramètres → Système → Bureau à distance) et note le nom du PC.</li>
   <li>Depuis ton PC : <code>Test-NetConnection -ComputerName &lt;nom&gt; -Port 3389</code>. Note la valeur de <code>TcpTestSucceeded</code>.</li>
@@ -155,13 +156,14 @@ Invoke-Command -ComputerName PC-LABO -ScriptBlock { Get-Culture }</code></pre>
   <li>Étape 4 : le test passe à <code>False</code> : le port ne répond plus. C'est le signe à reconnaître avant d'accuser <code>mstsc</code>.</li>
   <li>Étapes 5 et 6 : l'utilisateur autorise deux fois (la connexion, puis le contrôle) et peut retirer le contrôle à tout moment. Si ton compte de support n'est pas un compte Microsoft ou Entra ID, la session ne démarre pas.</li>
   <li>Étape 7 : une note du type « 24/11, 10 h 05 – 10 h 20, Assistance rapide, accord oral de l'utilisateur, contrôle demandé et accordé, redémarrage du spouleur, impression de test réussie, session quittée ».</li>
-  <li>Si Assistance rapide est absent de ta VM : il s'installe depuis le Microsoft Store.</li>
+  <li>Avant l'étape 5, cherche Assistance rapide dans le menu Démarrer de la VM ; s'il est absent, il s'installe depuis le Microsoft Store (§2).</li>
 </ul>
 </details>
 <aside class="callout astuce"><p>Prends un point de contrôle de la VM avant le labo : tu pourras recommencer.</p></aside>
 
 <span class="phase">Tu fais seul</span>
 <h2 id="cas">Mises en situation</h2>
+<p>Les corrections s'appuient sur les sections sourcées : éditions et port au §3, consentement et faux support aux §5 et §6.</p>
 <h3>1. Le poste en édition Famille</h3>
 <p>Un utilisateur te demande de te connecter en Bureau à distance à son PC personnel en Windows 11 Famille pour l'aider.</p>
 <details class="correction"><summary>Voir la correction</summary>
@@ -190,7 +192,7 @@ Invoke-Command -ComputerName PC-LABO -ScriptBlock { Get-Culture }</code></pre>
 <div class="bloc">
 <ul>
   <li><strong>Assistance rapide</strong> : le support génère un code à 6 chiffres, l'utilisateur le saisit et autorise ; contrôle sur demande, retirable (<em>Cancel control</em>) ; mêmes droits que l'utilisateur ; aucun journal sur les postes.</li>
-  <li><strong>Bureau à distance</strong> : hôte en édition Pro, activé dans Paramètres → Système, TCP 3389 ; <code>mstsc /v:nom /prompt</code> ; tester le port avec <code>Test-NetConnection -Port 3389</code>.</li>
+  <li><strong>Bureau à distance</strong> : hôte en édition Pro, Entreprise ou Éducation (pas Famille), activé dans Paramètres → Système, TCP 3389 ; <code>mstsc /v:nom /prompt</code> ; tester le port avec <code>Test-NetConnection -Port 3389</code>.</li>
   <li><strong>PowerShell à distance</strong> : <code>Enter-PSSession</code> (interactif), <code>Invoke-Command</code> (bloc de commandes) ; en lecture seulement en stage.</li>
   <li><strong>Faux support</strong> : appel ou message « IT Support », <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>Q</kbd>, code, contrôle → incident de sécurité.</li>
   <li><strong>Session</strong> : identité, accord explicite, annoncer chaque action, l'utilisateur répond aux invites, <em>Leave</em>, tout noter dans le ticket.</li>

@@ -28,3 +28,9 @@ Les six réponses du quiz `module-depannage-distance` dans `assets/modules-quiz.
 | Cadrage des sources. Les §§1 à 5 ont un encadré. Le §6, le labo, les cas, le quiz et la fiche n’ont pas de références directes propres. | non vérifié | Dépôt à la révision relue, ou preuve primaire manquante. | Ajouter les sources utiles au §6, puis des renvois explicites des exercices et réponses vers les sections sourcées. Pour tout fait local, attendre la procédure de la DSI. |
 
 **Bilan : 1 faux, 3 non vérifiés, 15 corrects (19 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- §1, §3, mémo, labo, Q2 (éditions hôtes) : **Corrigé** — hôte en Pro, Entreprise ou Éducation (ou Windows Server), Famille exclue ; source Learn « Enable Remote Desktop on your PC » ajoutée aux §1 et §3.
+- §2 (présence d'Assistance rapide) : **Corrigé** — plus de « présent par défaut » : emplacement dans le menu Démarrer (Windows 11 et 10), installation Store, retrait possible par l'organisation, présence à vérifier ; mention retirée de l'encadré du billet ; vérification ajoutée au labo.
+- §5 (Storm-1811) : **Justifié** — le billet du 15/05/2024 est la publication de Microsoft Threat Intelligence elle-même, donc la source primaire de cette observation ; le texte l'attribue maintenant explicitement à cette équipe.
+- Cadrage des sources : **Corrigé** — encadré source au §6 (Learn et Support Quick Assist ; trame et liste « sur place » présentées comme méthode, procédure de la DSI à vérifier sur place) ; renvois aux sections dans le labo et les cas.

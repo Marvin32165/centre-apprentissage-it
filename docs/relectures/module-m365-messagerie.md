@@ -29,3 +29,12 @@ Les six réponses du quiz `module-m365-messagerie` dans `assets/modules-quiz.js`
 | Cadrage des sources. Les six sections de théorie ont des liens. Le labo, les cas, le quiz et le mémo ne renvoient pas directement à leurs preuves. | non vérifié | Dépôt à la révision relue, ou preuve primaire manquante. | Relier les exercices et réponses à chaque section sourcée. Ajouter les références de comparaison Outlook et de rétention de corbeille. |
 
 **Bilan : 5 faux, 2 non vérifiés, 13 corrects (20 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- §1 (PST) : **Corrigé** — POP en PST (emplacement courant `Documents\Outlook Files`) ; IMAP, Exchange, Microsoft 365 et Outlook.com en OST ; deux pages Support ajoutées à l'encadré.
+- §3 et mémo (droits d'une boîte partagée) : **Corrigé en partie, justifié pour le reste** — droits distincts et Envoyer de la part de présentés comme autre choix possible (à vérifier sur place) ; quiz Q1 et cas 1 nuancés. Garde la phrase de Microsoft, qui écrit lui-même sur la page citée que les deux droits (Full Access et Send As) sont requis pour un fonctionnement normal.
+- §5, cas 2 et mémo (corbeille OneDrive) : **Corrigé** — 30 jours (personnel), 93 jours (professionnel ou scolaire) sauf réglage de l'administrateur, restauration si la corbeille n'a pas été vidée ; page Support « Restore deleted files or folders in OneDrive » ajoutée.
+- Labo, étapes 2 et 3 : **Corrigé** — deux parcours (Outlook classique / nouvel Outlook seul), limites de `--safe` rappelées, étape `/profiles` réservée au classique ; prérequis OneDrive (compte connecté, site web) ; Teams facultatif.
+- Labo, étape 6 : **Corrigé** — données locales et personnalisations effacées, reconnexion seulement possible.
+- Cas 4 : **Corrigé** — le web rend le poste et le client prioritaires sans le prouver ; limites de ce test énoncées.
+- Cadrage des sources : **Corrigé** — renvois aux sections dans le labo et les cas ; références de rétention ajoutées. **Justifié** : la comparaison des deux Outlook est déjà sourcée au §1 (« Getting started with the new Outlook for Windows »).

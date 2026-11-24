@@ -23,3 +23,8 @@ Les six réponses du quiz `module-imprimantes-peripheriques` dans `assets/module
 | Cadrage des sources. Les cinq sections de théorie ont des liens. Le labo, les cas, le quiz et le mémo n’indiquent pas toujours la référence applicable. | non vérifié | Dépôt à la révision relue, ou preuve primaire manquante. | Ajouter les renvois et sourcer les contrôles spécifiques au modèle lorsqu’ils sont présentés comme procédure. |
 
 **Bilan : 1 faux, 2 non vérifiés, 11 corrects (14 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- §4, cas 3 et Q5 (Windows Hello et Teams) : **Corrigé** — l'autorisation devient la première hypothèse, pas une preuve ; vérifier la caméra choisie dans Teams, l'autorisation du site dans le navigateur et l'application Caméra ; page Support « Camera doesn't work in Windows » ajoutée.
+- Labo, §3 et §4 (matériel absent) : **Corrigé** — prérequis annoncés, variantes « liste d'imprimantes vide » et « caméra absente ou réglage grisé » (étape passée), lecture d'une liste vide dans la correction.
+- Cadrage des sources : **Corrigé** — renvois aux sections dans le labo et les cas ; contrôles propres à un modèle renvoyés à la documentation du constructeur.

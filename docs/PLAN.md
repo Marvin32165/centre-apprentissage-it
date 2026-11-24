@@ -221,6 +221,7 @@ Reste : rien pour ce lot ; les rapports J1 à J5 restent dans `docs/relectures/`
 ## Lot 17 — Relecture des faits : prépa J6 à J10 et boîte à outils
 - [ ] 17.1 Relire `stage/j6.html` à `j10.html` et `stage/outils.html` (même procédure, rapports dans `docs/relectures/`).
 - [ ] 17.2 Corrections (autre conversation).
+  Justifié : pas encore faisable le 25/11, aucun rapport J6 à J10 ni boîte à outils dans `docs/relectures/` (17.1 à faire d'abord).
 - [ ] 17.3 `npm run controles`, coche, fusion.
 
 ## Lot 18 — Module « Dépannage à distance »
@@ -231,6 +232,7 @@ Suivre `docs/procedures/nouveau-module.md` (sous-étapes 18.1 à 18.4). Domaine 
   Fait : entrée dans `assets/modules.js` (Support, niveau 1, ≈ 3 h, approfondit J8) et retrait de `aVenir`, quiz de 6 questions, unité `module-depannage-distance`, index régénéré (250 entrées) ; page vérifiée en `file://` à 390 px.
 - [ ] 18.3 Relecture croisée par ChatGPT : `docs/procedures/relecture-sources.md` (rapport `docs/relectures/module-depannage-distance.md`), puis `test-chef.md` ; corrections dans une autre conversation.
   Fait : Relecture des sources et du quiz dans `docs/relectures/module-depannage-distance.md` (15 corrects, 1 faux et 3 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 18.3.
+  Corrections faites (25/11, Claude Code) : éditions hôtes RDP, présence d'Assistance rapide, sources du §6 et renvois ; Storm-1811 justifié ; suivi dans le rapport. Reste : `test-chef.md`.
 - [ ] 18.4 `npm run controles`, coche, fusion.
 
 ## Lot 19 — Révision express et progression portable
@@ -252,6 +254,7 @@ Reste : rien pour ce lot.
   Fait : entrée dans `assets/modules.js` (Support, niveau 2, ≈ 3 h, approfondit J7) et retrait de `aVenir`, quiz de 6 questions, unité `module-m365-messagerie`, index régénéré (262 entrées) ; page vérifiée en `file://` à 390 px.
 - [ ] 20.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-m365-messagerie.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
   Fait : Relecture des sources et du quiz dans `docs/relectures/module-m365-messagerie.md` (13 corrects, 5 faux et 2 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 20.3.
+  Corrections faites (25/11, Claude Code) : PST/OST, droits de la boîte partagée, corbeille OneDrive, labo en deux parcours, Teams, cas 4, renvois ; suivi dans le rapport. Reste : `test-chef.md`.
 - [ ] 20.4 `npm run controles`, coche, fusion.
 
 ## Lot 22 — Entraînement aux tickets
@@ -271,6 +274,7 @@ Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à fa
   Fait : entrée dans `assets/modules.js` (Support, niveau 1, ≈ 2 h 30, approfondit J5), `aVenir` du domaine Support vidé, quiz de 6 questions, unité `module-imprimantes-peripheriques`, index régénéré (275 entrées) ; page vérifiée en `file://` à 390 px.
 - [ ] 23.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-imprimantes-peripheriques.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
   Fait : Relecture des sources et du quiz dans `docs/relectures/module-imprimantes-peripheriques.md` (11 corrects, 1 faux et 2 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 23.3.
+  Corrections faites (25/11, Claude Code) : Windows Hello présenté comme hypothèse, variantes du labo sans imprimante ni caméra, renvois ; suivi dans le rapport. Reste : `test-chef.md`.
 - [ ] 23.4 `npm run controles`, coche, fusion.
 
 ## Lot 24 — Module « Sous-réseaux et plan d'adressage »
@@ -281,7 +285,9 @@ Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à fa
   Fait : entrée dans `assets/modules.js` (Réseau, niveau 2, ≈ 3 h, prérequis `reseau-base`), retrait de `aVenir`, quiz de 6 questions, unité `module-sous-reseaux`, index régénéré (287 entrées) ; page vérifiée en `file://` à 390 px.
 - [x] 24.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-sous-reseaux.md`) ; corrections dans une autre conversation.
   Fait : Relecture des sources et du quiz dans `docs/relectures/module-sous-reseaux.md` (13 corrects, 4 faux et 1 non vérifié). Les corrections relèvent de la prochaine passe.
+  Corrections faites (25/11, Claude Code) : colonne « pas », hypothèse de la route par défaut, méthode limitée aux octets coupés (/8, /16, /24, /31, /32), segment sans routage, encadré au §3 ; suivi dans le rapport.
 - [ ] 24.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` réussi après corrections (35 pages, 0 problème, 0 avertissement, 0 échec, serveur et `file://`). Reste : la fusion dans `main`.
 
 ## Lots 21 à 25
 Ils seront détaillés en sous-étapes au début de chaque lot, à partir du tableau ci-dessus. Pour le 22, utiliser les composants tickets existants (`CAS-0N` de `assets/jour.js`) sans toucher aux moteurs de l'atelier. Pour le 25, n'écrire que ce qui est public : aucune procédure interne, aucune IP, aucun nom.
