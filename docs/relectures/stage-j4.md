@@ -35,3 +35,16 @@ Le plan horaire annonce environ 5 h. Les durées affichées totalisent 4 h 40, s
 | Couverture des sources. Encadrés aux §1, §3, §4 et §5. Le §2 et le labo contiennent des affirmations techniques sans encadré propre. | faux | [Page relue](https://github.com/Marvin32165/centre-apprentissage-it/blob/bb590855b21afcd0d16b47ad13868fd56a91a324/stage/j4.html) | Ajouter les sources des profils et des prérequis Hyper-V. Le plan, les cas, le quiz et le mémo sont aussi sans encadré. Rattacher l’introduction aux fiches de cycle de vie. |
 
 **Bilan** — 14 correctes, 7 faux, 3 non vérifiés. Une ligne correspond à un constat, y compris lorsqu’il réapparaît dans le mémo ou le quiz.
+
+## Suivi des corrections (Claude Code, 24/11/2026)
+- Introduction, fin de support : **Corrigé** — 22H2 et éditions concernées, ESU, LTSC 2021 jusqu'en janvier 2027, deux liens Microsoft Learn.
+- Introduction, « la majorité des appels » : **Corrigé** — présenté comme des appels courants.
+- §2, cas 2, mémo, Q2, bureau vide : **Corrigé** — un bureau vide seul ne suffit pas ; vérifier le message et le profil chargé ; plus de « presque toujours » ; Q2 reformulée avec le message ; encadré source ajouté.
+- §3, chemin de l'utilitaire : **Corrigé** — chemins distincts Windows 10 et 11, application d'aide selon la version, lien ajouté.
+- Labo, service Windows Update arrêté : **Corrigé** — noter le type de démarrage, observer (le service peut redémarrer à la demande), distinguer arrêté et désactivé ; plus de « première chose à vérifier ».
+- §5, Réinitialiser ce PC : **Corrigé** — directement sous Dépannage.
+- Questions au tuteur, BitLocker et WinRE : **Corrigé** — la clé est demandée par certaines opérations, pas pour lancer WinRE.
+- Labo, processeurs virtuels : **Corrigé** — au moins 2 processeurs virtuels, vérification avant installation.
+- §1, bloc de commandes : **Corrigé** — titre et texte distinguent cmd et PowerShell.
+- Couverture des sources : **Corrigé** — sources des profils, de l'utilitaire et du cycle de vie ajoutées. **Justifié** : plan, cas, quiz et mémo reprennent les sections sourcées.
+- Durée annoncée : **Corrigé** — plan ramené à 3 h 30.
