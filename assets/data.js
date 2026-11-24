@@ -5,19 +5,19 @@ window.IT_DATA = {
     debut: "2026-12-07",
     fin: "2027-02-05",
     periodes: "du 7 au 18 décembre 2026, puis du 4 janvier au 5 février 2027, de 8 h 30 à 16 h",
-    /* Prépa : jours ouvrables du 23/11 au 4/12 (week-ends = repos). Textes repris des pages de jour. */
-    prepaDebut: "2026-11-23",
+    /* Prépa : huit séances en semaine du 25/11 au 4/12, avec deux jours de cours aux deux extrémités. */
+    prepaDebut: "2026-11-25",
     jours: [
-      { n: 1, date: "2026-11-23", href: "stage/j1.html", court: "Service desk", sujet: "le métier de <em>service desk</em>", chapeau: "ITIL, priorités, SLA et escalade : le vocabulaire que ton équipe utilisera dès le premier jour.", duree: "≈ 4 h 15", blocs: 6 },
-      { n: 2, date: "2026-11-24", href: "stage/j2.html", court: "Téléphone", sujet: "le <em>téléphone</em>", chapeau: "Accueillir, questionner, reformuler, rester calme face à un utilisateur difficile et déjouer l'ingénierie sociale.", duree: "≈ 4 h 30", blocs: 7 },
-      { n: 3, date: "2026-11-25", href: "stage/j3.html", court: "Jira", sujet: "<em>Jira</em>, de l'ouverture à la clôture", chapeau: "L'anatomie d'un ticket, ses statuts, une rédaction claire et la base de connaissances.", duree: "≈ 4 h 30", blocs: 7 },
-      { n: 4, date: "2026-11-26", href: "stage/j4.html", court: "Windows", sujet: "<em>Windows</em> côté poste", chapeau: "Outils de diagnostic, profils, mises à jour, sfc et DISM, environnement de récupération.", duree: "≈ 5 h", blocs: 7 },
-      { n: 5, date: "2026-11-27", href: "stage/j5.html", court: "Réseau", sujet: "le <em>réseau</em> côté utilisateur", chapeau: "DHCP, DNS, ping et tracert, eduroam, lecteurs réseau et imprimantes.", duree: "≈ 5 h", blocs: 6 },
-      { n: 6, date: "2026-11-30", href: "stage/j6.html", court: "Active Directory", sujet: "<em>Active Directory</em> côté support", chapeau: "Mots de passe, comptes verrouillés, groupes, OU et GPO, PowerShell en lecture.", duree: "≈ 5 h", blocs: 6 },
-      { n: 7, date: "2026-12-01", href: "stage/j7.html", court: "Microsoft 365", sujet: "messagerie et <em>Microsoft 365</em>", chapeau: "Outlook, Teams, OneDrive et MFA : les demandes les plus fréquentes du quotidien.", duree: "≈ 5 h", blocs: 6 },
-      { n: 8, date: "2026-12-02", href: "stage/j8.html", court: "À distance", sujet: "dépannage à distance et <em>méthode</em>", chapeau: "Assistance rapide, RDP, consentement, méthode de diagnostic et incident de sécurité.", duree: "≈ 5 h", blocs: 6 },
-      { n: 9, date: "2026-12-03", href: "stage/j9.html", court: "Matériel", sujet: "matériel et <em>PC</em>", chapeau: "BIOS/UEFI, TPM, BitLocker, déploiement, salles informatiques, colis et inventaire.", duree: "≈ 5 h", blocs: 6 },
-      { n: 10, date: "2026-12-04", href: "stage/j10.html", court: "Révision", sujet: "<em>révision</em> et répétition générale", chapeau: "Dix appels simulés de bout en bout, le quiz final et la check-list du premier jour.", duree: "≈ 5 h", blocs: 5 }
+      { n: 1, date: "2026-11-25", href: "stage/j1.html", court: "Service desk", sujet: "le métier de <em>service desk</em>", chapeau: "ITIL, priorités, SLA et escalade : le vocabulaire que ton équipe utilisera dès le premier jour.", duree: "≈ 1 h 45", blocs: 6 },
+      { n: 2, date: "2026-11-25", href: "stage/j2.html", court: "Téléphone", sujet: "le <em>téléphone</em>", chapeau: "Accueillir, questionner, reformuler, rester calme face à un utilisateur difficile et déjouer l'ingénierie sociale.", duree: "≈ 1 h 45", blocs: 7 },
+      { n: 3, date: "2026-11-26", href: "stage/j3.html", court: "Jira", sujet: "<em>Jira</em>, de l'ouverture à la clôture", chapeau: "L'anatomie d'un ticket, ses statuts, une rédaction claire et la base de connaissances.", duree: "≈ 3 h 30", blocs: 7 },
+      { n: 4, date: "2026-11-27", href: "stage/j4.html", court: "Windows", sujet: "<em>Windows</em> côté poste", chapeau: "Outils de diagnostic, profils, mises à jour, sfc et DISM, environnement de récupération.", duree: "≈ 3 h 30", blocs: 7 },
+      { n: 5, date: "2026-11-30", href: "stage/j5.html", court: "Réseau", sujet: "le <em>réseau</em> côté utilisateur", chapeau: "DHCP, DNS, ping et tracert, eduroam, lecteurs réseau et imprimantes.", duree: "≈ 3 h 30", blocs: 6 },
+      { n: 6, date: "2026-12-01", href: "stage/j6.html", court: "Active Directory", sujet: "<em>Active Directory</em> côté support", chapeau: "Mots de passe, comptes verrouillés, groupes, OU et GPO, PowerShell en lecture.", duree: "≈ 3 h 30", blocs: 6 },
+      { n: 7, date: "2026-12-02", href: "stage/j7.html", court: "Microsoft 365", sujet: "messagerie et <em>Microsoft 365</em>", chapeau: "Outlook, Teams, OneDrive et MFA : les demandes les plus fréquentes du quotidien.", duree: "≈ 3 h 30", blocs: 6 },
+      { n: 8, date: "2026-12-03", href: "stage/j8.html", court: "À distance", sujet: "dépannage à distance et <em>méthode</em>", chapeau: "Assistance rapide, RDP, consentement, méthode de diagnostic et incident de sécurité.", duree: "≈ 3 h 30", blocs: 6 },
+      { n: 9, date: "2026-12-04", href: "stage/j9.html", court: "Matériel", sujet: "matériel et <em>PC</em>", chapeau: "BIOS/UEFI, TPM, BitLocker, déploiement, salles informatiques, colis et inventaire.", duree: "≈ 3 h", blocs: 6 },
+      { n: 10, date: "2026-12-04", href: "stage/j10.html", court: "Révision", sujet: "<em>révision</em> et répétition générale", chapeau: "Révision express et check-list du premier jour. Les appels simulés sont à faire le soir pendant ta première semaine de stage.", duree: "≈ 45 min", blocs: 2 }
     ]
   },
   rubriques: [
