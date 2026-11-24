@@ -276,7 +276,8 @@ Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à fa
   Fait : 5 sections (masque et préfixe, local ou distant, calcul au 3e octet, découpage et plages spéciales, dépannage), labo « un masque qui ment » sur le réseau du J5, 5 exercices et 3 cas corrigés, fiche mémo ; faits tirés de Microsoft Learn (TCP/IP addressing and subnetting) et des RFC 1918, 3021, 3927, 4632, 6890 ; toutes les réponses calculées par script (module `ipaddress` de Python) ; aucun exemple repris de « Réseau de base ».
 - [x] 24.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-sous-reseaux`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Réseau, niveau 2, ≈ 3 h, prérequis `reseau-base`), retrait de `aVenir`, quiz de 6 questions, unité `module-sous-reseaux`, index régénéré (287 entrées) ; page vérifiée en `file://` à 390 px.
-- [ ] 24.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-sous-reseaux.md`) ; corrections dans une autre conversation.
+- [x] 24.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-sous-reseaux.md`) ; corrections dans une autre conversation.
+  Fait : Relecture des sources et du quiz dans `docs/relectures/module-sous-reseaux.md` (13 corrects, 4 faux et 1 non vérifié). Les corrections relèvent de la prochaine passe.
 - [ ] 24.4 `npm run controles`, coche, fusion.
 
 ## Lots 21 à 25
