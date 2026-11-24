@@ -250,6 +250,7 @@ Reste : rien pour ce lot.
 - [x] 20.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-m365-messagerie`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Support, niveau 2, ≈ 3 h, approfondit J7) et retrait de `aVenir`, quiz de 6 questions, unité `module-m365-messagerie`, index régénéré (262 entrées) ; page vérifiée en `file://` à 390 px.
 - [ ] 20.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-m365-messagerie.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
+  Fait : Relecture des sources et du quiz dans `docs/relectures/module-m365-messagerie.md` (13 corrects, 5 faux et 2 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 20.3.
 - [ ] 20.4 `npm run controles`, coche, fusion.
 
 ## Lot 22 — Entraînement aux tickets
