@@ -59,7 +59,7 @@
 <p>Retiens le principe plutôt que les numéros : plus on monte, plus c'est spécialisé et plus le temps de ces personnes est rare. Ton travail au N1 protège ce temps.</p>
 
 <h3>Le taux de résolution au premier contact</h3>
-<p>Un indicateur courant est le <strong>FCR</strong> (<em>First Contact Resolution</em>) : la part des demandes résolues pendant le premier échange, sans transfert ni rappel. Il monte avec trois habitudes : connaître les procédures, savoir questionner, documenter ce qu'on apprend.</p>
+<p>Un indicateur courant est le <strong>FCR</strong> (<em>First Contact Resolution</em>) : la part des demandes résolues pendant le premier échange, sans transfert ni rappel. Trois habitudes peuvent l'aider : connaître les procédures, savoir questionner, documenter ce qu'on apprend (ce sont des pistes de travail, pas une règle mesurée).</p>
 
 <aside class="callout source"><p>ITIL® 4 (PeopleCert / Axelos) : pratique « Service desk » (point de contact entre l'organisation et ses utilisateurs). Les niveaux N0 à N4 sont une convention courante, pas une règle ITIL.</p></aside>
 
@@ -75,7 +75,7 @@
 <p><strong>Objectif : la traiter selon la procédure</strong>, avec les validations prévues (par exemple l'accord du responsable pour un accès).</p>
 
 <h3>Problème</h3>
-<p>La <strong>cause</strong>, souvent inconnue au départ, d'un ou de plusieurs incidents. Dix personnes qui appellent pour la même erreur, ce sont dix incidents et un problème.</p>
+<p>La <strong>cause</strong>, souvent inconnue au départ, d'un ou de plusieurs incidents. Dix personnes qui appellent pour la même erreur : ce sont dix signalements, souvent de la <em>même</em> interruption (selon l'organisation, un incident principal et des tickets reliés). Le nombre d'appels ne prouve pas une cause ; il peut justifier d'ouvrir un problème pour la chercher.</p>
 <p>Ce n'est pas toi qui le résous au N1, mais tu as un rôle clé : <strong>repérer la répétition</strong>. Trois appels identiques en une heure, c'est le moment de prévenir ton responsable ou le N2 et de relier les tickets entre eux.</p>
 
 <h3>Changement</h3>
@@ -90,7 +90,7 @@
 <tr><td>« Le Wi-Fi coupe toutes les dix minutes depuis lundi, tout le bâtiment est touché. »</td><td>Incident, avec probablement un problème derrière</td></tr>
 <tr><td>« Mon mot de passe a expiré. »</td><td>Souvent une demande (procédure standard) ; certaines organisations la classent en incident</td></tr>
 </tbody></table></div>
-<aside class="callout astuce"><p>Le test rapide : « Est-ce que ça marchait avant ? » Si oui, c'est un incident. Si l'utilisateur veut quelque chose de nouveau, c'est une demande.</p></aside>
+<aside class="callout astuce"><p>Le test rapide : « Est-ce que ça marchait avant ? » Si oui, c'est <em>probablement</em> un incident, à condition que l'arrêt soit imprévu (un service retiré comme prévu ou un accès arrivé à échéance n'est pas un incident). Si l'utilisateur veut quelque chose de nouveau, c'est une demande.</p></aside>
 <aside class="callout source"><p>ITIL® 4 Foundation (PeopleCert / Axelos) : pratiques « Incident management », « Service request management », « Problem management » et « Change enablement ». Documentation Atlassian : types de demande et de ticket dans Jira Service Management.</p></aside>
 
 <h2 id="priorite">3. Priorité, SLA et cycle de vie d'un ticket</h2>
@@ -119,7 +119,7 @@
 </ul>
 
 <h3>Cycle de vie d'un ticket</h3>
-<p>Les noms exacts dépendent de la configuration de Jira, mais le schéma ressemble toujours à celui-ci :</p>
+<p>Les noms exacts et les étapes dépendent du flux de travail configuré dans Jira. Voici le schéma d'exercice que nous utilisons (proche du modèle ITSM d'Atlassian) :</p>
 <ol>
   <li><strong>Ouvert / À trier</strong> : le ticket vient d'arriver.</li>
   <li><strong>En cours</strong> : un agent l'a pris (il est « assigné »).</li>
@@ -130,11 +130,13 @@
 </ol>
 <aside class="callout retenir"><p>« Résolu » n'est pas « fermé ». On résout quand la solution est en place, mais l'utilisateur doit pouvoir répondre « non, ça ne marche toujours pas ». Ne ferme jamais un ticket sans avoir prévenu la personne.</p></aside>
 
+<aside class="callout source"><p>Atlassian Support, JSM Cloud : <a href="https://support.atlassian.com/jira-service-management-cloud/docs/how-impact-and-urgency-are-used-to-calculate-priority/">impact, urgence et priorité</a>, <a href="https://support.atlassian.com/jira-service-management-cloud/docs/what-are-slas/">SLA</a>, <a href="https://support.atlassian.com/jira-service-management-cloud/docs/the-incident-management-workflow-for-service-projects/">flux de travail des incidents</a>, <a href="https://support.atlassian.com/jira-service-management-cloud/docs/auto-close-resolved-service-requests/">clôture automatique des tickets résolus</a>.</p></aside>
+
 <h2 id="escalade">4. L'escalade : quand et comment passer la main</h2>
 <p>Escalader n'est pas un échec, c'est une partie normale du travail. Ce qui compte, c'est d'escalader <strong>au bon moment</strong> et <strong>proprement</strong>.</p>
 <h3>Deux sortes d'escalade</h3>
 <ul>
-  <li><strong>Fonctionnelle</strong> : vers une équipe plus compétente sur le sujet (N2, réseau, système). C'est la plus fréquente.</li>
+  <li><strong>Fonctionnelle</strong> : vers une équipe plus compétente sur le sujet (N2, réseau, système). C'est celle que tu feras le plus souvent au N1.</li>
   <li><strong>Hiérarchique</strong> : vers un responsable, quand il faut une décision ou un arbitrage, ou quand la situation devient sensible (utilisateur très mécontent, demande hors procédure, sécurité).</li>
 </ul>
 <h3>Quand escalader</h3>
@@ -156,6 +158,8 @@
   <li>la raison de l'escalade (« nécessite des droits d'administration », « matériel à remplacer »).</li>
 </ul>
 <p>Et tu préviens l'utilisateur : « Je transmets à l'équipe X, qui vous recontactera. Votre numéro de ticket est le SD-1234. »</p>
+
+<aside class="callout source"><p>Atlassian : <a href="https://www.atlassian.com/incident-management/on-call/escalation-policies">politiques d'escalade</a> et <a href="https://www.atlassian.com/incident-management/incident-response/support-levels">niveaux de support</a> ; <a href="https://support.atlassian.com/jira-software-cloud/docs/link-issues/">relier des tickets</a>.</p></aside>
 
 <h2 id="labo">Labo : trier 20 demandes <span class="duree">55 min</span></h2>
 <h3>Partie A — sur papier (30 min)</h3>
@@ -183,12 +187,13 @@
   <li>Un membre du personnel part à la retraite vendredi.</li>
 </ol>
 <details class="correction"><summary>Voir la correction de la partie A</summary>
+<p>Ces priorités appliquent la matrice d'exemple du §3 ; le critère retenu est indiqué quand l'énoncé ne le donne pas. Les procédures réelles (achat, accès, appareils personnels, départs) sont à vérifier sur place.</p>
 <ol>
   <li>Demande (mot de passe), impact faible, urgence haute (échéance) → P3. Résolu au N1 selon la procédure de vérification d'identité (jour 2).</li>
   <li>Demande, faible / faible → P4. À orienter selon la procédure d'achat ou de matériel ; aucune urgence.</li>
   <li>Incident, impact élevé et croissant → P1 ou P2. <strong>Escalade immédiate</strong>, incident de masse signalé, tickets reliés.</li>
   <li><strong>Sécurité</strong>, urgence maximale : compte compromis. Escalade immédiate selon la procédure ; en général on bloque le compte ou on force un changement de mot de passe. On n'attend pas.</li>
-  <li>Incident sur un poste d'accueil (impact moyen) → P3. Diagnostic de base au N1, puis N2 si besoin.</li>
+  <li>Incident sur un poste d'accueil : impact moyen (l'accueil reçoit du public, à confirmer en appelant), urgence moyenne (il fonctionne encore) → P3. Diagnostic de base au N1, puis N2 si besoin.</li>
   <li>Demande, P4. Vérifier la licence (logiciel payant) et la procédure d'installation.</li>
   <li>Incident, salle entière bientôt utilisée, échéance → P2. Escalade vers l'équipe salles / proximité, avec l'heure de l'examen dans le ticket.</li>
   <li>Demande planifiée (arrivée) → P3 avec échéance lundi. Procédure d'arrivée : compte, groupes, PC, accès.</li>
@@ -242,10 +247,10 @@
 <div class="bloc">
 <ul>
   <li><strong>Service desk</strong> = point de contact unique : enregistrer, résoudre, orienter.</li>
-  <li><strong>Incident</strong> : ça marchait, ça ne marche plus → rétablir vite. <strong>Demande</strong> : besoin standard → procédure. <strong>Problème</strong> : cause d'un ou plusieurs incidents. <strong>Changement</strong> : modification planifiée et approuvée.</li>
+  <li><strong>Incident</strong> : ça marchait, ça ne marche plus → rétablir vite. <strong>Demande</strong> : besoin standard → procédure. <strong>Problème</strong> : cause d'un ou plusieurs incidents (dix appels ≠ dix pannes : on relie les signalements). <strong>Changement</strong> : modification planifiée et approuvée.</li>
   <li><strong>Priorité = impact × urgence</strong>, pas l'ordre d'arrivée ni la fonction de l'appelant.</li>
   <li><strong>SLA</strong> : délais de première réponse et de résolution, selon la priorité.</li>
-  <li><strong>Résolu ≠ fermé</strong> : on prévient toujours l'utilisateur.</li>
+  <li><strong>Résolu ≠ fermé</strong> (flux d'exercice ; le flux réel est à vérifier) : on prévient toujours l'utilisateur.</li>
   <li><strong>Escalader</strong> : au bon moment, avec un ticket complet (qui, quoi, depuis quand, testé, impact, pourquoi).</li>
   <li><strong>Sécurité</strong> et <strong>panne de masse</strong> : escalade immédiate.</li>
 </ul>
