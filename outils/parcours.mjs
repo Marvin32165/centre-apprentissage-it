@@ -12,6 +12,44 @@ async function test(label,fn){try{await fn();console.log('OK '+label)}catch(e){f
 for(const mode of ['serveur','file']){
  const ctx=await browser.newContext({viewport:{width:1280,height:900},reducedMotion:'reduce'});const p=await ctx.newPage();let errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text())});
  const base=mode==='file'?pathToFileURL(root+'/').href:`http://127.0.0.1:${server.address().port}/`;
+ await test(mode+' calendrier de la prépa',async()=>{
+  const mission=p.locator('[data-mission]');
+  const cases=p.locator('[data-frise] .case');
+  const courante=p.locator('[data-frise] [aria-current="date"]');
+  const liens=()=>mission.locator('.mission-actions a').evaluateAll(els=>els.map(a=>a.getAttribute('href')));
+  const ouvrir=date=>p.goto(base+'index.html?date='+date);
+  await ouvrir('2026-11-25');
+  assert.match(await mission.locator('h1').innerText(),/jours 1 et 2/i);
+  assert.deepEqual(await liens(),['stage/j1.html','stage/j2.html']);
+  assert.equal(await cases.count(),13);
+  assert.equal(await cases.last().locator('.case-n').innerText(),'Stage');
+  assert.deepEqual(await cases.locator('.case-n').allTextContents(),['J1 + J2','J3','J4','—','—','J5','J6','J7','J8','J9 + J10','—','—','Stage']);
+  assert.equal(await courante.getAttribute('href'),'stage/j1.html');
+  await p.evaluate(()=>localStorage.setItem('it.done.stage-j1','1'));
+  await p.reload();
+  assert.equal(await courante.getAttribute('href'),'stage/j2.html');
+  assert.match(await courante.getAttribute('aria-label'),/jour 1, Service desk, terminé/);
+  assert.match(await p.locator('[data-compteur="stage"]').innerText(),/1 \/ 10/);
+  await p.evaluate(()=>localStorage.setItem('it.done.stage-j2','1'));
+  await p.reload();
+  assert.equal(await courante.locator('.case-n').innerText(),'J1 + J2 ✓');
+  assert.equal(await courante.getAttribute('href'),'stage/j1.html');
+  await p.evaluate(()=>{
+   localStorage.removeItem('it.done.stage-j1');
+   localStorage.removeItem('it.done.stage-j2');
+  });
+  await ouvrir('2026-11-26');
+  assert.match(await mission.locator('.kicker').innerText(),/jour 3 sur 10/i);
+  assert.deepEqual(await liens(),['stage/j3.html','stage/j3.html#plan']);
+  await ouvrir('2026-12-04');
+  assert.match(await mission.locator('h1').innerText(),/jours 9 et 10/i);
+  assert.deepEqual(await liens(),['stage/j9.html','stage/j10.html']);
+  assert.equal(await courante.locator('.case-n').innerText(),'J9 + J10');
+  await ouvrir('2026-12-05');
+  assert.match(await mission.locator('h1').innerText(),/révise/i);
+  assert.deepEqual(await liens(),['stage/revision.html','stage/j10.html#checklist']);
+  assert.match(await courante.innerText(),/Repos/);
+ });
  await test(mode+' progression et tampon',async()=>{await p.goto(base+'stage/j1.html');await p.evaluate(()=>{localStorage.setItem('it.done.stage-j1','1')});await p.reload({waitUntil:'load'});await p.waitForSelector('.cloture button[aria-pressed="true"]',{timeout:5000});assert.equal(await p.locator('.cloture button').getAttribute('aria-pressed'),'true');assert.ok(await p.locator('.tampon-mot').textContent()==='RÉSOLU');await p.locator('.cloture button').click();assert.equal(await p.evaluate(()=>localStorage.getItem('it.done.stage-j1')),null);await p.locator('.cloture button').click();await p.reload();assert.equal(await p.locator('.cloture button').getAttribute('aria-pressed'),'true')});
  await test(mode+' minuteur, pause, bloc suivant et reprise',async()=>{const go=p.locator('.seance-go');await go.click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).marche),true);await go.click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).marche),false);await p.locator('.seance-next').click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).bloc),1);await p.reload();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).bloc),1)});
  await test(mode+' quiz et correction cachée',async()=>{const qs=await p.evaluate(()=>window.IT_QUIZZES['stage-j1'].questions.map(q=>q.reponse));for(let i=0;i<qs.length;i++)await p.locator(`.quiz input[name=q${i}][value="${qs[i]}"]`).check();await p.locator('.quiz button[type=submit]').click();assert.match(await p.locator('.quiz .score').innerText(),new RegExp(qs.length+' / '+qs.length));assert.ok(await p.locator('.quiz details').count()>0);assert.equal(await p.locator('.quiz details[open]').count(),0);await p.getByRole('button',{name:'Recommencer',exact:true}).click();const wrong=await p.evaluate(()=>window.IT_QUIZZES['stage-j1'].questions.map(q=>(q.reponse+1)%q.options.length));for(let i=0;i<wrong.length;i++)await p.locator(`.quiz input[name=q${i}][value="${wrong[i]}"]`).check();await p.locator('.quiz button[type=submit]').click();assert.equal(await p.locator('.quiz .opt.bon').count(),0);assert.equal(await p.locator('.quiz details[open]').count(),0);assert.equal(await p.locator('.quiz details').count(),wrong.length)});

@@ -313,12 +313,13 @@ details.correction .table-wrap, details.correction .code-block { margin-top: var
 .titre-ligne h2 { margin: 0; }
 .titre-ligne .label { margin: 0; }
 .frise-defile { overflow-x: auto; padding-bottom: var(--s1); border-radius: var(--r-m); }
-.frise { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(15, minmax(64px, 1fr)); gap: 6px; min-width: 1044px; }
+.frise { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(72px, 1fr); gap: 6px; }
 .frise li { margin: 0; }
 .case { display: flex; flex-direction: column; gap: var(--s1); min-height: 96px; height: 100%; padding: 10px 8px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-m); color: var(--ink); text-decoration: none; font-family: var(--font-ui); }
 a.case:hover { border-color: var(--accent); }
 .case-date { font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-pale); }
 .case-n { font-family: var(--font-text); font-size: 1.375rem; font-weight: 500; line-height: 1; }
+.case-double .case-n { font-size: 1rem; }
 .case-sujet { font-size: 0.75rem; line-height: 1.3; color: var(--ink-soft); }
 .case.fait .case-n { color: var(--green); }
 .case.auj { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }

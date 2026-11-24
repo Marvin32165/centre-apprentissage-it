@@ -1,6 +1,6 @@
 /* Index de la recherche rapide — fichier GÉNÉRÉ par outils/index-recherche.mjs (ne pas modifier à la main).
    g = groupe, tag = étiquette, t = titre, o = provenance, u = lien depuis la racine, m = mots-clés. */
-window.IT_RECHERCHE = [{"g":"Notions","tag":"page","t":"Deux semaines jusqu'au premier jour","o":"Accueil","u":"index.html#frise-titre","m":" "},
+window.IT_RECHERCHE = [{"g":"Notions","tag":"page","t":"Calendrier de la prépa","o":"Accueil","u":"index.html#frise-titre","m":" "},
 {"g":"Notions","tag":"page","t":"Toute la plateforme","o":"Accueil","u":"index.html#rub-titre","m":"Dix jours pour arriver prêt · Cours ciblés · L'IT rangée par domaine · Le Livre du montage Théorie sourcée, labos chez soi, appels simulés, tickets à trier, boîte à outils."},
 {"g":"Notions","tag":"page","t":"Comment on apprend ici","o":"Accueil","u":"index.html#meth-titre","m":"Je montre · On fait ensemble · Tu fais seul Une théorie courte, qui cite sa source officielle."},
 {"g":"Atelier","tag":"page","t":"Table des matières","o":"Atelier · table et index","u":"atelier/index.html#tdm","m":" La table s'affiche avec JavaScript."},
