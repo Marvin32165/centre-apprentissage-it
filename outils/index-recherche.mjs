@@ -72,6 +72,13 @@ const sortie = `/* Index de la recherche rapide — fichier GÉNÉRÉ par outils
    g = groupe, tag = étiquette, t = titre, o = provenance, u = lien depuis la racine, m = mots-clés. */
 window.IT_RECHERCHE = ${JSON.stringify(entrees, null, 0).replace(/\},\{/g, "},\n{")};
 `;
+// --verifier : ne rien écrire, sortir en erreur si l'index n'est pas à jour (utilisé par outils/garde.mjs).
+if (process.argv.includes("--verifier")) {
+  const actuel = fs.existsSync(path.join(R, "assets/recherche.js")) ? lire("assets/recherche.js") : "";
+  if (actuel !== sortie) { console.error("assets/recherche.js n'est pas à jour : lancer npm run index"); process.exit(1); }
+  console.log(`assets/recherche.js à jour (${entrees.length} entrées)`);
+  process.exit(0);
+}
 fs.writeFileSync(path.join(R, "assets/recherche.js"), sortie);
 const parGroupe = entrees.reduce((a, e) => ((a[e.g] = (a[e.g] || 0) + 1), a), {});
 console.log(`assets/recherche.js : ${entrees.length} entrées`, parGroupe);

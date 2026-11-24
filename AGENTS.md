@@ -43,7 +43,11 @@ Identités « Poste de garde » (plateforme) et « Le Livre du montage » (ateli
 - **Reprise sans perte** : découpe le lot en sous-étapes cochables dans `docs/PLAN.md` ; après chaque sous-étape, coche-la avec une ligne « Fait : … » ou « Justifié : … », commite en français, puis pousse la branche. Un agent qui reprend lit `docs/PLAN.md` et continue à la première case non cochée.
 - **Jamais** de `push --force`, de réécriture d'historique ni de commit direct sur `main` hors fusion d'un lot terminé.
 - **Désaccord avec ces règles ou avec `docs/REFONTE.md`** (par exemple retirer les polices, changer une couleur, supprimer une fonction) : ne le fais pas ; écris « Question pour Marvin : … » sous le lot dans `docs/PLAN.md` et passe à la suite.
+- **Procédures** (`docs/procedures/`, valables pour les deux agents) : `nouveau-module.md` (ajouter un module), `relecture-sources.md` (vérifier les faits d'une page contre les sources primaires), `test-chef.md` (tester une page en situation). Les deux relectures se font par un agent **qui n'a pas écrit la page**, dans une nouvelle conversation, de préférence avec l'autre outil (ChatGPT relit Claude, et inversement). Claude Code a les mêmes procédures en skills et agents dans `.claude/` ; elles ne font que renvoyer à ces fichiers, qui font foi.
+- **Garde-fous** : `npm run garde` (sans navigateur, quelques secondes) avant chaque commit ; `npm run hooks` une fois par clone l'impose par un hook Git `pre-commit`. Modifier un moteur de l'atelier demande une ligne « Moteur autorisé : assets/<fichier> » écrite par Marvin dans `docs/PLAN.md`.
 - Messages de commit : une phrase en français qui dit ce qui change ; pas de nom de modèle dans les commits ni dans le code.
 - Prompts types :
   - lancer : « Lis AGENTS.md et docs/PLAN.md, puis fais le lot N. »
   - reprendre : « Lis AGENTS.md et docs/PLAN.md, et reprends le lot N à la première sous-étape non cochée (branche lot-N). »
+  - relire les faits : « Lis docs/procedures/relecture-sources.md et relis modules/<id>.html. »
+  - tester : « Lis docs/procedures/test-chef.md et teste <page>, usage : <usage concret>. »
