@@ -193,7 +193,10 @@ Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul 
   Fait : cinq rapports dans `docs/relectures/stage-j1.md` à `stage-j5.md`, avec les 40 questions de quiz vérifiées. Les constats à traiter restent en 16.2.
 - [x] 16.2 Corriger chaque « faux » et traiter chaque « non vérifié » (autre conversation, de préférence l'autre outil) ; noter dans chaque rapport ce qui a été corrigé.
   Fait : les 28 « faux » et 12 « non vérifiés » des J1 à J5 traités par Claude Code (dans l'ordre d'étude : J3, J4, J5, J1, J2), quiz compris ; chaque rapport se termine par son suivi « Corrigé / Justifié ». Justifié : les URL des corrections viennent des rapports de ChatGPT, qui les a ouvertes ; `8.8.8.8` gardé comme exemple signalé.
-- [ ] 16.3 `npm run controles`, coche, fusion.
+- [x] 16.3 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` = 0 problème, 0 avertissement, 0 échec (29 pages, serveur et `file://`) ; fusion dans `main`.
+
+Reste : rien pour ce lot ; les rapports J1 à J5 restent dans `docs/relectures/` comme trace.
 
 ## Lot 17 — Relecture des faits : prépa J6 à J10 et boîte à outils
 - [ ] 17.1 Relire `stage/j6.html` à `j10.html` et `stage/outils.html` (même procédure, rapports dans `docs/relectures/`).
