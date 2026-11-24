@@ -188,7 +188,7 @@ Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul 
 
 **File d'attente (mise à jour le 24/11, fin de session Claude Code)** — faits : lots 16 et 19, pages et données des modules 18 et 20. À faire, dans l'ordre :
 1. ChatGPT (Astra, effort `high`, recherche web) : **17.1** relire J6 à J10 et la boîte à outils.
-2. ChatGPT : **18.3** relire `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, et les 12 appels de `assets/tickets-data.js` (lot 22) ; rapports dans `docs/relectures/`.
+2. ChatGPT : **18.3** relire `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, **24.3** `modules/sous-reseaux.html`, et les 12 appels de `assets/tickets-data.js` (lot 22) ; rapports dans `docs/relectures/`.
 3. Claude Code : corriger d'après ces rapports (17.2, 18.3, 20.3), puis 17.3, 18.4, 20.4.
 4. Ensuite : lot 21 (ChatGPT relit les 5 premiers modules), lot 22 (entraînement aux tickets).
 
@@ -255,6 +255,15 @@ Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à fa
   Fait : entrée dans `assets/modules.js` (Support, niveau 1, ≈ 2 h 30, approfondit J5), `aVenir` du domaine Support vidé, quiz de 6 questions, unité `module-imprimantes-peripheriques`, index régénéré (275 entrées) ; page vérifiée en `file://` à 390 px.
 - [ ] 23.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-imprimantes-peripheriques.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
 - [ ] 23.4 `npm run controles`, coche, fusion.
+
+## Lot 24 — Module « Sous-réseaux et plan d'adressage »
+Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à faire.
+- [x] 24.1 Page `modules/sous-reseaux.html` (rédigée par Claude Code ; sources Microsoft Learn et RFC ouvertes le 25/11/2026 ; calculs vérifiés par script).
+  Fait : 5 sections (masque et préfixe, local ou distant, calcul au 3e octet, découpage et plages spéciales, dépannage), labo « un masque qui ment » sur le réseau du J5, 5 exercices et 3 cas corrigés, fiche mémo ; faits tirés de Microsoft Learn (TCP/IP addressing and subnetting) et des RFC 1918, 3021, 3927, 4632, 6890 ; toutes les réponses calculées par script (module `ipaddress` de Python) ; aucun exemple repris de « Réseau de base ».
+- [x] 24.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-sous-reseaux`, unité dans `data.js`, index.
+  Fait : entrée dans `assets/modules.js` (Réseau, niveau 2, ≈ 3 h, prérequis `reseau-base`), retrait de `aVenir`, quiz de 6 questions, unité `module-sous-reseaux`, index régénéré (287 entrées) ; page vérifiée en `file://` à 390 px.
+- [ ] 24.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-sous-reseaux.md`) ; corrections dans une autre conversation.
+- [ ] 24.4 `npm run controles`, coche, fusion.
 
 ## Lots 21 à 25
 Ils seront détaillés en sous-étapes au début de chaque lot, à partir du tableau ci-dessus. Pour le 22, utiliser les composants tickets existants (`CAS-0N` de `assets/jour.js`) sans toucher aux moteurs de l'atelier. Pour le 25, n'écrire que ce qui est public : aucune procédure interne, aucune IP, aucun nom.
