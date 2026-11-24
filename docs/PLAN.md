@@ -186,6 +186,8 @@ Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance 
 
 Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
 
+**Changement de rythme (24/11)** : à partir du mercredi 25/11, séances de 3 à 4 h par jour en semaine seulement. Les dates restent (J3 le 25/11 … J10 le 4/12) ; chaque plan horaire est ramené à ≈ 3 h 30 (blocs raccourcis, même contenu ; un labo qui déborde se termine au début de la séance suivante).
+
 ## Lot 16 — Relecture des faits : prépa J1 à J5
 - [x] 16.1 Relire `stage/j1.html` à `j5.html` avec leurs quiz (`assets/prepa.js`), selon `docs/procedures/relecture-sources.md` ; un rapport par page dans `docs/relectures/`.
   Fait : cinq rapports dans `docs/relectures/stage-j1.md` à `stage-j5.md`, avec les 40 questions de quiz vérifiées. Les constats à traiter restent en 16.2.

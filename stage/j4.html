@@ -26,14 +26,14 @@
 <h1><em>Windows</em> 10 et 11 côté poste</h1>
 <p class="lead">La majorité des appels concernent un poste Windows qui ralentit, refuse de se mettre à jour ou ne démarre plus. Aujourd'hui, tu apprends les outils de diagnostic, la logique des profils et des mises à jour, et les réparations qu'on peut tenter sans tout réinstaller.</p>
 
-<h2 id="plan">Plan de la journée <span class="duree">≈ 5 h</span></h2>
+<h2 id="plan">Plan de la journée <span class="duree">≈ 3 h 30</span></h2>
 <ol class="plan-horaire">
-  <li><span class="h">40 min</span><span>Les outils de diagnostic intégrés</span></li>
-  <li><span class="h">30 min</span><span>Profils utilisateur</span></li>
-  <li><span class="h">35 min</span><span>Mises à jour Windows</span></li>
-  <li><span class="h">40 min</span><span>Réparer : sfc, DISM, chkdsk</span></li>
-  <li><span class="h">30 min</span><span>WinRE : l'environnement de récupération</span></li>
-  <li><span class="h">1 h 30</span><span>Labo : une VM Windows 11 dans Hyper-V, on casse puis on répare</span></li>
+  <li><span class="h">30 min</span><span>Les outils de diagnostic intégrés</span></li>
+  <li><span class="h">25 min</span><span>Profils utilisateur</span></li>
+  <li><span class="h">25 min</span><span>Mises à jour Windows</span></li>
+  <li><span class="h">30 min</span><span>Réparer : sfc, DISM, chkdsk</span></li>
+  <li><span class="h">20 min</span><span>WinRE : l'environnement de récupération</span></li>
+  <li><span class="h">1 h 05</span><span>Labo : une VM Windows 11 dans Hyper-V, on casse puis on répare</span></li>
   <li><span class="h">15 min</span><span>Mises en situation, quiz, fiche mémo</span></li>
 </ol>
 <aside class="callout attention"><p>Windows 10 n'est plus pris en charge par Microsoft depuis le 14 octobre 2025, sauf programme de mises à jour de sécurité étendues. Dans une organisation, tu verras sans doute les deux versions : demande à ton tuteur quel parc tu auras en charge.</p></aside>
@@ -150,7 +150,7 @@ sfc /scannow</code></pre>
 <aside class="callout attention"><p>Avant « Réinitialiser ce PC » ou toute réinstallation, vérifie qu'il y a une sauvegarde et que la procédure de la maison l'autorise. Sur un poste d'organisation, le master ou l'outil de déploiement fait normalement ce travail (jour 9).</p></aside>
 <aside class="callout source"><p>Microsoft Learn : « Windows Recovery Environment (Windows RE) » et « Options de démarrage avancées » (documentation Windows 10 et 11).</p></aside>
 
-<h2 id="labo">Labo : une VM Windows 11, on casse puis on répare <span class="duree">1 h 30</span></h2>
+<h2 id="labo">Labo : une VM Windows 11, on casse puis on répare <span class="duree">1 h 05</span></h2>
 <p>Tout se fait dans une <strong>machine virtuelle</strong>, jamais sur ton vrai poste. Tu as besoin d'un Windows 10 ou 11 en édition <strong>Pro, Enterprise ou Éducation</strong> (Hyper-V n'est pas inclus dans l'édition Famille).</p>
 <h3>Préparer le labo</h3>
 <ol>
