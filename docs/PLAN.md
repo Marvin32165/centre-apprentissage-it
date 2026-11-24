@@ -211,8 +211,12 @@ Suivre `docs/procedures/nouveau-module.md` (sous-étapes 18.1 à 18.4). Domaine 
 Justifié : fait avant le lot 17 (relecture réservée à ChatGPT) et le lot 18, parce qu'il ne demande pas de relecture croisée et sert dès maintenant.
 - [x] 19.1 Page `stage/revision.html` : les fiches mémo J1 à J9 seules (lues depuis les sections `#memo` des pages, ou dupliquées en données si la lecture en `file://` l'impose, sans `fetch`), puis un quiz mélangé tiré des quiz existants ; lien depuis `stage/index.html` et l'accueil.
   Fait : `stage/revision.html` (9 fiches et quiz de 10 questions tirées dans `stage-j1` à `stage-j9`, bouton « Nouveau tirage ») ; fiches **générées** dans `assets/revision.js` par `outils/revision.mjs` depuis les sections `#memo` (inclus dans `npm run index`, contrôlé par `garde`, protégé par le hook) ; liens depuis `stage/index.html` et l'accueil (fin de prépa et pendant le stage) ; vérifiée en `file://` à 390 px.
-- [ ] 19.2 Export et import de la progression : bouton qui télécharge un fichier JSON des clés `it.*` (Blob, sans serveur) et import par `<input type="file">` avec vérification du contenu, message dans la page (jamais `alert`) ; dans le pied de page ou sur l'accueil.
-- [ ] 19.3 `npm run index`, `npm run controles` (ajouter les deux parcours à `outils/parcours.mjs`), coche, fusion.
+- [x] 19.2 Export et import de la progression : bouton qui télécharge un fichier JSON des clés `it.*` (Blob, sans serveur) et import par `<input type="file">` avec vérification du contenu, message dans la page (jamais `alert`) ; dans le pied de page ou sur l'accueil.
+  Fait : boutons « Exporter ma progression » et « Importer » dans le pied de page de toutes les pages (`app.js`) : fichier JSON `progression-it-AAAA-MM-JJ.json` des seules clés `it.*` (Blob), import par `<input type="file">` qui refuse tout autre format, message dans la page (`role="status"`), rechargement après import.
+- [x] 19.3 `npm run index`, `npm run controles` (ajouter les deux parcours à `outils/parcours.mjs`), coche, fusion.
+  Fait : index régénéré (238 entrées) ; `npm run controles` = 30 pages, 0 problème, 0 avertissement, 0 échec, avec deux nouveaux parcours (révision express ; export puis import, y compris un fichier refusé) en serveur et en `file://` ; fusion dans `main`.
+
+Reste : rien pour ce lot.
 
 ## Lot 20 — Module « Microsoft 365 et messagerie »
 `docs/procedures/nouveau-module.md`. Approfondit `stage/j7.html` (Outlook, profils, OST, boîtes partagées, Teams, OneDrive, MFA), sources Microsoft Learn ; la configuration du tenant UMONS est « à vérifier sur place ».

@@ -127,8 +127,66 @@
     var fw = el("div", { "class": "wrap" });
     fw.appendChild(el("p", null, "Apprentissage IT — contenu libre, sans compte ni suivi."));
     fw.appendChild(el("p", null, "Ta progression reste dans ce navigateur."));
+    fw.appendChild(progressionPortable());
     footer.appendChild(fw);
     body.appendChild(footer);
+  }
+
+  /* ---------- Progression portable : exporter / importer les clés it.* dans un fichier JSON ----------
+     Sans serveur ni requête réseau, donc utilisable en file:// ; jamais d'alert : le résultat s'affiche dans le pied de page. */
+  function progressionPortable() {
+    var bloc = el("div", { "class": "pied-progression" });
+    var statut = el("p", { "class": "pied-statut", role: "status", "aria-live": "polite" });
+    var bExport = el("button", { type: "button", "class": "pied-btn" }, "Exporter ma progression");
+    var bImport = el("button", { type: "button", "class": "pied-btn" }, "Importer");
+    var fichier = el("input", { type: "file", accept: "application/json,.json", hidden: "", "aria-label": "Fichier de progression à importer" });
+    function cles() {
+      var out = {};
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (k && k.indexOf(PREFIX) === 0) out[k] = localStorage.getItem(k);
+        }
+      } catch (e) { return null; }
+      return out;
+    }
+    bExport.addEventListener("click", function () {
+      var c = cles();
+      if (!c) { statut.textContent = "Le stockage du navigateur est inaccessible : rien à exporter."; return; }
+      var n = Object.keys(c).length;
+      var donnees = { format: "apprentissage-it", version: 1, date: new Date().toISOString(), cles: c };
+      var url = URL.createObjectURL(new Blob([JSON.stringify(donnees, null, 1)], { type: "application/json" }));
+      var a = el("a", { href: url, download: "progression-it-" + new Date().toISOString().slice(0, 10) + ".json" });
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      statut.textContent = n + " élément" + (n > 1 ? "s" : "") + " exporté" + (n > 1 ? "s" : "") + ". Garde le fichier pour l'importer sur un autre appareil.";
+    });
+    bImport.addEventListener("click", function () { fichier.click(); });
+    fichier.addEventListener("change", function () {
+      var f = fichier.files && fichier.files[0];
+      if (!f) return;
+      var lecteur = new FileReader();
+      lecteur.onload = function () {
+        var d;
+        try { d = JSON.parse(lecteur.result); } catch (e) { d = null; }
+        if (!d || d.format !== "apprentissage-it" || !d.cles || typeof d.cles !== "object") {
+          statut.textContent = "Ce fichier n'est pas un export de progression de ce site : rien n'a été modifié.";
+          fichier.value = ""; return;
+        }
+        var n = 0, ok = true;
+        Object.keys(d.cles).forEach(function (k) {
+          var v = d.cles[k];
+          if (k.indexOf(PREFIX) !== 0 || typeof v !== "string") return;
+          try { localStorage.setItem(k, v); n++; } catch (e) { ok = false; }
+        });
+        fichier.value = "";
+        statut.textContent = ok ? n + " élément" + (n > 1 ? "s" : "") + " importé" + (n > 1 ? "s" : "") + ". Mise à jour de la page…" : "Import incomplet : le stockage du navigateur a refusé certains éléments.";
+        if (ok) setTimeout(function () { location.reload(); }, 900);
+      };
+      lecteur.readAsText(f);
+    });
+    bloc.appendChild(bExport); bloc.appendChild(bImport); bloc.appendChild(fichier); bloc.appendChild(statut);
+    return bloc;
   }
 
   /* ---------- Numéros de section : « 1. Titre » devient « §1 Titre » ---------- */
