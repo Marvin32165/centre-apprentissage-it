@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entraînement aux tickets · Prépa stage</title>
+<meta name="description" content="Douze appels fictifs à qualifier : type, impact, urgence, priorité, action et résumé du ticket, avec la résolution cachée.">
+<meta property="og:title" content="Entraînement aux tickets · Prépa stage">
+<meta property="og:description" content="Douze appels fictifs à qualifier : type, impact, urgence, priorité, action et résumé du ticket, avec la résolution cachée.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/tickets-data.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/tickets-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="stage">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Prépa stage · Entraînement</p>
+<h1>Entraînement aux <em>tickets</em></h1>
+<p class="lead">Douze appels fictifs, comme au service desk. Pour chacun : de quoi s'agit-il, quel impact, quelle urgence, donc quelle priorité, que fais-tu, et quel résumé écris-tu ? Tu valides, puis tu compares avec la résolution.</p>
+
+<h2 id="regles">Les règles du jeu</h2>
+<ul>
+  <li>La priorité suit la <strong>matrice d'exemple</strong> du <a href="j1.html#priorite">jour 1</a> (P1 à P4) ; celle de l'UMONS est à vérifier sur place.</li>
+  <li>En cas de <strong>sécurité</strong>, la procédure de sécurité prime : impact et urgence ne sont pas notés.</li>
+  <li>Le résumé n'est pas noté automatiquement : compare-le avec l'exemple de la résolution (<a href="j3.html#rediger">jour 3</a>).</li>
+  <li>Tes résultats restent dans ce navigateur ; tu peux recommencer autant que tu veux.</li>
+</ul>
+<aside class="callout umons"><p>Les équipes vers lesquelles on transmet, la matrice de priorité et les délais réels de la DSI : à demander à ton tuteur. Les appels ci-dessous sont inventés pour l'exercice.</p></aside>
+
+<h2 id="appels">Les appels</h2>
+<div data-tickets></div>
+
+<nav class="jours-nav" aria-label="Navigation">
+  <a class="btn ghost" href="revision.html">Révision express</a>
+  <a class="btn ghost" href="index.html">Programme</a>
+</nav>
+</div>
+</main>
+</body>
+</html>
