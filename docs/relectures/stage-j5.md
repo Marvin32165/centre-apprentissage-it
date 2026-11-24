@@ -38,3 +38,17 @@ Le plan horaire annonce environ 5 h. Les durées affichées totalisent 4 h 40, s
 | Couverture des sources. Seuls les §1 et §3 ont un encadré. La méthode, les lecteurs et imprimantes, puis le labo donnent des procédures sans encadré propre. | faux | [Page relue](https://github.com/Marvin32165/centre-apprentissage-it/blob/bb590855b21afcd0d16b47ad13868fd56a91a324/stage/j5.html) | Ajouter les références Windows, Hyper-V et DHCP aux §2, §4 et au labo. Plan, cas, quiz et mémo n’ont pas d’encadré propre non plus. |
 
 **Bilan** — 16 correctes, 10 faux, 1 non vérifié. Une ligne correspond à un constat, y compris lorsqu’il réapparaît dans le mémo ou le quiz.
+
+## Suivi des corrections (Claude Code, 24/11/2026)
+- §2, mémo, Q2, conclusion DNS : **Corrigé** — distinction « nom introuvable » / « délai dépassé », test du service ; Q2 reformulée (nslookup, nom introuvable).
+- §2, premier ping manquant et tracert : **Corrigé** — échec de ping = indice ; saut muet ≠ panne ; pathping.
+- §3, cas 3, mémo, Q6, eduroam : **Corrigé** — mot de passe seulement si la méthode en utilise un, mise à jour ou oubli du réseau, profil officiel, certificats possibles ; liens eduroam.org.
+- §4, plusieurs personnes sans lecteur : **Corrigé** — serveur, réseau ou autorisations d'un groupe ; informations à transmettre.
+- Introduction et §4, « plus fréquent » / « plus courant » : **Corrigé** — « très courant », « fréquent » ; cas 4 : page de test interne d'abord.
+- Labo, autorisation DHCP : **Corrigé** — obligatoire dans un domaine AD (Add-DhcpServerInDC), sans objet en groupe de travail.
+- Labo, panne 2 : **Corrigé** — le labo n'a pas de routeur ; l'exercice porte sur le repérage de la passerelle anormale.
+- Labo, panne 4 : **Corrigé** — absence de liaison, vérifications selon poste réel ou VM.
+- Données d'exemple : **Corrigé** — `www.exemple.be` remplacé par `www.example.org` (RFC 2606). **Justifié** : `8.8.8.8` est gardé comme exemple de cible publique bien connue, signalé comme résolveur de Google, la cible à l'UMONS restant à vérifier sur place.
+- Mémo, ipconfig : **Corrigé** — trois commandes complètes.
+- Couverture des sources : **Corrigé** — encadrés ajoutés au §2, au §4 et au labo, liens dans celui du §3. **Justifié** : plan, cas, quiz et mémo reprennent les sections sourcées.
+- Durée annoncée : **Corrigé** — plan ramené à 3 h 30.
