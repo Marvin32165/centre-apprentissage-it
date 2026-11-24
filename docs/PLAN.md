@@ -268,6 +268,7 @@ Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à fa
 - [x] 23.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-imprimantes-peripheriques`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Support, niveau 1, ≈ 2 h 30, approfondit J5), `aVenir` du domaine Support vidé, quiz de 6 questions, unité `module-imprimantes-peripheriques`, index régénéré (275 entrées) ; page vérifiée en `file://` à 390 px.
 - [ ] 23.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-imprimantes-peripheriques.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
+  Fait : Relecture des sources et du quiz dans `docs/relectures/module-imprimantes-peripheriques.md` (11 corrects, 1 faux et 2 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 23.3.
 - [ ] 23.4 `npm run controles`, coche, fusion.
 
 ## Lot 24 — Module « Sous-réseaux et plan d'adressage »
