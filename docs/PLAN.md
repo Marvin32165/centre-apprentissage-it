@@ -238,6 +238,15 @@ Reste : rien pour ce lot.
 - [ ] 20.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-m365-messagerie.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
 - [ ] 20.4 `npm run controles`, coche, fusion.
 
+## Lot 22 — Entraînement aux tickets
+Justifié : fait avant le lot 21 (relecture réservée à ChatGPT), en autonomie la nuit du 24 au 25/11.
+- [x] 22.1 Page `stage/tickets.html` et données `assets/tickets-data.js` : 12 appels fictifs (type, impact, urgence, action attendus, résumé d'exemple, explication), conventions et matrice d'exemple du jour 1.
+  Fait : `assets/tickets-ui.js` construit chaque appel en ticket (composant `.ticket-cas`), calcule la priorité en direct, note type, impact, urgence et action (sécurité : impact et urgence non notés), cache la résolution dans un `<details>`, garde les résultats dans `it.tickets` ; liens depuis `stage/index.html`, index de recherche.
+- [x] 22.2 `npm run controles` (nouveau parcours « entraînement aux tickets »), coche, fusion.
+  Fait : parcours ajouté (12 tickets, refus sans réponse, priorité P4 calculée, résolution fermée par défaut, résultat mémorisé) ; contrôles sans échec ; vérifié à 390 px.
+
+Reste : relecture des 12 appels par ChatGPT (cohérence avec le jour 1) à ajouter au lot 21.
+
 ## Lots 21 à 25
 Ils seront détaillés en sous-étapes au début de chaque lot, à partir du tableau ci-dessus. Pour le 22, utiliser les composants tickets existants (`CAS-0N` de `assets/jour.js`) sans toucher aux moteurs de l'atelier. Pour le 25, n'écrire que ce qui est public : aucune procédure interne, aucune IP, aucun nom.
 

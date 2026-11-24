@@ -39,6 +39,7 @@ sections("docs/composants.html", "Guide · composants", "page");
 D.stage.jours.forEach((j) => sections(j.href, `Prépa · jour ${j.n} · ${j.court}`, "jour"));
 sections("stage/outils.html", "Prépa · boîte à outils", "outils");
 sections("stage/revision.html", "Prépa · révision express", "page");
+sections("stage/tickets.html", "Prépa · entraînement aux tickets", "page");
 M.modules.forEach((mo) => sections(`modules/${mo.id}.html`, `Module · ${mo.titre.split(" : ")[0]}`, "module"));
 
 // Commandes de la boîte à outils (chaque ligne des blocs de code de la section « Commandes »)
