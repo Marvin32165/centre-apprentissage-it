@@ -13,7 +13,7 @@ window.IT_MODULES = {
     { id: "support", stage: true, titre: "Support et service desk",
       desc: "Prendre un appel, diagnostiquer un poste, réparer ou escalader proprement : le cœur du stage.",
       liens: [{ href: "stage/index.html", label: "Prépa stage (10 jours)" }, { href: "stage/outils.html", label: "Boîte à outils" }],
-      aVenir: ["Microsoft 365 et messagerie, en profondeur", "Dépannage à distance", "Imprimantes et périphériques"] },
+      aVenir: ["Microsoft 365 et messagerie, en profondeur", "Imprimantes et périphériques"] },
     { id: "reseau", stage: true, titre: "Réseau",
       desc: "Adresses, DNS, DHCP, ports : comprendre le chemin d'une requête pour trouver où elle s'arrête.",
       liens: [{ href: "stage/j5.html", label: "Prépa, jour 5 : le réseau côté utilisateur" }],
@@ -82,6 +82,13 @@ window.IT_MODULES = {
       tags: ["matériel", "hardware", "pc", "portable", "ram", "ddr5", "ssd", "nvme", "m.2", "smart", "alimentation", "batterie", "usb-c", "post", "bips", "garantie"],
       prepa: [{ href: "stage/j9.html", label: "Jour 9 : matériel et PC" }],
       liens: [{ href: "atelier/index.html", label: "Atelier : montages" }, { href: "atelier/pannes.html", label: "Atelier : pannes matérielles" }],
+      suite: ["support-windows"] },
+    { id: "depannage-distance", titre: "Dépannage à distance : outils, sécurité et déroulé d'une session",
+      domaine: "support", niveau: 1, duree: 180, prerequis: [],
+      resume: "Choisir entre Assistance rapide, Bureau à distance et l'outil de l'organisation, conduire une session avec l'accord de l'utilisateur, agir avec PowerShell à distance, reconnaître le faux support.",
+      tags: ["à distance", "assistance rapide", "quick assist", "bureau à distance", "rdp", "mstsc", "3389", "powershell", "remote help", "consentement", "ingénierie sociale"],
+      prepa: [{ href: "stage/j8.html", label: "Jour 8 : dépannage à distance et méthode" }],
+      liens: [],
       suite: ["support-windows"] }
   ]
 };
