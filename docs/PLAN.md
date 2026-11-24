@@ -186,8 +186,7 @@ Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance 
 
 Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
 
-**File d'attente (mise à jour le 25/11 au matin, après la nuit en autonomie de Claude Code)** — faits : lots 16, 19 et 22 ; pages et données des modules 18, 20, 23 et 24. Plus rien n'avance sans relecture. À faire, dans l'ordre :
-0. ChatGPT (Sol, effort `medium`) : **lot 26**, le calendrier (urgent : la prépa commence aujourd'hui).
+**File d'attente (mise à jour le 25/11 au matin, après la nuit en autonomie de Claude Code)** — faits : lots 16, 19, 22 et 26 ; pages et données des modules 18, 20, 23 et 24. Plus rien n'avance sans relecture. À faire, dans l'ordre :
 1. ChatGPT (Astra, effort `high`, recherche web) : **17.1** relire J6 à J10 et la boîte à outils.
 2. ChatGPT : relire les quatre nouveaux modules — **18.3** `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, **24.3** `modules/sous-reseaux.html` — et les 12 appels de `assets/tickets-data.js` (lot 22) ; un rapport par page dans `docs/relectures/`.
 3. Claude Code : corriger d'après ces rapports, puis contrôles et coche (17.2–17.3, 18.4, 20.4, 23.4, 24.4).
@@ -205,7 +204,10 @@ Décision de Marvin (25/11) : la prépa commence **mercredi 25/11 avec le jour 1
   Fait : en-têtes du J1 au J10 alignés, consignes express pour J1 et J2 avec parcours complet au minuteur, labo raccourci au J9, programme du J10 en 45 min et rythme de la prépa affiché dans `stage/index.html`. Index de recherche régénéré.
 - [x] 26.4 `docs/REFONTE.md` § 2.1 : remplacer « du 23/11 au 4/12 » et l'exemple « Lundi 23 novembre » par le nouveau calendrier (décision de Marvin, pas un désaccord).
   Fait : section 2.1 de `docs/REFONTE.md` alignée sur les huit séances, les dates doubles et les 13 cases. La note de rythme renvoie au calendrier actuel.
-- [ ] 26.5 `npm run index`, `npm run controles` (le parcours « progression et tampon » ou d'autres tests peuvent dépendre des dates : les adapter sans les affaiblir), coche, fusion dans `main`.
+- [x] 26.5 `npm run index`, `npm run controles` (le parcours « progression et tampon » ou d'autres tests peuvent dépendre des dates : les adapter sans les affaiblir), coche, fusion dans `main`.
+  Fait : index régénéré et `npm run controles` réussi sur 35 pages : 0 problème, 0 avertissement et 0 échec en serveur et en `file://`. Le parcours calendrier vérifie les quatre dates et la progression sur les séances doubles.
+
+Reste : rien pour ce lot.
 
 ## Lot 16 — Relecture des faits : prépa J1 à J5
 - 16.1 Relecture initiale des jours J1 à J5 retirée de `main` à la demande de Marvin. Les [rapports d'origine](https://github.com/Marvin32165/centre-apprentissage-it/tree/c4e4b22c1a3eb0301ef27bb7fb6812cffe0e2b04/docs/relectures) restent accessibles dans l'historique. Les cinq fichiers de `docs/relectures/` gardent le suivi des corrections de 16.2.
