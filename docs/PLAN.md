@@ -192,7 +192,7 @@ Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul 
 - [x] 16.1 Relire `stage/j1.html` à `j5.html` avec leurs quiz (`assets/prepa.js`), selon `docs/procedures/relecture-sources.md` ; un rapport par page dans `docs/relectures/`.
   Fait : cinq rapports dans `docs/relectures/stage-j1.md` à `stage-j5.md`, avec les 40 questions de quiz vérifiées. Les constats à traiter restent en 16.2.
 - [ ] 16.2 Corriger chaque « faux » et traiter chaque « non vérifié » (autre conversation, de préférence l'autre outil) ; noter dans chaque rapport ce qui a été corrigé.
-  Fait partiellement (ordre d'étude : J3, J4, J5, puis J1, J2) : J3 corrigé (suivi en fin de `docs/relectures/stage-j3.md`).
+  Fait partiellement (ordre d'étude : J3, J4, J5, puis J1, J2) : J3 et J4 corrigés (suivi en fin de chaque rapport).
 - [ ] 16.3 `npm run controles`, coche, fusion.
 
 ## Lot 17 — Relecture des faits : prépa J6 à J10 et boîte à outils
