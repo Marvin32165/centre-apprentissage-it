@@ -49,10 +49,10 @@ window.IT_QUIZZES["stage-j2"] = { titre: "Quiz du jour 2", questions: [
     explication: "Un code de vérification prouve que c'est toi : il ne se communique à personne. L'appel est à signaler." },
   { q: "Face à un utilisateur en colère, le meilleur réflexe est…",
     options: ["De lui répondre sur le même ton", "De le laisser s'exprimer, reconnaître l'émotion, puis recentrer par une question précise", "De lui dire que c'est sa faute", "De transférer l'appel immédiatement"], reponse: 1,
-    explication: "Le calme et l'écoute désamorcent la plupart des situations. On recentre ensuite sur une action concrète." },
+    explication: "Le calme et l'écoute aident à faire baisser la tension. On recentre ensuite sur une action concrète." },
   { q: "Que contient une bonne clôture d'appel ?",
     options: ["Un « au revoir » rapide", "Un récapitulatif, le numéro de ticket, un délai honnête et un « autre chose ? »", "Une promesse de résolution immédiate", "Rien, le ticket suffit"], reponse: 1,
-    explication: "La clôture rassure et évite les rappels. On documente ensuite le ticket tout de suite." }
+    explication: "La clôture rassure et dit clairement la suite. On documente ensuite le ticket tout de suite." }
 ] };
 
 window.IT_QUIZZES["stage-j3"] = { titre: "Quiz du jour 3", questions: [
