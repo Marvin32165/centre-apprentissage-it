@@ -28,3 +28,13 @@ Le plan horaire annonce environ 4 h 30. Les durées affichées totalisent 4 h 10
 | Couverture des sources. Seul le §2 comporte un encadré. Les §1, §3, §4 et §5 ne renvoient pas aux pages qui étayent leurs affirmations. | faux | [Page relue](https://github.com/Marvin32165/centre-apprentissage-it/blob/bb590855b21afcd0d16b47ad13868fd56a91a324/stage/j3.html) | Documenter notamment les permissions des collaborateurs et celles de Confluence. Plan, labo, cas, quiz et mémo sont également sans encadré propre. |
 
 **Bilan** — 10 correctes, 3 faux, 4 non vérifiés. Une ligne correspond à un constat, y compris lorsqu’il réapparaît dans le mémo ou le quiz.
+
+## Suivi des corrections (Claude Code, 24/11/2026)
+- §1, cas le plus fréquent : **Corrigé** — présenté comme probable, répartition des canaux « à vérifier sur place », encadré source ajouté.
+- §2, Assignee : **Corrigé** — une personne ; l'équipe se lit dans la file ou un champ d'équipe.
+- §2, « tout est tracé » : **Corrigé** — liste des éléments réellement visibles ; liens ajoutés à l'encadré.
+- §4 et Q1, note interne : **Corrigé** — le demandeur ne la voit pas ; agents et collaborateurs autorisés la voient ; question, réponse et explication du quiz revues.
+- §5 et mémo, cause probable : **Corrigé** — « cause si elle est établie » ; encadré KCS ajouté.
+- Labo, réécriture : **Corrigé** — les précisions de la correction sont annoncées comme réponses fictives obtenues en rappelant.
+- Couverture des sources : **Corrigé** — encadrés aux §1, §3, §4 et §5 (en plus du §2). **Justifié** : plan, labo, cas, quiz et mémo reprennent les sections sourcées et n'ont pas d'encadré propre.
+- Durée annoncée : **Corrigé** — plan ramené à 3 h 30, somme des blocs égale à l'annonce.
