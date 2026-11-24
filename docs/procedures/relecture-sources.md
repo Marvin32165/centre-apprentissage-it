@@ -14,7 +14,7 @@ Prompt type : « Lis `docs/procedures/relecture-sources.md` et relis `modules/<i
    - aucune donnée privée (nom de personne, IP publique réelle, mot de passe).
 
 ## Ce que tu rends
-Un tableau, sans rien modifier dans le dépôt :
+Un tableau dans `docs/relectures/<page>.md` (par exemple `docs/relectures/stage-j1.md`), en tête : page relue, date, outil utilisé. C'est le seul fichier que tu écris ; tu ne modifies pas la page. Si tu ne peux pas écrire dans le dépôt, donne le tableau dans ta réponse pour que Marvin le colle.
 
 | Affirmation (section) | Verdict | URL de la source ouverte | Correction nécessaire |
 |---|---|---|---|
@@ -23,4 +23,4 @@ Un tableau, sans rien modifier dans le dépôt :
 - Ne liste pas les affirmations triviales ; ne donne pas d'avis de style.
 - Termine par le nombre de « faux » et de « non vérifié ». Si tout est correct : « Rien à corriger » et le nombre d'affirmations vérifiées.
 
-La correction revient à l'agent qui a écrit la page.
+La correction se fait dans une autre conversation : l'agent qui corrige lit le rapport, corrige, puis ajoute sous chaque ligne « Corrigé : … » ou « Justifié : … ».
