@@ -186,6 +186,12 @@ Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance 
 
 Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
 
+**File d'attente (mise à jour le 24/11, fin de session Claude Code)** — faits : lots 16 et 19, pages et données des modules 18 et 20. À faire, dans l'ordre :
+1. ChatGPT (Astra, effort `high`, recherche web) : **17.1** relire J6 à J10 et la boîte à outils.
+2. ChatGPT : **18.3** relire `modules/depannage-distance.html` ; puis **20.3** relire `modules/m365-messagerie.html` (rapports dans `docs/relectures/`).
+3. Claude Code : corriger d'après ces rapports (17.2, 18.3, 20.3), puis 17.3, 18.4, 20.4.
+4. Ensuite : lot 21 (ChatGPT relit les 5 premiers modules), lot 22 (entraînement aux tickets).
+
 **Changement de rythme (24/11)** : à partir du mercredi 25/11, séances de 3 à 4 h par jour en semaine seulement. Les dates restent (J3 le 25/11 … J10 le 4/12) ; chaque plan horaire est ramené à ≈ 3 h 30 (blocs raccourcis, même contenu ; un labo qui déborde se termine au début de la séance suivante).
 
 ## Lot 16 — Relecture des faits : prépa J1 à J5
