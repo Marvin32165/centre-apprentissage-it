@@ -5,6 +5,8 @@ Date : 24 novembre 2026. Outil : ChatGPT / Codex, consultation des sources prima
 
 Les exercices et le mémo reprennent les cinq sections. L’encadré sécurité nomme le CCB, Safeonweb et l’ENISA sans URL précise. Les deux pages Safeonweb recherchées ont refusé l’ouverture. Le document du CCB, Europol, la FTC et le NIST fournissent les preuves ci-dessous. Le guide du médiateur britannique documente la conduite d’un entretien avec un usager. Il ne décrit pas le fonctionnement du service desk de l’UMONS.
 
+Le plan horaire annonce environ 4 h 30. Les durées affichées totalisent 4 h 10, soit 20 minutes de moins. Aucune pause n’est explicitée.
+
 | Affirmation (section) | Verdict | URL de la source ouverte | Correction nécessaire |
 |---|---|---|---|
 | §1–2, labo, Q2–Q3. Laisser décrire le problème, clarifier par des questions, reprendre les mots de l’appelant et obtenir sa confirmation. | correct | [Médiateur britannique, guide d’entretien](https://www.ombudsman.org.uk/sites/default/files/3_Clarifying_the_complaint_and_explaining_the_process_02_0.pdf) · [KCS, recherche](https://library.serviceinnovation.org/KCS/KCS_v6/KCS_v6_Practices_Guide/030/030/030/010) · [College of Policing, types de questions](https://assets.college.police.uk/s3fs-public/2022-03/FOIA-2022-001.pdf?v=1648131190) | Aucune pour cette méthode. L’exemple de Q2 invite bien à décrire un symptôme. |

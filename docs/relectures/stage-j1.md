@@ -5,6 +5,8 @@ Date : 24 novembre 2026. Outil : ChatGPT / Codex, consultation des sources prima
 
 Les encadrés renvoient à des pratiques ITIL et à Atlassian sans donner d’URL de chapitre. Les priorités du labo sont appréciées au regard de la matrice d’exercice. Les délais, les canaux et les équipes réels restent des questions pour le tuteur. Aucun identifiant personnel, secret ou adresse IP publique relevé dans la page et son quiz.
 
+Le plan horaire annonce environ 4 h 15. Les durées affichées totalisent 3 h 55, soit 20 minutes de moins. Aucune pause n’est explicitée.
+
 | Affirmation (section) | Verdict | URL de la source ouverte | Correction nécessaire |
 |---|---|---|---|
 | §1. Le service desk reçoit les incidents et demandes, tient le contact avec les utilisateurs et oriente le travail. | correct | [PeopleCert, Service desk](https://www.peoplecert.org/browse-certifications/it-governance-and-service-management/itil-1/itil4-practices-service-desk-3706/) · [Atlassian, cycle de l’incident](https://support.atlassian.com/jira-service-management-cloud/docs/the-incident-management-workflow-for-service-projects/) | Aucune pour le rôle. Les canaux et l’obligation de créer un ticket pour chaque échange relèvent de l’organisation. |
