@@ -9,7 +9,7 @@ const plan = (() => { try { return fs.readFileSync(path.join(racine, "docs/PLAN.
 const regles = [
   [/^assets\/atelier(-pannes)?-regles\.js$/, () => !plan.includes(`Moteur autorisé : ${fichier}`),
     "moteur de l'atelier : ne change pas sans demande explicite de Marvin (ligne « Moteur autorisé : " + fichier + " » dans docs/PLAN.md). Sinon, écris « Question pour Marvin : … » sous le lot."],
-  [/^assets\/recherche\.js$/, () => true, "fichier généré : lance npm run index au lieu de le modifier."],
+  [/^assets\/(recherche|revision)\.js$/, () => true, "fichier généré : lance npm run index au lieu de le modifier."],
   [/^(node_modules|\.git)\//, () => true, "dossier technique, jamais modifié à la main."],
   [/^\.\.\//, () => true, "hors du dépôt : ce dépôt est le seul à modifier (jamais centre-de-notes)."]
 ];

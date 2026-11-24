@@ -49,13 +49,13 @@
     } else if (today < debutStage) {
       kicker = jourLong(today) + " · Prépa terminée";
       h1 = "Aujourd'hui, on <em>révise</em>.";
-      chapeau = "Les dix jours sont derrière toi. Relis les fiches mémo, refais les appels simulés du jour 10 et garde la boîte à outils sous la main.";
-      actions = [["Réviser", "stage/j10.html", true], ["Boîte à outils", "stage/outils.html"]];
+      chapeau = "Les dix jours sont derrière toi. Relis les fiches mémo de la révision express, refais les appels simulés du jour 10 et garde la boîte à outils sous la main.";
+      actions = [["Révision express", "stage/revision.html", true], ["Jour 10 : appels simulés", "stage/j10.html"]];
     } else {
       kicker = jourLong(today) + (today <= finStage ? " · Stage en cours" : " · Stage terminé");
       h1 = today <= finStage ? "Ton <em>stage</em> a commencé." : "Ton <em>stage</em> est terminé.";
       chapeau = "Service desk à la DSI de l'UMONS, " + S.periodes + ".";
-      actions = [["Boîte à outils", "stage/outils.html", true], ["Revoir la prépa", "stage/index.html"]];
+      actions = [["Boîte à outils", "stage/outils.html", true], ["Révision express", "stage/revision.html"]];
     }
     m.textContent = "";
     var k = el("p", { "class": "kicker point" }, kicker);
