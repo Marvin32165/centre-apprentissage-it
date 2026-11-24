@@ -186,11 +186,11 @@ Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance 
 
 Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
 
-**File d'attente (mise à jour le 24/11, fin de session Claude Code)** — faits : lots 16 et 19, pages et données des modules 18 et 20. À faire, dans l'ordre :
+**File d'attente (mise à jour le 25/11 au matin, après la nuit en autonomie de Claude Code)** — faits : lots 16, 19 et 22 ; pages et données des modules 18, 20, 23 et 24. Plus rien n'avance sans relecture. À faire, dans l'ordre :
 1. ChatGPT (Astra, effort `high`, recherche web) : **17.1** relire J6 à J10 et la boîte à outils.
-2. ChatGPT : **18.3** relire `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, **24.3** `modules/sous-reseaux.html`, et les 12 appels de `assets/tickets-data.js` (lot 22) ; rapports dans `docs/relectures/`.
-3. Claude Code : corriger d'après ces rapports (17.2, 18.3, 20.3), puis 17.3, 18.4, 20.4.
-4. Ensuite : lot 21 (ChatGPT relit les 5 premiers modules), lot 22 (entraînement aux tickets).
+2. ChatGPT : relire les quatre nouveaux modules — **18.3** `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, **24.3** `modules/sous-reseaux.html` — et les 12 appels de `assets/tickets-data.js` (lot 22) ; un rapport par page dans `docs/relectures/`.
+3. Claude Code : corriger d'après ces rapports, puis contrôles et coche (17.2–17.3, 18.4, 20.4, 23.4, 24.4).
+4. Lot 21 (ChatGPT relit les 5 premiers modules), puis lot 25 après le 18/12.
 
 **Changement de rythme (24/11)** : à partir du mercredi 25/11, séances de 3 à 4 h par jour en semaine seulement. Les dates restent (J3 le 25/11 … J10 le 4/12) ; chaque plan horaire est ramené à ≈ 3 h 30 (blocs raccourcis, même contenu ; un labo qui déborde se termine au début de la séance suivante).
 
