@@ -230,6 +230,7 @@ Suivre `docs/procedures/nouveau-module.md` (sous-étapes 18.1 à 18.4). Domaine 
 - [x] 18.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-depannage-distance`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Support, niveau 1, ≈ 3 h, approfondit J8) et retrait de `aVenir`, quiz de 6 questions, unité `module-depannage-distance`, index régénéré (250 entrées) ; page vérifiée en `file://` à 390 px.
 - [ ] 18.3 Relecture croisée par ChatGPT : `docs/procedures/relecture-sources.md` (rapport `docs/relectures/module-depannage-distance.md`), puis `test-chef.md` ; corrections dans une autre conversation.
+  Fait : Relecture des sources et du quiz dans `docs/relectures/module-depannage-distance.md` (15 corrects, 1 faux et 3 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 18.3.
 - [ ] 18.4 `npm run controles`, coche, fusion.
 
 ## Lot 19 — Révision express et progression portable
