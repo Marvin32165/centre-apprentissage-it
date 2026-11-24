@@ -230,6 +230,7 @@ Suivre `docs/procedures/nouveau-module.md` (sous-étapes 18.1 à 18.4). Domaine 
 - [x] 18.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-depannage-distance`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Support, niveau 1, ≈ 3 h, approfondit J8) et retrait de `aVenir`, quiz de 6 questions, unité `module-depannage-distance`, index régénéré (250 entrées) ; page vérifiée en `file://` à 390 px.
 - [ ] 18.3 Relecture croisée par ChatGPT : `docs/procedures/relecture-sources.md` (rapport `docs/relectures/module-depannage-distance.md`), puis `test-chef.md` ; corrections dans une autre conversation.
+  Fait : Relecture des sources et du quiz dans `docs/relectures/module-depannage-distance.md` (15 corrects, 1 faux et 3 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 18.3.
 - [ ] 18.4 `npm run controles`, coche, fusion.
 
 ## Lot 19 — Révision express et progression portable
@@ -250,6 +251,7 @@ Reste : rien pour ce lot.
 - [x] 20.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-m365-messagerie`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Support, niveau 2, ≈ 3 h, approfondit J7) et retrait de `aVenir`, quiz de 6 questions, unité `module-m365-messagerie`, index régénéré (262 entrées) ; page vérifiée en `file://` à 390 px.
 - [ ] 20.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-m365-messagerie.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
+  Fait : Relecture des sources et du quiz dans `docs/relectures/module-m365-messagerie.md` (13 corrects, 5 faux et 2 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 20.3.
 - [ ] 20.4 `npm run controles`, coche, fusion.
 
 ## Lot 22 — Entraînement aux tickets
@@ -259,7 +261,7 @@ Justifié : fait avant le lot 21 (relecture réservée à ChatGPT), en autonomie
 - [x] 22.2 `npm run controles` (nouveau parcours « entraînement aux tickets »), coche, fusion.
   Fait : parcours ajouté (12 tickets, refus sans réponse, priorité P4 calculée, résolution fermée par défaut, résultat mémorisé) ; contrôles sans échec ; vérifié à 390 px.
 
-Reste : relecture des 12 appels par ChatGPT (cohérence avec le jour 1) à ajouter au lot 21.
+Fait : relecture des douze appels et comparaison à la matrice J1 dans `docs/relectures/stage-tickets.md` (13 corrects, 2 faux et 2 non vérifiés). Les constats sont à traiter lors d'une passe de correction distincte.
 
 ## Lot 23 — Module « Imprimantes et périphériques »
 Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à faire comme pour les lots 18 et 20.
@@ -268,6 +270,7 @@ Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à fa
 - [x] 23.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-imprimantes-peripheriques`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Support, niveau 1, ≈ 2 h 30, approfondit J5), `aVenir` du domaine Support vidé, quiz de 6 questions, unité `module-imprimantes-peripheriques`, index régénéré (275 entrées) ; page vérifiée en `file://` à 390 px.
 - [ ] 23.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-imprimantes-peripheriques.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
+  Fait : Relecture des sources et du quiz dans `docs/relectures/module-imprimantes-peripheriques.md` (11 corrects, 1 faux et 2 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 23.3.
 - [ ] 23.4 `npm run controles`, coche, fusion.
 
 ## Lot 24 — Module « Sous-réseaux et plan d'adressage »
@@ -276,7 +279,8 @@ Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à fa
   Fait : 5 sections (masque et préfixe, local ou distant, calcul au 3e octet, découpage et plages spéciales, dépannage), labo « un masque qui ment » sur le réseau du J5, 5 exercices et 3 cas corrigés, fiche mémo ; faits tirés de Microsoft Learn (TCP/IP addressing and subnetting) et des RFC 1918, 3021, 3927, 4632, 6890 ; toutes les réponses calculées par script (module `ipaddress` de Python) ; aucun exemple repris de « Réseau de base ».
 - [x] 24.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-sous-reseaux`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Réseau, niveau 2, ≈ 3 h, prérequis `reseau-base`), retrait de `aVenir`, quiz de 6 questions, unité `module-sous-reseaux`, index régénéré (287 entrées) ; page vérifiée en `file://` à 390 px.
-- [ ] 24.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-sous-reseaux.md`) ; corrections dans une autre conversation.
+- [x] 24.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-sous-reseaux.md`) ; corrections dans une autre conversation.
+  Fait : Relecture des sources et du quiz dans `docs/relectures/module-sous-reseaux.md` (13 corrects, 4 faux et 1 non vérifié). Les corrections relèvent de la prochaine passe.
 - [ ] 24.4 `npm run controles`, coche, fusion.
 
 ## Lots 21 à 25
