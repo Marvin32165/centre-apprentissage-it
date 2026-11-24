@@ -22,16 +22,17 @@
 <body data-root="../" data-nav="stage">
 <main id="contenu" class="wrap page">
 <div class="prose">
-<p class="kicker">Prépa stage · Jour 9 · jeudi 3 décembre</p>
+<p class="kicker">Prépa stage · Jour 9 · vendredi 4 décembre</p>
 <h1>Matériel et <em>PC</em></h1>
 <p class="lead">Une partie du stage se passe les mains dans le matériel : réception des colis, inventaire, installation et intégration de PC, projets de salles informatiques. Aujourd'hui, tu revois les composants, le démarrage (BIOS/UEFI, Secure Boot, TPM), le chiffrement BitLocker, et la chaîne « colis → inventaire → PC prêt à l'emploi ».</p>
-<h2 id="plan">Plan de la journée <span class="duree">≈ 3 h 30</span></h2>
+<h2 id="plan">Plan de la journée <span class="duree">≈ 3 h</span></h2>
+<aside class="callout astuce"><p><strong>Séance double du vendredi 4/12.</strong> Prévois environ 3 h pour le jour 9. Dans le labo, vérifie le TPM et Secure Boot, puis avance sur BitLocker si la VM est prête. Garde la simulation de récupération et l'exercice d'inventaire pour plus tard. Enchaîne avec <a href="j10.html#plan">le jour 10</a>.</p></aside>
 <ol class="plan-horaire">
   <li><span class="h">30 min</span><span>Les composants d'un PC et leur rôle dans un diagnostic</span></li>
   <li><span class="h">30 min</span><span>BIOS/UEFI, Secure Boot, TPM, BitLocker</span></li>
   <li><span class="h">30 min</span><span>Déploiement et intégration d'un PC au domaine</span></li>
   <li><span class="h">20 min</span><span>Salles informatiques, réception des colis, inventaire</span></li>
-  <li><span class="h">1 h 05</span><span>Labo : TPM, Secure Boot et BitLocker dans Hyper-V</span></li>
+  <li><span class="h">35 min</span><span>Labo raccourci : TPM, Secure Boot et BitLocker dans Hyper-V</span></li>
   <li><span class="h">35 min</span><span>Mises en situation, quiz, fiche mémo</span></li>
 </ol>
 
@@ -107,7 +108,7 @@ Add-Computer -DomainName "lab.local" -Credential LAB\Administrateur -Restart</co
 <p>Un inventaire utile contient pour chaque appareil : numéro d'inventaire, numéro de série, modèle, date de réception, lieu, état (en stock, en service, en réparation, retiré), utilisateur ou salle, et éventuellement nom de la machine. Les écarts entre inventaire et réalité sont fréquents : tenir l'inventaire à jour à chaque mouvement évite beaucoup de temps perdu.</p>
 <aside class="callout attention"><p>Un appareil retiré ou renvoyé doit être <strong>effacé de façon sûre</strong> (disque chiffré ou effacé selon la procédure) avant de quitter l'organisation ou d'être jeté : n'improvise pas.</p></aside>
 
-<h2 id="labo">Labo : TPM, Secure Boot et BitLocker dans Hyper-V <span class="duree">1 h 05</span></h2>
+<h2 id="labo">Labo : TPM, Secure Boot et BitLocker dans Hyper-V <span class="duree">Labo complet · 1 h 05</span></h2>
 <ol>
   <li>Crée une VM de <strong>génération 2</strong> (UEFI) avec Windows 11, ou utilise ta VM. Dans ses paramètres, section « Sécurité » : active <strong>Secure Boot</strong> (modèle Windows) et <strong>le module TPM</strong>. En PowerShell sur l'hôte (VM éteinte) :</li>
 </ol>
