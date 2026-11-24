@@ -106,3 +106,24 @@ window.IT_QUIZZES["module-materiel-pc"] = { titre: "Quiz : matériel et PC", que
     options: ["La température du processeur","La capacité d'origine et la capacité actuelle à pleine charge","La vitesse du port USB-C","Le numéro de série du chargeur"], reponse: 1,
     explication: "Le rapport compare Design capacity et Full charge capacity, et montre l'historique d'autonomie." }
 ] };
+
+window.IT_QUIZZES["module-depannage-distance"] = { titre: "Quiz : dépannage à distance", questions: [
+  { q: "Dans Assistance rapide, qui génère le code de sécurité à 6 chiffres ?",
+    options: ["L'utilisateur aidé", "Le support (celui qui aide)", "Microsoft, par SMS", "Le serveur de l'organisation"], reponse: 1,
+    explication: "Le support choisit « Help someone » et obtient un code à durée limitée, qu'il donne à l'utilisateur ; celui-ci le saisit et autorise la connexion." },
+  { q: "Un utilisateur veut que tu te connectes en Bureau à distance à son PC en Windows 11 Famille. Que sais-tu ?",
+    options: ["Ça marche si le pare-feu est désactivé", "Il faut seulement connaître le nom du PC", "Une édition Famille ne peut pas recevoir de connexion Bureau à distance", "Il faut passer par le port 443"], reponse: 2,
+    explication: "Le poste hôte doit être en édition Pro ; seul le poste depuis lequel on se connecte peut être de n'importe quelle édition." },
+  { q: "Pendant une session Assistance rapide avec contrôle, de quels droits disposes-tu ?",
+    options: ["Des mêmes droits que l'utilisateur", "Des droits d'administrateur du domaine", "Des droits d'administrateur local", "D'aucun droit, tu ne fais que regarder"], reponse: 0,
+    explication: "Le support a les mêmes droits que l'utilisateur ; certaines invites UAC doivent être validées par l'utilisateur lui-même." },
+  { q: "Après une session Assistance rapide, où se trouve la trace de ce qui a été fait ?",
+    options: ["Dans un journal sur le poste de l'utilisateur", "Dans un journal sur ton poste", "Dans le ticket, que tu complètes toi-même", "Dans l'Observateur d'événements du serveur"], reponse: 2,
+    explication: "Assistance rapide ne crée aucun journal sur les postes et Microsoft ne garde que des données minimales : le ticket est la trace de la session." },
+  { q: "Test-NetConnection -Port 3389 renvoie TcpTestSucceeded : False, mais le ping du poste répond. Conclusion ?",
+    options: ["Le poste est éteint", "Le poste est joignable, mais pas le Bureau à distance (désactivé, pare-feu, stratégie)", "Le DNS est en panne", "Il faut relancer mstsc plusieurs fois"], reponse: 1,
+    explication: "Le port 3389 ne répond pas : inutile d'insister avec mstsc. On passe par l'outil prévu, sur place, ou on escalade." },
+  { q: "Quelqu'un « du support informatique » a fait saisir à une employée un code dans Assistance rapide, puis a pris le contrôle. Que fais-tu ?",
+    options: ["Rien, c'était peut-être un collègue", "Tu traites l'appel comme un incident de sécurité et tu escalades immédiatement", "Tu lui demandes son mot de passe pour vérifier le compte", "Tu réinstalles Assistance rapide"], reponse: 1,
+    explication: "C'est le scénario du faux support décrit par Microsoft en 2024 : incident de sécurité, escalade selon la procédure, ticket détaillé (heure, ce qui a été accepté)." }
+]};

@@ -205,7 +205,12 @@ Reste : rien pour ce lot ; les rapports J1 à J5 restent dans `docs/relectures/`
 
 ## Lot 18 — Module « Dépannage à distance »
 Suivre `docs/procedures/nouveau-module.md` (sous-étapes 18.1 à 18.4). Domaine Support, approfondit `stage/j8.html`, à retirer de `aVenir`. Pistes, chacune à sourcer : Assistance rapide et Bureau à distance (Microsoft Learn), consentement et vérification d'identité avant toute prise en main, journalisation dans le ticket, méthode de diagnostic à distance, quand passer sur site. Outil réellement utilisé à l'UMONS : « à vérifier sur place ».
-- [ ] 18.1 Page · [ ] 18.2 Données · [ ] 18.3 Relecture croisée · [ ] 18.4 Contrôles et fusion
+- [x] 18.1 Page `modules/depannage-distance.html` (rédigée par Claude Code, sources Microsoft ouvertes le 24/11/2026).
+  Fait : 6 sections (choisir l'outil, Assistance rapide pas à pas, Bureau à distance et `mstsc`, PowerShell à distance, faux support, session de bout en bout), labo PC + VM, 4 cas, fiche mémo, 6 questions pour le tuteur ; chaque fait vient d'une page Microsoft ouverte le 24/11/2026 (Learn, Support, blog Security), citée dans l'encadré de sa section ; libellés d'Assistance rapide en anglais (ceux de la documentation).
+- [x] 18.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-depannage-distance`, unité dans `data.js`, index.
+  Fait : entrée dans `assets/modules.js` (Support, niveau 1, ≈ 3 h, approfondit J8) et retrait de `aVenir`, quiz de 6 questions, unité `module-depannage-distance`, index régénéré (250 entrées) ; page vérifiée en `file://` à 390 px.
+- [ ] 18.3 Relecture croisée par ChatGPT : `docs/procedures/relecture-sources.md` (rapport `docs/relectures/module-depannage-distance.md`), puis `test-chef.md` ; corrections dans une autre conversation.
+- [ ] 18.4 `npm run controles`, coche, fusion.
 
 ## Lot 19 — Révision express et progression portable
 Justifié : fait avant le lot 17 (relecture réservée à ChatGPT) et le lot 18, parce qu'il ne demande pas de relecture croisée et sert dès maintenant.
