@@ -13,7 +13,7 @@ window.IT_MODULES = {
     { id: "support", stage: true, titre: "Support et service desk",
       desc: "Prendre un appel, diagnostiquer un poste, réparer ou escalader proprement : le cœur du stage.",
       liens: [{ href: "stage/index.html", label: "Prépa stage (10 jours)" }, { href: "stage/outils.html", label: "Boîte à outils" }],
-      aVenir: ["Microsoft 365 et messagerie, en profondeur", "Imprimantes et périphériques"] },
+      aVenir: ["Imprimantes et périphériques"] },
     { id: "reseau", stage: true, titre: "Réseau",
       desc: "Adresses, DNS, DHCP, ports : comprendre le chemin d'une requête pour trouver où elle s'arrête.",
       liens: [{ href: "stage/j5.html", label: "Prépa, jour 5 : le réseau côté utilisateur" }],
@@ -89,6 +89,13 @@ window.IT_MODULES = {
       tags: ["à distance", "assistance rapide", "quick assist", "bureau à distance", "rdp", "mstsc", "3389", "powershell", "remote help", "consentement", "ingénierie sociale"],
       prepa: [{ href: "stage/j8.html", label: "Jour 8 : dépannage à distance et méthode" }],
       liens: [],
-      suite: ["support-windows"] }
+      suite: ["support-windows"] },
+    { id: "m365-messagerie", titre: "Microsoft 365 et messagerie : Outlook, Teams, OneDrive et MFA en profondeur",
+      domaine: "support", niveau: 2, duree: 180, prerequis: [],
+      resume: "Outlook classique ou nouveau, commutateurs de dépannage, droits d'une boîte partagée, cache de Teams, OneDrive (icônes, corbeille, réinitialisation), correspondance de nombres et méthodes MFA.",
+      tags: ["microsoft 365", "outlook", "nouvel outlook", "olk", "boîte partagée", "send as", "teams", "cache", "onedrive", "mfa", "authenticator", "fido2"],
+      prepa: [{ href: "stage/j7.html", label: "Jour 7 : messagerie et Microsoft 365" }],
+      liens: [],
+      suite: ["depannage-distance"] }
   ]
 };

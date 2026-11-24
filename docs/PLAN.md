@@ -225,7 +225,12 @@ Reste : rien pour ce lot.
 
 ## Lot 20 — Module « Microsoft 365 et messagerie »
 `docs/procedures/nouveau-module.md`. Approfondit `stage/j7.html` (Outlook, profils, OST, boîtes partagées, Teams, OneDrive, MFA), sources Microsoft Learn ; la configuration du tenant UMONS est « à vérifier sur place ».
-- [ ] 20.1 Page · [ ] 20.2 Données · [ ] 20.3 Relecture croisée · [ ] 20.4 Contrôles et fusion
+- [x] 20.1 Page `modules/m365-messagerie.html` (rédigée par Claude Code, sources Microsoft ouvertes le 24/11/2026).
+  Fait : 6 sections (deux Outlook, commutateurs de dépannage, droits d'une boîte partagée, cache de Teams, OneDrive, MFA), labo sur son propre PC, 4 cas, fiche mémo, 5 questions pour le tuteur ; faits tirés de 9 pages Microsoft ouvertes le 24/11/2026, citées section par section ; licence et taille des boîtes partagées non trouvées dans la source, donc non mentionnées.
+- [x] 20.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-m365-messagerie`, unité dans `data.js`, index.
+  Fait : entrée dans `assets/modules.js` (Support, niveau 2, ≈ 3 h, approfondit J7) et retrait de `aVenir`, quiz de 6 questions, unité `module-m365-messagerie`, index régénéré (262 entrées) ; page vérifiée en `file://` à 390 px.
+- [ ] 20.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-m365-messagerie.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
+- [ ] 20.4 `npm run controles`, coche, fusion.
 
 ## Lots 21 à 25
 Ils seront détaillés en sous-étapes au début de chaque lot, à partir du tableau ci-dessus. Pour le 22, utiliser les composants tickets existants (`CAS-0N` de `assets/jour.js`) sans toucher aux moteurs de l'atelier. Pour le 25, n'écrire que ce qui est public : aucune procédure interne, aucune IP, aucun nom.

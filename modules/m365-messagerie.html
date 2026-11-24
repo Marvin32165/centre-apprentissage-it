@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Microsoft 365 et messagerie — Modules · Apprentissage IT</title>
+<meta name="description" content="Microsoft 365 et messagerie : Outlook classique et nouveau, commutateurs de démarrage, boîtes partagées, cache de Teams, OneDrive et authentification multifacteur.">
+<meta property="og:title" content="Microsoft 365 et messagerie — Modules · Apprentissage IT">
+<meta property="og:description" content="Microsoft 365 et messagerie : Outlook classique et nouveau, commutateurs de démarrage, boîtes partagées, cache de Teams, OneDrive et authentification multifacteur.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Support et service desk</p>
+<h1>Microsoft 365 et <em>messagerie</em></h1>
+<p class="lead">Outlook, Teams, OneDrive et la double authentification reviennent sans cesse au service desk. Le jour 7 t'a donné les réflexes ; ce module va plus loin : les deux Outlook, les démarrages de dépannage, les droits d'une boîte partagée, le cache de Teams, la réinitialisation de OneDrive et ce qui rend la MFA plus ou moins sûre.</p>
+<div data-module-meta="m365-messagerie"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>dire si l'utilisateur a l'Outlook classique ou le nouvel Outlook, et ce que ça change ;</li>
+  <li>démarrer Outlook en mode de dépannage avec le bon commutateur ;</li>
+  <li>expliquer pourquoi quelqu'un voit une boîte partagée sans pouvoir envoyer depuis elle ;</li>
+  <li>savoir quand vider le cache de Teams, et surtout quand ne pas le faire ;</li>
+  <li>lire les icônes de OneDrive, libérer de l'espace sans rien supprimer, et réinitialiser OneDrive ;</li>
+  <li>expliquer la correspondance de nombres et les méthodes MFA résistantes à l'hameçonnage.</li>
+</ul>
+<aside class="callout umons"><p>Les services Microsoft 365 réellement utilisés à l'UMONS, la version d'Outlook déployée, les méthodes MFA autorisées et ce que le service desk peut faire lui-même (droits sur les boîtes partagées, réinitialisation de la MFA) : à demander à ton tuteur.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="deux-outlook">1. Deux Outlook pour Windows</h2>
+<p>Il existe aujourd'hui l'<strong>Outlook classique</strong> (<code>outlook.exe</code>) et le <strong>nouvel Outlook</strong> (<code>olk.exe</code>), au design simplifié. Première question au téléphone : « Avez-vous un bouton <em>Nouvel Outlook</em> en haut à droite, et est-il activé ? »</p>
+<ul>
+  <li><strong>Basculer</strong> : dans l'Outlook classique, activer le bouton <em>Try the new Outlook</em> en haut à droite ; pour revenir, le désactiver dans le nouvel Outlook, qui rouvre alors la version classique. Au premier passage, le nouvel Outlook propose d'importer les paramètres.</li>
+  <li><strong>Fichiers PST</strong> : le nouvel Outlook peut en ouvrir, mais il faut que l'Outlook classique soit aussi installé, dans la même architecture (32 ou 64 bits).</li>
+  <li><strong>Dossiers publics</strong> : leur prise en charge est limitée dans le nouvel Outlook ; quelqu'un qui en dépend reste sur le classique.</li>
+  <li>Un compte POP ou IMAP stocke tout dans un fichier PST, par défaut dans <code>Documents\Outlook Files</code> (Outlook 2016 et plus récents).</li>
+</ul>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/office/getting-started-with-the-new-outlook-for-windows-656bb8d9-5a60-49b2-a98b-ba7822bc7627">Getting started with the new Outlook for Windows</a> ; <a href="https://support.microsoft.com/en-us/office/introduction-to-outlook-data-files-pst-and-ost-222eaf92-a995-45d9-bde2-f331f60e2790">Open and find items in an Outlook Data File (.pst)</a>.</p></aside>
+
+<h2 id="commutateurs">2. Démarrer Outlook pour dépanner</h2>
+<p>On lance Outlook avec un <strong>commutateur</strong> depuis <kbd>Windows</kbd> + <kbd>R</kbd>. Un seul à la fois : Microsoft ne prend pas en charge plusieurs commutateurs ensemble.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Outlook classique</th><th>Effet</th></tr></thead>
+<tbody>
+<tr><td><code>outlook.exe /safe</code></td><td>Mode sans échec : sans volet de lecture ni personnalisations, compléments (add-ins COM) désactivés. Si Outlook marche ainsi, un complément est suspect.</td></tr>
+<tr><td><code>outlook.exe /safe:3</code></td><td>Désactive seulement les compléments COM.</td></tr>
+<tr><td><code>outlook.exe /resetnavpane</code></td><td>Vide et régénère le volet des dossiers du profil courant.</td></tr>
+<tr><td><code>outlook.exe /resetfolders</code></td><td>Restaure les dossiers manquants à leur emplacement par défaut.</td></tr>
+<tr><td><code>outlook.exe /cleanviews</code></td><td>Remet les vues par défaut : les vues personnalisées sont <strong>perdues</strong> (préviens l'utilisateur).</td></tr>
+<tr><td><code>outlook.exe /profiles</code></td><td>Affiche le choix du profil au démarrage.</td></tr>
+<tr><td><code>outlook.exe /profile "Nom du profil"</code></td><td>Ouvre un profil précis (guillemets si le nom contient un espace).</td></tr>
+</tbody></table></div>
+<p>Le nouvel Outlook a ses propres options, avec deux tirets : <code>olk.exe --safe</code> (démarrage réduit, sans PST, S/MIME, mode hors connexion ni compléments web), <code>olk.exe --profile nom</code>, et <code>olk.exe --reset</code>, qui <strong>supprime tous les fichiers locaux</strong> et remet l'application comme au premier lancement.</p>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/office/command-line-switches-for-microsoft-office-products-079164cd-4ef5-4178-b235-441737deb3a6">Command-line switches for Microsoft Office products</a> (section Outlook et nouvel Outlook).</p></aside>
+
+<h2 id="boite-partagee">3. Boîte partagée : voir n'est pas envoyer</h2>
+<p>Une boîte partagée permet à un groupe de suivre et d'envoyer des courriels depuis une adresse commune (secrétariat, helpdesk) ; les réponses semblent venir de la boîte, pas de la personne. Trois droits distincts :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Droit</th><th>Ce qu'il permet</th></tr></thead>
+<tbody>
+<tr><td><strong>Accès total</strong> (<em>Full Access</em>)</td><td>Ouvrir la boîte, lire, créer et modifier des éléments. <strong>Pas</strong> envoyer à lui seul.</td></tr>
+<tr><td><strong>Envoyer en tant que</strong> (<em>Send As</em>)</td><td>Envoyer comme si le message venait de la boîte.</td></tr>
+<tr><td><strong>Envoyer de la part de</strong> (<em>Send on Behalf</em>)</td><td>Envoyer « de la part de » la boîte (le nom de la personne apparaît). Se règle en PowerShell (<code>Set-Mailbox -GrantSendOnBehalfTo</code>), pas dans le centre d'administration.</td></tr>
+</tbody></table></div>
+<p>Pour travailler normalement dans une boîte partagée, il faut <strong>Accès total et Envoyer en tant que</strong>. Quelqu'un qui « voit la boîte mais ne peut pas répondre » a souvent le premier sans le second : tu recueilles l'adresse de la boîte, le message d'erreur, et tu transmets à l'équipe qui gère les droits, avec la validation prévue par la procédure.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/exchange/collaboration-exo/shared-mailboxes">Shared mailboxes in Exchange Online</a>.</p></aside>
+
+<h2 id="teams">4. Teams : le cache, avec prudence</h2>
+<aside class="callout attention"><p>Microsoft déconseille de vider le cache pour des <strong>messages manquants</strong>, un historique qui ne se charge pas, un canal absent ou des compteurs de notifications faux : le cache contient les <strong>journaux de diagnostic</strong> dont l'équipe aura besoin. Dans ces cas, on escalade sans rien effacer.</p></aside>
+<p>Pour d'autres soucis du client (affichage, connexion du client), le nouveau Teams sous Windows se réinitialise de deux façons :</p>
+<ol>
+  <li><strong>Paramètres → Applications → Applications installées → Microsoft Teams → Options avancées → Réinitialiser</strong> : les données de l'application sont supprimées, personnalisations comprises.</li>
+  <li>Ou, Teams fermé : <kbd>Windows</kbd> + <kbd>R</kbd>, <code>%userprofile%\appdata\local\Packages\MSTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams</code>, supprimer tout le contenu, relancer Teams (le premier démarrage peut être plus long).</li>
+</ol>
+<p>Pour l'ancien client Teams (« classique ») : <code>%appdata%\Microsoft\Teams</code>, même principe.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/troubleshoot/microsoftteams/teams-administration/clear-teams-cache">Clear the Teams client cache</a>.</p></aside>
+
+<h2 id="onedrive">5. OneDrive : place disque et réinitialisation</h2>
+<h3>Les icônes des fichiers à la demande</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Icône</th><th>Signification</th></tr></thead>
+<tbody>
+<tr><td>Nuage bleu</td><td>En ligne seulement : n'occupe pas d'espace, ne s'ouvre pas hors connexion.</td></tr>
+<tr><td>Coche verte</td><td>Disponible sur l'appareil (téléchargé à l'ouverture), ouvrable hors connexion.</td></tr>
+<tr><td>Cercle vert plein, coche blanche</td><td><em>Toujours conserver sur cet appareil</em> : occupe de l'espace, toujours disponible.</td></tr>
+</tbody></table></div>
+<ul>
+  <li><strong>Libérer de l'espace</strong> (clic droit) repasse un fichier en ligne seulement : il reste dans OneDrive. C'est la bonne réponse à « mon disque est plein ».</li>
+  <li><strong>Supprimer</strong> un fichier, même en ligne seulement, le supprime de OneDrive <strong>partout</strong>. Il reste récupérable dans la corbeille OneDrive : 93 jours pour un compte professionnel ou scolaire, 30 jours pour un compte personnel.</li>
+</ul>
+<h3>Réinitialiser OneDrive</h3>
+<pre data-copy><code>%localappdata%\Microsoft\OneDrive\onedrive.exe /reset</code></pre>
+<p>À taper dans <kbd>Windows</kbd> + <kbd>R</kbd>. Si Windows ne trouve pas le chemin : <code>C:\Program Files\Microsoft OneDrive\onedrive.exe /reset</code>, puis <code>C:\Program Files (x86)\Microsoft OneDrive\onedrive.exe /reset</code>. Relance ensuite OneDrive depuis le menu Démarrer. Microsoft précise qu'on ne perd <strong>aucune donnée</strong> : les paramètres sont remis à zéro et une synchronisation complète suit ; les dossiers choisis en synchronisation sélective sont à re-sélectionner.</p>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/office/save-disk-space-with-onedrive-files-on-demand-for-windows-0e6860d3-d9f3-4971-b321-7092438fb38e">Save disk space with OneDrive Files On-Demand for Windows</a> ; <a href="https://support.microsoft.com/en-us/office/reset-onedrive-34701e00-bf7b-42db-b960-84905399050c">Reset OneDrive</a>.</p></aside>
+
+<h2 id="mfa">6. MFA : pourquoi on tape un nombre</h2>
+<p>Avec la <strong>correspondance de nombres</strong>, la page de connexion affiche un nombre que l'utilisateur doit saisir dans Microsoft Authenticator pour approuver. Elle est active pour toutes les notifications d'Authenticator et l'utilisateur ne peut pas la désactiver. Exception : si Teams ou Outlook tournent sur le même appareil qu'Authenticator, il peut parfois simplement approuver ou refuser ; depuis un navigateur, la saisie du nombre est toujours demandée.</p>
+<aside class="callout retenir"><p>Un utilisateur qui reçoit une demande d'approbation alors qu'il n'est pas en train de se connecter ne doit <strong>pas</strong> l'approuver : quelqu'un d'autre connaît peut-être son mot de passe. C'est un signalement de sécurité (jour 7, cas 4).</p></aside>
+<h3>Toutes les méthodes ne se valent pas</h3>
+<ul>
+  <li>Microsoft classe comme <strong>résistantes à l'hameçonnage</strong> : Windows Hello Entreprise, les clés de sécurité et passkeys FIDO2 (y compris dans Authenticator), l'authentification par certificat, Platform Credential pour macOS ; et recommande de les utiliser.</li>
+  <li>La MFA « traditionnelle » (SMS, code par courriel, application d'authentification) reste exposée à l'<strong>hameçonnage à distance</strong>.</li>
+  <li>Le <strong>Temporary Access Pass</strong> fait partie des méthodes prévues par Microsoft Entra (utile quand l'utilisateur a perdu son téléphone) ; s'il est utilisé à l'UMONS et par qui, c'est à vérifier sur place.</li>
+</ul>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-mfa-number-match">How number matching works in MFA push notifications for Authenticator</a> ; <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-methods">Microsoft Entra authentication methods</a>.</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo guidé : sur ton propre PC <span class="duree">≈ 45 min</span></h2>
+<p>Il te faut Outlook (classique ou nouveau), OneDrive et Teams avec un compte de test ou ton compte personnel. Ne fais rien sur un compte de l'UMONS sans accord.</p>
+<ol>
+  <li><strong>Quel Outlook ?</strong> Repère le bouton du nouvel Outlook et note quelle version tu utilises.</li>
+  <li>Outlook classique : ferme-le, puis <code>outlook.exe /safe</code>. Qu'est-ce qui a disparu ? Ferme et relance normalement. (Nouvel Outlook : <code>olk.exe --safe</code>.)</li>
+  <li>Lance <code>outlook.exe /profiles</code> : combien de profils as-tu ?</li>
+  <li><strong>OneDrive</strong> : crée un petit fichier de test dans OneDrive. Observe son icône. Clic droit → <em>Toujours conserver sur cet appareil</em>, puis <em>Libérer de l'espace</em> : note l'icône à chaque étape.</li>
+  <li>Supprime ce fichier, puis retrouve-le dans la corbeille OneDrive (site web) et restaure-le.</li>
+  <li><strong>Teams</strong> (facultatif) : réinitialise le nouveau Teams par Paramètres → Applications. Que dois-tu refaire après ?</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois constater</summary>
+<ul>
+  <li>Étape 2 : en mode sans échec, le volet de lecture et les personnalisations disparaissent, les compléments sont désactivés.</li>
+  <li>Étape 3 : la fenêtre de choix du profil s'ouvre même si Outlook démarre d'habitude directement.</li>
+  <li>Étape 4 : après « Toujours conserver », cercle vert plein avec coche blanche ; après « Libérer de l'espace », nuage bleu. Le fichier existe toujours dans OneDrive.</li>
+  <li>Étape 5 : le fichier supprimé est dans la corbeille OneDrive et se restaure.</li>
+  <li>Étape 6 : il faut te reconnecter et retrouver tes réglages (les personnalisations sont effacées).</li>
+</ul>
+</details>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « Je vois la boîte du secrétariat, mais je ne peux pas répondre »</h3>
+<p>Une nouvelle secrétaire voit la boîte partagée dans Outlook, lit les messages, mais un message d'erreur apparaît quand elle répond depuis l'adresse du secrétariat.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Elle a probablement l'accès total sans le droit « Envoyer en tant que ». Tu notes l'adresse de la boîte, le message d'erreur exact et la personne, et tu transmets à l'équipe qui gère les droits, selon la procédure de validation (souvent l'accord du responsable de la boîte). Tu ne lui proposes pas de contournement (transférer depuis son adresse personnelle).</p>
+</details>
+<h3>2. « J'ai supprimé mes fichiers OneDrive pour gagner de la place »</h3>
+<p>Un enseignant, disque plein, a supprimé un dossier de OneDrive il y a une semaine. Ses collègues ne trouvent plus les documents partagés.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Supprimer dans OneDrive supprime partout. Pour un compte professionnel ou scolaire, la corbeille garde les éléments 93 jours : on peut les restaurer depuis le site web de OneDrive. Ensuite, tu lui montres <em>Libérer de l'espace</em>, qui garde les fichiers en ligne sans occuper le disque. Si la restauration n'est pas possible, escalade.</p>
+</details>
+<h3>3. « Il manque des messages dans un canal Teams »</h3>
+<p>Une utilisatrice ne voit plus les messages d'hier dans un canal. Un collègue lui a conseillé de vider le cache de Teams.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Justement non : pour des messages manquants, Microsoft déconseille de vider le cache, qui contient les journaux de diagnostic. Tu vérifies d'abord sur Teams web (« Et sur le web ? », jour 7) et si d'autres membres du canal sont touchés, puis tu escalades avec ces éléments, sans rien effacer.</p>
+</details>
+<h3>4. Outlook se ferme au démarrage</h3>
+<p>Depuis ce matin, l'Outlook classique d'un utilisateur se ferme quelques secondes après son ouverture. Outlook sur le web fonctionne.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Le compte et le service vont bien (le web marche) : le problème est local. Tu fais lancer <code>outlook.exe /safe</code>. S'il tient en mode sans échec, un complément est suspect : tu le notes et tu suis la procédure (désactiver le complément, ou escalader si les compléments sont gérés par la DSI). S'il plante aussi en mode sans échec, tu passes aux pistes suivantes du jour 7 (profil, fichier OST) ou tu escalades.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-m365-messagerie"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Deux Outlook</strong> : classique (<code>outlook.exe</code>) et nouveau (<code>olk.exe</code>) ; bouton en haut à droite ; PST dans le nouveau = classique installé aussi.</li>
+  <li><strong>Commutateurs</strong> (un seul à la fois) : <code>/safe</code> (compléments désactivés), <code>/resetnavpane</code>, <code>/resetfolders</code>, <code>/cleanviews</code> (vues perdues), <code>/profiles</code> ; nouveau : <code>--safe</code>, <code>--reset</code> (efface le local).</li>
+  <li><strong>Boîte partagée</strong> : Accès total pour lire, Envoyer en tant que pour répondre ; il faut les deux.</li>
+  <li><strong>Teams</strong> : pas de vidage du cache pour des messages manquants (journaux) ; sinon Réinitialiser dans Applications.</li>
+  <li><strong>OneDrive</strong> : nuage bleu = en ligne ; Libérer de l'espace ≠ supprimer ; corbeille 93 jours (pro) ; <code>onedrive.exe /reset</code> sans perte de données.</li>
+  <li><strong>MFA</strong> : correspondance de nombres ; demande inattendue = ne pas approuver, signaler ; méthodes résistantes à l'hameçonnage : Windows Hello, FIDO2, certificat.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Quelle version d'Outlook est déployée, et le nouvel Outlook est-il autorisé ?</li>
+  <li>Qui accorde les droits sur une boîte partagée, et avec quelle validation ?</li>
+  <li>Le service desk peut-il réinitialiser Teams ou OneDrive sur un poste, ou seulement guider l'utilisateur ?</li>
+  <li>Quelles méthodes MFA sont proposées, et quelle est la procédure quand un utilisateur perd son téléphone ?</li>
+  <li>Où vérifier l'état des services Microsoft 365 en cas de panne générale ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-m365-messagerie"> Module terminé</label></p>
+<div data-module-suite="m365-messagerie"></div>
+</div>
+</main>
+</body>
+</html>
