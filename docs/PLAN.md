@@ -187,12 +187,21 @@ Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance 
 Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
 
 **File d'attente (mise à jour le 25/11 au matin, après la nuit en autonomie de Claude Code)** — faits : lots 16, 19 et 22 ; pages et données des modules 18, 20, 23 et 24. Plus rien n'avance sans relecture. À faire, dans l'ordre :
+0. ChatGPT (Sol, effort `medium`) : **lot 26**, le calendrier (urgent : la prépa commence aujourd'hui).
 1. ChatGPT (Astra, effort `high`, recherche web) : **17.1** relire J6 à J10 et la boîte à outils.
 2. ChatGPT : relire les quatre nouveaux modules — **18.3** `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, **24.3** `modules/sous-reseaux.html` — et les 12 appels de `assets/tickets-data.js` (lot 22) ; un rapport par page dans `docs/relectures/`.
 3. Claude Code : corriger d'après ces rapports, puis contrôles et coche (17.2–17.3, 18.4, 20.4, 23.4, 24.4).
 4. Lot 21 (ChatGPT relit les 5 premiers modules), puis lot 25 après le 18/12.
 
 **Changement de rythme (24/11)** : à partir du mercredi 25/11, séances de 3 à 4 h par jour en semaine seulement. Les dates restent (J3 le 25/11 … J10 le 4/12) ; chaque plan horaire est ramené à ≈ 3 h 30 (blocs raccourcis, même contenu ; un labo qui déborde se termine au début de la séance suivante).
+
+## Lot 26 — Calendrier : la prépa commence le mercredi 25/11 (URGENT, à faire en premier)
+Décision de Marvin (25/11) : la prépa commence **mercredi 25/11 avec le jour 1**, en semaine seulement, séances de 3 à 4 h ; il n'y a que 8 jours ouvrables avant le stage, donc **J1 + J2 le mercredi 25/11** et **J9 + J10 le vendredi 4/12** (J10 réduit à la révision express). Calendrier : J1 et J2 le 25/11, J3 le 26/11, J4 le 27/11, J5 le 30/11, J6 le 1/12, J7 le 2/12, J8 le 3/12, J9 et J10 le 4/12. Modèle conseillé : Sol, effort `medium`. Ne pas toucher aux moteurs de l'atelier.
+- [ ] 26.1 Données : dans `assets/data.js`, dates des jours ci-dessus et `prepaDebut` au 25/11 (commentaire à jour) ; vérifier ce que lit `assets/accueil.js`.
+- [ ] 26.2 Accueil (`assets/accueil.js`) : un même jour peut porter **deux** jours de prépa. « Jour du jour » : les deux (titre du type « Jours 1 et 2 », deux boutons) ; frise : une case du 25/11 au 7/12 (commentaire « Frise du 23/11 » à corriger), la case d'un jour double affiche « J1 + J2 » et renvoie au premier jour non terminé ; « reprise » et compteurs inchangés. Tester avec `index.html?date=2026-11-25`, `?date=2026-11-26`, `?date=2026-12-04`, `?date=2026-12-05`.
+- [ ] 26.3 Pages : sur `stage/j1.html` et `j2.html`, un encadré `callout astuce` en tête du plan : « Séance double du mercredi 25/11 : ≈ 1 h 45 par jour ; fais la théorie, les mises en situation et le quiz, garde les labos pour plus tard » (pas de nouveau fait, pas de durée inventée au-delà) ; même principe sur `j9.html` (≈ 3 h, labo raccourci) et `j10.html` (≈ 45 min : `revision.html`, puis la check-list du premier jour ; les appels simulés pendant la première semaine de stage, le soir). Texte de `stage/index.html` (rythme) à jour.
+- [ ] 26.4 `docs/REFONTE.md` § 2.1 : remplacer « du 23/11 au 4/12 » et l'exemple « Lundi 23 novembre » par le nouveau calendrier (décision de Marvin, pas un désaccord).
+- [ ] 26.5 `npm run index`, `npm run controles` (le parcours « progression et tampon » ou d'autres tests peuvent dépendre des dates : les adapter sans les affaiblir), coche, fusion dans `main`.
 
 ## Lot 16 — Relecture des faits : prépa J1 à J5
 - 16.1 Relecture initiale des jours J1 à J5 retirée de `main` à la demande de Marvin. Les [rapports d'origine](https://github.com/Marvin32165/centre-apprentissage-it/tree/c4e4b22c1a3eb0301ef27bb7fb6812cffe0e2b04/docs/relectures) restent accessibles dans l'historique. Les cinq fichiers de `docs/relectures/` gardent le suivi des corrections de 16.2.
