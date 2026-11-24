@@ -127,3 +127,24 @@ window.IT_QUIZZES["module-depannage-distance"] = { titre: "Quiz : dépannage à 
     options: ["Rien, c'était peut-être un collègue", "Tu traites l'appel comme un incident de sécurité et tu escalades immédiatement", "Tu lui demandes son mot de passe pour vérifier le compte", "Tu réinstalles Assistance rapide"], reponse: 1,
     explication: "C'est le scénario du faux support décrit par Microsoft en 2024 : incident de sécurité, escalade selon la procédure, ticket détaillé (heure, ce qui a été accepté)." }
 ]};
+
+window.IT_QUIZZES["module-m365-messagerie"] = { titre: "Quiz : Microsoft 365 et messagerie", questions: [
+  { q: "Une utilisatrice lit la boîte partagée du secrétariat mais ne peut pas répondre depuis son adresse. Quel droit lui manque probablement ?",
+    options: ["Envoyer en tant que (Send As)", "Accès total (Full Access)", "Une licence Teams", "Le mode mis en cache"], reponse: 0,
+    explication: "L'accès total permet d'ouvrir et de lire la boîte, pas d'envoyer : pour répondre depuis l'adresse de la boîte, il faut aussi Envoyer en tant que." },
+  { q: "Outlook classique se ferme au démarrage, mais fonctionne avec outlook.exe /safe. Quelle piste ?",
+    options: ["Le compte est bloqué", "Le serveur Exchange est en panne", "Un complément (add-in) est suspect", "Le disque est plein"], reponse: 2,
+    explication: "Le mode sans échec désactive les compléments COM : s'il fonctionne ainsi, un complément est la piste principale." },
+  { q: "Que fait « Libérer de l'espace » sur un fichier OneDrive ?",
+    options: ["Il supprime le fichier partout", "Il garde le fichier en ligne seulement, sans occuper le disque", "Il compresse le fichier", "Il le déplace dans la corbeille"], reponse: 1,
+    explication: "Le fichier repasse en ligne seulement (nuage bleu) et reste dans OneDrive ; supprimer, au contraire, le supprime partout." },
+  { q: "Des messages manquent dans un canal Teams. Faut-il vider le cache de Teams ?",
+    options: ["Oui, c'est la première chose à faire", "Oui, et réinstaller Teams", "Non : Microsoft le déconseille, le cache contient les journaux de diagnostic", "Non, il faut réinitialiser OneDrive"], reponse: 2,
+    explication: "Pour des messages manquants, un historique qui ne charge pas ou des notifications fausses, on ne vide pas le cache : on vérifie sur le web et on escalade." },
+  { q: "OneDrive ne synchronise plus. Que fait onedrive.exe /reset ?",
+    options: ["Il supprime les fichiers locaux et en ligne", "Il remet les paramètres de OneDrive à zéro, sans perte de données, puis resynchronise", "Il désinstalle OneDrive", "Il change le mot de passe du compte"], reponse: 1,
+    explication: "Microsoft précise qu'on ne perd aucune donnée ; les dossiers de synchronisation sélective sont à re-sélectionner." },
+  { q: "Laquelle de ces méthodes Microsoft classe-t-il comme résistante à l'hameçonnage ?",
+    options: ["Le code par SMS", "Le code par courriel", "Une clé de sécurité FIDO2", "L'appel vocal"], reponse: 2,
+    explication: "Windows Hello Entreprise, FIDO2 (clés et passkeys) et l'authentification par certificat sont résistants à l'hameçonnage ; SMS, courriel et applications d'authentification classiques y restent exposés." }
+]};
