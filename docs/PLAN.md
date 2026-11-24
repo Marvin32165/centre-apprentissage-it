@@ -204,7 +204,8 @@ Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul 
 Reste : rien pour ce lot ; les rapports J1 à J5 restent dans `docs/relectures/` comme trace.
 
 ## Lot 17 — Relecture des faits : prépa J6 à J10 et boîte à outils
-- [ ] 17.1 Relire `stage/j6.html` à `j10.html` et `stage/outils.html` (même procédure, rapports dans `docs/relectures/`).
+- [x] 17.1 Relire `stage/j6.html` à `j10.html` et `stage/outils.html` (même procédure, rapports dans `docs/relectures/`).
+  Fait : six rapports de relecture dans `docs/relectures/` pour J6 à J10 et la boîte à outils, avec vérification des 44 réponses de quiz et des sources primaires. Bilan : 28 points faux, 11 non vérifiés et 100 corrects. Reste : corrections en 17.2, puis contrôles et fusion en 17.3.
 - [ ] 17.2 Corrections (autre conversation).
 - [ ] 17.3 `npm run controles`, coche, fusion.
 
