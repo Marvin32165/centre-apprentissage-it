@@ -45,7 +45,9 @@
   <li>Le <strong>portail</strong> : ce que voit l'utilisateur (le « client » ou « demandeur »). Il choisit un <strong>type de demande</strong> (« Signaler un incident », « Demander un logiciel », etc.), remplit un formulaire, suit ses tickets et lit les articles de la base de connaissances.</li>
   <li>La <strong>vue agent</strong> : ce que voit le service desk. Les tickets arrivent dans des <strong>files d'attente</strong> (<em>queues</em>) ; l'agent les ouvre, change le statut, commente, assigne, relie.</li>
 </ul>
-<p>Un ticket peut aussi naître d'un <strong>courriel</strong> envoyé à l'adresse du service, ou être créé par l'agent après un appel (c'est ton cas le plus fréquent).</p>
+<p>Un ticket peut aussi naître d'un <strong>courriel</strong> envoyé à l'adresse du service, ou être créé par l'agent après un appel (sans doute fréquent pour toi ; la part de chaque canal à l'UMONS est à vérifier sur place).</p>
+<aside class="callout source"><p>Atlassian Support, JSM Cloud : <a href="https://support.atlassian.com/jira-service-management-cloud/docs/how-do-customers-send-requests-to-your-service-project/">comment les clients envoient leurs demandes</a> (portail, courriel, création par un agent).</p></aside>
+
 
 <h2 id="anatomie">2. Anatomie d'un ticket</h2>
 <div class="table-wrap"><table>
@@ -56,14 +58,14 @@
 <tr><td><strong>Description</strong></td><td>Le détail : contexte, message d'erreur, ce qui a été testé.</td></tr>
 <tr><td><strong>Type de ticket</strong></td><td>Incident, demande de service, problème, changement…</td></tr>
 <tr><td><strong>Demandeur</strong> (<em>reporter</em>)</td><td>La personne qui a le besoin. Peut différer de celle qui a appelé.</td></tr>
-<tr><td><strong>Responsable</strong> (<em>assignee</em>)</td><td>La personne ou l'équipe qui traite le ticket maintenant.</td></tr>
+<tr><td><strong>Responsable</strong> (<em>assignee</em>)</td><td>La personne chargée du ticket maintenant. L'équipe se lit plutôt dans la file d'attente ou dans un champ d'équipe, selon la configuration.</td></tr>
 <tr><td><strong>Priorité</strong></td><td>Déduite de l'impact et de l'urgence (jour 1).</td></tr>
 <tr><td><strong>Statut</strong></td><td>L'étape du cycle de vie (voir plus bas).</td></tr>
 <tr><td><strong>SLA</strong></td><td>Compteurs de première réponse et de résolution, selon configuration.</td></tr>
 <tr><td><strong>Pièces jointes</strong></td><td>Captures d'écran, journaux. Jamais de mots de passe.</td></tr>
 <tr><td><strong>Liens</strong></td><td>Relier à un autre ticket (doublon, lié, bloque, ticket principal…).</td></tr>
 <tr><td><strong>Étiquettes / composants</strong></td><td>Classer pour retrouver et faire des statistiques (selon configuration).</td></tr>
-<tr><td><strong>Activité</strong></td><td>Historique des commentaires, notes internes et changements : tout est tracé.</td></tr>
+<tr><td><strong>Activité</strong></td><td>Historique des commentaires, des notes internes, des modifications de champs et des changements de statut.</td></tr>
 </tbody></table></div>
 
 <h3>Les statuts</h3>
@@ -78,7 +80,7 @@
 <tr><td>Résolu</td><td>La solution est en place, l'utilisateur est prévenu.</td></tr>
 <tr><td>Fermé / Annulé</td><td>Terminé après confirmation, ou abandonné (avec raison notée).</td></tr>
 </tbody></table></div>
-<aside class="callout source"><p>Documentation Atlassian (Atlassian Support) : « Jira Service Management Cloud », rubriques sur les files d'attente, les flux de travail, les SLA et les types de demande.</p></aside>
+<aside class="callout source"><p>Documentation Atlassian (Atlassian Support) : « Jira Service Management Cloud », rubriques sur les files d'attente, les flux de travail, les SLA et les types de demande ; <a href="https://support.atlassian.com/jira-service-management-cloud/docs/see-everyone-involved-in-a-request/">les personnes liées à un ticket</a> ; <a href="https://support.atlassian.com/jira-software-cloud/docs/what-are-the-different-types-of-activity-on-an-issue/">l'activité d'un ticket</a>.</p></aside>
 
 <h2 id="rediger">3. Bien rédiger un ticket</h2>
 <p>Pose-toi la question : <strong>« Si quelqu'un d'autre ouvre ce ticket dans trois jours, sans m'appeler, peut-il agir ? »</strong></p>
@@ -108,11 +110,13 @@ Action prévue : ce que tu fais ou à qui tu passes la main</code></pre>
   <li><strong>Relis-toi</strong> : orthographe, noms, numéros de salle. Un ticket est un document de travail et une trace.</li>
 </ul>
 
+<aside class="callout source"><p>Consortium for Service Innovation, KCS v6 Practices Guide : <a href="https://library.serviceinnovation.org/KCS/Knowledge-Centered_Success_Practices_Guide/201-Solve_Loop/Practice_4_Structure/Technique_4.1">décrire le problème avec les mots et le contexte du demandeur</a>. Le modèle de description ci-dessus est une méthode d'exercice ; celui de la DSI est à vérifier sur place.</p></aside>
+
 <h2 id="commentaires">4. Commentaires publics et notes internes</h2>
 <p>Dans JSM, un commentaire peut être :</p>
 <ul>
   <li><strong>Public</strong> (« Répondre au client ») : l'utilisateur le voit et reçoit en général une notification. C'est la réponse officielle.</li>
-  <li><strong>Interne</strong> (« Ajouter une note interne ») : seuls les agents le voient. C'est l'endroit des échanges techniques, des pistes testées, des consignes pour l'équipe suivante.</li>
+  <li><strong>Interne</strong> (« Ajouter une note interne ») : le demandeur ne la voit pas sur le portail ; les agents la voient, ainsi que les collaborateurs du projet autorisés, selon les permissions. C'est l'endroit des échanges techniques, des pistes testées, des consignes pour l'équipe suivante.</li>
 </ul>
 <aside class="callout attention"><p>Vérifie le bouton <em>avant</em> d'envoyer : une note technique ou un jugement envoyé au client en commentaire public ne se rattrape pas. Et même en note interne, écris comme si le texte pouvait être relu par la hiérarchie ou par l'utilisateur lors d'une réclamation : factuel et courtois.</p></aside>
 <div class="table-wrap"><table>
@@ -127,6 +131,7 @@ Action prévue : ce que tu fais ou à qui tu passes la main</code></pre>
   <li><strong>Interne</strong> : dis ce que tu as testé et ce que tu en déduis, pour que personne ne refasse la même chose.</li>
   <li>Mets <strong>chaque appel ou contact</strong> en commentaire (heure, résumé), pour garder l'historique.</li>
 </ul>
+<aside class="callout source"><p>Atlassian Support, JSM Cloud : <a href="https://support.atlassian.com/jira-service-management-cloud/docs/talk-to-the-customer-or-team-members-from-the-new-issue-view/">répondre au client ou ajouter une note interne</a> ; <a href="https://support.atlassian.com/jira-service-management-cloud/docs/how-can-service-project-and-software-teams-work-together/">les collaborateurs et ce qu'ils voient</a>.</p></aside>
 
 <h2 id="kb">5. La base de connaissances</h2>
 <p>Une base de connaissances (<em>knowledge base</em>, KB) rassemble des articles que l'on peut réutiliser : la réponse au problème qui revient. Dans l'écosystème Atlassian, JSM s'associe à <strong>Confluence</strong> pour héberger les articles et les montrer dans le portail et dans le ticket (selon la configuration).</p>
@@ -138,13 +143,14 @@ Action prévue : ce que tu fais ou à qui tu passes la main</code></pre>
 <h3>Un bon article</h3>
 <ul>
   <li><strong>Titre</strong> : le symptôme tel que l'utilisateur le dirait (« Je ne reçois plus mes courriels sur mon téléphone »).</li>
-  <li><strong>Cause</strong> probable en une phrase.</li>
+  <li><strong>Cause</strong> en une phrase, si elle est établie (sinon, on ne l'invente pas).</li>
   <li><strong>Solution</strong> en étapes numérotées, une action par étape, avec captures.</li>
   <li><strong>Quand escalader</strong> et vers qui.</li>
   <li><strong>Mots-clés</strong> pour que la recherche le trouve.</li>
   <li><strong>Date et auteur</strong>, pour savoir quand le revoir.</li>
 </ul>
 <p>Avant d'écrire, <strong>cherche</strong> : ne crée pas un doublon. Après avoir résolu un ticket, relie l'article au ticket pour mesurer ce qui est réellement utile.</p>
+<aside class="callout source"><p>Consortium for Service Innovation, KCS v6 Practices Guide : <a href="https://library.serviceinnovation.org/KCS/Knowledge-Centered_Success_Practices_Guide/201-Solve_Loop/Practice_4_Structure/Technique_4.1">structure d'un article</a> (problème, environnement, résolution ; la cause est facultative).</p></aside>
 <aside class="callout umons"><p>Où se trouve la base de connaissances de la DSI (Confluence ? autre ?), qui peut y écrire, et quel modèle d'article utiliser : à demander à ton tuteur.</p></aside>
 
 <h2 id="labo">Labo : un mini-service desk dans Jira Service Management <span class="duree">1 h 10</span></h2>
@@ -166,6 +172,7 @@ Action prévue : ce que tu fais ou à qui tu passes la main</code></pre>
   <li>Résumé : « Imprimante » — Description : « Elle ne veut pas imprimer. Le technicien d'avant avait dit que c'était à cause du serveur. »</li>
 </ol>
 <details class="correction"><summary>Voir la correction</summary>
+<p>Les précisions ci-dessous (lieu, nom, lecteur P:, étage) sont des réponses <em>fictives</em> obtenues en rappelant l'utilisateur : dans la réalité, tu les obtiens en posant les questions, tu ne les devines pas.</p>
 <ol>
   <li><strong>Résumé</strong> : « PC portable de M. X (bât. B, bureau 12) ne démarre plus depuis ce matin ». <strong>Description</strong> : symptôme (écran noir ? message ?), depuis quand, ce qui a été essayé (câble, batterie), impact (échéance ?), numéro où joindre la personne. Le « venez vite » est remplacé par une priorité déduite de l'impact et de l'urgence.</li>
   <li><strong>Résumé</strong> : « Perte de connexion au lecteur réseau P: sur le poste de Mme Y depuis hier ». <strong>Description</strong> : message d'erreur exact, Wi-Fi ou câble, d'autres personnes touchées ?, ce qui a changé, ce qui a été testé (redémarrage, autre poste).</li>
@@ -202,7 +209,7 @@ Action prévue : ce que tu fais ou à qui tu passes la main</code></pre>
   <li><strong>Un ticket = un sujet</strong>. Pas de doublon : on relie ou on commente.</li>
   <li><strong>Public</strong> = ce que voit l'utilisateur. <strong>Interne</strong> = échanges techniques. Vérifier avant d'envoyer.</li>
   <li><strong>Jamais de mot de passe</strong> ou de code dans un ticket.</li>
-  <li><strong>KB</strong> : titre = symptôme, cause, étapes numérotées, quand escalader, mots-clés. Chercher avant d'écrire.</li>
+  <li><strong>KB</strong> : titre = symptôme, cause si elle est établie, étapes numérotées, quand escalader, mots-clés. Chercher avant d'écrire.</li>
 </ul>
 </div>
 <aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">

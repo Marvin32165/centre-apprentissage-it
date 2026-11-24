@@ -57,8 +57,8 @@ window.IT_QUIZZES["stage-j2"] = { titre: "Quiz du jour 2", questions: [
 
 window.IT_QUIZZES["stage-j3"] = { titre: "Quiz du jour 3", questions: [
   { q: "Dans Jira Service Management, qui voit une note interne ?",
-    options: ["Le demandeur seulement", "Tout le monde", "Seulement les agents", "Personne"], reponse: 2,
-    explication: "Une note interne est réservée aux agents ; seul un commentaire public est visible du demandeur." },
+    options: ["Le demandeur seulement", "Tout le monde", "Les agents et les collaborateurs autorisés, pas le demandeur", "Personne"], reponse: 2,
+    explication: "Le demandeur ne voit pas une note interne sur le portail ; les agents la voient, et les collaborateurs du projet selon les permissions. Seul un commentaire public est visible du demandeur." },
   { q: "Quel résumé est le plus utile dans une liste de tickets ?",
     options: ["« Urgent !!! »", "« Imprimante »", "« Imprimante du 2e étage, bât. A : pages blanches »", "« Ça marche pas »"], reponse: 2,
     explication: "Un bon résumé dit quoi, où et quel symptôme." },
