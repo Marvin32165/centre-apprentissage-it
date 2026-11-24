@@ -13,7 +13,7 @@ window.IT_MODULES = {
     { id: "support", stage: true, titre: "Support et service desk",
       desc: "Prendre un appel, diagnostiquer un poste, réparer ou escalader proprement : le cœur du stage.",
       liens: [{ href: "stage/index.html", label: "Prépa stage (10 jours)" }, { href: "stage/outils.html", label: "Boîte à outils" }],
-      aVenir: ["Imprimantes et périphériques"] },
+      aVenir: [] },
     { id: "reseau", stage: true, titre: "Réseau",
       desc: "Adresses, DNS, DHCP, ports : comprendre le chemin d'une requête pour trouver où elle s'arrête.",
       liens: [{ href: "stage/j5.html", label: "Prépa, jour 5 : le réseau côté utilisateur" }],
@@ -96,6 +96,13 @@ window.IT_MODULES = {
       tags: ["microsoft 365", "outlook", "nouvel outlook", "olk", "boîte partagée", "send as", "teams", "cache", "onedrive", "mfa", "authenticator", "fido2"],
       prepa: [{ href: "stage/j7.html", label: "Jour 7 : messagerie et Microsoft 365" }],
       liens: [],
-      suite: ["depannage-distance"] }
+      suite: ["depannage-distance"] },
+    { id: "imprimantes-peripheriques", titre: "Imprimantes et périphériques : méthode, pilotes, caméra et Bluetooth",
+      domaine: "support", niveau: 1, duree: 150, prerequis: [],
+      resume: "Dépanner une imprimante dans l'ordre, comprendre la règle Point and Print, mettre à jour ou restaurer un pilote, Get-Printer et printui, autorisations de la caméra, appairage Bluetooth.",
+      tags: ["imprimante", "spouleur", "pilote", "point and print", "get-printer", "printui", "gestionnaire de périphériques", "caméra", "bluetooth", "périphériques"],
+      prepa: [{ href: "stage/j5.html", label: "Jour 5 : imprimantes et lecteurs réseau" }],
+      liens: [],
+      suite: ["materiel-pc"] }
   ]
 };

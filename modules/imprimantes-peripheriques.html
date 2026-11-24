@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imprimantes et périphériques — Modules · Apprentissage IT</title>
+<meta name="description" content="Imprimantes et périphériques : méthode de dépannage, pilotes et Point and Print, commandes, caméra et Bluetooth.">
+<meta property="og:title" content="Imprimantes et périphériques — Modules · Apprentissage IT">
+<meta property="og:description" content="Imprimantes et périphériques : méthode de dépannage, pilotes et Point and Print, commandes, caméra et Bluetooth.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Support et service desk</p>
+<h1>Imprimantes et <em>périphériques</em></h1>
+<p class="lead">« L'imprimante ne marche pas », « ma caméra ne s'allume pas dans Teams », « mon casque Bluetooth ne se connecte plus » : des appels simples en apparence, qui demandent une méthode. Ce module prolonge le jour 5 (file d'impression, spouleur) : l'ordre des vérifications, les pilotes et la règle Point and Print, les commandes utiles, les autorisations de la caméra et l'appairage Bluetooth.</p>
+<div data-module-meta="imprimantes-peripheriques"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>dépanner une imprimante dans le bon ordre, du plus simple au plus lourd ;</li>
+  <li>expliquer pourquoi un utilisateur ne peut plus installer seul le pilote d'une imprimante réseau ;</li>
+  <li>mettre à jour ou revenir en arrière sur un pilote, et savoir quand il faut des droits d'administrateur ;</li>
+  <li>lister les imprimantes et en connecter une en ligne de commande ;</li>
+  <li>débloquer une caméra refusée à une application, et appairer un périphérique Bluetooth.</li>
+</ul>
+<aside class="callout umons"><p>Comment les imprimantes sont déployées à l'UMONS (serveur d'impression, impression par badge, pilotes dans l'image), qui installe les pilotes et ce que le service desk fait lui-même : à demander à ton tuteur.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="methode-impression">1. L'imprimante, dans l'ordre</h2>
+<p>Microsoft propose d'abord l'utilitaire automatique de l'application <em>Obtenir de l'aide</em> (<code>aka.ms/PrinterConnection</code>), puis cet ordre de vérifications :</p>
+<ol>
+  <li><strong>Redémarrer l'imprimante</strong> : éteindre, débrancher, attendre 30 secondes, rebrancher, rallumer.</li>
+  <li><strong>La connexion</strong> : câble USB bien branché ; ou, en sans-fil, option sans fil activée, test de connectivité de l'imprimante, même réseau que le PC.</li>
+  <li><strong>Supprimer puis réinstaller l'imprimante</strong> : Paramètres → Bluetooth et appareils → Imprimantes et scanners (Windows 11) ; Paramètres → Appareils → Imprimantes et scanners (Windows 10).</li>
+  <li><strong>Installer le dernier pilote</strong> de l'imprimante.</li>
+  <li><strong>Vider et redémarrer le spouleur</strong> (jour 5) : arrêter le service, vider <code>%WINDIR%\system32\spool\PRINTERS</code>, remettre le service en démarrage automatique.</li>
+  <li><strong>Remettre l'imprimante « en ligne »</strong> si Windows l'affiche hors ligne.</li>
+</ol>
+<p>Si l'état indique une <strong>erreur</strong>, regarde d'abord l'imprimante elle-même : papier, encre ou toner, capot ouvert, bourrage.</p>
+<aside class="callout attention"><p>Sur une imprimante partagée par un serveur d'impression, les étapes 3 à 5 se font sur <em>ton</em> poste seulement : on ne touche pas au serveur, et si plusieurs personnes sont touchées, on escalade (jour 5).</p></aside>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/fix-printer-connection-and-printing-problems-in-windows-fb830bff-7702-6349-33cd-9443fe987f73">Fix printer connection and printing problems in Windows</a>.</p></aside>
+
+<h2 id="pilotes">2. Pilotes et règle Point and Print</h2>
+<h3>Pourquoi l'utilisateur ne peut plus installer seul</h3>
+<p>Depuis les mises à jour Windows du 10 août 2021 (faille CVE-2021-34481), installer ou mettre à jour un pilote d'imprimante par <strong>Point and Print</strong> (depuis un serveur d'impression) demande par défaut des <strong>droits d'administrateur</strong>. Un utilisateur standard qui ajoute une imprimante réseau voit donc une demande d'identifiants d'administrateur.</p>
+<ul>
+  <li>Les solutions prévues par Microsoft : un administrateur fournit ses identifiants, ou les pilotes sont déjà inclus dans l'image du poste, ou l'organisation change le réglage (valeur <code>RestrictDriverInstallationToAdministrators</code>, que l'on peut aussi définir par stratégie de groupe).</li>
+  <li>Au service desk, tu ne donnes jamais d'identifiants d'administrateur à un utilisateur et tu ne changes pas ce réglage toi-même : c'est une mesure de sécurité, la procédure de la DSI décide.</li>
+</ul>
+<h3>Mettre à jour ou revenir en arrière</h3>
+<ul>
+  <li>En temps normal, Windows Update installe les pilotes, y compris ceux des imprimantes : Microsoft le présente comme la meilleure voie.</li>
+  <li><strong>Gestionnaire de périphériques</strong> → clic droit sur le périphérique → <em>Mettre à jour le pilote</em> → recherche automatique. Pour un pilote téléchargé chez le fabricant : <em>Parcourir mon ordinateur</em>.</li>
+  <li><strong>Revenir au pilote précédent</strong> : Propriétés du périphérique → onglet Pilote → <em>Restaurer le pilote</em> (<em>Roll Back Driver</em>), droits d'administrateur requis. Microsoft note que si le souci est apparu après une mise à jour, réinstaller le pilote précédent le règle souvent.</li>
+  <li>On évite les sites tiers de pilotes : fabricant ou Windows Update seulement.</li>
+</ul>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/topic/kb5005652-manage-new-point-and-print-default-driver-installation-behavior-cve-2021-34481-873642bf-2634-49c5-a23b-6d8e9a302872">KB5005652, Point and Print</a> ; <a href="https://support.microsoft.com/en-us/windows/update-drivers-manually-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6">Update drivers through Device Manager in Windows</a>.</p></aside>
+
+<h2 id="commandes">3. En ligne de commande</h2>
+<pre data-copy><code>Get-Printer
+Get-Printer -ComputerName SERVEUR-IMPRESSION
+rundll32 printui.dll,PrintUIEntry /in /n\\SERVEUR-IMPRESSION\Imprimante-2e
+rundll32 printui.dll,PrintUIEntry /p /n"Nom de l'imprimante"</code></pre>
+<ul>
+  <li><code>Get-Printer</code> (PowerShell) liste les imprimantes installées, sans droits d'administrateur ; avec <code>-ComputerName</code>, celles d'un autre ordinateur, par exemple un serveur d'impression.</li>
+  <li><code>printui.dll,PrintUIEntry</code> automatise la configuration des imprimantes : <code>/in</code> connecte une imprimante réseau, <code>/n</code> donne son nom, <code>/y</code> la met par défaut, <code>/dl</code> supprime une imprimante locale, <code>/p</code> affiche ses propriétés. Attention, <code>PrintUIEntry</code> respecte les majuscules.</li>
+</ul>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/powershell/module/printmanagement/get-printer">Get-Printer</a> ; <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/rundll32-printui">rundll32 printui.dll,PrintUIEntry</a>.</p></aside>
+
+<h2 id="camera">4. La caméra refusée</h2>
+<p>Trois niveaux d'autorisation, dans <strong>Paramètres → Confidentialité et sécurité → Caméra</strong> (Windows 11 ; sous Windows 10 : Paramètres → Confidentialité → Caméra) :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Réglage</th><th>Effet</th></tr></thead>
+<tbody>
+<tr><td>Accès à la caméra (l'appareil)</td><td>Autorise ou non les applications à utiliser la caméra sur ce poste. <strong>Grisé</strong> : seul un administrateur du poste peut le changer.</td></tr>
+<tr><td>Autoriser les applications à accéder à la caméra</td><td>Pour les applications du Microsoft Store, puis application par application.</td></tr>
+<tr><td>Autoriser les applications de bureau à accéder à la caméra</td><td>Pour <strong>toutes</strong> les applications de bureau à la fois (Teams, Edge…), sans réglage individuel.</td></tr>
+</tbody></table></div>
+<p>Windows Hello (connexion par visage) fonctionne même si l'accès à la caméra est coupé : « Windows Hello marche, mais pas Teams » oriente donc vers ces réglages, pas vers le matériel.</p>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/manage-app-permissions-for-your-camera-in-windows-87ebc757-1f87-7bbf-84b5-0686afb6ca6b">Manage app permissions for a camera in Windows</a>.</p></aside>
+
+<h2 id="bluetooth">5. Appairer un périphérique Bluetooth</h2>
+<ol>
+  <li>Allume le périphérique et mets-le en mode appairage (voir sa notice).</li>
+  <li>Clique sur l'icône Réseau, Son ou Batterie près de l'heure, puis sur la flèche <em>Gérer les appareils Bluetooth</em> de la vignette Bluetooth.</li>
+  <li>Choisis l'appareil sous <em>Nouveaux appareils</em>, suis les instructions, puis <em>Terminé</em>.</li>
+</ol>
+<ul>
+  <li>Le PC doit avoir le Bluetooth (sinon, un adaptateur USB) et il doit être activé (Paramètres → Bluetooth et appareils).</li>
+  <li>Avec <em>Swift Pair</em>, une notification propose de se connecter quand l'appareil est proche et en mode appairage.</li>
+  <li>Appareil absent de la liste : le réglage de découverte des appareils Bluetooth peut devoir passer en mode <em>Avancé</em>.</li>
+  <li>Une imprimante ou un scanner Bluetooth s'ajoute par Imprimantes et scanners → Ajouter un appareil.</li>
+</ul>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/pair-a-bluetooth-device-in-windows-2be7b51f-6ae9-b757-a3b9-95ee40c3e242">Pair a Bluetooth device in Windows</a>. Les libellés français de l'interface peuvent différer légèrement de ceux traduits ici.</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo guidé : sur ton propre PC <span class="duree">≈ 40 min</span></h2>
+<ol>
+  <li>Dans PowerShell : <code>Get-Printer</code>. Note les noms et la colonne qui indique le pilote.</li>
+  <li>Avec le nom d'une imprimante de la liste : <code>rundll32 printui.dll,PrintUIEntry /p /n"nom"</code>. Quelle fenêtre s'ouvre ?</li>
+  <li>Ouvre le Gestionnaire de périphériques, choisis un périphérique (carte réseau, souris), onglet Pilote : note la version et si <em>Restaurer le pilote</em> est disponible ou grisé.</li>
+  <li>Paramètres → Confidentialité et sécurité → Caméra : coupe « applications de bureau », ouvre la caméra dans Teams ou dans un site de visioconférence dans Edge, observe, puis réactive.</li>
+  <li>Si tu as un casque, une souris ou un téléphone Bluetooth : appaire-le en suivant les étapes du §5, puis supprime l'appareil et recommence.</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois constater</summary>
+<ul>
+  <li>Étape 1 : la liste des imprimantes installées, y compris les imprimantes virtuelles éventuelles ; aucun droit d'administrateur n'est demandé.</li>
+  <li>Étape 2 : la fenêtre des propriétés de cette imprimante.</li>
+  <li>Étape 3 : « Restaurer le pilote » est grisé s'il n'y a pas de pilote précédent ; l'utiliser demande des droits d'administrateur.</li>
+  <li>Étape 4 : l'application de bureau n'a plus accès à la caméra ; après réactivation, elle l'a de nouveau.</li>
+  <li>Étape 5 : l'appareil apparaît dans Bluetooth et appareils ; après suppression, il faut le remettre en mode appairage.</li>
+</ul>
+</details>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « Il me demande un mot de passe d'administrateur »</h3>
+<p>Une utilisatrice veut ajouter l'imprimante réseau du 2e étage depuis le serveur d'impression. Windows lui demande des identifiants d'administrateur. Elle te demande « le mot de passe admin, juste pour cette fois ».</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>C'est le comportement par défaut de Point and Print depuis 2021 : installer un pilote depuis un serveur demande des droits d'administrateur. Tu ne donnes jamais d'identifiants d'administrateur. Tu suis la procédure : installation par une personne habilitée (à distance ou sur place), ou outil de déploiement de la DSI. Tu notes le nom de l'imprimante et du poste dans le ticket.</p>
+</details>
+<h3>2. « L'imprimante est en erreur »</h3>
+<p>L'imprimante d'un bureau apparaît « en erreur » dans Windows ; rien ne sort, pour personne.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Plusieurs personnes et un état d'erreur : on regarde d'abord l'imprimante elle-même (papier, toner, capot, bourrage, message sur son écran), puis on la redémarre (30 secondes débranchée). Si l'erreur persiste ou si c'est matériel, ticket vers l'équipe ou le prestataire de maintenance, avec le message affiché par l'imprimante.</p>
+</details>
+<h3>3. « Ma caméra marche pour Windows Hello, pas dans Teams »</h3>
+<p>Un enseignant se connecte au PC par reconnaissance faciale, mais Teams affiche « aucune caméra ».</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Windows Hello fonctionne même quand l'accès des applications est coupé : la caméra marche, c'est une autorisation. Tu le guides vers Paramètres → Confidentialité et sécurité → Caméra : « Accès à la caméra », puis « Autoriser les applications de bureau ». Si un réglage est grisé, il est imposé par l'administrateur : tu escalades selon la procédure.</p>
+</details>
+<h3>4. La souris folle après la mise à jour</h3>
+<p>Depuis la mise à jour d'hier, le pavé tactile d'un portable réagit mal. L'utilisatrice n'est pas administratrice de son poste.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Piste : le pilote mis à jour. Revenir au pilote précédent (Gestionnaire de périphériques → Propriétés → Pilote → Restaurer le pilote) règle souvent un souci apparu après une mise à jour, mais demande des droits d'administrateur : tu le fais faire par une personne habilitée ou tu escalades, avec le nom du périphérique, la version du pilote et la date de la mise à jour. En attendant, une souris USB permet de travailler.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-imprimantes-peripheriques"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Imprimante, dans l'ordre</strong> : redémarrer (30 s débranchée), connexion, supprimer et réinstaller, pilote, spouleur, remettre en ligne ; « en erreur » = papier, toner, capot, bourrage.</li>
+  <li><strong>Point and Print</strong> : depuis 2021, installer un pilote depuis un serveur demande des droits d'administrateur ; jamais d'identifiants admin à l'utilisateur.</li>
+  <li><strong>Pilotes</strong> : Windows Update d'abord ; Gestionnaire de périphériques ; Restaurer le pilote après une mise à jour (admin) ; pas de sites tiers.</li>
+  <li><strong>Commandes</strong> : <code>Get-Printer [-ComputerName]</code> ; <code>printui.dll,PrintUIEntry /in /n\\serveur\imprimante</code>, <code>/y</code>, <code>/p</code>, <code>/dl</code>.</li>
+  <li><strong>Caméra</strong> : Confidentialité et sécurité → Caméra ; appareil, applications Store, applications de bureau (toutes à la fois) ; grisé = administrateur.</li>
+  <li><strong>Bluetooth</strong> : mode appairage, vignette Bluetooth → Nouveaux appareils ; découverte en mode Avancé si absent.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Comment les imprimantes sont-elles installées sur les postes (serveur d'impression, déploiement automatique, impression par badge) ?</li>
+  <li>Qui peut installer un pilote d'imprimante, et comment le service desk intervient-il ?</li>
+  <li>Qui gère la maintenance des imprimantes (équipe interne ou prestataire) et comment l'appeler ?</li>
+  <li>Les réglages de caméra et de micro sont-ils imposés par stratégie sur les postes ?</li>
+  <li>Quels périphériques (casques, webcams, souris) sont fournis, et que fait-on des appareils personnels ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-imprimantes-peripheriques"> Module terminé</label></p>
+<div data-module-suite="imprimantes-peripheriques"></div>
+</div>
+</main>
+</body>
+</html>

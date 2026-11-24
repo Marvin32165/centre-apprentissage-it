@@ -148,3 +148,24 @@ window.IT_QUIZZES["module-m365-messagerie"] = { titre: "Quiz : Microsoft 365 et 
     options: ["Le code par SMS", "Le code par courriel", "Une clé de sécurité FIDO2", "L'appel vocal"], reponse: 2,
     explication: "Windows Hello Entreprise, FIDO2 (clés et passkeys) et l'authentification par certificat sont résistants à l'hameçonnage ; SMS, courriel et applications d'authentification classiques y restent exposés." }
 ]};
+
+window.IT_QUIZZES["module-imprimantes-peripheriques"] = { titre: "Quiz : imprimantes et périphériques", questions: [
+  { q: "Une imprimante ne répond plus. Quelle est la première étape conseillée par Microsoft, après l'utilitaire automatique ?",
+    options: ["Réinstaller Windows", "Éteindre et débrancher l'imprimante 30 secondes, puis la rallumer", "Supprimer le spouleur", "Changer de pilote"], reponse: 1,
+    explication: "On commence par le plus simple : redémarrer l'imprimante, puis vérifier la connexion, avant de supprimer et réinstaller, changer de pilote ou vider le spouleur." },
+  { q: "Pourquoi un utilisateur standard ne peut-il plus installer seul le pilote d'une imprimante depuis un serveur d'impression ?",
+    options: ["Son compte est bloqué", "Depuis août 2021, Point and Print demande par défaut des droits d'administrateur", "Le serveur est en panne", "Le Bluetooth est coupé"], reponse: 1,
+    explication: "Après la faille CVE-2021-34481, Microsoft a imposé par défaut des droits d'administrateur pour installer ou mettre à jour un pilote par Point and Print." },
+  { q: "Un problème est apparu après la mise à jour d'un pilote. Que permet « Restaurer le pilote » ?",
+    options: ["Revenir au pilote précédent (droits d'administrateur requis)", "Supprimer le périphérique définitivement", "Télécharger un pilote sur un site tiers", "Désactiver Windows Update"], reponse: 0,
+    explication: "Le retour au pilote précédent règle souvent un souci apparu après une mise à jour ; il demande des droits d'administrateur." },
+  { q: "Quelle commande liste les imprimantes installées, sans droits d'administrateur ?",
+    options: ["net stop spooler", "Get-Printer", "ipconfig /all", "rundll32 printui.dll,PrintUIEntry /dl"], reponse: 1,
+    explication: "Get-Printer (PowerShell) liste les imprimantes ; avec -ComputerName, celles d'un autre ordinateur. /dl, lui, supprime une imprimante locale." },
+  { q: "Windows Hello reconnaît le visage de l'utilisateur, mais Teams ne trouve pas la caméra. Piste principale ?",
+    options: ["La caméra est cassée", "Le pilote est absent", "L'autorisation « applications de bureau » de la caméra est coupée", "Le Bluetooth est désactivé"], reponse: 2,
+    explication: "Windows Hello fonctionne même quand l'accès des applications est coupé : on vérifie Confidentialité et sécurité → Caméra, dont le réglage des applications de bureau." },
+  { q: "Un casque Bluetooth en mode appairage n'apparaît pas dans la liste des nouveaux appareils. Que peut-on essayer ?",
+    options: ["Passer la découverte des appareils Bluetooth en mode Avancé", "Réinstaller Teams", "Vider le spouleur", "Changer d'adresse IP"], reponse: 0,
+    explication: "Microsoft indique que la découverte des appareils Bluetooth peut devoir passer en mode Avancé ; on vérifie aussi que le Bluetooth est activé et que l'appareil est bien en mode appairage." }
+]};
