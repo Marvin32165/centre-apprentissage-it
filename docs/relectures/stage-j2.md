@@ -25,3 +25,12 @@ Le plan horaire annonce environ 4 h 30. Les durées affichées totalisent 4 h 10
 | Couverture des sources. Seul le §4 possède un encadré. Les §1, §2, §3 et §5 contiennent des recommandations vérifiables. | faux | [Page relue](https://github.com/Marvin32165/centre-apprentissage-it/blob/bb590855b21afcd0d16b47ad13868fd56a91a324/stage/j2.html) | Relier les sections au guide de communication et distinguer dans le quiz les habitudes du labo des résultats démontrés. Plan, labo, cas, quiz et mémo sont également sans encadré propre. |
 
 **Bilan** — 8 correctes, 4 faux, 2 non vérifiés. Une ligne correspond à un constat, y compris lorsqu’il réapparaît dans le mémo ou le quiz.
+
+## Suivi des corrections (Claude Code, 24/11/2026)
+- §1, §5, mémo, Q1, six temps et classements : **Corrigé** — trame présentée comme celle des exercices ; « le plus souvent » retirés ; encadré source (guide d'entretien) ajouté.
+- §2, bouton Démarrer : **Corrigé** — repère par la touche Windows, alignement Windows 11 expliqué, lien Microsoft.
+- §3, §5, Q7, Q8, effets quantifiés : **Corrigé** — « aide à faire baisser la tension », « dit clairement la suite » ; plus de « la plupart » ni de réduction des rappels.
+- §4, labo 2, cas 1, renseignements biographiques : **Corrigé** — distinction retrouver le dossier / prouver l'identité, méthodes prévues, liens NIST SP 800-63B.
+- Prénom réel : **Corrigé** — remplacé par « [ton prénom] ».
+- Couverture des sources : **Corrigé** — encadrés ajoutés aux §1, §2 et §5 (le §3 partage celui du §5). **Justifié** : plan, labo, cas, quiz et mémo reprennent les sections sourcées.
+- Durée annoncée : **Corrigé** — plan ramené à 3 h 30.
