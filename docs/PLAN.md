@@ -259,7 +259,7 @@ Justifié : fait avant le lot 21 (relecture réservée à ChatGPT), en autonomie
 - [x] 22.2 `npm run controles` (nouveau parcours « entraînement aux tickets »), coche, fusion.
   Fait : parcours ajouté (12 tickets, refus sans réponse, priorité P4 calculée, résolution fermée par défaut, résultat mémorisé) ; contrôles sans échec ; vérifié à 390 px.
 
-Reste : relecture des 12 appels par ChatGPT (cohérence avec le jour 1) à ajouter au lot 21.
+Fait : relecture des douze appels et comparaison à la matrice J1 dans `docs/relectures/stage-tickets.md` (13 corrects, 2 faux et 2 non vérifiés). Les constats sont à traiter lors d'une passe de correction distincte.
 
 ## Lot 23 — Module « Imprimantes et périphériques »
 Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à faire comme pour les lots 18 et 20.
