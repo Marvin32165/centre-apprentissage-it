@@ -17,7 +17,7 @@ window.IT_MODULES = {
     { id: "reseau", stage: true, titre: "Réseau",
       desc: "Adresses, DNS, DHCP, ports : comprendre le chemin d'une requête pour trouver où elle s'arrête.",
       liens: [{ href: "stage/j5.html", label: "Prépa, jour 5 : le réseau côté utilisateur" }],
-      aVenir: ["Sous-réseaux et plan d'adressage", "Dépannage réseau par couches", "Commutation et routage (équipements Cisco)", "Téléphonie sur IP"] },
+      aVenir: ["Dépannage réseau par couches", "Commutation et routage (équipements Cisco)", "Téléphonie sur IP"] },
     { id: "windows", stage: true, titre: "Windows et annuaire",
       desc: "Comptes, groupes et stratégies : ce que l'annuaire d'une organisation décide, et comment le lire.",
       liens: [{ href: "stage/j6.html", label: "Prépa, jour 6 : Active Directory côté support" }],
@@ -103,6 +103,13 @@ window.IT_MODULES = {
       tags: ["imprimante", "spouleur", "pilote", "point and print", "get-printer", "printui", "gestionnaire de périphériques", "caméra", "bluetooth", "périphériques"],
       prepa: [{ href: "stage/j5.html", label: "Jour 5 : imprimantes et lecteurs réseau" }],
       liens: [],
-      suite: ["materiel-pc"] }
+      suite: ["materiel-pc"] },
+    { id: "sous-reseaux", titre: "Sous-réseaux et plan d'adressage : calculer, découper, dépanner",
+      domaine: "reseau", niveau: 2, duree: 180, prerequis: ["reseau-base"],
+      resume: "Masques et préfixes jusqu'à /20, décision local ou distant, méthode du bloc, découpage en sous-réseaux de tailles différentes, plages spéciales, symptômes d'un mauvais masque ou d'une mauvaise passerelle.",
+      tags: ["sous-réseau", "subnetting", "masque", "cidr", "préfixe", "vlsm", "plan d'adressage", "diffusion", "rfc 1918", "passerelle"],
+      prepa: [{ href: "stage/j5.html", label: "Jour 5 : le réseau côté utilisateur" }],
+      liens: [],
+      suite: [] }
   ]
 };

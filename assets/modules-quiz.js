@@ -169,3 +169,24 @@ window.IT_QUIZZES["module-imprimantes-peripheriques"] = { titre: "Quiz : imprima
     options: ["Passer la découverte des appareils Bluetooth en mode Avancé", "Réinstaller Teams", "Vider le spouleur", "Changer d'adresse IP"], reponse: 0,
     explication: "Microsoft indique que la découverte des appareils Bluetooth peut devoir passer en mode Avancé ; on vérifie aussi que le Bluetooth est activé et que l'appareil est bien en mode appairage." }
 ]};
+
+window.IT_QUIZZES["module-sous-reseaux"] = { titre: "Quiz : sous-réseaux et plan d'adressage", questions: [
+  { q: "Quel masque correspond au préfixe /23 ?",
+    options: ["255.255.255.0", "255.255.254.0", "255.255.252.0", "255.255.255.128"], reponse: 1,
+    explication: "23 bits à 1 : 255.255 puis 11111110 dans le 3e octet, soit 254. Le bloc fait 2 dans le 3e octet, 510 hôtes utilisables." },
+  { q: "Quelle est l'adresse de réseau de 172.16.5.200/20 ?",
+    options: ["172.16.5.0", "172.16.0.0", "172.16.4.0", "172.16.5.192"], reponse: 1,
+    explication: "/20 = 255.255.240.0 : bloc de 16 dans le 3e octet ; 5 est dans 0–15, donc réseau 172.16.0.0 et diffusion 172.16.15.255." },
+  { q: "Combien d'hôtes utilisables dans un /27 ?",
+    options: ["32", "30", "62", "14"], reponse: 1,
+    explication: "5 bits d'hôte : 2⁵ = 32 adresses, moins l'adresse de réseau et la diffusion : 30." },
+  { q: "Avec le masque 255.255.255.192, 192.168.123.71 et 192.168.123.133 sont…",
+    options: ["dans le même réseau", "dans des réseaux différents : ils passent par la passerelle", "tous deux des adresses de diffusion", "invalides"], reponse: 1,
+    explication: "C'est l'exemple de Microsoft : en /26, le premier est dans le réseau .64, le second dans le réseau .128." },
+  { q: "Un poste joint le réseau local mais aucun réseau distant. Quel réglage soupçonnes-tu d'abord ?",
+    options: ["Le masque", "La passerelle par défaut", "Le nom du poste", "La carte graphique"], reponse: 1,
+    explication: "Local OK, distant KO : la passerelle (absente, fausse ou hors du réseau du poste) est la première piste." },
+  { q: "Laquelle de ces plages est une plage privée de la RFC 1918 ?",
+    options: ["100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "127.0.0.0/8"], reponse: 2,
+    explication: "Les plages privées sont 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16. 100.64/10 est l'espace partagé, 169.254/16 le lien local, 127/8 la boucle locale." }
+]};
