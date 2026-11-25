@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sous-réseaux et plan d'adressage — Modules · Apprentissage IT</title>
+<meta name="description" content="Sous-réseaux et plan d’adressage : masques et préfixes, local ou distant, calcul de sous-réseaux, plan d’adressage à taille variable, plages spéciales et dépannage.">
+<meta property="og:title" content="Sous-réseaux et plan d'adressage — Modules · Apprentissage IT">
+<meta property="og:description" content="Sous-réseaux et plan d’adressage : masques et préfixes, local ou distant, calcul de sous-réseaux, plan d’adressage à taille variable, plages spéciales et dépannage.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Réseau</p>
+<h1>Sous-réseaux et <em>plan d'adressage</em></h1>
+<p class="lead">Le module « Réseau de base » t'a appris à trouver le réseau d'une adresse en /24, /26 ou /27. Ici, on va plus loin : des masques qui coupent le troisième octet, la décision « local ou distant » telle que Windows la prend, le découpage d'un réseau en sous-réseaux de tailles différentes, les plages spéciales, et les symptômes d'un mauvais masque ou d'une mauvaise passerelle.</p>
+<div data-module-meta="sous-reseaux"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>passer d'un masque à un préfixe et inversement, y compris pour /20 ou /23 ;</li>
+  <li>dire si une destination est locale ou distante pour un poste donné ;</li>
+  <li>calculer réseau, diffusion et plage d'hôtes pour n'importe quel préfixe de /16 à /30 ;</li>
+  <li>découper un réseau en sous-réseaux de tailles différentes selon les besoins ;</li>
+  <li>reconnaître les plages spéciales et diagnostiquer un mauvais masque, une mauvaise adresse ou une mauvaise passerelle.</li>
+</ul>
+<aside class="callout umons"><p>Le plan d'adressage réel de l'UMONS n'a rien à faire dans un dépôt public : ne le recopie jamais ici. Ce que le service desk doit en connaître (plages des bâtiments, VLAN, DHCP) : à demander à ton tuteur.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="masque">1. Adresse, masque et préfixe</h2>
+<p>Une adresse IPv4 est un nombre de 32 bits, écrit en quatre octets décimaux. Exemple de Microsoft : <code>192.168.123.132</code> s'écrit en binaire <code>11000000.10101000.01111011.10000100</code>. Le <strong>masque</strong> sépare la partie <strong>réseau</strong> de la partie <strong>hôte</strong> : avec <code>255.255.255.0</code> (24 bits à 1, puis 8 bits à 0), le réseau est <code>192.168.123.0</code> et l'hôte <code>0.0.0.132</code>.</p>
+<ul>
+  <li><strong>Notation par préfixe</strong> (CIDR) : l'adresse, une barre oblique, puis le nombre de bits du réseau, de 0 à 32. <code>255.255.255.0</code> = <code>/24</code> ; <code>255.255.0.0</code> = <code>/16</code>.</li>
+  <li>Les bits à 1 d'un masque sont toujours <strong>contigus</strong>, à gauche : <code>255.255.255.192</code> existe, <code>255.255.0.255</code> non.</li>
+  <li>Les anciennes <strong>classes</strong> A, B, C (masques par défaut /8, /16, /24 selon le premier octet) ont été abandonnées au profit des préfixes : un réseau en 10.x peut très bien être un /24. Ne déduis jamais le masque du premier octet.</li>
+</ul>
+<h3>Les masques à connaître</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Préfixe</th><th>Masque</th><th>Pas (dans l'octet coupé)</th><th>Adresses du bloc</th><th>Hôtes utilisables</th></tr></thead>
+<tbody>
+<tr><td>/20</td><td>255.255.240.0</td><td>16 dans le 3e octet</td><td>4 096</td><td>4 094</td></tr>
+<tr><td>/22</td><td>255.255.252.0</td><td>4 dans le 3e octet</td><td>1 024</td><td>1 022</td></tr>
+<tr><td>/23</td><td>255.255.254.0</td><td>2 dans le 3e octet</td><td>512</td><td>510</td></tr>
+<tr><td>/24</td><td>255.255.255.0</td><td>1 dans le 3e octet</td><td>256</td><td>254</td></tr>
+<tr><td>/25</td><td>255.255.255.128</td><td>128 dans le 4e octet</td><td>128</td><td>126</td></tr>
+<tr><td>/26</td><td>255.255.255.192</td><td>64 dans le 4e octet</td><td>64</td><td>62</td></tr>
+<tr><td>/27</td><td>255.255.255.224</td><td>32 dans le 4e octet</td><td>32</td><td>30</td></tr>
+<tr><td>/28</td><td>255.255.255.240</td><td>16 dans le 4e octet</td><td>16</td><td>14</td></tr>
+<tr><td>/29</td><td>255.255.255.248</td><td>8 dans le 4e octet</td><td>8</td><td>6</td></tr>
+<tr><td>/30</td><td>255.255.255.252</td><td>4 dans le 4e octet</td><td>4</td><td>2</td></tr>
+</tbody></table></div>
+<p>Pourquoi « − 2 » ? Dans chaque réseau, l'adresse dont la partie hôte est tout à 0 désigne le <strong>réseau</strong>, et celle dont la partie hôte est tout à 1 la <strong>diffusion</strong> : ni l'une ni l'autre ne s'attribue à une machine. Exception : sur une liaison point à point, un <strong>/31</strong> est permis et ses deux adresses servent d'adresses d'hôtes.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/networking/tcpip-addressing-and-subnetting">TCP/IP addressing and subnetting</a> (adresse, masque, classes, adresses réservées) ; IETF : <a href="https://datatracker.ietf.org/doc/html/rfc4632">RFC 4632</a> (notation par préfixe, abandon des classes, masques contigus), <a href="https://datatracker.ietf.org/doc/html/rfc3021">RFC 3021</a> (préfixes /31 sur les liaisons point à point). Le tableau découle de ces règles : nombre d'adresses du bloc = 2 puissance le nombre de bits d'hôte (octets de droite compris) ; le <strong>pas</strong> est l'écart entre deux réseaux dans l'octet où le masque est coupé (256 moins la valeur du masque dans cet octet).</p></aside>
+
+<h2 id="local-distant">2. Local ou distant : la décision du poste</h2>
+<p>Cas simple, celui de la plupart des postes : une seule carte réseau, et la route par défaut comme seul chemin vers l'extérieur. Avant d'envoyer un paquet, le poste compare, avec son masque, l'adresse de destination et sa propre adresse. Si elles tombent dans le même réseau, il envoie directement sur le réseau local ; sinon, il envoie à sa <strong>passerelle par défaut</strong>.</p>
+<p>Hors de ce cas simple (plusieurs cartes, VPN, routes ajoutées), une route plus précise passe avant la route par défaut : <code>route print</code> affiche la table de routage du poste.</p>
+<p>L'exemple de Microsoft : les postes <code>192.168.123.71</code> et <code>192.168.123.133</code>.</p>
+<ul>
+  <li>Avec <code>255.255.255.0</code> : tous deux dans <code>192.168.123.0</code>, ils se parlent directement.</li>
+  <li>Avec <code>255.255.255.192</code> : le premier est dans <code>192.168.123.64</code>, le second dans <code>192.168.123.128</code> : chacun passe par sa passerelle pour joindre l'autre.</li>
+</ul>
+<aside class="callout retenir"><p>Le même couple d'adresses peut être « local » ou « distant » selon le masque. Une erreur de masque change donc qui le poste croit pouvoir joindre directement.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/networking/tcpip-addressing-and-subnetting">TCP/IP addressing and subnetting</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/route_ws2008">route</a> ; IETF : <a href="https://datatracker.ietf.org/doc/html/rfc1122">RFC 1122</a> (choix entre remise directe et passerelle), <a href="https://datatracker.ietf.org/doc/html/rfc4632">RFC 4632</a> (la route la plus précise l'emporte).</p></aside>
+
+<h2 id="calcul">3. Calculer quand le masque coupe le 3e octet</h2>
+<p>La méthode du pas marche pour tout masque coupé à l'intérieur d'un octet : on repère l'<strong>octet où le masque n'est ni 255 ni 0</strong>, on calcule le pas (256 moins la valeur du masque dans cet octet), et on cherche dans cet octet le multiple du pas juste inférieur ou égal. Les octets de droite valent 0 pour le réseau et 255 pour la diffusion.</p>
+<p>Pour /8, /16 et /24, aucun octet n'est coupé : on recopie les octets à 255 du masque, puis on met les autres à 0 (réseau) ou à 255 (diffusion). Un <strong>/31</strong> n'a pas d'adresse de réseau ni de diffusion : ses deux adresses sont des hôtes (liaison point à point) ; un <strong>/32</strong> désigne une seule adresse.</p>
+<p>Exemple : <code>172.16.5.200/20</code>. Masque <code>255.255.240.0</code> : l'octet coupé est le 3e (240), pas de 256 − 240 = 16. Les réseaux commencent à 0, 16, 32… dans le 3e octet ; 5 tombe dans 0–15.</p>
+<ul>
+  <li>réseau : <code>172.16.0.0</code> ; diffusion : 0 + 16 − 1 = 15 dans le 3e octet, 255 dans le 4e, soit <code>172.16.15.255</code> ;</li>
+  <li>hôtes : <code>172.16.0.1</code> à <code>172.16.15.254</code>, soit 2<sup>12</sup> − 2 = 4 094.</li>
+</ul>
+<aside class="callout astuce"><p>En cas de doute, refais le calcul en binaire sur l'octet concerné seulement : les octets à 255 se recopient, ceux à 0 deviennent 0. Le calcul mental vient avec l'entraînement : fais les exercices sans calculatrice.</p></aside>
+<aside class="callout source"><p>IETF : <a href="https://datatracker.ietf.org/doc/html/rfc4632">RFC 4632</a> (préfixes et masques), <a href="https://datatracker.ietf.org/doc/html/rfc3021">RFC 3021</a> (/31) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/networking/tcpip-addressing-and-subnetting">TCP/IP addressing and subnetting</a> (réseau et diffusion). La méthode du pas est une méthode de calcul ; les exemples de cette page ont été vérifiés par script.</p></aside>
+
+<h2 id="plan-adressage">4. Découper un réseau : le plan d'adressage</h2>
+<p>L'exemple de Microsoft : un réseau <code>192.168.123.0/24</code> à répartir en trois réseaux de 50 hôtes. Le masque <code>255.255.255.192</code> (/26) donne quatre sous-réseaux de 62 hôtes : <code>.0</code>, <code>.64</code>, <code>.128</code> et <code>.192</code>, avec les plages <code>.1–.62</code>, <code>.65–.126</code>, <code>.129–.190</code> et <code>.193–.254</code>.</p>
+<h3>Des sous-réseaux de tailles différentes</h3>
+<p>Quand les besoins diffèrent, on choisit pour chacun le plus petit bloc suffisant, en commençant par le plus grand besoin (pour que chaque bloc commence sur un multiple de sa taille) :</p>
+<ol>
+  <li>lister les besoins en hôtes, du plus grand au plus petit ;</li>
+  <li>pour chacun, prendre le plus petit préfixe dont le nombre d'hôtes utilisables suffit ;</li>
+  <li>placer les blocs à la suite, sans chevauchement, et garder de la marge pour la croissance.</li>
+</ol>
+<h3>Les plages spéciales</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Plage</th><th>Usage</th></tr></thead>
+<tbody>
+<tr><td><code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code></td><td>Adresses privées : à utiliser pour un réseau interne ; elles ne sont pas routées sur Internet.</td></tr>
+<tr><td><code>169.254.0.0/16</code></td><td>Lien local (APIPA) ; les 256 premières et 256 dernières adresses sont réservées, une adresse automatique est donc tirée entre <code>169.254.1.0</code> et <code>169.254.254.255</code>.</td></tr>
+<tr><td><code>127.0.0.0/8</code></td><td>Boucle locale (la machine elle-même).</td></tr>
+<tr><td><code>100.64.0.0/10</code></td><td>« Espace d'adresses partagé », réservé à un usage particulier : ce n'est pas une plage privée ordinaire.</td></tr>
+</tbody></table></div>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/networking/tcpip-addressing-and-subnetting">TCP/IP addressing and subnetting</a> (exemple de découpage) ; IETF : <a href="https://datatracker.ietf.org/doc/html/rfc1918">RFC 1918</a> (adresses privées), <a href="https://datatracker.ietf.org/doc/html/rfc3927">RFC 3927</a> (lien local), <a href="https://datatracker.ietf.org/doc/html/rfc6890">RFC 6890</a> (registre des plages spéciales). La méthode de découpage « du plus grand au plus petit » est une méthode de calcul, pas une norme.</p></aside>
+
+<h2 id="depanner">5. Dépanner un mauvais réglage</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Erreur</th><th>Symptôme décrit par Microsoft</th></tr></thead>
+<tbody>
+<tr><td><strong>Masque</strong> incorrect</td><td>Le poste joint le réseau local et la plupart des réseaux distants, mais échoue vers certains réseaux « voisins », qu'il croit à tort locaux.</td></tr>
+<tr><td><strong>Adresse</strong> incorrecte</td><td>Des machines sur le même segment mais dans des sous-réseaux IP différents ne se joignent pas directement. Sans routeur prévu entre ces sous-réseaux (comme dans le labo ci-dessous), on met donc toutes les machines du segment dans le même sous-réseau ; avec un routage adapté, plusieurs sous-réseaux peuvent cohabiter sur un segment.</td></tr>
+<tr><td><strong>Passerelle</strong> incorrecte</td><td>Tout marche en local, mais pas vers certains ou tous les réseaux distants. Cas typique : plusieurs routeurs sur le segment, et le poste pointe vers le mauvais.</td></tr>
+</tbody></table></div>
+<p>Au service desk : compare le masque et la passerelle du poste avec ceux d'un poste voisin qui fonctionne (<code>ipconfig /all</code>). Une configuration distribuée par DHCP qui serait fausse pour tout un bâtiment se signale à l'équipe réseau, on ne la corrige pas poste par poste.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/networking/tcpip-addressing-and-subnetting">TCP/IP addressing and subnetting</a> (section dépannage).</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo guidé : un masque qui ment, avec tes vraies valeurs <span class="duree">≈ 30 min</span></h2>
+<p>Sur papier, à partir de ton propre PC, sans rien modifier. Calculs : §1 et §3 ; décision local ou distant : §2 ; <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig">ipconfig</a> pour lire ce que le poste a vraiment pris.</p>
+<ol>
+  <li><code>ipconfig /all</code> : note ton adresse IPv4, ton masque et ta passerelle. Calcule l'adresse de réseau, la diffusion et la plage d'hôtes de ton réseau.</li>
+  <li>Ta passerelle est-elle dans cette plage ? Elle doit l'être.</li>
+  <li>Imagine qu'on règle ton PC avec la même adresse mais le masque <code>255.255.255.128</code> (/25). Recalcule ton réseau : la passerelle y est-elle encore ? Fais le même calcul pour une machine de ta maison dont tu connais l'adresse (téléphone, imprimante : <code>arp -a</code> liste les adresses vues récemment).</li>
+  <li>Explique avec le §2 ce qui se passerait pour joindre Internet, puis pour joindre cette machine.</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois constater</summary>
+<ul>
+  <li>Exemple avec une configuration courante, <code>192.168.1.34/24</code> et la passerelle <code>192.168.1.1</code> : réseau <code>192.168.1.0</code>, diffusion <code>192.168.1.255</code>, hôtes <code>.1</code> à <code>.254</code> ; la passerelle est dans la plage.</li>
+  <li>En /25, la même adresse est dans <code>192.168.1.0</code> (hôtes .1 à .126) : la passerelle <code>.1</code> reste locale. Mais une machine en <code>192.168.1.140</code> serait dans l'autre moitié (<code>192.168.1.128</code>) : ton PC la croirait distante et passerait par la passerelle, alors qu'elle est sur le même réseau physique.</li>
+  <li>Si ton adresse était dans la moitié haute (par exemple <code>.140</code>) avec une passerelle en <code>.1</code>, le /25 rendrait la passerelle injoignable : plus d'Internet. C'est le symptôme « adresse ou masque incorrect » du §5 : même segment, sous-réseaux IP différents.</li>
+</ul>
+</details>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="exercices">Exercices de calcul</h2>
+<p>Règles utilisées : §1 (masques, hôtes), §3 (méthode du pas), §4 (découpage). Les cas renvoient au §5.</p>
+<ol>
+  <li>Pour <code>172.20.14.9/23</code> : masque, adresse de réseau, diffusion, plage d'hôtes et nombre d'hôtes.</li>
+  <li>Avec le masque /26, les postes <code>192.168.10.100</code> et <code>192.168.10.130</code> sont-ils dans le même réseau ?</li>
+  <li>Quel est le plus petit préfixe pour 25 hôtes ? pour 60 ? pour 63 ?</li>
+  <li>Découpe <code>192.168.40.0/24</code> pour un service de 100 postes, un de 50, un de 20, et une liaison entre deux routeurs (2 adresses).</li>
+  <li>Un poste a <code>192.168.1.130</code> avec le masque <code>255.255.255.128</code> et la passerelle <code>192.168.1.1</code>. Que se passe-t-il pour sortir du réseau ?</li>
+</ol>
+<details class="correction"><summary>Voir les corrections</summary>
+<ol>
+  <li>/23 = <code>255.255.254.0</code>, pas de 2 dans le 3e octet : 14 est pair, donc réseau <code>172.20.14.0</code>, diffusion <code>172.20.15.255</code>, hôtes <code>172.20.14.1</code> à <code>172.20.15.254</code>, soit 2<sup>9</sup> − 2 = 510.</li>
+  <li>Non. /26 : pas de 64 dans le 4e octet (0, 64, 128, 192). <code>.100</code> est dans <code>192.168.10.64</code> (64–127), <code>.130</code> dans <code>192.168.10.128</code> (128–191).</li>
+  <li>25 hôtes : /27 (30 utilisables). 60 : /26 (62). 63 : /25 (126), car /26 n'en offre que 62.</li>
+  <li>100 postes : <code>192.168.40.0/25</code> (hôtes .1 à .126, diffusion .127) ; 50 : <code>192.168.40.128/26</code> (.129 à .190, diffusion .191) ; 20 : <code>192.168.40.192/27</code> (.193 à .222, diffusion .223) ; liaison : <code>192.168.40.224/30</code> (.225 et .226, diffusion .227). Il reste <code>.228</code> à <code>.255</code> pour la croissance.</li>
+  <li>En /25, le poste est dans <code>192.168.1.128</code> (hôtes .129 à .254). La passerelle <code>192.168.1.1</code> est dans l'autre moitié, hors de son réseau : il ne peut pas la joindre directement et ne sort pas. Corriger le masque (si le réseau est un /24) ou la passerelle, selon la configuration prévue.</li>
+</ol>
+</details>
+
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « J'ai Internet, mais pas le serveur du labo d'à côté »</h3>
+<p>Un chercheur joint Internet et la plupart des services, mais pas un serveur d'un réseau voisin. Son poste a une adresse fixe saisie à la main il y a longtemps.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>C'est le symptôme d'un masque trop large : le poste croit le réseau voisin local et n'envoie pas ses paquets à la passerelle. Tu compares son masque avec celui d'un poste voisin qui fonctionne (<code>ipconfig /all</code>). Une adresse fixe se corrige selon la procédure (souvent par l'équipe réseau, ou en repassant en DHCP si c'est prévu).</p>
+</details>
+<h3>2. « Plus rien hors du bureau, mais l'imprimante du couloir marche »</h3>
+<p>Une utilisatrice imprime sur l'imprimante réseau de son étage, mais n'a plus ni Internet ni messagerie. <code>ipconfig</code> montre une adresse valide.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Local OK, distant KO : pense passerelle (absente, fausse, ou injoignable). Tu notes la passerelle affichée, tu la compares avec un poste voisin et tu fais un ping vers elle. Si tout le bâtiment est touché, c'est un incident pour l'équipe réseau (jour 5).</p>
+</details>
+<h3>3. L'adresse qui finit par .255</h3>
+<p>Un poste a reçu à la main l'adresse fixe <code>192.168.20.255</code> avec le masque <code>255.255.255.0</code>. Il ne communique pas. Un collègue affirme qu'une adresse en .255 est toujours impossible.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>En /24, <code>192.168.20.255</code> est l'adresse de <strong>diffusion</strong> du réseau <code>192.168.20.0</code> : elle ne s'attribue pas à une machine. Mais le collègue a tort de généraliser : en /23 (<code>255.255.254.0</code>), le réseau va de <code>192.168.20.0</code> à <code>192.168.21.255</code>, et <code>192.168.20.255</code> y est une adresse d'hôte valide. Tout dépend du masque prévu : tu vérifies la configuration attendue avant de corriger.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-sous-reseaux"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Masque</strong> : bits à 1 contigus ; /24 = 255.255.255.0 ; /23 = 255.255.254.0 ; /20 = 255.255.240.0. Classes abandonnées : jamais de masque deviné au premier octet.</li>
+  <li><strong>Hôtes</strong> = 2<sup>bits d'hôte</sup> − 2 (réseau et diffusion) ; /31 permis sur une liaison point à point.</li>
+  <li><strong>Méthode du pas</strong> : octet ni 255 ni 0 → pas = 256 − valeur → multiple juste inférieur dans cet octet = réseau (octets de droite à 0) ; réseau + pas − 1 dans cet octet, octets de droite à 255 = diffusion. /8, /16, /24 : octets entiers ; /31 : deux hôtes ; /32 : une adresse.</li>
+  <li><strong>Local ou distant</strong> (une carte, route par défaut seule) : même réseau après le masque = direct ; sinon passerelle. Routes plus précises : <code>route print</code>.</li>
+  <li><strong>Découpage</strong> : du plus grand besoin au plus petit, le plus petit bloc suffisant, sans chevauchement.</li>
+  <li><strong>Plages</strong> : privées 10/8, 172.16/12, 192.168/16 ; 169.254/16 lien local ; 127/8 boucle ; 100.64/10 partagée.</li>
+  <li><strong>Dépanner</strong> : masque faux = certains voisins injoignables ; passerelle fausse = local OK, distant KO.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Les postes sont-ils tous en DHCP, ou certains ont-ils des adresses fixes ? Qui les attribue ?</li>
+  <li>Que doit vérifier le service desk avant d'escalader un problème d'adressage, et vers quelle équipe ?</li>
+  <li>Le service desk a-t-il accès à un outil qui montre l'adresse et le VLAN d'un poste ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-sous-reseaux"> Module terminé</label></p>
+<div data-module-suite="sous-reseaux"></div>
+</div>
+</main>
+</body>
+</html>

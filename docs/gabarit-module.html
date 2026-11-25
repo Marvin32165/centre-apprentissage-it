@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gabarit de module — Guide interne</title>
+<meta name="description" content="Gabarit de module : trame à copier pour créer un nouveau module.">
+<meta property="og:title" content="Gabarit de module — Guide interne">
+<meta property="og:description" content="Gabarit de module : trame à copier pour créer un nouveau module.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Guide interne · Gabarit de module</p>
+<h1>Gabarit de <em>module</em></h1>
+<p class="lead">À copier dans <code>modules/&lt;id&gt;.html</code> pour chaque nouveau module (l'en-tête de cette page est celui d'un module ; seul <code>&lt;head&gt;</code> et le contenu changent). Les étapes pour ajouter un module sont en haut de <code>assets/modules.js</code>.</p>
+<ol>
+  <li>Ajouter l'entrée dans <code>IT_MODULES.modules</code> (<code>assets/modules.js</code>) : <code>id</code>, <code>titre</code>, <code>domaine</code>, <code>niveau</code> (1 à 3), <code>duree</code> (minutes), <code>prerequis</code> (identifiants de modules), <code>resume</code>, <code>tags</code>, <code>prepa</code> (jours de la prépa approfondis), <code>suite</code>.</li>
+  <li>Copier cette page vers <code>modules/&lt;id&gt;.html</code> et remplacer <code>gabarit</code> par l'identifiant (<code>data-module-meta</code>, <code>data-module-suite</code>, <code>data-quiz</code>, <code>data-done</code> en <code>module-&lt;id&gt;</code>).</li>
+  <li>Écrire le quiz dans <code>assets/modules-quiz.js</code> sous la clé <code>module-&lt;id&gt;</code> (6 questions, bonne réponse à des positions variées).</li>
+  <li>Ajouter <code>module-&lt;id&gt;</code> dans les <code>units</code> de la rubrique « modules » de <code>assets/data.js</code>.</li>
+</ol>
+<h2>Trame à respecter</h2>
+<ul>
+  <li><strong>Pas de recopie de la prépa</strong> : le module approfondit et renvoie vers les jours concernés (<code>prepa</code> dans les données).</li>
+  <li><strong>Je montre</strong> : théorie courte, une source officielle par section dans un encadré <code>callout source</code> ; ce qui dépend de l'UMONS dans un <code>callout umons</code> (« à vérifier sur place »).</li>
+  <li><strong>On fait ensemble</strong> : un pas-à-pas à reproduire (VM, labo), avec « ce que tu dois constater » dans un <code>&lt;details class="correction"&gt;</code>.</li>
+  <li><strong>Tu fais seul</strong> : mises en situation et exercices, toutes les corrections dans des <code>&lt;details class="correction"&gt;</code>.</li>
+  <li>Quiz (<code>data-quiz</code>), fiche mémo, questions pour le tuteur, case « Module terminé » (<code>data-done</code>) et suite (<code>data-module-suite</code>).</li>
+  <li>Rien d'inventé : une valeur, un code ou un nom que l'on ne peut pas sourcer est retiré ou marqué « à vérifier ».</li>
+</ul>
+<h2>Squelette</h2>
+<pre data-copy><code>&lt;p class="kicker"&gt;Module · Domaine&lt;/p&gt;
+&lt;h1&gt;Titre du module&lt;/h1&gt;
+&lt;p class="lead"&gt;Ce que le module apporte, et en quoi il prolonge la prépa.&lt;/p&gt;
+&lt;div data-module-meta="gabarit"&gt;&lt;/div&gt;
+&lt;h2 id="objectifs"&gt;À la fin de ce module, tu sauras&lt;/h2&gt;
+&lt;ul class="objectifs"&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;
+
+&lt;span class="phase"&gt;Je montre&lt;/span&gt;
+&lt;h2 id="theorie"&gt;1. …&lt;/h2&gt;
+&lt;aside class="callout source"&gt;&lt;p&gt;Source officielle…&lt;/p&gt;&lt;/aside&gt;
+&lt;aside class="callout umons"&gt;&lt;p&gt;Ce qui dépend de l'UMONS…&lt;/p&gt;&lt;/aside&gt;
+
+&lt;span class="phase"&gt;On fait ensemble&lt;/span&gt;
+&lt;h2 id="labo"&gt;Labo guidé&lt;/h2&gt;
+&lt;details class="correction"&gt;&lt;summary&gt;Voir ce que tu dois constater&lt;/summary&gt;…&lt;/details&gt;
+
+&lt;span class="phase"&gt;Tu fais seul&lt;/span&gt;
+&lt;h2 id="cas"&gt;Mises en situation&lt;/h2&gt;
+&lt;details class="correction"&gt;&lt;summary&gt;Voir la correction&lt;/summary&gt;…&lt;/details&gt;
+
+&lt;h2 id="quiz"&gt;Quiz&lt;/h2&gt;&lt;div data-quiz="module-gabarit"&gt;&lt;/div&gt;
+&lt;h2 id="memo"&gt;Fiche mémo&lt;/h2&gt;&lt;div class="bloc"&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place"&gt;&lt;ul&gt;&lt;li&gt;…&lt;/li&gt;&lt;/ul&gt;&lt;/aside&gt;
+&lt;p&gt;&lt;label class="done"&gt;&lt;input type="checkbox" data-done="module-gabarit"&gt; Module terminé&lt;/label&gt;&lt;/p&gt;
+&lt;div data-module-suite="gabarit"&gt;&lt;/div&gt;</code></pre>
+</div>
+</main>
+</body>
+</html>

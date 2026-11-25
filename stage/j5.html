@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jour 5 — Le réseau côté utilisateur · Prépa stage</title>
+<meta name="description" content="ipconfig, DHCP et APIPA, DNS, ping, tracert, nslookup, eduroam, lecteurs réseau et imprimantes.">
+<meta property="og:title" content="Jour 5 — Le réseau côté utilisateur · Prépa stage">
+<meta property="og:description" content="ipconfig, DHCP et APIPA, DNS, ping, tracert, nslookup, eduroam, lecteurs réseau et imprimantes.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/prepa.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/jour.js" defer></script>
+</head>
+<body data-root="../" data-nav="stage">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Prépa stage · Jour 5 · jeudi 3 décembre</p>
+<h1>Le <em>réseau</em> côté utilisateur</h1>
+<p class="lead">« Je n'ai plus Internet » est un appel très courant. Aujourd'hui, tu apprends à diagnostiquer couche par couche : le poste, l'adresse IP, la passerelle, la résolution de noms, puis les cas particuliers du Wi-Fi d'université, des lecteurs réseau et des imprimantes.</p>
+
+<h2 id="plan">Plan de la journée <span class="duree">≈ 3 h 30</span></h2>
+<ol class="plan-horaire">
+  <li><span class="h">25 min</span><span>Les notions utiles : IP, masque, passerelle, DHCP, DNS</span></li>
+  <li><span class="h">30 min</span><span>ipconfig, ping, tracert, nslookup : la méthode</span></li>
+  <li><span class="h">20 min</span><span>eduroam et le Wi-Fi d'organisation</span></li>
+  <li><span class="h">20 min</span><span>Lecteurs réseau et imprimantes</span></li>
+  <li><span class="h">1 h 20</span><span>Labo : ton réseau à la maison, sans rien casser</span></li>
+  <li><span class="h">35 min</span><span>Mises en situation, quiz, fiche mémo</span></li>
+</ol>
+
+<h2 id="notions">1. Les notions utiles</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Notion</th><th>En clair</th></tr></thead>
+<tbody>
+<tr><td><strong>Adresse IP</strong></td><td>L'adresse du poste sur le réseau (ex. <code>192.168.1.25</code>).</td></tr>
+<tr><td><strong>Masque de sous-réseau</strong></td><td>Dit quelles adresses sont « dans le même réseau » (ex. <code>255.255.255.0</code>, noté <code>/24</code>).</td></tr>
+<tr><td><strong>Passerelle par défaut</strong></td><td>Le routeur par lequel on sort du réseau local, notamment vers Internet.</td></tr>
+<tr><td><strong>DHCP</strong></td><td>Service qui <em>distribue</em> automatiquement adresse, masque, passerelle et serveurs DNS.</td></tr>
+<tr><td><strong>DNS</strong></td><td>L'annuaire qui traduit un nom (<code>www.example.org</code>) en adresse IP.</td></tr>
+<tr><td><strong>Adresse MAC</strong></td><td>Identifiant de la carte réseau, utilisé sur le réseau local.</td></tr>
+</tbody></table></div>
+
+<h3>DHCP : la poignée de main en quatre temps</h3>
+<ol>
+  <li><strong>Discover</strong> : le poste crie « Y a-t-il un serveur DHCP ? ».</li>
+  <li><strong>Offer</strong> : un serveur propose une adresse.</li>
+  <li><strong>Request</strong> : le poste demande formellement cette adresse.</li>
+  <li><strong>Acknowledge</strong> : le serveur confirme et fixe la durée du <strong>bail</strong> (<em>lease</em>).</li>
+</ol>
+<h3>APIPA : l'adresse 169.254.x.x</h3>
+<p>Si un poste configuré en DHCP ne reçoit aucune réponse, Windows s'attribue lui-même une adresse en <strong>169.254.0.0/16</strong> (adressage « <em>link-local</em> », appelé APIPA chez Microsoft). Cette adresse ne permet de parler qu'au réseau local immédiat, pas à Internet.</p>
+<aside class="callout retenir"><p>Une adresse en <code>169.254.x.x</code> veut dire « <strong>le poste n'a pas réussi à joindre un serveur DHCP</strong> ». Ce n'est pas un problème de DNS ni de site web : cherche du côté du câble / Wi-Fi, du port, du VLAN, ou du service DHCP.</p></aside>
+<aside class="callout source"><p>RFC 2131 (DHCP), RFC 3927 (adresses IPv4 link-local), RFC 1918 (adresses privées), RFC 1034 et 1035 (DNS), RFC 792 (ICMP, utilisé par ping). Microsoft Learn : documentation des commandes <code>ipconfig</code>, <code>ping</code>, <code>tracert</code>, <code>nslookup</code>.</p></aside>
+
+<h2 id="methode">2. La méthode : du plus proche au plus lointain</h2>
+<p>Le principe : tester d'abord ce qui est près de l'utilisateur, puis s'éloigner. Le premier test qui échoue oriente vers une zone à vérifier. Prudence : un équipement peut fonctionner tout en refusant le ping (pare-feu), donc un échec de ping est un indice, pas une preuve.</p>
+<ol>
+  <li><strong>Le poste lui-même</strong> : <code>ping 127.0.0.1</code>. Échec = la pile réseau du poste est en cause.</li>
+  <li><strong>Sa configuration</strong> : <code>ipconfig /all</code>. Adresse valide ? 169.254 ? passerelle présente ?</li>
+  <li><strong>La passerelle</strong> : <code>ping</code> de l'adresse de la passerelle. Échec = piste locale (câble, Wi-Fi, port, VLAN), sauf si la passerelle filtre le ping : compare avec un poste voisin.</li>
+  <li><strong>Une adresse publique</strong> : <code>ping 8.8.8.8</code> par exemple (le résolveur public de Google ; la cible à utiliser à l'UMONS est à vérifier sur place). Réussite = cette adresse est joignable : la sortie fonctionne au moins pour ce test.</li>
+  <li><strong>La résolution de noms</strong> : <code>nslookup www.example.org</code> ou <code>ping www.example.org</code>. Si le nom est <em>introuvable</em> alors que l'étape 4 réussit, la <strong>résolution de noms (DNS)</strong> est la piste. Si le nom se résout mais que le ping <em>expire</em>, ce n'est pas le DNS : la destination peut filtrer le ping, teste le service lui-même (<code>Test-NetConnection … -Port 443</code>).</li>
+  <li><strong>Le chemin</strong> : <code>tracert</code> liste les routeurs qui répondent ; un saut muet (<code>*</code>) n'est pas forcément une panne. <code>pathping</code> ajoute des mesures de perte sur les sauts qui répondent.</li>
+</ol>
+
+<h3>Les commandes</h3>
+<pre data-copy><code>ipconfig
+ipconfig /all
+ipconfig /release
+ipconfig /renew
+ipconfig /flushdns
+ipconfig /displaydns
+ping 127.0.0.1
+ping -n 10 8.8.8.8
+tracert www.example.org
+pathping www.example.org
+nslookup www.example.org
+nslookup www.example.org 8.8.8.8
+Test-NetConnection -ComputerName www.example.org -Port 443</code></pre>
+<div class="table-wrap"><table>
+<thead><tr><th>Commande</th><th>Ce qu'elle fait</th></tr></thead>
+<tbody>
+<tr><td><code>ipconfig /all</code></td><td>Affiche adresse IP, masque, passerelle, serveurs DNS, serveur DHCP, bail, adresse MAC.</td></tr>
+<tr><td><code>ipconfig /release</code> puis <code>/renew</code></td><td>Rend l'adresse actuelle puis en redemande une au serveur DHCP.</td></tr>
+<tr><td><code>ipconfig /flushdns</code></td><td>Vide le cache DNS local (utile si un nom pointe vers une ancienne adresse).</td></tr>
+<tr><td><code>ping</code></td><td>Envoie des paquets ICMP et mesure la réponse. Un pare-feu peut bloquer le ping même si le service fonctionne.</td></tr>
+<tr><td><code>tracert</code></td><td>Liste les routeurs traversés, un par un, jusqu'à la destination.</td></tr>
+<tr><td><code>nslookup</code></td><td>Interroge un serveur DNS pour un nom, éventuellement un serveur précis (second argument).</td></tr>
+<tr><td><code>Test-NetConnection</code></td><td>(PowerShell) teste l'accès à un port TCP précis, par exemple 443 (HTTPS).</td></tr>
+</tbody></table></div>
+<aside class="callout attention"><p>Une réponse « Délai d'attente de la demande dépassé » à un <code>ping</code> ne prouve pas que la machine est éteinte : elle peut simplement ne pas répondre au ping. Pour un service, teste le port avec <code>Test-NetConnection</code>.</p></aside>
+<h3>Quand rien ne va plus : la réinitialisation</h3>
+<p>Réservées aux postes dont la configuration réseau semble corrompue, et à faire avec l'accord de la procédure, ces commandes s'exécutent en administrateur et demandent un redémarrage :</p>
+<pre data-copy><code>netsh winsock reset
+netsh int ip reset</code></pre>
+<aside class="callout attention"><p>Ces deux commandes réinitialisent la pile réseau : à ne pas lancer à l'aveugle. Essaie d'abord <code>ipconfig /release</code>, <code>/renew</code> et <code>/flushdns</code>, puis éventuellement le redémarrage de la carte (désactiver / réactiver).</p></aside>
+
+<aside class="callout source"><p>Microsoft Learn, commandes Windows : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping">ping</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/tracert">tracert</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pathping">pathping</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nslookup">nslookup</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig">ipconfig</a> ; PowerShell : <a href="https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection">Test-NetConnection</a>. Noms d'exemple réservés : <a href="https://datatracker.ietf.org/doc/html/rfc2606">RFC 2606</a> (<code>example.org</code>).</p></aside>
+
+<h2 id="eduroam">3. eduroam et le Wi-Fi d'organisation</h2>
+<p><strong>eduroam</strong> (<em>education roaming</em>) est un réseau Wi-Fi mondial pour l'enseignement et la recherche : un utilisateur d'une institution peut se connecter dans une autre avec <strong>son propre compte institutionnel</strong>. Il repose sur l'authentification <strong>802.1X</strong> (WPA2 ou WPA3 « Enterprise ») : le poste prouve son identité avec un identifiant et un mot de passe, et non avec une clé Wi-Fi partagée.</p>
+<h3>Les pannes classiques</h3>
+<ul>
+  <li><strong>Identifiant mal saisi</strong> : eduroam attend en général un identifiant complet, de la forme <code>nom@domaine</code>, où le domaine est celui de l'institution.</li>
+  <li><strong>Mot de passe changé récemment</strong> (si l'institution utilise une connexion par mot de passe) : le poste peut garder l'ancien. On met à jour le mot de passe enregistré, ou on « oublie » le réseau, puis on se reconnecte avec le profil officiel de l'institution. Certaines institutions utilisent des certificats plutôt qu'un mot de passe.</li>
+  <li><strong>Certificat du serveur</strong> : un message d'avertissement ou de refus lié au certificat, souvent après un changement de configuration. Le profil de configuration fourni par l'institution règle normalement ce point.</li>
+  <li><strong>Mauvais réseau choisi</strong> : un réseau « invité » ou un réseau au nom proche, alors que la connexion doit se faire sur eduroam.</li>
+  <li><strong>Appareil personnel</strong> : configurations très variées ; le support se limite souvent à renvoyer vers le guide officiel.</li>
+</ul>
+<aside class="callout umons"><p>La configuration d'eduroam à l'UMONS (domaine de l'identifiant, outil de configuration, certificat, réseaux invités, ce que le service desk prend en charge) : à demander à ton tuteur. Ne communique aucune information réelle à un utilisateur sans l'avoir confirmée.</p></aside>
+<aside class="callout source"><p>eduroam.org : <a href="https://eduroam.org/how/">fonctionnement du service</a> et <a href="https://eduroam.org/configuration-assistant-tool-cat/">outil de configuration (CAT)</a>. IEEE 802.1X : authentification par port. Microsoft Learn : réseaux sans fil WPA2/WPA3 Enterprise.</p></aside>
+
+<h2 id="lecteurs">4. Lecteurs réseau et imprimantes</h2>
+<h3>Lecteurs réseau</h3>
+<p>Un lecteur réseau (<code>P:</code>, <code>S:</code>…) est un raccourci vers un dossier partagé sur un serveur, via le protocole SMB. Un chemin réseau s'écrit <code>\\serveur\partage</code>.</p>
+<pre data-copy><code>net use
+net use Z: \\serveur\partage
+net use Z: /delete
+dir \\serveur\partage</code></pre>
+<p>Quand « le lecteur P: ne marche plus », pose-toi ces questions dans l'ordre :</p>
+<ol>
+  <li>L'utilisateur est-il <strong>sur le bon réseau</strong> (sur site, ou à distance via VPN si l'accès l'exige) ?</li>
+  <li>Le <strong>nom du serveur</strong> se résout-il (<code>nslookup</code>, <code>ping</code>) ?</li>
+  <li>L'utilisateur a-t-il <strong>encore le droit</strong> d'y accéder (groupe, changement de service) ?</li>
+  <li>Son <strong>mot de passe a-t-il changé</strong> ? Des identifiants anciens en cache peuvent bloquer l'accès.</li>
+  <li>D'autres utilisateurs sont-ils touchés ? Si oui, la cause est commune (serveur, réseau, ou autorisations d'un groupe) : escalade avec le chemin, le message exact et les personnes touchées.</li>
+</ol>
+<h3>Imprimantes</h3>
+<p>Une imprimante en réseau se connecte généralement de deux façons :</p>
+<ul>
+  <li>via un <strong>serveur d'impression</strong> (<code>\\serveur\imprimante</code>) qui centralise pilotes et files d'attente ;</li>
+  <li>directement par <strong>adresse IP</strong> (port TCP/IP).</li>
+</ul>
+<p>Un cas fréquent : une file bloquée. Sur un poste, on vérifie la file d'impression, puis on redémarre le <strong>spouleur</strong> (le service qui gère les travaux en attente) :</p>
+<pre data-copy><code>net stop spooler
+del /Q /F /S "%systemroot%\System32\spool\PRINTERS\*.*"
+net start spooler</code></pre>
+<aside class="callout attention"><p>Ces commandes demandent un invite de commandes administrateur et <strong>suppriment les travaux en attente</strong> : prévient l'utilisateur. Sur un serveur d'impression partagé, ne touche à rien sans l'équipe responsable.</p></aside>
+<p>Autres causes fréquentes : mauvaise imprimante par défaut, pilote manquant ou obsolète, imprimante éteinte ou hors réseau, bourrage papier ou consommable à remplacer, droit d'impression absent.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/networking/cannot-access-shared-folder-file-explorer">accès impossible à un dossier partagé</a> ; Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/hardware/printer/fix-print-job-stuck-in-queue-errors-in-windows">travaux d'impression bloqués dans la file</a>.</p></aside>
+<aside class="callout umons"><p>La façon dont les imprimantes sont déployées à l'UMONS (serveur d'impression, impression « sécurisée » par badge, nommage des files) et ce que le service desk peut faire seul : à demander à ton tuteur.</p></aside>
+
+<h2 id="labo">Labo : ton réseau à la maison, sans rien casser <span class="duree">1 h 20</span></h2>
+<p>Pas de machine virtuelle : tu observes le réseau de ton PC et de ta box. Rien n'est modifié, sauf le renouvellement de l'adresse (quelques secondes de coupure : pas pendant un appel vidéo). Les noms <code>example.org</code> et <code>.invalid</code> sont réservés aux exemples et aux tests (RFC 2606).</p>
+<h3>Lire sa configuration</h3>
+<ol>
+  <li><code>ipconfig /all</code> : note l'adresse, le masque, la passerelle, le ou les serveurs DNS, « DHCP activé », le serveur DHCP et les dates du bail. Qui distribue les adresses chez toi ?</li>
+  <li><code>ipconfig /release</code> puis <code>ipconfig /renew</code> : relis <code>ipconfig /all</code>. Qu'est-ce qui a changé (dates du bail, adresse) ?</li>
+  <li><code>ping</code> de ta passerelle, puis <code>ping example.org</code>, puis <code>tracert example.org</code> : combien de sauts avant de quitter ta box ?</li>
+  <li><code>Resolve-DnsName example.org</code> et <code>nslookup example.org</code> : quel serveur DNS répond ?</li>
+  <li><code>Test-NetConnection example.org -Port 443</code> : lis <code>TcpTestSucceeded</code>.</li>
+</ol>
+<h3>Des pannes sans danger</h3>
+<ol>
+  <li><strong>Nom introuvable</strong> : <code>ping test.invalid</code> et <code>Resolve-DnsName test.invalid</code>. Que dit le message ? Compare avec un ping de ta passerelle, qui marche.</li>
+  <li><strong>Liaison coupée</strong> : désactive le Wi-Fi (ou débranche le câble), lis <code>ipconfig</code>, puis rétablis la connexion et relis-le.</li>
+  <li><strong>Sur papier</strong> : pour chacune des quatre pannes ci-dessous, écris ce que tu verrais dans <code>ipconfig /all</code>, le premier test que tu ferais et ce que tu dirais à l'utilisateur. (1) Le serveur DHCP ne répond plus. (2) La passerelle configurée n'existe pas. (3) Le serveur DNS configuré est faux. (4) Le câble est débranché.</li>
+</ol>
+<details class="correction"><summary>Voir des repères pour contrôler tes résultats</summary>
+<ul>
+  <li><strong>Configuration</strong> : en général, la box fait serveur DHCP, passerelle et DNS (même adresse pour les trois). Après <code>/renew</code>, les dates du bail sont nouvelles ; l'adresse reste souvent la même.</li>
+  <li><strong>Nom introuvable</strong> : « hôte introuvable » (ou une erreur DNS) alors que la passerelle répond : le réseau marche, la résolution échoue. C'est le raisonnement de la panne 3.</li>
+  <li><strong>Liaison coupée</strong> : « Média déconnecté » dans <code>ipconfig</code> pour la carte concernée.</li>
+  <li><strong>Panne 1 (DHCP muet)</strong> : un poste en DHCP finit en 169.254.x.x, masque 255.255.0.0, sans passerelle ; premier test : un voisin a-t-il le même problème ?</li>
+  <li><strong>Panne 2 (passerelle fausse)</strong> : adresse valide, réseau local OK, rien au-delà ; <code>ipconfig /all</code> montre une passerelle différente de celle des postes qui marchent, et son ping échoue.</li>
+  <li><strong>Panne 3 (DNS faux)</strong> : les pings vers des adresses IP fonctionnent, les noms ne se résolvent pas.</li>
+  <li><strong>Panne 4 (câble)</strong> : « Média déconnecté » ; on vérifie le câble, la prise, le port du commutateur et la carte.</li>
+</ul>
+<p>Sources : <a href="https://www.rfc-editor.org/rfc/rfc2606.html">RFC 2606</a> (noms réservés) et les encadrés des sections précédentes.</p>
+</details>
+<aside class="callout umons"><p>Installer un serveur DHCP et DNS de test (<a href="https://learn.microsoft.com/en-us/windows-server/networking/technologies/dhcp/quickstart-install-configure-dhcp-server">procédure Microsoft</a>) : sur un poste de test au stage, si ton tuteur le permet (à vérifier sur place).</p></aside>
+
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « Je n'ai plus Internet »</h3>
+<p>Un utilisateur sur poste fixe filaire appelle : « Plus d'Internet ». Il voit un petit triangle jaune sur l'icône réseau. À la demande de <code>ipconfig</code>, il lit une adresse <code>169.254.12.7</code>.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Le poste n'a pas reçu d'adresse DHCP. On vérifie d'abord le plus simple : câble bien branché, prise murale, autre prise ou poste voisin. On tente <code>ipconfig /release</code> puis <code>/renew</code>. Si les postes voisins sont aussi en 169.254, c'est un incident de masse (DHCP ou réseau) : escalade immédiate au réseau avec le nom du bâtiment et de la prise. Si seul ce poste est touché : câble ou port, puis N2.</p>
+</details>
+<h3>2. « Internet marche, mais pas le site de l'université »</h3>
+<p>Un enseignant dit pouvoir ouvrir n'importe quel site, sauf le site interne de son service. <code>ping</code> vers l'adresse d'un autre site marche.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Le réseau fonctionne. On teste la résolution du nom : <code>nslookup</code> du site interne. Un échec indique un souci DNS (serveur DNS ou nom absent, peut-être un accès VPN requis hors du campus). Un succès suivi d'un échec d'accès indique plutôt le serveur ou un droit. On compare avec un collègue et on escalade avec ces résultats.</p>
+</details>
+<h3>3. Le Wi-Fi ne marche pas sur le portable personnel</h3>
+<p>Une étudiante dit : « eduroam ne veut pas me laisser entrer, mais ça marche chez mes amis. » Elle a changé son mot de passe hier.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Si eduroam se connecte par mot de passe à l'UMONS (à vérifier sur place), l'ancien est sans doute encore enregistré : elle le met à jour ou « oublie » le réseau, puis se reconnecte avec son identifiant complet ou le profil officiel. On vérifie qu'elle utilise le bon réseau et le bon format d'identifiant, selon le guide officiel de l'UMONS. Au-delà, on la renvoie vers la procédure prévue pour les appareils personnels, et on note le cas.</p>
+</details>
+<h3>4. « L'imprimante imprime des pages blanches »</h3>
+<p>Imprimante réseau, plusieurs utilisateurs l'utilisaient ce matin ; l'un d'eux imprime maintenant, mais seules des pages blanches sortent. Il y a aussi une file de documents en attente depuis hier.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>On demande si d'autres utilisateurs sont touchés, on regarde la file d'impression (travaux bloqués), on imprime d'abord une page de test depuis le panneau de l'imprimante elle-même (si elle sort blanche, c'est matériel : toner, tambour → N2 ; si elle est correcte, on cherche du côté de Windows, du pilote ou de la file). Si le problème se limite à un poste, on redémarre le spouleur après avoir prévenu l'utilisateur. Si toute la file est bloquée sur un serveur d'impression, on escalade à l'équipe qui le gère.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="stage-j5"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>IP, masque, passerelle, DNS</strong> : le quatuor de base (<code>ipconfig /all</code>).</li>
+  <li><strong>DHCP</strong> : Discover, Offer, Request, Acknowledge. <strong>169.254.x.x</strong> = pas de DHCP joint.</li>
+  <li><strong>Méthode</strong> : <code>127.0.0.1</code> → <code>ipconfig /all</code> → passerelle → adresse publique → nom (DNS) → <code>tracert</code>.</li>
+  <li><strong>IP qui répond, nom qui ne répond pas</strong> = DNS.</li>
+  <li><strong>Commandes</strong> : <code>ipconfig /release</code>, <code>ipconfig /renew</code>, <code>ipconfig /flushdns</code> (trois commandes), <code>ping</code>, <code>tracert</code>, <code>nslookup</code>, <code>Test-NetConnection</code>.</li>
+  <li><strong>eduroam</strong> : 802.1X, compte institutionnel, identifiant complet, après un changement de mot de passe, mettre à jour le mot de passe enregistré ou oublier le réseau ; profil officiel de l'institution.</li>
+  <li><strong>Lecteurs</strong> : réseau, DNS, droits, mot de passe en cache. <strong>Imprimantes</strong> : file bloquée, spouleur, pilote, matériel.</li>
+  <li><strong>Plusieurs personnes touchées</strong> = escalade immédiate.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Comment se connecter à eduroam à l'UMONS, et quelle aide donne-t-on pour les appareils personnels ?</li>
+  <li>Quel est le plan des réseaux (filaire, Wi-Fi, invités, VPN) à connaître côté support ?</li>
+  <li>Qui gère DHCP, DNS et les imprimantes, et comment les joindre ?</li>
+  <li>Comment sont déployés les lecteurs réseau et les imprimantes sur les postes ?</li>
+  <li>Quelle est la procédure en cas de panne réseau touchant plusieurs utilisateurs ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="stage-j5"> Jour 5 terminé</label></p>
+<nav class="jours-nav" aria-label="Navigation entre les jours">
+  <a class="btn ghost" href="j4.html">← Jour 4</a>
+  <a class="btn ghost" href="index.html">Programme</a>
+</nav>
+</div>
+</main>
+</body>
+</html>

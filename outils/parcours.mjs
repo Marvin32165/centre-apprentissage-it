@@ -1,0 +1,84 @@
+// Parcours de régression dans Chromium : node outils/parcours.mjs
+import {chromium} from 'playwright';
+import {readFile} from 'node:fs/promises';
+import {createServer} from 'node:http';
+import {pathToFileURL} from 'node:url';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+const root=process.cwd();
+const server=createServer(async(req,res)=>{try{let p=decodeURIComponent(new URL(req.url,'http://localhost').pathname);if(p.endsWith('/'))p+='index.html';const f=path.resolve(root,'.'+p);if(!f.startsWith(root+path.sep))throw Error();const ext=path.extname(f);res.setHeader('Content-Type',({'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml'})[ext]||'application/octet-stream');res.end(await readFile(f))}catch{res.statusCode=404;res.end('404')}});
+await new Promise(r=>server.listen(0,'127.0.0.1',r));const browser=await chromium.launch();let failures=0;
+async function test(label,fn){try{await fn();console.log('OK '+label)}catch(e){failures++;console.log('ÉCHEC '+label+': '+e.message)}}
+for(const mode of ['serveur','file']){
+ const ctx=await browser.newContext({viewport:{width:1280,height:900},reducedMotion:'reduce'});const p=await ctx.newPage();let errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(['error','warning'].includes(m.type()))errors.push(m.text())});
+ const base=mode==='file'?pathToFileURL(root+'/').href:`http://127.0.0.1:${server.address().port}/`;
+ await test(mode+' calendrier de la prépa',async()=>{
+  const mission=p.locator('[data-mission]');
+  const cases=p.locator('[data-frise] .case');
+  const courante=p.locator('[data-frise] [aria-current="date"]');
+  const liens=()=>mission.locator('.mission-actions a').evaluateAll(els=>els.map(a=>a.getAttribute('href')));
+  const ouvrir=date=>p.goto(base+'index.html?date='+date);
+  await ouvrir('2026-11-30');
+  assert.match(await mission.locator('h1').innerText(),/jours 1 et 2/i);
+  assert.deepEqual(await liens(),['stage/j1.html','stage/j2.html']);
+  assert.equal(await cases.count(),8);
+  assert.equal(await cases.last().locator('.case-n').innerText(),'Stage');
+  assert.deepEqual(await cases.locator('.case-n').allTextContents(),['J1 + J2','J3','J4','J5','J6','J7 + J8','J9 + J10','Stage']);
+  assert.equal(await courante.getAttribute('href'),'stage/j1.html');
+  await p.evaluate(()=>localStorage.setItem('it.done.stage-j1','1'));
+  await p.reload();
+  assert.equal(await courante.getAttribute('href'),'stage/j2.html');
+  assert.match(await courante.getAttribute('aria-label'),/jour 1, Service desk, terminé/);
+  assert.match(await p.locator('[data-compteur="stage"]').innerText(),/1 \/ 10/);
+  await p.evaluate(()=>localStorage.setItem('it.done.stage-j2','1'));
+  await p.reload();
+  assert.equal(await courante.locator('.case-n').innerText(),'J1 + J2 ✓');
+  assert.equal(await courante.getAttribute('href'),'stage/j1.html');
+  await p.evaluate(()=>{
+   localStorage.removeItem('it.done.stage-j1');
+   localStorage.removeItem('it.done.stage-j2');
+  });
+  await ouvrir('2026-12-01');
+  assert.match(await mission.locator('.kicker').innerText(),/jour 3 sur 10/i);
+  assert.deepEqual(await liens(),['stage/j3.html','stage/j3.html#plan']);
+  await ouvrir('2026-12-05');
+  assert.match(await mission.locator('h1').innerText(),/jours 7 et 8/i);
+  assert.deepEqual(await liens(),['stage/j7.html','stage/j8.html']);
+  assert.equal(await courante.locator('.case-n').innerText(),'J7 + J8');
+  await ouvrir('2026-12-06');
+  assert.match(await mission.locator('h1').innerText(),/jours 9 et 10/i);
+  assert.deepEqual(await liens(),['stage/j9.html','stage/j10.html']);
+  assert.equal(await courante.locator('.case-n').innerText(),'J9 + J10');
+  await ouvrir('2026-11-27');
+  assert.match(await mission.locator('.kicker').innerText(),/commence le lundi 30 novembre/i);
+  assert.deepEqual(await liens(),['stage/j1.html','stage/index.html']);
+  assert.equal(await courante.count(),0);
+  await ouvrir('2026-12-07');
+  assert.match(await mission.locator('h1').innerText(),/stage.*commencé/i);
+ });
+ await test(mode+' progression et tampon',async()=>{await p.goto(base+'stage/j1.html');await p.evaluate(()=>{localStorage.setItem('it.done.stage-j1','1')});await p.reload({waitUntil:'load'});await p.waitForSelector('.cloture button[aria-pressed="true"]',{timeout:5000});assert.equal(await p.locator('.cloture button').getAttribute('aria-pressed'),'true');assert.ok(await p.locator('.tampon-mot').textContent()==='RÉSOLU');await p.locator('.cloture button').click();assert.equal(await p.evaluate(()=>localStorage.getItem('it.done.stage-j1')),null);await p.locator('.cloture button').click();await p.reload();assert.equal(await p.locator('.cloture button').getAttribute('aria-pressed'),'true')});
+ await test(mode+' minuteur, pause, bloc suivant et reprise',async()=>{const go=p.locator('.seance-go');await go.click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).marche),true);await go.click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).marche),false);await p.locator('.seance-next').click();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).bloc),1);await p.reload();assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.seance.j1')).bloc),1)});
+ await test(mode+' quiz et correction cachée',async()=>{const qs=await p.evaluate(()=>window.IT_QUIZZES['stage-j1'].questions.map(q=>q.reponse));for(let i=0;i<qs.length;i++)await p.locator(`.quiz input[name=q${i}][value="${qs[i]}"]`).check();await p.locator('.quiz button[type=submit]').click();assert.match(await p.locator('.quiz .score').innerText(),new RegExp(qs.length+' / '+qs.length));assert.ok(await p.locator('.quiz details').count()>0);assert.equal(await p.locator('.quiz details[open]').count(),0);await p.getByRole('button',{name:'Recommencer',exact:true}).click();const wrong=await p.evaluate(()=>window.IT_QUIZZES['stage-j1'].questions.map(q=>(q.reponse+1)%q.options.length));for(let i=0;i<wrong.length;i++)await p.locator(`.quiz input[name=q${i}][value="${wrong[i]}"]`).check();await p.locator('.quiz button[type=submit]').click();assert.equal(await p.locator('.quiz .opt.bon').count(),0);assert.equal(await p.locator('.quiz details[open]').count(),0);assert.equal(await p.locator('.quiz details').count(),wrong.length)});
+ await test(mode+' chaque destination de la recherche',async()=>{
+  await p.goto(base+'index.html');await p.locator('[data-recherche]').click();await p.waitForFunction(()=>Array.isArray(window.IT_RECHERCHE));const entries=await p.evaluate(()=>[...new Map(window.IT_RECHERCHE.map(e=>[e.u,e])).values()]);
+  for(const e of entries){
+   await p.goto(base+'index.html');await p.locator('[data-recherche]').click();await p.waitForFunction(()=>Array.isArray(window.IT_RECHERCHE));await p.locator('#rech-q').fill(e.t+' '+e.o);
+   const pos=await p.locator('.rech-item').evaluateAll((els,u)=>els.findIndex(a=>a.getAttribute('href')===u),e.u);assert.notEqual(pos,-1,'Résultat inaccessible : '+e.t+' → '+e.u);
+   await p.locator('.rech-item').nth(pos).click();await p.waitForURL(new URL(e.u,base).href);assert.ok(await p.evaluate(()=>!location.hash||!!document.getElementById(decodeURIComponent(location.hash.slice(1)))),e.u);
+  }
+ });
+ await test(mode+' filtres des modules',async()=>{await p.goto(base+'modules/index.html');const cards=p.locator('.mod-card');const total=await cards.count();assert.ok(total>1);await p.locator('.puce').nth(1).click();assert.ok(await cards.count()<total);await p.locator('.filtre-q input').fill('termeintrouvable987');assert.equal(await cards.count(),0);await p.getByRole('button',{name:'Tout afficher'}).click();assert.equal(await cards.count(),total)});
+ await test(mode+' atlas avec domaine',async()=>{await p.goto(base+'themes.html?domaine=reseau');assert.match(await p.locator('#domaine h2').innerText(),/réseau/i);assert.equal(await p.locator('.tuile[aria-pressed=true]').count(),1)});
+ await test(mode+' montage guidé',async()=>{await p.goto(base+'atelier/montage.html?s=bureautique-intel');await p.getByRole('button',{name:/Commencer le montage/}).click();for(let i=0;i<18;i++){const b=p.getByRole('button',{name:'Montre-moi'});if(!(await b.count()))break;await b.click();if(await p.locator('#at-post').isVisible())await p.locator('#at-post .at-verdict').waitFor();}assert.match(await p.locator('.at-etape').innerText(),/Fin du chapitre/)});
+ await test(mode+' dossier de panne résolu',async()=>{await p.goto(base+'atelier/pannes.html');const info=await p.evaluate(()=>{const id=Object.keys(window.IT_ATELIER.pannes)[0], x=window.IT_ATELIER.pannes[id];return {id,cause:x.cause,fix:x.fix,outil:x.utile[0]}});await p.goto(base+'atelier/pannes.html?p='+info.id);await p.locator('[data-outil="'+info.outil+'"]').click();await p.locator('#pn-cause').selectOption(info.cause);await p.getByRole('button',{name:'Poser ce diagnostic'}).click();await p.getByRole('button',{name:/Mettre hors tension/}).click();await p.locator('#pn-inter').selectOption(info.fix);await p.getByRole('button',{name:'Intervenir',exact:true}).click();await p.getByRole('button',{name:/Rebrancher/}).click();await p.getByRole('button',{name:'Appuyer sur le bouton marche'}).click();await p.waitForFunction(id=>localStorage.getItem('it.panne.'+id)==='1',info.id);assert.equal(await p.locator('.pn-corrige details[open]').count(),0)});
+ await test(mode+' mode test du montage',async()=>{await p.goto(base+'atelier/montage.html?s=bureautique-intel&m=test');await p.getByRole('button',{name:/Commencer le test/}).click();await p.getByRole('button',{name:'Terminer le test'}).click();await p.getByRole('button',{name:'Confirmer : terminer ?'}).click();assert.ok(await p.locator('.at-rapport').isVisible());assert.equal(await p.locator('.at-rapport details[open]').count(),0)});
+ await test(mode+' évaluation des montages et bilan A4',async()=>{await p.goto(base+'atelier/evaluation.html');await p.getByRole('button',{name:'Commencer',exact:true}).click();for(let i=0;i<4;i++){await p.getByRole('button',{name:/Commencer le test/}).click();await p.getByRole('button',{name:'Terminer le test'}).click();await p.getByRole('button',{name:'Confirmer : terminer ?'}).click();await p.getByRole('button',{name:i===3?'Voir le rapport final':/Scénario suivant/}).click()}assert.ok(await p.locator('.at-rap.bilan').isVisible());await p.emulateMedia({media:'print'});const pdf=await p.pdf({format:'A4',printBackground:true});assert.ok((pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length>=1);await p.emulateMedia({media:'screen'})});
+ await test(mode+' évaluation des pannes et bilan A4',async()=>{await p.goto(base+'atelier/pannes-eval.html');await p.getByRole('button',{name:'Commencer',exact:true}).click();for(let i=0;i<5;i++){await p.getByRole('button',{name:'Terminer le test'}).click();await p.getByRole('button',{name:'Confirmer : terminer ?'}).click();await p.getByRole('button',{name:i===4?'Voir le rapport final':/Dossier suivant/}).click()}assert.ok(await p.locator('.at-rap.bilan').isVisible());await p.emulateMedia({media:'print'});const pdf=await p.pdf({format:'A4',printBackground:true});assert.ok((pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length>=1);await p.emulateMedia({media:'screen'})});
+ await test(mode+' révision express',async()=>{await p.goto(base+'stage/revision.html');assert.equal(await p.locator('.revision-fiche').count(),9);assert.equal(await p.evaluate(()=>window.IT_QUIZZES['stage-revision'].questions.length),10);assert.ok(await p.locator('[data-quiz="stage-revision"].quiz').count()===1)});
+ await test(mode+' entraînement aux tickets',async()=>{await p.goto(base+'stage/tickets.html');const t=await p.evaluate(()=>window.IT_TICKETS[0]);const a=p.locator('#ticket-t01');assert.equal(await p.locator('.ticket-cas').count(),12);await a.getByRole('button',{name:'Valider'}).click();assert.match(await a.locator('.tk-msg').innerText(),/Réponds/);for(const k of ['type','impact','urgence','action'])await a.locator(`input[name="T01-${k}"][value="${t[k]}"]`).check();assert.match(await a.locator('.tk-prio').innerText(),/P4/);await a.getByRole('button',{name:'Valider'}).click();assert.equal(await a.locator('.tk-faux').count(),0);assert.equal(await a.locator('details.correction[open]').count(),0);assert.equal(JSON.parse(await p.evaluate(()=>localStorage.getItem('it.tickets'))).T01.justes,4)});
+ await test(mode+' export puis import de la progression',async()=>{await p.goto(base+'stage/index.html');await p.evaluate(()=>{localStorage.setItem('it.done.stage-j2','1');localStorage.setItem('autre.cle','x')});const [dl]=await Promise.all([p.waitForEvent('download'),p.getByRole('button',{name:'Exporter ma progression'}).click()]);const contenu=JSON.parse(await readFile(await dl.path(),'utf8'));assert.equal(contenu.format,'apprentissage-it');assert.equal(contenu.cles['it.done.stage-j2'],'1');assert.ok(!('autre.cle' in contenu.cles));await p.evaluate(()=>{localStorage.removeItem('it.done.stage-j2');localStorage.removeItem('autre.cle')});await Promise.all([p.waitForEvent('load'),p.locator('.pied-progression input[type=file]').setInputFiles(await dl.path())]);assert.equal(await p.evaluate(()=>localStorage.getItem('it.done.stage-j2')),'1');await p.locator('.pied-progression input[type=file]').setInputFiles({name:'faux.json',mimeType:'application/json',buffer:Buffer.from('{"a":1}')});await p.waitForFunction(()=>/rien n'a été modifié/.test(document.querySelector('.pied-statut').textContent))});
+ for(const m of ['support-windows','reseau-base','ad-support','itil','materiel-pc','depannage-distance','m365-messagerie','imprimantes-peripheriques','sous-reseaux'])await test(mode+` impression module ${m} : fiche sur une page A4`,async()=>{await p.goto(base+`modules/${m}.html`);await p.emulateMedia({media:'print'});const pdf=await p.pdf({format:'A4',printBackground:true});const count=(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;assert.equal(count,1);await p.emulateMedia({media:'screen'})});
+ for(let i=1;i<=9;i++)await test(mode+` impression J${i} : une page A4`,async()=>{await p.goto(base+`stage/j${i}.html`);await p.emulateMedia({media:'print'});const pdf=await p.pdf({format:'A4',printBackground:true});const count=(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;assert.equal(count,1);await p.emulateMedia({media:'screen'})});
+ await test(mode+' console',async()=>assert.deepEqual(errors,[]));await ctx.close();
+}
+await browser.close();await new Promise(r=>server.close(r));console.log(failures+' échec(s)');if(failures)process.exitCode=1;

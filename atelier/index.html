@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atelier hardware — Apprentissage IT</title>
+<meta name="description" content="Atelier de montage et de dépannage de PC virtuel.">
+<meta property="og:title" content="Atelier hardware — Apprentissage IT">
+<meta property="og:description" content="Atelier de montage et de dépannage de PC virtuel.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/atelier-data.js" defer></script>
+<script src="../assets/atelier-scenarios.js" defer></script>
+<script src="../assets/atelier-pannes-data.js" defer></script>
+<script src="../assets/atelier-art.js" defer></script>
+<script src="../assets/atelier-index.js" defer></script>
+</head>
+<body data-root="../" data-nav="atelier" class="livre">
+<main id="contenu" class="wrap page">
+<h1 class="sr-only">Atelier hardware : Le Livre du montage</h1>
+<div class="livre-double frontispice">
+  <section class="livre-page gauche" aria-label="Frontispice">
+    <div class="frontis">
+      <p class="frontis-haut">Atelier hardware</p>
+      <p class="frontis-titre">Le Livre<br>du <em>montage</em></p>
+      <p class="frontis-sous">Monter un PC virtuel pièce par pièce, comprendre pourquoi il démarre (ou non), puis diagnostiquer et réparer ses pannes.</p>
+      <figure class="frontis-gravure" data-gravure aria-hidden="true"></figure>
+      <p class="frontis-mode"><strong>Au doigt :</strong> touche une pièce du bac, puis l'emplacement surligné. <strong>À la souris :</strong> glisse la pièce sur la planche. Quatre angles de vue : côté, carte mère, face, arrière.</p>
+      <aside class="callout source"><p>Théorie : <a href="../stage/j9.html">jour 9 de la prépa</a> (composants, BIOS/UEFI, déploiement). Fiches de processeurs : Intel ARK ; mémoire : JEDEC ; Windows 11 : Microsoft Learn. Pièces et mesures : modèles génériques, réalistes mais simplifiés.</p></aside>
+    </div>
+    <p class="folio-ligne"><span class="folio">— i —</span></p>
+  </section>
+  <section class="livre-page droite" aria-labelledby="tdm">
+    <p class="titre-courant"><span>Table des matières</span></p>
+    <h2 id="tdm" class="tdm-titre">Table des matières</h2>
+    <div data-tdm><p>La table s'affiche avec JavaScript.</p></div>
+    <p class="folio-ligne"><span class="folio">— ii —</span></p>
+  </section>
+</div>
+<div class="livre-double index-livre" id="index">
+  <section class="livre-page gauche" aria-labelledby="index-pieces">
+    <p class="titre-courant"><span>Index</span><span>Pièces</span></p>
+    <h2 id="index-pieces">Index des pièces</h2>
+    <div data-index-pieces></div>
+    <p class="folio-ligne"><span class="folio" data-folio-index></span></p>
+  </section>
+  <section class="livre-page droite" aria-labelledby="index-pannes">
+    <p class="titre-courant"><span>Index</span><span>Pannes et causes</span></p>
+    <h2 id="index-pannes">Index des pannes</h2>
+    <div data-index-pannes></div>
+    <p class="folio-ligne"><span class="folio" data-folio-index2></span></p>
+  </section>
+</div>
+</main>
+</body>
+</html>

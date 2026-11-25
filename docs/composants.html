@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Composants — Apprentissage IT</title>
+<meta name="description" content="Composants — Apprentissage IT">
+<meta property="og:title" content="Composants — Apprentissage IT">
+<meta property="og:description" content="Composants — Apprentissage IT">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script>
+window.IT_QUIZZES = { demo: { titre: "Quiz de démonstration", questions: [
+  { q: "Où est stockée la progression ?", options: ["Sur un serveur", "Dans le localStorage du navigateur", "Dans un cookie tiers"], reponse: 1, explication: "Les clés sont préfixées « it. » et lues dans un try/catch." },
+  { q: "Que contient une correction ?", options: ["Rien, elle est affichée d'office", "Elle reste dans un details fermé"], reponse: 1, explication: "Règle de la plateforme : les corrections sont toujours cachées." }
+] } };
+</script>
+<script src="../assets/app.js" defer></script>
+</head>
+<body data-root="../" data-nav="">
+<main id="contenu" class="wrap page"><div class="prose">
+<p class="kicker">Guide interne</p>
+<h1>Composants <em>communs</em></h1>
+<p class="lead">Référence de l'identité « Poste de garde » (voir <code>docs/REFONTE.md</code>) : une seule feuille de style, des jetons, trois niveaux d'encadrés.</p>
+
+<h2 id="typo">1. Typographie</h2>
+<p class="kicker">Étiquette · police monospace locale</p>
+<p>Texte courant en police à empattements locale, 18,5 px, interligne 1,7, colonne de 46rem au plus. <code>code en ligne</code>, <kbd>Ctrl</kbd> + <kbd>K</kbd>. Les h2 qui commencent par « 1. » reçoivent un numéro <span class="sec">§1</span> en italique rouille.</p>
+<h3>Titre de niveau 3</h3>
+<p class="label">Étiquette neutre · compteurs, dates</p>
+
+<h2 id="encadres">2. Encadrés : trois niveaux</h2>
+<aside class="callout retenir"><p><strong>Retenir</strong> : la priorité d'un ticket vient de l'impact et de l'urgence.</p></aside>
+<aside class="callout astuce"><p>L'astuce prend le style de « Retenir » avec sa propre étiquette.</p></aside>
+<aside class="callout attention"><p>Ne jamais demander un mot de passe à l'utilisateur.</p></aside>
+<aside class="callout umons"><p>Étiquette en ligne : la procédure d'escalade interne est à confirmer avec le tuteur.</p></aside>
+<aside class="callout source"><p>Étiquette en ligne : Microsoft Learn, documentation officielle de la commande.</p></aside>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place"><ul><li>Bloc ambre en contour, réservé aux questions pour le tuteur.</li></ul></aside>
+
+<h2 id="code">3. Code, tableau, correction</h2>
+<pre data-copy><code>ipconfig /all
+ping 127.0.0.1</code></pre>
+<div class="table-wrap"><table>
+<thead><tr><th>Commande</th><th>Usage</th></tr></thead>
+<tbody><tr><td><code>ipconfig</code></td><td>Afficher la configuration IP</td></tr><tr><td><code>gpupdate</code></td><td>Forcer l'application des GPO</td></tr></tbody>
+</table></div>
+<details class="correction"><summary>Voir la correction</summary><p>Contenu de la correction, caché par défaut.</p></details>
+
+<h2 id="quiz">4. Quiz et progression</h2>
+<div data-quiz="demo"></div>
+<ul class="checklist bloc">
+<li><label class="done"><input type="checkbox" data-done="demo-1"> Fait : lire la théorie</label></li>
+<li><label class="done"><input type="checkbox" data-done="demo-2"> Fait : faire le labo</label></li>
+</ul>
+<div class="progress" data-progress="all"></div>
+
+<h2 id="boutons">5. Boutons, cartes, pastilles</h2>
+<p><a class="btn" href="../index.html">Bouton principal</a> <a class="btn ghost" href="../index.html">Secondaire</a></p>
+<p><span class="badge">Pastille</span> <span class="badge soon">Bientôt</span> <span class="duree">≈ 30 min</span> <span class="stamp" style="color:var(--accent);border-color:var(--accent)">IT</span></p>
+<div class="grid cols-2">
+<a class="card" href="../modules/index.html"><p class="kicker">Carte</p><h3>Titre de carte</h3><p>Fond surface, bordure, rayon 10 ; le survol passe la bordure en rouille.</p></a>
+<div class="card"><p class="kicker">Carte statique</p><h3>Sans lien</h3><p>Pas d'ombre au repos.</p></div>
+</div>
+<h2 id="composants-specifiques">6. Composants des journées et de l'atelier</h2>
+<h3>Minuteur de séance</h3>
+<p>Le panneau sombre lit les durées du plan horaire, affiche le bloc courant et conserve son état dans <code>it.seance.jN</code>. <a href="../stage/j1.html#plan">Voir le minuteur du jour 1</a>.</p>
+<h3>Ticket de mise en situation</h3>
+<p>Un ticket <code>CAS-01</code> regroupe le contexte et une résolution dans un <code>details</code> fermé. <a href="../stage/j1.html#cas">Voir les tickets du jour 1</a>.</p>
+<h3>Tampon de clôture</h3>
+<p>La clôture affiche le tampon RÉSOLU, conserve <code>it.done.stage-jN</code> et sa date dans <code>it.cloture.jN</code>. <a href="../stage/j1.html#memo">Voir la clôture du jour 1</a>.</p>
+<h3>Matrice de priorité</h3>
+<p>Les neuf cases présentent l'impact et l'urgence avec une explication annoncée après sélection. <a href="../stage/j1.html#priorite">Voir la matrice du jour 1</a>.</p>
+<h3>Fiche mémo imprimable</h3>
+<p>La fiche est générée à partir du contenu du jour et imprimée en A4 ; le jour 10 n'en possède pas. <a href="../stage/j1.html#memo">Voir la fiche du jour 1</a>.</p>
+<h3>Le Livre du montage</h3>
+<p>Les pages de l'atelier réunissent cahier des charges, planche, légende, bac et notes en marge. <a href="../atelier/index.html">Voir le livre de l'atelier</a>.</p>
+
+<h2 id="jour">6. Pages de jour (construits par <code>assets/jour.js</code>)</h2>
+<p>Ces blocs ne s'écrivent pas à la main : <code>jour.js</code> les construit à partir du HTML des jours (plan horaire, tableau impact × urgence, <code>h3</code> de « Mises en situation », section <code>#memo</code>, case <code>data-done</code>). Rendu statique pour référence :</p>
+<article class="ticket-cas"><header class="cas-tete"><span class="cas-id">CAS-01</span><span class="cas-jour">Jour 1</span><span class="cas-statut">À trier</span></header>
+<div class="cas-corps"><h3>Titre de la mise en situation</h3><p>Énoncé du cas.</p>
+<details class="correction"><summary>J'ai répondu : voir la résolution</summary><p class="cas-resolution">Résolution</p><p>Correction cachée.</p></details></div></article>
+<section class="cloture faite" aria-label="Clôture du jour (exemple)"><div class="cloture-txt"><p class="cloture-q">Jour 1 résolu le 23.11.2026.</p></div><div class="tampon" aria-hidden="true"><span class="tampon-mot">RÉSOLU</span><span class="tampon-date">Jour 1 · 23.11.2026</span></div><button type="button" class="btn ghost">Rouvrir le jour 1</button></section>
+<p>Autres pièces de <code>jour.js</code> : minuteur <code>.seance</code> (état <code>it.seance.jN</code>, pastille <code>.seance-pastille</code> sur mobile), matrice <code>.matrice</code>, tiroirs <code>.tiroir</code>, fiche A4 <code>.fiche-print</code> (visible seulement à l'impression).</p>
+
+<h2 id="livre">7. Le Livre du montage (atelier)</h2>
+<p>Pages claires même en thème sombre ; polices IM Fell. Les notes en marge remplacent les encadrés.</p>
+<div class="livre-double" style="grid-template-columns:minmax(0,1fr)"><section class="livre-page gauche" aria-label="Exemple de page">
+<p class="titre-courant"><span>Chap. I — Exemple</span><span>Étape 1 sur 15</span></p>
+<div class="livre-corps"><h2>Titre d'étape</h2><p class="texte at-client">Texte justifié avec lettrine, comme le premier paragraphe d'une étape ou du cahier des charges.</p><p class="ornement" aria-hidden="true">✣</p>
+<p class="note-marge"><span class="note-tit">Indice 1</span>Une note en marge, filet rouille ; vert si juste, rouge si erreur.</p></div>
+<div class="folio-ligne"><span class="voisin">‹ étape précédente</span><span class="folio">3</span></div></section></div>
+</div></main>
+</body>
+</html>

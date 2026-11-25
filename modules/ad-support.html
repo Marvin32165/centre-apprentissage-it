@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Active Directory pour le support — Modules · Apprentissage IT</title>
+<meta name="description" content="Active Directory pour le support : domaine, OU, groupes, Kerberos, stratégies de mot de passe et de verrouillage, réplication.">
+<meta property="og:title" content="Active Directory pour le support — Modules · Apprentissage IT">
+<meta property="og:description" content="Active Directory pour le support : domaine, OU, groupes, Kerberos, stratégies de mot de passe et de verrouillage, réplication.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Windows et annuaire</p>
+<h1><em>Active Directory</em> pour le support</h1>
+<p class="lead">Le jour 6 de la prépa t'apprend les gestes : réinitialiser, déverrouiller, vérifier un groupe, lire une GPO. Ce module explique <strong>pourquoi</strong> l'annuaire se comporte ainsi : comment un compte est identifié, comment l'ouverture de session se passe (Kerberos), pourquoi une modification n'est pas visible partout tout de suite, et ce que les stratégies de mot de passe et de verrouillage décident à ta place.</p>
+<div data-module-meta="ad-support"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>décrire la structure d'un annuaire (forêt, domaine, OU, objets) et identifier un objet de façon sûre ;</li>
+  <li>suivre l'ouverture de session d'un poste du domaine et en déduire ce que le DNS, l'heure et le réseau y changent ;</li>
+  <li>expliquer l'état d'un compte (désactivé, verrouillé, expiré, mot de passe expiré) et lire les politiques qui le gouvernent ;</li>
+  <li>comprendre pourquoi une modification tarde (réplication, jeton d'accès, cache) ;</li>
+  <li>lire l'annuaire en PowerShell sans rien modifier.</li>
+</ul>
+<aside class="callout umons"><p>Le nom du domaine, la forêt, l'organisation des OU, les politiques de mot de passe et de verrouillage, les groupes, les délégations du service desk et l'éventuel lien avec le cloud (annuaire synchronisé) sont propres à l'UMONS : <strong>à vérifier sur place</strong>. Les noms de ce module (<code>lab.local</code>, <code>jdupont</code>) sont fictifs.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : « Active Directory Domain Services overview », « Active Directory security groups », « Kerberos authentication overview », « Password policy » et « Account lockout policy » (sécurité Windows), module PowerShell <code>ActiveDirectory</code>.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="structure">1. La structure de l'annuaire</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Niveau</th><th>Rôle</th></tr></thead>
+<tbody>
+<tr><td><strong>Forêt</strong></td><td>Ensemble de domaines qui partagent le même schéma (la liste des types d'objets et attributs) et la même configuration. C'est la limite de sécurité de plus haut niveau.</td></tr>
+<tr><td><strong>Domaine</strong></td><td>Une partition de l'annuaire avec ses comptes, ses ordinateurs et ses stratégies, hébergée par des <strong>contrôleurs de domaine</strong> (DC).</td></tr>
+<tr><td><strong>Unité d'organisation (OU)</strong></td><td>Un conteneur à l'intérieur d'un domaine : sert à <em>ranger</em>, à <em>appliquer des GPO</em> et à <em>déléguer</em> des droits.</td></tr>
+<tr><td><strong>Objet</strong></td><td>Un utilisateur, un ordinateur, un groupe, etc., décrit par des <strong>attributs</strong>.</td></tr>
+<tr><td><strong>Site</strong></td><td>Représentation du <em>réseau physique</em> (sous-réseaux bien connectés) : aide les postes à choisir un DC proche et règle la réplication.</td></tr>
+</tbody></table></div>
+<h3>Identifier un objet sans se tromper</h3>
+<p>Plusieurs personnes peuvent avoir le même nom : on ne s'y fie pas. Les identifiants utiles :</p>
+<ul>
+  <li><strong><code>sAMAccountName</code></strong> : l'identifiant de connexion « court » (<code>jdupont</code>) ; on le tape souvent précédé du nom NetBIOS du domaine (<code>LAB\jdupont</code>).</li>
+  <li><strong><code>userPrincipalName</code></strong> (UPN) : l'identifiant au format courriel (<code>jdupont@lab.local</code>) ; s'il est synchronisé vers le cloud, il peut y servir d'identifiant, selon la synchronisation et le suffixe (un suffixe <code>.local</code> ne peut pas servir tel quel en ligne).</li>
+  <li><strong><code>distinguishedName</code></strong> (DN) : le chemin complet dans l'annuaire, par exemple <code>CN=Jean Dupont,OU=Personnel,DC=lab,DC=local</code> (nom et domaine fictifs). Il change quand on déplace l'objet.</li>
+  <li><strong><code>objectSID</code></strong> et <strong><code>objectGUID</code></strong> : identifiants uniques et stables ; les droits sont accordés au SID, pas au nom. Renommer un compte ne change ni l'un ni l'autre.</li>
+</ul>
+<aside class="callout astuce"><p>Avant d'agir sur un compte, <strong>confirme que c'est le bon</strong> : identifiant, service, adresse de messagerie. Deux « J. Dupont » dans deux services, c'est un cas courant de mauvaise réinitialisation.</p></aside>
+
+<h2 id="dns-dc">2. L'annuaire repose sur le DNS</h2>
+<p>Un poste ne « connaît » pas ses contrôleurs de domaine : il les <strong>trouve par le DNS</strong> grâce à des enregistrements de service (<code>SRV</code>), par exemple <code>_ldap._tcp.dc._msdcs.lab.local</code>. Le DNS du poste doit donc être celui du domaine (et non un serveur public). Microsoft recommande de vérifier le DNS en premier quand « le poste ne trouve pas le domaine » (<a href="reseau-base.html#dns">module Réseau de base</a>).</p>
+<pre data-copy><code>nltest /dsgetdc:lab.local
+nslookup -type=SRV _ldap._tcp.dc._msdcs.lab.local
+Get-ADDomainController -Discover</code></pre>
+<p>La première commande lance une <strong>découverte</strong> d'un contrôleur de domaine et affiche celui qui est trouvé (le résultat peut venir du cache ; <code>/force</code> impose une nouvelle découverte) : ce n'est pas forcément le DC qui a traité l'ouverture de session. La deuxième interroge le DNS sur les enregistrements SRV du domaine. La troisième fait une découverte de DC via PowerShell (module <code>ActiveDirectory</code>, installé sur le serveur ou avec les outils RSAT).</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/dc-locator">Locating domain controllers</a> (découverte, cache), <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc731935(v=ws.11)">Nltest</a> (<code>/force</code>), <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/windows-security/troubleshoot-domain-controller-location-issues">dépannage de la localisation des DC</a>, <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/active-directory/domain-join-networking-errors">erreurs réseau à la jonction</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-addomaincontroller">Get-ADDomainController</a> ; <a href="https://learn.microsoft.com/en-us/windows/win32/ad/naming-properties">attributs de nommage</a> (§1).</p></aside>
+
+<h2 id="kerberos">3. L'ouverture de session et Kerberos</h2>
+<p>Dans un domaine, l'authentification utilise par défaut <strong>Kerberos</strong>. Version simplifiée :</p>
+<ol>
+  <li>Tu t'authentifies auprès du DC (mot de passe) : tu reçois un <strong>ticket d'octroi de tickets</strong> (TGT).</li>
+  <li>Pour chaque service (partage, messagerie interne, serveur), tu présentes le TGT et obtiens un <strong>ticket de service</strong>, valable un temps limité.</li>
+  <li>Le service lit ce ticket et décide, d'après tes <strong>groupes</strong> (dans ton jeton d'accès), si tu as le droit.</li>
+</ol>
+<p>Trois conséquences pratiques :</p>
+<ul>
+  <li><strong>L'heure compte.</strong> Kerberos tolère par défaut un écart d'au plus 5 minutes entre le poste et le DC. Au-delà, l'authentification échoue avec des messages trompeurs. Les postes du domaine se synchronisent sur le DC (service Windows Time) ; un poste dont l'horloge dérive est un suspect à vérifier.</li>
+  <li><strong>Les groupes sont lus à l'ouverture de session.</strong> Ajouter quelqu'un à un groupe ne change pas son jeton en cours : le premier test est une <strong>nouvelle ouverture de session, en contact avec un DC qui a reçu la modification</strong> (sur le réseau ou le VPN de l'organisation) (<a href="../stage/j6.html#actes">jour 6</a>). Si l'accès manque encore : tickets Kerberos en cache, connexion déjà ouverte au partage, droits de la ressource elle-même.</li>
+  <li><strong>Hors connexion au DC</strong> (par exemple sur un portable hors campus), Windows peut accepter la connexion à partir d'<strong>informations mises en cache</strong> : l'utilisateur ouvre sa session, mais les ressources du domaine ne répondent pas.</li>
+</ul>
+<pre data-copy><code>klist
+klist purge
+w32tm /query /status
+Test-ComputerSecureChannel</code></pre>
+<p><code>klist</code> affiche les tickets Kerberos de la session ; <code>klist purge</code> les efface (ils seront redemandés au besoin ; ne le fais que pour un test, jamais en pleine intervention de l'utilisateur) ; <code>w32tm /query /status</code> montre la source et l'état de l'heure ; <code>Test-ComputerSecureChannel</code> vérifie que le poste a toujours un <strong>canal sécurisé</strong> valide avec le domaine (il répond <code>True</code> ou <code>False</code>).</p>
+<aside class="callout attention"><p>Si <code>Test-ComputerSecureChannel</code> répond <code>False</code> (« la relation d'approbation entre cette station de travail et le domaine principal a échoué »), la réparation (<code>-Repair</code>, réinitialisation du mot de passe du compte ordinateur, ou nouvelle jonction) nécessite des droits que le service desk n'a pas toujours. Teste aussi le DNS et la connexion vers un DC. <strong>Ne retire pas et ne rejoins pas le poste au domaine sans procédure</strong> : selon la façon de faire, l'objet ordinateur peut être recréé ailleurs, sans son OU ni ses groupes ; seule la réutilisation du même objet les conserve.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-machines/troubleshoot-broken-secure-channel">relation d'approbation rompue</a>, <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/active-directory-domain-join-permissions">réutilisation d'un compte ordinateur</a>, <a href="https://learn.microsoft.com/en-us/windows/win32/secauthz/access-tokens">Access tokens</a>.</p></aside>
+
+<h2 id="comptes">4. L'état d'un compte et les politiques</h2>
+<p>« Je n'arrive pas à me connecter » peut avoir cinq causes distinctes, avec des remèdes différents :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>État</th><th>Signification</th><th>Remède</th></tr></thead>
+<tbody>
+<tr><td><strong>Désactivé</strong> (<code>Enabled = False</code>)</td><td>Compte coupé (départ, suspension).</td><td>Pas au service desk de le réactiver sans décision : vérifier la demande.</td></tr>
+<tr><td><strong>Verrouillé</strong> (<code>LockedOut</code>)</td><td>Trop d'échecs de mot de passe.</td><td>Déverrouiller, <em>puis chercher la source</em> (<a href="../stage/j6.html#actes">jour 6</a>).</td></tr>
+<tr><td><strong>Expiré</strong> (date d'expiration du compte)</td><td>Compte à durée limitée (stagiaire, prestataire).</td><td>Prolongation = décision du responsable.</td></tr>
+<tr><td><strong>Mot de passe expiré</strong></td><td>Âge maximal dépassé.</td><td>Changement de mot de passe (par l'utilisateur ou réinitialisation vérifiée).</td></tr>
+<tr><td><strong>Horaires ou postes autorisés</strong></td><td>Restrictions d'ouverture de session.</td><td>Vérifier la restriction avant de conclure à une panne.</td></tr>
+</tbody></table></div>
+<h3>Les deux politiques qui gouvernent les mots de passe</h3>
+<ul>
+  <li><strong>Mot de passe</strong> : longueur minimale, complexité, historique (anciens mots de passe interdits), âge maximal et minimal.</li>
+  <li><strong>Verrouillage</strong> : seuil d'échecs, durée du verrouillage, délai de réinitialisation du compteur d'échecs.</li>
+</ul>
+<p>Elles s'appliquent par défaut à tout le domaine (stratégie de domaine par défaut) ; des <strong>stratégies de mot de passe affinées</strong> peuvent imposer des règles différentes à certains groupes (comptes à privilèges, par exemple). Conséquence : <em>deux utilisateurs du même domaine peuvent avoir des règles différentes</em>.</p>
+<pre data-copy><code>Get-ADDefaultDomainPasswordPolicy
+Get-ADFineGrainedPasswordPolicy -Filter *
+Get-ADUser jdupont -Properties PasswordLastSet,PasswordExpired,LockedOut,BadLogonCount,LastBadPasswordAttempt,AccountExpirationDate | Format-List Name,Enabled,PasswordLastSet,PasswordExpired,LockedOut,BadLogonCount,LastBadPasswordAttempt,AccountExpirationDate
+Search-ADAccount -AccountExpiring -TimeSpan 30.00:00:00</code></pre>
+<aside class="callout astuce"><p>Si l'audit est activé, les journaux de sécurité racontent l'histoire d'un compte : <strong>4625</strong> (échec d'ouverture de session, noté sur la machine où la tentative a eu lieu), <strong>4740</strong> (compte verrouillé, noté sur le DC ; son champ <em>Caller Computer Name</em> est un indice de la machine d'origine, qui peut manquer ou désigner un intermédiaire), <strong>4771</strong> (échec de pré-authentification Kerberos), <strong>4724</strong> (tentative de réinitialisation de mot de passe), <strong>4767</strong> (compte déverrouillé). Le support n'y a pas toujours accès : donne à l'équipe qui les consulte le <strong>compte</strong> et les <strong>heures</strong>.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : événements <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4625">4625</a>, <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4740">4740</a>, <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4771">4771</a>, <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4724">4724</a>, <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4767">4767</a>.</p></aside>
+
+<h2 id="groupes">5. Les groupes : AGDLP et jeton d'accès</h2>
+<p>Un groupe a un <strong>type</strong> et une <strong>étendue</strong>.</p>
+<ul>
+  <li><strong>Type</strong> : <em>sécurité</em> (sert à donner des droits) ou <em>distribution</em> (liste de messagerie, sans droit).</li>
+  <li><strong>Étendue</strong> : <em>domaine local</em> (donne l'accès à des ressources de ce domaine), <em>globale</em> (rassemble des comptes d'un même domaine), <em>universelle</em> (à travers plusieurs domaines d'une forêt).</li>
+</ul>
+<p>Une façon classique de s'organiser : <strong>AGDLP</strong> — les <strong>A</strong>ccounts (comptes) vont dans des groupes <strong>G</strong>lobaux (par fonction : « Enseignants »), qui vont dans des groupes <strong>DL</strong> (domaine local) attachés à une ressource (« Partage-Compta-Lecture »), sur laquelle on met les <strong>P</strong>ermissions. On ne donne jamais de droit directement à une personne.</p>
+<p>Les groupes peuvent être <strong>imbriqués</strong> : être membre d'un groupe, c'est aussi hériter de ses groupes parents. D'où l'intérêt de lire les groupes <em>effectifs</em> et pas seulement les groupes directs :</p>
+<pre data-copy><code>Get-ADPrincipalGroupMembership jdupont | Select-Object Name,GroupScope,GroupCategory
+Get-ADGroupMember "NomDuGroupe" -Recursive | Select-Object Name,SamAccountName
+whoami /groups</code></pre>
+<p>Trois vues différentes : l'appartenance dans l'annuaire (<code>Get-ADPrincipalGroupMembership</code>), les membres d'un groupe (<code>Get-ADGroupMember</code>, <code>-Recursive</code> pour les imbriqués), et le <strong>jeton d'accès en cours</strong> sur le poste (<code>whoami /groups</code>), qui contient aussi des groupes propres au poste. Une différence entre le jeton et l'annuaire a souvent pour cause une session antérieure à la modification, mais pas seulement (réplication, groupes locaux). Aucune de ces commandes ne calcule à elle seule l'accès à une ressource distante.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-adprincipalgroupmembership">Get-ADPrincipalGroupMembership</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-adgroupmember">Get-ADGroupMember</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/whoami">whoami</a>.</p></aside>
+<aside class="callout attention"><p>Ne supprime jamais un groupe, et ne vide pas un groupe, « pour nettoyer » : de nombreuses ressources y sont attachées, de façon souvent invisible. La suppression d'un objet est sérieuse ; l'annuaire peut avoir une <em>corbeille</em>, mais ne compte pas dessus.</p></aside>
+
+<h2 id="replication">6. Réplication : pourquoi ça n'est pas instantané</h2>
+<p>Un domaine a généralement <strong>plusieurs</strong> contrôleurs. Chacun possède une copie de l'annuaire du domaine (en écriture, sauf les DC en lecture seule, ou RODC) ; les modifications faites sur l'un sont <strong>répliquées</strong> vers les autres. Entre des DC d'un même site, c'est rapide (de quelques secondes à quelques minutes) ; entre sites, cela suit un calendrier (par défaut toutes les 180 minutes, réglable) et peut prendre bien plus de temps.</p>
+<ul>
+  <li>Un utilisateur dont tu viens de réinitialiser le mot de passe sur un DC peut se heurter à un échec s'il s'authentifie sur un <em>autre</em> DC qui n'a pas encore l'information. Pour les mots de passe et les verrouillages, Windows prévoit des mécanismes accélérés avec un DC particulier (l'émulateur de PDC), mais un léger décalage reste possible.</li>
+  <li>Une GPO ou un groupe modifié met un peu de temps à apparaître partout.</li>
+</ul>
+<p>La conduite à tenir pour le support : <strong>patienter quelques minutes</strong> avant de conclure à un échec, vérifier <em>sur quel DC</em> on a agi et lequel le poste utilise (<code>nltest /dsgetdc:</code>), et signaler à l'équipe annuaire les décalages qui dépassent les délais attendus localement (à vérifier sur place) : elle dispose d'outils de contrôle de la réplication.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/understanding-the-active-directory-logical-model">modèle logique d'AD</a>, <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/active-directory/modify-default-intra-site-dc-replication-interval">réplication dans un site</a>, <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/determining-the-interval">intervalle entre sites</a>.</p></aside>
+<aside class="callout umons"><p>Combien de contrôleurs de domaine, sur quels sites, et quel est le délai de réplication attendu ? Quel DC le service desk interroge-t-il par défaut ? À vérifier sur place.</p></aside>
+
+<h2 id="delegation">7. Délégation et limites du service desk</h2>
+<p>Dans un annuaire bien tenu, le service desk n'est <strong>pas administrateur du domaine</strong>. On lui <em>délègue</em> un petit nombre d'actions sur des OU précises (réinitialiser des mots de passe, déverrouiller des comptes, lire les propriétés), grâce à l'assistant de délégation de contrôle. Principe du <strong>moindre privilège</strong> : chacun a juste ce qu'il lui faut pour son travail.</p>
+<p>Si un geste est refusé (« accès refusé »), vérifie d'abord le compte utilisé, l'OU de l'objet visé et la tâche demandée. Si l'action est bien hors de ta délégation, ce n'est pas un bug : tu la demandes à l'équipe habilitée, avec l'identifiant et la justification dans le ticket.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/delegation-control-wizard">Delegation of Control Wizard</a>.</p></aside>
+<aside class="callout retenir"><p><strong>Vérifier → agir dans ce qui t'est délégué → tracer.</strong> Rien en dehors de la délégation, même si une faille technique le permettrait.</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo guidé : ton PC, puis l'annuaire sur papier <span class="duree">≈ 75 min</span></h2>
+<p>Pas de machine virtuelle, donc pas de domaine de test : quelques commandes de lecture sur ton PC, puis un raisonnement écrit sur le domaine d'exemple <code>lab.local</code> du jour 6 (noms fictifs). Les commandes de l'annuaire se pratiqueront au stage, sur un environnement de test si ton tuteur le permet (à vérifier sur place).</p>
+<ol>
+  <li><strong>Sur ton PC.</strong> <code>whoami /user</code> (ton SID local), <code>whoami /groups</code>, <code>klist</code> et <code>nltest /dsgetdc:lab.local</code>. Qu'est-ce qui manque sur un PC hors domaine ?</li>
+  <li><strong>Identifiants.</strong> L'utilisateur <code>etu.test</code> a un <code>SamAccountName</code>, un <code>UserPrincipalName</code>, un <code>DistinguishedName</code>, un <code>ObjectSID</code> et un <code>ObjectGUID</code> (§1). On le déplace de l'OU « Personnel » vers l'OU « Etudiants » : lesquels changent ? Et si on supprime le compte puis qu'on le recrée avec le même nom ?</li>
+  <li><strong>AGDLP.</strong> Avec un groupe global <code>GG-Etudiants</code> et un groupe de domaine local <code>DL-Partage-Cours-Lecture</code>, dessine qui va dans quoi et où se pose la permission de lecture du dossier (§5).</li>
+  <li><strong>Découverte du DC.</strong> Un poste du domaine reçoit un serveur DNS public au lieu de celui du domaine. Que répondent <code>nslookup -type=SRV _ldap._tcp.dc._msdcs.lab.local</code> et <code>nltest /dsgetdc:lab.local /force</code>, et pourquoi (§2) ?</li>
+  <li><strong>Kerberos.</strong> Range dans l'ordre : ouverture de session, ticket de service pour le serveur de fichiers, accès au partage, TGT. Que montrerait <code>klist</code> avant puis après l'accès au partage (§3) ?</li>
+  <li><strong>Canal sécurisé.</strong> <code>Test-ComputerSecureChannel</code> répond <code>False</code> sur un poste de salle : quelles pistes, et que fais-tu (§3) ?</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois constater</summary>
+<ul>
+  <li>Étape 1 : un SID local (qui commence par <code>S-1-5-21-</code>), des groupes locaux, aucun ticket Kerberos de domaine, et <code>nltest</code> ne trouve aucun domaine.</li>
+  <li>Étape 2 : au déplacement, seul le <code>DistinguishedName</code> change (le nom d'OU qu'il contient). Un compte supprimé puis recréé reçoit un nouveau SID et un nouveau GUID : il n'hérite ni des droits ni des groupes de l'ancien.</li>
+  <li>Étape 3 : l'utilisateur dans <code>GG-Etudiants</code>, ce groupe dans <code>DL-Partage-Cours-Lecture</code>, et la permission de lecture donnée à <code>DL-Partage-Cours-Lecture</code> sur le dossier.</li>
+  <li>Étape 4 : le DNS public ne connaît pas la zone du domaine : la requête SRV n'aboutit pas, et <code>nltest … /force</code> échoue en général (sans <code>/force</code>, une réponse du cache reste possible).</li>
+  <li>Étape 5 : ouverture de session (TGT), puis, à l'accès au partage, un ticket de service pour le serveur de fichiers ; <code>klist</code> montre ce nouveau ticket après l'accès.</li>
+  <li>Étape 6 : compte ordinateur désynchronisé, DNS ou connexion au DC ; tu notes le nom du poste et son OU et tu escalades selon la procédure.</li>
+</ul>
+</details>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « J'ai changé de mot de passe, mais mon téléphone me bloque »</h3>
+<p>Une utilisatrice a changé son mot de passe ce matin. Depuis, son compte se verrouille toutes les 10 minutes. Elle ne se connecte pourtant qu'à son PC. Quelles sont tes hypothèses, dans l'ordre, et quelles informations donnes-tu si tu dois escalader ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Un autre appareil ou programme envoie encore l'ancien mot de passe : téléphone ou tablette (messagerie, Wi-Fi), session ouverte ailleurs, lecteur réseau mémorisé, tâche ou service avec les anciennes informations. On demande de les mettre à jour, on déverrouille, on observe. Si cela continue, on escalade avec le <strong>compte</strong>, les <strong>heures de verrouillage</strong> et la liste de ce qui a été vérifié : l'équipe consultera l'événement 4740 pour connaître la machine source. Si la source est inconnue ou inhabituelle, on le dit : cela peut être une tentative d'attaque.</p>
+</details>
+<h3>2. Le nouvel arrivant n'a toujours pas accès</h3>
+<p>Ajouté au groupe depuis ce matin, un utilisateur n'a toujours pas accès au dossier. Il dit s'être déconnecté et reconnecté. Quels contrôles ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>(1) <code>whoami /groups</code> sur son poste : le groupe figure-t-il dans le jeton ? Sinon : réplication (le DC utilisé a-t-il l'information ? <code>nltest /dsgetdc:</code>) ou session pas réellement renouvelée (verrouiller l'écran ne suffit pas ; hors campus, la nouvelle ouverture doit se faire avec le VPN si la procédure le prévoit). (2) Le groupe donné est-il bien celui qui a les droits sur le dossier (AGDLP : le droit est-il sur un groupe de domaine local qui contient son groupe global ?). (3) Les droits sur le dossier lui-même. Un point (2) ou (3) relève de l'équipe qui gère le serveur de fichiers : ticket avec le chemin et les constats.</p>
+</details>
+<h3>3. Le poste qui n'ouvre plus de session de domaine</h3>
+<p>Un poste de salle indique « La relation d'approbation entre cette station de travail et le domaine principal a échoué ». Les autres postes de la salle fonctionnent.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Le <strong>canal sécurisé</strong> du poste avec le domaine est rompu (mot de passe du compte ordinateur désynchronisé, par exemple après une restauration d'image ou un retour en arrière de VM). Tu confirmes avec <code>Test-ComputerSecureChannel</code>, tu notes le nom du poste et son OU, et tu <strong>escalades</strong> : la réparation (ou la nouvelle jonction) demande des droits d'administration et passe par la procédure. Tu ne retires pas le poste du domaine toi-même.</p>
+</details>
+<h3>4. Vrai ou faux ?</h3>
+<p>(a) Renommer un compte fait perdre ses droits. (b) Supprimer puis recréer un compte avec le même nom redonne les mêmes droits. (c) Deux utilisateurs du même domaine ont toujours la même règle de mot de passe.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>(a) Faux : les droits suivent le SID, qui ne change pas au renommage. (b) Faux : le nouveau compte reçoit un <strong>nouveau SID</strong> ; il n'hérite ni des droits ni de l'appartenance aux groupes de l'ancien (sauf restauration depuis la corbeille, qui rend le SID d'origine). (c) Faux : des stratégies de mot de passe affinées peuvent s'appliquer à certains groupes.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-ad-support"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Hiérarchie</strong> : forêt › domaine › OU › objets ; site = réseau physique.</li>
+  <li><strong>Identifier</strong> : sAMAccountName, UPN, DN (change si l'objet bouge), SID/GUID (stables).</li>
+  <li><strong>Pas de domaine ?</strong> DNS en premier (SRV), heure (±5 min pour Kerberos), canal sécurisé.</li>
+  <li><strong>Groupes</strong> : lus à l'ouverture de session → déconnexion/reconnexion. AGDLP : comptes → global → domaine local → permission.</li>
+  <li><strong>Compte</strong> : désactivé, verrouillé, expiré, mot de passe expiré, horaires : cinq causes, cinq remèdes.</li>
+  <li><strong>Réplication</strong> : patienter, vérifier quel DC, escalader si le décalage est anormal.</li>
+  <li><strong>Délégation</strong> : seulement ce qui t'est confié ; « accès refusé » : vérifier compte, OU et tâche, puis demander à l'équipe habilitée.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Quel est le domaine, l'organisation des OU et le nombre de contrôleurs de domaine ?</li>
+  <li>Quelles politiques de mot de passe et de verrouillage s'appliquent, et y a-t-il des stratégies affinées ?</li>
+  <li>Qu'est le service desk autorisé à faire dans l'annuaire (délégation) ?</li>
+  <li>L'annuaire est-il synchronisé avec le cloud (messagerie, authentification multifacteur) ? Qui gère cette synchronisation ?</li>
+  <li>Comment demander une action refusée (formulaire, file de tickets, délai) ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-ad-support"> Module terminé</label></p>
+<div data-module-suite="ad-support"></div>
+</div>
+</main>
+</body>
+</html>

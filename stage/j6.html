@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jour 6 — Active Directory côté support · Prépa stage</title>
+<meta name="description" content="Active Directory pour le support : mots de passe, comptes verrouillés, groupes, OU, GPO, PowerShell en lecture.">
+<meta property="og:title" content="Jour 6 — Active Directory côté support · Prépa stage">
+<meta property="og:description" content="Active Directory pour le support : mots de passe, comptes verrouillés, groupes, OU, GPO, PowerShell en lecture.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/prepa.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/jour.js" defer></script>
+</head>
+<body data-root="../" data-nav="stage">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Prépa stage · Jour 6 · vendredi 4 décembre</p>
+<h1><em>Active Directory</em> côté support</h1>
+<p class="lead">Mot de passe oublié, compte verrouillé, « je n'ai plus accès à ce dossier » : une grande partie des appels passe par l'annuaire. Aujourd'hui, tu comprends comment il est organisé, ce que le support y fait (et ne fait pas), et comment lire l'état d'un compte ou d'un poste sans rien casser.</p>
+<h2 id="plan">Plan de la journée <span class="duree">≈ 3 h 30</span></h2>
+<ol class="plan-horaire">
+  <li><span class="h">25 min</span><span>Ce qu'est Active Directory : domaine, utilisateurs, ordinateurs, OU, groupes</span></li>
+  <li><span class="h">30 min</span><span>Les actes du support : mot de passe, déverrouillage, groupes</span></li>
+  <li><span class="h">20 min</span><span>Les GPO : gpupdate et gpresult</span></li>
+  <li><span class="h">20 min</span><span>PowerShell en lecture</span></li>
+  <li><span class="h">1 h 20</span><span>Labo : ton PC en lecture, puis l'annuaire sur papier</span></li>
+  <li><span class="h">35 min</span><span>Mises en situation, quiz, fiche mémo</span></li>
+</ol>
+
+<aside class="callout umons"><p>Les droits exacts du service desk dans l'annuaire (réinitialiser un mot de passe, déverrouiller, modifier des groupes ou non), les outils utilisés (console, portail de gestion) et la procédure de vérification d'identité : à demander à ton tuteur. Ici, tu pratiques sur ton propre PC (en lecture) et sur papier.</p></aside>
+
+<h2 id="notions">1. Les notions utiles</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Notion</th><th>En clair</th></tr></thead>
+<tbody>
+<tr><td><strong>Active Directory (AD DS)</strong></td><td>L'annuaire de Microsoft : il centralise comptes, ordinateurs et groupes, et vérifie qui a le droit de faire quoi.</td></tr>
+<tr><td><strong>Domaine</strong></td><td>Un ensemble de comptes et d'ordinateurs gérés ensemble, avec un nom (ex. <code>lab.local</code> dans notre labo).</td></tr>
+<tr><td><strong>Contrôleur de domaine (DC)</strong></td><td>Le serveur qui héberge l'annuaire et authentifie les connexions.</td></tr>
+<tr><td><strong>Objet</strong></td><td>Un compte utilisateur, un ordinateur, un groupe, une imprimante…</td></tr>
+<tr><td><strong>Unité d'organisation (OU)</strong></td><td>Un « dossier » de l'annuaire, qui range les objets et permet de leur appliquer des GPO ou de déléguer des droits.</td></tr>
+<tr><td><strong>Groupe</strong></td><td>Un ensemble d'utilisateurs auquel on donne des droits (accès à un dossier, une imprimante, une application). On donne les droits au groupe, pas à chaque personne.</td></tr>
+<tr><td><strong>GPO</strong> (stratégie de groupe)</td><td>Un jeu de paramètres appliqué automatiquement aux utilisateurs ou aux ordinateurs ; une GPO se lie à un site, au domaine ou à une OU (fond d'écran, lecteurs réseau, pare-feu…). Les règles de mot de passe des comptes du domaine se définissent au niveau du domaine, pas d'une OU.</td></tr>
+<tr><td><strong>Authentification Kerberos</strong></td><td>Le mécanisme par défaut qui permet de se connecter au domaine sans renvoyer le mot de passe à chaque service.</td></tr>
+</tbody></table></div>
+<aside class="callout retenir"><p><strong>Droits = groupes. Paramètres = GPO. Rangement = OU.</strong> Si quelqu'un « n'a pas accès », on regarde d'abord ses groupes (c'est une piste, pas une certitude). Si un poste « n'a pas le bon réglage », on regarde les GPO qui s'y appliquent.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview">Active Directory Domain Services overview</a>, <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-overview">Group Policy overview</a> (liens sur site, domaine et OU), <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing">Group Policy processing</a>, <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/account-policies">Account Policies</a> (stratégie de compte au niveau du domaine).</p></aside>
+
+<h2 id="actes">2. Les actes du support</h2>
+<h3>Réinitialiser un mot de passe</h3>
+<ol>
+  <li><strong>Vérifie l'identité</strong> selon la procédure (jour 2) : jamais de réinitialisation sur la seule base « c'est moi ».</li>
+  <li>Réinitialise avec un <strong>mot de passe temporaire</strong> et coche « l'utilisateur doit changer son mot de passe à la prochaine ouverture de session ».</li>
+  <li>Transmets-le par le canal prévu (jamais par courriel en clair), puis note l'action dans le ticket <strong>sans écrire le mot de passe</strong>.</li>
+</ol>
+<h3>Déverrouiller un compte</h3>
+<p>Un compte se verrouille après un certain nombre d'échecs de connexion (seuil défini par la stratégie de mot de passe). Le <strong>déverrouiller ne suffit pas</strong> s'il se reverrouille cinq minutes plus tard : cherche <em>qui</em> envoie encore un mauvais mot de passe.</p>
+<ul>
+  <li>Un <strong>téléphone</strong> ou une <strong>messagerie</strong> qui a gardé l'ancien mot de passe.</li>
+  <li>Un <strong>lecteur réseau</strong> ou une <strong>session ouverte sur un autre poste</strong> (salle, bureau, bureau à distance).</li>
+  <li>Une <strong>tâche planifiée</strong> ou un <strong>service</strong> configuré avec l'ancien mot de passe.</li>
+  <li>Une <strong>tentative malveillante</strong> : si les échecs viennent d'ailleurs, escalade (sécurité).</li>
+</ul>
+<aside class="callout astuce"><p>Sur un contrôleur de domaine, l'événement de sécurité <strong>4740</strong> (« compte verrouillé ») indique le nom de l'ordinateur à l'origine du verrouillage. Si tu n'y as pas accès, donne l'heure et le nom du compte à l'équipe qui l'a.</p></aside>
+<h3>Groupes</h3>
+<p>« Il n'a plus accès au dossier » ou « il vient d'arriver dans le service » : la première piste est l'<strong>appartenance à un groupe</strong>, sans être la seule (autorisations du dossier lui-même, groupes imbriqués, session ouverte avant l'ajout et donc jeton d'accès sans le nouveau groupe). Vérifie à quels groupes appartient l'utilisateur, compare avec un collègue du même service, mais <strong>ne modifie l'appartenance que sur demande validée</strong> (responsable ou procédure). Après un ajout, l'utilisateur doit <strong>fermer puis rouvrir sa session</strong> pour que son jeton d'accès soit mis à jour.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-groups">Active Directory security groups</a> ; <a href="https://learn.microsoft.com/en-us/windows/win32/secauthz/access-tokens">Access tokens</a> (les groupes sont lus à l'ouverture de session) ; <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4740">événement 4740</a>.</p></aside>
+<aside class="callout attention"><p>Ne donne jamais de droits « pour dépanner vite » : ajouter quelqu'un à un groupe d'administration ou de partage sensible sans validation est une faute de sécurité, même bien intentionnée.</p></aside>
+
+<h2 id="gpo">3. Les GPO côté support</h2>
+<p>Les GPO s'appliquent au démarrage de l'ordinateur et à l'ouverture de session, puis sont réactualisées périodiquement (environ toutes les 90 minutes pour un poste, avec un décalage aléatoire). Deux commandes à retenir :</p>
+<pre data-copy><code>gpupdate /force
+gpresult /r
+gpresult /h %USERPROFILE%\Desktop\gpo.html</code></pre>
+<div class="table-wrap"><table>
+<thead><tr><th>Commande</th><th>Ce qu'elle fait</th></tr></thead>
+<tbody>
+<tr><td><code>gpupdate /force</code></td><td>Redemande tout de suite le traitement de tous les paramètres, même inchangés. Certains (installation de logiciels, redirection de dossiers) ne s'appliquent qu'à la déconnexion ou au redémarrage suivant.</td></tr>
+<tr><td><code>gpresult /r</code></td><td>Résume les GPO appliquées à l'utilisateur et à l'ordinateur, et celles qui sont filtrées.</td></tr>
+<tr><td><code>gpresult /h fichier.html</code></td><td>Produit un rapport détaillé lisible dans un navigateur (le plus utile pour comparer deux postes).</td></tr>
+</tbody></table></div>
+<p>Cas typique : un lecteur réseau ou un réglage manque sur un poste mais pas sur le poste voisin. On compare les deux rapports <code>gpresult</code> : la GPO apparaît-elle dans « appliquées » ? dans « refusées » ? Le poste est-il dans la bonne <strong>OU</strong> ? Un poste mal rangé dans l'annuaire n'a pas les bonnes stratégies.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/gpupdate">gpupdate</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/gpresult">gpresult</a>, <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing">Group Policy processing</a>.</p></aside>
+<aside class="callout attention"><p>Le support <strong>lit</strong> les GPO ; leur modification relève de l'équipe d'administration. Une GPO touche des centaines de postes : ne la change jamais « pour essayer ».</p></aside>
+
+<h2 id="powershell">4. PowerShell en lecture</h2>
+<p>Les cmdlets de lecture ne modifient rien : tu peux les utiliser sans risque (si tu as le droit de lire l'annuaire). Elles demandent le module <strong>ActiveDirectory</strong>, installé avec les outils d'administration à distance (RSAT) ou sur le contrôleur de domaine.</p>
+<pre data-copy><code>Get-ADUser -Identity jdupont -Properties LockedOut,Enabled,PasswordExpired,PasswordLastSet,LastLogonDate | Format-List Name,Enabled,LockedOut,PasswordExpired,PasswordLastSet,LastLogonDate
+Get-ADUser -Identity jdupont -Properties MemberOf | Select-Object -ExpandProperty MemberOf
+Get-ADGroupMember -Identity "NomDuGroupe" | Select-Object Name
+Get-ADComputer -Identity PC-TEST01 -Properties OperatingSystem,LastLogonDate
+Search-ADAccount -LockedOut
+Search-ADAccount -PasswordExpired</code></pre>
+<p>Et les deux actions que le support fait le plus souvent (à n'utiliser que dans le cadre de ta procédure) :</p>
+<pre data-copy><code>Unlock-ADAccount -Identity jdupont
+Set-ADAccountPassword -Identity jdupont -Reset -NewPassword (Read-Host -AsSecureString "Mot de passe temporaire")
+Set-ADUser -Identity jdupont -ChangePasswordAtLogon $true</code></pre>
+<p>Sur le <strong>poste</strong> de l'utilisateur, quelques commandes en lecture suffisent souvent :</p>
+<pre data-copy><code>whoami
+whoami /groups
+net user jdupont /domain
+nltest /dsgetdc:lab.local
+klist</code></pre>
+<p><code>nltest /dsgetdc:</code> teste la localisation d'un contrôleur de domaine et affiche celui qui est trouvé (le résultat peut venir du cache). Un échec oriente vers la découverte du domaine ou la connectivité (réseau, DNS, VPN), sans désigner seul la cause.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser">Get-ADUser</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/unlock-adaccount">Unlock-ADAccount</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/set-adaccountpassword">Set-ADAccountPassword</a> (module ActiveDirectory) ; <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/dc-locator">Locating Active Directory domain controllers</a> (localisation et cache).</p></aside>
+
+<h2 id="labo">Labo : ton PC en lecture, puis l'annuaire sur papier <span class="duree">1 h 20</span></h2>
+<p>Pas de machine virtuelle, donc pas de domaine de test : tu lis ce que ton propre PC sait de toi, puis tu prépares sur papier les gestes de l'annuaire. Le domaine de test se pratiquera au stage, si ton tuteur te donne accès à un environnement de test (à vérifier sur place).</p>
+<h3>Sur ton PC (rien n'est modifié)</h3>
+<ol>
+  <li><code>whoami</code> puis <code>whoami /groups</code> : quel est ton nom de compte, et dans quels groupes locaux es-tu (Administrateurs, Utilisateurs…) ?</li>
+  <li><code>net user %USERNAME%</code> (invite de commandes) : date du dernier changement de mot de passe, compte actif ou non. Si ton compte est un compte Microsoft, le nom local peut différer de ton adresse : compare avec <code>whoami</code>.</li>
+  <li><code>net accounts</code> : quels sont le seuil de verrouillage, la durée de verrouillage et la longueur minimale du mot de passe de ton PC ?</li>
+  <li><code>gpresult /r</code> : sur un PC qui n'est pas dans un domaine, que liste la partie « Objets de stratégie de groupe appliqués » ?</li>
+  <li><code>nltest /dsgetdc:lab.local</code> et <code>klist</code> : que répondent-ils sur un PC hors domaine ?</li>
+</ol>
+<h3>Sur papier : un petit annuaire</h3>
+<ol>
+  <li>Dessine l'arbre d'un domaine <code>lab.local</code> avec deux OU, « Salle01 » (les ordinateurs d'une salle) et « Personnel » (les comptes), deux utilisateurs <code>etu.test</code> et <code>prof.test</code> et un groupe <code>GRP-Partage-Test</code> qui donne accès à un dossier. Place chaque objet.</li>
+  <li><code>etu.test</code> appelle : compte verrouillé. Écris, dans l'ordre, les commandes de lecture puis d'action (§4) et la note de ticket, sans mot de passe.</li>
+  <li><code>prof.test</code> vient d'être ajouté à <code>GRP-Partage-Test</code> et n'a pas accès : que lui demandes-tu, et pourquoi (§2) ?</li>
+  <li>Une GPO liée à « Salle01 » impose un réglage de <strong>Configuration ordinateur</strong>. Un PC est déplacé hors de cette OU : que devient la GPO pour ce PC, et comment le vérifies-tu (§3) ?</li>
+  <li>Un PC de la salle reçoit un mauvais serveur DNS : qu'arrive-t-il à l'ouverture de session sur le domaine (§4) ?</li>
+</ol>
+<details class="correction"><summary>Voir des repères pour contrôler tes résultats</summary>
+<ul>
+  <li><strong>Sur ton PC</strong> : <code>whoami</code> donne <code>NOM-DU-PC\compte</code> ; <code>whoami /groups</code> liste notamment « BUILTIN\Utilisateurs », et « BUILTIN\Administrateurs » si ton compte est administrateur. <code>net accounts</code> montre la stratégie de compte <em>locale</em> ; dans un domaine, celle des comptes du domaine vient du domaine (§1). <code>gpresult /r</code> ne liste en général que la stratégie de groupe locale. <code>nltest</code> répond qu'il ne trouve pas de domaine et <code>klist</code> ne montre aucun ticket Kerberos de domaine.</li>
+  <li><strong>Arbre</strong> : les comptes dans « Personnel », les ordinateurs de la salle dans « Salle01 », le groupe où l'organisation range ses groupes ; l'accès au dossier se donne au groupe, puis on met <code>prof.test</code> dans le groupe.</li>
+  <li><strong>Verrouillage</strong> : vérification d'identité, <code>Get-ADUser etu.test -Properties LockedOut,…</code> ou <code>Search-ADAccount -LockedOut</code>, recherche de la cause (téléphone, session ouverte ailleurs), <code>Unlock-ADAccount</code> dans le cadre de ta procédure, puis note : heure, cause trouvée, action, sans mot de passe.</li>
+  <li><strong>Nouveau groupe</strong> : une nouvelle ouverture de session, car les groupes sont lus à l'ouverture de session (jeton d'accès).</li>
+  <li><strong>GPO</strong> : hors de l'OU, la GPO disparaît de la partie ordinateur de <code>gpresult /r</code> après <code>gpupdate /force</code> et un redémarrage ; certains réglages peuvent rester sur le poste.</li>
+  <li><strong>Mauvais DNS</strong> : le poste ne trouve plus le contrôleur de domaine ; un compte du domaine ne peut ouvrir de session qu'avec les informations mises en cache d'une session précédente.</li>
+</ul>
+<p>Sources : les encadrés des §1 à §4 ; <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/whoami">whoami</a>, <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/net-commands-on-operating-systems">commandes net</a>.</p>
+</details>
+
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « Mon compte est bloqué »</h3>
+<p>Une enseignante appelle à 9 h : impossible de se connecter. Tu déverrouilles son compte ; à 9 h 20, elle rappelle : de nouveau bloqué. Elle a changé son mot de passe hier.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Un appareil envoie encore l'ancien mot de passe : téléphone ou tablette connectés au Wi-Fi ou à la messagerie, session ouverte dans une salle, lecteur réseau mémorisé. On lui demande de mettre à jour le mot de passe partout (ou d'éteindre ses autres appareils), puis on déverrouille à nouveau. Si le verrouillage continue, on escalade en donnant l'identifiant du compte et les heures de verrouillage, pour que l'équipe consulte les journaux du contrôleur de domaine.</p>
+</details>
+<h3>2. Le nouvel arrivant et le dossier partagé</h3>
+<p>Un nouvel assistant, arrivé lundi, appelle : « Je n'ai pas accès au dossier du service. » Son collègue y accède sans problème.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Première piste : on compare ses groupes avec ceux de son collègue (<code>whoami /groups</code> ou la console). Si les groupes sont identiques, l'accès dépend d'autre chose (autorisations du dossier, chemin utilisé) : on escalade avec ces éléments. S'il manque un groupe, on ne l'ajoute pas de sa propre initiative : on demande la validation de son responsable (selon la procédure) puis on ajoute, et on lui demande de se déconnecter puis se reconnecter. On note la demande et la validation dans le ticket.</p>
+</details>
+<h3>3. Le lecteur manque sur un seul poste</h3>
+<p>Dans une salle, quinze postes ont le lecteur <code>S:</code>, un seul ne l'a pas. Redémarrer n'y change rien.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Une GPO s'applique aux quinze autres : on compare <code>gpresult /h</code> du poste en panne avec celui d'un poste normal. Causes probables : poste rangé dans la mauvaise OU, poste qui ne joint pas le contrôleur de domaine (DNS, réseau), ou GPO refusée par un filtre. On corrige le réseau si c'est la cause ; pour la position dans l'annuaire, on transmet à l'équipe qui gère l'annuaire.</p>
+</details>
+<h3>4. « Appelez-moi, c'est le directeur »</h3>
+<p>Quelqu'un se présente comme un directeur, très pressé, et demande de réinitialiser son mot de passe sur le champ « parce qu'il est en réunion à l'extérieur ». Il refuse de répondre aux questions de vérification.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>La procédure de vérification s'applique à tout le monde, quelle que soit la fonction. On reste poli et ferme : « Je comprends l'urgence, la vérification est obligatoire pour protéger votre compte. » S'il refuse toujours, on ne réinitialise pas, on note la demande et on informe ton tuteur ou l'équipe sécurité selon la procédure : c'est un schéma classique d'ingénierie sociale.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="stage-j6"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>OU</strong> = rangement et cible des GPO. <strong>Groupe</strong> = droits. <strong>GPO</strong> = réglages.</li>
+  <li><strong>Mot de passe</strong> : vérifier l'identité, mot de passe temporaire, changement à la prochaine connexion, ne jamais l'écrire dans le ticket.</li>
+  <li><strong>Compte qui se reverrouille</strong> : chercher l'appareil, la session ou la tâche qui a l'ancien mot de passe.</li>
+  <li><strong>Nouveau droit</strong> : validation, ajout au groupe, déconnexion puis reconnexion.</li>
+  <li><strong>GPO</strong> : <code>gpupdate /force</code>, <code>gpresult /r</code> ou <code>/h</code>, comparer avec un poste qui marche.</li>
+  <li><strong>Lecture</strong> : <code>Get-ADUser</code>, <code>Search-ADAccount -LockedOut</code>, <code>whoami /groups</code>.</li>
+  <li><strong>Pas de domaine joignable</strong> : penser DNS et réseau avant l'annuaire.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Que peut faire le service desk dans l'annuaire (mots de passe, déverrouillage, groupes) et avec quel outil ?</li>
+  <li>Quelle est la procédure de vérification d'identité, et pour quels cas escalade-t-on ?</li>
+  <li>Comment les OU sont-elles organisées (salles, services, étudiants, personnel) ?</li>
+  <li>Quelles GPO connaît-on côté support (lecteurs, imprimantes, verrouillage d'écran) et à qui signale-t-on un problème ?</li>
+  <li>Quelle est la règle de mot de passe et de verrouillage à l'UMONS ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="stage-j6"> Jour 6 terminé</label></p>
+<nav class="jours-nav" aria-label="Navigation entre les jours">
+  <a class="btn ghost" href="j5.html">← Jour 5</a>
+  <a class="btn ghost" href="j7.html">Jour 7 →</a>
+</nav>
+</div>
+</main>
+</body>
+</html>

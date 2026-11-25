@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dépannage à distance — Modules · Apprentissage IT</title>
+<meta name="description" content="Dépannage à distance : choisir l’outil, Assistance rapide, Bureau à distance, PowerShell à distance, faux support et déroulé d’une session.">
+<meta property="og:title" content="Dépannage à distance — Modules · Apprentissage IT">
+<meta property="og:description" content="Dépannage à distance : choisir l’outil, Assistance rapide, Bureau à distance, PowerShell à distance, faux support et déroulé d’une session.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Support et service desk</p>
+<h1>Dépannage <em>à distance</em></h1>
+<p class="lead">Une bonne partie du dépannage se fait sans se déplacer : on voit l'écran de l'utilisateur, on le guide ou on prend la main avec son accord. Ce module prolonge le jour 8 : choisir le bon outil, maîtriser Assistance rapide et le Bureau à distance, agir sans prendre la main, reconnaître un faux support, et conduire une session de bout en bout.</p>
+<div data-module-meta="depannage-distance"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>choisir entre Assistance rapide, Bureau à distance et l'outil de l'organisation selon la situation ;</li>
+  <li>ouvrir, conduire et fermer une session Assistance rapide, du code de sécurité à la fin du contrôle ;</li>
+  <li>activer le Bureau à distance sur un poste compatible et t'y connecter avec <code>mstsc</code> ;</li>
+  <li>expliquer ce que fait PowerShell à distance et quand il évite de prendre la main ;</li>
+  <li>reconnaître le scénario du faux support et protéger l'utilisateur ;</li>
+  <li>tracer une session dans le ticket, et savoir quand passer sur place.</li>
+</ul>
+<aside class="callout umons"><p>L'outil de prise en main utilisé par la DSI (Assistance rapide, Remote Help ou un autre), qui a le droit de s'en servir et sur quels postes : à demander à ton tuteur. Ce module décrit les outils intégrés à Windows ; la procédure de la maison passe avant.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="choisir">1. Choisir l'outil</h2>
+<p>Trois familles d'outils, pour trois situations différentes :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Outil</th><th>Quand</th><th>Ce qu'il faut</th></tr></thead>
+<tbody>
+<tr><td><strong>Assistance rapide</strong> (<em>Quick Assist</em>)</td><td>L'utilisateur est devant son poste et accepte de partager son écran.</td><td>Côté support : un compte Microsoft ou Microsoft Entra ID. Côté utilisateur : aucune authentification, il saisit un code. Passe par Internet (port 443).</td></tr>
+<tr><td><strong>Bureau à distance</strong> (RDP, <code>mstsc</code>)</td><td>Se connecter à un poste ou un serveur avec un compte autorisé, par exemple pour administrer.</td><td>Un poste hôte en édition Pro, Entreprise ou Éducation (pas Famille), le Bureau à distance activé, un compte autorisé, le port TCP 3389 joignable.</td></tr>
+<tr><td><strong>Outil de l'organisation</strong> (par exemple Remote Help d'Intune)</td><td>C'est souvent l'outil prévu en entreprise : contrôle d'accès, rôles, journal des sessions.</td><td>À vérifier sur place.</td></tr>
+</tbody></table></div>
+<p>Microsoft recommande aux organisations qui utilisent un autre outil, comme Remote Help, de désactiver ou de retirer Assistance rapide. Ne sois donc pas surpris s'il est absent des postes de l'UMONS.</p>
+<aside class="callout attention"><p>La commande <code>mstsc</code> a une option <code>/noConsentPrompt</code> qui permet d'observer la session d'un utilisateur <strong>sans son accord</strong>. Qu'elle existe ne veut pas dire qu'on peut s'en servir : au service desk, on obtient toujours le consentement de l'utilisateur avant de voir son écran, sauf procédure écrite contraire.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a> (comptes, réseau, Remote Help) ; Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/how-to-use-remote-desktop-5fe128d5-8fb1-7a23-3b8a-41e636865e8c">How to use Remote Desktop</a> ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remotepc/remote-desktop-allow-access">Enable Remote Desktop on your PC</a> (éditions) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/mstsc">mstsc</a>, <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/clients/change-listening-port">port d'écoute du Bureau à distance</a> (3389 par défaut).</p></aside>
+
+<h2 id="assistance-rapide">2. Assistance rapide pas à pas</h2>
+<p>Libellés de l'interface française (ceux de la <a href="https://support.microsoft.com/fr-fr/windows/apps/solve-pc-problems-remotely-using-quick-assist">version française de la page Microsoft</a>), avec l'anglais entre parenthèses. Avant d'ouvrir l'outil : ticket, identité vérifiée et accord explicite (<a href="#deroule">§6</a>).</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Toi (le support, <em>helper</em>)</th><th>L'utilisateur (<em>sharer</em>)</th></tr></thead>
+<tbody>
+<tr><td>1. Ouvre Assistance rapide et choisis <strong>Aider quelqu'un</strong> (<em>Help someone</em>). Un <strong>code de sécurité à 6 chiffres</strong>, valable un temps limité, s'affiche.</td><td></td></tr>
+<tr><td>2. Donne-lui le code au téléphone.</td><td>3. Ouvre Assistance rapide (raccourci <kbd>Ctrl</kbd> + <kbd>Windows</kbd> + <kbd>Q</kbd>), saisit le code dans <strong>Code de l'assistant</strong> (<em>Code from assistant</em>), puis <strong>Envoyer</strong> (<em>Submit</em>).</td></tr>
+<tr><td></td><td>4. Clique sur <strong>Autoriser</strong> (<em>Allow</em>) pour autoriser la connexion et le partage d'écran.</td></tr>
+<tr><td>5. Tu vois l'écran : pointeur laser, annotation et conversation sont disponibles. Si tu dois agir, clique sur <strong>Demander le contrôle</strong> (<em>Request control</em>).</td><td>6. Accepte (<strong>Autoriser</strong>) ou refuse. Il peut reprendre la main à tout moment avec <strong>Annuler le contrôle</strong> (<em>Cancel control</em>).</td></tr>
+<tr><td>7. À la fin : <strong>Quitter</strong> (<em>Leave</em>).</td><td>Ou lui-même : <strong>Quitter</strong>.</td></tr>
+<tr><td>8. Note la session dans le ticket : outil, heures, accord, actions, résultat (<a href="#deroule">§6</a>).</td><td></td></tr>
+</tbody></table></div>
+<h3>Ce qu'il faut savoir</h3>
+<ul>
+  <li>Avec le contrôle, tu as les <strong>mêmes droits que l'utilisateur</strong>, pas plus. Certaines invites (contrôle de compte d'utilisateur, UAC) demandent que <strong>l'utilisateur</strong> réponde lui-même.</li>
+  <li><strong>Aucun journal</strong> n'est créé sur ton poste ni sur celui de l'utilisateur. Microsoft garde seulement des données minimales (heures, erreurs, fonctions utilisées), au plus trois jours. La trace de la session, c'est donc <strong>ton ticket</strong>.</li>
+  <li>Assistance rapide se trouve dans le menu Démarrer (Windows 11 : <strong>Toutes les applications</strong> ; Windows 10 : <strong>Accessoires Windows</strong>) ; sa version actuelle s'installe et se déploie depuis le Microsoft Store, et une organisation peut l'avoir retiré. Sa présence sur un poste donné se vérifie : ne la suppose pas.</li>
+</ul>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/solve-pc-problems-over-a-remote-connection-b077e31a-16f4-2529-1a47-21f6a9040bf3">Solve PC problems remotely using Quick Assist</a> (étapes des deux côtés) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a> (UAC, journalisation, installation) ; Microsoft Security : <a href="https://www.microsoft.com/en-us/security/blog/2024/05/15/threat-actors-misusing-quick-assist-in-social-engineering-attacks-leading-to-ransomware/">article du 15 mai 2024</a> (raccourci clavier).</p></aside>
+
+<h2 id="bureau-distance">3. Le Bureau à distance</h2>
+<h3>Côté poste distant (l'hôte)</h3>
+<ul>
+  <li>Il doit être en édition <strong>Pro</strong>, <strong>Entreprise</strong> ou <strong>Éducation</strong> (ou un Windows Server) : une édition Famille ne peut pas recevoir de connexion. Le poste depuis lequel tu te connectes, lui, peut être de n'importe quelle édition, voire un autre système.</li>
+  <li>Activation : <strong>Paramètres → Système → Bureau à distance</strong>, activer, puis confirmer. Le <strong>nom du PC</strong> affiché sur cette page sert à la connexion.</li>
+  <li>Le service écoute par défaut sur le <strong>port TCP 3389</strong> (valeur <code>PortNumber</code> sous <code>HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp</code>). Dans une organisation, on ne change pas ce réglage soi-même.</li>
+</ul>
+<h3>Côté support : <code>mstsc</code></h3>
+<pre data-copy><code>Test-NetConnection -ComputerName PC-LABO -Port 3389
+mstsc /v:PC-LABO
+mstsc /v:PC-LABO /prompt
+mstsc /v:PC-LABO /w:1600 /h:900</code></pre>
+<div class="table-wrap"><table>
+<thead><tr><th>Option</th><th>Effet</th></tr></thead>
+<tbody>
+<tr><td><code>/v:nom[:port]</code></td><td>L'ordinateur distant (et le port, s'il n'est pas le port par défaut).</td></tr>
+<tr><td><code>/prompt</code></td><td>Demande les identifiants à la connexion.</td></tr>
+<tr><td><code>/f</code></td><td>Plein écran.</td></tr>
+<tr><td><code>/w:</code> et <code>/h:</code></td><td>Largeur et hauteur de la fenêtre, à utiliser ensemble.</td></tr>
+<tr><td><code>/admin</code></td><td>Session d'administration d'un serveur.</td></tr>
+<tr><td><code>/shadow:ID</code>, <code>/control</code></td><td>Observer (et contrôler) une session existante : réservé aux procédures qui le prévoient.</td></tr>
+</tbody></table></div>
+<p><code>Test-NetConnection … -Port 3389</code> (jour 5) dit si le port répond : s'il ne répond pas, inutile d'insister avec <code>mstsc</code>, la cause est le réseau, le pare-feu ou un Bureau à distance désactivé.</p>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/how-to-use-remote-desktop-5fe128d5-8fb1-7a23-3b8a-41e636865e8c">How to use Remote Desktop</a> ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remotepc/remote-desktop-allow-access">Enable Remote Desktop on your PC</a> (éditions hôtes), <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/mstsc">mstsc</a>, <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/clients/change-listening-port">Change Remote Desktop listening port</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection">Test-NetConnection</a>.</p></aside>
+
+<h2 id="powershell">4. Agir sans prendre la main : PowerShell à distance</h2>
+<p>Pour lire une information sur un poste sans déranger l'utilisateur, PowerShell peut exécuter des commandes sur un autre ordinateur, si les deux machines ont été <strong>configurées pour le travail à distance</strong> (ce que décide l'organisation).</p>
+<pre data-copy><code>Enter-PSSession PC-LABO
+Invoke-Command -ComputerName PC-LABO -ScriptBlock { Get-Culture }</code></pre>
+<ul>
+  <li><code>Enter-PSSession</code> ouvre une session <strong>interactive</strong> sur un seul ordinateur : l'invite affiche le nom de l'ordinateur distant, et chaque commande s'exécute là-bas.</li>
+  <li><code>Invoke-Command</code> exécute un bloc de commandes sur un ou plusieurs ordinateurs et rapporte le résultat.</li>
+</ul>
+<aside class="callout attention"><p>En stage, reste en <strong>lecture</strong> (afficher, jamais modifier) et seulement si ton tuteur te l'a montré : une commande lancée sur le mauvais poste agit pour de vrai.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_remote">about_Remote</a> (Enter-PSSession, Invoke-Command) ; les prérequis sont dans <a href="https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_remote_requirements">about_Remote_Requirements</a>.</p></aside>
+
+<h2 id="faux-support">5. Le faux support</h2>
+<p>En mai 2024, l'équipe de renseignement sur les menaces de Microsoft a publié l'analyse d'attaques où un groupe criminel, qu'elle nomme Storm-1811, appelait des employés en se faisant passer pour le support informatique, puis envoyait des messages Teams signés « Help Desk » ou « IT Support ». Le déroulé :</p>
+<ol>
+  <li>un appel ou un message « du support », pour une prétendue correction ;</li>
+  <li>la demande d'ouvrir Assistance rapide avec <kbd>Ctrl</kbd> + <kbd>Windows</kbd> + <kbd>Q</kbd> et de saisir un code fourni par l'attaquant ;</li>
+  <li>l'acceptation du partage d'écran, puis du contrôle total ;</li>
+  <li>ensuite : téléchargement d'outils malveillants, faux formulaires qui volent des identifiants, et pour finir un rançongiciel.</li>
+</ol>
+<p>Ce que Microsoft conseille aux utilisateurs : <strong>n'autoriser un aidant que si l'on a soi-même contacté le support</strong>, ne pas céder à quelqu'un qui invoque l'urgence, se déconnecter et signaler en cas de doute. Aux organisations : retirer Assistance rapide s'il n'est pas utilisé et former les utilisateurs.</p>
+<aside class="callout retenir"><p>Ta propre pratique doit rendre ce conseil facile à suivre : c'est l'utilisateur qui a appelé, ou tu le rappelles sur un numéro connu de l'organisation ; tu expliques qui tu es et pourquoi tu demandes l'accès ; et tu ne demandes <strong>jamais</strong> de mot de passe ni de code reçu par SMS (jour 2).</p></aside>
+<aside class="callout source"><p>Microsoft Security : <a href="https://www.microsoft.com/en-us/security/blog/2024/05/15/threat-actors-misusing-quick-assist-in-social-engineering-attacks-leading-to-ransomware/">Threat actors misusing Quick Assist in social engineering attacks leading to ransomware</a> (15 mai 2024) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a> (conseils de sécurité).</p></aside>
+
+<h2 id="deroule">6. Une session de bout en bout</h2>
+<p>Cette trame est une <strong>méthode d'exercice</strong>, qui applique le consentement et la traçabilité vus au jour 8 ; la procédure de la DSI passe avant.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Moment</th><th>Ce que tu fais</th></tr></thead>
+<tbody>
+<tr><td><strong>Avant</strong></td><td>Ticket ouvert ; identité vérifiée selon la procédure ; tu expliques ce que tu vas voir et faire ; tu obtiens un accord <strong>explicite</strong> ; tu proposes de fermer les documents et messageries personnels.</td></tr>
+<tr><td><strong>Pendant</strong></td><td>Tu regardes d'abord, tu ne demandes le contrôle que si c'est utile ; tu annonces chaque action (« j'ouvre les paramètres réseau ») ; tu laisses l'utilisateur répondre aux invites UAC et saisir ses mots de passe.</td></tr>
+<tr><td><strong>Après</strong></td><td>Tu quittes la session (<strong>Quitter</strong>) et tu vérifies avec l'utilisateur que tout fonctionne ; tu notes dans le ticket l'outil, l'heure de début et de fin, l'accord obtenu, les actions faites et le résultat.</td></tr>
+</tbody></table></div>
+<h3>Quand passer sur place (ou escalader)</h3>
+<ul>
+  <li>le poste n'a pas de réseau, ou ne démarre pas jusqu'à Windows ;</li>
+  <li>le problème est matériel (écran, câble, périphérique, bruit, odeur) ;</li>
+  <li>l'utilisateur refuse la prise en main, ou il n'est pas là pour donner son accord ;</li>
+  <li>il faut des droits que tu n'as pas, ou la procédure l'impose.</li>
+</ul>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a> (accord de l'utilisateur, contrôle retirable, invites UAC, absence de journal sur les postes, d'où la note dans le ticket) ; Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/solve-pc-problems-over-a-remote-connection-b077e31a-16f4-2529-1a47-21f6a9040bf3">Solve PC problems remotely using Quick Assist</a> (fin de session). La trame et la liste « sur place » sont une méthode d'exercice, pas une norme : la procédure de la DSI passe avant (à vérifier sur place).</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo guidé : ton PC et celui d'un proche <span class="duree">≈ 50 min</span></h2>
+<p>Règles utilisées : §2 (Assistance rapide), §3 (Bureau à distance, test du port), §6 (note de ticket). Pas de machine virtuelle : le Bureau à distance s'observe sur ton PC, et la prise en main se fait avec un proche qui accepte, chacun sur son Windows. Il faut un compte Microsoft pour le rôle d'aidant.</p>
+<ol>
+  <li><strong>Bureau à distance</strong> : Paramètres → Système → Bureau à distance. Ton édition permet-elle de l'activer ? Ne change rien.</li>
+  <li><code>Test-NetConnection -ComputerName localhost -Port 3389</code>. Note la valeur de <code>TcpTestSucceeded</code>.</li>
+  <li><code>mstsc</code> → « Afficher les options » : repère où se saisissent le nom du poste et le compte, <strong>sans te connecter</strong>. Puis lis l'aide de <code>mstsc /?</code> et retrouve <code>/v</code> et <code>/prompt</code>.</li>
+  <li><strong>Assistance rapide</strong> avec ton proche : avant tout, son accord explicite (§6). Toi, <strong>Aider quelqu'un</strong> ; lui, <kbd>Ctrl</kbd> + <kbd>Windows</kbd> + <kbd>Q</kbd> et saisie du code.</li>
+  <li>Observe chaque fenêtre d'accord. Demande le contrôle, puis laisse-le le reprendre avec <strong>Annuler le contrôle</strong>. Terminez avec <strong>Quitter</strong>. N'ouvre aucun de ses fichiers.</li>
+  <li>Rédige la note de ticket de cette session (outil, heures, accord, actions, résultat).</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois constater</summary>
+<ul>
+  <li>Étape 1 : seules les éditions Pro, Entreprise et Éducation peuvent recevoir une connexion ; en Famille, l'option manque.</li>
+  <li>Étape 2 : <code>TcpTestSucceeded : False</code> quand le Bureau à distance n'est pas actif : le port ne répond pas. C'est le signe à reconnaître avant d'accuser <code>mstsc</code>. Sur un poste où il est actif et joignable, le test passe à <code>True</code>.</li>
+  <li>Étape 3 : <code>/v:nom</code> désigne le poste, <code>/prompt</code> fait demander les identifiants ; le client existe sur toutes les éditions.</li>
+  <li>Étapes 4 et 5 : l'utilisateur autorise deux fois (la connexion, puis le contrôle) et peut retirer le contrôle à tout moment. Si le compte de l'aidant n'est pas un compte Microsoft ou Entra ID, la session ne démarre pas. Si l'application manque chez l'un de vous, elle s'installe depuis le Microsoft Store (§2).</li>
+  <li>Étape 6 : une note du type « 24/11, 10 h 05 – 10 h 20, Assistance rapide, accord oral de l'utilisateur, contrôle demandé et accordé, puis repris par l'utilisateur (Annuler le contrôle), aucune modification faite, session quittée ».</li>
+</ul>
+</details>
+<aside class="callout umons"><p>Se connecter en Bureau à distance à un vrai poste : au stage, avec un compte et un poste prévus pour cela (à vérifier sur place).</p></aside>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<p>Les corrections s'appuient sur les sections sourcées : éditions et port au §3, consentement et faux support aux §5 et §6.</p>
+<h3>1. Le poste en édition Famille</h3>
+<p>Un utilisateur te demande de te connecter en Bureau à distance à son PC personnel en Windows 11 Famille pour l'aider.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Une édition Famille ne peut pas recevoir de connexion Bureau à distance. Et un appareil personnel ne se dépanne que si la procédure le prévoit : vérifie d'abord ce que la DSI prend en charge. Si c'est le cas, l'outil adapté est celui où l'utilisateur partage son écran (Assistance rapide ou l'outil de l'organisation).</p>
+</details>
+<h3>2. « Le support informatique m'a appelé »</h3>
+<p>Une secrétaire t'appelle : quelqu'un « du support informatique » vient de lui demander d'appuyer sur <kbd>Ctrl</kbd> + <kbd>Windows</kbd> + <kbd>Q</kbd> et de saisir un code. Elle l'a fait, puis a accepté une demande de contrôle. L'appel est terminé.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>C'est le scénario du faux support. Si la session est encore ouverte, elle clique sur <strong>Quitter</strong>. Tu traites l'appel comme un <strong>incident de sécurité</strong> : escalade immédiate selon la procédure (le poste peut devoir être isolé, le mot de passe changé), ticket avec l'heure, ce qui a été accepté et ce qu'elle a vu à l'écran. Tu ne minimises pas et tu ne cherches pas toi-même ce que l'attaquant a fait.</p>
+</details>
+<h3>3. Le port qui ne répond pas</h3>
+<p><code>mstsc /v:PC-ACCUEIL</code> échoue. <code>Test-NetConnection -ComputerName PC-ACCUEIL -Port 3389</code> donne <code>TcpTestSucceeded : False</code>, mais <code>ping PC-ACCUEIL</code> répond.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Le poste est joignable, mais pas le port 3389 : Bureau à distance désactivé, pare-feu, ou poste non autorisé par la stratégie de l'organisation. Inutile de réessayer <code>mstsc</code>. Tu le notes dans le ticket et tu passes par l'outil prévu (ou sur place), ou tu escalades à l'équipe poste de travail.</p>
+</details>
+<h3>4. L'invite UAC</h3>
+<p>Pendant une session Assistance rapide avec contrôle, une invite de contrôle de compte d'utilisateur apparaît et tu ne peux pas la valider.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>C'est prévu : dans certains cas, c'est l'utilisateur qui doit répondre à l'invite. Tu lui expliques ce qu'elle demande et pourquoi ; s'il faut des identifiants d'administrateur qu'il n'a pas, l'action dépasse ses droits (et donc les tiens dans cette session) : on escalade ou on passe par la procédure prévue, on ne lui demande pas de mot de passe.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-depannage-distance"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Assistance rapide</strong> : le support génère un code à 6 chiffres, l'utilisateur le saisit et autorise ; contrôle sur demande, retirable (<em>Annuler le contrôle</em>) ; mêmes droits que l'utilisateur ; aucun journal sur les postes.</li>
+  <li><strong>Bureau à distance</strong> : hôte en édition Pro, Entreprise ou Éducation (pas Famille), activé dans Paramètres → Système, TCP 3389 ; <code>mstsc /v:nom /prompt</code> ; tester le port avec <code>Test-NetConnection -Port 3389</code>.</li>
+  <li><strong>PowerShell à distance</strong> : <code>Enter-PSSession</code> (interactif), <code>Invoke-Command</code> (bloc de commandes) ; en lecture seulement en stage.</li>
+  <li><strong>Faux support</strong> : appel ou message « IT Support », <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>Q</kbd>, code, contrôle → incident de sécurité.</li>
+  <li><strong>Session</strong> : identité, accord explicite, annoncer chaque action, l'utilisateur répond aux invites, <em>Quitter</em>, tout noter dans le ticket.</li>
+  <li><strong>Sur place</strong> : pas de réseau, matériel, pas d'accord, droits manquants.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Quel outil de prise en main la DSI utilise-t-elle, et Assistance rapide est-il autorisé ou retiré des postes ?</li>
+  <li>Comment l'accord de l'utilisateur est-il recueilli et noté (oral, écrit, dans le ticket) ?</li>
+  <li>Le Bureau à distance est-il ouvert sur les postes du personnel, et pour quels comptes ?</li>
+  <li>PowerShell à distance est-il configuré, et le service desk a-t-il le droit de s'en servir ?</li>
+  <li>Comment un utilisateur peut-il vérifier qu'un appel vient vraiment de la DSI ?</li>
+  <li>Que prend en charge le service desk pour les appareils personnels ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-depannage-distance"> Module terminé</label></p>
+<div data-module-suite="depannage-distance"></div>
+</div>
+</main>
+</body>
+</html>

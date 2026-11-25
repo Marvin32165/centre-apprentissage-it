@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jour 9 — Matériel et PC · Prépa stage</title>
+<meta name="description" content="Composants, BIOS/UEFI, Secure Boot, TPM, BitLocker, déploiement et intégration au domaine, salles informatiques, colis et inventaire.">
+<meta property="og:title" content="Jour 9 — Matériel et PC · Prépa stage">
+<meta property="og:description" content="Composants, BIOS/UEFI, Secure Boot, TPM, BitLocker, déploiement et intégration au domaine, salles informatiques, colis et inventaire.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/prepa.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/jour.js" defer></script>
+</head>
+<body data-root="../" data-nav="stage">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Prépa stage · Jour 9 · dimanche 6 décembre</p>
+<h1>Matériel et <em>PC</em></h1>
+<p class="lead">Une partie du stage se passe les mains dans le matériel : réception des colis, inventaire, installation et intégration de PC, projets de salles informatiques. Aujourd'hui, tu revois les composants, le démarrage (BIOS/UEFI, Secure Boot, TPM), le chiffrement BitLocker, et la chaîne « colis → inventaire → PC prêt à l'emploi ».</p>
+<h2 id="plan">Plan de la journée <span class="duree">≈ 3 h</span></h2>
+<aside class="callout astuce"><p><strong>Séance double du dimanche 6/12, veille du stage.</strong> Prévois environ 3 h pour le jour 9. Dans le labo, vérifie le TPM et Secure Boot, puis l'état de BitLocker et l'emplacement de ta clé. Garde l'exercice d'inventaire pour plus tard. Enchaîne avec <a href="j10.html#plan">le jour 10</a>.</p></aside>
+<ol class="plan-horaire">
+  <li><span class="h">30 min</span><span>Les composants d'un PC et leur rôle dans un diagnostic</span></li>
+  <li><span class="h">30 min</span><span>BIOS/UEFI, Secure Boot, TPM, BitLocker</span></li>
+  <li><span class="h">30 min</span><span>Déploiement et intégration d'un PC au domaine</span></li>
+  <li><span class="h">20 min</span><span>Salles informatiques, réception des colis, inventaire</span></li>
+  <li><span class="h">35 min</span><span>Labo raccourci : TPM, Secure Boot et BitLocker sur ton PC, en lecture</span></li>
+  <li><span class="h">35 min</span><span>Mises en situation, quiz, fiche mémo</span></li>
+</ol>
+
+<aside class="callout umons"><p>Les modèles de PC, l'outil d'inventaire, la méthode de déploiement (image, installation automatisée), la nomenclature des noms de machines et la gestion des colis de la DSI : tout est à vérifier sur place. Ce jour pose les principes ; ton tuteur te donnera la méthode de la maison.</p></aside>
+
+<h2 id="composants">1. Les composants et ce qu'ils disent d'une panne</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Composant</th><th>Rôle</th><th>Symptôme typique quand il lâche</th></tr></thead>
+<tbody>
+<tr><td><strong>Alimentation</strong></td><td>Fournit le courant à tous les composants.</td><td>Rien ne s'allume, redémarrages aléatoires.</td></tr>
+<tr><td><strong>Carte mère</strong></td><td>Relie tous les composants ; contient le BIOS/UEFI et la pile CMOS.</td><td>Pas d'affichage, horloge remise à zéro (pile), ports qui ne marchent plus.</td></tr>
+<tr><td><strong>Processeur (CPU)</strong> et refroidissement</td><td>Effectue les calculs ; un ventirad le garde à bonne température.</td><td>Arrêts brusques ou lenteur par surchauffe.</td></tr>
+<tr><td><strong>Mémoire (RAM)</strong></td><td>Mémoire de travail.</td><td>Écrans bleus aléatoires, bips au démarrage, pas d'affichage.</td></tr>
+<tr><td><strong>Stockage (SSD/disque)</strong></td><td>Conserve Windows et les données.</td><td>« Aucun périphérique de démarrage », lenteur extrême, erreurs de lecture.</td></tr>
+<tr><td><strong>Carte graphique</strong> ou sortie vidéo</td><td>Produit l'image.</td><td>Pas d'image, ou image dégradée.</td></tr>
+<tr><td><strong>Carte réseau</strong></td><td>Relie le poste au réseau.</td><td>« Média déconnecté », pas d'adresse IP (jour 5).</td></tr>
+</tbody></table></div>
+<aside class="callout attention"><p>Avant d'ouvrir un PC : éteins-le, <strong>débranche l'alimentation</strong>, décharge l'électricité statique en touchant une partie métallique du boîtier (ou bracelet antistatique), et ne manipule les composants que par les bords.</p></aside>
+<aside class="callout astuce"><p>Pour une panne matérielle, le <strong>remplacement par une pièce témoin</strong> qui fonctionne est un bon réflexe : si le problème disparaît, la pièce d'origine est en cause. Fais-le un composant à la fois.</p></aside>
+
+<h2 id="demarrage">2. BIOS/UEFI, Secure Boot, TPM, BitLocker</h2>
+<h3>BIOS et UEFI</h3>
+<p>Le <strong>micrologiciel</strong> (<em>firmware</em>) de la carte mère démarre en premier : il teste le matériel, puis lance le système. Les PC récents utilisent l'<strong>UEFI</strong> (successeur du BIOS historique). On y accède au démarrage par une touche qui varie selon le constructeur (souvent <kbd>F2</kbd>, <kbd>Suppr</kbd>, <kbd>F10</kbd> ou <kbd>F12</kbd> pour le menu de démarrage). On y règle l'ordre de démarrage, le mode de démarrage, Secure Boot, le TPM, et on y protège l'accès par un mot de passe.</p>
+<h3>Secure Boot</h3>
+<p><strong>Secure Boot</strong> vérifie, au démarrage, que le chargeur de démarrage est signé par une autorité reconnue : il bloque des logiciels malveillants qui s'installeraient avant Windows. Il fonctionne avec le mode UEFI (pas avec l'ancien mode « Legacy / CSM »). Une installation d'un autre système ou un vieux média de démarrage peut ne pas passer avec Secure Boot actif.</p>
+<h3>TPM</h3>
+<p>Le <strong>TPM</strong> (<em>Trusted Platform Module</em>) est une puce (ou une fonction du processeur) qui stocke des clés de chiffrement de façon sécurisée. <strong>Windows 11 demande un TPM 2.0</strong> et le démarrage sécurisé (Secure Boot) activable. L'outil <code>tpm.msc</code> indique s'il est présent et prêt.</p>
+<h3>BitLocker</h3>
+<p><strong>BitLocker</strong> chiffre le disque : sans la clé, les données sont illisibles, même si l'on retire le disque. Il s'appuie en général sur le TPM. En cas de changement jugé suspect (modification du BIOS, changement de carte mère, certains changements de démarrage), Windows demande une <strong>clé de récupération</strong> de 48 chiffres.</p>
+<ul>
+  <li>Cette clé est sauvegardée à un endroit défini par l'organisation (annuaire, compte en ligne, outil de gestion). <strong>À vérifier sur place</strong>.</li>
+  <li>C'est un <strong>secret</strong> : on ne l'envoie pas par courriel et on ne la lit qu'à la personne dont l'identité est vérifiée.</li>
+  <li><strong>Avant</strong> de modifier le BIOS, de mettre à jour le micrologiciel, ou de changer du matériel sur un poste chiffré, vérifie que la clé de récupération est disponible.</li>
+</ul>
+<pre data-copy><code>manage-bde -status
+Get-BitLockerVolume
+Get-Tpm
+Confirm-SecureBootUEFI
+msinfo32</code></pre>
+<p><code>Confirm-SecureBootUEFI</code> renvoie <code>True</code> si Secure Boot est actif ; <code>msinfo32</code> affiche « État du démarrage sécurisé » et « Mode BIOS ».</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/whats-new/windows-11-requirements">Windows 11 requirements</a> (TPM 2.0, Secure Boot), <a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/">BitLocker overview</a>, <a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/recovery-overview">BitLocker recovery overview</a> (causes d'une demande de clé), <a href="https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/oem-secure-boot">Secure Boot</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/manage-bde-status">manage-bde -status</a>. Norme UEFI (<a href="https://uefi.org/specifications">uefi.org</a>).</p></aside>
+
+<h2 id="deploiement">3. Déploiement et intégration d'un PC</h2>
+<p>Un PC neuf ou réinstallé doit arriver à l'utilisateur <strong>à jour, au bon nom, dans le bon domaine, avec les bons logiciels</strong>. Les organisations le font avec des outils (image de référence, installation automatisée, Autopilot…) pour avoir des postes identiques. Le principe se résume en étapes :</p>
+<ol>
+  <li><strong>Préparer</strong> : vérifier le matériel reçu (inventaire, étiquette), mettre à jour le micrologiciel si la procédure le demande.</li>
+  <li><strong>Installer</strong> Windows (ou appliquer l'image) avec la langue, le clavier et la région prévus.</li>
+  <li><strong>Nommer</strong> le poste selon la nomenclature (ex. : lieu ou service + numéro).</li>
+  <li><strong>Joindre au domaine</strong> (jour 6) et le ranger dans la <strong>bonne OU</strong>, pour qu'il reçoive les bonnes GPO.</li>
+  <li><strong>Installer les logiciels</strong> standards et les pilotes, appliquer les mises à jour.</li>
+  <li><strong>Activer BitLocker</strong> et vérifier que la clé de récupération est sauvegardée.</li>
+  <li><strong>Tester</strong> avec un compte de test : connexion au domaine, réseau, imprimante, lecteur réseau, messagerie.</li>
+  <li><strong>Documenter</strong> : inventaire (nom, numéro de série, utilisateur, lieu) et ticket clôturé.</li>
+</ol>
+<p>Pour la jonction au domaine en PowerShell (en administrateur, sur le poste, avec un compte autorisé) :</p>
+<pre data-copy><code>Rename-Computer -NewName "PC-TEST01" -Restart
+Add-Computer -DomainName "lab.local" -Credential LAB\Administrateur -Restart</code></pre>
+<aside class="callout umons"><p>Méthode de déploiement, nomenclature des noms, rangement des postes par OU, logiciels standards, qui peut joindre un poste au domaine : à demander à ton tuteur.</p></aside>
+
+<h2 id="salles">4. Salles informatiques, colis et inventaire</h2>
+<h3>Salles informatiques</h3>
+<p>Dans une salle (par exemple pour des cours), on veut <strong>des postes identiques</strong> : même image, mêmes logiciels, même configuration. Un projet de salle (renouvellement, extension) suit en général : <strong>besoin</strong> → <strong>commande</strong> → <strong>réception</strong> → <strong>préparation d'un poste modèle</strong> → <strong>déploiement en série</strong> → <strong>test</strong> → <strong>mise en service</strong> et suivi des premiers jours. On teste toujours un seul poste complet avant de multiplier.</p>
+<h3>Réception d'un colis</h3>
+<ol>
+  <li><strong>Regarder l'extérieur</strong> : carton abîmé, humide ? Le noter (et le photographier) <em>avant</em> de signer la livraison si c'est le cas, selon la procédure.</li>
+  <li><strong>Comparer avec le bon de livraison / la commande</strong> : quantité, références, modèles.</li>
+  <li><strong>Vérifier le contenu</strong> : appareil, alimentation, câbles, accessoires.</li>
+  <li><strong>Relever les numéros de série</strong> et les associer au bon de livraison.</li>
+  <li><strong>Étiqueter</strong> avec le numéro d'inventaire et <strong>enregistrer</strong> dans l'outil d'inventaire.</li>
+  <li><strong>Ranger</strong> en lieu sûr, signaler tout écart (manquant, abîmé) à qui de droit.</li>
+</ol>
+<h3>Inventaire</h3>
+<p>Un inventaire utile contient pour chaque appareil : numéro d'inventaire, numéro de série, modèle, date de réception, lieu, état (en stock, en service, en réparation, retiré), utilisateur ou salle, et éventuellement nom de la machine. Les écarts entre inventaire et réalité sont fréquents : tenir l'inventaire à jour à chaque mouvement évite beaucoup de temps perdu.</p>
+<aside class="callout attention"><p>Un appareil retiré ou renvoyé doit être <strong>effacé de façon sûre</strong> selon la procédure de l'organisation avant de quitter l'organisation ou d'être jeté : n'improvise pas. Un disque chiffré ne suffit pas tant que ses clés existent encore : un effacement par destruction des clés a ses propres conditions.</p></aside>
+<aside class="callout source"><p>NIST : <a href="https://csrc.nist.gov/pubs/sp/800/88/r2/final">SP 800-88 Rev. 2, Guidelines for Media Sanitization</a>. Réception des colis : les délais et formalités dépendent du transporteur et du contrat (exemple : <a href="https://www.ups.com/be/en/support/file-a-claim">UPS Belgique, déclarer un dommage</a>) ; la procédure de l'UMONS est à vérifier sur place.</p></aside>
+
+<h2 id="labo">Labo : TPM, Secure Boot et BitLocker sur ton PC, en lecture <span class="duree">Labo complet · 1 h 05</span></h2>
+<p>Pas de machine virtuelle : tu <strong>lis</strong> l'état de ton propre PC, sans rien activer ni désactiver (ne touche pas aux réglages du firmware ni à BitLocker). Console <strong>administrateur</strong> pour les commandes.</p>
+<ol>
+  <li><code>msinfo32</code> : relève « Mode BIOS » (UEFI ou hérité) et « État du démarrage sécurisé ».</li>
+  <li><code>Get-Tpm</code> et <code>tpm.msc</code> : un TPM est-il présent et prêt ? En quelle version ? Puis <code>Confirm-SecureBootUEFI</code>.</li>
+  <li><code>manage-bde -status</code> : ton disque système est-il chiffré ? Que valent « Statut de la conversion » et « État de la protection » ?</li>
+  <li><strong>Où est ta clé ?</strong> Si ton disque est chiffré, vérifie depuis un autre appareil, dans ton compte Microsoft (<code>aka.ms/myrecoverykey</code>), que la clé de récupération y est enregistrée. Ne la recopie nulle part, ne l'affiche pas en capture d'écran : c'est un secret.</li>
+  <li><strong>Inventaire</strong> : prépare un tableau (numéro d'inventaire, numéro de série, modèle, lieu, état, utilisateur) et remplis-le avec ton PC (<code>Get-CimInstance Win32_BIOS</code> pour le numéro de série) et deux autres appareils de la maison (étiquette). Ajoute-y trois lignes de « colis reçu » inventées.</li>
+  <li><strong>Sur papier</strong> : un utilisateur appelle, son PC demande la clé de récupération après une mise à jour du BIOS. Écris tes questions et tes gestes dans l'ordre (cas 1).</li>
+</ol>
+<details class="correction"><summary>Voir des repères pour contrôler tes résultats</summary>
+<ul>
+  <li>Sur un PC récent sous Windows 11 : Mode BIOS « UEFI », démarrage sécurisé « Activé », <code>Get-Tpm</code> indique un TPM présent et prêt (version 2.0 dans <code>tpm.msc</code>), <code>Confirm-SecureBootUEFI</code> renvoie <code>True</code>.</li>
+  <li><code>manage-bde -status</code> distingue l'état de conversion (entièrement chiffré, espace utilisé seulement chiffré, ou en cours) et l'état de la protection (activée ou non). Sur certains PC, le « chiffrement de l'appareil » active BitLocker automatiquement ; d'autres ne sont pas chiffrés.</li>
+  <li>La clé de récupération est une série de huit groupes de six chiffres ; sans elle, un volume en demande de récupération reste verrouillé.</li>
+  <li>Dans un bon inventaire, chaque appareil et chaque colis reçu a un numéro de série et une date, sans doublons.</li>
+  <li>Cas papier : identité vérifiée, clé récupérée à l'endroit prévu et transmise par un canal sûr, jamais écrite dans le ticket ; puis contrôle que la protection a repris (<code>manage-bde -status</code>).</li>
+</ul>
+<p>Sources : <a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/">BitLocker overview</a> (chiffrement de l'appareil), <a href="https://support.microsoft.com/en-us/windows/security/encryption/find-your-bitlocker-recovery-key">Find your BitLocker recovery key</a>, <a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/recovery-process">BitLocker recovery process</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/manage-bde-status">manage-bde -status</a> et l'encadré du §2.</p>
+</details>
+<aside class="callout umons"><p>Activer BitLocker, provoquer une demande de clé ou préparer un PC complet : sur un poste de test au stage, si ton tuteur le permet (à vérifier sur place).</p></aside>
+
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « Mon PC demande une clé à 48 chiffres »</h3>
+<p>Un utilisateur a démarré son portable après une mise à jour du BIOS faite hier par un collègue. Windows réclame une clé de récupération BitLocker.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>C'est un cas connu : une modification du micrologiciel peut déclencher la récupération, selon le matériel et la configuration de BitLocker (une mise à jour faite en suspendant BitLocker, par exemple, ne la déclenche pas). On <strong>vérifie l'identité</strong>, puis on récupère la clé à l'endroit prévu par l'organisation et on la communique par le canal sûr, sans l'écrire dans le ticket. Une fois le poste démarré, on s'assure que l'événement est expliqué (la mise à jour d'hier) et que BitLocker protège de nouveau le disque (<code>manage-bde -status</code>) ; sinon, on escalade. On note la cause, et on rappelle de vérifier la clé avant toute modification du BIOS.</p>
+</details>
+<h3>2. Un colis abîmé</h3>
+<p>Un transporteur livre cinq cartons de portables. Un carton est écrasé et le livreur attend une signature.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>On note la réserve sur le bon de livraison (carton abîmé), on photographie, on ouvre si la procédure le permet pour vérifier l'état, et on signale immédiatement à la personne responsable des commandes. On ne range pas le colis comme si de rien n'était : le délai pour déclarer un dommage au transporteur est limité et dépend du transporteur et du contrat (à vérifier sur place).</p>
+</details>
+<h3>3. Le PC « de remplacement »</h3>
+<p>Un utilisateur demande de lui installer son nouveau PC « comme l'ancien ». Il veut y garder sa session, ses fichiers et ses imprimantes.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>On applique la procédure standard : poste à jour, joint au domaine dans la bonne OU, logiciels standards, vérification que les données sont bien sur OneDrive ou sur le serveur (et non en local sur l'ancien poste), transfert des fichiers locaux selon la règle, test avec lui présent, puis mise à jour de l'inventaire (ancien poste retiré, nouveau poste attribué). On ne copie pas aveuglément un ancien profil sur le nouveau poste.</p>
+</details>
+<h3>4. Pas de démarrage après installation</h3>
+<p>Un technicien prépare un PC de salle : « Aucun périphérique de démarrage » apparaît. Le disque est visible dans le BIOS.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Vérifier le <strong>mode de démarrage</strong> (UEFI ou Legacy) et que l'installation a été faite dans le même mode, l'<strong>ordre de démarrage</strong>, et la présence de la partition de démarrage. Si Windows a été installé en mode Legacy sur un disque MBR et que le poste doit démarrer en UEFI, l'outil Microsoft <code>MBR2GPT</code> peut convertir le disque sans réinstaller, après validation et avec une sauvegarde, selon la procédure ; sinon, on réinstalle en UEFI (<a href="https://learn.microsoft.com/en-us/windows/deployment/mbr-to-gpt">MBR2GPT</a>). On teste d'abord le plus simple : débrancher les clés USB et vérifier l'ordre.</p>
+</details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="stage-j9"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Avant d'ouvrir un PC</strong> : éteint, débranché, décharge statique.</li>
+  <li><strong>Pièce témoin</strong> : on change un composant à la fois.</li>
+  <li><strong>UEFI</strong> remplace le BIOS ; <strong>Secure Boot</strong> = démarrage signé ; <strong>TPM 2.0</strong> requis par Windows 11.</li>
+  <li><strong>BitLocker</strong> : la clé de récupération est un secret ; elle doit exister <em>avant</em> de toucher au BIOS ou au matériel.</li>
+  <li><strong>Déploiement</strong> : nom, domaine, bonne OU, logiciels, BitLocker, test, inventaire.</li>
+  <li><strong>Colis</strong> : extérieur, bon de livraison, contenu, numéros de série, étiquette, inventaire.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Quel outil d'inventaire utilise-t-on, et quelles informations doivent figurer pour un appareil ?</li>
+  <li>Comment sont déployés les postes (image, installation automatisée) et quelle est la nomenclature des noms ?</li>
+  <li>Où sont sauvegardées les clés de récupération BitLocker, et qui peut les consulter ?</li>
+  <li>Quelle est la procédure de réception d'un colis et de signalement d'un dommage ?</li>
+  <li>Comment est géré le matériel retiré ou renvoyé (effacement, évacuation) ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="stage-j9"> Jour 9 terminé</label></p>
+<nav class="jours-nav" aria-label="Navigation entre les jours">
+  <a class="btn ghost" href="j8.html">← Jour 8</a>
+  <a class="btn ghost" href="j10.html">Jour 10 →</a>
+</nav>
+</div>
+</main>
+</body>
+</html>
