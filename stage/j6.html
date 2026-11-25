@@ -47,11 +47,11 @@
 <tr><td><strong>Objet</strong></td><td>Un compte utilisateur, un ordinateur, un groupe, une imprimante…</td></tr>
 <tr><td><strong>Unité d'organisation (OU)</strong></td><td>Un « dossier » de l'annuaire, qui range les objets et permet de leur appliquer des GPO ou de déléguer des droits.</td></tr>
 <tr><td><strong>Groupe</strong></td><td>Un ensemble d'utilisateurs auquel on donne des droits (accès à un dossier, une imprimante, une application). On donne les droits au groupe, pas à chaque personne.</td></tr>
-<tr><td><strong>GPO</strong> (stratégie de groupe)</td><td>Un jeu de paramètres appliqué automatiquement aux utilisateurs ou aux ordinateurs d'une OU (fond d'écran, lecteurs réseau, règles de mot de passe, pare-feu…).</td></tr>
+<tr><td><strong>GPO</strong> (stratégie de groupe)</td><td>Un jeu de paramètres appliqué automatiquement aux utilisateurs ou aux ordinateurs ; une GPO se lie à un site, au domaine ou à une OU (fond d'écran, lecteurs réseau, pare-feu…). Les règles de mot de passe des comptes du domaine se définissent au niveau du domaine, pas d'une OU.</td></tr>
 <tr><td><strong>Authentification Kerberos</strong></td><td>Le mécanisme par défaut qui permet de se connecter au domaine sans renvoyer le mot de passe à chaque service.</td></tr>
 </tbody></table></div>
-<aside class="callout retenir"><p><strong>Droits = groupes. Paramètres = GPO. Rangement = OU.</strong> Si quelqu'un « n'a pas accès », on regarde ses groupes. Si un poste « n'a pas le bon réglage », on regarde les GPO qui s'y appliquent.</p></aside>
-<aside class="callout source"><p>Microsoft Learn : « Active Directory Domain Services overview », « Group Policy overview », cmdlets du module ActiveDirectory (<code>Get-ADUser</code>, <code>Unlock-ADAccount</code>, <code>Set-ADAccountPassword</code>), commandes <code>gpupdate</code> et <code>gpresult</code>.</p></aside>
+<aside class="callout retenir"><p><strong>Droits = groupes. Paramètres = GPO. Rangement = OU.</strong> Si quelqu'un « n'a pas accès », on regarde d'abord ses groupes (c'est une piste, pas une certitude). Si un poste « n'a pas le bon réglage », on regarde les GPO qui s'y appliquent.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview">Active Directory Domain Services overview</a>, <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-overview">Group Policy overview</a> (liens sur site, domaine et OU), <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing">Group Policy processing</a>, <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/account-policies">Account Policies</a> (stratégie de compte au niveau du domaine).</p></aside>
 
 <h2 id="actes">2. Les actes du support</h2>
 <h3>Réinitialiser un mot de passe</h3>
@@ -70,7 +70,8 @@
 </ul>
 <aside class="callout astuce"><p>Sur un contrôleur de domaine, l'événement de sécurité <strong>4740</strong> (« compte verrouillé ») indique le nom de l'ordinateur à l'origine du verrouillage. Si tu n'y as pas accès, donne l'heure et le nom du compte à l'équipe qui l'a.</p></aside>
 <h3>Groupes</h3>
-<p>« Il n'a plus accès au dossier » ou « il vient d'arriver dans le service » = un problème d'<strong>appartenance à un groupe</strong>. Vérifie à quels groupes appartient l'utilisateur, compare avec un collègue du même service, mais <strong>ne modifie l'appartenance que sur demande validée</strong> (responsable ou procédure). Après un ajout, l'utilisateur doit <strong>fermer puis rouvrir sa session</strong> pour que son jeton d'accès soit mis à jour.</p>
+<p>« Il n'a plus accès au dossier » ou « il vient d'arriver dans le service » : la première piste est l'<strong>appartenance à un groupe</strong>, sans être la seule (autorisations du dossier lui-même, groupes imbriqués, session ouverte avant l'ajout et donc jeton d'accès sans le nouveau groupe). Vérifie à quels groupes appartient l'utilisateur, compare avec un collègue du même service, mais <strong>ne modifie l'appartenance que sur demande validée</strong> (responsable ou procédure). Après un ajout, l'utilisateur doit <strong>fermer puis rouvrir sa session</strong> pour que son jeton d'accès soit mis à jour.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-groups">Active Directory security groups</a> ; <a href="https://learn.microsoft.com/en-us/windows/win32/secauthz/access-tokens">Access tokens</a> (les groupes sont lus à l'ouverture de session) ; <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4740">événement 4740</a>.</p></aside>
 <aside class="callout attention"><p>Ne donne jamais de droits « pour dépanner vite » : ajouter quelqu'un à un groupe d'administration ou de partage sensible sans validation est une faute de sécurité, même bien intentionnée.</p></aside>
 
 <h2 id="gpo">3. Les GPO côté support</h2>
@@ -81,11 +82,12 @@ gpresult /h %USERPROFILE%\Desktop\gpo.html</code></pre>
 <div class="table-wrap"><table>
 <thead><tr><th>Commande</th><th>Ce qu'elle fait</th></tr></thead>
 <tbody>
-<tr><td><code>gpupdate /force</code></td><td>Réapplique toutes les stratégies tout de suite. Certaines demandent ensuite une déconnexion ou un redémarrage.</td></tr>
+<tr><td><code>gpupdate /force</code></td><td>Redemande tout de suite le traitement de tous les paramètres, même inchangés. Certains (installation de logiciels, redirection de dossiers) ne s'appliquent qu'à la déconnexion ou au redémarrage suivant.</td></tr>
 <tr><td><code>gpresult /r</code></td><td>Résume les GPO appliquées à l'utilisateur et à l'ordinateur, et celles qui sont filtrées.</td></tr>
 <tr><td><code>gpresult /h fichier.html</code></td><td>Produit un rapport détaillé lisible dans un navigateur (le plus utile pour comparer deux postes).</td></tr>
 </tbody></table></div>
 <p>Cas typique : un lecteur réseau ou un réglage manque sur un poste mais pas sur le poste voisin. On compare les deux rapports <code>gpresult</code> : la GPO apparaît-elle dans « appliquées » ? dans « refusées » ? Le poste est-il dans la bonne <strong>OU</strong> ? Un poste mal rangé dans l'annuaire n'a pas les bonnes stratégies.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/gpupdate">gpupdate</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/gpresult">gpresult</a>, <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing">Group Policy processing</a>.</p></aside>
 <aside class="callout attention"><p>Le support <strong>lit</strong> les GPO ; leur modification relève de l'équipe d'administration. Une GPO touche des centaines de postes : ne la change jamais « pour essayer ».</p></aside>
 
 <h2 id="powershell">4. PowerShell en lecture</h2>
@@ -106,7 +108,8 @@ whoami /groups
 net user jdupont /domain
 nltest /dsgetdc:lab.local
 klist</code></pre>
-<p><code>nltest /dsgetdc:</code> indique quel contrôleur de domaine le poste utilise ; s'il ne répond pas, le poste n'arrive pas à joindre le domaine (réseau, DNS, VPN).</p>
+<p><code>nltest /dsgetdc:</code> teste la localisation d'un contrôleur de domaine et affiche celui qui est trouvé (le résultat peut venir du cache). Un échec oriente vers la découverte du domaine ou la connectivité (réseau, DNS, VPN), sans désigner seul la cause.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser">Get-ADUser</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/unlock-adaccount">Unlock-ADAccount</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/set-adaccountpassword">Set-ADAccountPassword</a> (module ActiveDirectory) ; <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/dc-locator">Locating Active Directory domain controllers</a> (localisation et cache).</p></aside>
 
 <h2 id="labo">Labo : un domaine de test dans Hyper-V <span class="duree">1 h 20</span></h2>
 <p>Tu reprends l'infrastructure du jour 5 : un commutateur privé, une VM <strong>Windows Server</strong> d'évaluation et une VM <strong>Windows 11</strong> (éditions Pro ou Entreprise pour joindre un domaine). Prends un point de contrôle de chaque VM avant de commencer.</p>
@@ -126,14 +129,15 @@ Install-ADDSForest -DomainName "lab.local" -DomainNetbiosName "LAB"</code></pre>
   <li>Ouvre une session sur le client avec <code>etu.test</code> (en <code>LAB\etu.test</code>). Lance <code>whoami /groups</code>.</li>
   <li><strong>Mot de passe</strong> : réinitialise celui de <code>etu.test</code> avec l'obligation de le changer à la prochaine connexion, puis reconnecte-toi.</li>
   <li><strong>Verrouillage</strong> : dans la stratégie du domaine, règle un seuil de verrouillage bas (par exemple 3 tentatives, en labo uniquement), échoue volontairement trois fois la connexion, puis constate le verrouillage, retrouve-le avec <code>Search-ADAccount -LockedOut</code> et déverrouille-le.</li>
-  <li><strong>GPO</strong> : crée une GPO liée à l'OU « Salle01 » qui impose un réglage visible (par exemple un fond d'écran ou une restriction facile à constater). Sur le client : <code>gpupdate /force</code>, reconnexion, puis <code>gpresult /r</code> et <code>gpresult /h</code>.</li>
+  <li><strong>GPO</strong> : crée une GPO liée à l'OU « Salle01 » avec un paramètre de <strong>Configuration ordinateur</strong> facile à constater (par exemple, dans Paramètres de sécurité → Stratégies locales → Options de sécurité, un message affiché à l'ouverture de session). L'OU ne contient que l'ordinateur : un paramètre de Configuration utilisateur (comme le fond d'écran) ne s'appliquerait pas à <code>etu.test</code>, rangé ailleurs, sans traitement en boucle. Sur le client : <code>gpupdate /force</code>, redémarrage, puis <code>gpresult /r</code> et <code>gpresult /h</code>.</li>
   <li><strong>Panne</strong> : retire le client de l'OU « Salle01 » ; que devient la GPO ? Mets un mauvais DNS sur le client : que devient l'ouverture de session sur le domaine ?</li>
 </ol>
+<p>Repères : §2 (mot de passe, verrouillage, groupes), §3 (GPO), §4 (commandes) et leurs encadrés de sources ; traitement en boucle : <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/group-policy/loopback-processing-of-group-policy">Loopback processing of Group Policy</a>.</p>
 <details class="correction"><summary>Voir des repères pour contrôler tes résultats</summary>
 <ul>
   <li><code>whoami /groups</code> affiche les groupes de l'utilisateur ; <code>GRP-Partage-Test</code> n'apparaît que pour <code>prof.test</code>, et seulement après une nouvelle ouverture de session suivant l'ajout.</li>
   <li>Après trois échecs, <code>Search-ADAccount -LockedOut</code> liste <code>etu.test</code> ; <code>Unlock-ADAccount</code> le libère. Remets le seuil d'origine après le test.</li>
-  <li><code>gpresult /r</code> liste la GPO sous « Objets de stratégie de groupe appliqués » ; hors de l'OU, elle disparaît après un nouveau <code>gpupdate /force</code> et une reconnexion.</li>
+  <li><code>gpresult /r</code> (partie ordinateur) liste la GPO sous « Objets de stratégie de groupe appliqués » ; hors de l'OU, elle disparaît de cette liste après un nouveau <code>gpupdate /force</code> et un redémarrage. Certains réglages peuvent rester sur le poste même quand la GPO ne s'applique plus : c'est le rapport qui fait foi.</li>
   <li>Avec un mauvais DNS, le poste ne trouve plus le contrôleur de domaine : <code>nslookup lab.local</code> échoue et la connexion avec un compte du domaine peut se faire seulement avec les informations mises en cache d'une session précédente.</li>
 </ul>
 </details>
@@ -147,7 +151,7 @@ Install-ADDSForest -DomainName "lab.local" -DomainNetbiosName "LAB"</code></pre>
 <h3>2. Le nouvel arrivant et le dossier partagé</h3>
 <p>Un nouvel assistant, arrivé lundi, appelle : « Je n'ai pas accès au dossier du service. » Son collègue y accède sans problème.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>On compare ses groupes avec ceux de son collègue (<code>whoami /groups</code> ou la console). S'il manque un groupe, on ne l'ajoute pas de sa propre initiative : on demande la validation de son responsable (selon la procédure) puis on ajoute, et on lui demande de se déconnecter puis se reconnecter. On note la demande et la validation dans le ticket.</p>
+<p>Première piste : on compare ses groupes avec ceux de son collègue (<code>whoami /groups</code> ou la console). Si les groupes sont identiques, l'accès dépend d'autre chose (autorisations du dossier, chemin utilisé) : on escalade avec ces éléments. S'il manque un groupe, on ne l'ajoute pas de sa propre initiative : on demande la validation de son responsable (selon la procédure) puis on ajoute, et on lui demande de se déconnecter puis se reconnecter. On note la demande et la validation dans le ticket.</p>
 </details>
 <h3>3. Le lecteur manque sur un seul poste</h3>
 <p>Dans une salle, quinze postes ont le lecteur <code>S:</code>, un seul ne l'a pas. Redémarrer n'y change rien.</p>

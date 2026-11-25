@@ -23,3 +23,16 @@ Les six réponses du quiz `module-imprimantes-peripheriques` dans `assets/module
 | Cadrage des sources. Les cinq sections de théorie ont des liens. Le labo, les cas, le quiz et le mémo n’indiquent pas toujours la référence applicable. | non vérifié | Dépôt à la révision relue, ou preuve primaire manquante. | Ajouter les renvois et sourcer les contrôles spécifiques au modèle lorsqu’ils sont présentés comme procédure. |
 
 **Bilan : 1 faux, 2 non vérifiés, 11 corrects (14 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- §4, cas 3 et Q5 (Windows Hello et Teams) : **Corrigé** — l'autorisation devient la première hypothèse, pas une preuve ; vérifier la caméra choisie dans Teams, l'autorisation du site dans le navigateur et l'application Caméra ; page Support « Camera doesn't work in Windows » ajoutée.
+- Labo, §3 et §4 (matériel absent) : **Corrigé** — prérequis annoncés, variantes « liste d'imprimantes vide » et « caméra absente ou réglage grisé » (étape passée), lecture d'une liste vide dans la correction.
+- Cadrage des sources : **Corrigé** — renvois aux sections dans le labo et les cas ; contrôles propres à un modèle renvoyés à la documentation du constructeur.
+
+## Test en situation (`test-chef.md`, 25/11/2026)
+Agent testeur qui n'a pas écrit la page ; usage : « Teams ne trouve pas ma caméra », puis « l'imprimante du couloir n'imprime plus », au téléphone (390 px), puis labo et quiz sur PC. 7 critères sur 8 réussis.
+- Fiche mémo imprimée sur 9 pages (bloquant) : **Corrigé** — fiche A4 commune aux modules.
+- §4, vérifications rapides de la caméra : **Corrigé** — cache ou interrupteur, autre application, câble USB (page « Camera doesn't work in Windows », vérifiée). **Justifié** : pas de chemin dans Teams, faute de source ouverte.
+- §1, tri « une personne ou plusieurs ? » : **Corrigé** — en tête de la méthode, avec renvoi au cas 2 ; `aka.ms/PrinterConnection` devenu un lien.
+- Recherche (« n'imprime plus », « hors ligne », « caméra Teams ») : **Corrigé** — mots-clés ajoutés.
+- `printui` dans PowerShell : **Corrigé** — à taper dans `cmd` (labo et §3). **Justifié** : bouton Copier sur le bloc de code laissé (le bloc défile). Pas de sommaire ajouté.

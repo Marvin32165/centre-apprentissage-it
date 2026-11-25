@@ -46,9 +46,9 @@
   <li><strong>Basculer</strong> : dans l'Outlook classique, activer le bouton <em>Try the new Outlook</em> en haut à droite ; pour revenir, le désactiver dans le nouvel Outlook, qui rouvre alors la version classique. Au premier passage, le nouvel Outlook propose d'importer les paramètres.</li>
   <li><strong>Fichiers PST</strong> : le nouvel Outlook peut en ouvrir, mais il faut que l'Outlook classique soit aussi installé, dans la même architecture (32 ou 64 bits).</li>
   <li><strong>Dossiers publics</strong> : leur prise en charge est limitée dans le nouvel Outlook ; quelqu'un qui en dépend reste sur le classique.</li>
-  <li>Un compte POP ou IMAP stocke tout dans un fichier PST, par défaut dans <code>Documents\Outlook Files</code> (Outlook 2016 et plus récents).</li>
+  <li>Dans l'Outlook classique, un compte <strong>POP</strong> range ses éléments dans un fichier <strong>PST</strong> (emplacement courant : <code>Documents\Outlook Files</code>) ; un compte <strong>IMAP</strong>, Exchange, Microsoft 365 ou Outlook.com utilise un fichier <strong>OST</strong>, copie hors connexion de la boîte.</li>
 </ul>
-<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/office/getting-started-with-the-new-outlook-for-windows-656bb8d9-5a60-49b2-a98b-ba7822bc7627">Getting started with the new Outlook for Windows</a> ; <a href="https://support.microsoft.com/en-us/office/introduction-to-outlook-data-files-pst-and-ost-222eaf92-a995-45d9-bde2-f331f60e2790">Open and find items in an Outlook Data File (.pst)</a>.</p></aside>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/office/getting-started-with-the-new-outlook-for-windows-656bb8d9-5a60-49b2-a98b-ba7822bc7627">Getting started with the new Outlook for Windows</a> ; <a href="https://support.microsoft.com/en-us/office/introduction-to-outlook-data-files-pst-and-ost-222eaf92-a995-45d9-bde2-f331f60e2790">Open and find items in an Outlook Data File (.pst)</a> ; <a href="https://support.microsoft.com/en-us/outlook/create-an-outlook-data-file-pst-to-save-your-information">Create an Outlook Data File (.pst)</a> et <a href="https://support.microsoft.com/en-us/outlook/open-or-import-items-from-an-offline-outlook-data-file-ost">Open or import items from an offline Outlook Data File (.ost)</a> (POP en PST ; IMAP, Exchange et Outlook.com en OST).</p></aside>
 
 <h2 id="commutateurs">2. Démarrer Outlook pour dépanner</h2>
 <p>On lance Outlook avec un <strong>commutateur</strong> depuis <kbd>Windows</kbd> + <kbd>R</kbd>. Un seul à la fois : Microsoft ne prend pas en charge plusieurs commutateurs ensemble.</p>
@@ -75,7 +75,7 @@
 <tr><td><strong>Envoyer en tant que</strong> (<em>Send As</em>)</td><td>Envoyer comme si le message venait de la boîte.</td></tr>
 <tr><td><strong>Envoyer de la part de</strong> (<em>Send on Behalf</em>)</td><td>Envoyer « de la part de » la boîte (le nom de la personne apparaît). Se règle en PowerShell (<code>Set-Mailbox -GrantSendOnBehalfTo</code>), pas dans le centre d'administration.</td></tr>
 </tbody></table></div>
-<p>Pour travailler normalement dans une boîte partagée, il faut <strong>Accès total et Envoyer en tant que</strong>. Quelqu'un qui « voit la boîte mais ne peut pas répondre » a souvent le premier sans le second : tu recueilles l'adresse de la boîte, le message d'erreur, et tu transmets à l'équipe qui gère les droits, avec la validation prévue par la procédure.</p>
+<p>Ce sont des droits distincts : l'accès au contenu d'un côté, la façon d'envoyer de l'autre. Pour un fonctionnement normal, Microsoft indique qu'il faut <strong>Accès total et Envoyer en tant que</strong> ; une organisation peut aussi préférer <strong>Envoyer de la part de</strong>, qui s'affiche autrement chez le destinataire (à vérifier sur place). Avec l'accès total seul, on ne peut pas envoyer depuis la boîte. Quelqu'un qui « voit la boîte mais ne peut pas répondre » a souvent le premier sans le second : tu recueilles l'adresse de la boîte, le message d'erreur, et tu transmets à l'équipe qui gère les droits, avec la validation prévue par la procédure.</p>
 <aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/exchange/collaboration-exo/shared-mailboxes">Shared mailboxes in Exchange Online</a>.</p></aside>
 
 <h2 id="teams">4. Teams : le cache, avec prudence</h2>
@@ -99,12 +99,12 @@
 </tbody></table></div>
 <ul>
   <li><strong>Libérer de l'espace</strong> (clic droit) repasse un fichier en ligne seulement : il reste dans OneDrive. C'est la bonne réponse à « mon disque est plein ».</li>
-  <li><strong>Supprimer</strong> un fichier, même en ligne seulement, le supprime de OneDrive <strong>partout</strong>. Il reste récupérable dans la corbeille OneDrive : 93 jours pour un compte professionnel ou scolaire, 30 jours pour un compte personnel.</li>
+  <li><strong>Supprimer</strong> un fichier, même en ligne seulement, le supprime de OneDrive <strong>partout</strong>. Il reste récupérable dans la corbeille OneDrive pendant un temps limité : jusqu'à 30 jours pour un compte personnel ; 93 jours pour un compte professionnel ou scolaire, sauf si l'administrateur a changé ce réglage (à vérifier sur place).</li>
 </ul>
 <h3>Réinitialiser OneDrive</h3>
 <pre data-copy><code>%localappdata%\Microsoft\OneDrive\onedrive.exe /reset</code></pre>
 <p>À taper dans <kbd>Windows</kbd> + <kbd>R</kbd>. Si Windows ne trouve pas le chemin : <code>C:\Program Files\Microsoft OneDrive\onedrive.exe /reset</code>, puis <code>C:\Program Files (x86)\Microsoft OneDrive\onedrive.exe /reset</code>. Relance ensuite OneDrive depuis le menu Démarrer. Microsoft précise qu'on ne perd <strong>aucune donnée</strong> : les paramètres sont remis à zéro et une synchronisation complète suit ; les dossiers choisis en synchronisation sélective sont à re-sélectionner.</p>
-<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/office/save-disk-space-with-onedrive-files-on-demand-for-windows-0e6860d3-d9f3-4971-b321-7092438fb38e">Save disk space with OneDrive Files On-Demand for Windows</a> ; <a href="https://support.microsoft.com/en-us/office/reset-onedrive-34701e00-bf7b-42db-b960-84905399050c">Reset OneDrive</a>.</p></aside>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/office/save-disk-space-with-onedrive-files-on-demand-for-windows-0e6860d3-d9f3-4971-b321-7092438fb38e">Save disk space with OneDrive Files On-Demand for Windows</a> ; <a href="https://support.microsoft.com/en-us/office/reset-onedrive-34701e00-bf7b-42db-b960-84905399050c">Reset OneDrive</a> ; <a href="https://support.microsoft.com/en-us/office/restore-deleted-files-or-folders-in-onedrive-949ada80-0026-4db3-a953-c99083e6a84f">Restore deleted files or folders in OneDrive</a> (durées de la corbeille).</p></aside>
 
 <h2 id="mfa">6. MFA : pourquoi on tape un nombre</h2>
 <p>Avec la <strong>correspondance de nombres</strong>, la page de connexion affiche un nombre que l'utilisateur doit saisir dans Microsoft Authenticator pour approuver. Elle est active pour toutes les notifications d'Authenticator et l'utilisateur ne peut pas la désactiver. Exception : si Teams ou Outlook tournent sur le même appareil qu'Authenticator, il peut parfois simplement approuver ou refuser ; depuis un navigateur, la saisie du nombre est toujours demandée.</p>
@@ -119,46 +119,47 @@
 
 <span class="phase">On fait ensemble</span>
 <h2 id="labo">Labo guidé : sur ton propre PC <span class="duree">≈ 45 min</span></h2>
-<p>Il te faut Outlook (classique ou nouveau), OneDrive et Teams avec un compte de test ou ton compte personnel. Ne fais rien sur un compte de l'UMONS sans accord.</p>
+<p>Il te faut Outlook (classique ou nouveau), OneDrive connecté à un compte (avec accès au site web de OneDrive pour la corbeille) et, en option, Teams, avec un compte de test ou ton compte personnel. Ne fais rien sur un compte de l'UMONS sans accord. Règles utilisées : §1 et §2 (Outlook), §4 (Teams), §5 (OneDrive).</p>
 <ol>
   <li><strong>Quel Outlook ?</strong> Repère le bouton du nouvel Outlook et note quelle version tu utilises.</li>
-  <li>Outlook classique : ferme-le, puis <code>outlook.exe /safe</code>. Qu'est-ce qui a disparu ? Ferme et relance normalement. (Nouvel Outlook : <code>olk.exe --safe</code>.)</li>
-  <li>Lance <code>outlook.exe /profiles</code> : combien de profils as-tu ?</li>
+  <li><strong>Si tu as l'Outlook classique</strong> : ferme-le, puis <code>outlook.exe /safe</code>. Qu'est-ce qui a disparu ? Ferme et relance normalement. <strong>Si tu n'as que le nouvel Outlook</strong> : <code>olk.exe --safe</code>, puis repère ce qui n'est plus disponible.</li>
+  <li>Outlook classique seulement (sinon, passe cette étape) : lance <code>outlook.exe /profiles</code> : combien de profils as-tu ?</li>
   <li><strong>OneDrive</strong> : crée un petit fichier de test dans OneDrive. Observe son icône. Clic droit → <em>Toujours conserver sur cet appareil</em>, puis <em>Libérer de l'espace</em> : note l'icône à chaque étape.</li>
   <li>Supprime ce fichier, puis retrouve-le dans la corbeille OneDrive (site web) et restaure-le.</li>
   <li><strong>Teams</strong> (facultatif) : réinitialise le nouveau Teams par Paramètres → Applications. Que dois-tu refaire après ?</li>
 </ol>
 <details class="correction"><summary>Voir ce que tu dois constater</summary>
 <ul>
-  <li>Étape 2 : en mode sans échec, le volet de lecture et les personnalisations disparaissent, les compléments sont désactivés.</li>
-  <li>Étape 3 : la fenêtre de choix du profil s'ouvre même si Outlook démarre d'habitude directement.</li>
+  <li>Étape 2, Outlook classique : en mode sans échec, le volet de lecture et les personnalisations disparaissent, les compléments COM sont désactivés. Nouvel Outlook : <code>--safe</code> démarre sans PST, S/MIME, mode hors connexion ni compléments web (§2) ; ce n'est pas le même mode que <code>/safe</code>.</li>
+  <li>Étape 3 (classique) : la fenêtre de choix du profil s'ouvre même si Outlook démarre d'habitude directement.</li>
   <li>Étape 4 : après « Toujours conserver », cercle vert plein avec coche blanche ; après « Libérer de l'espace », nuage bleu. Le fichier existe toujours dans OneDrive.</li>
   <li>Étape 5 : le fichier supprimé est dans la corbeille OneDrive et se restaure.</li>
-  <li>Étape 6 : il faut te reconnecter et retrouver tes réglages (les personnalisations sont effacées).</li>
+  <li>Étape 6 : les données locales et les personnalisations de Teams sont effacées ; il se peut aussi que tu doives te reconnecter, selon le compte et la session Windows. Note ce que tu as dû refaire.</li>
 </ul>
 </details>
 
 <span class="phase">Tu fais seul</span>
 <h2 id="cas">Mises en situation</h2>
-<h3>1. « Je vois la boîte du secrétariat, mais je ne peux pas répondre »</h3>
+<p>Les corrections s'appuient sur les sections sourcées : boîte partagée au §3, OneDrive au §5, Teams au §4, commutateurs d'Outlook au §2.</p>
+<h3 id="cas-1">1. « Je vois la boîte du secrétariat, mais je ne peux pas répondre »</h3>
 <p>Une nouvelle secrétaire voit la boîte partagée dans Outlook, lit les messages, mais un message d'erreur apparaît quand elle répond depuis l'adresse du secrétariat.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>Elle a probablement l'accès total sans le droit « Envoyer en tant que ». Tu notes l'adresse de la boîte, le message d'erreur exact et la personne, et tu transmets à l'équipe qui gère les droits, selon la procédure de validation (souvent l'accord du responsable de la boîte). Tu ne lui proposes pas de contournement (transférer depuis son adresse personnelle).</p>
+<p>Elle a probablement l'accès total sans droit d'envoi (« Envoyer en tant que » ou « de la part de », selon ce que prévoit l'organisation). Tu notes l'adresse de la boîte, le message d'erreur exact et la personne, et tu transmets à l'équipe qui gère les droits, selon la procédure de validation (souvent l'accord du responsable de la boîte). Tu ne lui proposes pas de contournement (transférer depuis son adresse personnelle).</p>
 </details>
-<h3>2. « J'ai supprimé mes fichiers OneDrive pour gagner de la place »</h3>
+<h3 id="cas-2">2. « J'ai supprimé mes fichiers OneDrive pour gagner de la place »</h3>
 <p>Un enseignant, disque plein, a supprimé un dossier de OneDrive il y a une semaine. Ses collègues ne trouvent plus les documents partagés.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>Supprimer dans OneDrive supprime partout. Pour un compte professionnel ou scolaire, la corbeille garde les éléments 93 jours : on peut les restaurer depuis le site web de OneDrive. Ensuite, tu lui montres <em>Libérer de l'espace</em>, qui garde les fichiers en ligne sans occuper le disque. Si la restauration n'est pas possible, escalade.</p>
+<p>Supprimer dans OneDrive supprime partout. Pour un compte professionnel ou scolaire, la corbeille garde en principe les éléments 93 jours (sauf réglage différent de l'administrateur) : une semaine plus tard, on peut normalement les restaurer depuis le site web de OneDrive, si la corbeille n'a pas été vidée. Ensuite, tu lui montres <em>Libérer de l'espace</em>, qui garde les fichiers en ligne sans occuper le disque. Si la restauration n'est pas possible, escalade.</p>
 </details>
-<h3>3. « Il manque des messages dans un canal Teams »</h3>
+<h3 id="cas-3">3. « Il manque des messages dans un canal Teams »</h3>
 <p>Une utilisatrice ne voit plus les messages d'hier dans un canal. Un collègue lui a conseillé de vider le cache de Teams.</p>
 <details class="correction"><summary>Voir la correction</summary>
 <p>Justement non : pour des messages manquants, Microsoft déconseille de vider le cache, qui contient les journaux de diagnostic. Tu vérifies d'abord sur Teams web (« Et sur le web ? », jour 7) et si d'autres membres du canal sont touchés, puis tu escalades avec ces éléments, sans rien effacer.</p>
 </details>
-<h3>4. Outlook se ferme au démarrage</h3>
+<h3 id="cas-4">4. Outlook se ferme au démarrage</h3>
 <p>Depuis ce matin, l'Outlook classique d'un utilisateur se ferme quelques secondes après son ouverture. Outlook sur le web fonctionne.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>Le compte et le service vont bien (le web marche) : le problème est local. Tu fais lancer <code>outlook.exe /safe</code>. S'il tient en mode sans échec, un complément est suspect : tu le notes et tu suis la procédure (désactiver le complément, ou escalader si les compléments sont gérés par la DSI). S'il plante aussi en mode sans échec, tu passes aux pistes suivantes du jour 7 (profil, fichier OST) ou tu escalades.</p>
+<p>Le web marche : le compte et le service de messagerie répondent, donc le poste et le client Outlook deviennent les pistes prioritaires. Ce n'est pas une preuve : le web ne teste ni la configuration du client, ni le réseau du poste, ni toutes les méthodes d'authentification. Tu fais lancer <code>outlook.exe /safe</code>. S'il tient en mode sans échec, un complément est suspect : tu le notes et tu suis la procédure (désactiver le complément dans <strong>Fichier → Options → Compléments</strong>, comme au <a href="../stage/j7.html#outlook">jour 7</a>, ou escalader si les compléments sont gérés par la DSI). S'il plante aussi en mode sans échec, tu passes aux pistes suivantes du <a href="../stage/j7.html#outlook">jour 7</a> (profil, fichier OST) ou tu escalades.</p>
 </details>
 
 <h2 id="quiz">Quiz</h2>
@@ -169,9 +170,9 @@
 <ul>
   <li><strong>Deux Outlook</strong> : classique (<code>outlook.exe</code>) et nouveau (<code>olk.exe</code>) ; bouton en haut à droite ; PST dans le nouveau = classique installé aussi.</li>
   <li><strong>Commutateurs</strong> (un seul à la fois) : <code>/safe</code> (compléments désactivés), <code>/resetnavpane</code>, <code>/resetfolders</code>, <code>/cleanviews</code> (vues perdues), <code>/profiles</code> ; nouveau : <code>--safe</code>, <code>--reset</code> (efface le local).</li>
-  <li><strong>Boîte partagée</strong> : Accès total pour lire, Envoyer en tant que pour répondre ; il faut les deux.</li>
+  <li><strong>Boîte partagée</strong> : Accès total pour lire ; pour répondre, Envoyer en tant que (ou de la part de, selon l'organisation) ; l'accès total seul ne permet pas d'envoyer.</li>
   <li><strong>Teams</strong> : pas de vidage du cache pour des messages manquants (journaux) ; sinon Réinitialiser dans Applications.</li>
-  <li><strong>OneDrive</strong> : nuage bleu = en ligne ; Libérer de l'espace ≠ supprimer ; corbeille 93 jours (pro) ; <code>onedrive.exe /reset</code> sans perte de données.</li>
+  <li><strong>OneDrive</strong> : nuage bleu = en ligne ; Libérer de l'espace ≠ supprimer ; corbeille jusqu'à 93 jours (pro, réglable par l'admin), 30 jours (perso) ; <code>onedrive.exe /reset</code> sans perte de données.</li>
   <li><strong>MFA</strong> : correspondance de nombres ; demande inattendue = ne pas approuver, signaler ; méthodes résistantes à l'hameçonnage : Windows Hello, FIDO2, certificat.</li>
 </ul>
 </div>

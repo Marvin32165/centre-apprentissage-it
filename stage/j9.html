@@ -73,7 +73,7 @@ Get-Tpm
 Confirm-SecureBootUEFI
 msinfo32</code></pre>
 <p><code>Confirm-SecureBootUEFI</code> renvoie <code>True</code> si Secure Boot est actif ; <code>msinfo32</code> affiche « État du démarrage sécurisé » et « Mode BIOS ».</p>
-<aside class="callout source"><p>Microsoft Learn : « Configuration système requise pour Windows 11 » (TPM 2.0, Secure Boot), « BitLocker overview », « Secure Boot ». Norme UEFI (uefi.org).</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/whats-new/windows-11-requirements">Windows 11 requirements</a> (TPM 2.0, Secure Boot), <a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/">BitLocker overview</a>, <a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/recovery-overview">BitLocker recovery overview</a> (causes d'une demande de clé), <a href="https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/oem-secure-boot">Secure Boot</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/manage-bde-status">manage-bde -status</a>. Norme UEFI (<a href="https://uefi.org/specifications">uefi.org</a>).</p></aside>
 
 <h2 id="deploiement">3. Déploiement et intégration d'un PC</h2>
 <p>Un PC neuf ou réinstallé doit arriver à l'utilisateur <strong>à jour, au bon nom, dans le bon domaine, avec les bons logiciels</strong>. Les organisations le font avec des outils (image de référence, installation automatisée, Autopilot…) pour avoir des postes identiques. Le principe se résume en étapes :</p>
@@ -106,7 +106,8 @@ Add-Computer -DomainName "lab.local" -Credential LAB\Administrateur -Restart</co
 </ol>
 <h3>Inventaire</h3>
 <p>Un inventaire utile contient pour chaque appareil : numéro d'inventaire, numéro de série, modèle, date de réception, lieu, état (en stock, en service, en réparation, retiré), utilisateur ou salle, et éventuellement nom de la machine. Les écarts entre inventaire et réalité sont fréquents : tenir l'inventaire à jour à chaque mouvement évite beaucoup de temps perdu.</p>
-<aside class="callout attention"><p>Un appareil retiré ou renvoyé doit être <strong>effacé de façon sûre</strong> (disque chiffré ou effacé selon la procédure) avant de quitter l'organisation ou d'être jeté : n'improvise pas.</p></aside>
+<aside class="callout attention"><p>Un appareil retiré ou renvoyé doit être <strong>effacé de façon sûre</strong> selon la procédure de l'organisation avant de quitter l'organisation ou d'être jeté : n'improvise pas. Un disque chiffré ne suffit pas tant que ses clés existent encore : un effacement par destruction des clés a ses propres conditions.</p></aside>
+<aside class="callout source"><p>NIST : <a href="https://csrc.nist.gov/pubs/sp/800/88/r2/final">SP 800-88 Rev. 2, Guidelines for Media Sanitization</a>. Réception des colis : les délais et formalités dépendent du transporteur et du contrat (exemple : <a href="https://www.ups.com/be/en/support/file-a-claim">UPS Belgique, déclarer un dommage</a>) ; la procédure de l'UMONS est à vérifier sur place.</p></aside>
 
 <h2 id="labo">Labo : TPM, Secure Boot et BitLocker dans Hyper-V <span class="duree">Labo complet · 1 h 05</span></h2>
 <ol>
@@ -119,28 +120,30 @@ Enable-VMTPM -VMName "NomDeLaVM"</code></pre>
   <li>Dans la VM, vérifie : <code>Get-Tpm</code>, <code>Confirm-SecureBootUEFI</code>, <code>msinfo32</code>.</li>
   <li>Active <strong>BitLocker</strong> sur le disque système (Panneau de configuration ou <code>manage-bde</code>). <strong>Enregistre la clé de récupération</strong> dans un fichier de test, à un endroit sûr de ta machine hôte.</li>
   <li>Contrôle : <code>manage-bde -status</code>. Que vaut « Statut de la conversion » ? Quelle méthode de protection est utilisée ?</li>
-  <li>Prends un <strong>point de contrôle</strong>, puis simule le cas « BitLocker demande la clé » : modifie un paramètre de démarrage de la VM ou son micrologiciel et redémarre. Retrouve la clé et déverrouille.</li>
+  <li>Prends un <strong>point de contrôle</strong>, puis essaie de provoquer la demande de clé : par exemple, VM éteinte, place le lecteur DVD avant le disque dans l'ordre de démarrage (paramètres de la VM → Microprogramme), cas cité par Microsoft, et redémarre. Le résultat dépend de la configuration de BitLocker : si la clé n'est pas demandée, note-le, remets le réglage et reviens au point de contrôle. Si elle l'est, retrouve la clé et déverrouille.</li>
   <li>Fais un <strong>exercice d'inventaire</strong> : prépare un tableau (numéro d'inventaire, numéro de série, modèle, lieu, état, utilisateur) et remplis-le avec deux VM et la machine hôte. Ajoute-y trois lignes de « colis reçu ».</li>
 </ol>
 <details class="correction"><summary>Voir des repères pour contrôler tes résultats</summary>
 <ul>
   <li><code>Get-Tpm</code> doit indiquer un TPM présent et prêt ; <code>Confirm-SecureBootUEFI</code> renvoie <code>True</code>.</li>
-  <li><code>manage-bde -status</code> indique « Chiffrement complet » (ou en cours) et un protecteur de type TPM et mot de passe de récupération numérique.</li>
+  <li><code>manage-bde -status</code> distingue l'état de conversion (entièrement chiffré, espace utilisé seulement chiffré, ou en cours) et l'état de la protection (activée ou non). <code>manage-bde -protectors -get C:</code> liste les protecteurs réellement configurés : en général TPM et mot de passe de récupération numérique, mais pas obligatoirement.</li>
   <li>La clé de récupération est une série de huit groupes de six chiffres ; sans elle, un volume en demande de récupération reste verrouillé.</li>
   <li>Dans un bon inventaire, chaque colis reçu a un numéro de série et une date, sans doublons.</li>
+  <li>Si la clé n'a pas été demandée à l'étape 6, ce n'est pas un échec : la mesure du démarrage dépend des protecteurs et de la configuration.</li>
 </ul>
+<p>Sources : <a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/recovery-process">BitLocker recovery process</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/manage-bde-protectors">manage-bde -protectors</a>, et l'encadré du §2.</p>
 </details>
 
 <h2 id="cas">Mises en situation</h2>
 <h3>1. « Mon PC demande une clé à 48 chiffres »</h3>
 <p>Un utilisateur a démarré son portable après une mise à jour du BIOS faite hier par un collègue. Windows réclame une clé de récupération BitLocker.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>C'est un comportement attendu après une modification du micrologiciel. On <strong>vérifie l'identité</strong>, puis on récupère la clé à l'endroit prévu par l'organisation et on la communique par le canal sûr, sans l'écrire dans le ticket. Une fois le poste démarré, on s'assure que BitLocker se protège de nouveau normalement. On note la cause, et on rappelle de vérifier la clé avant toute modification du BIOS.</p>
+<p>C'est un cas connu : une modification du micrologiciel peut déclencher la récupération, selon le matériel et la configuration de BitLocker (une mise à jour faite en suspendant BitLocker, par exemple, ne la déclenche pas). On <strong>vérifie l'identité</strong>, puis on récupère la clé à l'endroit prévu par l'organisation et on la communique par le canal sûr, sans l'écrire dans le ticket. Une fois le poste démarré, on s'assure que l'événement est expliqué (la mise à jour d'hier) et que BitLocker protège de nouveau le disque (<code>manage-bde -status</code>) ; sinon, on escalade. On note la cause, et on rappelle de vérifier la clé avant toute modification du BIOS.</p>
 </details>
 <h3>2. Un colis abîmé</h3>
 <p>Un transporteur livre cinq cartons de portables. Un carton est écrasé et le livreur attend une signature.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>On note la réserve sur le bon de livraison (carton abîmé), on photographie, on ouvre si la procédure le permet pour vérifier l'état, et on signale immédiatement à la personne responsable des commandes. On ne range pas le colis comme si de rien n'était : le délai pour déclarer un dommage au transporteur est court.</p>
+<p>On note la réserve sur le bon de livraison (carton abîmé), on photographie, on ouvre si la procédure le permet pour vérifier l'état, et on signale immédiatement à la personne responsable des commandes. On ne range pas le colis comme si de rien n'était : le délai pour déclarer un dommage au transporteur est limité et dépend du transporteur et du contrat (à vérifier sur place).</p>
 </details>
 <h3>3. Le PC « de remplacement »</h3>
 <p>Un utilisateur demande de lui installer son nouveau PC « comme l'ancien ». Il veut y garder sa session, ses fichiers et ses imprimantes.</p>
@@ -150,7 +153,7 @@ Enable-VMTPM -VMName "NomDeLaVM"</code></pre>
 <h3>4. Pas de démarrage après installation</h3>
 <p>Un technicien prépare un PC de salle : « Aucun périphérique de démarrage » apparaît. Le disque est visible dans le BIOS.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>Vérifier le <strong>mode de démarrage</strong> (UEFI ou Legacy) et que l'installation a été faite dans le même mode, l'<strong>ordre de démarrage</strong>, et la présence de la partition de démarrage. Si Windows a été installé en mode Legacy sur un disque non adapté, il faut réinstaller en UEFI. On teste d'abord le plus simple : débrancher les clés USB et vérifier l'ordre.</p>
+<p>Vérifier le <strong>mode de démarrage</strong> (UEFI ou Legacy) et que l'installation a été faite dans le même mode, l'<strong>ordre de démarrage</strong>, et la présence de la partition de démarrage. Si Windows a été installé en mode Legacy sur un disque MBR et que le poste doit démarrer en UEFI, l'outil Microsoft <code>MBR2GPT</code> peut convertir le disque sans réinstaller, après validation et avec une sauvegarde, selon la procédure ; sinon, on réinstalle en UEFI (<a href="https://learn.microsoft.com/en-us/windows/deployment/mbr-to-gpt">MBR2GPT</a>). On teste d'abord le plus simple : débrancher les clés USB et vérifier l'ordre.</p>
 </details>
 
 <h2 id="quiz">Quiz</h2>

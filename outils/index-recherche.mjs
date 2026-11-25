@@ -58,7 +58,7 @@ M.modules.forEach((mo) => sections(`modules/${mo.id}.html`, `Module · ${mo.titr
 // Modules du catalogue
 M.modules.forEach((mo) => {
   const h = Math.round(mo.duree / 60);
-  ajoute("Modules", "module", mo.titre, `Module · niveau ${mo.niveau} · ≈ ${h} h`, `modules/${mo.id}.html`, (mo.resume || "") + " " + (mo.tags || []).join(" "));
+  ajoute("Modules", "module", mo.titre, `Module · niveau ${mo.niveau} · ≈ ${h} h`, `modules/${mo.id}.html`, (mo.tags || []).join(" ") + " " + (mo.resume || ""));
 });
 // Domaines (thèmes)
 M.domaines.forEach((d) => ajoute("Modules", "thème", d.titre, "Thèmes · domaine", `themes.html?domaine=${d.id}`, d.desc || ""));

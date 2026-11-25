@@ -288,12 +288,63 @@
     choisir(sel, false);
   }
 
+
+  /* ---------- Fiche mémo d'un module : bouton et version imprimable A4 (comme les pages de jour) ---------- */
+  function ficheMemo(box) {
+    var memo = document.getElementById("memo"), main = document.querySelector("main");
+    if (!memo || !main || document.querySelector(".fiche-print")) return;
+    var m = mod(box.getAttribute("data-module-suite"));
+    var bloc = memo.nextElementSibling;
+    if (!bloc || bloc.tagName === "H2") return;
+    var tuteur = main.querySelector(".callout.umons[data-titre]");
+    var bPrint = el("button", { type: "button", "class": "btn ghost" });
+    bPrint.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/></svg><span>Imprimer la fiche mémo (une page A4)</span>';
+    bPrint.addEventListener("click", function () { window.print(); });
+    var pb = el("p"); pb.appendChild(bPrint);
+    bloc.parentNode.insertBefore(pb, bloc.nextSibling);
+
+    var fiche = el("section", { "class": "fiche-print", "aria-hidden": "true" });
+    var fh = el("header", { "class": "fp-tete" }), fht = el("div");
+    fht.appendChild(el("p", { "class": "fp-kicker" }, "Fiche mémo · Module"));
+    var h1 = main.querySelector("h1");
+    fht.appendChild(el("p", { "class": "fp-titre" }, m ? m.titre : (h1 ? h1.textContent.trim() : "")));
+    fh.appendChild(fht);
+    fh.appendChild(el("span", { "class": "stamp" }, "IT"));
+    fiche.appendChild(fh);
+    var lignes = el("div", { "class": "fp-lignes" });
+    Array.prototype.forEach.call(bloc.querySelectorAll("li"), function (li) {
+      var c = li.cloneNode(true), st = c.querySelector("strong"), k = "";
+      if (st && c.firstChild === st && st.nextSibling && st.nextSibling.nodeType === 3 && /^\s*[:=,(]/.test(st.nextSibling.nodeValue)) { k = st.textContent; st.remove(); }
+      var row = el("div", { "class": "fp-ligne" });
+      row.appendChild(el("span", { "class": "fp-k" }, k));
+      var v = el("span", { "class": "fp-v" });
+      v.innerHTML = c.innerHTML.replace(/^\s*[:=,]\s*/, "");
+      row.appendChild(v);
+      lignes.appendChild(row);
+    });
+    fiche.appendChild(lignes);
+    if (tuteur) {
+      var q = el("div", { "class": "fp-tuteur" });
+      q.appendChild(el("p", { "class": "fp-k" }, "À demander au tuteur · à l'UMONS"));
+      var lst = tuteur.querySelector("ul, ol");
+      if (lst) { var ol2 = el("ol"); ol2.innerHTML = lst.innerHTML; q.appendChild(ol2); }
+      fiche.appendChild(q);
+    }
+    var pied = el("footer", { "class": "fp-pied" });
+    pied.appendChild(el("span", null, "Sources : voir les encadrés de chaque section du module"));
+    pied.appendChild(el("span", null, "Apprentissage IT"));
+    fiche.appendChild(pied);
+    main.appendChild(fiche);
+    document.body.classList.add("a-fiche");
+  }
+
   function init() {
     store = window.IT && window.IT.store;
     var c = document.getElementById("catalogue"); if (c) catalogue(c);
     Array.prototype.forEach.call(document.querySelectorAll("[data-parcours]"), parcours);
     Array.prototype.forEach.call(document.querySelectorAll("[data-module-meta]"), entete);
     Array.prototype.forEach.call(document.querySelectorAll("[data-module-suite]"), suite);
+    var ms = document.querySelector("[data-module-suite]"); if (ms) ficheMemo(ms);
     var t = document.getElementById("themes-liste"); if (t) themes(t);
   }
   /* app.js (defer) est chargé avant ce script : window.IT est prêt au DOMContentLoaded. */

@@ -27,3 +27,10 @@ Les six réponses du quiz `module-sous-reseaux` dans `assets/modules-quiz.js` on
 | Cadrage des sources. La section 3 n’a pas d’encadré propre. Le labo, les exercices, les cas et le quiz n’indiquent pas la source applicable. | non vérifié | Dépôt à la révision relue, ou preuve primaire manquante. | Relier ces passages aux références déjà utilisées, au guide ipconfig et aux hypothèses réseau du labo. Aucune source publique ne peut établir le plan de l’UMONS. |
 
 **Bilan : 4 faux, 1 non vérifié, 13 corrects (18 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- §1 (taille du bloc) : **Corrigé** — colonne « Pas (dans l'octet coupé) » avec l'octet en unité, colonne « Adresses du bloc » (2 puissance les bits d'hôte) ajoutée ; encadré reformulé ; vocabulaire « pas » repris dans les exercices et le quiz.
+- §2 et mémo (passerelle par défaut) : **Corrigé** — hypothèse explicite (une carte, route par défaut seule) ; routes plus précises prioritaires, `route print` ; sources `route`, RFC 1122 et RFC 4632 ajoutées.
+- §3 et mémo (méthode et diffusion) : **Corrigé** — méthode limitée aux masques coupés dans un octet ; cas /8, /16, /24, /31 et /32 ; diffusion « réseau + pas − 1 dans l'octet coupé, octets de droite à 255 », exemple détaillé.
+- §5 et labo (même segment) : **Corrigé** — règle limitée au segment sans routage (cas du labo) ; plusieurs sous-réseaux possibles sur un segment avec un routage adapté.
+- Cadrage des sources : **Corrigé** — encadré source au §3 ; renvois aux sections et à `ipconfig` dans le labo et les exercices. **Justifié** : le plan d'adressage de l'UMONS reste dans les questions au tuteur.
