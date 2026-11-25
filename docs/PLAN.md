@@ -186,7 +186,7 @@ Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance 
 
 Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
 
-**File d'attente (mise à jour le 25/11 au matin, après la nuit en autonomie de Claude Code)** — faits : lots 16, 19, 22 et 26 ; pages et données des modules 18, 20, 23 et 24. Plus rien n'avance sans relecture. À faire, dans l'ordre :
+**File d'attente (mise à jour le 25/11 au soir)** — faits et fusionnés : lots 16 à 20, 22 à 24 et 26 (relectures, corrections, tests en situation des modules). Reste : lot 21 (ChatGPT relit les 5 premiers modules), puis lot 25 après le 18/12. Ancienne file, pour mémoire :
 1. ChatGPT (Astra, effort `high`, recherche web) : **17.1** relire J6 à J10 et la boîte à outils.
 2. ChatGPT : relire les quatre nouveaux modules — **18.3** `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, **24.3** `modules/sous-reseaux.html` — et les 12 appels de `assets/tickets-data.js` (lot 22) ; un rapport par page dans `docs/relectures/`.
 3. Claude Code : corriger d'après ces rapports, puis contrôles et coche (17.2–17.3, 18.4, 20.4, 23.4, 24.4).
@@ -221,9 +221,12 @@ Reste : rien pour ce lot ; les rapports J1 à J5 restent dans `docs/relectures/`
 ## Lot 17 — Relecture des faits : prépa J6 à J10 et boîte à outils
 - [x] 17.1 Relire `stage/j6.html` à `j10.html` et `stage/outils.html` (même procédure, rapports dans `docs/relectures/`).
   Fait : six rapports de relecture dans `docs/relectures/` pour J6 à J10 et la boîte à outils, avec vérification des 44 réponses de quiz et des sources primaires. Rapports actualisés après le lot 26 sur [`bfb5760`](https://github.com/Marvin32165/centre-apprentissage-it/commit/bfb57600c17ed514aef57fd1da1e241647ff2533). Bilan : 28 points faux, 11 non vérifiés et 100 corrects. Reste : corrections en 17.2, puis contrôles et fusion en 17.3.
-- [ ] 17.2 Corrections (autre conversation).
-  Justifié : pas encore faisable le 25/11, aucun rapport J6 à J10 ni boîte à outils dans `docs/relectures/` (17.1 à faire d'abord).
-- [ ] 17.3 `npm run controles`, coche, fusion.
+- [x] 17.2 Corrections (autre conversation).
+  Fait (25/11, Claude Code) : 28 « faux » et 11 « non vérifiés » traités dans J6 à J10, la boîte à outils et leurs quiz ; encadrés de sources avec URL dans chaque section ; suivi « Corrigé / Justifié » en fin de chaque rapport. Justifié : un lien du rapport J7 (« Open Outlook in safe mode ») renvoie 404, remplacé par la page des commutateurs Office.
+- [x] 17.3 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` réussi le 25/11 (35 pages × 4 largeurs × 2 thèmes, serveur et `file://` : 0 problème, 0 avertissement, 0 échec ; nouveau parcours « fiche mémo sur une page A4 » pour les 9 modules) ; fusion dans `main`.
+
+Reste : rien pour ce lot.
 
 ## Lot 18 — Module « Dépannage à distance »
 Suivre `docs/procedures/nouveau-module.md` (sous-étapes 18.1 à 18.4). Domaine Support, approfondit `stage/j8.html`, à retirer de `aVenir`. Pistes, chacune à sourcer : Assistance rapide et Bureau à distance (Microsoft Learn), consentement et vérification d'identité avant toute prise en main, journalisation dans le ticket, méthode de diagnostic à distance, quand passer sur site. Outil réellement utilisé à l'UMONS : « à vérifier sur place ».
@@ -231,10 +234,14 @@ Suivre `docs/procedures/nouveau-module.md` (sous-étapes 18.1 à 18.4). Domaine 
   Fait : 6 sections (choisir l'outil, Assistance rapide pas à pas, Bureau à distance et `mstsc`, PowerShell à distance, faux support, session de bout en bout), labo PC + VM, 4 cas, fiche mémo, 6 questions pour le tuteur ; chaque fait vient d'une page Microsoft ouverte le 24/11/2026 (Learn, Support, blog Security), citée dans l'encadré de sa section ; libellés d'Assistance rapide en anglais (ceux de la documentation).
 - [x] 18.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-depannage-distance`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Support, niveau 1, ≈ 3 h, approfondit J8) et retrait de `aVenir`, quiz de 6 questions, unité `module-depannage-distance`, index régénéré (250 entrées) ; page vérifiée en `file://` à 390 px.
-- [ ] 18.3 Relecture croisée par ChatGPT : `docs/procedures/relecture-sources.md` (rapport `docs/relectures/module-depannage-distance.md`), puis `test-chef.md` ; corrections dans une autre conversation.
+- [x] 18.3 Relecture croisée par ChatGPT : `docs/procedures/relecture-sources.md` (rapport `docs/relectures/module-depannage-distance.md`), puis `test-chef.md` ; corrections dans une autre conversation.
   Fait : Relecture des sources et du quiz dans `docs/relectures/module-depannage-distance.md` (15 corrects, 1 faux et 3 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 18.3.
   Corrections faites (25/11, Claude Code) : éditions hôtes RDP, présence d'Assistance rapide, sources du §6 et renvois ; Storm-1811 justifié ; suivi dans le rapport. Reste : `test-chef.md`.
-- [ ] 18.4 `npm run controles`, coche, fusion.
+  Fait : test en situation (agent qui n'a pas écrit la page) ; fiche mémo A4 des modules, étapes avant et après du §2, libellés français, réseau de la VM ; suivi dans le rapport.
+- [x] 18.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` réussi le 25/11 (35 pages × 4 largeurs × 2 thèmes, serveur et `file://` : 0 problème, 0 avertissement, 0 échec ; nouveau parcours « fiche mémo sur une page A4 » pour les 9 modules) ; fusion dans `main`.
+
+Reste : rien pour ce lot.
 
 ## Lot 19 — Révision express et progression portable
 Justifié : fait avant le lot 17 (relecture réservée à ChatGPT) et le lot 18, parce qu'il ne demande pas de relecture croisée et sert dès maintenant.
@@ -253,10 +260,14 @@ Reste : rien pour ce lot.
   Fait : 6 sections (deux Outlook, commutateurs de dépannage, droits d'une boîte partagée, cache de Teams, OneDrive, MFA), labo sur son propre PC, 4 cas, fiche mémo, 5 questions pour le tuteur ; faits tirés de 9 pages Microsoft ouvertes le 24/11/2026, citées section par section ; licence et taille des boîtes partagées non trouvées dans la source, donc non mentionnées.
 - [x] 20.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-m365-messagerie`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Support, niveau 2, ≈ 3 h, approfondit J7) et retrait de `aVenir`, quiz de 6 questions, unité `module-m365-messagerie`, index régénéré (262 entrées) ; page vérifiée en `file://` à 390 px.
-- [ ] 20.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-m365-messagerie.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
+- [x] 20.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-m365-messagerie.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
   Fait : Relecture des sources et du quiz dans `docs/relectures/module-m365-messagerie.md` (13 corrects, 5 faux et 2 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 20.3.
   Corrections faites (25/11, Claude Code) : PST/OST, droits de la boîte partagée, corbeille OneDrive, labo en deux parcours, Teams, cas 4, renvois ; suivi dans le rapport. Reste : `test-chef.md`.
-- [ ] 20.4 `npm run controles`, coche, fusion.
+  Fait : test en situation (agent qui n'a pas écrit la page) ; constats traités, dont la fiche mémo A4 commune aux modules ; suivi dans le rapport.
+- [x] 20.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` réussi le 25/11 (35 pages × 4 largeurs × 2 thèmes, serveur et `file://` : 0 problème, 0 avertissement, 0 échec ; nouveau parcours « fiche mémo sur une page A4 » pour les 9 modules) ; fusion dans `main`.
+
+Reste : rien pour ce lot.
 
 ## Lot 22 — Entraînement aux tickets
 Justifié : fait avant le lot 21 (relecture réservée à ChatGPT), en autonomie la nuit du 24 au 25/11.
@@ -265,7 +276,7 @@ Justifié : fait avant le lot 21 (relecture réservée à ChatGPT), en autonomie
 - [x] 22.2 `npm run controles` (nouveau parcours « entraînement aux tickets »), coche, fusion.
   Fait : parcours ajouté (12 tickets, refus sans réponse, priorité P4 calculée, résolution fermée par défaut, résultat mémorisé) ; contrôles sans échec ; vérifié à 390 px.
 
-Fait : relecture des douze appels et comparaison à la matrice J1 dans `docs/relectures/stage-tickets.md` (13 corrects, 2 faux et 2 non vérifiés). Les constats sont à traiter lors d'une passe de correction distincte.
+Fait : relecture des douze appels et comparaison à la matrice J1 dans `docs/relectures/stage-tickets.md` (13 corrects, 2 faux et 2 non vérifiés). Corrigé le 25/11 (Claude Code) : T01, T04, T06 et encadré de sources ; suivi dans le rapport.
 
 ## Lot 23 — Module « Imprimantes et périphériques »
 Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à faire comme pour les lots 18 et 20.
@@ -273,10 +284,14 @@ Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à fa
   Fait : 5 sections (imprimante dans l'ordre, pilotes et Point and Print, commandes `Get-Printer` et `printui`, caméra, Bluetooth), labo sur son propre PC, 4 cas, fiche mémo, 5 questions pour le tuteur ; faits tirés de 7 pages Microsoft (Support et Learn) ouvertes le 25/11/2026.
 - [x] 23.2 Données : `modules.js` (retirer de `aVenir`), quiz `module-imprimantes-peripheriques`, unité dans `data.js`, index.
   Fait : entrée dans `assets/modules.js` (Support, niveau 1, ≈ 2 h 30, approfondit J5), `aVenir` du domaine Support vidé, quiz de 6 questions, unité `module-imprimantes-peripheriques`, index régénéré (275 entrées) ; page vérifiée en `file://` à 390 px.
-- [ ] 23.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-imprimantes-peripheriques.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
+- [x] 23.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-imprimantes-peripheriques.md`, puis `test-chef.md`) ; corrections dans une autre conversation.
   Fait : Relecture des sources et du quiz dans `docs/relectures/module-imprimantes-peripheriques.md` (11 corrects, 1 faux et 2 non vérifiés). Le test en situation demandé par le plan reste à faire avant de cocher 23.3.
   Corrections faites (25/11, Claude Code) : Windows Hello présenté comme hypothèse, variantes du labo sans imprimante ni caméra, renvois ; suivi dans le rapport. Reste : `test-chef.md`.
-- [ ] 23.4 `npm run controles`, coche, fusion.
+  Fait : test en situation (agent qui n'a pas écrit la page) ; constats traités, dont la fiche mémo A4 commune aux modules ; suivi dans le rapport.
+- [x] 23.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` réussi le 25/11 (35 pages × 4 largeurs × 2 thèmes, serveur et `file://` : 0 problème, 0 avertissement, 0 échec ; nouveau parcours « fiche mémo sur une page A4 » pour les 9 modules) ; fusion dans `main`.
+
+Reste : rien pour ce lot.
 
 ## Lot 24 — Module « Sous-réseaux et plan d'adressage »
 Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à faire.
@@ -287,8 +302,10 @@ Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à fa
 - [x] 24.3 Relecture croisée par ChatGPT (rapport `docs/relectures/module-sous-reseaux.md`) ; corrections dans une autre conversation.
   Fait : Relecture des sources et du quiz dans `docs/relectures/module-sous-reseaux.md` (13 corrects, 4 faux et 1 non vérifié). Les corrections relèvent de la prochaine passe.
   Corrections faites (25/11, Claude Code) : colonne « pas », hypothèse de la route par défaut, méthode limitée aux octets coupés (/8, /16, /24, /31, /32), segment sans routage, encadré au §3 ; suivi dans le rapport.
-- [ ] 24.4 `npm run controles`, coche, fusion.
-  Fait : `npm run controles` réussi après corrections (35 pages, 0 problème, 0 avertissement, 0 échec, serveur et `file://`). Reste : la fusion dans `main`.
+- [x] 24.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` réussi le 25/11 (35 pages × 4 largeurs × 2 thèmes, serveur et `file://` : 0 problème, 0 avertissement, 0 échec ; nouveau parcours « fiche mémo sur une page A4 » pour les 9 modules) ; fusion dans `main`.
+
+Reste : rien pour ce lot.
 
 ## Lots 21 à 25
 Ils seront détaillés en sous-étapes au début de chaque lot, à partir du tableau ci-dessus. Pour le 22, utiliser les composants tickets existants (`CAS-0N` de `assets/jour.js`) sans toucher aux moteurs de l'atelier. Pour le 25, n'écrire que ce qui est public : aucune procédure interne, aucune IP, aucun nom.
