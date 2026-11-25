@@ -219,7 +219,8 @@ Reste : rien pour ce lot.
 Reste : rien pour ce lot ; les rapports J1 à J5 restent dans `docs/relectures/` comme trace.
 
 ## Lot 17 — Relecture des faits : prépa J6 à J10 et boîte à outils
-- [ ] 17.1 Relire `stage/j6.html` à `j10.html` et `stage/outils.html` (même procédure, rapports dans `docs/relectures/`).
+- [x] 17.1 Relire `stage/j6.html` à `j10.html` et `stage/outils.html` (même procédure, rapports dans `docs/relectures/`).
+  Fait : six rapports de relecture dans `docs/relectures/` pour J6 à J10 et la boîte à outils, avec vérification des 44 réponses de quiz et des sources primaires. Rapports actualisés après le lot 26 sur [`bfb5760`](https://github.com/Marvin32165/centre-apprentissage-it/commit/bfb57600c17ed514aef57fd1da1e241647ff2533). Bilan : 28 points faux, 11 non vérifiés et 100 corrects. Reste : corrections en 17.2, puis contrôles et fusion en 17.3.
 - [ ] 17.2 Corrections (autre conversation).
   Justifié : pas encore faisable le 25/11, aucun rapport J6 à J10 ni boîte à outils dans `docs/relectures/` (17.1 à faire d'abord).
 - [ ] 17.3 `npm run controles`, coche, fusion.
