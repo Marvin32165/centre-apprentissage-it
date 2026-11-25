@@ -38,3 +38,11 @@ Relecture documentaire. Les résultats du labo n’ont pas été reproduits sur 
 | §2, §3, §4, labo, situations, quiz et mémo. Chaque section technique doit permettre de retrouver sa source. Le seul encadré source est en §1 et donne des intitulés sans URL. | non vérifié | Dépôt à la révision relue, ou aucune preuve primaire disponible. | Ajouter des encadrés avec liens directs pour les sections techniques et renvoyer à ces liens depuis les exercices et le quiz. L’encadré actuel n’étaye pas ces sections à lui seul. |
 
 **Bilan : 5 faux, 1 non vérifié, 21 corrects (27 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- §1 (cible des GPO, stratégie de compte) : **Corrigé** — liens sur site, domaine ou OU ; règles de mot de passe des comptes du domaine au niveau du domaine (Account Policies, vérifié) ; encadré source avec URL.
+- §2 et cas 2 (groupes) : **Corrigé** — groupe présenté comme première piste ; autorisations du dossier, groupes imbriqués, jeton de session ; cas 2 : escalade si groupes identiques ; encadré source.
+- §3 et Q3 (`gpupdate /force`) : **Corrigé** — « redemande le traitement de tous les paramètres » ; installation de logiciels et redirection de dossiers à la déconnexion ou au redémarrage (page gpupdate, vérifiée) ; question et explication reformulées.
+- §4 (`nltest /dsgetdc`) : **Corrigé** — test de localisation, résultat possible depuis le cache, échec = piste et non cause ; encadré source (cmdlets, DC locator).
+- Labo GPO : **Corrigé** — paramètre de Configuration ordinateur (message d'ouverture de session), mention du traitement en boucle, redémarrage, réglages qui peuvent persister.
+- Cadrage des sources : **Corrigé** — encadrés avec URL aux §1 à §4 et renvoi depuis le labo.

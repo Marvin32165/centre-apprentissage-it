@@ -29,3 +29,11 @@ Relecture documentaire. Les mécanismes et prérequis du labo ont été confront
 | §2, §4, labo, situations, quiz et mémo. Aucune source directe par section. Les deux encadrés (§1 et §3) nomment des références sans URL. | non vérifié | Dépôt à la révision relue, ou aucune preuve primaire disponible. | Ajouter des liens vers les guides Microsoft, PeopleCert/CompTIA et les sources de réponse aux incidents aux endroits concernés. Relier les corrigés à ces références. |
 
 **Bilan : 5 faux, 1 non vérifié, 12 corrects (18 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- §1 (Assistance rapide intégrée) : **Corrigé** — disponible sous Windows 10 et 11, à installer ou mettre à jour depuis le Store selon le poste ; même variante dans le labo.
+- Q1 : **Corrigé** — « code à 6 chiffres donné par l'aidant et saisi par l'utilisateur » (page Support, vérifiée).
+- §1, labo et mémo (groupe RDP) : **Corrigé** — par défaut administrateurs et « Utilisateurs du Bureau à distance », sauf stratégie (page « Allow log on through Remote Desktop Services », vérifiée) ; labo avec un compte réellement sans ces droits.
+- §1 (« accès non autorisé ») : **Corrigé** — accord de l'utilisateur, habilitation technique et autorisation de l'organisation distingués ; RGPD cité comme cadre, application locale à vérifier sur place.
+- §2, cas 4, mémo, Q5 (faux support) : **Corrigé** — plus de règle universelle sur l'initiateur : appel non sollicité, sens du code selon l'outil, vérification du ticket ou rappel sur un numéro officiel. L'URL de la page « tech support scams » du rapport redirige vers « Protect yourself from online scams and attacks », citée à sa place.
+- Cadrage des sources : **Corrigé** — encadrés avec URL aux §1 à §4 (Microsoft, PeopleCert, CompTIA, CISA) et renvois dans le labo.

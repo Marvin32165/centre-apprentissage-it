@@ -40,3 +40,16 @@ Relecture documentaire. Le labo n’a pas été exécuté avec les applications 
 | §2 à §4, labo, situations, quiz et mémo. L’unique encadré source, en §1, regroupe les thèmes sans lien direct. | non vérifié | Dépôt à la révision relue, ou aucune preuve primaire disponible. | Ajouter les liens vers les pages Microsoft précises dans les sections qui en dépendent, avec renvois pour les exercices et le quiz. |
 
 **Bilan : 10 faux, 1 non vérifié, 18 corrects (29 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- §1, labo, mémo, Q1 (« et sur le web ? ») : **Corrigé** — orientation et non preuve, dans les deux sens (navigateur, réseau, règle d'accès ; incident propre au client).
+- §2, mémo, Q2 (PST) : **Corrigé** — fichier local pour stocker, archiver ou exporter, avec copies possibles.
+- Labo (mode sans échec) : **Corrigé** — complément suspect, confirmé en les réactivant un par un ; même nuance au §2.
+- §2 (boîte pleine) : **Corrigé** — trois seuils (avertissement, plus d'envoi, plus d'envoi ni de réception) ; source Exchange Online limits.
+- §2 (droits de boîte partagée) : **Corrigé** — Full Access sans envoi ; Send As et Send on Behalf distingués.
+- Cas 2 : **Corrigé** — adresse, message exact, droit absent ou pas encore propagé.
+- Cas 1 : **Corrigé** — la session du téléphone ne prouve rien ; connexion fraîche sur le web.
+- Labo OneDrive (« : ») : **Corrigé** — on observe le refus de Windows ; restrictions OneDrive renvoyées à la page Microsoft.
+- §3 et mémo (« rien n'est perdu ») : **Corrigé** — le web montre le serveur, pas ce qui attend d'être synchronisé.
+- §4 (définition de la MFA) : **Corrigé** — combinaison de facteurs de types différents ; méthodes sans mot de passe.
+- Cadrage des sources : **Corrigé** — encadrés avec URL aux §1 à §4. Le lien « Open Outlook in safe mode » du rapport renvoie 404 le 25/11 : remplacé par « Command-line switches for Microsoft Office products ».

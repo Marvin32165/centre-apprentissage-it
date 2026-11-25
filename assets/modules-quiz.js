@@ -110,7 +110,7 @@ window.IT_QUIZZES["module-materiel-pc"] = { titre: "Quiz : matériel et PC", que
 window.IT_QUIZZES["module-depannage-distance"] = { titre: "Quiz : dépannage à distance", questions: [
   { q: "Dans Assistance rapide, qui génère le code de sécurité à 6 chiffres ?",
     options: ["L'utilisateur aidé", "Le support (celui qui aide)", "Microsoft, par SMS", "Le serveur de l'organisation"], reponse: 1,
-    explication: "Le support choisit « Help someone » et obtient un code à durée limitée, qu'il donne à l'utilisateur ; celui-ci le saisit et autorise la connexion." },
+    explication: "Le support choisit « Aider quelqu'un » (Help someone) et obtient un code à durée limitée, qu'il donne à l'utilisateur ; celui-ci le saisit et autorise la connexion." },
   { q: "Un utilisateur veut que tu te connectes en Bureau à distance à son PC en Windows 11 Famille. Que sais-tu ?",
     options: ["Ça marche si le pare-feu est désactivé", "Il faut seulement connaître le nom du PC", "Une édition Famille ne peut pas recevoir de connexion Bureau à distance", "Il faut passer par le port 443"], reponse: 2,
     explication: "Le poste hôte doit être en édition Pro, Entreprise ou Éducation ; le poste depuis lequel on se connecte peut être de n'importe quelle édition, Famille comprise." },

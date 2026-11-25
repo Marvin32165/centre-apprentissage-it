@@ -40,7 +40,8 @@
 
 <span class="phase">Je montre</span>
 <h2 id="methode-impression">1. L'imprimante, dans l'ordre</h2>
-<p>Microsoft propose d'abord l'utilitaire automatique de l'application <em>Obtenir de l'aide</em> (<code>aka.ms/PrinterConnection</code>), puis cet ordre de vérifications :</p>
+<p><strong>D'abord, une question</strong> : « vos collègues impriment-ils sur cette imprimante ? » Une seule personne touchée : tu suis les étapes ci-dessous sur son poste. Plusieurs : tu regardes l'imprimante elle-même (écran, papier, voyants) et tu escalades (encadré ci-dessous et <a href="#cas">cas 2</a>).</p>
+<p>Microsoft propose ensuite l'utilitaire automatique de l'application <em>Obtenir de l'aide</em> (<a href="https://aka.ms/PrinterConnection"><code>aka.ms/PrinterConnection</code></a>), puis cet ordre de vérifications :</p>
 <ol>
   <li><strong>Redémarrer l'imprimante</strong> : éteindre, débrancher, attendre 30 secondes, rebrancher, rallumer.</li>
   <li><strong>La connexion</strong> : câble USB bien branché ; ou, en sans-fil, option sans fil activée, test de connectivité de l'imprimante, même réseau que le PC.</li>
@@ -76,7 +77,7 @@ rundll32 printui.dll,PrintUIEntry /in /n\\SERVEUR-IMPRESSION\Imprimante-2e
 rundll32 printui.dll,PrintUIEntry /p /n"Nom de l'imprimante"</code></pre>
 <ul>
   <li><code>Get-Printer</code> (PowerShell) liste les imprimantes installées, sans droits d'administrateur ; avec <code>-ComputerName</code>, celles d'un autre ordinateur, par exemple un serveur d'impression.</li>
-  <li><code>printui.dll,PrintUIEntry</code> automatise la configuration des imprimantes : <code>/in</code> connecte une imprimante réseau, <code>/n</code> donne son nom, <code>/y</code> la met par défaut, <code>/dl</code> supprime une imprimante locale, <code>/p</code> affiche ses propriétés. Attention, <code>PrintUIEntry</code> respecte les majuscules.</li>
+  <li><code>printui.dll,PrintUIEntry</code> (à taper dans l'invite de commandes <code>cmd</code>) automatise la configuration des imprimantes : <code>/in</code> connecte une imprimante réseau, <code>/n</code> donne son nom, <code>/y</code> la met par défaut, <code>/dl</code> supprime une imprimante locale, <code>/p</code> affiche ses propriétés. Attention, <code>PrintUIEntry</code> respecte les majuscules.</li>
 </ul>
 <aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/powershell/module/printmanagement/get-printer">Get-Printer</a> ; <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/rundll32-printui">rundll32 printui.dll,PrintUIEntry</a>.</p></aside>
 
@@ -89,6 +90,7 @@ rundll32 printui.dll,PrintUIEntry /p /n"Nom de l'imprimante"</code></pre>
 <tr><td>Autoriser les applications à accéder à la caméra</td><td>Pour les applications du Microsoft Store, puis application par application.</td></tr>
 <tr><td>Autoriser les applications de bureau à accéder à la caméra</td><td>Pour <strong>toutes</strong> les applications de bureau à la fois (Teams, Edge…), sans réglage individuel.</td></tr>
 </tbody></table></div>
+<p>Avant les réglages, trois vérifications rapides que donne Microsoft : un <strong>cache ou un interrupteur</strong> de caméra sur le portable (certains coupent la caméra au point que Windows ne la voit plus) ; une <strong>autre application</strong> qui utilise déjà la caméra (la fermer) ; pour une caméra externe, le <strong>câble USB</strong> bien branché.</p>
 <p>Windows Hello (connexion par visage) fonctionne même si l'accès à la caméra est coupé : « Windows Hello marche, mais pas Teams » fait donc d'abord penser à ces réglages. C'est une hypothèse, pas une preuve : Windows Hello et Teams peuvent passer par des voies, voire des caméras, différentes. Vérifie aussi la caméra choisie dans les paramètres de Teams, l'autorisation du site si Teams est ouvert dans le navigateur, et teste l'application Caméra de Windows.</p>
 <aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/manage-app-permissions-for-your-camera-in-windows-87ebc757-1f87-7bbf-84b5-0686afb6ca6b">Manage app permissions for a camera in Windows</a> ; <a href="https://support.microsoft.com/en-us/windows/hardware/camera/camera-doesn-t-work-in-windows">Camera doesn't work in Windows</a> (autres vérifications).</p></aside>
 
@@ -111,7 +113,7 @@ rundll32 printui.dll,PrintUIEntry /p /n"Nom de l'imprimante"</code></pre>
 <p>Règles utilisées : §3 (commandes), §2 (pilotes), §4 (caméra), §5 (Bluetooth). Il te faut une imprimante installée (même virtuelle) pour les étapes 1 et 2, et une caméra reconnue par Windows pour l'étape 4 ; sinon, passe l'étape concernée.</p>
 <ol>
   <li>Dans PowerShell : <code>Get-Printer</code>. Note les noms et la colonne qui indique le pilote.</li>
-  <li>Avec le nom d'une imprimante de la liste : <code>rundll32 printui.dll,PrintUIEntry /p /n"nom"</code>. Quelle fenêtre s'ouvre ? (Liste vide à l'étape 1 : passe cette étape.)</li>
+  <li>Dans l'<strong>invite de commandes</strong> (<code>cmd</code>, pas PowerShell, qui interprète autrement la virgule et les guillemets), avec le nom d'une imprimante de la liste : <code>rundll32 printui.dll,PrintUIEntry /p /n"nom"</code>. Quelle fenêtre s'ouvre ? (Liste vide à l'étape 1 : passe cette étape.)</li>
   <li>Ouvre le Gestionnaire de périphériques, choisis un périphérique (carte réseau, souris), onglet Pilote : note la version et si <em>Restaurer le pilote</em> est disponible ou grisé.</li>
   <li>Paramètres → Confidentialité et sécurité → Caméra : coupe « applications de bureau », ouvre la caméra dans Teams ou dans un site de visioconférence dans Edge, observe, puis réactive. Si aucune caméra n'est reconnue, ou si le réglage est grisé (imposé par l'administrateur), note-le et passe l'étape.</li>
   <li>Si tu as un casque, une souris ou un téléphone Bluetooth : appaire-le en suivant les étapes du §5, puis supprime l'appareil et recommence.</li>

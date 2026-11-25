@@ -54,15 +54,16 @@
 <aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a> (comptes, réseau, Remote Help) ; Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/how-to-use-remote-desktop-5fe128d5-8fb1-7a23-3b8a-41e636865e8c">How to use Remote Desktop</a> ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remotepc/remote-desktop-allow-access">Enable Remote Desktop on your PC</a> (éditions) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/mstsc">mstsc</a>, <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/clients/change-listening-port">port d'écoute du Bureau à distance</a> (3389 par défaut).</p></aside>
 
 <h2 id="assistance-rapide">2. Assistance rapide pas à pas</h2>
-<p>Les libellés ci-dessous sont ceux de la documentation anglaise ; l'interface française peut les traduire.</p>
+<p>Libellés de l'interface française (ceux de la <a href="https://support.microsoft.com/fr-fr/windows/apps/solve-pc-problems-remotely-using-quick-assist">version française de la page Microsoft</a>), avec l'anglais entre parenthèses. Avant d'ouvrir l'outil : ticket, identité vérifiée et accord explicite (<a href="#deroule">§6</a>).</p>
 <div class="table-wrap"><table>
 <thead><tr><th>Toi (le support, <em>helper</em>)</th><th>L'utilisateur (<em>sharer</em>)</th></tr></thead>
 <tbody>
-<tr><td>1. Ouvre Assistance rapide et choisis <strong>Help someone</strong>. Un <strong>code de sécurité à 6 chiffres</strong>, valable un temps limité, s'affiche.</td><td></td></tr>
-<tr><td>2. Donne-lui le code au téléphone.</td><td>3. Ouvre Assistance rapide (raccourci <kbd>Ctrl</kbd> + <kbd>Windows</kbd> + <kbd>Q</kbd>), saisit le code dans <strong>Code from assistant</strong>, puis <strong>Submit</strong>.</td></tr>
-<tr><td></td><td>4. Clique sur <strong>Allow</strong> pour autoriser la connexion et le partage d'écran.</td></tr>
-<tr><td>5. Tu vois l'écran : pointeur laser, annotation et conversation sont disponibles. Si tu dois agir, clique sur <strong>Request control</strong>.</td><td>6. Accepte (<strong>Allow</strong>) ou refuse. Il peut reprendre la main à tout moment avec <strong>Cancel control</strong>.</td></tr>
-<tr><td>7. À la fin : <strong>Leave</strong>.</td><td>Ou lui-même : <strong>Leave</strong>.</td></tr>
+<tr><td>1. Ouvre Assistance rapide et choisis <strong>Aider quelqu'un</strong> (<em>Help someone</em>). Un <strong>code de sécurité à 6 chiffres</strong>, valable un temps limité, s'affiche.</td><td></td></tr>
+<tr><td>2. Donne-lui le code au téléphone.</td><td>3. Ouvre Assistance rapide (raccourci <kbd>Ctrl</kbd> + <kbd>Windows</kbd> + <kbd>Q</kbd>), saisit le code dans <strong>Code de l'assistant</strong> (<em>Code from assistant</em>), puis <strong>Envoyer</strong> (<em>Submit</em>).</td></tr>
+<tr><td></td><td>4. Clique sur <strong>Autoriser</strong> (<em>Allow</em>) pour autoriser la connexion et le partage d'écran.</td></tr>
+<tr><td>5. Tu vois l'écran : pointeur laser, annotation et conversation sont disponibles. Si tu dois agir, clique sur <strong>Demander le contrôle</strong> (<em>Request control</em>).</td><td>6. Accepte (<strong>Autoriser</strong>) ou refuse. Il peut reprendre la main à tout moment avec <strong>Annuler le contrôle</strong> (<em>Cancel control</em>).</td></tr>
+<tr><td>7. À la fin : <strong>Quitter</strong> (<em>Leave</em>).</td><td>Ou lui-même : <strong>Quitter</strong>.</td></tr>
+<tr><td>8. Note la session dans le ticket : outil, heures, accord, actions, résultat (<a href="#deroule">§6</a>).</td><td></td></tr>
 </tbody></table></div>
 <h3>Ce qu'il faut savoir</h3>
 <ul>
@@ -127,7 +128,7 @@ Invoke-Command -ComputerName PC-LABO -ScriptBlock { Get-Culture }</code></pre>
 <tbody>
 <tr><td><strong>Avant</strong></td><td>Ticket ouvert ; identité vérifiée selon la procédure ; tu expliques ce que tu vas voir et faire ; tu obtiens un accord <strong>explicite</strong> ; tu proposes de fermer les documents et messageries personnels.</td></tr>
 <tr><td><strong>Pendant</strong></td><td>Tu regardes d'abord, tu ne demandes le contrôle que si c'est utile ; tu annonces chaque action (« j'ouvre les paramètres réseau ») ; tu laisses l'utilisateur répondre aux invites UAC et saisir ses mots de passe.</td></tr>
-<tr><td><strong>Après</strong></td><td>Tu quittes la session (<strong>Leave</strong>) et tu vérifies avec l'utilisateur que tout fonctionne ; tu notes dans le ticket l'outil, l'heure de début et de fin, l'accord obtenu, les actions faites et le résultat.</td></tr>
+<tr><td><strong>Après</strong></td><td>Tu quittes la session (<strong>Quitter</strong>) et tu vérifies avec l'utilisateur que tout fonctionne ; tu notes dans le ticket l'outil, l'heure de début et de fin, l'accord obtenu, les actions faites et le résultat.</td></tr>
 </tbody></table></div>
 <h3>Quand passer sur place (ou escalader)</h3>
 <ul>
@@ -140,14 +141,14 @@ Invoke-Command -ComputerName PC-LABO -ScriptBlock { Get-Culture }</code></pre>
 
 <span class="phase">On fait ensemble</span>
 <h2 id="labo">Labo guidé : ton PC et ta VM <span class="duree">≈ 50 min</span></h2>
-<p>Règles utilisées : §2 (Assistance rapide), §3 (Bureau à distance, test du port), §6 (note de ticket). Il te faut la VM Windows 11 du jour 4 (en édition Pro, Entreprise ou Éducation, pour le Bureau à distance), reliée à un commutateur virtuel qui la rend joignable depuis ton PC, et un compte Microsoft pour le rôle de support dans Assistance rapide.</p>
+<p>Règles utilisées : §2 (Assistance rapide), §3 (Bureau à distance, test du port), §6 (note de ticket). Il te faut la VM Windows 11 du jour 4 (en édition Pro, Entreprise ou Éducation, pour le Bureau à distance), reliée à un commutateur virtuel qui lui donne accès à Internet (Assistance rapide passe par Internet) et la rend joignable depuis ton PC, par exemple le commutateur par défaut de Hyper-V (<em>Default Switch</em>) ; un compte de la VM protégé par un mot de passe (Windows refuse par défaut la connexion à distance d'un compte local sans mot de passe : <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/accounts-limit-local-account-use-of-blank-passwords-to-console-logon-only">stratégie correspondante</a>) ; et un compte Microsoft pour le rôle de support dans Assistance rapide. Si le nom de la VM ne répond pas, utilise son adresse IP (<code>ipconfig</code> dans la VM).</p>
 <ol>
   <li><strong>Bureau à distance</strong> : dans la VM, active le Bureau à distance (Paramètres → Système → Bureau à distance) et note le nom du PC.</li>
   <li>Depuis ton PC : <code>Test-NetConnection -ComputerName &lt;nom&gt; -Port 3389</code>. Note la valeur de <code>TcpTestSucceeded</code>.</li>
   <li><code>mstsc /v:&lt;nom&gt; /prompt</code>, connecte-toi avec le compte de la VM, puis déconnecte-toi.</li>
   <li>Désactive le Bureau à distance dans la VM et relance l'étape 2. Que change-t-il ? Réactive-le.</li>
-  <li><strong>Assistance rapide</strong> : sur ton PC, joue le support (<strong>Help someone</strong>) ; dans la VM, joue l'utilisateur (<kbd>Ctrl</kbd> + <kbd>Windows</kbd> + <kbd>Q</kbd>, saisie du code).</li>
-  <li>Observe chaque fenêtre d'accord. Demande le contrôle, puis, côté VM, reprends-le avec <strong>Cancel control</strong>. Termine avec <strong>Leave</strong>.</li>
+  <li><strong>Assistance rapide</strong> : sur ton PC, joue le support (<strong>Aider quelqu'un</strong>) ; dans la VM, joue l'utilisateur (<kbd>Ctrl</kbd> + <kbd>Windows</kbd> + <kbd>Q</kbd>, saisie du code).</li>
+  <li>Observe chaque fenêtre d'accord. Demande le contrôle, puis, côté VM, reprends-le avec <strong>Annuler le contrôle</strong>. Termine avec <strong>Quitter</strong>.</li>
   <li>Rédige la note de ticket de cette session fictive (outil, heures, accord, actions, résultat).</li>
 </ol>
 <details class="correction"><summary>Voir ce que tu dois constater</summary>
@@ -155,7 +156,8 @@ Invoke-Command -ComputerName PC-LABO -ScriptBlock { Get-Culture }</code></pre>
   <li>Étape 2 : <code>TcpTestSucceeded : True</code> quand le Bureau à distance est actif et le réseau correct.</li>
   <li>Étape 4 : le test passe à <code>False</code> : le port ne répond plus. C'est le signe à reconnaître avant d'accuser <code>mstsc</code>.</li>
   <li>Étapes 5 et 6 : l'utilisateur autorise deux fois (la connexion, puis le contrôle) et peut retirer le contrôle à tout moment. Si ton compte de support n'est pas un compte Microsoft ou Entra ID, la session ne démarre pas.</li>
-  <li>Étape 7 : une note du type « 24/11, 10 h 05 – 10 h 20, Assistance rapide, accord oral de l'utilisateur, contrôle demandé et accordé, redémarrage du spouleur, impression de test réussie, session quittée ».</li>
+  <li>Étape 7 : une note du type « 24/11, 10 h 05 – 10 h 20, Assistance rapide, accord oral de l'utilisateur, contrôle demandé et accordé, puis repris par l'utilisateur (Annuler le contrôle), aucune modification faite, session quittée ».</li>
+  <li>Si la connexion <code>mstsc</code> est refusée avec un compte sans mot de passe : c'est le comportement par défaut de Windows, donne un mot de passe au compte de la VM.</li>
   <li>Avant l'étape 5, cherche Assistance rapide dans le menu Démarrer de la VM ; s'il est absent, il s'installe depuis le Microsoft Store (§2).</li>
 </ul>
 </details>
@@ -169,10 +171,10 @@ Invoke-Command -ComputerName PC-LABO -ScriptBlock { Get-Culture }</code></pre>
 <details class="correction"><summary>Voir la correction</summary>
 <p>Une édition Famille ne peut pas recevoir de connexion Bureau à distance. Et un appareil personnel ne se dépanne que si la procédure le prévoit : vérifie d'abord ce que la DSI prend en charge. Si c'est le cas, l'outil adapté est celui où l'utilisateur partage son écran (Assistance rapide ou l'outil de l'organisation).</p>
 </details>
-<h3>2. « Le support Microsoft m'a appelé »</h3>
+<h3>2. « Le support informatique m'a appelé »</h3>
 <p>Une secrétaire t'appelle : quelqu'un « du support informatique » vient de lui demander d'appuyer sur <kbd>Ctrl</kbd> + <kbd>Windows</kbd> + <kbd>Q</kbd> et de saisir un code. Elle l'a fait, puis a accepté une demande de contrôle. L'appel est terminé.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>C'est le scénario du faux support. Si la session est encore ouverte, elle clique sur <strong>Leave</strong>. Tu traites l'appel comme un <strong>incident de sécurité</strong> : escalade immédiate selon la procédure (le poste peut devoir être isolé, le mot de passe changé), ticket avec l'heure, ce qui a été accepté et ce qu'elle a vu à l'écran. Tu ne minimises pas et tu ne cherches pas toi-même ce que l'attaquant a fait.</p>
+<p>C'est le scénario du faux support. Si la session est encore ouverte, elle clique sur <strong>Quitter</strong>. Tu traites l'appel comme un <strong>incident de sécurité</strong> : escalade immédiate selon la procédure (le poste peut devoir être isolé, le mot de passe changé), ticket avec l'heure, ce qui a été accepté et ce qu'elle a vu à l'écran. Tu ne minimises pas et tu ne cherches pas toi-même ce que l'attaquant a fait.</p>
 </details>
 <h3>3. Le port qui ne répond pas</h3>
 <p><code>mstsc /v:PC-ACCUEIL</code> échoue. <code>Test-NetConnection -ComputerName PC-ACCUEIL -Port 3389</code> donne <code>TcpTestSucceeded : False</code>, mais <code>ping PC-ACCUEIL</code> répond.</p>
@@ -191,11 +193,11 @@ Invoke-Command -ComputerName PC-LABO -ScriptBlock { Get-Culture }</code></pre>
 <h2 id="memo">Fiche mémo</h2>
 <div class="bloc">
 <ul>
-  <li><strong>Assistance rapide</strong> : le support génère un code à 6 chiffres, l'utilisateur le saisit et autorise ; contrôle sur demande, retirable (<em>Cancel control</em>) ; mêmes droits que l'utilisateur ; aucun journal sur les postes.</li>
+  <li><strong>Assistance rapide</strong> : le support génère un code à 6 chiffres, l'utilisateur le saisit et autorise ; contrôle sur demande, retirable (<em>Annuler le contrôle</em>) ; mêmes droits que l'utilisateur ; aucun journal sur les postes.</li>
   <li><strong>Bureau à distance</strong> : hôte en édition Pro, Entreprise ou Éducation (pas Famille), activé dans Paramètres → Système, TCP 3389 ; <code>mstsc /v:nom /prompt</code> ; tester le port avec <code>Test-NetConnection -Port 3389</code>.</li>
   <li><strong>PowerShell à distance</strong> : <code>Enter-PSSession</code> (interactif), <code>Invoke-Command</code> (bloc de commandes) ; en lecture seulement en stage.</li>
   <li><strong>Faux support</strong> : appel ou message « IT Support », <kbd>Ctrl</kbd>+<kbd>Win</kbd>+<kbd>Q</kbd>, code, contrôle → incident de sécurité.</li>
-  <li><strong>Session</strong> : identité, accord explicite, annoncer chaque action, l'utilisateur répond aux invites, <em>Leave</em>, tout noter dans le ticket.</li>
+  <li><strong>Session</strong> : identité, accord explicite, annoncer chaque action, l'utilisateur répond aux invites, <em>Quitter</em>, tout noter dans le ticket.</li>
   <li><strong>Sur place</strong> : pas de réseau, matériel, pas d'accord, droits manquants.</li>
 </ul>
 </div>

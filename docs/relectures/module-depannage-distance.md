@@ -34,3 +34,11 @@ Les six réponses du quiz `module-depannage-distance` dans `assets/modules-quiz.
 - §2 (présence d'Assistance rapide) : **Corrigé** — plus de « présent par défaut » : emplacement dans le menu Démarrer (Windows 11 et 10), installation Store, retrait possible par l'organisation, présence à vérifier ; mention retirée de l'encadré du billet ; vérification ajoutée au labo.
 - §5 (Storm-1811) : **Justifié** — le billet du 15/05/2024 est la publication de Microsoft Threat Intelligence elle-même, donc la source primaire de cette observation ; le texte l'attribue maintenant explicitement à cette équipe.
 - Cadrage des sources : **Corrigé** — encadré source au §6 (Learn et Support Quick Assist ; trame et liste « sur place » présentées comme méthode, procédure de la DSI à vérifier sur place) ; renvois aux sections dans le labo et les cas.
+
+## Test en situation (`test-chef.md`, 25/11/2026)
+Agent testeur qui n'a pas écrit la page ; usage : prise en main pendant un appel, au téléphone (390 px), puis labo et quiz sur PC. Bloquant : aucun ; 7 critères sur 8 réussis.
+- Fiche mémo imprimée sur 11 pages : **Corrigé** — `modules-ui.js` construit une fiche A4 depuis `#memo`, pour tous les modules, avec un bouton d'impression ; parcours « fiche sur une page A4 » ajouté pour les 9 modules.
+- §2 sans étapes avant et après : **Corrigé** — renvoi au §6 avant d'ouvrir l'outil et ligne 8 « note dans le ticket ».
+- Libellés en anglais : **Corrigé** — libellés français tirés de la page Support fr-fr (lien dans le §2), anglais entre parenthèses.
+- Réseau de la VM : **Corrigé** — commutateur avec Internet (exemple : Default Switch), adresse IP si le nom ne répond pas ; compte avec mot de passe (stratégie Microsoft vérifiée).
+- Mineurs : **Corrigé** — exemple de note de l'étape 7, titre du cas 2, « Quick Assist » trouvé par la recherche (mots-clés placés en tête de l'index des modules). **Justifié** : pas de sommaire ajouté, la recherche mène aux sections.

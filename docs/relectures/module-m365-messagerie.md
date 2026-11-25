@@ -38,3 +38,11 @@ Les six réponses du quiz `module-m365-messagerie` dans `assets/modules-quiz.js`
 - Labo, étape 6 : **Corrigé** — données locales et personnalisations effacées, reconnexion seulement possible.
 - Cas 4 : **Corrigé** — le web rend le poste et le client prioritaires sans le prouver ; limites de ce test énoncées.
 - Cadrage des sources : **Corrigé** — renvois aux sections dans le labo et les cas ; références de rétention ajoutées. **Justifié** : la comparaison des deux Outlook est déjà sourcée au §1 (« Getting started with the new Outlook for Windows »).
+
+## Test en situation (`test-chef.md`, 25/11/2026)
+Agent testeur qui n'a pas écrit la page ; usage : Outlook qui se ferme, puis boîte partagée, au téléphone (390 px), puis labo et quiz sur PC. 7 critères sur 8 réussis.
+- Fiche mémo imprimée sur 10 pages (bloquant) : **Corrigé** — fiche A4 commune aux modules (voir le rapport du module Dépannage à distance).
+- Cas 4, désactiver un complément : **Corrigé** — chemin Fichier → Options → Compléments et liens vers le J7.
+- Recherche (Send As, mode sans échec, Outlook plante) : **Corrigé** — mots-clés ajoutés au module et placés en tête de l'index.
+- Ancres des cas : **Corrigé** — `cas-1` à `cas-4`. **Justifié** : la marge sous l'en-tête fixe existe déjà (`scroll-padding-top`) ; coupure de `outlook.exe /safe` à 390 px laissée, la commande reste dans un `code`.
+- Source MFA redirigée : **Justifié** — la page d'arrivée contient le contenu cité ; lien laissé.

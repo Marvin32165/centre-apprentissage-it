@@ -30,3 +30,8 @@ Relecture documentaire des commandes et conseils opérationnels. La page ne char
 | §1, §2 et §3. Aucun encadré source. L’encadré du §4 cite ITIL sans URL. | non vérifié | Dépôt à la révision relue, ou aucune preuve primaire disponible. | Ajouter des liens vers les références Microsoft par famille de commandes et vers les références d’identification, de traçabilité et de priorité au niveau des sections. |
 
 **Bilan : 1 faux, 2 non vérifiés, 16 corrects (19 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- §1 (« sans risque ») : **Corrigé** — « ne modifient pas la configuration », sorties à traiter avec soin, commandes qui réparent ou interrompent nommées.
+- §1 (`taskmgr`, `devmgmt.msc`) : **Justifié** — gardés (chaînes usuelles de « Exécuter », non testées ici) avec le chemin de secours documenté : <kbd>Ctrl</kbd>+<kbd>Maj</kbd>+<kbd>Échap</kbd> et <kbd>Windows</kbd>+<kbd>X</kbd>.
+- Cadrage des sources : **Corrigé** — encadré avec URL au §1, renvoi sourcé aux J1 et J2 pour §2 et §3, URL PeopleCert et Atlassian au §4.

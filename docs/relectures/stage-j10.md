@@ -30,3 +30,11 @@ Relecture documentaire des dix corrections et des douze réponses du quiz. Les s
 | Appels, quiz et check-list. Aucun encadré source n’est présent. Les renvois vers les jours de préparation ne donnent pas les sources primaires. | non vérifié | Dépôt à la révision relue, ou aucune preuve primaire disponible. | Ajouter des références directes pour les corrections et le quiz. Pour les éléments personnels du premier jour, renvoyer à la convocation ou au tuteur sans publier de document privé. |
 
 **Bilan : 3 faux, 3 non vérifiés, 13 corrects (19 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- Q3 (169.254.x.x) : **Corrigé** — poste réglé en DHCP, adresse lien local qui oriente vers l'absence de configuration DHCP, sans prouver la panne du serveur.
+- Q5 (web OK) : **Corrigé** — « où cherches-tu d'abord ? », poste et client en piste prioritaire.
+- Q1 (un problème et dix incidents) : **Corrigé** — signalements rattachés à un incident commun ; cause réelle ou potentielle = problème ; aucun nombre fixe.
+- Q11 (colis) : **Corrigé** — documenter et remonter ; délai et justificatifs propres au transporteur et au contrat.
+- Check-list (enregistrement) : **Corrigé** — conditionné au stockage local du navigateur ; renvoi à l'export de la progression.
+- Cadrage des sources : **Corrigé** — encadré source après le quiz ; premier jour renvoyé à la convocation et au tuteur.

@@ -141,25 +141,25 @@
 <span class="phase">Tu fais seul</span>
 <h2 id="cas">Mises en situation</h2>
 <p>Les corrections s'appuient sur les sections sourcées : boîte partagée au §3, OneDrive au §5, Teams au §4, commutateurs d'Outlook au §2.</p>
-<h3>1. « Je vois la boîte du secrétariat, mais je ne peux pas répondre »</h3>
+<h3 id="cas-1">1. « Je vois la boîte du secrétariat, mais je ne peux pas répondre »</h3>
 <p>Une nouvelle secrétaire voit la boîte partagée dans Outlook, lit les messages, mais un message d'erreur apparaît quand elle répond depuis l'adresse du secrétariat.</p>
 <details class="correction"><summary>Voir la correction</summary>
 <p>Elle a probablement l'accès total sans droit d'envoi (« Envoyer en tant que » ou « de la part de », selon ce que prévoit l'organisation). Tu notes l'adresse de la boîte, le message d'erreur exact et la personne, et tu transmets à l'équipe qui gère les droits, selon la procédure de validation (souvent l'accord du responsable de la boîte). Tu ne lui proposes pas de contournement (transférer depuis son adresse personnelle).</p>
 </details>
-<h3>2. « J'ai supprimé mes fichiers OneDrive pour gagner de la place »</h3>
+<h3 id="cas-2">2. « J'ai supprimé mes fichiers OneDrive pour gagner de la place »</h3>
 <p>Un enseignant, disque plein, a supprimé un dossier de OneDrive il y a une semaine. Ses collègues ne trouvent plus les documents partagés.</p>
 <details class="correction"><summary>Voir la correction</summary>
 <p>Supprimer dans OneDrive supprime partout. Pour un compte professionnel ou scolaire, la corbeille garde en principe les éléments 93 jours (sauf réglage différent de l'administrateur) : une semaine plus tard, on peut normalement les restaurer depuis le site web de OneDrive, si la corbeille n'a pas été vidée. Ensuite, tu lui montres <em>Libérer de l'espace</em>, qui garde les fichiers en ligne sans occuper le disque. Si la restauration n'est pas possible, escalade.</p>
 </details>
-<h3>3. « Il manque des messages dans un canal Teams »</h3>
+<h3 id="cas-3">3. « Il manque des messages dans un canal Teams »</h3>
 <p>Une utilisatrice ne voit plus les messages d'hier dans un canal. Un collègue lui a conseillé de vider le cache de Teams.</p>
 <details class="correction"><summary>Voir la correction</summary>
 <p>Justement non : pour des messages manquants, Microsoft déconseille de vider le cache, qui contient les journaux de diagnostic. Tu vérifies d'abord sur Teams web (« Et sur le web ? », jour 7) et si d'autres membres du canal sont touchés, puis tu escalades avec ces éléments, sans rien effacer.</p>
 </details>
-<h3>4. Outlook se ferme au démarrage</h3>
+<h3 id="cas-4">4. Outlook se ferme au démarrage</h3>
 <p>Depuis ce matin, l'Outlook classique d'un utilisateur se ferme quelques secondes après son ouverture. Outlook sur le web fonctionne.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>Le web marche : le compte et le service de messagerie répondent, donc le poste et le client Outlook deviennent les pistes prioritaires. Ce n'est pas une preuve : le web ne teste ni la configuration du client, ni le réseau du poste, ni toutes les méthodes d'authentification. Tu fais lancer <code>outlook.exe /safe</code>. S'il tient en mode sans échec, un complément est suspect : tu le notes et tu suis la procédure (désactiver le complément, ou escalader si les compléments sont gérés par la DSI). S'il plante aussi en mode sans échec, tu passes aux pistes suivantes du jour 7 (profil, fichier OST) ou tu escalades.</p>
+<p>Le web marche : le compte et le service de messagerie répondent, donc le poste et le client Outlook deviennent les pistes prioritaires. Ce n'est pas une preuve : le web ne teste ni la configuration du client, ni le réseau du poste, ni toutes les méthodes d'authentification. Tu fais lancer <code>outlook.exe /safe</code>. S'il tient en mode sans échec, un complément est suspect : tu le notes et tu suis la procédure (désactiver le complément dans <strong>Fichier → Options → Compléments</strong>, comme au <a href="../stage/j7.html#outlook">jour 7</a>, ou escalader si les compléments sont gérés par la DSI). S'il plante aussi en mode sans échec, tu passes aux pistes suivantes du <a href="../stage/j7.html#outlook">jour 7</a> (profil, fichier OST) ou tu escalades.</p>
 </details>
 
 <h2 id="quiz">Quiz</h2>

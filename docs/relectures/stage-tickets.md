@@ -26,3 +26,9 @@ Le rapport couvre les appels T01 à T12, leurs réponses, résumés et justifica
 | Cadrage des sources. La page renvoie à J1 et J3, et les explications ont des renvois internes, sans encadrés primaires dans l’entraînement. | non vérifié | Dépôt à la révision relue, ou preuve primaire manquante. | Ajouter une référence sur incident, demande, problème et impact/urgence au niveau des règles, puis relier les explications techniques aux sources propres. Garder l’UMONS sous « à vérifier sur place ». |
 
 **Bilan : 2 faux, 2 non vérifiés, 13 corrects (17 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- T01 : **Corrigé** — web OK = poste et client en piste prioritaire, sans preuve (client et authentification différents).
+- T04 : **Corrigé** — résumé « panne Wi-Fi signalée dans le bâtiment B (3 signalements rapportés par l'accueil) – périmètre à confirmer ».
+- T06 : **Corrigé** — l'appel précise le besoin pour lundi et un contournement partiel, ce qui justifie l'urgence moyenne ; l'explication compare avec le J1 (compte et PC, P3).
+- Cadrage des sources : **Corrigé** — encadré source dans les règles du jeu (Atlassian, PeopleCert) ; la sécurité et l'UMONS restent sous « à vérifier sur place ».

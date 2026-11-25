@@ -41,12 +41,12 @@
 <div class="table-wrap"><table>
 <thead><tr><th>Outil</th><th>Principe</th><th>À savoir</th></tr></thead>
 <tbody>
-<tr><td><strong>Assistance rapide</strong> (<em>Quick Assist</em>)</td><td>Application intégrée à Windows 10/11. L'aidant génère un <strong>code à 6 chiffres</strong> à communiquer à l'utilisateur, qui le saisit et accepte la session.</td><td>L'utilisateur est <strong>présent</strong> et voit tout. Le code est de courte durée (quelques minutes). Mode « afficher l'écran » ou « prendre le contrôle ».</td></tr>
-<tr><td><strong>Bureau à distance</strong> (RDP, <code>mstsc</code>)</td><td>Ouvre une session sur un autre ordinateur, par le réseau (port TCP <strong>3389</strong> par défaut).</td><td>Le poste cible doit l'autoriser, être joignable (réseau, VPN), et l'utilisateur doit appartenir au groupe « Utilisateurs du Bureau à distance ». Sur un poste de bureau, la session locale est verrouillée pendant la connexion.</td></tr>
+<tr><td><strong>Assistance rapide</strong> (<em>Quick Assist</em>)</td><td>Application disponible sous Windows 10 et 11 (menu Démarrer) ; selon le poste, elle est à installer ou à mettre à jour depuis le Microsoft Store. L'aidant génère un <strong>code à 6 chiffres</strong> à communiquer à l'utilisateur, qui le saisit et accepte la session.</td><td>L'utilisateur est <strong>présent</strong> et voit tout. Le code est de courte durée (quelques minutes). Mode « afficher l'écran » ou « prendre le contrôle ».</td></tr>
+<tr><td><strong>Bureau à distance</strong> (RDP, <code>mstsc</code>)</td><td>Ouvre une session sur un autre ordinateur, par le réseau (port TCP <strong>3389</strong> par défaut).</td><td>Le poste cible doit l'autoriser, être joignable (réseau, VPN), et le compte doit avoir le droit de s'y connecter : par défaut, les administrateurs du poste et les membres du groupe « Utilisateurs du Bureau à distance », sauf si une stratégie en décide autrement. Sur un poste de bureau, la session locale est verrouillée pendant la connexion.</td></tr>
 <tr><td><strong>Outil de gestion à distance de l'organisation</strong></td><td>Logiciel déployé par le service, avec journal et droits.</td><td>À vérifier sur place : c'est probablement l'outil à connaître en premier.</td></tr>
 </tbody></table></div>
-<aside class="callout attention"><p>Une prise en main sans accord est un <strong>accès non autorisé</strong>. Même sur un poste de l'organisation, le cadre (politique interne, charte informatique) dit quand et comment on peut le faire. Sans certitude, demande.</p></aside>
-<aside class="callout source"><p>Microsoft Learn et Microsoft Support : « Assistance rapide » (Quick Assist), « Bureau à distance » (activation, groupe d'utilisateurs, port 3389).</p></aside>
+<aside class="callout attention"><p>Trois choses différentes : l'<strong>accord de l'utilisateur</strong>, indispensable pour voir ou prendre sa session ; l'<strong>habilitation technique</strong> (ton compte a-t-il le droit de se connecter ?) ; l'<strong>autorisation de l'organisation</strong> (politique interne, charte informatique), qui dit quand une intervention de maintenance est permise. Sans les trois, ou sans certitude, ne prends pas la main : demande à ton tuteur (à vérifier sur place).</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/client-management/client-tools/quick-assist">Use Quick Assist to help users</a>, <a href="https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remotepc/remote-desktop-allow-access">Enable Remote Desktop on your PC</a>, <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/allow-log-on-through-remote-desktop-services">Allow log on through Remote Desktop Services</a> (comptes autorisés par défaut) ; Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/apps/solve-pc-problems-remotely-using-quick-assist">Solve PC problems remotely using Quick Assist</a> (code à 6 chiffres donné par l'aidant).</p></aside>
 
 <h2 id="consentement">2. Consentement, confidentialité, traçabilité</h2>
 <ol>
@@ -58,7 +58,8 @@
   <li><strong>Tracer</strong> dans le ticket : accord obtenu, heure, outil, actions menées, résultat.</li>
 </ol>
 <aside class="callout retenir"><p>Le cadre légal et les chartes varient : en cas de doute sur ce qu'on a le droit de voir (données personnelles, données de recherche, cas d'un étudiant), <strong>arrête et demande à ton tuteur</strong>.</p></aside>
-<aside class="callout attention"><p>Méfie-toi du cas inverse : un appelant te demandant de <strong>lui donner un code</strong> ou d'installer un outil « pour que le support l'aide » est le scénario habituel d'une arnaque au faux support. C'est le support qui initie, jamais l'inverse, sur la base d'un ticket vérifié.</p></aside>
+<aside class="callout attention"><p>Méfie-toi d'un appel <strong>non sollicité</strong> qui te demande de donner un code ou d'installer un outil « pour que le support t'aide » : c'est le scénario habituel d'une arnaque au faux support. Le sens du code dépend de l'outil (avec Assistance rapide, c'est l'aidant qui donne le code et l'utilisateur qui le saisit) ; dans tous les cas, avant de donner ou saisir un code, on vérifie le ticket ou on rappelle sur un numéro officiel de l'organisation.</p></aside>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/apps/solve-pc-problems-remotely-using-quick-assist">Solve PC problems remotely using Quick Assist</a>, <a href="https://support.microsoft.com/en-us/support/protect-yourself-from-online-scams-and-attacks">Protect yourself from online scams and attacks</a>. Le RGPD (<a href="https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng">règlement (UE) 2016/679</a>, article 5 : limitation des finalités, minimisation) éclaire le « ne pas fouiller » ; son application précise à l'UMONS est à vérifier sur place.</p></aside>
 
 <h2 id="methode">3. La méthode de diagnostic en sept étapes</h2>
 <ol>
@@ -79,7 +80,7 @@
 <tr><td>Qu'ont déjà essayé l'utilisateur et le support ?</td><td>Les pistes à ne pas refaire, et les effets de bord possibles.</td></tr>
 </tbody></table></div>
 <aside class="callout astuce"><p>Avant d'escalader, vérifie que ton ticket permettrait à N2 de <strong>ne pas rappeler l'utilisateur</strong> : symptôme exact, heure, poste, compte, ce qui a été testé, résultat.</p></aside>
-<aside class="callout source"><p>ITIL (gestion des incidents) pour le cadre général de la résolution. La démarche « une hypothèse, un test à la fois » est une pratique générale de dépannage, pas une règle propre à un éditeur.</p></aside>
+<aside class="callout source"><p>ITIL (gestion des incidents) pour le cadre général de la résolution : <a href="https://www.peoplecert.org/-/media/folders-reorganized/pdfs/itil-maturity-model/services-page/introduction-to-the-itil-mm.pdf">PeopleCert, introduction au modèle de maturité ITIL</a> ; démarche de dépannage : <a href="https://comptiacdn.azureedge.net/webcontent/docs/default-source/exam-objectives/comptia-a-220-1101-exam-objectives-%287-0%29-1.pdf">objectifs CompTIA A+ 220-1101</a> (méthodologie de dépannage). La démarche « une hypothèse, un test à la fois » est une pratique générale de dépannage, pas une règle propre à un éditeur.</p></aside>
 
 <h2 id="securite">4. Incident de sécurité : reconnaître et réagir</h2>
 <h3>Quelques signaux</h3>
@@ -101,6 +102,7 @@
   <li><strong>Garder le secret professionnel</strong> : on ne diffuse pas l'incident hors des canaux prévus.</li>
 </ol>
 <aside class="callout attention"><p>Tu n'enquêtes pas, tu <strong>signales et limites</strong>. La conduite à tenir précise (isoler, éteindre ou laisser allumé, qui appeler, y compris hors horaires) est définie par l'organisation : à vérifier sur place le jour 1.</p></aside>
+<aside class="callout source"><p>CISA : <a href="https://www.cisa.gov/sites/default/files/2025-03/StopRansomware-Guide%20508.pdf">#StopRansomware Guide</a> (isoler, conserver les traces, signaler) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/defender-office-365/responding-to-a-compromised-email-account">Respond to a compromised email account</a> (signaux et réaction pour un compte de messagerie).</p></aside>
 <aside class="callout umons"><p>Qui est l'équipe sécurité de la DSI, comment la joindre, et quelle est la procédure officielle en cas de compromission ou d'hameçonnage : à demander à ton tuteur dès le premier jour.</p></aside>
 
 <h2 id="labo">Labo : Bureau à distance dans Hyper-V et dépannage guidé <span class="duree">1 h 10</span></h2>
@@ -108,12 +110,14 @@
 <ol>
   <li>Dans la VM : Paramètres → Système → <strong>Bureau à distance</strong> → activer. Note le nom de la machine et son adresse IP (<code>ipconfig</code>).</li>
   <li>Depuis l'hôte (ou l'autre VM), lance <code>mstsc</code> et connecte-toi. Observe : que voit l'utilisateur qui est devant l'écran de la VM pendant ce temps ?</li>
-  <li>Teste ce qui peut bloquer : pare-feu (règle du Bureau à distance), mauvais utilisateur (non membre du groupe), port : <code>Test-NetConnection -ComputerName ADRESSE -Port 3389</code>.</li>
-  <li>Teste <strong>Assistance rapide</strong> entre ta VM et ta machine hôte si tu as un compte Microsoft : génère le code, accepte la session et observe les deux modes.</li>
+  <li>Teste ce qui peut bloquer : pare-feu (règle du Bureau à distance), mauvais utilisateur (un compte standard de la VM, ni administrateur ni membre de « Utilisateurs du Bureau à distance » : vérifie-le dans Gestion de l'ordinateur → Groupes avant le test), port : <code>Test-NetConnection -ComputerName ADRESSE -Port 3389</code>.</li>
+  <li>Teste <strong>Assistance rapide</strong> entre ta VM et ta machine hôte si tu as un compte Microsoft (si elle manque dans la VM, installe-la depuis le Microsoft Store) : génère le code, accepte la session et observe les deux modes.</li>
   <li><strong>Jeu à deux</strong> (avec un proche ou en jouant les deux rôles) : un « utilisateur » décrit un symptôme que tu as créé à l'avance (ex. un lecteur réseau qui manque, une imprimante par défaut mauvaise, une application qui ne s'ouvre pas) ; l'autre applique la méthode en sept étapes, en demandant l'accord, et rédige le ticket.</li>
 </ol>
+<p>Repères : §1 et ses sources (Bureau à distance, Assistance rapide), §2 (accord et traçabilité), §3 (méthode).</p>
 <details class="correction"><summary>Voir des repères pour contrôler tes résultats</summary>
 <ul>
+  <li>Le compte sans droit de connexion à distance est refusé, même avec le bon mot de passe.</li>
   <li>Avec le Bureau à distance, la session locale du poste cible se verrouille ; avec Assistance rapide, l'utilisateur voit en direct tout ce que tu fais et peut interrompre.</li>
   <li><code>Test-NetConnection</code> sur 3389 indique <code>TcpTestSucceeded : True</code> si le service est joignable ; <code>False</code> oriente vers le pare-feu, le réseau ou le service désactivé.</li>
   <li>Un bon ticket contient : symptôme, heure, poste et compte, accord à la prise en main, tests faits et résultats, solution ou escalade, confirmation de l'utilisateur.</li>
@@ -139,7 +143,7 @@
 <h3>4. Le faux support</h3>
 <p>Un utilisateur dit : « Quelqu'un du support m'a appelé pour que j'installe un logiciel et lui donne un code. C'était bien vous ? » Il est encore en ligne et a déjà l'application ouverte.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>Il faut <strong>arrêter immédiatement</strong> : ne pas donner le code, fermer l'application, déconnecter le poste du réseau si la procédure le prévoit. On ouvre un incident de sécurité avec le numéro appelant, l'heure et ce qui a été fait. Le vrai support ne demande jamais de code ni d'installation à l'initiative de l'appel sans ticket vérifié.</p>
+<p>Il faut <strong>arrêter immédiatement</strong> : ne pas donner le code, fermer l'application, déconnecter le poste du réseau si la procédure le prévoit. On ouvre un incident de sécurité avec le numéro appelant, l'heure et ce qui a été fait. Avant toute prise en main, on vérifie l'appel : ticket existant, ou rappel sur un numéro officiel de l'organisation. Un appel non sollicité qui demande un code ou une installation est à traiter comme une tentative de fraude.</p>
 </details>
 
 <h2 id="quiz">Quiz</h2>
@@ -149,10 +153,10 @@
 <div class="bloc">
 <ul>
   <li><strong>Accord avant la prise en main</strong>, explications pendant, pas de fouille, pas de mot de passe saisi à sa place, fermeture et trace.</li>
-  <li><strong>Assistance rapide</strong> : code à 6 chiffres, utilisateur présent. <strong>RDP</strong> : port 3389, autorisation et groupe nécessaires.</li>
+  <li><strong>Assistance rapide</strong> : l'aidant donne le code à 6 chiffres, l'utilisateur le saisit, utilisateur présent ; Store si absente. <strong>RDP</strong> : port 3389, Bureau à distance activé, compte autorisé (administrateurs, « Utilisateurs du Bureau à distance », stratégies).</li>
   <li><strong>Méthode</strong> : symptôme → cadrage → reproduction → hypothèse → un test à la fois → confirmation → documentation.</li>
   <li><strong>Sécurité</strong> : signaler vite, limiter, ne rien supprimer, ne pas approuver de MFA inattendue.</li>
-  <li><strong>Faux support</strong> : le support ne demande jamais un code non sollicité.</li>
+  <li><strong>Faux support</strong> : appel non sollicité + code ou installation = arrêt ; on vérifie toujours le ticket ou on rappelle sur un numéro officiel.</li>
 </ul>
 </div>
 <aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">

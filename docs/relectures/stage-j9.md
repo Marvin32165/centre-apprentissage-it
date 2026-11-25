@@ -38,3 +38,12 @@ Relecture documentaire. Les résultats du laboratoire Hyper-V n’ont pas été 
 | §1, §3, §4, labo, cas, quiz et mémo. Le seul encadré source, en §2, donne des intitulés sans URL. | non vérifié | Dépôt à la révision relue, ou aucune preuve primaire disponible. | Ajouter les sources constructeur, Microsoft, UEFI et NIST au niveau de chacune des sections concernées. Les procédures internes de livraison et déploiement nécessitent les références de l’organisation. |
 
 **Bilan : 4 faux, 3 non vérifiés, 20 corrects (27 points examinés).**
+
+## Suivi des corrections (Claude Code, 25/11/2026)
+- Cas 1 et Q4 (récupération après mise à jour du BIOS) : **Corrigé** — cas possible selon le matériel et la configuration ; suspendre BitLocker l'évite (BitLocker recovery overview, vérifié) ; vérifier ensuite que la protection a repris.
+- §4, cas 2, Q6 (délai et réserve) : **Corrigé** — délai et formalités propres au transporteur et au contrat, UPS Belgique en exemple, procédure à vérifier sur place.
+- §4 (disque chiffré = effacé) : **Corrigé** — chiffrement insuffisant tant que les clés existent ; NIST SP 800-88 Rev. 2 cité.
+- Labo (demande de clé) : **Corrigé** — exemple pris dans la liste Microsoft (lecteur DVD avant le disque dans l'ordre de démarrage, cas des VM), résultat non garanti, retour au point de contrôle.
+- Labo (statut `manage-bde`) : **Corrigé** — état de conversion et état de protection distingués ; `manage-bde -protectors -get`.
+- Cas 4 (Legacy et MBR) : **Corrigé** — MBR2GPT après validation et sauvegarde, sinon réinstallation.
+- Cadrage des sources : **Corrigé** — URL dans l'encadré du §2, encadré au §4 et sources du labo. **Justifié** : §1 (composants) et §3 (déploiement) décrivent une pratique générale et renvoient à la procédure de l'organisation ; le module « Matériel et PC » détaille et source les composants.

@@ -27,7 +27,7 @@
 <nav class="toc" aria-label="Sommaire"><a href="#commandes">Commandes</a> · <a href="#phrases">Phrases</a> · <a href="#ticket">Modèle de ticket</a> · <a href="#priorite">Priorité</a></nav>
 
 <h2 id="commandes">1. Commandes</h2>
-<aside class="callout attention"><p>Une commande qui modifie le système ou l'annuaire ne se lance que dans le cadre de ta procédure et de tes droits. Les commandes de lecture sont sans risque.</p></aside>
+<aside class="callout attention"><p>Une commande qui modifie le système ou l'annuaire ne se lance que dans le cadre de ta procédure et de tes droits. Les commandes de lecture (<code>ipconfig /all</code>, <code>whoami /groups</code>, <code>Get-ADUser</code>…) ne modifient pas la configuration, mais leurs sorties contiennent des identifiants et des informations réseau : ne les copie que dans le ticket, sans en garder ailleurs. Dans la liste, certaines commandes réparent ou interrompent : <code>sfc</code>, <code>DISM</code>, <code>ipconfig /release</code> (coupe le réseau), <code>shutdown</code> (redémarre), <code>Unlock-ADAccount</code>, <code>gpupdate</code>.</p></aside>
 <h3>Poste Windows (jour 4)</h3>
 <pre data-copy><code>winver
 msinfo32
@@ -64,7 +64,8 @@ mstsc
 manage-bde -status
 Get-Tpm
 Confirm-SecureBootUEFI</code></pre>
-<p>Rappels : <kbd>Windows</kbd> + <kbd>R</kbd> ouvre « Exécuter », <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>Échap</kbd> ouvre le Gestionnaire des tâches, <kbd>Windows</kbd> + <kbd>X</kbd> donne le menu des outils d'administration.</p>
+<p>Rappels : <kbd>Windows</kbd> + <kbd>R</kbd> ouvre « Exécuter », <kbd>Ctrl</kbd> + <kbd>Maj</kbd> + <kbd>Échap</kbd> ouvre le Gestionnaire des tâches, <kbd>Windows</kbd> + <kbd>X</kbd> donne le menu des outils d'administration (dont le Gestionnaire de périphériques) : c'est le chemin de secours si <code>taskmgr</code> ou <code>devmgmt.msc</code> ne s'ouvre pas depuis « Exécuter ».</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands">Windows commands</a> (dont <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/chkdsk">chkdsk</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig">ipconfig</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/gpupdate">gpupdate</a>, <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/manage-bde-status">manage-bde</a>), <a href="https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-aduser">Get-ADUser</a>, <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-server/support-tools/support-tools-task-manager">Task Manager</a> ; Microsoft Support : <a href="https://support.microsoft.com/en-gb/accessibility/windows/keyboard-shortcuts-in-windows">raccourcis clavier de Windows</a>. Chaque commande est expliquée, avec sa source, dans le jour indiqué entre parenthèses.</p></aside>
 
 <h2 id="phrases">2. Phrases utiles au téléphone</h2>
 <div class="table-wrap"><table>
@@ -119,6 +120,8 @@ Confirmation de l'utilisateur : [oui/non, heure]</code></pre>
 </ul>
 <aside class="callout attention"><p>Jamais de <strong>mot de passe</strong>, de <strong>clé de récupération</strong> ou de donnée personnelle inutile dans un ticket.</p></aside>
 
+<aside class="callout source"><p>Les phrases (§2) et le modèle de ticket (§3) appliquent ce qui est sourcé aux <a href="j1.html">jour 1</a> (tickets, incidents et demandes) et <a href="j2.html">jour 2</a> (vérification d'identité, jamais de mot de passe demandé) : voir les encadrés de ces pages. Ce sont des modèles d'exercice ; les champs et formulations de l'UMONS sont à vérifier sur place.</p></aside>
+
 <h2 id="priorite">4. Priorité : impact × urgence</h2>
 <p>La <strong>priorité</strong> se déduit de l'<strong>impact</strong> (combien de personnes ou quelle fonction essentielle sont touchées) et de l'<strong>urgence</strong> (pour quand faut-il que ce soit réglé). Les niveaux et délais exacts (SLA) sont propres à l'organisation : <strong>à vérifier sur place</strong>.</p>
 <div class="table-wrap"><table>
@@ -128,7 +131,7 @@ Confirmation de l'utilisateur : [oui/non, heure]</code></pre>
 <tr><td><strong>Impact moyen</strong> (un service)</td><td>Haute</td><td>Moyenne</td><td>Basse</td></tr>
 <tr><td><strong>Impact faible</strong> (une personne)</td><td>Moyenne</td><td>Basse</td><td>Basse</td></tr>
 </tbody></table></div>
-<aside class="callout source"><p>ITIL : la priorité est le résultat de l'impact et de l'urgence ; la matrice exacte est choisie par l'organisation. Ce tableau n'est qu'un exemple pédagogique.</p></aside>
+<aside class="callout source"><p>ITIL (<a href="https://www.peoplecert.org/-/media/folders-reorganized/pdfs/itil-maturity-model/services-page/introduction-to-the-itil-mm.pdf">PeopleCert</a>) et <a href="https://support.atlassian.com/jira-service-management-cloud/docs/how-impact-and-urgency-are-used-to-calculate-priority/">Atlassian, impact et urgence</a> : la priorité est le résultat de l'impact et de l'urgence ; la matrice exacte est choisie par l'organisation. Ce tableau n'est qu'un exemple pédagogique.</p></aside>
 
 <nav class="jours-nav" aria-label="Navigation">
   <a class="btn ghost" href="j10.html">← Jour 10</a>
