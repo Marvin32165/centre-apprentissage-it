@@ -186,7 +186,7 @@ Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance 
 
 Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
 
-**File d'attente (mise à jour le 25/11 au soir)** — faits et fusionnés : lots 16 à 20, 22 à 24 et 26 (relectures, corrections, tests en situation des modules). Reste : lot 21 (ChatGPT relit les 5 premiers modules), puis lot 25 après le 18/12. Ancienne file, pour mémoire :
+**File d'attente (mise à jour le 25/11 au soir)** — faits et fusionnés : lots 16 à 20, 22 à 24 et 26 (relectures, corrections, tests en situation des modules). Reste : corrections et fusion du lot 21, puis lot 25 après le 18/12. Ancienne file, pour mémoire :
 1. ChatGPT (Astra, effort `high`, recherche web) : **17.1** relire J6 à J10 et la boîte à outils.
 2. ChatGPT : relire les quatre nouveaux modules — **18.3** `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, **24.3** `modules/sous-reseaux.html` — et les 12 appels de `assets/tickets-data.js` (lot 22) ; un rapport par page dans `docs/relectures/`.
 3. Claude Code : corriger d'après ces rapports, puis contrôles et coche (17.2–17.3, 18.4, 20.4, 23.4, 24.4).
@@ -307,7 +307,15 @@ Justifié : rédigé avant le lot 21, en autonomie ; relecture par ChatGPT à fa
 
 Reste : rien pour ce lot.
 
-## Lots 21 à 25
-Ils seront détaillés en sous-étapes au début de chaque lot, à partir du tableau ci-dessus. Pour le 22, utiliser les composants tickets existants (`CAS-0N` de `assets/jour.js`) sans toucher aux moteurs de l'atelier. Pour le 25, n'écrire que ce qui est public : aucune procédure interne, aucune IP, aucun nom.
+## Lot 21 — Relecture des faits : les cinq premiers modules
+- [x] 21.1 Relire les pages et les quiz de `support-windows`, `itil`, `reseau-base`, `ad-support` et `materiel-pc` selon `docs/procedures/relecture-sources.md`.
+  Fait (25/11, ChatGPT / Codex) : cinq rapports `docs/relectures/module-*.md`, 30 réponses de quiz couvertes et calculs IPv4 confirmés par script. Bilan des tableaux : 68 corrects, 40 faux et 14 non vérifiés. Pages et quiz laissés pour la passe de correction.
+- [ ] 21.2 Corriger ou justifier chaque « faux » et « non vérifié » dans une autre conversation (Claude Code), puis ajouter le suivi dans les rapports.
+- [ ] 21.3 Lancer `npm run controles`, cocher la fin du lot et fusionner `lot-21` dans `main`.
+
+Reste : 21.2 et 21.3 sur `lot-21`.
+
+## Lot 25 — Retour du terrain
+À détailler après le 18/12, à partir du tableau ci-dessus. N'écrire que ce qui est public : aucune procédure interne, aucune IP, aucun nom.
 
 Après le 7/12 : le journal de stage reste privé, **hors de ce dépôt**.
