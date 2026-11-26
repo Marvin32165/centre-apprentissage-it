@@ -183,3 +183,11 @@ DA inchangée (couleurs, polices, AA, cibles ≥ 44 px, mouvement réduit). Chaq
 - Un schéma ne dit rien de plus que sa section et sa source : il est relu par l'autre outil (rapport `docs/relectures/schemas.md`).
 - Les schémas sont générés par `outils/schemas.py` (outil de travail) puis collés dans les pages : pas d'étape de build pour le site. Pour modifier un schéma, modifier le script, le relancer et recoller la `<figure>`.
 
+### 5.4 Lot 32 — Mouvement et micro-interactions
+- Tout se coupe avec `prefers-reduced-motion: reduce` (contrôlé par le parcours « mouvement réduit »).
+- Transitions entre pages : View Transitions entre documents (`@view-transition`), activées seulement sans préférence de mouvement réduit ; l'en-tête reste en place (`view-transition-name: entete`), le reste se fond en 0,22 s. Sans prise en charge, rien ne change.
+- Apparition au défilement des schémas, cartes, citations « À retenir », quiz et minuteur situés sous la ligne de flottaison : opacité et décalage de 14 px, une seule fois (`IntersectionObserver`). Rien n'est masqué sans `IntersectionObserver`, en mouvement réduit, ni pour les outils de contrôle automatisés (`navigator.webdriver`), qui lisent la page sans défiler.
+- Corrections `<details class="correction">` qui s'ouvrent en hauteur (`::details-content`, `interpolate-size`), là où le navigateur le permet.
+- Quiz : la bonne réponse choisie fait un léger rebond, la mauvaise tremble ; le score s'affiche en grand (Newsreader, chiffre rouille qui compte de 0 au score en 0,7 s ; le texte annoncé aux lecteurs d'écran reste « Score : n / N »).
+- Survol et appui : boutons et puces qui s'enfoncent d'un pixel, cartes qui se soulèvent de 2 px avec une ombre très douce, anneau de focus qui se décale.
+

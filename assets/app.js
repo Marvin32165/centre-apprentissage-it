@@ -310,6 +310,24 @@
     });
   }
 
+  function mouvementReduit() { return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); }
+
+  /* ---------- Apparition douce au défilement (schémas, cartes, citations) ----------
+     Rien n'est masqué si le mouvement est réduit, sans IntersectionObserver, ou pour les outils de contrôle automatisés (qui lisent la page sans défiler). */
+  function initApparition() {
+    if (mouvementReduit() || !("IntersectionObserver" in window) || navigator.webdriver) return;
+    var cibles = document.querySelectorAll("main .schema, main .card, main .callout.retenir, main .quiz, main .seance");
+    var h = window.innerHeight || 800;
+    var io = new IntersectionObserver(function (entrees) {
+      entrees.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("revele"); io.unobserve(en.target); } });
+    }, { rootMargin: "0px 0px -8% 0px" });
+    Array.prototype.forEach.call(cibles, function (c) {
+      if (c.getBoundingClientRect().top < h) return;
+      c.classList.add("a-reveler");
+      io.observe(c);
+    });
+  }
+
   /* ---------- Tableaux : sur mobile, chaque ligne devient une carte (étiquettes tirées de l'en-tête) ---------- */
   function initTableaux() {
     var tables = document.querySelectorAll("main .table-wrap > table");
@@ -423,6 +441,15 @@
         box.classList.add("corrige");
         submit.remove();
         out.textContent = "Score : " + txt + ".";
+        var grand = el("p", { "class": "score-grand", "aria-hidden": "true" });
+        var gN = el("span", { "class": "score-n" }, String(score));
+        grand.appendChild(gN); grand.appendChild(document.createTextNode(" / " + quiz.questions.length));
+        out.parentNode.insertBefore(grand, out);
+        if (!mouvementReduit() && score > 0) {
+          var t0 = null;
+          var pas = function (t) { if (!t0) t0 = t; var k = Math.min(1, (t - t0) / 700); gN.textContent = String(Math.round(score * (1 - Math.pow(1 - k, 3)))); if (k < 1) requestAnimationFrame(pas); };
+          gN.textContent = "0"; requestAnimationFrame(pas);
+        }
         var retry = el("button", { type: "button", "class": "btn ghost" }, "Recommencer");
         retry.addEventListener("click", function () { render(); box.scrollIntoView({ block: "start" }); });
         out.parentNode.appendChild(retry);
@@ -604,6 +631,7 @@
   initTableaux();
   initMarge();
   initQuizzes();
+  initApparition();
   initReprise();
   initRecherche();
 

@@ -1124,3 +1124,37 @@ code, kbd, pre, .meta-page, table { hyphens: none; -webkit-hyphens: none; }
 .s-num { fill: var(--accent); }
 .s-num-t { font-family: var(--font-code); font-size: 12px; font-weight: 500; fill: var(--on-accent); }
 @media print { .schema { break-inside: avoid; } .s-boite.sombre { fill: #fff; stroke: #000; } .schema svg rect.sombre + text, .schema svg rect.sombre + text + text { fill: #000; } }
+
+/* ===== Lot 32 : mouvement et micro-interactions (tout se coupe avec prefers-reduced-motion) ===== */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  .site-header { view-transition-name: entete; }
+}
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.22s; }
+/* Apparition au défilement */
+.a-reveler { opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.a-reveler.revele { opacity: 1; transform: none; }
+/* Corrections qui s'ouvrent en douceur (navigateurs récents) */
+:root { interpolate-size: allow-keywords; }
+details.correction::details-content { block-size: 0; overflow: hidden; transition: block-size 0.3s ease, content-visibility 0.3s allow-discrete; }
+details.correction[open]::details-content { block-size: auto; }
+/* Quiz : la bonne réponse s'affirme, la mauvaise tremble, le score s'affiche en grand */
+.quiz .opt.bon { animation: ok-pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1); }
+.quiz .opt.faux { animation: ko-secousse 0.4s ease; }
+@keyframes ok-pop { 0% { transform: scale(0.98); } 60% { transform: scale(1.015); } 100% { transform: none; } }
+@keyframes ko-secousse { 20% { transform: translateX(-4px); } 40% { transform: translateX(4px); } 60% { transform: translateX(-2px); } 80% { transform: translateX(2px); } }
+.score-grand { margin: var(--s4) 0 0; font-family: var(--font-text); font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem); line-height: 1; color: var(--ink-pale); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.score-n { color: var(--accent); }
+/* États au survol, à l'appui et au focus */
+.btn { transition: background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.12s; }
+.btn:active, .puce:active, .fil-btn:active { transform: translateY(1px); }
+a.card, .mod-card { transition: border-color 0.15s, transform 0.2s ease, box-shadow 0.2s ease; }
+a.card:hover, a.mod-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -18px rgba(27, 23, 19, 0.45); }
+:focus-visible { outline-offset: 3px; transition: outline-offset 0.12s; }
+.toc-liste a, .jours-liste a, .sommaire-mod a { transition: color 0.15s, border-color 0.15s, background-color 0.15s; }
+@media (prefers-reduced-motion: reduce) {
+  .a-reveler { opacity: 1; transform: none; transition: none; }
+  details.correction::details-content { transition: none; }
+  .quiz .opt.bon, .quiz .opt.faux { animation: none; }
+  a.card:hover, a.mod-card:hover, .btn:active, .puce:active, .fil-btn:active { transform: none; }
+}
