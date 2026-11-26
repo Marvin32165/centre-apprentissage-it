@@ -88,6 +88,34 @@
 
 <h2 id="plan-adressage">4. Découper un réseau : le plan d'adressage</h2>
 <p>L'exemple de Microsoft : un réseau <code>192.168.123.0/24</code> à répartir en trois réseaux de 50 hôtes. Le masque <code>255.255.255.192</code> (/26) donne quatre sous-réseaux de 62 hôtes : <code>.0</code>, <code>.64</code>, <code>.128</code> et <code>.192</code>, avec les plages <code>.1–.62</code>, <code>.65–.126</code>, <code>.129–.190</code> et <code>.193–.254</code>.</p>
+<figure class="schema" id="fig-decoupage">
+<svg viewBox="0 0 400 300" role="img" aria-labelledby="decoupage-t decoupage-d"><title id="decoupage-t">Un /24 découpé en quatre /26</title><desc id="decoupage-d">Le réseau 192.168.123.0/24 découpé avec le masque 255.255.255.192 donne quatre sous-réseaux : .0, .64, .128 et .192, avec les plages d&#x27;hôtes .1 à .62, .65 à .126, .129 à .190 et .193 à .254.</desc><defs><marker id="decoupage-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="s-pointe" d="M0 0L10 5L0 10z"/></marker><pattern id="decoupage-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="s-hachure" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<rect class="s-boite sombre" x="8" y="10" width="384" height="44" rx="8"/>
+<text class="s-titre" x="200.0" y="28.0" text-anchor="middle">192.168.123.0/24</text>
+<text class="s-sous" x="200.0" y="46.0" text-anchor="middle">256 adresses</text>
+<rect class="s-boite accent" x="8" y="86" width="188" height="72" rx="8"/>
+<text class="s-titre" x="102.0" y="109.0" text-anchor="middle">192.168.123.0/26</text>
+<text class="s-sous" x="102.0" y="127.0" text-anchor="middle">hôtes .1 à .62</text>
+<text class="s-sous" x="102.0" y="145.0" text-anchor="middle">diffusion .63</text>
+<rect class="s-boite " x="204" y="86" width="188" height="72" rx="8"/>
+<text class="s-titre" x="298.0" y="109.0" text-anchor="middle">192.168.123.64/26</text>
+<text class="s-sous" x="298.0" y="127.0" text-anchor="middle">hôtes .65 à .126</text>
+<text class="s-sous" x="298.0" y="145.0" text-anchor="middle">diffusion .127</text>
+<rect class="s-boite " x="8" y="172" width="188" height="72" rx="8"/>
+<text class="s-titre" x="102.0" y="195.0" text-anchor="middle">192.168.123.128/26</text>
+<text class="s-sous" x="102.0" y="213.0" text-anchor="middle">hôtes .129 à .190</text>
+<text class="s-sous" x="102.0" y="231.0" text-anchor="middle">diffusion .191</text>
+<rect class="s-boite " x="204" y="172" width="188" height="72" rx="8"/>
+<text class="s-titre" x="298.0" y="195.0" text-anchor="middle">192.168.123.192/26</text>
+<text class="s-sous" x="298.0" y="213.0" text-anchor="middle">hôtes .193 à .254</text>
+<text class="s-sous" x="298.0" y="231.0" text-anchor="middle">diffusion .255</text>
+<path class="s-trait " d="M102 54V84" marker-end="url(#decoupage-p)"/>
+<path class="s-trait " d="M298 54V84" marker-end="url(#decoupage-p)"/>
+<text class="s-etiq" x="200" y="272" text-anchor="middle">masque 255.255.255.192 · pas de 64</text>
+<text class="s-etiq" x="200" y="290" text-anchor="middle">62 hôtes utilisables par sous-réseau</text>
+</svg>
+<figcaption><span class="fig-n">Fig.</span> L'exemple de Microsoft : 192.168.123.0/24 en quatre /26 de 62 hôtes.</figcaption>
+</figure>
 <h3>Des sous-réseaux de tailles différentes</h3>
 <p>Quand les besoins diffèrent, on choisit pour chacun le plus petit bloc suffisant, en commençant par le plus grand besoin (pour que chaque bloc commence sur un multiple de sa taille) :</p>
 <ol>

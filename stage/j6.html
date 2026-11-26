@@ -50,6 +50,37 @@
 <tr><td><strong>GPO</strong> (stratégie de groupe)</td><td>Un jeu de paramètres appliqué automatiquement aux utilisateurs ou aux ordinateurs ; une GPO se lie à un site, au domaine ou à une OU (fond d'écran, lecteurs réseau, pare-feu…). Les règles de mot de passe des comptes du domaine se définissent au niveau du domaine, pas d'une OU.</td></tr>
 <tr><td><strong>Authentification Kerberos</strong></td><td>Le mécanisme par défaut qui permet de se connecter au domaine sans renvoyer le mot de passe à chaque service.</td></tr>
 </tbody></table></div>
+<figure class="schema" id="fig-annuaire">
+<svg viewBox="0 0 400 360" role="img" aria-labelledby="annuaire-t annuaire-d"><title id="annuaire-t">Rangement, droits et paramètres dans l&#x27;annuaire</title><desc id="annuaire-d">Le domaine contient des OU : une OU de comptes et une OU d&#x27;ordinateurs. Un groupe donne des droits sur un dossier. Une GPO liée à une OU applique des paramètres aux objets de cette OU.</desc><defs><marker id="annuaire-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="s-pointe" d="M0 0L10 5L0 10z"/></marker><pattern id="annuaire-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="s-hachure" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<rect class="s-boite sombre" x="110" y="12" width="180" height="46" rx="8"/>
+<text class="s-titre" x="200.0" y="31.0" text-anchor="middle">Domaine</text>
+<text class="s-sous" x="200.0" y="49.0" text-anchor="middle">l&#x27;annuaire AD DS</text>
+<path class="s-trait " d="M160 58C150 78 110 78 104 96" marker-end="url(#annuaire-p)"/>
+<path class="s-trait " d="M240 58C250 78 290 78 296 96" marker-end="url(#annuaire-p)"/>
+<rect class="s-boite " x="14" y="98" width="180" height="52" rx="8"/>
+<text class="s-titre" x="104.0" y="120.0" text-anchor="middle">OU « Personnel »</text>
+<text class="s-sous" x="104.0" y="138.0" text-anchor="middle">rangement des comptes</text>
+<rect class="s-boite " x="206" y="98" width="180" height="52" rx="8"/>
+<text class="s-titre" x="296.0" y="120.0" text-anchor="middle">OU « Salles »</text>
+<text class="s-sous" x="296.0" y="138.0" text-anchor="middle">rangement des ordinateurs</text>
+<rect class="s-boite accent" x="14" y="194" width="180" height="52" rx="8"/>
+<text class="s-titre" x="104.0" y="216.0" text-anchor="middle">Groupe</text>
+<text class="s-sous" x="104.0" y="234.0" text-anchor="middle">rassemble des comptes</text>
+<path class="s-trait " d="M104 150V192" marker-end="url(#annuaire-p)"/>
+<rect class="s-boite hache" x="14" y="290" width="180" height="52" rx="8"/>
+<text class="s-titre" x="104.0" y="312.0" text-anchor="middle">Dossier partagé</text>
+<text class="s-sous" x="104.0" y="330.0" text-anchor="middle">droits donnés au groupe</text>
+<path class="s-trait " d="M104 246V288" marker-end="url(#annuaire-p)"/>
+<rect class="s-boite accent" x="206" y="194" width="180" height="52" rx="8"/>
+<text class="s-titre" x="296.0" y="216.0" text-anchor="middle">GPO liée à l&#x27;OU</text>
+<text class="s-sous" x="296.0" y="234.0" text-anchor="middle">fond d&#x27;écran, lecteurs…</text>
+<path class="s-trait s-retour" d="M296 194V152" marker-end="url(#annuaire-p)"/>
+<text class="s-etiq" x="300" y="280" text-anchor="middle">paramètres appliqués</text>
+<text class="s-etiq" x="300" y="296" text-anchor="middle">aux ordinateurs de l&#x27;OU</text>
+<text class="s-etiq" x="110" y="276" text-anchor="start">droits</text>
+</svg>
+<figcaption><span class="fig-n">Fig.</span> Rangement = OU, droits = groupes, paramètres = GPO.</figcaption>
+</figure>
 <aside class="callout retenir"><p><strong>Droits = groupes. Paramètres = GPO. Rangement = OU.</strong> Si quelqu'un « n'a pas accès », on regarde d'abord ses groupes (c'est une piste, pas une certitude). Si un poste « n'a pas le bon réglage », on regarde les GPO qui s'y appliquent.</p></aside>
 <aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview">Active Directory Domain Services overview</a>, <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-overview">Group Policy overview</a> (liens sur site, domaine et OU), <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing">Group Policy processing</a>, <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/account-policies">Account Policies</a> (stratégie de compte au niveau du domaine).</p></aside>
 

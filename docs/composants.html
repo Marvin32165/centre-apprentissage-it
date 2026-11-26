@@ -102,6 +102,27 @@ ping 127.0.0.1</code></pre>
 ipconfig /all</code></pre>
 <div class="table-wrap"><table><thead><tr><th>Colonne</th><th>Sur mobile</th></tr></thead><tbody><tr><td>Ligne</td><td>Sous 600 px, chaque ligne devient une carte, avec le nom de la colonne au-dessus de chaque valeur.</td></tr></tbody></table></div>
 <p>Sur les modules, un sommaire repliable suit la fiche, et à partir de 1200 px les encadrés « Source officielle » et « À l'UMONS » passent dans la marge droite, au début de leur section.</p>
+<h2 id="lot30">9. Schémas SVG (lot 30)</h2>
+<p>Charte : <code>docs/REFONTE.md</code> § 5.2. Exemple :</p>
+<figure class="schema" id="fig-couches-exemple">
+<svg viewBox="0 0 400 290" role="img" aria-labelledby="couches-ex-t couches-ex-d"><title id="couches-ex-t">Les quatre étages du modèle TCP/IP</title><desc id="couches-ex-d">De haut en bas : application, transport, internet, accès réseau. Le dépannage remonte du bas vers le haut.</desc><defs><marker id="couches-ex-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="s-pointe" d="M0 0L10 5L0 10z"/></marker><pattern id="couches-ex-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="s-hachure" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<rect class="s-boite " x="64" y="20" width="328" height="54" rx="8"/>
+<text class="s-titre" x="228.0" y="43.0" text-anchor="middle">Application</text>
+<text class="s-sous" x="228.0" y="61.0" text-anchor="middle">HTTP/HTTPS, DNS, SMB, SMTP, RDP</text>
+<rect class="s-boite " x="64" y="84" width="328" height="54" rx="8"/>
+<text class="s-titre" x="228.0" y="107.0" text-anchor="middle">Transport</text>
+<text class="s-sous" x="228.0" y="125.0" text-anchor="middle">TCP, UDP (ports)</text>
+<rect class="s-boite " x="64" y="148" width="328" height="54" rx="8"/>
+<text class="s-titre" x="228.0" y="171.0" text-anchor="middle">Internet</text>
+<text class="s-sous" x="228.0" y="189.0" text-anchor="middle">IPv4, IPv6, ICMP</text>
+<rect class="s-boite hache" x="64" y="212" width="328" height="54" rx="8"/>
+<text class="s-titre" x="228.0" y="235.0" text-anchor="middle">Accès réseau</text>
+<text class="s-sous" x="228.0" y="253.0" text-anchor="middle">Ethernet, Wi-Fi, VLAN</text>
+<path class="s-trait s-fort" d="M30 264V28" marker-end="url(#couches-ex-p)"/>
+<text class="s-etiq" transform="translate(20 148) rotate(-90)" text-anchor="middle">dépannage du bas vers le haut</text>
+</svg>
+<figcaption><span class="fig-n">Fig.</span> Les quatre étages TCP/IP ; on dépanne du bas vers le haut.</figcaption>
+</figure>
 </div></main>
 </body>
 </html>
