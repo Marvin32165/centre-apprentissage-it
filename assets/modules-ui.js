@@ -192,6 +192,29 @@
     }
   }
 
+  /* ---------- Sommaire d'un module (repliable, sous la fiche) ---------- */
+  function sommaire(box) {
+    var hs = Array.prototype.filter.call(document.querySelectorAll("main .prose h2[id]"), function (h) { return h.id !== "objectifs"; });
+    if (hs.length < 3) return;
+    var d = el("details", { "class": "sommaire-mod" });
+    var sm = el("summary", null, "Sur cette page");
+    sm.appendChild(el("span", { "class": "sommaire-n" }, hs.length + " sections"));
+    d.appendChild(sm);
+    var ol = el("ol");
+    hs.forEach(function (h) {
+      var li = el("li"), a = el("a", { href: "#" + h.id });
+      var sec = h.querySelector(".sec");
+      if (sec) a.appendChild(el("span", { "class": "toc-sec" }, sec.textContent));
+      var c = h.cloneNode(true);
+      Array.prototype.forEach.call(c.querySelectorAll(".sec, .duree"), function (n) { n.remove(); });
+      a.appendChild(document.createTextNode(c.textContent.replace(/\s+/g, " ").trim()));
+      li.appendChild(a); ol.appendChild(li);
+    });
+    d.appendChild(ol);
+    if (window.matchMedia && window.matchMedia("(min-width: 75rem)").matches) d.open = true;
+    box.parentNode.insertBefore(d, box.nextSibling);
+  }
+
   /* ---------- Suite d'un module : <div data-module-suite="id"> ---------- */
   function suite(box) {
     var m = mod(box.getAttribute("data-module-suite"));
@@ -343,6 +366,7 @@
     var c = document.getElementById("catalogue"); if (c) catalogue(c);
     Array.prototype.forEach.call(document.querySelectorAll("[data-parcours]"), parcours);
     Array.prototype.forEach.call(document.querySelectorAll("[data-module-meta]"), entete);
+    Array.prototype.forEach.call(document.querySelectorAll("[data-module-meta]"), sommaire);
     Array.prototype.forEach.call(document.querySelectorAll("[data-module-suite]"), suite);
     var ms = document.querySelector("[data-module-suite]"); if (ms) ficheMemo(ms);
     var t = document.getElementById("themes-liste"); if (t) themes(t);

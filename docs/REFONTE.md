@@ -162,3 +162,16 @@ Lots 8 à 12 de `docs/PLAN.md`. Chaque lot :
 - se vérifie en 390 et 1280 px, en clair et en sombre (le livre garde ses pages claires en sombre, seul le bureau fonce) ;
 - doit s'ouvrir sans erreur console ;
 - garde la navigation au clavier.
+
+## 5. Lots 29 à 33 : rendre le site plus beau
+DA inchangée (couleurs, polices, AA, cibles ≥ 44 px, mouvement réduit). Chaque lot range son CSS dans une section délimitée de `assets/style.css`.
+
+### 5.1 Lot 29 — Typographie et mise en page éditoriale
+- Titres fluides (`clamp()`) jusqu'à h4 ; `text-wrap: pretty` sur les paragraphes ; césure automatique dans le texte des cours (jamais dans le code, les tableaux, les cartes ni le minuteur) ; chiffres tabulaires dans les tableaux, durées et minuteur.
+- Listes : puces rouille, numéros en mono rouille.
+- Pages de jour : sous le chapeau, une ligne de repères en mono (`dl.meta-page` : durée, blocs, nombre d'encadrés de sources, questions pour le tuteur), construite par `jour.js` depuis `data.js`. Les modules gardent leur fiche (`dl.mod-fiche`).
+- « À retenir » (`callout retenir`) devient une citation mise en avant : sans fond, grand guillemet rouille, texte en italique plus grand. « Attention » : fond légèrement teinté de rouge, filet de 4 px.
+- Blocs de code : barre de titre sombre (trois points, langage en mono, bouton « Copier » intégré) ; langage déduit (cmdlet `Verbe-Nom` ou variable `$` = PowerShell, sinon « Invite de commandes ou PowerShell »), forçable par `data-langage`.
+- Tableaux : sous 600 px, chaque ligne devient une carte (étiquette de colonne en mono au-dessus de la valeur), sauf les tableaux à en-têtes de ligne (matrices).
+- Modules : sommaire repliable « Sur cette page » sous la fiche (ouvert à partir de 1200 px) ; à partir de 1200 px, les encadrés « Source officielle » et « À l'UMONS » (pas les questions pour le tuteur) passent dans la marge droite, au début de leur section, puis reviennent dans le texte sur écran plus étroit. Les pages de jour gardent leur colonne « Sur cette page » et leurs encadrés dans le texte.
+
