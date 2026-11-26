@@ -1232,3 +1232,27 @@ a.card:hover, a.mod-card:hover { transform: translateY(-2px); box-shadow: 0 10px
 .t4-tampon { transform-box: view-box; }
 .pictos-demo { display: flex; flex-wrap: wrap; gap: var(--s3) var(--s5); font-family: var(--font-code); font-size: 0.75rem; color: var(--ink-soft); }
 .picto-ex { display: inline-flex; align-items: center; gap: 6px; }
+
+/* ===== Lot 33 : icônes, mode sombre et finitions ===== */
+.pied-btn { display: inline-flex; align-items: center; gap: 8px; }
+.pied-btn svg { width: 15px; height: 15px; stroke-width: 1.75; }
+.btn svg { stroke-width: 1.75; }
+/* Touches de clavier dessinées */
+kbd { display: inline-block; min-width: 1.6em; padding: 0.1em 0.45em 0.06em; text-align: center; line-height: 1.35; background: linear-gradient(var(--surface), var(--paper)); border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 5px; box-shadow: inset 0 -1px 0 rgba(27, 23, 19, 0.06); font-size: 0.8em; color: var(--ink); white-space: nowrap; }
+/* Liens fins */
+.prose a { text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); text-underline-offset: 0.22em; }
+.prose a:hover { text-decoration-color: currentColor; }
+/* Mode sombre travaillé : niveaux de surface et blocs distincts */
+:root { --surface-2: var(--surface); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --surface-2: #221C17; } }
+:root[data-theme="dark"] { --surface-2: #221C17; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .ticket, :root:not([data-theme="light"]) .seance, :root:not([data-theme="light"]) .case.stage { background: var(--surface-2); }
+  :root:not([data-theme="light"]) .ticket-grille div { background: var(--surface-2); }
+  :root:not([data-theme="light"]) .code-block { border: 1px solid var(--line); }
+  :root:not([data-theme="light"]) .card.une, :root:not([data-theme="light"]) .sommaire-mod, :root:not([data-theme="light"]) .quiz { background: var(--surface-2); }
+  :root:not([data-theme="light"]) .s-boite.sombre { fill: var(--surface-2); }
+}
+:root[data-theme="dark"] .ticket, :root[data-theme="dark"] .seance, :root[data-theme="dark"] .case.stage, :root[data-theme="dark"] .ticket-grille div, :root[data-theme="dark"] .card.une, :root[data-theme="dark"] .sommaire-mod, :root[data-theme="dark"] .quiz { background: var(--surface-2); }
+:root[data-theme="dark"] .code-block { border: 1px solid var(--line); }
+:root[data-theme="dark"] .s-boite.sombre { fill: var(--surface-2); }

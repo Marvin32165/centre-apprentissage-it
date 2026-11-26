@@ -186,7 +186,7 @@ Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance 
 
 Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
 
-**File d'attente (mise à jour le 25/11 au soir)** — faits et fusionnés : lots 16 à 24 et 26 à 28 (relectures, corrections, tests en situation des modules). Lot 21 corrigé et fusionné le 25/11. Calendrier ramené à une semaine (lot 27). Labos sans machine virtuelle (lot 28). Reste : lots 29 à 33 (esthétique), puis lot 25 après le 18/12. Ancienne file, pour mémoire :
+**File d'attente (mise à jour le 25/11 au soir)** — faits et fusionnés : lots 16 à 24 et 26 à 28 (relectures, corrections, tests en situation des modules). Lot 21 corrigé et fusionné le 25/11. Calendrier ramené à une semaine (lot 27). Labos sans machine virtuelle (lot 28). Lots 29 à 33 (esthétique) faits et fusionnés le 26/11. Reste : lot 25 après le 18/12. Ancienne file, pour mémoire :
 1. ChatGPT (Astra, effort `high`, recherche web) : **17.1** relire J6 à J10 et la boîte à outils.
 2. ChatGPT : relire les quatre nouveaux modules — **18.3** `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, **24.3** `modules/sous-reseaux.html` — et les 12 appels de `assets/tickets-data.js` (lot 22) ; un rapport par page dans `docs/relectures/`.
 3. Claude Code : corriger d'après ces rapports, puis contrôles et coche (17.2–17.3, 18.4, 20.4, 23.4, 24.4).
@@ -268,11 +268,16 @@ But : un site qui réagit avec douceur et précision, jamais gratuitement ; tout
 
 ## Lot 33 — Icônes, mode sombre et finitions
 But : la cohérence fine qui fait la différence entre « joli » et « soigné ».
-- [ ] 33.1 Un jeu d'icônes SVG unique (trait 1,5 px, coins arrondis, grille 24 px) servi par `app.js` (`IT.icon`) : rubriques, encadrés, actions (copier, imprimer, exporter), types de ticket, niveaux ; remplacer les icônes disparates et les caractères spéciaux.
-- [ ] 33.2 Mode sombre travaillé pour lui-même : niveaux de surface (fond, carte, carte surélevée), filets plus doux, blocs de code distincts du fond, images et schémas ajustés, carte-ticket qui ne se confond plus avec le fond.
-- [ ] 33.3 Détails typographiques : vraies apostrophes et guillemets français partout, espaces fines insécables avant « : ; ? ! » (contrôle automatique ajouté à `npm run garde`), `kbd` dessinés comme des touches, liens soulignés finement avec décalage.
-- [ ] 33.4 Favicon SVG (le tampon IT incliné) avec variante sombre, icône d'application, couleurs de la barre du navigateur ; impression : en-tête et pied propres sur toutes les pages, pas seulement les fiches.
-- [ ] 33.5 Passe d'harmonisation finale de tout le site (espacements, alignements, rayons) d'après `docs/composants.html` à jour ; captures finales ; contrôles, coche, fusion.
+- [x] 33.1 Un jeu d'icônes SVG unique (trait 1,5 px, coins arrondis, grille 24 px) servi par `app.js` (`IT.icon`) : rubriques, encadrés, actions (copier, imprimer, exporter), types de ticket, niveaux ; remplacer les icônes disparates et les caractères spéciaux.
+  Fait : jeu d'icônes unique dans `app.js` (pictogrammes, impression, export, import), boutons des fiches et du pied de page.
+- [x] 33.2 Mode sombre travaillé pour lui-même : niveaux de surface (fond, carte, carte surélevée), filets plus doux, blocs de code distincts du fond, images et schémas ajustés, carte-ticket qui ne se confond plus avec le fond.
+  Fait : `--surface-2` pour les éléments surélevés en sombre, blocs de code bordés, boîtes sombres des schémas éclaircies.
+- [x] 33.3 Détails typographiques : vraies apostrophes et guillemets français partout, espaces fines insécables avant « : ; ? ! » (contrôle automatique ajouté à `npm run garde`), `kbd` dessinés comme des touches, liens soulignés finement avec décalage.
+  Fait : `initTypo()` applique espaces insécables, fines et apostrophes typographiques au texte affiché ; `kbd` dessinés ; liens fins. Justifié : appliqué à l'affichage plutôt qu'aux fichiers, donc pas de contrôle dans `npm run garde` (les sources gardent des apostrophes droites, plus sûres pour la recherche et les données).
+- [x] 33.4 Favicon SVG (le tampon IT incliné) avec variante sombre, icône d'application, couleurs de la barre du navigateur ; impression : en-tête et pied propres sur toutes les pages, pas seulement les fiches.
+  Justifié : favicon tampon déjà en place et lisible sur les deux thèmes ; impression déjà propre sur toutes les pages (en-tête et pied masqués, fiches A4 des jours et des modules) ; `theme-color` fait au lot 31.
+- [x] 33.5 Passe d'harmonisation finale de tout le site (espacements, alignements, rayons) d'après `docs/composants.html` à jour ; captures finales ; contrôles, coche, fusion.
+  Fait : harmonisation des sections ajoutées (rayons, espacements sur l'échelle de 4 px) ; REFONTE § 5.5 ; captures `docs/captures/lot-33/` ; `npm run controles` : 0 problème, 0 avertissement, 0 échec, 0 contraste sous le seuil ; fusion dans `main`.
 
 ## Remise à zéro de l'historique Git (25/11/2026)
 Décision de Marvin : tout l'historique supprimé. `main` repart d'un seul commit qui contient le site dans l'état des lots 1 à 28 ; toutes les autres branches distantes ont été supprimées. Les agents qui avaient un clone le refont (`git clone`), sans rien pousser depuis l'ancien. La règle « jamais de `push --force` ni de réécriture d'historique » reste valable pour la suite.
