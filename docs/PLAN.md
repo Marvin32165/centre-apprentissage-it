@@ -186,13 +186,71 @@ Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance 
 
 Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
 
-**File d'attente (mise à jour le 25/11 au soir)** — faits et fusionnés : lots 16 à 24 et 26 à 28 (relectures, corrections, tests en situation des modules). Lot 21 corrigé et fusionné le 25/11. Calendrier ramené à une semaine (lot 27). Labos sans machine virtuelle (lot 28). Lots 29 à 33 (esthétique) faits et fusionnés le 26/11. Reste : lot 25 après le 18/12. Ancienne file, pour mémoire :
+**File d'attente (mise à jour le 25/11 au soir)** — faits et fusionnés : lots 16 à 24 et 26 à 28 (relectures, corrections, tests en situation des modules). Lot 21 corrigé et fusionné le 25/11. Calendrier ramené à une semaine (lot 27). Labos sans machine virtuelle (lot 28). Lots 29 à 33 (esthétique) faits et fusionnés le 26/11. À faire : lot 34 (glossaire) si possible avant le 7/12, puis lots 35 à 39 (modules pour la suite du stage) et lot 25 après le 18/12. Ancienne file, pour mémoire :
 1. ChatGPT (Astra, effort `high`, recherche web) : **17.1** relire J6 à J10 et la boîte à outils.
 2. ChatGPT : relire les quatre nouveaux modules — **18.3** `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, **24.3** `modules/sous-reseaux.html` — et les 12 appels de `assets/tickets-data.js` (lot 22) ; un rapport par page dans `docs/relectures/`.
 3. Claude Code : corriger d'après ces rapports, puis contrôles et coche (17.2–17.3, 18.4, 20.4, 23.4, 24.4).
 4. Lot 21 (ChatGPT relit les 5 premiers modules), puis lot 25 après le 18/12.
 
 **Nouveau calendrier (25/11)** : une semaine, du lundi 30/11 au dimanche 6/12, week-end compris (lot 27), qui remplace le paragraphe suivant. **Changement de rythme (24/11)** : à partir du mercredi 25/11, séances de 3 à 4 h par jour en semaine seulement. Le lot 26 fixe le calendrier des huit séances et précise le programme des deux séances doubles.
+
+## Lots 34 à 39 — Après la prépa : glossaire et modules pour la suite du stage
+Rédigé le 26/11/2026, à la demande de Marvin. But : accompagner la deuxième période du stage (janvier à février 2027 : maintenance avec le pôle opération, projets avec les experts N4) et les questions du quotidien. Chaque module suit `docs/procedures/nouveau-module.md` (sous-étapes N.1 page, N.2 données, N.3 relecture croisée puis test en situation, N.4 contrôles et fusion) ; labos **sans machine virtuelle** ; rien sur l'UMONS sans « à vérifier sur place ».
+
+**Règle de croisement** : l'outil qui écrit ne relit pas. Par défaut, Claude Code écrit et Codex / ChatGPT relit les faits (`relecture-sources.md`, recherche web activée) et fait le test en situation (`test-chef.md`) ; on peut inverser lot par lot, en l'indiquant sous le lot.
+
+| Lot | Contenu | Pour quand | Écrit | Relit et teste | Effort |
+|---|---|---|---|---|---|
+| 34 | Glossaire français-anglais du service desk | avant le 7/12 si possible | Claude Code | Codex | `medium` |
+| 35 | Module « Sécurité du poste » | décembre | Claude Code | Codex | `high` |
+| 36 | Module « Jira Service Management au quotidien » | décembre | Codex | Claude Code | `high` |
+| 37 | Module « Déploiement et gestion des postes » | janvier | Claude Code | Codex | `high` |
+| 38 | Module « Sauvegarde et restauration » | janvier | Codex | Claude Code | `high` |
+| 39 | Module « Bases de Linux pour le support » | février | Claude Code | Codex | `high` |
+
+## Lot 34 — Glossaire français-anglais du service desk
+Une page `stage/glossaire.html` : les termes que l'on croise en anglais dans Jira, Microsoft 365, Windows et ITIL, avec leur équivalent français, une définition d'une ligne, la page du site qui l'explique et la source officielle. Recherche intégrée (index), tri alphabétique, filtre par domaine, lisible au téléphone.
+- [ ] 34.1 Liste des termes (au moins 80) tirée **des pages du site** (incident, problem, known error, workaround, SLA, queue, assignee, escalation, Full Access, Send As, Send on Behalf, lease, gateway, OU, GPO, recovery key, safe mode…) ; données dans `assets/glossaire.js` ; chaque terme renvoie à sa section du site et à une source officielle.
+- [ ] 34.2 Page `stage/glossaire.html` (filtre par domaine, recherche locale, ancre par terme), liens depuis `stage/index.html`, la boîte à outils et le pied des pages de jour ; `npm run index`.
+- [ ] 34.3 Relecture croisée par Codex (rapport `docs/relectures/glossaire.md`) ; corrections dans une autre conversation.
+- [ ] 34.4 `npm run controles`, coche, fusion.
+
+## Lot 35 — Module « Sécurité du poste »
+Domaine Sécurité. Pistes, chacune à sourcer (Microsoft Learn, CISA, Centre pour la cybersécurité Belgique) : reconnaître un hameçonnage et le signaler, Microsoft Defender (état, analyse, quarantaine, sans désactiver), mises à jour et redémarrages, compte compromis (que faire, dans quel ordre), clé USB inconnue, données sensibles et verrouillage du poste. Labo sur son propre PC en lecture (état de Defender, historique de protection, `Get-MpComputerStatus`), mises en situation, quiz. Procédure de sécurité de l'UMONS : « à vérifier sur place ».
+- [ ] 35.1 Page `modules/securite-poste.html`.
+- [ ] 35.2 Données : `modules.js` (retirer de `aVenir` si présent), quiz `module-securite-poste`, unité, index.
+- [ ] 35.3 Relecture croisée par Codex (`docs/relectures/module-securite-poste.md`), puis test en situation ; corrections dans une autre conversation.
+- [ ] 35.4 `npm run controles`, coche, fusion.
+
+## Lot 36 — Module « Jira Service Management au quotidien »
+Domaine Gestion. Approfondit le J3 : files et filtres, SLA (lire un compteur, pause, objectifs), liens entre tickets, commentaires internes et réponses au client, base de connaissances, macros et réponses types, automatisations simples (lecture), bonnes pratiques de rédaction. Sources : documentation Atlassian. Labo sur une instance Jira Service Management gratuite (si Marvin en crée une) ou sur papier. Configuration de Jira à l'UMONS : « à vérifier sur place ».
+- [ ] 36.1 Page `modules/jira-quotidien.html` (rédigée par Codex).
+- [ ] 36.2 Données : `modules.js`, quiz `module-jira-quotidien`, unité, index.
+- [ ] 36.3 Relecture croisée par Claude Code (`docs/relectures/module-jira-quotidien.md`), puis test en situation ; corrections dans une autre conversation.
+- [ ] 36.4 `npm run controles`, coche, fusion.
+
+## Lot 37 — Module « Déploiement et gestion des postes »
+Domaine Matériel (ou Windows). Pistes : cycle de vie d'un poste (réception, inventaire, préparation, remise, retrait et effacement), image de référence et installation automatisée, Windows Autopilot et Intune en principe (sources Microsoft Learn), jonction au domaine ou à Entra ID, applications déployées, nommage et inventaire. Labo sans VM : lire l'état de gestion de son PC (`dsregcmd /status`, Paramètres → Comptes → Accès Professionnel ou Scolaire), exercice d'inventaire et de préparation sur papier. Outils de l'UMONS : « à vérifier sur place ».
+- [ ] 37.1 Page `modules/deploiement-postes.html`.
+- [ ] 37.2 Données : `modules.js`, quiz `module-deploiement-postes`, unité, index.
+- [ ] 37.3 Relecture croisée par Codex (`docs/relectures/module-deploiement-postes.md`), puis test en situation ; corrections dans une autre conversation.
+- [ ] 37.4 `npm run controles`, coche, fusion.
+
+## Lot 38 — Module « Sauvegarde et restauration »
+Domaine Support. Pistes : où sont les données d'un utilisateur (profil, OneDrive, partages), versions précédentes et corbeille OneDrive, historique des fichiers, restauration d'un fichier supprimé ou écrasé, sauvegarde avant intervention (quoi, où, vérifier), règle « 3-2-1 » seulement si une source primaire l'établit. Sources : Microsoft Support et Learn. Labo sur son propre PC : restaurer une version précédente d'un fichier de test dans OneDrive. Politique de sauvegarde de l'UMONS : « à vérifier sur place ».
+- [ ] 38.1 Page `modules/sauvegarde-restauration.html` (rédigée par Codex).
+- [ ] 38.2 Données : `modules.js`, quiz `module-sauvegarde-restauration`, unité, index.
+- [ ] 38.3 Relecture croisée par Claude Code (`docs/relectures/module-sauvegarde-restauration.md`), puis test en situation ; corrections dans une autre conversation.
+- [ ] 38.4 `npm run controles`, coche, fusion.
+
+## Lot 39 — Module « Bases de Linux pour le support »
+Domaine Linux et scripts. Pistes : se connecter en SSH depuis Windows (client OpenSSH intégré), se repérer (`pwd`, `ls`, `cd`, `cat`, `less`), lire des journaux (`journalctl`), état d'un service (`systemctl status`), espace disque (`df -h`), réseau (`ip a`, `ping`), droits (`ls -l`, `sudo` : jamais sans procédure). Sources : documentation Debian, pages de manuel, Microsoft Learn pour OpenSSH. Labo sans VM : WSL seulement si Marvin peut l'installer (à vérifier : WSL 2 utilise aussi la virtualisation et de la mémoire), sinon une console Linux en ligne d'un organisme officiel, ou sur papier avec des sorties décrites par la documentation. Serveurs de l'UMONS : « à vérifier sur place ».
+- [ ] 39.1 Page `modules/linux-support.html`.
+- [ ] 39.2 Données : `modules.js` (retirer de `aVenir` du domaine Linux), quiz `module-linux-support`, unité, index.
+- [ ] 39.3 Relecture croisée par Codex (`docs/relectures/module-linux-support.md`), puis test en situation ; corrections dans une autre conversation.
+- [ ] 39.4 `npm run controles`, coche, fusion.
+
+**Prompts types** : Claude Code ou Codex qui écrit : « Lis AGENTS.md et docs/PLAN.md, puis fais le lot 35 jusqu'à 35.2. » ; l'autre outil pour relire : « Lis docs/procedures/relecture-sources.md et relis modules/securite-poste.html. » ; puis « Lis docs/procedures/test-chef.md et teste modules/securite-poste.html, usage : <usage concret>. »
 
 ## Lots 29 à 33 — Rendre le site beaucoup plus beau
 Demande de Marvin (26/11) : cinq lots pour **améliorer l'esthétique à fond**, à partager entre Claude Code et Codex. Ce ne sont pas des corrections : on enrichit l'identité « Poste de garde » sans la trahir.
