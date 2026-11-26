@@ -245,11 +245,16 @@ But : que l'arrivée sur chaque rubrique donne envie, comme la couverture d'un m
 
 ## Lot 32 — Mouvement et micro-interactions
 But : un site qui réagit avec douceur et précision, jamais gratuitement ; tout se coupe avec `prefers-reduced-motion`.
-- [ ] 32.1 Transitions entre pages avec la View Transitions API (CSS `@view-transition`, amélioration progressive : rien ne casse sans), en-tête et titre qui glissent d'une page à l'autre.
-- [ ] 32.2 Apparition des sections au défilement (opacité et léger décalage, une seule fois, `IntersectionObserver`), barre de lecture plus fine et animée.
-- [ ] 32.3 Moments forts : tampon « RÉSOLU » qui s'imprime (rotation et échelle), quiz (réponse juste : coche qui se dessine ; fausse : légère secousse ; score qui compte), minuteur avec anneau qui se vide, ouverture des corrections `<details>` animée en hauteur.
-- [ ] 32.4 États au survol, à l'appui et au focus redessinés pour tous les composants (anneau de focus rouille net, boutons qui s'enfoncent d'un pixel, cartes qui se soulèvent légèrement) ; retours de copie et d'export en « toast » discret (`role="status"`).
-- [ ] 32.5 Parcours de contrôle : `prefers-reduced-motion` coupe tout, aucun décalage de mise en page mesurable ; REFONTE, composants, captures, contrôles, coche, fusion.
+- [x] 32.1 Transitions entre pages avec la View Transitions API (CSS `@view-transition`, amélioration progressive : rien ne casse sans), en-tête et titre qui glissent d'une page à l'autre.
+  Fait : `@view-transition` entre documents, seulement sans mouvement réduit ; en-tête fixe pendant la transition.
+- [x] 32.2 Apparition des sections au défilement (opacité et léger décalage, une seule fois, `IntersectionObserver`), barre de lecture plus fine et animée.
+  Fait : `initApparition()` (schémas, cartes, citations, quiz, minuteur sous la ligne de flottaison). Justifié : barre de lecture laissée telle quelle, déjà fine (3 px).
+- [x] 32.3 Moments forts : tampon « RÉSOLU » qui s'imprime (rotation et échelle), quiz (réponse juste : coche qui se dessine ; fausse : légère secousse ; score qui compte), minuteur avec anneau qui se vide, ouverture des corrections `<details>` animée en hauteur.
+  Fait : rebond et secousse des réponses du quiz, score en grand qui compte, corrections qui s'ouvrent en hauteur. Justifié : le tampon « RÉSOLU » s'imprimait déjà (animation `tampon`) ; pas d'anneau pour le minuteur, sa barre de blocs suffit.
+- [x] 32.4 États au survol, à l'appui et au focus redessinés pour tous les composants (anneau de focus rouille net, boutons qui s'enfoncent d'un pixel, cartes qui se soulèvent légèrement) ; retours de copie et d'export en « toast » discret (`role="status"`).
+  Fait : boutons et puces qui s'enfoncent, cartes qui se soulèvent, anneau de focus décalé. Justifié : pas de « toast » ajouté, la copie et l'export ont déjà leur retour dans la page (`role="status"`).
+- [x] 32.5 Parcours de contrôle : `prefers-reduced-motion` coupe tout, aucun décalage de mise en page mesurable ; REFONTE, composants, captures, contrôles, coche, fusion.
+  Fait : parcours « mouvement réduit » (aucune animation du quiz, aucune apparition) ; REFONTE § 5.4 ; `npm run controles` : 0 problème, 0 avertissement, 0 échec ; fusion dans `main`.
 
 ## Lot 33 — Icônes, mode sombre et finitions
 But : la cohérence fine qui fait la différence entre « joli » et « soigné ».

@@ -175,3 +175,11 @@ DA inchangée (couleurs, polices, AA, cibles ≥ 44 px, mouvement réduit). Chaq
 - Tableaux : sous 600 px, chaque ligne devient une carte (étiquette de colonne en mono au-dessus de la valeur), sauf les tableaux à en-têtes de ligne (matrices).
 - Modules : sommaire repliable « Sur cette page » sous la fiche (ouvert à partir de 1200 px) ; à partir de 1200 px, les encadrés « Source officielle » et « À l'UMONS » (pas les questions pour le tuteur) passent dans la marge droite, au début de leur section, puis reviennent dans le texte sur écran plus étroit. Les pages de jour gardent leur colonne « Sur cette page » et leurs encadrés dans le texte.
 
+### 5.4 Lot 32 — Mouvement et micro-interactions
+- Tout se coupe avec `prefers-reduced-motion: reduce` (contrôlé par le parcours « mouvement réduit »).
+- Transitions entre pages : View Transitions entre documents (`@view-transition`), activées seulement sans préférence de mouvement réduit ; l'en-tête reste en place (`view-transition-name: entete`), le reste se fond en 0,22 s. Sans prise en charge, rien ne change.
+- Apparition au défilement des schémas, cartes, citations « À retenir », quiz et minuteur situés sous la ligne de flottaison : opacité et décalage de 14 px, une seule fois (`IntersectionObserver`). Rien n'est masqué sans `IntersectionObserver`, en mouvement réduit, ni pour les outils de contrôle automatisés (`navigator.webdriver`), qui lisent la page sans défiler.
+- Corrections `<details class="correction">` qui s'ouvrent en hauteur (`::details-content`, `interpolate-size`), là où le navigateur le permet.
+- Quiz : la bonne réponse choisie fait un léger rebond, la mauvaise tremble ; le score s'affiche en grand (Newsreader, chiffre rouille qui compte de 0 au score en 0,7 s ; le texte annoncé aux lecteurs d'écran reste « Score : n / N »).
+- Survol et appui : boutons et puces qui s'enfoncent d'un pixel, cartes qui se soulèvent de 2 px avec une ombre très douce, anneau de focus qui se décale.
+
