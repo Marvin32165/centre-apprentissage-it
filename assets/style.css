@@ -1158,3 +1158,77 @@ a.card:hover, a.mod-card:hover { transform: translateY(-2px); box-shadow: 0 10px
   .quiz .opt.bon, .quiz .opt.faux { animation: none; }
   a.card:hover, a.mod-card:hover, .btn:active, .puce:active, .fil-btn:active { transform: none; }
 }
+
+/* ===== Lot 31 : pages d'entrée « couverture » ===== */
+/* Pictogrammes */
+.picto { display: inline-flex; align-items: center; justify-content: center; flex: none; color: var(--accent); }
+.picto svg { width: 22px; height: 22px; stroke-width: 1.5; }
+.card.rub > .picto { width: 44px; height: 44px; margin-bottom: var(--s1); border: 1px solid var(--line); border-radius: var(--r-m); background: var(--paper); }
+.card.rub > .picto svg { width: 24px; height: 24px; }
+.card.rub.livre > .picto { font-family: var(--fell, serif); }
+/* Ticket de l'accueil : perforations, tampon, code-barres */
+.ticket { position: relative; }
+.ticket::before, .ticket::after { content: ""; position: absolute; top: 58%; width: 22px; height: 22px; border-radius: 50%; background: var(--paper); transform: translateY(-50%); }
+.ticket::before { left: -11px; } .ticket::after { right: -11px; }
+.ticket-grille { position: relative; }
+.ticket-etat { display: inline-flex; align-items: center; padding: 3px 9px; border: 1.5px solid var(--bar-accent); border-radius: var(--r-s); transform: rotate(-4deg); }
+.ticket-pied { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); padding-top: var(--s3); border-top: 1px dashed rgba(237, 230, 218, 0.28); font-family: var(--font-code); font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--bar-soft); }
+.ticket-code { display: block; width: 9rem; height: 26px; opacity: 0.75; background: repeating-linear-gradient(90deg, var(--bar-ink) 0 2px, transparent 2px 4px, var(--bar-ink) 4px 5px, transparent 5px 8px, var(--bar-ink) 8px 11px, transparent 11px 12px, var(--bar-ink) 12px 13px, transparent 13px 16px); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ticket::before, :root:not([data-theme="light"]) .ticket::after { box-shadow: inset 0 0 0 1px var(--line); } }
+:root[data-theme="dark"] .ticket::before, :root[data-theme="dark"] .ticket::after { box-shadow: inset 0 0 0 1px var(--line); }
+/* Frise en ligne de temps */
+.frise { padding-bottom: 22px; }
+.frise li { position: relative; }
+.frise li::after { content: ""; position: absolute; left: -3px; right: -3px; bottom: -14px; height: 2px; background: var(--line); }
+.frise li:first-child::after { left: 50%; } .frise li:last-child::after { right: 50%; }
+.frise li::before { content: ""; position: absolute; z-index: 1; left: 50%; bottom: -18px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--paper); border: 2px solid var(--line); }
+.frise li:has(.fait)::before { background: var(--green); border-color: var(--green); }
+.frise li:has(.fait)::after { background: var(--green); }
+.frise li:has(.auj)::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.frise li:has(.stage)::before { background: var(--bar); border-color: var(--bar); }
+/* Programme de la prépa en sommaire de revue */
+.plan-jours.programme { border-top: 1px solid var(--ink); }
+.programme li { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr); gap: 2px var(--s4); align-items: baseline; padding: var(--s4) 0; }
+.prog-n { grid-row: span 2; font-family: var(--font-text); font-size: 2.25rem; font-style: italic; font-weight: 400; line-height: 1; color: var(--accent); font-variant-numeric: lining-nums; }
+.prog-corps { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.prog-titre { font-family: var(--font-text); font-size: 1.3rem; line-height: 1.25; }
+.prog-titre a { font-weight: 500; color: var(--ink); text-decoration: none; }
+.prog-titre a:hover { color: var(--accent); text-decoration: underline; }
+.prog-desc { font-family: var(--font-ui); font-size: 0.875rem; line-height: 1.45; color: var(--ink-soft); }
+.prog-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s3); font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-pale); }
+.prog-meta .fait { margin: 0; font-family: var(--font-ui); letter-spacing: 0; text-transform: none; }
+.programme li.auj { background: linear-gradient(90deg, var(--accent-soft), transparent 80%); }
+.programme li.auj .prog-date::after { content: " · aujourd'hui"; color: var(--accent); }
+@media (min-width: 48rem) { .programme li { grid-template-columns: 4rem minmax(0, 1fr) 11rem; } .prog-n { grid-row: auto; font-size: 2.75rem; } .prog-meta { flex-direction: column; align-items: flex-end; text-align: right; } }
+/* Modules : carte à la une et pictogrammes */
+.card.une { display: flex; flex-direction: row; gap: var(--s5); margin: var(--s6) 0 0; padding: var(--s5) var(--s6); border-color: var(--accent); background: linear-gradient(135deg, var(--accent-soft), var(--surface) 70%); }
+.card.une > .picto { width: 56px; height: 56px; border: 1.5px solid var(--accent); border-radius: var(--r-l); background: var(--paper); }
+.card.une > .picto svg { width: 30px; height: 30px; }
+.une-corps { min-width: 0; }
+.une-titre { margin: 0 0 var(--s2); font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.875rem); font-weight: 400; line-height: 1.15; letter-spacing: -0.015em; }
+.card .une-resume { margin: 0 0 var(--s2); }
+.card .une-meta { margin: 0; font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-pale); }
+@media (max-width: 30rem) { .card.une { flex-direction: column; gap: var(--s3); padding: var(--s5); } }
+.mod-kicker { display: flex; align-items: center; gap: 6px; }
+.mod-kicker .picto svg { width: 16px; height: 16px; }
+/* Atlas : pictogramme dans la tuile */
+.tuile-tete .picto { margin-right: auto; }
+.tuile-tete .picto svg { width: 24px; height: 24px; }
+.tuile.vide .picto { color: var(--ink-pale); }
+/* Page 404 illustrée */
+.ticket-404 { max-width: 26rem; margin: 0 0 var(--s6); }
+.ticket-404 svg { display: block; width: 100%; height: auto; font-family: var(--font-ui); }
+.t4-fond { fill: var(--surface); stroke: var(--ink); stroke-width: 1.5; }
+.t4-pointille { stroke: var(--line); stroke-width: 2; stroke-dasharray: 4 5; }
+.t4-etiq { font-family: var(--font-code); font-size: 11px; letter-spacing: 0.14em; fill: var(--ink-pale); }
+.t4-titre { font-family: var(--font-text); font-size: 24px; fill: var(--ink); }
+.t4-sous { font-size: 13px; fill: var(--ink-soft); }
+.t4-num { font-family: var(--font-code); font-size: 34px; fill: var(--accent); }
+.t4-tampon rect { fill: none; stroke: var(--red); stroke-width: 3; }
+.t4-tampon text { font-family: var(--font-code); font-size: 17px; font-weight: 600; letter-spacing: 0.16em; fill: var(--red); }
+@media (prefers-reduced-motion: no-preference) { .t4-tampon { animation: t4 0.5s 0.2s ease both; } }
+@keyframes t4 { from { opacity: 0; } to { opacity: 0.9; } }
+.card.une .kicker { font-family: var(--font-code); font-size: 0.6875rem; line-height: 1.5; color: var(--accent); margin-bottom: var(--s2); }
+.t4-tampon { transform-box: view-box; }
+.pictos-demo { display: flex; flex-wrap: wrap; gap: var(--s3) var(--s5); font-family: var(--font-code); font-size: 0.75rem; color: var(--ink-soft); }
+.picto-ex { display: inline-flex; align-items: center; gap: 6px; }

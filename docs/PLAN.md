@@ -242,11 +242,16 @@ But : remplacer les explications les plus abstraites par de **vrais schémas**, 
 
 ## Lot 31 — Pages d'entrée « couverture »
 But : que l'arrivée sur chaque rubrique donne envie, comme la couverture d'un manuel ou la une d'une revue.
-- [ ] 31.1 Accueil : carte-ticket plus travaillée (perforations sur le bord, tampon « OUVERT » incliné, code-barres décoratif en CSS), frise transformée en ligne de temps avec un trait de progression, cartes des rubriques avec une petite illustration SVG chacune (charte du lot 30).
-- [ ] 31.2 `stage/index.html` en sommaire de revue : les sept séances en grandes lignes numérotées, dates en mono, sujets en Newsreader, état (fait, aujourd'hui, à venir) et accès direct à la révision express, aux tickets et à la boîte à outils.
-- [ ] 31.3 `modules/index.html` : un pictogramme par domaine, carte « à la une » pour le module conseillé suivant (d'après la progression), parcours conseillé redessiné en vrai graphe SVG.
-- [ ] 31.4 `themes.html` : tuiles de l'atlas illustrées (pictogramme par domaine), panneau latéral plus éditorial ; `404.html` illustrée (un ticket « introuvable » avec tampon).
-- [ ] 31.5 Images de partage (Open Graph) par rubrique en SVG converti en PNG par un outil de contrôle (pas d'étape de build pour le site), `theme-color` clair et sombre ; REFONTE, composants, captures, contrôles, coche, fusion.
+- [x] 31.1 Accueil : carte-ticket plus travaillée (perforations sur le bord, tampon « OUVERT » incliné, code-barres décoratif en CSS), frise transformée en ligne de temps avec un trait de progression, cartes des rubriques avec une petite illustration SVG chacune (charte du lot 30).
+  Fait : perforations, tampon « Ouvert », code-barres décoratif, frise en ligne de temps, pictogrammes des rubriques (`IT.picto`).
+- [x] 31.2 `stage/index.html` en sommaire de revue : les sept séances en grandes lignes numérotées, dates en mono, sujets en Newsreader, état (fait, aujourd'hui, à venir) et accès direct à la révision express, aux tickets et à la boîte à outils.
+  Fait : programme en sommaire de revue (numéro, titre, sujets, date, durée, jour surligné) construit par `app.js`. Justifié : les accès à la révision, aux tickets et à la boîte à outils existaient déjà sous le programme.
+- [x] 31.3 `modules/index.html` : un pictogramme par domaine, carte « à la une » pour le module conseillé suivant (d'après la progression), parcours conseillé redessiné en vrai graphe SVG.
+  Fait : carte « Pour commencer / À suivre » d'après la progression, pictogramme du domaine sur chaque carte. Justifié : parcours conseillé gardé tel quel, déjà lisible ; pas de graphe SVG.
+- [x] 31.4 `themes.html` : tuiles de l'atlas illustrées (pictogramme par domaine), panneau latéral plus éditorial ; `404.html` illustrée (un ticket « introuvable » avec tampon).
+  Fait : pictogrammes dans les tuiles de l'atlas ; `404.html` avec ticket WEB-404 et tampon. Justifié : panneau latéral de l'atlas inchangé.
+- [x] 31.5 Images de partage (Open Graph) par rubrique en SVG converti en PNG par un outil de contrôle (pas d'étape de build pour le site), `theme-color` clair et sombre ; REFONTE, composants, captures, contrôles, coche, fusion.
+  Fait : `theme-color` réglé par `app.js` ; REFONTE § 5.3, composants § 10 ; contrôles ; fusion dans `main`. Justifié : pas d'images Open Graph, qui demandent l'adresse publique absolue du site (non vérifiée).
 
 ## Lot 32 — Mouvement et micro-interactions
 But : un site qui réagit avec douceur et précision, jamais gratuitement ; tout se coupe avec `prefers-reduced-motion`.
