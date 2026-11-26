@@ -380,7 +380,7 @@
         var row = el("div", { "class": "fp-ligne" });
         row.appendChild(el("span", { "class": "fp-k" }, k));
         var v = el("span", { "class": "fp-v" });
-        v.innerHTML = c.innerHTML.replace(/^\s*[:=,]\s*/, "");
+        v.innerHTML = c.innerHTML.replace(/^(\s|&nbsp;|\u00a0|\u202f)*[:=,](\s|&nbsp;)*/, "");
         row.appendChild(v);
         lignes.appendChild(row);
       });

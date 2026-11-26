@@ -209,30 +209,33 @@ net start spooler</code></pre>
 <aside class="callout umons"><p>La façon dont les imprimantes sont déployées à l'UMONS (serveur d'impression, impression « sécurisée » par badge, nommage des files) et ce que le service desk peut faire seul : à demander à ton tuteur.</p></aside>
 
 <h2 id="labo">Labo : ton réseau à la maison, sans rien casser <span class="duree">1 h 20</span></h2>
-<p>Pas de machine virtuelle : tu observes le réseau de ton PC et de ta box. Rien n'est modifié, sauf le renouvellement de l'adresse (quelques secondes de coupure : pas pendant un appel vidéo). Les noms <code>example.org</code> et <code>.invalid</code> sont réservés aux exemples et aux tests (RFC 2606).</p>
+<p>Pas de machine virtuelle : tu observes le réseau de ton PC et de ta box. Ouvre le <strong>Terminal</strong> (clic droit sur Démarrer → Terminal) : c'est PowerShell, nécessaire pour <code>Resolve-DnsName</code> et <code>Test-NetConnection</code>, qui ne marchent pas dans l'ancienne invite de commandes. Rien n'est modifié, sauf deux coupures de quelques secondes (le renouvellement de l'adresse et la liaison coupée) : pas pendant un appel vidéo. Les noms <code>example.org</code> et <code>.invalid</code> sont réservés aux exemples et aux tests (RFC 2606).</p>
 <h3>Lire sa configuration</h3>
 <ol>
   <li><code>ipconfig /all</code> : note l'adresse, le masque, la passerelle, le ou les serveurs DNS, « DHCP activé », le serveur DHCP et les dates du bail. Qui distribue les adresses chez toi ?</li>
-  <li><code>ipconfig /release</code> puis <code>ipconfig /renew</code> : relis <code>ipconfig /all</code>. Qu'est-ce qui a changé (dates du bail, adresse) ?</li>
+  <li><code>ipconfig /release</code> puis <code>ipconfig /renew</code> (le Wi-Fi tombe quelques secondes ; si Windows demande des droits d'administrateur, relance le Terminal en administrateur ; si <code>/renew</code> échoue, désactive puis réactive le Wi-Fi, ou redémarre le PC) : relis <code>ipconfig /all</code>. Qu'est-ce qui a changé (dates du bail, adresse) ?</li>
   <li><code>ping</code> de ta passerelle, puis <code>ping example.org</code>, puis <code>tracert example.org</code> : combien de sauts avant de quitter ta box ?</li>
   <li><code>Resolve-DnsName example.org</code> et <code>nslookup example.org</code> : quel serveur DNS répond ?</li>
   <li><code>Test-NetConnection example.org -Port 443</code> : lis <code>TcpTestSucceeded</code>.</li>
 </ol>
 <h3>Des pannes sans danger</h3>
 <ol>
-  <li><strong>Nom introuvable</strong> : <code>ping test.invalid</code> et <code>Resolve-DnsName test.invalid</code>. Que dit le message ? Compare avec un ping de ta passerelle, qui marche.</li>
+  <li><strong>Nom introuvable</strong> : <code>ping test.invalid</code> et <code>Resolve-DnsName test.invalid</code>. Que dit le message ? Compare avec <code>Resolve-DnsName example.org</code>, qui marche, et avec un ping de ta passerelle, qui marche.</li>
   <li><strong>Liaison coupée</strong> : désactive le Wi-Fi (ou débranche le câble), lis <code>ipconfig</code>, puis rétablis la connexion et relis-le.</li>
   <li><strong>Sur papier</strong> : pour chacune des quatre pannes ci-dessous, écris ce que tu verrais dans <code>ipconfig /all</code>, le premier test que tu ferais et ce que tu dirais à l'utilisateur. (1) Le serveur DHCP ne répond plus. (2) La passerelle configurée n'existe pas. (3) Le serveur DNS configuré est faux. (4) Le câble est débranché.</li>
 </ol>
 <details class="correction"><summary>Voir des repères pour contrôler tes résultats</summary>
 <ul>
   <li><strong>Configuration</strong> : en général, la box fait serveur DHCP, passerelle et DNS (même adresse pour les trois). Après <code>/renew</code>, les dates du bail sont nouvelles ; l'adresse reste souvent la même.</li>
-  <li><strong>Nom introuvable</strong> : « hôte introuvable » (ou une erreur DNS) alors que la passerelle répond : le réseau marche, la résolution échoue. C'est le raisonnement de la panne 3.</li>
+  <li><strong>Chemin</strong> : le saut 1 de <code>tracert</code> est en général l'adresse de ta box ; tu la quittes dès le saut 2. Un saut en <code>*</code> n'est pas forcément une panne.</li>
+  <li><strong>DNS</strong> : c'est <code>nslookup</code> qui affiche le serveur qui répond (lignes « Serveur » et « Address ») : souvent la box, parfois une adresse IPv6 ou « UnKnown », ce qui est normal. <code>Resolve-DnsName</code> donne les adresses obtenues.</li>
+  <li><strong>Port</strong> : <code>TcpTestSucceeded : True</code> veut dire que le port 443 répond, même si une ligne d'avertissement sur le ping échoue.</li>
+  <li><strong>Nom introuvable</strong> : le serveur DNS répond, mais ce nom n'existe pas (« nom DNS inexistant »), alors que <code>example.org</code> se résout. Avec un serveur DNS faux (panne 3), au contraire, <em>aucun</em> nom ne se résoudrait.</li>
   <li><strong>Liaison coupée</strong> : « Média déconnecté » dans <code>ipconfig</code> pour la carte concernée.</li>
-  <li><strong>Panne 1 (DHCP muet)</strong> : un poste en DHCP finit en 169.254.x.x, masque 255.255.0.0, sans passerelle ; premier test : un voisin a-t-il le même problème ?</li>
-  <li><strong>Panne 2 (passerelle fausse)</strong> : adresse valide, réseau local OK, rien au-delà ; <code>ipconfig /all</code> montre une passerelle différente de celle des postes qui marchent, et son ping échoue.</li>
-  <li><strong>Panne 3 (DNS faux)</strong> : les pings vers des adresses IP fonctionnent, les noms ne se résolvent pas.</li>
-  <li><strong>Panne 4 (câble)</strong> : « Média déconnecté » ; on vérifie le câble, la prise, le port du commutateur et la carte.</li>
+  <li><strong>Panne 1 (DHCP muet)</strong> : un poste en DHCP finit en 169.254.x.x, masque 255.255.0.0, sans passerelle ; premier test : un voisin a-t-il le même problème ? À l'utilisateur : « Votre poste n'obtient pas d'adresse du réseau ; je vérifie si d'autres personnes sont touchées et je transmets à l'équipe réseau si c'est le cas. »</li>
+  <li><strong>Panne 2 (passerelle fausse)</strong> : adresse valide, réseau local OK, rien au-delà ; <code>ipconfig /all</code> montre une passerelle différente de celle des postes qui marchent, et son ping échoue. À l'utilisateur : « Le réseau local fonctionne mais pas la sortie ; je compare votre réglage avec un poste qui marche. »</li>
+  <li><strong>Panne 3 (DNS faux)</strong> : <code>ipconfig /all</code> montre un serveur DNS différent de celui des postes qui marchent ; premier test : <code>nslookup</code> d'un nom (échec), puis <code>ping</code> d'une adresse IP (succès). À l'utilisateur : « Le réseau fonctionne, mais votre poste ne traduit plus les noms ; je corrige ou je transmets selon la procédure. »</li>
+  <li><strong>Panne 4 (câble)</strong> : « Média déconnecté » ; on vérifie le câble, la prise, le port du commutateur et la carte. À l'utilisateur : « Pouvez-vous vérifier que le câble est bien branché des deux côtés, ou essayer une autre prise ? »</li>
 </ul>
 <p>Sources : <a href="https://www.rfc-editor.org/rfc/rfc2606.html">RFC 2606</a> (noms réservés) et les encadrés des sections précédentes.</p>
 </details>
@@ -242,7 +245,7 @@ net start spooler</code></pre>
 <h3>1. « Je n'ai plus Internet »</h3>
 <p>Un utilisateur sur poste fixe filaire appelle : « Plus d'Internet ». Il voit un petit triangle jaune sur l'icône réseau. À la demande de <code>ipconfig</code>, il lit une adresse <code>169.254.12.7</code>.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>Le poste n'a pas reçu d'adresse DHCP. On vérifie d'abord le plus simple : câble bien branché, prise murale, autre prise ou poste voisin. On tente <code>ipconfig /release</code> puis <code>/renew</code>. Si les postes voisins sont aussi en 169.254, c'est un incident de masse (DHCP ou réseau) : escalade immédiate au réseau avec le nom du bâtiment et de la prise. Si seul ce poste est touché : câble ou port, puis N2.</p>
+<p>Le poste n'a pas reçu d'adresse DHCP. On vérifie d'abord le plus simple : câble bien branché, prise murale, autre prise ou poste voisin. On tente <code>ipconfig /release</code> puis <code>/renew</code>. Si les postes voisins sont aussi en 169.254, c'est un incident de masse (DHCP ou réseau) : escalade immédiate au réseau (circuit d'escalade à vérifier sur place) avec le nom du bâtiment et de la prise. Si seul ce poste est touché : câble ou port, puis N2.</p>
 </details>
 <h3>2. « Internet marche, mais pas le site de l'université »</h3>
 <p>Un enseignant dit pouvoir ouvrir n'importe quel site, sauf le site interne de son service. <code>ping</code> vers l'adresse d'un autre site marche.</p>
@@ -257,7 +260,7 @@ net start spooler</code></pre>
 <h3>4. « L'imprimante imprime des pages blanches »</h3>
 <p>Imprimante réseau, plusieurs utilisateurs l'utilisaient ce matin ; l'un d'eux imprime maintenant, mais seules des pages blanches sortent. Il y a aussi une file de documents en attente depuis hier.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>On demande si d'autres utilisateurs sont touchés, on regarde la file d'impression (travaux bloqués), on imprime d'abord une page de test depuis le panneau de l'imprimante elle-même (si elle sort blanche, c'est matériel : toner, tambour → N2 ; si elle est correcte, on cherche du côté de Windows, du pilote ou de la file). Si le problème se limite à un poste, on redémarre le spouleur après avoir prévenu l'utilisateur. Si toute la file est bloquée sur un serveur d'impression, on escalade à l'équipe qui le gère.</p>
+<p>On demande si d'autres utilisateurs sont touchés, on regarde la file d'impression (travaux bloqués), on imprime d'abord une page de test depuis le panneau de l'imprimante elle-même (si elle sort blanche, c'est matériel : toner, tambour → N2 (circuit d'escalade à vérifier sur place) ; si elle est correcte, on cherche du côté de Windows, du pilote ou de la file). Si le problème se limite à un poste, on redémarre le spouleur après avoir prévenu l'utilisateur. Si toute la file est bloquée sur un serveur d'impression, on escalade à l'équipe qui le gère.</p>
 </details>
 
 <h2 id="quiz">Quiz</h2>

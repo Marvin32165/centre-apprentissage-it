@@ -719,7 +719,8 @@
   initApparition();
   initReprise();
   initRecherche();
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initTypo); else initTypo();
+  /* Après les autres scripts différés (jour.js, modules-ui.js…), qui construisent encore du texte. */
+  if (document.readyState === "complete") initTypo(); else document.addEventListener("DOMContentLoaded", initTypo);
 
   window.IT = { store: store, el: el, icon: icon, picto: picto, isDone: isDone, renderProgress: renderProgress };
 })();
