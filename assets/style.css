@@ -1018,3 +1018,81 @@ details.rabat[open] { background: #F3EBDD; }
   .fp-tuteur ol { margin: 0; padding-left: 5mm; font-family: var(--font-ui); font-size: 9.5pt; line-height: 1.55; }
   .fp-pied { display: flex; justify-content: space-between; gap: 6mm; margin-top: auto; padding-top: 3mm; border-top: 1px solid #DDD3C3; font-family: var(--font-code); font-size: 7pt; letter-spacing: 0.06em; color: #6B5F52; }
 }
+
+/* ===== Lot 29 : typographie et mise en page éditoriale ===== */
+/* Rythme et finesse du texte */
+p { text-wrap: pretty; }
+.prose p, .prose li { hyphens: auto; -webkit-hyphens: auto; }
+.prose h2, .prose h3, .prose .lead { hyphens: manual; }
+h3 { font-size: clamp(1.2rem, 1.1rem + 0.4vw, 1.375rem); }
+h4 { font-size: clamp(1.05rem, 1rem + 0.2vw, 1.15rem); }
+table, .seance-temps, .plan-horaire .h, .duree, .meta-page dd { font-variant-numeric: tabular-nums; }
+.prose > .lead { margin-bottom: var(--s5); }
+/* Listes dessinées */
+.prose ul > li::marker { color: var(--accent); }
+.prose ol > li::marker { font-family: var(--font-code); font-size: 0.82em; color: var(--accent); }
+.prose li + li { margin-top: var(--s1); }
+
+/* En-tête de page : ligne de repères en mono (jours ; les modules ont leur fiche) */
+.meta-page { display: flex; flex-wrap: wrap; gap: var(--s3) var(--s6); margin: 0 0 var(--s6); padding: var(--s3) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-family: var(--font-ui); }
+.meta-page div { min-width: 5.5rem; }
+.meta-page dt { font-family: var(--font-code); font-size: 0.625rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-pale); }
+.meta-page dd { margin: 2px 0 0; font-size: 0.9375rem; color: var(--ink); }
+
+/* « À retenir » : citation mise en avant */
+.callout.retenir { position: relative; margin: var(--s6) 0; padding: var(--s1) 0 var(--s1) 3.25rem; background: transparent; border-left: 0; border-radius: 0; font-size: clamp(1.15rem, 1.08rem + 0.3vw, 1.3rem); line-height: 1.5; font-style: italic; color: var(--ink); }
+.callout.retenir::after { content: "\201C"; position: absolute; left: 0; top: -0.08em; font-family: var(--font-text); font-size: 4.25rem; font-style: normal; line-height: 1; color: var(--accent); }
+.callout.retenir strong { font-weight: 600; }
+.callout.retenir code { font-style: normal; }
+/* « Attention » plus net */
+:root { --red-soft: #F3EAE4; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --red-soft: #261D18; } }
+:root[data-theme="dark"] { --red-soft: #261D18; }
+.callout.attention { background: var(--red-soft); border-left-width: 4px; }
+
+/* Blocs de code : barre de titre avec le langage et le bouton copier */
+.code-block { overflow: hidden; background: var(--code-bg); border-radius: var(--r-m); }
+.code-titre { display: flex; align-items: center; gap: var(--s3); min-height: 44px; padding: 0 4px 0 14px; border-bottom: 1px solid rgba(237, 230, 218, 0.14); color: var(--bar-soft); font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.code-points { display: inline-flex; gap: 5px; }
+.code-points::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--bar-accent); box-shadow: 12px 0 0 rgba(237, 230, 218, 0.28), 24px 0 0 rgba(237, 230, 218, 0.28); margin-right: 24px; }
+.code-langage { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.code-block .copy-btn { position: static; min-height: 44px; margin: 0; background: transparent; border-color: transparent; letter-spacing: 0; text-transform: none; }
+.code-block .copy-btn:hover { background: rgba(237, 230, 218, 0.1); }
+.code-block pre { padding: var(--s4); border-radius: 0; }
+
+/* Tableaux en cartes sur mobile */
+@media (max-width: 37.5rem) {
+  .table-wrap.empile { overflow: visible; }
+  .table-wrap.empile table, .table-wrap.empile tbody, .table-wrap.empile tr, .table-wrap.empile td { display: block; width: 100%; }
+  .table-wrap.empile thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  .table-wrap.empile tr { padding: var(--s3) 0; border-bottom: 1px solid var(--line); }
+  .table-wrap.empile tr:first-child { border-top: 1px solid var(--ink-pale); }
+  .table-wrap.empile td { padding: 2px 0; border: 0; }
+  .table-wrap.empile td::before { content: attr(data-label); display: block; margin-top: var(--s2); font-family: var(--font-code); font-size: 0.625rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-pale); }
+  .table-wrap.empile td:first-child::before { margin-top: 0; }
+  .table-wrap.empile td:first-child { font-weight: 600; color: var(--ink); }
+}
+
+/* Notes en marge (modules, grand écran) */
+@media (min-width: 75rem) {
+  .prose > .callout.en-marge { float: right; clear: right; width: 15rem; margin: var(--s1) -18.5rem var(--s4) var(--s5); padding: 0 0 0 var(--s3); border-left: 1px solid var(--line); font-size: 0.84375rem; line-height: 1.55; }
+  .prose > .callout.en-marge::before { display: flex; width: max-content; margin: 0 0 var(--s2); }
+  .prose > .callout.en-marge > p:first-child { display: block; }
+  .prose > h2 { clear: none; }
+}
+
+/* Sommaire repliable des modules */
+.sommaire-mod { margin: 0 0 var(--s6); border: 1px solid var(--line); border-radius: var(--r-l); background: var(--surface); font-family: var(--font-ui); }
+.sommaire-mod summary { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); min-height: 48px; padding: 0 var(--s4); cursor: pointer; font-weight: 600; font-size: 0.9375rem; list-style: none; }
+.sommaire-mod summary::-webkit-details-marker { display: none; }
+.sommaire-mod summary::after { content: ""; width: 8px; height: 8px; border-right: 1.5px solid var(--ink-pale); border-bottom: 1.5px solid var(--ink-pale); transform: rotate(45deg); margin: -4px 4px 0 0; transition: transform 0.2s; }
+.sommaire-mod[open] summary::after { transform: rotate(-135deg); margin-top: 4px; }
+.sommaire-n { margin-left: auto; font-family: var(--font-code); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-pale); }
+.sommaire-mod ol { list-style: none; margin: 0; padding: 0 var(--s4) var(--s3); border-top: 1px solid var(--line); }
+.sommaire-mod li { margin: 0; break-inside: avoid; }
+.sommaire-mod a { display: flex; align-items: baseline; gap: var(--s2); min-height: 44px; padding: 10px 0; color: var(--ink-soft); font-size: 0.9375rem; line-height: 1.4; text-decoration: none; }
+.sommaire-mod a:hover { color: var(--accent); }
+@media (min-width: 40rem) { .sommaire-mod ol { columns: 2; column-gap: var(--s6); } }
+@media print { .sommaire-mod, .meta-page, .code-titre { display: none; } }
+code, kbd, pre, .meta-page, table { hyphens: none; -webkit-hyphens: none; }
+.seance, .seance *, .card, .card * { hyphens: none; -webkit-hyphens: none; }

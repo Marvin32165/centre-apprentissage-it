@@ -23,6 +23,21 @@
   function dateCourte(iso) { var p = iso.split("-"); return p[2] + "." + p[1] + "." + p[0]; }
   function aujourdhui() { var d = new Date(); return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2); }
 
+  /* ---------- Ligne de métadonnées sous le chapeau ---------- */
+  (function () {
+    var lead = prose.querySelector(".lead"), J = JOURS.filter(function (j) { return j.n === N; })[0];
+    if (!lead || !J) return;
+    var nSrc = prose.querySelectorAll(".callout.source").length;
+    var tut = prose.querySelector(".callout.umons[data-titre]");
+    var nTut = tut ? tut.querySelectorAll("li").length : 0;
+    var items = [["Durée", J.duree.replace("≈ ", "≈\u00a0")], ["Blocs", String(J.blocs)]];
+    if (nSrc) items.push(["Sources", nSrc + (nSrc > 1 ? " encadrés" : " encadré")]);
+    if (nTut) items.push(["Tuteur", nTut + (nTut > 1 ? " questions" : " question")]);
+    var dl = el("dl", { "class": "meta-page", "aria-label": "Repères du jour" });
+    items.forEach(function (it) { var d = el("div"); d.appendChild(el("dt", null, it[0])); d.appendChild(el("dd", null, it[1])); dl.appendChild(d); });
+    lead.parentNode.insertBefore(dl, lead.nextSibling);
+  })();
+
   /* ---------- Trois colonnes ---------- */
   main.classList.add("jour-grille");
   var gauche = el("nav", { "class": "jour-jours tiroir", id: "tiroir-jours", "aria-label": "Les dix jours de la prépa" });

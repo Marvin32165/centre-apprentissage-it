@@ -214,12 +214,18 @@ Demande de Marvin (26/11) : cinq lots pour **améliorer l'esthétique à fond**,
 
 ## Lot 29 — Typographie et mise en page éditoriale
 But : que chaque page de cours ait l'allure d'un beau document professionnel (une revue technique soignée), sur ordinateur comme sur téléphone.
-- [ ] 29.1 Échelle typographique fluide (`clamp()`) pour h1 à h4, chapeau et texte ; rythme vertical sur l'échelle de 4 px ; césure et `text-wrap: balance` sur les titres, `pretty` sur les paragraphes ; chiffres tabulaires dans les tableaux et le minuteur.
-- [ ] 29.2 En-tête de page de cours : kicker, grand h1 avec son mot en `<em>`, chapeau en plus grand, puis une ligne de métadonnées (durée, niveau, prérequis, sources) en mono ; même gabarit pour les jours et les modules.
-- [ ] 29.3 Notes en marge sur ordinateur (≥ 1200 px) : les encadrés « Source officielle » et « À l'UMONS » passent dans la marge droite, à hauteur du paragraphe qu'ils concernent ; sous le texte sur mobile. Pas de JS obligatoire (grille CSS).
-- [ ] 29.4 Encadrés « Retenir » repensés en citation mise en avant (grand guillemet ou filet épais, Newsreader italique plus grand) ; « Attention » plus net ; listes à puces et numérotées dessinées (puces rouille, numéros en mono).
-- [ ] 29.5 Tableaux sur mobile : sous 600 px, chaque ligne devient une carte empilée (étiquette de colonne en mono au-dessus de la valeur), sans défilement horizontal ; blocs de code avec barre de titre (langage : PowerShell, invite de commandes) et bouton copier intégré.
-- [ ] 29.6 Sommaire des modules (comme sur les jours : colonne « Sur cette page » sur ordinateur, menu repliable sur mobile) ; REFONTE, composants, captures, contrôles, coche, fusion.
+- [x] 29.1 Échelle typographique fluide (`clamp()`) pour h1 à h4, chapeau et texte ; rythme vertical sur l'échelle de 4 px ; césure et `text-wrap: balance` sur les titres, `pretty` sur les paragraphes ; chiffres tabulaires dans les tableaux et le minuteur.
+  Fait : titres fluides jusqu'à h4, `text-wrap: pretty`, césure dans le texte des cours seulement, chiffres tabulaires.
+- [x] 29.2 En-tête de page de cours : kicker, grand h1 avec son mot en `<em>`, chapeau en plus grand, puis une ligne de métadonnées (durée, niveau, prérequis, sources) en mono ; même gabarit pour les jours et les modules.
+  Fait : ligne de repères `dl.meta-page` sous le chapeau des jours (durée, blocs, sources, questions pour le tuteur), construite par `jour.js` ; les modules gardent leur fiche.
+- [x] 29.3 Notes en marge sur ordinateur (≥ 1200 px) : les encadrés « Source officielle » et « À l'UMONS » passent dans la marge droite, à hauteur du paragraphe qu'ils concernent ; sous le texte sur mobile. Pas de JS obligatoire (grille CSS).
+  Fait : `initMarge()` dans `app.js` déplace les sources et les « à l'UMONS » des modules dans la marge à partir de 1200 px, au début de leur section, et les remet en place sur écran étroit. Justifié : pas de marge sur les pages de jour, déjà en trois colonnes.
+- [x] 29.4 Encadrés « Retenir » repensés en citation mise en avant (grand guillemet ou filet épais, Newsreader italique plus grand) ; « Attention » plus net ; listes à puces et numérotées dessinées (puces rouille, numéros en mono).
+  Fait : « À retenir » en citation mise en avant (grand guillemet), « Attention » teinté (jeton `--red-soft`, contrastes AA), puces et numéros rouille.
+- [x] 29.5 Tableaux sur mobile : sous 600 px, chaque ligne devient une carte empilée (étiquette de colonne en mono au-dessus de la valeur), sans défilement horizontal ; blocs de code avec barre de titre (langage : PowerShell, invite de commandes) et bouton copier intégré.
+  Fait : tableaux en cartes sous 600 px (`initTableaux()`, sauf matrices) ; blocs de code avec barre de titre, langage déduit et bouton Copier de 44 px.
+- [x] 29.6 Sommaire des modules (comme sur les jours : colonne « Sur cette page » sur ordinateur, menu repliable sur mobile) ; REFONTE, composants, captures, contrôles, coche, fusion.
+  Fait : sommaire repliable des modules (`modules-ui.js`) ; REFONTE § 5.1, `docs/composants.html` § 8, captures dans `docs/captures/lot-29/` ; `npm run controles` : 0 problème, 0 avertissement, 0 échec, 0 contraste sous le seuil ; fusion dans `main`.
 
 ## Lot 30 — Schémas et illustrations SVG maison
 But : remplacer les explications les plus abstraites par de **vrais schémas**, dessinés à la main en SVG dans un style « trait d'encre + aplat rouille » cohérent avec la gravure de l'atelier mais plus moderne.

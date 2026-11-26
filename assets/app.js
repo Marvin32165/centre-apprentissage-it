@@ -284,6 +284,12 @@
       var wrap = el("div", { "class": "code-block" });
       pre.parentNode.insertBefore(wrap, pre);
       wrap.appendChild(pre);
+      var code = pre.innerText;
+      var langage = /\b[A-Z][a-z]+-[A-Z][A-Za-z]+\b|\$[A-Za-z_]/.test(code) ? "PowerShell" : "Invite de commandes ou PowerShell";
+      if (pre.getAttribute("data-langage")) langage = pre.getAttribute("data-langage");
+      var barre = el("div", { "class": "code-titre" });
+      barre.appendChild(el("span", { "class": "code-points", "aria-hidden": "true" }));
+      barre.appendChild(el("span", { "class": "code-langage" }, langage));
       var btn = el("button", { type: "button", "class": "copy-btn", "aria-label": "Copier le code" });
       var lbl = el("span", null, "Copier");
       btn.appendChild(icon("copy"));
@@ -299,8 +305,50 @@
           timer = setTimeout(function () { lbl.textContent = "Copier"; btn.classList.remove("ok"); }, 1800);
         });
       });
-      wrap.appendChild(btn);
+      barre.appendChild(btn);
+      wrap.insertBefore(barre, pre);
     });
+  }
+
+  /* ---------- Tableaux : sur mobile, chaque ligne devient une carte (étiquettes tirées de l'en-tête) ---------- */
+  function initTableaux() {
+    var tables = document.querySelectorAll("main .table-wrap > table");
+    Array.prototype.forEach.call(tables, function (t) {
+      var ths = t.querySelectorAll("thead th");
+      if (!ths.length || t.querySelector("tbody th")) return;
+      var noms = Array.prototype.map.call(ths, function (th) { return th.textContent.replace(/\s+/g, " ").trim(); });
+      Array.prototype.forEach.call(t.querySelectorAll("tbody tr"), function (tr) {
+        Array.prototype.forEach.call(tr.children, function (td, i) { if (noms[i]) td.setAttribute("data-label", noms[i]); });
+      });
+      t.parentNode.classList.add("empile");
+    });
+  }
+
+  /* ---------- Notes en marge : sur grand écran, les sources et les « à vérifier sur place » d'un module passent dans la marge ---------- */
+  function initMarge() {
+    var main = document.querySelector("main");
+    if (!main || !document.querySelector("[data-module-suite]") || !window.matchMedia) return;
+    var notes = Array.prototype.slice.call(main.querySelectorAll(".prose > .callout.source, .prose > .callout.umons:not([data-titre])"));
+    var places = notes.map(function (n) { var c = document.createComment("note"); n.parentNode.insertBefore(c, n); return c; });
+    var mq = window.matchMedia("(min-width: 75rem)");
+    function appliquer() {
+      notes.forEach(function (n, i) {
+        if (mq.matches) {
+          var h = places[i].previousElementSibling;
+          while (h && h.tagName !== "H2") h = h.previousElementSibling;
+          if (!h) return;
+          var cible = h.nextElementSibling;
+          while (cible && cible.classList.contains("en-marge")) cible = cible.nextElementSibling;
+          h.parentNode.insertBefore(n, cible);
+          n.classList.add("en-marge");
+        } else {
+          places[i].parentNode.insertBefore(n, places[i].nextSibling);
+          n.classList.remove("en-marge");
+        }
+      });
+    }
+    appliquer();
+    if (mq.addEventListener) mq.addEventListener("change", appliquer); else if (mq.addListener) mq.addListener(appliquer);
   }
 
   /* ---------- Moteur de quiz ----------
@@ -553,6 +601,8 @@
   initDone();
   renderProgress();
   initCopy();
+  initTableaux();
+  initMarge();
   initQuizzes();
   initReprise();
   initRecherche();
