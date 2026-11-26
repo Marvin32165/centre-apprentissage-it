@@ -51,7 +51,7 @@
 <tr><td><strong>Authentification Kerberos</strong></td><td>Le mécanisme par défaut qui permet de se connecter au domaine sans renvoyer le mot de passe à chaque service.</td></tr>
 </tbody></table></div>
 <figure class="schema" id="fig-annuaire">
-<svg viewBox="0 0 400 360" role="img" aria-labelledby="annuaire-t annuaire-d"><title id="annuaire-t">Rangement, droits et paramètres dans l&#x27;annuaire</title><desc id="annuaire-d">Le domaine contient des OU : une OU de comptes et une OU d&#x27;ordinateurs. Un groupe donne des droits sur un dossier. Une GPO liée à une OU applique des paramètres aux objets de cette OU.</desc><defs><marker id="annuaire-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="s-pointe" d="M0 0L10 5L0 10z"/></marker><pattern id="annuaire-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="s-hachure" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<svg viewBox="0 0 400 360" role="img" aria-labelledby="annuaire-t annuaire-d"><title id="annuaire-t">Rangement, droits et paramètres dans l&#x27;annuaire</title><desc id="annuaire-d">Le domaine contient des OU : une OU de comptes et une OU d&#x27;ordinateurs. Un groupe donne des droits sur un dossier. Une GPO liée à l&#x27;OU des ordinateurs leur applique des paramètres d&#x27;ordinateur, comme le pare-feu. L&#x27;appartenance à une OU et à un groupe sont indépendantes.</desc><defs><marker id="annuaire-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="s-pointe" d="M0 0L10 5L0 10z"/></marker><pattern id="annuaire-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="s-hachure" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
 <rect class="s-boite sombre" x="110" y="12" width="180" height="46" rx="8"/>
 <text class="s-titre" x="200.0" y="31.0" text-anchor="middle">Domaine</text>
 <text class="s-sous" x="200.0" y="49.0" text-anchor="middle">l&#x27;annuaire AD DS</text>
@@ -73,16 +73,17 @@
 <path class="s-trait " d="M104 246V288" marker-end="url(#annuaire-p)"/>
 <rect class="s-boite accent" x="206" y="194" width="180" height="52" rx="8"/>
 <text class="s-titre" x="296.0" y="216.0" text-anchor="middle">GPO liée à l&#x27;OU</text>
-<text class="s-sous" x="296.0" y="234.0" text-anchor="middle">fond d&#x27;écran, lecteurs…</text>
+<text class="s-sous" x="296.0" y="234.0" text-anchor="middle">pare-feu, sécurité…</text>
 <path class="s-trait s-retour" d="M296 194V152" marker-end="url(#annuaire-p)"/>
 <text class="s-etiq" x="300" y="280" text-anchor="middle">paramètres appliqués</text>
 <text class="s-etiq" x="300" y="296" text-anchor="middle">aux ordinateurs de l&#x27;OU</text>
 <text class="s-etiq" x="110" y="276" text-anchor="start">droits</text>
+<text class="s-etiq" x="110" y="180" text-anchor="start">comptes membres</text>
 </svg>
 <figcaption><span class="fig-n">Fig.</span> Rangement = OU, droits = groupes, paramètres = GPO.</figcaption>
 </figure>
 <aside class="callout retenir"><p><strong>Droits = groupes. Paramètres = GPO. Rangement = OU.</strong> Si quelqu'un « n'a pas accès », on regarde d'abord ses groupes (c'est une piste, pas une certitude). Si un poste « n'a pas le bon réglage », on regarde les GPO qui s'y appliquent.</p></aside>
-<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview">Active Directory Domain Services overview</a>, <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-overview">Group Policy overview</a> (liens sur site, domaine et OU), <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing">Group Policy processing</a>, <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/account-policies">Account Policies</a> (stratégie de compte au niveau du domaine).</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview">Active Directory Domain Services overview</a>, <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-overview">Group Policy overview</a> (liens sur site, domaine et OU), <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-processing">Group Policy processing</a>, <a href="https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/account-policies">Account Policies</a> (stratégie de compte au niveau du domaine), <a href="https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-groups">Active Directory security groups</a> (droits donnés aux groupes).</p></aside>
 
 <h2 id="actes">2. Les actes du support</h2>
 <h3>Réinitialiser un mot de passe</h3>

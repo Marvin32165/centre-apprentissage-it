@@ -29,7 +29,7 @@ class S:
                 f'<figcaption><span class="fig-n">Fig.</span> {s.leg}</figcaption>\n</figure>\n')
 F={}
 # 1. J1 cycle de vie
-s=S("cycle-ticket",430,"Cycle de vie d'un ticket","Ouvert ou à trier, puis en cours. Depuis En cours, le ticket peut passer en attente du client ou en attente d'un tiers, puis revenir en cours. Ensuite résolu, puis fermé ; un ticket résolu revient en cours si l'utilisateur répond que ça ne marche toujours pas.","Le cycle de vie d'un ticket : les attentes reviennent toujours à « En cours », et « Résolu » n'est pas « Fermé ».")
+s=S("cycle-ticket",430,"Cycle de vie d'un ticket","Ouvert ou à trier, puis en cours. Depuis En cours, le ticket peut passer en attente du client ou en attente d'un tiers, puis revenir en cours. Ensuite résolu, puis fermé ; un ticket résolu revient en cours si l'utilisateur répond que ça ne marche toujours pas.","Le cycle de vie d'un ticket (schéma d'exercice) : les attentes reviennent à « En cours », et « Résolu » n'est pas « Fermé ».")
 s.boite(100,16,200,46,"Ouvert / À trier","le ticket vient d'arriver")
 s.fleche("M200 62V92")
 s.boite(100,94,200,46,"En cours","un agent l'a pris",cls="accent")
@@ -48,7 +48,7 @@ s.texte(396,412,"« ça ne marche toujours pas » : retour en cours","s-etiq","e
 F["cycle"]=s.rendu()
 # 2. J5 du plus proche au plus lointain
 st=[("Le poste","ping 127.0.0.1"),("Sa configuration","ipconfig /all"),("La passerelle","ping de la passerelle"),("Une adresse publique","ping d'une adresse IP"),("La résolution de noms","nslookup www.example.org"),("Le chemin","tracert")]
-s=S("proche-lointain",30+len(st)*62+24,"Dépanner du plus proche au plus lointain","Six étapes dans l'ordre : le poste, sa configuration, la passerelle, une adresse publique, la résolution de noms, le chemin. On s'arrête à la première qui échoue.","Du plus proche au plus lointain : on s'arrête à la première étape qui échoue.")
+s=S("proche-lointain",30+len(st)*62+24,"Dépanner du plus proche au plus lointain","Six étapes dans l'ordre : le poste, sa configuration, la passerelle, une adresse publique, la résolution de noms, le chemin. Le premier échec oriente la recherche : c'est un indice, pas une preuve.","Du plus proche au plus lointain : le premier échec oriente la recherche (un indice, pas une preuve).")
 s.texte(8,18,"Le plus proche","s-etiq","start")
 for i,(a,b) in enumerate(st):
     y=30+i*62
@@ -70,7 +70,7 @@ for i,(m,c,sens,x) in enumerate(msgs):
     if x: s.texte(200,y+36,x,"s-etiq")
 F["dora"]=s.rendu()
 # 4. J6 annuaire
-s=S("annuaire",360,"Rangement, droits et paramètres dans l'annuaire","Le domaine contient des OU : une OU de comptes et une OU d'ordinateurs. Un groupe donne des droits sur un dossier. Une GPO liée à une OU applique des paramètres aux objets de cette OU.","Rangement = OU, droits = groupes, paramètres = GPO.")
+s=S("annuaire",360,"Rangement, droits et paramètres dans l'annuaire","Le domaine contient des OU : une OU de comptes et une OU d'ordinateurs. Un groupe donne des droits sur un dossier. Une GPO liée à l'OU des ordinateurs leur applique des paramètres d'ordinateur, comme le pare-feu. L'appartenance à une OU et à un groupe sont indépendantes.","Rangement = OU, droits = groupes, paramètres = GPO.")
 s.boite(110,12,180,46,"Domaine","l'annuaire AD DS",cls="sombre")
 s.fleche("M160 58C150 78 110 78 104 96"); s.fleche("M240 58C250 78 290 78 296 96")
 s.boite(14,98,180,52,"OU « Personnel »","rangement des comptes")
@@ -79,14 +79,14 @@ s.boite(14,194,180,52,"Groupe","rassemble des comptes",cls="accent")
 s.fleche("M104 150V192")
 s.boite(14,290,180,52,"Dossier partagé","droits donnés au groupe",cls="hache")
 s.fleche("M104 246V288")
-s.boite(206,194,180,52,"GPO liée à l'OU","fond d'écran, lecteurs…",cls="accent")
+s.boite(206,194,180,52,"GPO liée à l'OU","pare-feu, sécurité…",cls="accent")
 s.fleche("M296 194V152","s-retour")
 s.texte(300,280,"paramètres appliqués","s-etiq"); s.texte(300,296,"aux ordinateurs de l'OU","s-etiq")
-s.texte(110,276,"droits","s-etiq","start")
+s.texte(110,276,"droits","s-etiq","start"); s.texte(110,180,"comptes membres","s-etiq","start")
 F["annuaire"]=s.rendu()
 # 5. J8 sept étapes
 st=[("Décrire","le symptôme, avec ses mots"),("Cadrer","depuis quand, qui est touché"),("Reproduire","noter l'heure et le message"),("Formuler une hypothèse","du plus simple au plus rare"),("Tester une seule chose","et noter le résultat"),("Résoudre ou contourner","puis faire confirmer"),("Documenter","cause, solution, fiche")]
-s=S("sept-etapes",24+len(st)*56+10,"La méthode de diagnostic en sept étapes","Décrire, cadrer, reproduire, formuler une hypothèse, tester une seule chose à la fois, résoudre ou contourner, documenter. Si le test n'est pas concluant, on revient à une nouvelle hypothèse.","Les sept étapes : une hypothèse, un test à la fois ; un test non concluant ramène à une nouvelle hypothèse.")
+s=S("sept-etapes",24+len(st)*56+10,"La méthode de diagnostic en sept étapes","Décrire, cadrer, reproduire, formuler une hypothèse, tester une seule chose à la fois, résoudre ou contourner, documenter. Si le test n'est pas concluant, on revient à une nouvelle hypothèse, ou on escalade.","Les sept étapes : une hypothèse, un test à la fois ; un test non concluant ramène à une nouvelle hypothèse, ou à l'escalade.")
 for i,(a,b) in enumerate(st):
     y=16+i*56
     s.num(26,y+24,i+1)
@@ -97,16 +97,16 @@ s.texte(386,224,"non","s-etiq","end")
 s.texte(386,238,"concluant","s-etiq","end")
 F["sept"]=s.rendu()
 # 6. Support Windows chaîne de démarrage
-st=[("1. Alimentation","aucune LED, aucun ventilateur"),("2. Firmware et POST","pas d'image ni de logo, bips, LED"),("3. Disque de démarrage","« aucun périphérique de démarrage »"),("4. Chargement de Windows","boucle, réparation, écran bleu"),("5. Ouverture de session","profil temporaire, écran noir")]
-s=S("demarrage",20+len(st)*70+8,"La chaîne de démarrage","Cinq maillons : alimentation, firmware et POST, recherche du disque de démarrage, chargement de Windows, ouverture de session. Chaque maillon a son symptôme quand il échoue.","Chaque maillon passe la main au suivant ; le symptôme indique où chercher.")
+st=[("1. Alimentation","aucune LED, aucun ventilateur"),("2. Firmware et POST","ventilateurs, mais ni image ni logo"),("3. Disque de démarrage","« aucun périphérique de démarrage »"),("4. Chargement de Windows","boucle, réparation, écran bleu"),("5. Ouverture de session","profil temporaire, écran noir")]
+s=S("demarrage",20+len(st)*70+8,"La chaîne de démarrage","Cinq maillons : alimentation, firmware et POST, recherche du disque de démarrage, chargement de Windows, ouverture de session. Chaque maillon a son symptôme quand il échoue.","Chaque maillon passe la main au suivant ; les symptômes (écran et câble vérifiés) sont des repères d'orientation.")
 for i,(a,b) in enumerate(st):
     y=14+i*70
     s.boite(30,y,340,52,a,"si ça échoue : "+b,cls="sombre" if i==0 else ("accent" if i==2 else ""))
     if i<len(st)-1: s.fleche(f"M200 {y+52}V{y+68}")
 F["demarrage"]=s.rendu()
 # 7. Réseau de base couches
-st=[("Application","HTTP/HTTPS, DNS, SMB, SMTP, RDP"),("Transport","TCP, UDP (ports)"),("Internet","IPv4, IPv6, ICMP"),("Accès réseau","Ethernet, Wi-Fi, VLAN")]
-s=S("couches",28+len(st)*64+6,"Les quatre étages du modèle TCP/IP","De haut en bas : application, transport, internet, accès réseau. Le dépannage remonte du bas vers le haut.","Les quatre étages TCP/IP ; on dépanne du bas vers le haut.")
+st=[("Application","HTTP/HTTPS, DNS, SMB, SMTP, RDP"),("Transport","TCP, UDP (ports)"),("Internet","IPv4, IPv6, ICMP"),("Liaison (accès réseau)","Ethernet, Wi-Fi, VLAN")]
+s=S("couches",28+len(st)*64+6,"Les quatre étages du modèle TCP/IP","De haut en bas : application, transport, internet, liaison (accès réseau). Le dépannage remonte du bas vers le haut.","Les quatre étages TCP/IP ; on dépanne du bas vers le haut.")
 for i,(a,b) in enumerate(st):
     y=20+i*64
     s.boite(64,y,328,54,a,b,cls="hache" if i==3 else "")
@@ -125,14 +125,14 @@ s.texte(200,290,"62 hôtes utilisables par sous-réseau","s-etiq")
 F["decoupage"]=s.rendu()
 # 9. AGDLP
 st=[("A — Comptes","les utilisateurs"),("G — Groupe global","par fonction : « Enseignants »"),("DL — Groupe de domaine local","attaché à une ressource : « Partage-Compta-Lecture »"),("P — Permission","posée sur la ressource, pour le groupe DL")]
-s=S("agdlp",20+len(st)*72,"Le modèle AGDLP","Les comptes vont dans des groupes globaux par fonction, qui vont dans des groupes de domaine local attachés à une ressource, sur laquelle on pose la permission.","AGDLP : on ne donne jamais un droit directement à une personne.")
+s=S("agdlp",20+len(st)*72,"Le modèle AGDLP (une convention)","Les comptes vont dans des groupes globaux par fonction, qui vont dans des groupes de domaine local attachés à une ressource, sur laquelle on pose la permission.","AGDLP, une convention d'organisation : les droits vont à un groupe, pas à des personnes, comme le recommande Microsoft.")
 for i,(a,b) in enumerate(st):
     y=12+i*72
     s.boite(20,y,360,54,a,b,cls="accent" if i==3 else "")
     if i<len(st)-1: s.fleche(f"M200 {y+54}V{y+70}")
 F["agdlp"]=s.rendu()
 # 10. ITIL incident probleme erreur connue
-s=S("probleme",400,"Des incidents au problème, puis à l'erreur connue","Plusieurs incidents ont une cause commune : un problème, cause réelle ou potentielle. Le problème analysé mais pas encore résolu devient une erreur connue, documentée avec son contournement s'il existe, pour que le N1 puisse le proposer.","Incident : rétablir vite. Problème : chercher la cause. Erreur connue : analysée, pas encore résolue.")
+s=S("probleme",400,"Des incidents au problème, puis à l'erreur connue","Un ou plusieurs incidents ont une cause : un problème, cause réelle ou potentielle. Le problème analysé mais pas encore résolu devient une erreur connue, documentée avec son contournement s'il existe, pour que le N1 puisse le proposer.","Incident : rétablir vite. Problème : chercher la cause. Erreur connue : analysée, pas encore résolue.")
 for i in range(3):
     s.boite(14+i*126,12,120,44,"Incident",f"appel {i+1}")
     s.fleche(f"M{74+i*126} 56C{74+i*126} 80 200 80 200 100")
@@ -141,7 +141,7 @@ s.fleche("M200 156V190")
 s.boite(80,192,240,62,"Erreur connue","analysée, pas encore résolue",sous2="contournement noté s'il existe",cls="hache")
 s.fleche("M200 254V288")
 s.boite(80,290,240,54,"Base de connaissances","le N1 propose le contournement",cls="sombre")
-s.texte(200,380,"la correction viendra plus tard","s-etiq")
+s.texte(200,380,"la correction, si elle est prévue, viendra plus tard","s-etiq")
 F["probleme"]=s.rendu()
 # 11. M365 boîte partagée
 s=S("boite-partagee",360,"Les droits d'une boîte partagée","Accès total : ouvrir la boîte et gérer son contenu, sans droit d'envoi. Envoyer en tant que : le message semble venir de la boîte. Envoyer de la part de : le destinataire voit le nom de la personne de la part de la boîte.","Voir n'est pas envoyer : trois droits distincts.")
@@ -150,10 +150,10 @@ rows=[("Accès total","Full Access","ouvrir, lire, gérer — pas d'envoi"),("En
 for i,(a,b,c) in enumerate(rows):
     y=100+i*86
     s.boite(30,y,340,66,a,c,code=b,cls="accent" if i==0 else "")
-    s.fleche(f"M200 {y-24 if i==0 else y-20}V{y-2}" if i==0 else f"M200 {y-20}V{y-2}")
+    s.fleche(f"M200 62V80H14V{y+33}H28")
 F["boite"]=s.rendu()
 # 12. Matériel compatibilité
-s=S("compatibilite",380,"Les vérifications de compatibilité autour de la carte mère","Autour de la carte mère : le processeur (socket et liste de compatibilité), la mémoire (DDR4 ou DDR5, DIMM ou SO-DIMM), le stockage M.2 (NVMe ou SATA, longueur), le format (carte, boîtier, alimentation) et le graphique (intégré au processeur ou carte dédiée).","Avant d'acheter ou de poser une pièce : cinq vérifications dans la fiche de la carte mère.")
+s=S("compatibilite",380,"Les vérifications de compatibilité autour de la carte mère","Autour de la carte mère : le processeur (socket et liste de compatibilité), la mémoire (DDR4 ou DDR5, DIMM ou SO-DIMM), le stockage M.2 (NVMe ou SATA, longueur), le format (carte, boîtier, alimentation) et le graphique (intégré au processeur ou carte dédiée).","Avant d'acheter ou de poser une pièce : cinq vérifications dans les fiches de la carte mère et des pièces.")
 s.boite(120,150,160,64,"Carte mère","sa fiche technique",cls="sombre")
 pts=[(8,16,"Processeur","socket, liste de la carte"),(212,16,"Mémoire","DDR4 ou DDR5"),(8,280,"Stockage M.2","NVMe ou SATA, longueur"),(212,280,"Format","carte, boîtier, alimentation")]
 for (x,y,a,b) in pts:
