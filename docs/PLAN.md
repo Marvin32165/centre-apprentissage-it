@@ -186,13 +186,72 @@ Rédigé le 24/11/2026. Un lot = une conversation. Ordre fixé par l'échéance 
 
 Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul par lot de contenu, sur la page principale.
 
-**File d'attente (mise à jour le 25/11 au soir)** — faits et fusionnés : lots 16 à 24 et 26 à 28 (relectures, corrections, tests en situation des modules). Lot 21 corrigé et fusionné le 25/11. Calendrier ramené à une semaine (lot 27). Labos sans machine virtuelle (lot 28). Reste : lot 25 après le 18/12. Ancienne file, pour mémoire :
+**File d'attente (mise à jour le 25/11 au soir)** — faits et fusionnés : lots 16 à 24 et 26 à 28 (relectures, corrections, tests en situation des modules). Lot 21 corrigé et fusionné le 25/11. Calendrier ramené à une semaine (lot 27). Labos sans machine virtuelle (lot 28). Reste : lots 29 à 33 (esthétique), puis lot 25 après le 18/12. Ancienne file, pour mémoire :
 1. ChatGPT (Astra, effort `high`, recherche web) : **17.1** relire J6 à J10 et la boîte à outils.
 2. ChatGPT : relire les quatre nouveaux modules — **18.3** `modules/depannage-distance.html`, **20.3** `modules/m365-messagerie.html`, **23.3** `modules/imprimantes-peripheriques.html`, **24.3** `modules/sous-reseaux.html` — et les 12 appels de `assets/tickets-data.js` (lot 22) ; un rapport par page dans `docs/relectures/`.
 3. Claude Code : corriger d'après ces rapports, puis contrôles et coche (17.2–17.3, 18.4, 20.4, 23.4, 24.4).
 4. Lot 21 (ChatGPT relit les 5 premiers modules), puis lot 25 après le 18/12.
 
 **Nouveau calendrier (25/11)** : une semaine, du lundi 30/11 au dimanche 6/12, week-end compris (lot 27), qui remplace le paragraphe suivant. **Changement de rythme (24/11)** : à partir du mercredi 25/11, séances de 3 à 4 h par jour en semaine seulement. Le lot 26 fixe le calendrier des huit séances et précise le programme des deux séances doubles.
+
+## Lots 29 à 33 — Rendre le site beaucoup plus beau
+Demande de Marvin (26/11) : cinq lots pour **améliorer l'esthétique à fond**, à partager entre Claude Code et Codex. Ce ne sont pas des corrections : on enrichit l'identité « Poste de garde » sans la trahir.
+
+**Cadre commun aux cinq lots**
+- La DA d'`AGENTS.md` ne bouge pas : couleurs, polices (et le lien Google Fonts), barre sombre, AA, cibles ≥ 44 px, `prefers-reduced-motion`. On gagne en beauté par la **composition, l'illustration, le détail et le mouvement**, pas par de nouvelles couleurs. Une teinte dérivée (transparence d'une couleur existante) est permise si elle passe `npm run contrastes`.
+- Rien d'inventé dans le contenu : un schéma ne montre que ce que dit la section et sa source.
+- Chaque lot ajoute sa section à `docs/REFONTE.md` (qui fait foi) et ses composants à `docs/composants.html`, et range son CSS dans **une section délimitée** de `assets/style.css` (`/* ===== Lot N : … ===== */`) pour limiter les conflits entre agents.
+- Avant et après : une capture 1280 px clair et une 390 px sombre des pages touchées dans `docs/captures/lot-N/`. Une seule vérification visuelle par lot, puis `npm run controles`.
+- Répartition conseillée : **29 → 30 et 32 en parallèle → 31 → 33**. Deux agents ne travaillent jamais sur le même lot ; s'ils travaillent en même temps, chacun sur sa branche `lot-N`, et celui qui fusionne en second résout les conflits de `style.css` dans sa propre section.
+
+| Lot | Thème | Qui | Effort |
+|---|---|---|---|
+| 29 | Typographie et mise en page éditoriale | Claude Code | `high` |
+| 30 | Schémas et illustrations SVG maison | Claude Code (rédaction), Codex relit les faits | `high` |
+| 31 | Pages d'entrée « couverture » | Codex ou Claude Code | `high` |
+| 32 | Mouvement et micro-interactions | Codex | `medium` |
+| 33 | Icônes, mode sombre et finitions | Codex | `medium` |
+
+## Lot 29 — Typographie et mise en page éditoriale
+But : que chaque page de cours ait l'allure d'un beau document professionnel (une revue technique soignée), sur ordinateur comme sur téléphone.
+- [ ] 29.1 Échelle typographique fluide (`clamp()`) pour h1 à h4, chapeau et texte ; rythme vertical sur l'échelle de 4 px ; césure et `text-wrap: balance` sur les titres, `pretty` sur les paragraphes ; chiffres tabulaires dans les tableaux et le minuteur.
+- [ ] 29.2 En-tête de page de cours : kicker, grand h1 avec son mot en `<em>`, chapeau en plus grand, puis une ligne de métadonnées (durée, niveau, prérequis, sources) en mono ; même gabarit pour les jours et les modules.
+- [ ] 29.3 Notes en marge sur ordinateur (≥ 1200 px) : les encadrés « Source officielle » et « À l'UMONS » passent dans la marge droite, à hauteur du paragraphe qu'ils concernent ; sous le texte sur mobile. Pas de JS obligatoire (grille CSS).
+- [ ] 29.4 Encadrés « Retenir » repensés en citation mise en avant (grand guillemet ou filet épais, Newsreader italique plus grand) ; « Attention » plus net ; listes à puces et numérotées dessinées (puces rouille, numéros en mono).
+- [ ] 29.5 Tableaux sur mobile : sous 600 px, chaque ligne devient une carte empilée (étiquette de colonne en mono au-dessus de la valeur), sans défilement horizontal ; blocs de code avec barre de titre (langage : PowerShell, invite de commandes) et bouton copier intégré.
+- [ ] 29.6 Sommaire des modules (comme sur les jours : colonne « Sur cette page » sur ordinateur, menu repliable sur mobile) ; REFONTE, composants, captures, contrôles, coche, fusion.
+
+## Lot 30 — Schémas et illustrations SVG maison
+But : remplacer les explications les plus abstraites par de **vrais schémas**, dessinés à la main en SVG dans un style « trait d'encre + aplat rouille » cohérent avec la gravure de l'atelier mais plus moderne.
+- [ ] 30.1 Charte des schémas dans `docs/REFONTE.md` : épaisseurs de trait, aplats, flèches, étiquettes en Instrument Sans, couleurs par `currentColor` et variables (lisibles en clair et en sombre), `role="img"` avec `<title>` et `<desc>`, texte réel dans le SVG (pas d'image de texte), largeur fluide. Un composant d'exemple dans `docs/composants.html`.
+- [ ] 30.2 Prépa, au moins six schémas : cycle de vie d'un ticket et matrice impact × urgence (J1), chaîne de démarrage (J4), couches et « du plus proche au plus lointain » (J5), DORA du DHCP (J5), arbre domaine-OU-groupes-GPO (J6), session d'Assistance rapide côté aidant et côté utilisateur (J8).
+- [ ] 30.3 Modules, au moins six schémas : couches TCP/IP (Réseau de base), découpage d'un /24 en sous-réseaux (Sous-réseaux), AGDLP et Kerberos (AD), incident → problème → erreur connue (ITIL), boîte partagée et droits (M365), anatomie d'une carte mère (Matériel et PC).
+- [ ] 30.4 Relecture des schémas par l'autre outil (`relecture-sources.md`, rapport `docs/relectures/schemas.md`) : chaque élément dessiné doit exister dans la section et sa source.
+- [ ] 30.5 Corrections, fiches mémo (un schéma clé peut entrer dans la fiche A4 en niveaux de gris), contrôles (accessibilité : `title`/`desc`, contrastes), coche, fusion.
+
+## Lot 31 — Pages d'entrée « couverture »
+But : que l'arrivée sur chaque rubrique donne envie, comme la couverture d'un manuel ou la une d'une revue.
+- [ ] 31.1 Accueil : carte-ticket plus travaillée (perforations sur le bord, tampon « OUVERT » incliné, code-barres décoratif en CSS), frise transformée en ligne de temps avec un trait de progression, cartes des rubriques avec une petite illustration SVG chacune (charte du lot 30).
+- [ ] 31.2 `stage/index.html` en sommaire de revue : les sept séances en grandes lignes numérotées, dates en mono, sujets en Newsreader, état (fait, aujourd'hui, à venir) et accès direct à la révision express, aux tickets et à la boîte à outils.
+- [ ] 31.3 `modules/index.html` : un pictogramme par domaine, carte « à la une » pour le module conseillé suivant (d'après la progression), parcours conseillé redessiné en vrai graphe SVG.
+- [ ] 31.4 `themes.html` : tuiles de l'atlas illustrées (pictogramme par domaine), panneau latéral plus éditorial ; `404.html` illustrée (un ticket « introuvable » avec tampon).
+- [ ] 31.5 Images de partage (Open Graph) par rubrique en SVG converti en PNG par un outil de contrôle (pas d'étape de build pour le site), `theme-color` clair et sombre ; REFONTE, composants, captures, contrôles, coche, fusion.
+
+## Lot 32 — Mouvement et micro-interactions
+But : un site qui réagit avec douceur et précision, jamais gratuitement ; tout se coupe avec `prefers-reduced-motion`.
+- [ ] 32.1 Transitions entre pages avec la View Transitions API (CSS `@view-transition`, amélioration progressive : rien ne casse sans), en-tête et titre qui glissent d'une page à l'autre.
+- [ ] 32.2 Apparition des sections au défilement (opacité et léger décalage, une seule fois, `IntersectionObserver`), barre de lecture plus fine et animée.
+- [ ] 32.3 Moments forts : tampon « RÉSOLU » qui s'imprime (rotation et échelle), quiz (réponse juste : coche qui se dessine ; fausse : légère secousse ; score qui compte), minuteur avec anneau qui se vide, ouverture des corrections `<details>` animée en hauteur.
+- [ ] 32.4 États au survol, à l'appui et au focus redessinés pour tous les composants (anneau de focus rouille net, boutons qui s'enfoncent d'un pixel, cartes qui se soulèvent légèrement) ; retours de copie et d'export en « toast » discret (`role="status"`).
+- [ ] 32.5 Parcours de contrôle : `prefers-reduced-motion` coupe tout, aucun décalage de mise en page mesurable ; REFONTE, composants, captures, contrôles, coche, fusion.
+
+## Lot 33 — Icônes, mode sombre et finitions
+But : la cohérence fine qui fait la différence entre « joli » et « soigné ».
+- [ ] 33.1 Un jeu d'icônes SVG unique (trait 1,5 px, coins arrondis, grille 24 px) servi par `app.js` (`IT.icon`) : rubriques, encadrés, actions (copier, imprimer, exporter), types de ticket, niveaux ; remplacer les icônes disparates et les caractères spéciaux.
+- [ ] 33.2 Mode sombre travaillé pour lui-même : niveaux de surface (fond, carte, carte surélevée), filets plus doux, blocs de code distincts du fond, images et schémas ajustés, carte-ticket qui ne se confond plus avec le fond.
+- [ ] 33.3 Détails typographiques : vraies apostrophes et guillemets français partout, espaces fines insécables avant « : ; ? ! » (contrôle automatique ajouté à `npm run garde`), `kbd` dessinés comme des touches, liens soulignés finement avec décalage.
+- [ ] 33.4 Favicon SVG (le tampon IT incliné) avec variante sombre, icône d'application, couleurs de la barre du navigateur ; impression : en-tête et pied propres sur toutes les pages, pas seulement les fiches.
+- [ ] 33.5 Passe d'harmonisation finale de tout le site (espacements, alignements, rayons) d'après `docs/composants.html` à jour ; captures finales ; contrôles, coche, fusion.
 
 ## Remise à zéro de l'historique Git (25/11/2026)
 Décision de Marvin : tout l'historique supprimé. `main` repart d'un seul commit qui contient le site dans l'état des lots 1 à 28 ; toutes les autres branches distantes ont été supprimées. Les agents qui avaient un clone le refont (`git clone`), sans rien pousser depuis l'ancien. La règle « jamais de `push --force` ni de réécriture d'historique » reste valable pour la suite.
