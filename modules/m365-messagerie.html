@@ -75,6 +75,29 @@
 <tr><td><strong>Envoyer en tant que</strong> (<em>Send As</em>)</td><td>Envoyer comme si le message venait de la boîte.</td></tr>
 <tr><td><strong>Envoyer de la part de</strong> (<em>Send on Behalf</em>)</td><td>Envoyer « de la part de » la boîte (le nom de la personne apparaît). Se règle en PowerShell (<code>Set-Mailbox -GrantSendOnBehalfTo</code>), pas dans le centre d'administration.</td></tr>
 </tbody></table></div>
+<figure class="schema" id="fig-boite-partagee">
+<svg viewBox="0 0 400 360" role="img" aria-labelledby="boite-partagee-t boite-partagee-d"><title id="boite-partagee-t">Les droits d&#x27;une boîte partagée</title><desc id="boite-partagee-d">Accès total : ouvrir la boîte et gérer son contenu, sans droit d&#x27;envoi. Envoyer en tant que : le message semble venir de la boîte. Envoyer de la part de : le destinataire voit le nom de la personne de la part de la boîte.</desc><defs><marker id="boite-partagee-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="s-pointe" d="M0 0L10 5L0 10z"/></marker><pattern id="boite-partagee-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="s-hachure" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<rect class="s-boite sombre" x="110" y="12" width="180" height="50" rx="8"/>
+<text class="s-titre" x="200.0" y="33.0" text-anchor="middle">Boîte partagée</text>
+<text class="s-sous" x="200.0" y="51.0" text-anchor="middle">« Secrétariat »</text>
+<rect class="s-boite accent" x="30" y="100" width="340" height="66" rx="8"/>
+<text class="s-titre" x="200.0" y="120.0" text-anchor="middle">Accès total</text>
+<text class="s-sous" x="200.0" y="138.0" text-anchor="middle">ouvrir, lire, gérer — pas d&#x27;envoi</text>
+<text class="s-code" x="200.0" y="156.0" text-anchor="middle">Full Access</text>
+<path class="s-trait " d="M200 62V80H14V133H28" marker-end="url(#boite-partagee-p)"/>
+<rect class="s-boite " x="30" y="186" width="340" height="66" rx="8"/>
+<text class="s-titre" x="200.0" y="206.0" text-anchor="middle">Envoyer en tant que</text>
+<text class="s-sous" x="200.0" y="224.0" text-anchor="middle">le message vient « de la boîte »</text>
+<text class="s-code" x="200.0" y="242.0" text-anchor="middle">Send As</text>
+<path class="s-trait " d="M200 62V80H14V219H28" marker-end="url(#boite-partagee-p)"/>
+<rect class="s-boite " x="30" y="272" width="340" height="66" rx="8"/>
+<text class="s-titre" x="200.0" y="292.0" text-anchor="middle">Envoyer de la part de</text>
+<text class="s-sous" x="200.0" y="310.0" text-anchor="middle">« X de la part de la boîte »</text>
+<text class="s-code" x="200.0" y="328.0" text-anchor="middle">Send on Behalf</text>
+<path class="s-trait " d="M200 62V80H14V305H28" marker-end="url(#boite-partagee-p)"/>
+</svg>
+<figcaption><span class="fig-n">Fig.</span> Voir n'est pas envoyer : trois droits distincts.</figcaption>
+</figure>
 <p>Ce sont des droits distincts : l'accès au contenu d'un côté, la façon d'envoyer de l'autre. Pour un fonctionnement normal, Microsoft indique qu'il faut <strong>Accès total et Envoyer en tant que</strong> ; une organisation peut aussi préférer <strong>Envoyer de la part de</strong>, qui s'affiche autrement chez le destinataire (à vérifier sur place). Avec l'accès total seul, on ne peut pas envoyer depuis la boîte. Quelqu'un qui « voit la boîte mais ne peut pas répondre » a souvent le premier sans le second : tu recueilles l'adresse de la boîte, le message d'erreur, et tu transmets à l'équipe qui gère les droits, avec la validation prévue par la procédure.</p>
 <aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/exchange/collaboration-exo/shared-mailboxes">Shared mailboxes in Exchange Online</a>.</p></aside>
 

@@ -47,8 +47,27 @@
 <tr><td><strong>Application</strong></td><td>Le service que l'on veut utiliser.</td><td>HTTP/HTTPS, DNS, SMB, SMTP, RDP</td><td>Navigateur, <code>Test-NetConnection -Port</code></td></tr>
 <tr><td><strong>Transport</strong></td><td>Conversations entre programmes, identifiées par un <em>port</em>.</td><td>TCP, UDP</td><td><code>Test-NetConnection -Port</code>, <code>netstat</code></td></tr>
 <tr><td><strong>Internet</strong> (réseau)</td><td>Adresser et acheminer entre réseaux.</td><td>IPv4, IPv6, ICMP</td><td><code>ping</code>, <code>tracert</code>, <code>route print</code></td></tr>
-<tr><td><strong>Accès réseau</strong></td><td>Liaison locale : câble, Wi-Fi, adresses physiques (MAC).</td><td>Ethernet, Wi-Fi (802.11), VLAN</td><td>Voyants, <code>Get-NetAdapter</code>, <code>arp -a</code></td></tr>
+<tr><td><strong>Liaison</strong> (accès réseau)</td><td>Liaison locale : câble, Wi-Fi, adresses physiques (MAC).</td><td>Ethernet, Wi-Fi (802.11), VLAN</td><td>Voyants, <code>Get-NetAdapter</code>, <code>arp -a</code></td></tr>
 </tbody></table></div>
+<figure class="schema" id="fig-couches">
+<svg viewBox="0 0 400 290" role="img" aria-labelledby="couches-t couches-d"><title id="couches-t">Les quatre étages du modèle TCP/IP</title><desc id="couches-d">De haut en bas : application, transport, internet, liaison (accès réseau). Le dépannage remonte du bas vers le haut.</desc><defs><marker id="couches-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="s-pointe" d="M0 0L10 5L0 10z"/></marker><pattern id="couches-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="s-hachure" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<rect class="s-boite " x="64" y="20" width="328" height="54" rx="8"/>
+<text class="s-titre" x="228.0" y="43.0" text-anchor="middle">Application</text>
+<text class="s-sous" x="228.0" y="61.0" text-anchor="middle">HTTP/HTTPS, DNS, SMB, SMTP, RDP</text>
+<rect class="s-boite " x="64" y="84" width="328" height="54" rx="8"/>
+<text class="s-titre" x="228.0" y="107.0" text-anchor="middle">Transport</text>
+<text class="s-sous" x="228.0" y="125.0" text-anchor="middle">TCP, UDP (ports)</text>
+<rect class="s-boite " x="64" y="148" width="328" height="54" rx="8"/>
+<text class="s-titre" x="228.0" y="171.0" text-anchor="middle">Internet</text>
+<text class="s-sous" x="228.0" y="189.0" text-anchor="middle">IPv4, IPv6, ICMP</text>
+<rect class="s-boite hache" x="64" y="212" width="328" height="54" rx="8"/>
+<text class="s-titre" x="228.0" y="235.0" text-anchor="middle">Liaison (accès réseau)</text>
+<text class="s-sous" x="228.0" y="253.0" text-anchor="middle">Ethernet, Wi-Fi, VLAN</text>
+<path class="s-trait s-fort" d="M30 264V28" marker-end="url(#couches-p)"/>
+<text class="s-etiq" transform="translate(20 148) rotate(-90)" text-anchor="middle">dépannage du bas vers le haut</text>
+</svg>
+<figcaption><span class="fig-n">Fig.</span> Les quatre étages TCP/IP ; on dépanne du bas vers le haut.</figcaption>
+</figure>
 <p>La logique de dépannage en découle : <strong>du bas vers le haut</strong> (le câble branché, l'adresse correcte, la passerelle joignable, un nom qui se résout, un port ouvert), en s'arrêtant à la première étape qui échoue. C'est la méthode « du plus proche au plus lointain » du <a href="../stage/j5.html#methode">jour 5</a>.</p>
 <aside class="callout source"><p>RFC 1122 (« Requirements for Internet Hosts — Communication Layers ») pour la pile TCP/IP ; Microsoft Learn pour les cmdlets <code>Test-NetConnection</code>, <code>Get-NetAdapter</code>, <code>Resolve-DnsName</code>.</p></aside>
 

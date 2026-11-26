@@ -63,6 +63,30 @@
 <tr><td>4. Chargement de Windows</td><td>Le système et les pilotes de démarrage sont chargés (logo Windows).</td><td>Redémarrage en boucle, « Réparation automatique », écran bleu.</td></tr>
 <tr><td>5. Ouverture de session</td><td>Authentification, chargement du profil, stratégies, programmes de démarrage.</td><td>Profil temporaire, écran noir après la connexion, grande lenteur.</td></tr>
 </tbody></table></div>
+<figure class="schema" id="fig-demarrage">
+<svg viewBox="0 0 400 378" role="img" aria-labelledby="demarrage-t demarrage-d"><title id="demarrage-t">La chaîne de démarrage</title><desc id="demarrage-d">Cinq maillons : alimentation, firmware et POST, recherche du disque de démarrage, chargement de Windows, ouverture de session. Chaque maillon a son symptôme quand il échoue.</desc><defs><marker id="demarrage-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="s-pointe" d="M0 0L10 5L0 10z"/></marker><pattern id="demarrage-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="s-hachure" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<rect class="s-boite sombre" x="30" y="14" width="340" height="52" rx="8"/>
+<text class="s-titre" x="200.0" y="36.0" text-anchor="middle">1. Alimentation</text>
+<text class="s-sous" x="200.0" y="54.0" text-anchor="middle">si ça échoue : aucune LED, aucun ventilateur</text>
+<path class="s-trait " d="M200 66V82" marker-end="url(#demarrage-p)"/>
+<rect class="s-boite " x="30" y="84" width="340" height="52" rx="8"/>
+<text class="s-titre" x="200.0" y="106.0" text-anchor="middle">2. Firmware et POST</text>
+<text class="s-sous" x="200.0" y="124.0" text-anchor="middle">si ça échoue : ventilateurs, mais ni image ni logo</text>
+<path class="s-trait " d="M200 136V152" marker-end="url(#demarrage-p)"/>
+<rect class="s-boite accent" x="30" y="154" width="340" height="52" rx="8"/>
+<text class="s-titre" x="200.0" y="176.0" text-anchor="middle">3. Disque de démarrage</text>
+<text class="s-sous" x="200.0" y="194.0" text-anchor="middle">si ça échoue : « aucun périphérique de démarrage »</text>
+<path class="s-trait " d="M200 206V222" marker-end="url(#demarrage-p)"/>
+<rect class="s-boite " x="30" y="224" width="340" height="52" rx="8"/>
+<text class="s-titre" x="200.0" y="246.0" text-anchor="middle">4. Chargement de Windows</text>
+<text class="s-sous" x="200.0" y="264.0" text-anchor="middle">si ça échoue : boucle, réparation, écran bleu</text>
+<path class="s-trait " d="M200 276V292" marker-end="url(#demarrage-p)"/>
+<rect class="s-boite " x="30" y="294" width="340" height="52" rx="8"/>
+<text class="s-titre" x="200.0" y="316.0" text-anchor="middle">5. Ouverture de session</text>
+<text class="s-sous" x="200.0" y="334.0" text-anchor="middle">si ça échoue : profil temporaire, écran noir</text>
+</svg>
+<figcaption><span class="fig-n">Fig.</span> Chaque maillon passe la main au suivant ; les symptômes (écran et câble vérifiés) sont des repères d'orientation.</figcaption>
+</figure>
 <p>Les étapes 1 et 2 relèvent du <strong>matériel</strong>, l'étape 3 du firmware, avant Windows : le <a href="../atelier/pannes.html">simulateur de pannes de l'atelier</a> t'entraîne à les reconnaître (LED, bips, pièce témoin). Les étapes 3 à 5 relèvent de Windows et de ses outils de récupération (<a href="../stage/j4.html#winre">WinRE, jour 4</a>).</p>
 <aside class="callout attention"><p><strong>BitLocker.</strong> Sur un poste chiffré, un changement de matériel ou de réglage du firmware peut faire demander la <strong>clé de récupération</strong> au démarrage. Ne désactive pas le démarrage sécurisé ni le TPM « pour essayer » : suis la procédure et demande la clé au bon endroit (<a href="../stage/j9.html#demarrage">jour 9</a>).</p></aside>
 <aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/performance/windows-boot-issues-troubleshooting">Advanced troubleshooting for Windows boot problems</a> (phases du démarrage), <a href="https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/windows-recovery-environment--windows-re--technical-reference">Windows RE</a>, <a href="https://learn.microsoft.com/en-us/windows/security/operating-system-security/data-protection/bitlocker/recovery-overview">BitLocker recovery overview</a> ; ASUS : <a href="https://www.asus.com/support/faq/1042632/">absence d'affichage</a> (exemple constructeur).</p></aside>

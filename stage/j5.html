@@ -50,11 +50,35 @@
 
 <h3>DHCP : la poignée de main en quatre temps</h3>
 <ol>
-  <li><strong>Discover</strong> : le poste crie « Y a-t-il un serveur DHCP ? ».</li>
+  <li><strong>Discover</strong> : le poste crie, en diffusion, « Y a-t-il un serveur DHCP ? ».</li>
   <li><strong>Offer</strong> : un serveur propose une adresse.</li>
   <li><strong>Request</strong> : le poste demande formellement cette adresse.</li>
   <li><strong>Acknowledge</strong> : le serveur confirme et fixe la durée du <strong>bail</strong> (<em>lease</em>).</li>
 </ol>
+<figure class="schema" id="fig-dora">
+<svg viewBox="0 0 400 370" role="img" aria-labelledby="dora-t dora-d"><title id="dora-t">Les quatre messages du DHCP</title><desc id="dora-d">Le poste diffuse Discover ; le serveur DHCP répond Offer avec une adresse ; le poste envoie Request pour cette adresse ; le serveur confirme par Acknowledge et fixe la durée du bail.</desc><defs><marker id="dora-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="s-pointe" d="M0 0L10 5L0 10z"/></marker><pattern id="dora-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="s-hachure" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<rect class="s-boite accent" x="16" y="12" width="150" height="44" rx="8"/>
+<text class="s-titre" x="91.0" y="30.0" text-anchor="middle">Le poste</text>
+<text class="s-sous" x="91.0" y="48.0" text-anchor="middle">sans adresse</text>
+<rect class="s-boite sombre" x="234" y="12" width="150" height="44" rx="8"/>
+<text class="s-titre" x="309.0" y="39.0" text-anchor="middle">Serveur DHCP</text>
+<path class="s-vie" d="M91 56V360M309 56V360"/>
+<path class="s-trait s-msg" d="M95 96H305" marker-end="url(#dora-p)"/>
+<text class="s-titre" x="200" y="86" text-anchor="middle">Discover</text>
+<text class="s-sous" x="200" y="116" text-anchor="middle">« Y a-t-il un serveur DHCP ? »</text>
+<text class="s-etiq" x="200" y="132" text-anchor="middle">diffusion</text>
+<path class="s-trait s-msg" d="M305 168H95" marker-end="url(#dora-p)"/>
+<text class="s-titre" x="200" y="158" text-anchor="middle">Offer</text>
+<text class="s-sous" x="200" y="188" text-anchor="middle">« Je propose cette adresse »</text>
+<path class="s-trait s-msg" d="M95 240H305" marker-end="url(#dora-p)"/>
+<text class="s-titre" x="200" y="230" text-anchor="middle">Request</text>
+<text class="s-sous" x="200" y="260" text-anchor="middle">« Je la demande »</text>
+<path class="s-trait s-msg" d="M305 312H95" marker-end="url(#dora-p)"/>
+<text class="s-titre" x="200" y="302" text-anchor="middle">Acknowledge</text>
+<text class="s-sous" x="200" y="332" text-anchor="middle">« Confirmé, et voici le bail »</text>
+</svg>
+<figcaption><span class="fig-n">Fig.</span> La poignée de main du DHCP en quatre temps (Discover, Offer, Request, Acknowledge).</figcaption>
+</figure>
 <h3>APIPA : l'adresse 169.254.x.x</h3>
 <p>Si un poste configuré en DHCP ne reçoit aucune réponse, Windows s'attribue lui-même une adresse en <strong>169.254.0.0/16</strong> (adressage « <em>link-local</em> », appelé APIPA chez Microsoft). Cette adresse ne permet de parler qu'au réseau local immédiat, pas à Internet.</p>
 <aside class="callout retenir"><p>Une adresse en <code>169.254.x.x</code> veut dire « <strong>le poste n'a pas réussi à joindre un serveur DHCP</strong> ». Ce n'est pas un problème de DNS ni de site web : cherche du côté du câble / Wi-Fi, du port, du VLAN, ou du service DHCP.</p></aside>
@@ -71,6 +95,42 @@
   <li><strong>Le chemin</strong> : <code>tracert</code> liste les routeurs qui répondent ; un saut muet (<code>*</code>) n'est pas forcément une panne. <code>pathping</code> ajoute des mesures de perte sur les sauts qui répondent.</li>
 </ol>
 
+<figure class="schema" id="fig-proche-lointain">
+<svg viewBox="0 0 400 426" role="img" aria-labelledby="proche-lointain-t proche-lointain-d"><title id="proche-lointain-t">Dépanner du plus proche au plus lointain</title><desc id="proche-lointain-d">Six étapes dans l&#x27;ordre : le poste, sa configuration, la passerelle, une adresse publique, la résolution de noms, le chemin. Le premier échec oriente la recherche : c&#x27;est un indice, pas une preuve.</desc><defs><marker id="proche-lointain-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="s-pointe" d="M0 0L10 5L0 10z"/></marker><pattern id="proche-lointain-h" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="s-hachure" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<text class="s-etiq" x="8" y="18" text-anchor="start">Le plus proche</text>
+<circle class="s-num" cx="26" cy="56" r="12"/><text class="s-num-t" x="26" y="60.5" text-anchor="middle">1</text>
+<rect class="s-boite accent" x="48" y="30" width="344" height="52" rx="8"/>
+<text class="s-titre" x="220.0" y="52.0" text-anchor="middle">Le poste</text>
+<text class="s-code" x="220.0" y="70.0" text-anchor="middle">ping 127.0.0.1</text>
+<path class="s-trait s-fin" d="M26 68V104"/>
+<circle class="s-num" cx="26" cy="118" r="12"/><text class="s-num-t" x="26" y="122.5" text-anchor="middle">2</text>
+<rect class="s-boite " x="48" y="92" width="344" height="52" rx="8"/>
+<text class="s-titre" x="220.0" y="114.0" text-anchor="middle">Sa configuration</text>
+<text class="s-code" x="220.0" y="132.0" text-anchor="middle">ipconfig /all</text>
+<path class="s-trait s-fin" d="M26 130V166"/>
+<circle class="s-num" cx="26" cy="180" r="12"/><text class="s-num-t" x="26" y="184.5" text-anchor="middle">3</text>
+<rect class="s-boite " x="48" y="154" width="344" height="52" rx="8"/>
+<text class="s-titre" x="220.0" y="176.0" text-anchor="middle">La passerelle</text>
+<text class="s-code" x="220.0" y="194.0" text-anchor="middle">ping de la passerelle</text>
+<path class="s-trait s-fin" d="M26 192V228"/>
+<circle class="s-num" cx="26" cy="242" r="12"/><text class="s-num-t" x="26" y="246.5" text-anchor="middle">4</text>
+<rect class="s-boite " x="48" y="216" width="344" height="52" rx="8"/>
+<text class="s-titre" x="220.0" y="238.0" text-anchor="middle">Une adresse publique</text>
+<text class="s-code" x="220.0" y="256.0" text-anchor="middle">ping d&#x27;une adresse IP</text>
+<path class="s-trait s-fin" d="M26 254V290"/>
+<circle class="s-num" cx="26" cy="304" r="12"/><text class="s-num-t" x="26" y="308.5" text-anchor="middle">5</text>
+<rect class="s-boite " x="48" y="278" width="344" height="52" rx="8"/>
+<text class="s-titre" x="220.0" y="300.0" text-anchor="middle">La résolution de noms</text>
+<text class="s-code" x="220.0" y="318.0" text-anchor="middle">nslookup www.example.org</text>
+<path class="s-trait s-fin" d="M26 316V352"/>
+<circle class="s-num" cx="26" cy="366" r="12"/><text class="s-num-t" x="26" y="370.5" text-anchor="middle">6</text>
+<rect class="s-boite " x="48" y="340" width="344" height="52" rx="8"/>
+<text class="s-titre" x="220.0" y="362.0" text-anchor="middle">Le chemin</text>
+<text class="s-code" x="220.0" y="380.0" text-anchor="middle">tracert</text>
+<text class="s-etiq" x="8" y="418" text-anchor="start">Le plus lointain</text>
+</svg>
+<figcaption><span class="fig-n">Fig.</span> Du plus proche au plus lointain : le premier échec oriente la recherche (un indice, pas une preuve).</figcaption>
+</figure>
 <h3>Les commandes</h3>
 <pre data-copy><code>ipconfig
 ipconfig /all

@@ -229,11 +229,16 @@ But : que chaque page de cours ait l'allure d'un beau document professionnel (un
 
 ## Lot 30 — Schémas et illustrations SVG maison
 But : remplacer les explications les plus abstraites par de **vrais schémas**, dessinés à la main en SVG dans un style « trait d'encre + aplat rouille » cohérent avec la gravure de l'atelier mais plus moderne.
-- [ ] 30.1 Charte des schémas dans `docs/REFONTE.md` : épaisseurs de trait, aplats, flèches, étiquettes en Instrument Sans, couleurs par `currentColor` et variables (lisibles en clair et en sombre), `role="img"` avec `<title>` et `<desc>`, texte réel dans le SVG (pas d'image de texte), largeur fluide. Un composant d'exemple dans `docs/composants.html`.
-- [ ] 30.2 Prépa, au moins six schémas : cycle de vie d'un ticket et matrice impact × urgence (J1), chaîne de démarrage (J4), couches et « du plus proche au plus lointain » (J5), DORA du DHCP (J5), arbre domaine-OU-groupes-GPO (J6), session d'Assistance rapide côté aidant et côté utilisateur (J8).
-- [ ] 30.3 Modules, au moins six schémas : couches TCP/IP (Réseau de base), découpage d'un /24 en sous-réseaux (Sous-réseaux), AGDLP et Kerberos (AD), incident → problème → erreur connue (ITIL), boîte partagée et droits (M365), anatomie d'une carte mère (Matériel et PC).
-- [ ] 30.4 Relecture des schémas par l'autre outil (`relecture-sources.md`, rapport `docs/relectures/schemas.md`) : chaque élément dessiné doit exister dans la section et sa source.
-- [ ] 30.5 Corrections, fiches mémo (un schéma clé peut entrer dans la fiche A4 en niveaux de gris), contrôles (accessibilité : `title`/`desc`, contrastes), coche, fusion.
+- [x] 30.1 Charte des schémas dans `docs/REFONTE.md` : épaisseurs de trait, aplats, flèches, étiquettes en Instrument Sans, couleurs par `currentColor` et variables (lisibles en clair et en sombre), `role="img"` avec `<title>` et `<desc>`, texte réel dans le SVG (pas d'image de texte), largeur fluide. Un composant d'exemple dans `docs/composants.html`.
+  Fait : REFONTE § 5.2 (largeur 400 en colonne, classes `s-*` sur les variables, `title`/`desc`, texte réel) ; exemple dans `docs/composants.html` § 9 ; générateur `outils/schemas.py`.
+- [x] 30.2 Prépa, au moins six schémas : cycle de vie d'un ticket et matrice impact × urgence (J1), chaîne de démarrage (J4), couches et « du plus proche au plus lointain » (J5), DORA du DHCP (J5), arbre domaine-OU-groupes-GPO (J6), session d'Assistance rapide côté aidant et côté utilisateur (J8).
+  Fait : cycle de vie du ticket (J1), DORA et « du plus proche au plus lointain » (J5), annuaire (J6), sept étapes (J8). Justifié : pas de schéma de la matrice (tableau déjà là) ni de session Assistance rapide (le tableau pas à pas du module la montre déjà).
+- [x] 30.3 Modules, au moins six schémas : couches TCP/IP (Réseau de base), découpage d'un /24 en sous-réseaux (Sous-réseaux), AGDLP et Kerberos (AD), incident → problème → erreur connue (ITIL), boîte partagée et droits (M365), anatomie d'une carte mère (Matériel et PC).
+  Fait : chaîne de démarrage, couches TCP/IP, découpage d'un /24, AGDLP, incident → problème → erreur connue, droits d'une boîte partagée, compatibilité autour de la carte mère. Justifié : pas d'anatomie de carte mère, faute de contenu correspondant dans la section ; Kerberos laissé en texte.
+- [x] 30.4 Relecture des schémas par l'autre outil (`relecture-sources.md`, rapport `docs/relectures/schemas.md`) : chaque élément dessiné doit exister dans la section et sa source.
+  Fait : relecture par un agent qui n'a pas dessiné les schémas, sources ouvertes : `docs/relectures/schemas.md` (2 faux, 8 non vérifiés, 22 corrects).
+- [x] 30.5 Corrections, fiches mémo (un schéma clé peut entrer dans la fiche A4 en niveaux de gris), contrôles (accessibilité : `title`/`desc`, contrastes), coche, fusion.
+  Fait : les 10 points traités (suivi dans le rapport), sections et encadrés complétés ; captures `docs/captures/lot-30/` ; `npm run controles` : 0 problème, 0 avertissement, 0 échec, 0 contraste sous le seuil ; fusion dans `main`. Justifié : schémas laissés hors des fiches A4, déjà pleines.
 
 ## Lot 31 — Pages d'entrée « couverture »
 But : que l'arrivée sur chaque rubrique donne envie, comme la couverture d'un manuel ou la une d'une revue.

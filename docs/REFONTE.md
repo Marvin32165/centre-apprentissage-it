@@ -175,6 +175,14 @@ DA inchangée (couleurs, polices, AA, cibles ≥ 44 px, mouvement réduit). Chaq
 - Tableaux : sous 600 px, chaque ligne devient une carte (étiquette de colonne en mono au-dessus de la valeur), sauf les tableaux à en-têtes de ligne (matrices).
 - Modules : sommaire repliable « Sur cette page » sous la fiche (ouvert à partir de 1200 px) ; à partir de 1200 px, les encadrés « Source officielle » et « À l'UMONS » (pas les questions pour le tuteur) passent dans la marge droite, au début de leur section, puis reviennent dans le texte sur écran plus étroit. Les pages de jour gardent leur colonne « Sur cette page » et leurs encadrés dans le texte.
 
+### 5.2 Lot 30 — Schémas SVG maison
+- Chaque schéma est un `<figure class="schema">` avec un `<svg viewBox="0 0 400 H" role="img" aria-labelledby="…">`, un `<title>` et un `<desc>` qui disent tout le contenu en une phrase, puis une `<figcaption>` (« *Fig.* » en italique rouille + une phrase).
+- Largeur de dessin fixe de 400 unités, en **colonne verticale** : lisible à 1:1 sur téléphone, `max-width: 32rem` sur ordinateur.
+- Charte (classes de `style.css`, couleurs par variables, donc justes en clair, en sombre et à l'impression) : `s-boite` (fond surface, trait encre 1,25), `.accent` (fond rouille doux, trait rouille), `.sombre` (barre sombre, texte clair), `.vert` (état réussi), `.hache` (trait pointillé : élément à part, ressource) ; `s-trait` (flèches gris-encre 1,4, pointe en marqueur), `.s-retour` (pointillé : retour en arrière), `.s-msg` (message, rouille) ; textes `s-titre` (Instrument Sans 15 gras), `s-sous` (12,5), `s-code` (mono rouille), `s-etiq` (mono capitales espacées) ; pastilles numérotées `s-num`.
+- Texte réel dans le SVG (jamais d'image de texte), coupé à la main : 24 caractères au plus par ligne dans une boîte de 180.
+- Un schéma ne dit rien de plus que sa section et sa source : il est relu par l'autre outil (rapport `docs/relectures/schemas.md`).
+- Les schémas sont générés par `outils/schemas.py` (outil de travail) puis collés dans les pages : pas d'étape de build pour le site. Pour modifier un schéma, modifier le script, le relancer et recoller la `<figure>`.
+
 ### 5.4 Lot 32 — Mouvement et micro-interactions
 - Tout se coupe avec `prefers-reduced-motion: reduce` (contrôlé par le parcours « mouvement réduit »).
 - Transitions entre pages : View Transitions entre documents (`@view-transition`), activées seulement sans préférence de mouvement réduit ; l'en-tête reste en place (`view-transition-name: entete`), le reste se fond en 0,22 s. Sans prise en charge, rien ne change.
