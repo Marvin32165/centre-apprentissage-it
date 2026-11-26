@@ -339,7 +339,7 @@
     if (!bloc || bloc.tagName === "H2") return;
     var tuteur = main.querySelector(".callout.umons[data-titre]");
     var bPrint = el("button", { type: "button", "class": "btn ghost" });
-    bPrint.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/></svg><span>Imprimer la fiche mémo (une page A4)</span>';
+    bPrint.appendChild(IT.icon("print")); bPrint.appendChild(el("span", null, "Imprimer la fiche mémo (une page A4)"));
     bPrint.addEventListener("click", function () { window.print(); });
     var pb = el("p"); pb.appendChild(bPrint);
     bloc.parentNode.insertBefore(pb, bloc.nextSibling);

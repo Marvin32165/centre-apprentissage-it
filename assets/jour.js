@@ -352,7 +352,7 @@
     carte.appendChild(el("p", { "class": "label" }, "Fiche mémo"));
     carte.appendChild(el("p", null, "Une page A4 à garder près du téléphone."));
     var bPrint = el("button", { type: "button", "class": "btn ghost" });
-    bPrint.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/></svg><span>Aperçu et impression</span>';
+    bPrint.appendChild(IT.icon("print")); bPrint.appendChild(el("span", null, "Aperçu et impression"));
     bPrint.addEventListener("click", function () { window.print(); });
     carte.appendChild(bPrint);
     if (tuteur) {

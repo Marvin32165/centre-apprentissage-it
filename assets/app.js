@@ -157,8 +157,10 @@
   function progressionPortable() {
     var bloc = el("div", { "class": "pied-progression" });
     var statut = el("p", { "class": "pied-statut", role: "status", "aria-live": "polite" });
-    var bExport = el("button", { type: "button", "class": "pied-btn" }, "Exporter ma progression");
-    var bImport = el("button", { type: "button", "class": "pied-btn" }, "Importer");
+    var bExport = el("button", { type: "button", "class": "pied-btn" });
+    bExport.appendChild(icon("download")); bExport.appendChild(el("span", null, "Exporter ma progression"));
+    var bImport = el("button", { type: "button", "class": "pied-btn" });
+    bImport.appendChild(icon("upload")); bImport.appendChild(el("span", null, "Importer"));
     var fichier = el("input", { type: "file", accept: "application/json,.json", hidden: "", "aria-label": "Fichier de progression à importer" });
     function cles() {
       var out = {};
@@ -385,6 +387,29 @@
     var tc = document.querySelector('meta[name="theme-color"]');
     if (!tc) { tc = el("meta", { name: "theme-color" }); document.head.appendChild(tc); }
     tc.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bar").trim() || "#2C1F16");
+  }
+
+  /* ---------- Typographie française, appliquée au texte affiché (jamais au code) :
+     espace insécable avant « : » et « » », fine insécable avant « ; ? ! », insécable après « « », apostrophe typographique. ---------- */
+  function initTypo() {
+    var main = document.querySelector("main");
+    if (!main || !document.createTreeWalker) return;
+    var exclus = /^(CODE|PRE|KBD|SAMP|SCRIPT|STYLE|TEXTAREA|INPUT|OPTION|svg|text|title|desc)$/;
+    var w = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (n) {
+        for (var p = n.parentNode; p && p !== main; p = p.parentNode) if (exclus.test(p.nodeName) || (p.classList && p.classList.contains("no-typo"))) return NodeFilter.FILTER_REJECT;
+        return /[:;?!»«']/.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var noeuds = [], n;
+    while ((n = w.nextNode())) noeuds.push(n);
+    noeuds.forEach(function (t) {
+      t.nodeValue = t.nodeValue
+        .replace(/[ \u00a0]+([:»])/g, "\u00a0$1")
+        .replace(/[ \u00a0]+([;?!])/g, "\u202f$1")
+        .replace(/«[ \u00a0]+/g, "«\u00a0")
+        .replace(/([A-Za-zÀ-ÿ])'([A-Za-zÀ-ÿ])/g, "$1\u2019$2");
+    });
   }
 
   /* ---------- Tableaux : sur mobile, chaque ligne devient une carte (étiquettes tirées de l'en-tête) ---------- */
@@ -694,6 +719,7 @@
   initApparition();
   initReprise();
   initRecherche();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initTypo); else initTypo();
 
   window.IT = { store: store, el: el, icon: icon, picto: picto, isDone: isDone, renderProgress: renderProgress };
 })();

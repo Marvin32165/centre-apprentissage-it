@@ -200,3 +200,10 @@ DA inchangée (couleurs, polices, AA, cibles ≥ 44 px, mouvement réduit). Chaq
 - Quiz : la bonne réponse choisie fait un léger rebond, la mauvaise tremble ; le score s'affiche en grand (Newsreader, chiffre rouille qui compte de 0 au score en 0,7 s ; le texte annoncé aux lecteurs d'écran reste « Score : n / N »).
 - Survol et appui : boutons et puces qui s'enfoncent d'un pixel, cartes qui se soulèvent de 2 px avec une ombre très douce, anneau de focus qui se décale.
 
+### 5.5 Lot 33 — Icônes, mode sombre et finitions
+- Un seul jeu d'icônes (`ICONS` de `app.js`, grille 24, trait 1,5 à 2 selon la taille) : pictogrammes du lot 31, plus `print`, `download`, `upload` ; boutons d'impression des fiches et d'export / import du pied de page.
+- Mode sombre : jeton `--surface-2` (#221C17, surface surélevée) pour le ticket, le minuteur, la case « Stage », la carte à la une, le sommaire, le quiz et les boîtes sombres des schémas, qui ne se confondent plus avec le fond ; blocs de code bordés.
+- Typographie française appliquée au texte affiché par `app.js` (`initTypo`, jamais dans `code`, `pre`, `kbd`, les SVG ni la classe `no-typo`) : espace insécable avant « : » et « » », fine insécable avant « ; ? ! », insécable après « « », apostrophe typographique. Le contenu source reste en apostrophes droites, ce qui garde la recherche et les données simples.
+- Touches `kbd` dessinées (bord inférieur épais, léger dégradé), soulignés des liens plus fins et décalés.
+- Favicon : le tampon IT incliné sur fond de barre, lisible sur onglet clair comme sombre (inchangé) ; impression déjà propre (en-tête et pied masqués, fiches A4).
+
