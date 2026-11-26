@@ -183,6 +183,15 @@ DA inchangée (couleurs, polices, AA, cibles ≥ 44 px, mouvement réduit). Chaq
 - Un schéma ne dit rien de plus que sa section et sa source : il est relu par l'autre outil (rapport `docs/relectures/schemas.md`).
 - Les schémas sont générés par `outils/schemas.py` (outil de travail) puis collés dans les pages : pas d'étape de build pour le site. Pour modifier un schéma, modifier le script, le relancer et recoller la `<figure>`.
 
+### 5.3 Lot 31 — Pages d'entrée « couverture »
+- Pictogrammes (grille 24, trait 1,5, `IT.picto(nom)` dans `app.js`) : rubriques (`stage`, `modules`, `themes`, `atelier`) et domaines (`support`, `reseau`, `windows`, `gestion`, `materiel`, `securite`, `linux`, `virtualisation`, `cloud`). Sur les cartes de rubrique, dans un carré de 44 px bordé.
+- Accueil : ticket avec perforations latérales, état « Ouvert » en tampon incliné, pied pointillé avec code-barres décoratif ; frise posée sur une ligne de temps (pastille verte si fait, rouille cerclée pour aujourd'hui, sombre pour le stage).
+- `stage/index.html` : le programme devient un sommaire de revue (grand numéro italique rouille, titre en Newsreader, sujets en dessous, date et durée en mono à droite, ligne du jour surlignée), construit par `app.js` depuis `data.js`.
+- `modules/index.html` : carte « Pour commencer / À suivre » en tête (premier module non terminé dont les prérequis sont faits), pictogramme du domaine sur chaque carte. Le parcours conseillé garde sa grille actuelle.
+- `themes.html` : pictogramme du domaine dans chaque tuile.
+- `404.html` : un ticket « WEB-404 » dessiné en SVG, tampon « INTROUVABLE » qui apparaît (sans mouvement si réduit).
+- Barre du navigateur : `meta theme-color` réglée par `app.js` sur la couleur de la barre du thème courant.
+
 ### 5.4 Lot 32 — Mouvement et micro-interactions
 - Tout se coupe avec `prefers-reduced-motion: reduce` (contrôlé par le parcours « mouvement réduit »).
 - Transitions entre pages : View Transitions entre documents (`@view-transition`), activées seulement sans préférence de mouvement réduit ; l'en-tête reste en place (`view-transition-name: entete`), le reste se fond en 0,22 s. Sans prise en charge, rien ne change.

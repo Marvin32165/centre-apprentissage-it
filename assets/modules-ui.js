@@ -95,6 +95,20 @@
     var compte = el("p", { "class": "compte", "aria-live": "polite" });
     var liste = el("div", { "class": "mod-liste" });
     box.textContent = "";
+    var une = (function () {
+      var m = D.modules.filter(function (x) { return !fait(x) && x.prerequis.every(function (id) { var p = mod(id); return !p || fait(p); }); })[0];
+      if (!m) return null;
+      var d = dom(m.domaine), c = el("a", { "class": "card une", href: m.id + ".html" });
+      if (window.IT && IT.picto) c.appendChild(IT.picto(m.domaine));
+      var t = el("div", { "class": "une-corps" });
+      t.appendChild(el("p", { "class": "kicker" }, (D.modules.some(fait) ? "À suivre" : "Pour commencer") + " · " + (d ? d.titre : m.domaine)));
+      t.appendChild(el("h2", { "class": "une-titre" }, m.titre));
+      t.appendChild(el("p", { "class": "une-resume" }, m.resume));
+      t.appendChild(el("p", { "class": "une-meta" }, niv(m.niveau) + " · " + duree(m.duree)));
+      c.appendChild(t);
+      return c;
+    })();
+    if (une) box.appendChild(une);
     box.appendChild(form);
     box.appendChild(compte);
     box.appendChild(liste);
@@ -114,7 +128,10 @@
       a.appendChild(g);
       var dr = el("div", { "class": "mod-droite" });
       var d = dom(m.domaine);
-      dr.appendChild(el("p", { "class": "kicker" }, d ? d.titre : m.domaine));
+      var kk = el("p", { "class": "kicker mod-kicker" });
+      if (window.IT && IT.picto) kk.appendChild(IT.picto(m.domaine));
+      kk.appendChild(document.createTextNode(d ? d.titre : m.domaine));
+      dr.appendChild(kk);
       dr.appendChild(el("h2", { "class": "mod-titre" }, m.titre));
       dr.appendChild(el("p", { "class": "mod-resume" }, m.resume));
       var tags = el("p", { "class": "mod-tags" });
@@ -249,6 +266,7 @@
       var dispo = mods.length + (d.liens || []).length, venir = (d.aVenir || []).length;
       var b = el("button", { type: "button", "class": "tuile" + (dispo ? "" : " vide"), "aria-pressed": "false", "aria-controls": "domaine" });
       var tete = el("span", { "class": "tuile-tete" });
+      if (window.IT && IT.picto) tete.appendChild(IT.picto(d.id));
       tete.appendChild(el("span", { "class": "tuile-n" }, num(i)));
       if (d.stage) tete.appendChild(el("span", { "class": "badge-stage" }, "STAGE"));
       b.appendChild(tete);

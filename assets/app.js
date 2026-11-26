@@ -31,8 +31,26 @@
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
     copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
     check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
-    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>'
+    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    /* Pictogrammes (grille 24, trait 1,5 par CSS) : rubriques et domaines */
+    stage: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/><path d="M19 20c0 1.5-1.5 2.5-3.5 2.5H13"/>',
+    support: '<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/><path d="M19 20c0 1.5-1.5 2.5-3.5 2.5H13"/>',
+    modules: '<path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2z"/><path d="M5 18a2 2 0 0 1 2-2h12"/><path d="M9 8h6"/>',
+    themes: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+    atelier: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
+    reseau: '<rect x="9" y="3" width="6" height="5" rx="1"/><rect x="3" y="16" width="6" height="5" rx="1"/><rect x="15" y="16" width="6" height="5" rx="1"/><path d="M12 8v4M6 16v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/>',
+    windows: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 4.5a3 3 0 0 1 0 6M21 20a5 5 0 0 0-3.5-4.8"/>',
+    gestion: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>',
+    materiel: '<rect x="6" y="6" width="12" height="12" rx="1.5"/><rect x="9.5" y="9.5" width="5" height="5"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+    securite: '<path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
+    linux: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/>',
+    virtualisation: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+    cloud: '<path d="M7 18a4 4 0 0 1-.6-8 6 6 0 0 1 11.5 1.5A3.5 3.5 0 0 1 17.5 18z"/>',
+    print: '<path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/>',
+    download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+    upload: '<path d="M12 20V9M7 14l5-5 5 5M5 4h14"/>'
   };
+  function picto(name) { var w = el("span", { "class": "picto", "aria-hidden": "true" }); if (ICONS[name]) w.appendChild(icon(name)); return w; }
   function icon(name) {
     var span = document.createElement("span");
     span.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + ICONS[name] + "</svg>";
@@ -47,6 +65,8 @@
   function applyTheme(t) {
     if (t === "auto") document.documentElement.removeAttribute("data-theme");
     else document.documentElement.setAttribute("data-theme", t);
+    var tc = document.querySelector('meta[name="theme-color"]');
+    if (tc) tc.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bar").trim() || "#2C1F16");
   }
 
   /* ---------- En-tête, navigation, pied de page ---------- */
@@ -326,6 +346,45 @@
       c.classList.add("a-reveler");
       io.observe(c);
     });
+  }
+
+  /* ---------- Couvertures : pictogrammes des rubriques, programme de la prépa, couleur de la barre du navigateur ---------- */
+  function initCouvertures() {
+    Array.prototype.forEach.call(document.querySelectorAll("main .card.rub[href]"), function (c) {
+      var h = c.getAttribute("href"), n = /stage\//.test(h) ? "stage" : /modules\//.test(h) ? "modules" : /themes/.test(h) ? "themes" : /atelier\//.test(h) ? "atelier" : null;
+      if (n && !c.querySelector(".picto")) c.insertBefore(picto(n), c.firstChild);
+    });
+    var ul = document.querySelector("main ul.plan-jours"), J = DATA.stage && DATA.stage.jours;
+    if (ul && J) {
+      var d = new Date(), auj = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+      ul.classList.add("programme");
+      Array.prototype.forEach.call(ul.children, function (li) {
+        var a = li.querySelector("a"), m = a && /j(\d+)\.html/.exec(a.getAttribute("href"));
+        if (!m) return;
+        var j = J.filter(function (x) { return x.n === +m[1]; })[0];
+        var reste = li.textContent.split(a.textContent).slice(1).join(a.textContent).replace(/\s+/g, " ").trim();
+        var fait = li.querySelector("[data-fait]");
+        li.textContent = "";
+        li.appendChild(el("span", { "class": "prog-n", "aria-hidden": "true" }, (j && j.n < 10 ? "0" : "") + m[1]));
+        var corps = el("span", { "class": "prog-corps" });
+        var t = el("span", { "class": "prog-titre" }); a.textContent = a.textContent.replace(/^./, function (c) { return c.toUpperCase(); }); t.appendChild(el("span", { "class": "sr-only" }, "Jour " + m[1] + " : ")); t.appendChild(a);
+        corps.appendChild(t);
+        if (reste) corps.appendChild(el("span", { "class": "prog-desc" }, reste.replace(/^\(|\)$/g, "")));
+        li.appendChild(corps);
+        var meta = el("span", { "class": "prog-meta" });
+        if (j) {
+          var dt = j.date.split("-"), date = new Date(+dt[0], +dt[1] - 1, +dt[2]);
+          meta.appendChild(el("span", { "class": "prog-date" }, date.toLocaleDateString("fr-BE", { weekday: "short", day: "numeric", month: "numeric" }).replace(".", "")));
+          meta.appendChild(el("span", { "class": "prog-duree" }, j.duree));
+          if (j.date === auj) li.classList.add("auj");
+        }
+        if (fait) meta.appendChild(fait);
+        li.appendChild(meta);
+      });
+    }
+    var tc = document.querySelector('meta[name="theme-color"]');
+    if (!tc) { tc = el("meta", { name: "theme-color" }); document.head.appendChild(tc); }
+    tc.setAttribute("content", getComputedStyle(document.documentElement).getPropertyValue("--bar").trim() || "#2C1F16");
   }
 
   /* ---------- Tableaux : sur mobile, chaque ligne devient une carte (étiquettes tirées de l'en-tête) ---------- */
@@ -625,6 +684,7 @@
   applyTheme(currentTheme());
   buildChrome();
   initSections();
+  initCouvertures();
   initDone();
   renderProgress();
   initCopy();
@@ -635,5 +695,5 @@
   initReprise();
   initRecherche();
 
-  window.IT = { store: store, el: el, icon: icon, isDone: isDone, renderProgress: renderProgress };
+  window.IT = { store: store, el: el, icon: icon, picto: picto, isDone: isDone, renderProgress: renderProgress };
 })();
