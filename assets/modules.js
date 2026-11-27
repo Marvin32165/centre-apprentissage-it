@@ -25,7 +25,7 @@ window.IT_MODULES = {
     { id: "gestion", stage: true, titre: "Gestion des services et méthode",
       desc: "Les cadres qui organisent le travail d'une DSI : pratiques ITIL, outils de tickets, méthode de travail.",
       liens: [{ href: "stage/j1.html", label: "Prépa, jour 1 : le métier de service desk" }, { href: "stage/j3.html", label: "Prépa, jour 3 : Jira" }],
-      aVenir: ["Outils de tickets et de projet", "Méthodes agiles", "Gestion de parc et d'inventaire"] },
+      aVenir: ["Outils de gestion de projet", "Méthodes agiles", "Gestion de parc et d'inventaire"] },
     { id: "materiel", stage: true, titre: "Matériel",
       desc: "Composants, démarrage, montage et pannes d'un PC.",
       liens: [{ href: "atelier/index.html", label: "Atelier hardware" }, { href: "stage/j9.html", label: "Prépa, jour 9 : matériel et PC" }],
@@ -110,6 +110,17 @@ window.IT_MODULES = {
       tags: ["sous-réseau", "subnetting", "masque", "cidr", "préfixe", "vlsm", "plan d'adressage", "diffusion", "rfc 1918", "passerelle"],
       prepa: [{ href: "stage/j5.html", label: "Jour 5 : le réseau côté utilisateur" }],
       liens: [],
-      suite: [] }
+      suite: [] },
+    { id: "jira-quotidien",
+      titre: "Jira Service Management au quotidien",
+      domaine: "gestion",
+      niveau: 2,
+      duree: 110,
+      prerequis: ["itil"],
+      resume: "Lire une file, un filtre JQL et un SLA, documenter un ticket, lier les demandes et comprendre les automatisations.",
+      tags: ["jira", "jira service management", "jsm", "jql", "sla", "files", "note interne", "commentaire", "base de connaissances", "réponses types", "automatisation"],
+      prepa: [{"href": "stage/j3.html", "label": "Jour 3 : Jira, de l’ouverture à la clôture"}],
+      liens: [{"href": "stage/tickets.html", "label": "Entraînement aux tickets"}],
+      suite: ["depannage-distance"] }
   ]
 };

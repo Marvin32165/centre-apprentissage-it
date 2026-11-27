@@ -190,3 +190,24 @@ window.IT_QUIZZES["module-sous-reseaux"] = { titre: "Quiz : sous-réseaux et pla
     options: ["100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "127.0.0.0/8"], reponse: 2,
     explication: "Les plages privées sont 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16. 100.64/10 est l'espace partagé, 169.254/16 le lien local, 127/8 la boucle locale." }
 ]};
+
+window.IT_QUIZZES["module-jira-quotidien"] = { titre: "Quiz : Jira Service Management au quotidien", questions: [
+  { q: "Quel ticket retient le filtre assignee IS EMPTY AND statusCategory != Done ?",
+    options: ["Un ticket non assigné et en cours", "Un ticket assigné et en cours", "Un ticket non assigné et terminé", "Tous les tickets créés aujourd’hui"], reponse: 0,
+    explication: "Les deux conditions portent sur l’assignation et sur la catégorie de statut. Atlassian, champs JQL : https://support.atlassian.com/jira-service-management-cloud/docs/jql-fields/" },
+  { q: "Le SLA de résolution est en pause. Que fais-tu avec le SLA de première réponse ?",
+    options: ["Je le considère comme arrêté", "Je change la priorité du ticket", "Je lis son état séparément et j’agis selon son échéance", "J’attends le prochain redémarrage de Jira"], reponse: 2,
+    explication: "Deux SLA peuvent mesurer des actions différentes selon leurs propres conditions. Atlassian, lecture des SLA : https://support.atlassian.com/jira-service-management-cloud/docs/what-are-slas-and-how-do-i-view-them-in-my-service-project/" },
+  { q: "Où consigner un résultat de diagnostic qui doit rester entre agents ?",
+    options: ["Dans le portail public", "Dans une note interne", "Dans la réponse au client", "Dans le titre de la file"], reponse: 1,
+    explication: "Le client ne voit pas les notes internes. Atlassian, communiquer depuis le ticket : https://support.atlassian.com/jira-service-management-cloud/docs/talk-to-the-customer-or-team-members-from-the-new-issue-view/" },
+  { q: "Deux tickets décrivent vraisemblablement le même incident. Quel geste conserve leur contexte ?",
+    options: ["Clôturer automatiquement les deux tickets", "Copier toutes les données dans le portail", "Effacer le premier ticket", "Lier les tickets avec la relation pertinente et garder les éléments propres à chacun"], reponse: 3,
+    explication: "Le lien permet de choisir un type de relation entre deux tickets. Atlassian, lier des éléments : https://support.atlassian.com/jira-service-management-cloud/docs/link-issues-pages-and-app-content-from-the-issue-view/" },
+  { q: "Tu trouves un guide interne et une réponse type. Comment écris-tu au client ?",
+    options: ["J’adapte la réponse type et je garde le guide interne dans la note d’équipe", "Je copie le lien interne dans la réponse publique", "Je publie le texte type sans relecture", "Je déplace le guide sur un espace public"], reponse: 0,
+    explication: "La visibilité de l’article détermine son canal de partage. Le texte inséré se relit avec le contexte du ticket. Atlassian : https://support.atlassian.com/jira-service-management-cloud/docs/use-internal-articles-in-the-knowledge-base-panel/" },
+  { q: "Quel indice montre pourquoi une automatisation a tourné sans produire l’action prévue ?",
+    options: ["Le nom de l’agent seulement", "Le statut de la file seulement", "L’exécution et le détail des étapes dans l’audit, si j’y ai accès", "Le titre de l’article de connaissances"], reponse: 2,
+    explication: "L’audit permet à la personne habilitée de consulter le résultat et les étapes d’une exécution. Atlassian : https://support.atlassian.com/cloud-automation/docs/view-execution-data-for-a-rule/" }
+] };

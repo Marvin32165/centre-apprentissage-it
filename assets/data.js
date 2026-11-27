@@ -27,7 +27,7 @@ window.IT_DATA = {
       units: ["stage-j1", "stage-j2", "stage-j3", "stage-j4", "stage-j5", "stage-j6", "stage-j7", "stage-j8", "stage-j9", "stage-j10"] },
     { id: "modules", titre: "Modules", href: "modules/index.html",
       desc: "Des cours ciblés, du support poste au réseau en passant par Active Directory.",
-      units: ["module-support-windows", "module-itil", "module-reseau-base", "module-ad-support", "module-materiel-pc", "module-depannage-distance", "module-m365-messagerie", "module-imprimantes-peripheriques", "module-sous-reseaux"] },
+      units: ["module-support-windows", "module-itil", "module-reseau-base", "module-ad-support", "module-materiel-pc", "module-depannage-distance", "module-m365-messagerie", "module-imprimantes-peripheriques", "module-sous-reseaux", "module-jira-quotidien"] },
     { id: "themes", titre: "Thèmes", href: "themes.html",
       desc: "Les grands domaines de l'IT, avec des liens vers les modules.", units: [] },
     { id: "atelier", titre: "Atelier hardware", menu: "Atelier", href: "atelier/index.html",
