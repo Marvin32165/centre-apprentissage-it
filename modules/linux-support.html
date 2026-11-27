@@ -40,14 +40,15 @@
 
 <span class="phase">Je montre</span>
 <h2 id="ssh">1. Se connecter en SSH depuis Windows</h2>
-<p>Windows 10 et 11 disposent d'un client <strong>OpenSSH</strong>, un outil de connexion à distance qui chiffre tout le trafic entre le client et le serveur. Pour vérifier qu'il est là, sans rien installer :</p>
-<pre data-copy><code>ssh -V</code></pre>
+<p>Windows 10 (à partir de la version 1809) et Windows 11 proposent un client <strong>OpenSSH</strong>, un outil de connexion à distance qui chiffre tout le trafic entre le client et le serveur. C'est une fonctionnalité facultative de Windows : selon le poste, il est déjà installé ou non. Pour vérifier qu'il est là, sans rien installer :</p>
+<pre data-copy data-langage="PowerShell · sur ton PC"><code>ssh -V</code></pre>
 <p>La commande affiche le numéro de version et s'arrête. (Microsoft montre aussi la vérification en PowerShell administrateur : <code>Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'</code>.) Pour se connecter :</p>
-<pre data-copy><code>ssh utilisateur@serveur.example.org</code></pre>
+<pre data-copy data-langage="PowerShell · sur ton PC"><code>ssh utilisateur@serveur.example.org</code></pre>
 <p>À la <strong>première connexion</strong>, le client affiche l'empreinte (<em>fingerprint</em>) de la clé du serveur et demande s'il faut continuer. Répondre <code>yes</code> ajoute ce serveur à la liste des hôtes connus de ton poste ; le mot de passe est ensuite demandé, et ses caractères ne s'affichent pas pendant la saisie. Compare l'empreinte avec celle que t'indique l'équipe qui gère le serveur avant de répondre : si elle change plus tard sans raison, on prévient au lieu de forcer.</p>
-<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">Get started with OpenSSH for Windows</a> (Windows 10 et 11, vérification, première connexion, empreinte, mot de passe masqué) ; Debian : <a href="https://manpages.debian.org/trixie/openssh-client/ssh.1.en.html">ssh(1)</a> (<code>-V</code>).</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh-overview">OpenSSH for Windows overview</a> (fonctionnalité à la demande depuis Windows 10 version 1809, pas toujours installée), <a href="https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">Get started with OpenSSH for Windows</a> (Windows 10 et 11, vérification, première connexion, empreinte, mot de passe masqué) ; Debian : <a href="https://manpages.debian.org/trixie/openssh-client/ssh.1.en.html">ssh(1)</a> (<code>-V</code> ; vérification de l'empreinte, avertissement si la clé change).</p></aside>
 
 <h2 id="reperer">2. Se repérer</h2>
+<p>Une fois connecté (§1), toutes les commandes de ce module se tapent <strong>sur le serveur</strong>, dans la fenêtre de la session SSH, et non dans PowerShell : sur ton PC Windows, elles donneraient « commande inconnue ».</p>
 <div class="table-wrap"><table>
 <thead><tr><th>Commande</th><th>Ce qu'elle fait</th></tr></thead>
 <tbody>
@@ -71,10 +72,10 @@
 <tr><td><code>-e</code></td><td>Va directement à la fin du journal dans le pager.</td></tr>
 <tr><td><code>-f</code></td><td>Suit le journal en direct (<kbd>Ctrl</kbd>+<kbd>C</kbd> pour arrêter).</td></tr>
 </tbody></table></div>
-<pre data-copy><code>journalctl -u ssh.service -b -n 50
+<pre data-copy data-langage="Linux · sur le serveur (SSH)"><code>journalctl -u ssh.service -b -n 50
 journalctl -p err -b</code></pre>
 <p>Par défaut, chacun lit son propre journal ; le <strong>journal du système</strong> n'est lisible que par root et par les membres de quelques groupes (<code>systemd-journal</code>, <code>adm</code>, <code>wheel</code>). Si tu ne vois rien, c'est peut-être une question de droits, pas une absence d'erreurs.</p>
-<aside class="callout source"><p>Debian : <a href="https://manpages.debian.org/trixie/systemd/journalctl.1.en.html">journalctl(1)</a> (options <code>-u</code>, <code>-b</code>, <code>-p</code>, <code>-n</code>, <code>-e</code>, <code>-f</code> ; accès au journal du système).</p></aside>
+<aside class="callout source"><p>Debian : <a href="https://manpages.debian.org/trixie/systemd/journalctl.1.en.html">journalctl(1)</a> (options <code>-u</code>, <code>-b</code>, <code>-p</code>, <code>-n</code>, <code>-e</code>, <code>-f</code> ; accès au journal du système) ; <a href="https://wiki.debian.org/systemd">systemd</a> (système d'initialisation par défaut depuis Debian 8) ; <a href="https://packages.debian.org/trixie/amd64/openssh-server/filelist">openssh-server</a> (unité <code>ssh.service</code>).</p></aside>
 
 <h2 id="services">4. L'état d'un service : <code>systemctl status</code></h2>
 <p><code>systemctl status nom.service</code> affiche l'état d'exécution d'un service, suivi de ses dernières lignes de journal. Les lignes à lire :</p>
@@ -83,7 +84,7 @@ journalctl -p err -b</code></pre>
   <li><strong>Active</strong> : <code>active (running)</code> depuis telle date, ou un état d'arrêt ou d'échec ;</li>
   <li>les <strong>dernières lignes du journal</strong>, souvent l'explication d'une panne.</li>
 </ul>
-<pre data-copy><code>systemctl status ssh.service</code></pre>
+<pre data-copy data-langage="Linux · sur le serveur (SSH)"><code>systemctl status ssh.service</code></pre>
 <aside class="callout attention"><p>Démarrer, arrêter ou redémarrer un service (<code>systemctl start</code>, <code>stop</code>, <code>restart</code>) change l'état du serveur pour tous ses utilisateurs : au service desk, on lit l'état et on transmet aux experts.</p></aside>
 <aside class="callout source"><p>Debian : <a href="https://manpages.debian.org/trixie/systemd/systemctl.1.en.html">systemctl(1)</a> (commande <code>status</code> et exemple de sortie : Loaded, Active, journal).</p></aside>
 
@@ -96,7 +97,7 @@ journalctl -p err -b</code></pre>
 <aside class="callout source"><p>Debian : <a href="https://manpages.debian.org/trixie/coreutils/df.1.en.html">df(1)</a> (<code>-h</code>), <a href="https://manpages.debian.org/trixie/iproute2/ip.8.en.html">ip(8)</a> (objet <code>address</code>, abrégé <code>a</code>), <a href="https://manpages.debian.org/trixie/iputils-ping/ping.8.en.html">ping(8)</a> (<code>-c</code>) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping">ping</a> (quatre demandes par défaut sous Windows).</p></aside>
 
 <h2 id="droits">6. Les droits et <code>sudo</code></h2>
-<p>En format long, <code>ls -l</code> commence chaque ligne par dix caractères, par exemple <code>-rw-r-----</code> :</p>
+<p>En format long, <code>ls -l</code> commence chaque ligne par dix caractères, par exemple <code>-rw-r-----</code> (un onzième caractère, comme <code>+</code>, peut suivre quand le fichier a une autre méthode de contrôle d'accès) :</p>
 <ul>
   <li>le <strong>premier</strong> donne le type : <code>-</code> fichier ordinaire, <code>d</code> répertoire, <code>l</code> lien symbolique ;</li>
   <li>puis trois groupes de trois : droits du <strong>propriétaire</strong> (<em>u</em>), du <strong>groupe</strong> du fichier (<em>g</em>), des <strong>autres</strong> (<em>o</em>) ;</li>
@@ -116,28 +117,33 @@ journalctl -p err -b</code></pre>
 <pre data-copy data-langage="Sortie d'exemple"><code>$ pwd
 /home/stagiaire
 $ ls -l /srv/partage
+total 24
 -rw-r----- 1 compta compta  18432 nov 27 09:12 budget.ods
 drwxr-x--- 2 compta compta   4096 nov 20 14:03 archives
 $ df -h /srv
 Sys. de fichiers Taille Utilisé Dispo Uti% Monté sur
-/dev/sdb1          200G    196G  4,0G  98% /srv
+/dev/sdb1          200G    200G     0 100% /srv
 $ systemctl status partage.service
-● partage.service - Partage de fichiers
-     Loaded: loaded (/usr/lib/systemd/system/partage.service; enabled)
-     Active: failed (Result: exit-code) since Fri 2026-11-27 08:58:01 CET</code></pre>
+× partage.service - Partage de fichiers
+     Loaded: loaded (/usr/lib/systemd/system/partage.service; enabled; preset: enabled)
+     Active: failed (Result: exit-code) since Fri 2026-11-27 08:58:01 CET
+$ journalctl -u partage.service -b -n 3
+nov 27 08:58:01 srv-fichiers partage[812]: Error: cannot write /srv/partage/.lock: No space left on device
+nov 27 08:58:01 srv-fichiers systemd[1]: partage.service: Main process exited, code=exited, status=1/FAILURE
+nov 27 08:58:01 srv-fichiers systemd[1]: partage.service: Failed with result 'exit-code'.</code></pre>
 <ol start="3">
   <li>Dans quel répertoire est-on ? Qui peut lire <code>budget.ods</code> ? Qu'est-ce que <code>archives</code> ?</li>
   <li>Que dit <code>df -h</code> sur <code>/srv</code> ?</li>
-  <li>Dans quel état est le service <code>partage.service</code> ? Quelle commande montrerait ses derniers messages ?</li>
+  <li>Dans quel état est le service <code>partage.service</code> ? Quelle ligne du journal explique l'échec, et quel lien fais-tu avec <code>df -h</code> ?</li>
   <li>Qu'écris-tu dans le ticket, et à qui le transmets-tu ?</li>
 </ol>
 <details class="correction"><summary>Voir ce que tu dois constater</summary>
 <ul>
-  <li><code>ssh -V</code> affiche la version d'OpenSSH (par exemple <code>OpenSSH_for_Windows_…</code>) : le client est présent. Sinon, c'est une fonctionnalité facultative de Windows à ajouter selon la procédure, pas à toi de l'installer sur un poste de l'université.</li>
+  <li><code>ssh -V</code> affiche le numéro de version d'OpenSSH et s'arrête : le client est présent. Sinon, c'est une fonctionnalité facultative de Windows à ajouter selon la procédure, pas à toi de l'installer sur un poste de l'université.</li>
   <li>On est dans <code>/home/stagiaire</code>. <code>budget.ods</code> (<code>-rw-r-----</code>) : le propriétaire <code>compta</code> lit et écrit, les membres du groupe <code>compta</code> lisent, les autres n'ont aucun droit. <code>archives</code> est un répertoire (<code>d</code>), traversable par le propriétaire et le groupe seulement.</li>
-  <li><code>/srv</code> est utilisé à 98 % : il ne reste que 4,0 Go.</li>
-  <li>Le service est en échec (<code>Active: failed</code>) depuis 8 h 58. Ses derniers messages : <code>journalctl -u partage.service -b -n 50</code> (avec les droits nécessaires).</li>
-  <li>Ticket : serveur, heure, sortie de <code>systemctl status</code>, disque <code>/srv</code> à 98 %, effet pour les utilisateurs ; transmis à l'équipe qui gère le serveur. Tu ne redémarres rien et tu ne libères pas d'espace toi-même.</li>
+  <li><code>/srv</code> est plein : 100 % utilisé, 0 disponible.</li>
+  <li>Le service est en échec (<code>Active: failed</code>) depuis 8 h 58. La première ligne du journal donne la cause : le programme n'a pas pu écrire dans <code>/srv/partage</code> (« No space left on device », plus de place sur le support) ; les deux lignes de systemd ne font que constater l'arrêt. C'est cohérent avec <code>df -h</code> : le disque plein explique l'échec.</li>
+  <li>Ticket : serveur, heure, sortie de <code>systemctl status</code>, ligne du journal qui explique l'échec, <code>/srv</code> à 100 %, effet pour les utilisateurs ; transmis à l'équipe qui gère le serveur. Tu ne redémarres rien et tu ne libères pas d'espace toi-même.</li>
 </ul>
 </details>
 <aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/wsl/about">What is WSL?</a> (WSL 2 : noyau Linux dans une machine virtuelle légère, version par défaut).</p></aside>

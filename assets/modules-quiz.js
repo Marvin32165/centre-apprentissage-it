@@ -278,7 +278,7 @@ window.IT_QUIZZES["module-deploiement-postes"] = { titre: "Quiz : déploiement e
 window.IT_QUIZZES["module-linux-support"] = { titre: "Quiz : bases de Linux pour le support", questions: [
   { q: "À la première connexion SSH à un serveur, le client affiche une empreinte et demande « yes/no ». Que se passe-t-il si tu réponds yes ?",
     options: ["Le mot de passe est enregistré", "Le serveur est ajouté à la liste des hôtes connus de ton poste", "La connexion devient non chiffrée", "Le serveur redémarre"], reponse: 1,
-    explication: "Répondre yes ajoute le serveur à la liste des hôtes SSH connus du client Windows ; on compare d'abord l'empreinte avec celle donnée par l'équipe du serveur (Microsoft Learn, Get started with OpenSSH for Windows)." },
+    explication: "Répondre yes ajoute le serveur à la liste des hôtes SSH connus du client Windows (Microsoft Learn, Get started with OpenSSH for Windows) ; avant, on compare l'empreinte avec celle donnée par l'équipe du serveur (ssh(1), Debian, section VERIFYING HOST KEYS)." },
   { q: "Quelle commande affiche seulement les 50 derniers messages du service ssh depuis le démarrage en cours ?",
     options: ["journalctl -u ssh.service -b -n 50", "systemctl restart ssh.service", "cat /var/log -n 50", "ls -l ssh.service"], reponse: 0,
     explication: "-u filtre sur une unité, -b sur le démarrage en cours, -n limite aux entrées les plus récentes (journalctl(1), Debian)." },

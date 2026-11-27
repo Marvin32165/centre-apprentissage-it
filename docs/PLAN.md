@@ -259,7 +259,8 @@ Domaine Sécurité. Pistes, chacune à sourcer (Microsoft Learn, CISA, Centre po
   Fait : entrée `securite-poste` (domaine Sécurité), quiz de 6 questions sourcées, unité de progression, index.
 - [x] 35.3 Relecture croisée par Codex (`docs/relectures/module-securite-poste.md`), puis test en situation ; corrections dans une autre conversation.
   Fait : relecture par un agent relecteur séparé (4 faux, 8 non vérifiés, tous corrigés) et test en situation par l'agent chef (rien à signaler). Justifié : agents Claude distincts plutôt que Codex, à la demande de Marvin.
-- [ ] 35.4 `npm run controles`, coche, fusion.
+- [x] 35.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` sans problème, fusion dans `main`. Reste : relecture croisée par Codex possible, et les « à vérifier sur place ».
 
 ## Lot 36 — Module « Jira Service Management au quotidien »
 Domaine Gestion. Approfondit le J3 : files et filtres, SLA (lire un compteur, pause, objectifs), liens entre tickets, commentaires internes et réponses au client, base de connaissances, macros et réponses types, automatisations simples (lecture), bonnes pratiques de rédaction. Sources : documentation Atlassian. Labo sur une instance Jira Service Management gratuite (si Marvin en crée une) ou sur papier. Configuration de Jira à l'UMONS : « à vérifier sur place ».
@@ -280,7 +281,8 @@ Domaine Matériel (ou Windows). Pistes : cycle de vie d'un poste (réception, in
   Fait : entrée `deploiement-postes` (domaine Matériel), quiz de 6 questions, unité, index ; « Gestion de parc et d'inventaire » retiré des sujets à venir.
 - [x] 37.3 Relecture croisée par Codex (`docs/relectures/module-deploiement-postes.md`), puis test en situation ; corrections dans une autre conversation.
   Fait : relecture par un agent relecteur séparé (1 faux, 4 non vérifiés, tous corrigés) et test en situation par l'agent chef (rien à signaler). Justifié : agents Claude distincts plutôt que Codex, à la demande de Marvin.
-- [ ] 37.4 `npm run controles`, coche, fusion.
+- [x] 37.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` sans problème, fusion dans `main`. Reste : relecture croisée par Codex possible, et les « à vérifier sur place ».
 
 ## Lot 38 — Module « Sauvegarde et restauration »
 Domaine Support. Pistes : où sont les données d'un utilisateur (profil, OneDrive, partages), versions précédentes et corbeille OneDrive, historique des fichiers, restauration d'un fichier supprimé ou écrasé, sauvegarde avant intervention (quoi, où, vérifier), règle « 3-2-1 » seulement si une source primaire l'établit. Sources : Microsoft Support et Learn. Labo sur son propre PC : restaurer une version précédente d'un fichier de test dans OneDrive. Politique de sauvegarde de l'UMONS : « à vérifier sur place ».
@@ -299,8 +301,10 @@ Domaine Linux et scripts. Pistes : se connecter en SSH depuis Windows (client Op
   Fait : page en six sections sourcées (SSH depuis Windows et empreinte, se repérer, journalctl, systemctl status, df et réseau, droits et sudo), labo sans VM (ssh -V puis lecture d'une sortie d'exemple), trois mises en situation.
 - [x] 39.2 Données : `modules.js` (retirer de `aVenir` du domaine Linux), quiz `module-linux-support`, unité, index.
   Fait : entrée `linux-support` (domaine Linux), quiz de 6 questions, unité, index ; « Debian en ligne de commande » retiré des sujets à venir.
-- [ ] 39.3 Relecture croisée par Codex (`docs/relectures/module-linux-support.md`), puis test en situation ; corrections dans une autre conversation.
-- [ ] 39.4 `npm run controles`, coche, fusion.
+- [x] 39.3 Relecture croisée par Codex (`docs/relectures/module-linux-support.md`), puis test en situation ; corrections dans une autre conversation.
+  Fait : relecture par un agent relecteur séparé (6 faux, 1 non vérifié) et test en situation par l'agent chef (2 points bloquants : étiquettes des commandes Linux, labo sans la ligne de journal qui explique la panne) ; tout corrigé. Justifié : agents Claude distincts plutôt que Codex, à la demande de Marvin.
+- [x] 39.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` sans problème, fusion dans `main`. Reste : relecture croisée par Codex possible, et les « à vérifier sur place ».
 
 **Prompts types** : Claude Code ou Codex qui écrit : « Lis AGENTS.md et docs/PLAN.md, puis fais le lot 35 jusqu'à 35.2. » ; l'autre outil pour relire : « Lis docs/procedures/relecture-sources.md et relis modules/securite-poste.html. » ; puis « Lis docs/procedures/test-chef.md et teste modules/securite-poste.html, usage : <usage concret>. »
 
