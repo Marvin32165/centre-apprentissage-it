@@ -245,3 +245,8 @@ Couleurs, polices, contrastes AA et mouvement réduit inchangés ; chaque étape
 - Sous la mission et le ticket, sur toute la largeur : gravure du poste de garde en SVG inline (`figure.garde-illu`, décorative) posée sur un plateau à double filet : lampe et ses rayons pointillés ambre, téléphone hachuré, écran avec une file de tickets (pastilles rouille), clavier, casque rouille posé sur le coin de l'écran, ticket perforé incliné, tasse fumante. Traits en jetons (`--ink`, `--accent`), donc justes en sombre ; recadrée au centre sur téléphone (`slice`).
 - Rubriques en grandes cartes : médaillon de 84 px hachuré à 45° et double anneau, pictogramme agrandi au trait fin, titre plus grand, chiffre romain I à IV en filigrane (`counter`, couleur de bordure, décoratif).
 - Pied de page en colophon sur toutes les pages : tampon « IT » agrandi à double filet, nom en Newsreader, mentions ; plan du site en colonnes (Prépa stage, Apprendre ; deux colonnes au téléphone) avec liens de 44 px ; colophon typographique en italique ; export / import de la progression sous un filet pointillé.
+
+### 6.8 Lot 40.8 — Passe finale
+- Le bandeau gravé couvre aussi les pages de la prépa : programme, boîte à outils, révision express, entraînement aux tickets (mot en grand italique de 92 unités au lieu du numéro, pictogramme de la page) ; lettrine et ornements y suivent les mêmes règles que les pages de cours.
+- Index des modules et atlas des thèmes gardent leur en-tête propre (parcours, atlas) et reçoivent le grain, les encadrés illustrés, les tableaux et le colophon communs.
+- Captures avant / après (accueil, jour 5, module Active Directory, quiz, code et encadrés) : `docs/captures/lot-40/`.
