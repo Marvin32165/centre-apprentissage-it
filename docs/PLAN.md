@@ -229,7 +229,8 @@ Domaine Sécurité. Pistes, chacune à sourcer (Microsoft Learn, CISA, Centre po
 
 ## Lot 36 — Module « Jira Service Management au quotidien »
 Domaine Gestion. Approfondit le J3 : files et filtres, SLA (lire un compteur, pause, objectifs), liens entre tickets, commentaires internes et réponses au client, base de connaissances, macros et réponses types, automatisations simples (lecture), bonnes pratiques de rédaction. Sources : documentation Atlassian. Labo sur une instance Jira Service Management gratuite (si Marvin en crée une) ou sur papier. Configuration de Jira à l'UMONS : « à vérifier sur place ».
-- [ ] 36.1 Page `modules/jira-quotidien.html` (rédigée par Codex).
+- [x] 36.1 Page `modules/jira-quotidien.html` (rédigée par Codex).
+  Fait : Page Jira Service Management Cloud, avec files et JQL, SLA, communication, liens, base de connaissances, réponses types, automatisations en lecture et labo sur papier ou espace de test.
 - [ ] 36.2 Données : `modules.js`, quiz `module-jira-quotidien`, unité, index.
 - [ ] 36.3 Relecture croisée par Claude Code (`docs/relectures/module-jira-quotidien.md`), puis test en situation ; corrections dans une autre conversation.
 - [ ] 36.4 `npm run controles`, coche, fusion.

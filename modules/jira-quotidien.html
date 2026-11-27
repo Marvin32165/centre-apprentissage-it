@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jira Service Management au quotidien — Modules · Apprentissage IT</title>
+<meta name="description" content="Jira Service Management Cloud : files, filtres JQL, SLA, liens, réponses au client, connaissances et automatisations.">
+<meta property="og:title" content="Jira Service Management au quotidien — Modules · Apprentissage IT">
+<meta property="og:description" content="Jira Service Management Cloud : files, filtres JQL, SLA, liens, réponses au client, connaissances et automatisations.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Gestion des services et méthode</p>
+<h1><em>Jira Service Management</em> au quotidien</h1>
+<p class="lead">Une même demande peut laisser plusieurs traces : un ticket dans ta file, une réponse dans le portail et un lien vers le travail de l’équipe qui prend la suite. Après le <a href="../stage/j3.html">jour 3</a>, entraîne-toi à choisir quoi traiter, quoi écrire et quoi transmettre.</p>
+<div data-module-meta="jira-quotidien"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>lire une file et comprendre un filtre JQL simple</li>
+  <li>lire le bon compteur SLA et expliquer une pause</li>
+  <li>lier des demandes et choisir entre réponse au client et note interne</li>
+  <li>partager un article ou adapter une réponse type</li>
+  <li>lire une automatisation et préparer une transmission exploitable</li>
+</ul>
+<aside class="callout umons"><p>À vérifier sur place : édition de Jira, files, processus, visibilité des tickets, objectifs de service, réponses types, règles d’automatisation et droits du service desk à l’UMONS. Les libellés ci-dessous proviennent de la documentation Cloud.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="files-filtres">1. Files et filtres JQL</h2>
+<p>Une <strong>file</strong> affiche les demandes qui satisfont un filtre. Une demande peut apparaître dans plusieurs files. Les agents peuvent affiner une vue par type de demande, statut ou personne assignée. Lis le nom de la file, ses filtres et la colonne de tri avant de décider lequel de ses tickets traiter.</p>
+<p>JQL (<em>Jira Query Language</em>) exprime le filtre. Cet exemple de lecture affiche les demandes sans personne assignée dont la catégorie de statut n’est pas terminée. Il place les demandes créées le plus tôt en haut. Utilise-le dans le périmètre de l’espace de test ou ajoute son filtre de projet dans une recherche plus large.</p>
+<pre data-copy><code>assignee IS EMPTY AND statusCategory != Done
+ORDER BY created ASC</code></pre>
+<aside class="callout source"><p>Atlassian : <a href="https://support.atlassian.com/jira-service-management-cloud/docs/what-are-queues/">Files et filtres</a> · <a href="https://support.atlassian.com/jira-service-management-cloud/docs/create-a-new-queue/">Créer une file et utiliser JQL</a> · <a href="https://support.atlassian.com/jira-service-management-cloud/docs/jql-fields/">Champs JQL</a>.</p></aside>
+
+<h2 id="sla">2. Lire un compteur SLA</h2>
+<p>Un SLA mesure le délai par rapport à un <strong>objectif de service</strong>. Lis d’abord son nom. La première réponse et la résolution peuvent être mesurées séparément. Dans Jira Service Management, les conditions définissent quand la mesure commence, s’arrête ou se met en pause. Le calendrier détermine quelles heures sont comptées.</p>
+<ul>
+  <li><strong>En cours</strong> : lis le temps restant dans le ticket ou la file. Compare-le à l’impact et aux consignes de priorisation du service.</li>
+  <li><strong>En pause</strong> : identifie la condition qui suspend le compteur. Une attente de réponse du client ne suspend le compteur que si elle a été configurée ainsi.</li>
+  <li><strong>Objectif dépassé</strong> : relève de quel objectif il s’agit. Indique la prochaine action ou transmets selon la procédure du service.</li>
+</ul>
+<aside class="callout source"><p>Atlassian : <a href="https://support.atlassian.com/jira-service-management-cloud/docs/what-are-slas-and-how-do-i-view-them-in-my-service-project/">Lire les SLA</a> · <a href="https://support.atlassian.com/jira-service-management-cloud/docs/create-an-sla/">Configurer objectifs, conditions et calendrier</a>.</p></aside>
+
+<h2 id="commentaires">3. Répondre au client et documenter l’enquête</h2>
+<p><strong>Reply to customer</strong> publie une réponse destinée au client. <strong>Add internal note</strong> ajoute une note que le client ne voit pas. Vérifie le canal et les pièces jointes avant d’envoyer.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Où écrire</th><th scope="col">Quoi écrire</th></tr></thead>
+<tbody>
+<tr><th scope="row">Résumé et description</th><td>Service, symptôme, début, périmètre et message exact utile. Exemple fictif : « Impression indisponible dans la salle de test depuis 9 h, trois postes touchés ».</td></tr>
+<tr><th scope="row">Réponse au client</th><td>Ce qui a été compris, la prochaine action et le suivi que tu peux assurer. Exemple : « Pouvez-vous préciser si d’autres postes sont touchés ? Je vérifie la file d’impression. »</td></tr>
+<tr><th scope="row">Note interne</th><td>Heure, test effectué, résultat, hypothèse ouverte, relais attendu. Garde les secrets et les données sans rapport avec le dépannage hors du ticket.</td></tr>
+</tbody>
+</table></div>
+<aside class="callout source"><p>Atlassian : <a href="https://support.atlassian.com/jira-service-management-cloud/docs/talk-to-the-customer-or-team-members-from-the-new-issue-view/">Échanges avec le client et l’équipe</a> · <a href="https://support.atlassian.com/jira-software-cloud/docs/add-files-images-and-other-content-to-describe-an-issue/">Décrire une demande et ajouter les éléments utiles</a>.</p></aside>
+
+<h2 id="liens-tickets">4. Lier sans perdre le suivi</h2>
+<p>Depuis un ticket, <strong>Link work item</strong> permet de rechercher un autre élément et de choisir le type de relation disponible. Utilise par exemple <em>relates to</em> pour un ticket lié ou <em>is blocked by</em> si une action dépend de cet autre ticket. Lis la relation depuis le ticket courant pour vérifier son sens.</p>
+<p>Pour deux demandes qui semblent relever d’un même incident, lie-les à l’incident de référence s’il est identifié. Conserve dans chacune les éléments propres à l’utilisateur et note qui donne le prochain point de situation.</p>
+<aside class="callout source"><p>Atlassian : <a href="https://support.atlassian.com/jira-service-management-cloud/docs/link-issues-pages-and-app-content-from-the-issue-view/">Lier des tickets et choisir la relation</a>.</p></aside>
+
+<h2 id="connaissances">5. Articles et réponses types</h2>
+<p>Si la base de connaissances est configurée, cherche un article depuis le ticket. Vérifie qu’il correspond au cas et regarde son indication de visibilité. Partage un article accessible au client dans la réponse externe. Cite un article interne en note d’équipe.</p>
+<p>Une réponse type (<em>canned response</em>) insère un texte réutilisable dans l’éditeur. Atlassian documente des réponses personnelles et partagées ainsi que des champs qui peuvent être remplis automatiquement. Relis le texte inséré, précise l’action adaptée à cette demande, puis vérifie le canal avant de publier.</p>
+<aside class="callout source"><p>Atlassian : <a href="https://support.atlassian.com/jira-service-management-cloud/docs/use-internal-articles-in-the-knowledge-base-panel/">Visibilité des articles</a> · <a href="https://support.atlassian.com/jira-service-management-cloud/docs/respond-with-an-article-from-the-issue-view/">Répondre avec un article</a> · <a href="https://support.atlassian.com/jira-service-management-cloud/docs/insert-a-canned-response/">Insérer une réponse type</a> · <a href="https://support.atlassian.com/jira-service-management-cloud/docs/create-a-canned-response/">Créer une réponse type</a>.</p></aside>
+
+<h2 id="automatisations">6. Lire une automatisation</h2>
+<p>Lis dans l’ordre : <strong>déclencheur</strong> (événement), <strong>condition</strong> (test éventuel), <strong>action</strong> (conséquence). Exemple fictif : à la création d’un ticket, si son type est « Incident d’impression », la règle ajoute une étiquette de suivi. Un ticket portant sur un compte déclenche l’évaluation mais ne remplit pas la condition.</p>
+<p>Si le résultat attendu manque, relève le ticket, l’heure et l’effet observé. Si tu as accès au <strong>journal d’audit de l’automatisation</strong>, lis l’exécution et ses étapes. Sinon, transmets ces éléments à la personne habilitée. L’exercice se limite à la lecture.</p>
+<aside class="callout source"><p>Atlassian : <a href="https://support.atlassian.com/cloud-automation/docs/what-are-automation-rules/">Étapes d’une automatisation</a> · <a href="https://support.atlassian.com/cloud-automation/docs/view-execution-data-for-a-rule/">Journal d’audit des automatisations</a>.</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo guidé : prendre une file de garde <span class="duree">≈ 35 min</span></h2>
+<p>Fais le labo sur papier. Si tu disposes déjà d’un espace Jira Service Management Cloud de test, tu peux y saisir les tickets fictifs, essayer le filtre, les lier et passer de la réponse publique à la note interne avec un destinataire de test. L’offre gratuite est une option. Pour le calcul des SLA, utilise les données papier même si les objectifs de ton espace sont différents.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Ticket fictif</th><th scope="col">Assignation et état</th><th scope="col">Compteur de première réponse</th></tr></thead>
+<tbody>
+<tr><th scope="row">LAB-1 · Impression salle A</th><td>9 h, sans agent, ouvert</td><td>En cours, 15 minutes</td></tr>
+<tr><th scope="row">LAB-2 · Impression salle A depuis un autre poste</th><td>9 h 10, sans agent, ouvert</td><td>En cours, 40 minutes</td></tr>
+<tr><th scope="row">LAB-3 · Compte de test</th><td>9 h 05, agent attribué, attente client</td><td>Pause prévue dans cet exercice</td></tr>
+<tr><th scope="row">LAB-4 · Écran de test</th><td>8 h 40, sans agent, terminé</td><td>Arrêté</td></tr>
+</tbody>
+</table></div>
+<ol>
+  <li>Applique le filtre du §1 à ces quatre tickets. Dis lequel tu prends si les deux demandes retenues ont le même impact et que la consigne de garde est de traiter la première réponse qui arrive à échéance.</li>
+  <li>Rédige une réponse au client de LAB-1 et une note interne. Lie LAB-2 à LAB-1 si les premiers tests confirment une cause commune.</li>
+  <li>Choisis quel ticket remplirait la condition de l’automatisation du §6 à la création parmi LAB-1 et LAB-3.</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois constater</summary>
+<ul>
+  <li>LAB-1 puis LAB-2. LAB-3 est assigné et LAB-4 est terminé. Pour les deux demandes retenues, LAB-1 a le délai de première réponse le plus court.</li>
+  <li>Réponse : « Votre demande est prise en charge. Pouvez-vous indiquer si un autre poste de la salle imprime ? » Note : « Deux signalements salle A. Confirmer l’imprimante utilisée et comparer les erreurs avant de regrouper les demandes. » Après confirmation, lier LAB-2 à LAB-1 via la relation choisie dans l’exercice.</li>
+  <li>LAB-1, si son type est saisi comme « Incident d’impression ». LAB-3 concerne un compte et ne reçoit pas l’étiquette de l’exemple.</li>
+</ul>
+</details>
+<aside class="callout source"><p>Atlassian : <a href="https://www.atlassian.com/collections/service/pricing">Offre gratuite et fonctionnalités</a> · <a href="https://support.atlassian.com/jira-service-management-cloud/docs/what-are-queues/">Lire et filtrer les files</a>.</p></aside>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<h3>Deux compteurs et un ticket en pause</h3>
+<p>Le compteur de résolution est en pause, celui de première réponse est encore actif. Quelle action prendre ?</p>
+<details class="correction"><summary>Voir la correction</summary><p>Vérifie le délai de première réponse et adresse un premier retour utile, ou préviens le relais. Dans le ticket, précise que la résolution est suspendue selon sa propre condition. Voir <a href="#sla">les SLA</a>.</p></details>
+<h3>Un article réservé au support</h3>
+<p>Tu trouves un guide interne qui te permet d’identifier le bon logiciel. Comment t’en sers-tu ?</p>
+<details class="correction"><summary>Voir la correction</summary><p>Ajoute le guide dans la note interne et explique au client seulement l’étape qui le concerne. Si un article visible par le client existe, partage celui-là après vérification. Voir <a href="#connaissances">la base de connaissances</a>.</p></details>
+<h3>Une transmission à l’équipe de proximité</h3>
+<p>Une imprimante de salle reste inutilisable. Tu as deux tickets liés et une réponse type en brouillon. Que documentes-tu ?</p>
+<details class="correction"><summary>Voir la correction</summary><p>Note heure, lieu, périmètre, résultat des tests et action attendue de l’équipe. Vérifie les relations entre tickets, adapte la réponse type au cas et donne au client le prochain point de suivi convenu. Voir <a href="#commentaires">les commentaires</a> et <a href="#liens-tickets">les liens</a>.</p></details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-jira-quotidien"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc"><ul>
+  <li><strong>File</strong> : vérifie le périmètre, le filtre, l’assignation et le tri.</li>
+  <li><strong>SLA</strong> : lis l’objectif, le temps restant, la condition de pause et le calendrier.</li>
+  <li><strong>Réponse</strong> : confirme la prise en charge et annonce une prochaine action.</li>
+  <li><strong>Note interne</strong> : consigne le test, son résultat et le relais attendu.</li>
+  <li><strong>Lien</strong> : vérifie le type de relation et son sens.</li>
+  <li><strong>Article ou réponse type</strong> : vérifie l’accès et relis avant publication.</li>
+  <li><strong>Automatisation</strong> : suis l’événement, la condition, l’action et le résultat.</li>
+</ul></div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place"><ul>
+  <li>Quelles files consulter et comment arbitrer si plusieurs compteurs approchent de l’échéance ?</li>
+  <li>Comment regrouper les demandes liées et qui tient les utilisateurs au courant ?</li>
+  <li>Où trouver les réponses validées et à qui signaler une automatisation qui semble en échec ?</li>
+</ul></aside>
+<p><label class="done"><input type="checkbox" data-done="module-jira-quotidien"> Module terminé</label></p>
+<div data-module-suite="jira-quotidien"></div>
+</div>
+</main>
+</body>
+</html>
