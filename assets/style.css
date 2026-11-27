@@ -1309,3 +1309,43 @@ pre.colore .ln:not(.vide)::before { content: "›"; display: inline-block; width
 .code-legende { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4); margin: 0; padding: var(--s2) var(--s4) var(--s3); border-top: 1px dashed rgba(237, 230, 218, 0.14); font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.06em; color: var(--tk-com); }
 .code-legende span::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 2px; background: currentColor; }
 @media print { pre.colore .ln::before { content: none; } pre.colore { padding-left: var(--s4); } .code-block::before, .code-legende { display: none; } }
+
+/* ===== Lot 40.5 : quiz redessiné (une carte par question, pastilles A à D, jauge, tampons) ===== */
+.quiz { padding: 0; background: none; border: 0; border-radius: 0; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .quiz { background: none; } :root:not([data-theme="light"]) .q-carte, :root:not([data-theme="light"]) .q-tampon { background: var(--surface-2); } }
+:root[data-theme="dark"] .quiz { background: none; }
+:root[data-theme="dark"] .q-carte, :root[data-theme="dark"] .q-tampon { background: var(--surface-2); }
+.quiz-tete { margin-bottom: var(--s4); padding-top: var(--s4); border-top: 3px double var(--ink); }
+.quiz-surtitre { margin: 0; font-family: var(--font-code); font-size: 0.75rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+.quiz-tete h3 { margin: var(--s1) 0 var(--s3); font-size: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem); }
+.quiz-compte { margin: 0 0 var(--s2); font-family: var(--font-code); font-size: 0.8125rem; color: var(--ink-soft); }
+.quiz-barre { height: 6px; overflow: hidden; background: var(--line); border-radius: 3px; }
+.quiz-barre span { display: block; width: 0; height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.3s ease; }
+.quiz.corrige .quiz-barre span { width: 100%; background: var(--ink-pale); }
+.quiz fieldset.q-carte { position: relative; margin: 0 0 var(--s4); padding: var(--s4) var(--s4) var(--s3); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-l); }
+.q-carte legend { display: flex; align-items: baseline; gap: var(--s3); margin-bottom: var(--s3); font-weight: 400; }
+.q-num { flex: none; min-width: 1.4ch; font-family: var(--font-text); font-size: 2.25rem; font-style: italic; line-height: 0.9; color: var(--accent); }
+.q-texte { font-family: var(--font-text); font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
+.quiz .q-carte .opt { position: relative; align-items: center; margin: 6px 0; padding: 8px 12px; background: var(--paper); border: 1px solid var(--line); }
+.quiz .q-carte .opt input { position: absolute; top: 50%; left: 12px; width: 30px; height: 30px; margin: -15px 0 0; opacity: 0; cursor: pointer; }
+.lettre { flex: none; display: inline-grid; place-items: center; width: 30px; height: 30px; border: 1.5px solid var(--ink-pale); border-radius: 50%; background: var(--surface); font-family: var(--font-code); font-size: 0.8125rem; font-weight: 500; color: var(--ink-soft); transition: background 0.15s, border-color 0.15s, color 0.15s; }
+.quiz:not(.corrige) .opt:hover .lettre { border-color: var(--accent); color: var(--accent); }
+.opt input:checked + .lettre { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+.opt input:focus-visible + .lettre { outline: 2px solid var(--accent); outline-offset: 3px; }
+.quiz .q-carte .opt:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.quiz.corrige .q-carte .opt.bon { border-color: var(--green); background: var(--paper); }
+.quiz.corrige .q-carte .opt.faux { border-color: var(--red); background: var(--paper); }
+.opt.bon .lettre, .opt.bon input:checked + .lettre { background: var(--green); border-color: var(--green); color: var(--paper); }
+.opt.faux .lettre, .opt.faux input:checked + .lettre { background: var(--red); border-color: var(--red); color: var(--paper); }
+.quiz fieldset.q-carte.q-bon { border-left: 5px solid var(--green); }
+.quiz fieldset.q-carte.q-faux { border-left: 5px solid var(--red); }
+.q-tampon { position: absolute; top: -12px; right: var(--s4); padding: 2px 8px; background: var(--surface); border: 2px solid currentColor; border-radius: 4px; font-family: var(--font-code); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; transform: rotate(-6deg); }
+.q-bon .q-tampon { color: var(--green); }
+.q-faux .q-tampon { color: var(--red); }
+.quiz .verdict { display: flex; align-items: center; gap: 6px; }
+.quiz .verdict svg { flex: none; }
+.quiz .actions { margin-top: 0; padding: var(--s4); border: 1px dashed var(--line); border-radius: var(--r-l); }
+.quiz.complet .actions { border-style: solid; border-color: var(--accent); }
+.quiz .score-grand { width: 100%; margin: 0; font-size: clamp(3rem, 2.4rem + 2.6vw, 4.5rem); font-style: italic; }
+@media (prefers-reduced-motion: reduce) { .quiz-barre span, .lettre { transition: none; } }
+@media print { .quiz-barre, .q-tampon { display: none; } }
