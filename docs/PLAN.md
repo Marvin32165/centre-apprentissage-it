@@ -229,10 +229,14 @@ Rédigé le 26/11/2026, à la demande de Marvin. But : accompagner la deuxième 
 
 ## Lot 34 — Glossaire français-anglais du service desk
 Une page `stage/glossaire.html` : les termes que l'on croise en anglais dans Jira, Microsoft 365, Windows et ITIL, avec leur équivalent français, une définition d'une ligne, la page du site qui l'explique et la source officielle. Recherche intégrée (index), tri alphabétique, filtre par domaine, lisible au téléphone.
-- [ ] 34.1 Liste des termes (au moins 80) tirée **des pages du site** (incident, problem, known error, workaround, SLA, queue, assignee, escalation, Full Access, Send As, Send on Behalf, lease, gateway, OU, GPO, recovery key, safe mode…) ; données dans `assets/glossaire.js` ; chaque terme renvoie à sa section du site et à une source officielle.
-- [ ] 34.2 Page `stage/glossaire.html` (filtre par domaine, recherche locale, ancre par terme), liens depuis `stage/index.html`, la boîte à outils et le pied des pages de jour ; `npm run index`.
-- [ ] 34.3 Relecture croisée par Codex (rapport `docs/relectures/glossaire.md`) ; corrections dans une autre conversation.
-- [ ] 34.4 `npm run controles`, coche, fusion.
+- [x] 34.1 Liste des termes (au moins 80) tirée **des pages du site** (incident, problem, known error, workaround, SLA, queue, assignee, escalation, Full Access, Send As, Send on Behalf, lease, gateway, OU, GPO, recovery key, safe mode…) ; données dans `assets/glossaire.js` ; chaque terme renvoie à sa section du site et à une source officielle.
+  Fait : 80 termes dans `assets/glossaire.js` (7 domaines), chacun avec sa section du site (ancres contrôlées) et une source officielle ouverte (URL testées : 200, sauf CISA et Dell en 403 anti-robots, déjà cités ailleurs).
+- [x] 34.2 Page `stage/glossaire.html` (filtre par domaine, recherche locale, ancre par terme), liens depuis `stage/index.html`, la boîte à outils et le pied des pages de jour ; `npm run index`.
+  Fait : `stage/glossaire.html` + `assets/glossaire-ui.js` (recherche locale sans accents, filtres par domaine, ancre « # » par terme, arrivée par ancre signalée) ; liens depuis le programme, la boîte à outils et le pied de page de toutes les pages ; termes dans l'index de recherche.
+- [x] 34.3 Relecture croisée par Codex (rapport `docs/relectures/glossaire.md`) ; corrections dans une autre conversation.
+  Fait : relecture par un agent relecteur séparé (`docs/relectures/glossaire.md` : 17 faux, 21 non vérifiés, 42 corrects), puis corrections de toutes les lignes. Justifié : relue par un agent Claude distinct plutôt que par Codex, à la demande de Marvin (travail en autonomie) ; une relecture croisée par Codex reste possible.
+- [x] 34.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` sans problème ; termes dans un groupe « Glossaire » de la recherche rapide (tri par mots du titre à score égal). Reste : rien.
 
 ## Lot 35 — Module « Sécurité du poste »
 Domaine Sécurité. Pistes, chacune à sourcer (Microsoft Learn, CISA, Centre pour la cybersécurité Belgique) : reconnaître un hameçonnage et le signaler, Microsoft Defender (état, analyse, quarantaine, sans désactiver), mises à jour et redémarrages, compte compromis (que faire, dans quel ordre), clé USB inconnue, données sensibles et verrouillage du poste. Labo sur son propre PC en lecture (état de Defender, historique de protection, `Get-MpComputerStatus`), mises en situation, quiz. Procédure de sécurité de l'UMONS : « à vérifier sur place ».

@@ -159,7 +159,7 @@
     marque.appendChild(el("p", null, "Ta progression reste dans ce navigateur."));
     fw.appendChild(marque);
     var plan = el("nav", { "class": "colo-plan", "aria-label": "Plan du site" });
-    [["Prépa stage", [["Programme", "stage/index.html"], ["Boîte à outils", "stage/outils.html"], ["Révision express", "stage/revision.html"], ["Entraînement aux tickets", "stage/tickets.html"]]],
+    [["Prépa stage", [["Programme", "stage/index.html"], ["Boîte à outils", "stage/outils.html"], ["Révision express", "stage/revision.html"], ["Entraînement aux tickets", "stage/tickets.html"], ["Glossaire", "stage/glossaire.html"]]],
      ["Apprendre", [["Accueil", "index.html"], ["Modules", "modules/index.html"], ["Thèmes", "themes.html"], ["Atelier hardware", "atelier/index.html"]]]].forEach(function (col) {
       var d = el("div");
       d.appendChild(el("p", { "class": "colo-titre" }, col[0]));
@@ -510,8 +510,8 @@
     if (!prose) return;
     var mj = /stage\/j(\d+)\.html$/.exec(location.pathname), meta = document.querySelector("[data-module-meta]");
     var num = null, nom = null, legende = "";
-    var ms = /stage\/(outils|revision|tickets|index\.html$|$)/.exec(location.pathname);
-    var PAGES_PREPA = { outils: ["Outils", "atelier"], revision: ["Révision", "revision"], tickets: ["Tickets", "ticket"] };
+    var ms = /stage\/(outils|revision|tickets|glossaire|index\.html$|$)/.exec(location.pathname);
+    var PAGES_PREPA = { outils: ["Outils", "atelier"], revision: ["Révision", "revision"], tickets: ["Tickets", "ticket"], glossaire: ["Glossaire", "modules"] };
     if (mj) { num = (+mj[1] < 10 ? "0" : "") + mj[1]; nom = PICTO_JOUR[+mj[1]]; legende = "Jour"; }
     else if (ms) { var pp = PAGES_PREPA[ms[1]] || ["Programme", "stage"]; num = pp[0]; nom = pp[1]; legende = "Prépa stage"; }
     else if (meta && window.IT_MODULES) {
@@ -746,7 +746,7 @@
   /* ---------- Recherche rapide (/, Ctrl+K, bouton de l'en-tête) ----------
      Index : assets/recherche.js (généré par outils/index-recherche.mjs), chargé à la première ouverture. */
   var R = null;
-  var GROUPES = ["Commandes", "Notions", "Modules", "Atelier"];
+  var GROUPES = ["Commandes", "Notions", "Glossaire", "Modules", "Atelier"];
   var EXEMPLES = ["dns", "mot de passe", "bips", "gpupdate", "priorité"];
   function norm(s) { return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
   function chargerIndex(cb) {
@@ -822,11 +822,12 @@
     var trouves = (window.IT_RECHERCHE || []).map(function (e) {
       var t = norm(e.t), hay = t + " " + norm(e.o) + " " + norm(e.m);
       for (var i = 0; i < mots.length; i++) if (hay.indexOf(mots[i]) < 0) return null;
-      return { e: e, s: t.indexOf(q) === 0 ? 0 : t.indexOf(q) >= 0 ? 1 : mots.every(function (m) { return t.indexOf(m) >= 0; }) ? 2 : 3 };
+      var k = mots.filter(function (m) { return t.indexOf(m) >= 0; }).length; // à score égal, le titre qui contient le plus de mots passe devant
+      return { e: e, k: k, s: t.indexOf(q) === 0 ? 0 : t.indexOf(q) >= 0 ? 1 : k === mots.length ? 2 : 3 };
     }).filter(Boolean);
     var total = 0;
     GROUPES.forEach(function (g, gi) {
-      var liste = trouves.filter(function (x) { return x.e.g === g; }).sort(function (a, b) { return a.s - b.s; }).slice(0, g === "Notions" ? 8 : 6);
+      var liste = trouves.filter(function (x) { return x.e.g === g; }).sort(function (a, b) { return a.s - b.s || b.k - a.k; }).slice(0, g === "Notions" ? 8 : 6);
       if (!liste.length) return;
       var grp = el("div", { role: "group", "aria-labelledby": "rech-g" + gi });
       grp.appendChild(el("p", { "class": "rech-groupe", id: "rech-g" + gi }, g));
