@@ -445,6 +445,20 @@
       + '<g class="bd-picto" transform="translate(604 39) scale(3)">' + paths + '</g>'
       + '<text class="bd-orn" x="405" y="62" text-anchor="middle">✣</text></svg>';
     prose.insertBefore(b, kicker && kicker.classList.contains("kicker") ? kicker : h1);
+    // Les filets partent après le numéro : leur départ dépend de sa largeur réelle (« 05 » contre « M04 »).
+    function placerFilets() {
+      var t = b.querySelector(".bd-num"), w = 0;
+      try { w = t.getComputedTextLength(); } catch (e) { w = 0; }
+      if (!w) w = num.length * 80;
+      var x1 = Math.min(Math.round(w + 30), 470);
+      Array.prototype.forEach.call(b.querySelectorAll(".bd-filet"), function (l) { l.setAttribute("x1", x1); });
+      b.querySelector(".bd-orn").setAttribute("x", Math.round((x1 + 560) / 2));
+    }
+    placerFilets();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(placerFilets);
+    // Lettrine seulement si le chapeau commence par une lettre (pas par « « » ni un chiffre).
+    var lead = prose.querySelector(":scope > .lead");
+    if (lead && /^\s*\p{L}/u.test(lead.textContent)) document.body.classList.add("lettrine");
     Array.prototype.forEach.call(prose.querySelectorAll(".phase"), function (ph) {
       var r = ROMAINS[ph.textContent.trim().toLowerCase()];
       if (r) { ph.setAttribute("data-romain", r); ph.classList.add("phase-bande"); }

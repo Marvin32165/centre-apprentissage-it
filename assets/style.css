@@ -1292,5 +1292,5 @@ body.livre { background-attachment: scroll; }
 .prose h2 .sec { display: block; margin: 0 0 var(--s1); font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem); line-height: 0.95; letter-spacing: -0.02em; }
 .prose h2[data-sec] { margin-top: var(--s7); }
 .toc-liste .sec, .sommaire-mod .sec { display: inline; font-size: inherit; }
-.page-cours .prose > .lead::first-letter { float: left; margin: 0.08em 0.1em 0 0; font-family: var(--font-text); font-size: 3.9em; font-weight: 400; line-height: 0.78; color: var(--accent); }
+.page-cours.lettrine .prose > .lead::first-letter { float: left; margin: 0.08em 0.1em 0 0; font-family: var(--font-text); font-size: 3.9em; font-weight: 400; line-height: 0.78; color: var(--accent); }
 @media print { .bandeau, .ornement-sep { display: none; } body { background-image: none; } }
