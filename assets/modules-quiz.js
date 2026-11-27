@@ -236,7 +236,7 @@ window.IT_QUIZZES["module-sous-reseaux"] = { titre: "Quiz : sous-réseaux et pla
 window.IT_QUIZZES["module-securite-poste"] = { titre: "Quiz : sécurité du poste", questions: [
   { q: "Un courriel demande de « valider ton compte » ; le texte du lien affiche le site de l'université, mais l'adresse réelle mène ailleurs. Que conclure ?",
     options: ["Rien : c'est courant", "C'est un signe d'hameçonnage : on ne clique pas et on signale", "Il suffit de vérifier l'orthographe", "On clique pour voir si la page ressemble au vrai site"], reponse: 1,
-    explication: "Microsoft cite en premier signe un lien dont la destination réelle ne correspond pas à l'adresse affichée. On vérifie par un canal connu et on signale à l'équipe de sécurité (Microsoft Support, Protect yourself from phishing)." },
+    explication: "Microsoft cite en premier signe un lien dont la destination réelle ne correspond pas à l'adresse affichée. On vérifie par un canal connu et on signale à l'équipe de sécurité (Microsoft Learn, How to protect against phishing attacks)." },
   { q: "Dans l'historique de protection, un fichier est « mis en quarantaine ». Qu'est-ce que cela veut dire ?",
     options: ["Il a été supprimé définitivement", "Il a été envoyé à Microsoft", "Il est bloqué mais pas encore supprimé ; on peut le supprimer ou le restaurer", "Il est autorisé jusqu'au redémarrage"], reponse: 2,
     explication: "Une menace mise en quarantaine est bloquée, pas encore supprimée, et ne devrait plus présenter de risque ; les actions possibles sont Supprimer ou Restaurer (Microsoft Support, Historique de protection)." },
@@ -248,7 +248,7 @@ window.IT_QUIZZES["module-securite-poste"] = { titre: "Quiz : sécurité du post
     explication: "Normal : Defender est l'antivirus actif. Passive mode : Defender tourne mais n'est pas l'antivirus principal, sur un poste inscrit à Defender for Endpoint (Microsoft Learn, Microsoft Defender Antivirus in Windows)." },
   { q: "Une utilisatrice a saisi son mot de passe sur une page douteuse il y a vingt minutes. Quelle est ta première action ?",
     options: ["Lui envoyer un nouveau mot de passe par courriel", "Signaler tout de suite l'incident selon la procédure de sécurité", "Attendre de voir si des courriels bizarres partent", "Supprimer le message reçu pour qu'elle ne clique plus"], reponse: 1,
-    explication: "C'est un incident de sécurité : on signale immédiatement. Microsoft rappelle de ne jamais envoyer le nouveau mot de passe par courriel (l'attaquant peut lire la boîte), et on ne supprime rien : ce sont des indices (Microsoft Learn, Responding to a compromised email account)." },
+    explication: "C'est un incident de sécurité : on signale immédiatement. Microsoft rappelle de ne jamais envoyer le nouveau mot de passe par courriel, car l'attaquant peut avoir accès à la boîte (Microsoft Learn, Responding to a compromised email account). On ne supprime rien : l'équipe de sécurité examinera les messages envoyés et les journaux." },
   { q: "On t'apporte une clé USB trouvée dans un auditoire. Que recommande la CISA ?",
     options: ["La brancher sur un poste isolé pour trouver le propriétaire", "La formater avant de la rendre", "Ne pas la brancher et la remettre au service désigné (sécurité ou informatique)", "La brancher si l'antivirus est à jour"], reponse: 2,
     explication: "La CISA demande de ne pas brancher une clé inconnue et de remettre une clé trouvée aux personnes désignées, sans la brancher pour voir son contenu ou identifier son propriétaire (CISA, Using Caution with USB Drives)." }

@@ -28,3 +28,6 @@ Remarques suivies : liens Intune mis à jour vers leurs nouvelles adresses ; « 
 
 ## Corrections (27/11/2026, Claude Code)
 - Toutes les lignes « faux » et « non vérifié » corrigées comme indiqué ci-dessus.
+
+## Test en situation (test-chef.md), 27/11/2026
+- Usage : recevoir des PC neufs pour une salle, comprendre leur déploiement et vérifier l'état de gestion d'un poste sans machine virtuelle. Rien à signaler : huit critères réussis.

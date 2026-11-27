@@ -257,7 +257,8 @@ Domaine Sécurité. Pistes, chacune à sourcer (Microsoft Learn, CISA, Centre po
   Fait : page en six sections sourcées (hameçonnage, Defender et quarantaine, mises à jour, compte compromis, clé USB, verrouillage), labo en lecture sur son PC, quatre mises en situation.
 - [x] 35.2 Données : `modules.js` (retirer de `aVenir` si présent), quiz `module-securite-poste`, unité, index.
   Fait : entrée `securite-poste` (domaine Sécurité), quiz de 6 questions sourcées, unité de progression, index.
-- [ ] 35.3 Relecture croisée par Codex (`docs/relectures/module-securite-poste.md`), puis test en situation ; corrections dans une autre conversation.
+- [x] 35.3 Relecture croisée par Codex (`docs/relectures/module-securite-poste.md`), puis test en situation ; corrections dans une autre conversation.
+  Fait : relecture par un agent relecteur séparé (4 faux, 8 non vérifiés, tous corrigés) et test en situation par l'agent chef (rien à signaler). Justifié : agents Claude distincts plutôt que Codex, à la demande de Marvin.
 - [ ] 35.4 `npm run controles`, coche, fusion.
 
 ## Lot 36 — Module « Jira Service Management au quotidien »
@@ -277,7 +278,8 @@ Domaine Matériel (ou Windows). Pistes : cycle de vie d'un poste (réception, in
   Fait : page en six sections sourcées (cycle de vie, méthodes de déploiement, Autopilot et Intune, dsregcmd, inventaire, retrait et NIST SP 800-88 Rev. 2), labo en lecture et fiche d'inventaire, quatre mises en situation.
 - [x] 37.2 Données : `modules.js`, quiz `module-deploiement-postes`, unité, index.
   Fait : entrée `deploiement-postes` (domaine Matériel), quiz de 6 questions, unité, index ; « Gestion de parc et d'inventaire » retiré des sujets à venir.
-- [ ] 37.3 Relecture croisée par Codex (`docs/relectures/module-deploiement-postes.md`), puis test en situation ; corrections dans une autre conversation.
+- [x] 37.3 Relecture croisée par Codex (`docs/relectures/module-deploiement-postes.md`), puis test en situation ; corrections dans une autre conversation.
+  Fait : relecture par un agent relecteur séparé (1 faux, 4 non vérifiés, tous corrigés) et test en situation par l'agent chef (rien à signaler). Justifié : agents Claude distincts plutôt que Codex, à la demande de Marvin.
 - [ ] 37.4 `npm run controles`, coche, fusion.
 
 ## Lot 38 — Module « Sauvegarde et restauration »
