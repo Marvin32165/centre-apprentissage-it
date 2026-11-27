@@ -208,7 +208,8 @@ Demande de Marvin (27/11) : une **énorme** amélioration graphique, bien au-del
   Fait : cartes par question, pastilles A à D sur le vrai bouton radio, compteur et jauge, tampons « Juste » / « À revoir », score en grand.
 - [x] 40.6 Encadrés avec icône (retenir, attention, astuce, source, UMONS) et tableaux plus éditoriaux (en-tête collant sur ordinateur, première colonne affirmée).
   Fait : icônes au trait en masque SVG teinté (retenir, astuce, attention, UMONS, source), en-têtes Plex Mono sur filet épais, première colonne Newsreader, en-tête collant si le tableau tient dans la colonne.
-- [ ] 40.7 Accueil : grande illustration gravée du poste de garde (casque, écran, ticket) dans l'en-tête, rubriques en grandes cartes illustrées ; pied de page sombre en colophon (plan du site en colonnes, tampon agrandi).
+- [x] 40.7 Accueil : grande illustration gravée du poste de garde (casque, écran, ticket) dans l'en-tête, rubriques en grandes cartes illustrées ; pied de page sombre en colophon (plan du site en colonnes, tampon agrandi).
+  Fait : gravure SVG du poste de garde (lampe, téléphone, écran et file de tickets, casque, ticket perforé, tasse), cartes de rubrique à médaillon hachuré et chiffre romain, pied en colophon sur toutes les pages.
 - [ ] 40.8 Passe finale : cohérence de toutes les pages (index des modules, thèmes, prépa, outils, révision, tickets), captures avant/après dans `docs/captures/lot-40/`, contrôles, fusion.
 
 ## Lots 34 à 39 — Après la prépa : glossaire et modules pour la suite du stage
