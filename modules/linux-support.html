@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bases de Linux pour le support — Modules · Apprentissage IT</title>
+<meta name="description" content="Bases de Linux pour le support : se connecter en SSH depuis Windows, se repérer, lire les journaux avec journalctl, l'état d'un service, l'espace disque, le réseau et les droits.">
+<meta property="og:title" content="Bases de Linux pour le support — Modules · Apprentissage IT">
+<meta property="og:description" content="Bases de Linux pour le support : se connecter en SSH depuis Windows, se repérer, lire les journaux avec journalctl, l'état d'un service, l'espace disque, le réseau et les droits.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Linux et scripts</p>
+<h1>Bases de <em>Linux</em> pour le support</h1>
+<p class="lead">Avec les experts, tu croiseras des serveurs Linux. Le service desk n'y administre rien, mais il doit savoir s'y connecter quand on le lui demande, s'y repérer et lire ce qu'on lui montre : un journal, l'état d'un service, l'espace disque, une adresse IP, des droits. Ce module donne ces gestes de lecture, avec les pages de manuel de Debian comme référence.</p>
+<div data-module-meta="linux-support"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>vérifier que le client SSH de Windows est présent et te connecter à un serveur, en comprenant la question de l'empreinte ;</li>
+  <li>te repérer avec <code>pwd</code>, <code>ls</code>, <code>cd</code>, <code>cat</code> et <code>less</code> ;</li>
+  <li>lire les journaux d'un service avec <code>journalctl</code> et son état avec <code>systemctl status</code> ;</li>
+  <li>contrôler l'espace disque (<code>df -h</code>) et le réseau (<code>ip a</code>, <code>ping -c</code>) ;</li>
+  <li>lire les droits d'un fichier avec <code>ls -l</code>, et savoir pourquoi on n'utilise pas <code>sudo</code> sans procédure.</li>
+</ul>
+<aside class="callout umons"><p>Les serveurs Linux de l'UMONS, qui peut s'y connecter, avec quel compte et selon quelle procédure : à vérifier sur place. En stage, on ne se connecte à un serveur que si un expert le demande, et on n'y lance que des commandes de lecture.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="ssh">1. Se connecter en SSH depuis Windows</h2>
+<p>Windows 10 et 11 disposent d'un client <strong>OpenSSH</strong>, un outil de connexion à distance qui chiffre tout le trafic entre le client et le serveur. Pour vérifier qu'il est là, sans rien installer :</p>
+<pre data-copy><code>ssh -V</code></pre>
+<p>La commande affiche le numéro de version et s'arrête. (Microsoft montre aussi la vérification en PowerShell administrateur : <code>Get-WindowsCapability -Online | Where-Object Name -like 'OpenSSH*'</code>.) Pour se connecter :</p>
+<pre data-copy><code>ssh utilisateur@serveur.example.org</code></pre>
+<p>À la <strong>première connexion</strong>, le client affiche l'empreinte (<em>fingerprint</em>) de la clé du serveur et demande s'il faut continuer. Répondre <code>yes</code> ajoute ce serveur à la liste des hôtes connus de ton poste ; le mot de passe est ensuite demandé, et ses caractères ne s'affichent pas pendant la saisie. Compare l'empreinte avec celle que t'indique l'équipe qui gère le serveur avant de répondre : si elle change plus tard sans raison, on prévient au lieu de forcer.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">Get started with OpenSSH for Windows</a> (Windows 10 et 11, vérification, première connexion, empreinte, mot de passe masqué) ; Debian : <a href="https://manpages.debian.org/trixie/openssh-client/ssh.1.en.html">ssh(1)</a> (<code>-V</code>).</p></aside>
+
+<h2 id="reperer">2. Se repérer</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Commande</th><th>Ce qu'elle fait</th></tr></thead>
+<tbody>
+<tr><td><code>pwd</code></td><td>Affiche le chemin complet du répertoire courant (« où suis-je ? »).</td></tr>
+<tr><td><code>ls</code>, <code>ls -l</code>, <code>ls -a</code></td><td>Liste le contenu d'un répertoire ; <code>-l</code> en format long (droits, propriétaire, taille, date) ; <code>-a</code> montre aussi les fichiers cachés, dont le nom commence par un point.</td></tr>
+<tr><td><code>cd /var/log</code>, <code>cd</code></td><td>Change de répertoire ; sans argument, ramène au répertoire personnel.</td></tr>
+<tr><td><code>cat fichier</code></td><td>Affiche le contenu d'un fichier d'un coup (bien pour un fichier court).</td></tr>
+<tr><td><code>less fichier</code></td><td>Affiche un fichier page par page ; <kbd>q</kbd> pour quitter.</td></tr>
+</tbody></table></div>
+<aside class="callout source"><p>Pages de manuel Debian (trixie) : <a href="https://manpages.debian.org/trixie/coreutils/pwd.1.en.html">pwd(1)</a>, <a href="https://manpages.debian.org/trixie/coreutils/ls.1.en.html">ls(1)</a>, <a href="https://manpages.debian.org/trixie/bash/bash.1.en.html">bash(1)</a> (commande interne <code>cd</code>), <a href="https://manpages.debian.org/trixie/coreutils/cat.1.en.html">cat(1)</a>, <a href="https://manpages.debian.org/trixie/less/less.1.en.html">less(1)</a> (<kbd>q</kbd> : quitter).</p></aside>
+
+<h2 id="journaux">3. Lire les journaux avec <code>journalctl</code></h2>
+<p>Sur un système qui utilise systemd (c'est le cas de Debian), <code>journalctl</code> affiche les entrées du journal. Les options utiles au support :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Option</th><th>Effet</th></tr></thead>
+<tbody>
+<tr><td><code>-u nom.service</code></td><td>Seulement les messages d'un service (une « unité »).</td></tr>
+<tr><td><code>-b</code></td><td>Seulement les messages du démarrage en cours.</td></tr>
+<tr><td><code>-p err</code></td><td>Seulement les messages de priorité « err » ou plus grave (niveaux de 0 « emerg » à 7 « debug »).</td></tr>
+<tr><td><code>-n 50</code></td><td>Les 50 entrées les plus récentes (10 si on ne précise pas le nombre).</td></tr>
+<tr><td><code>-e</code></td><td>Va directement à la fin du journal dans le pager.</td></tr>
+<tr><td><code>-f</code></td><td>Suit le journal en direct (<kbd>Ctrl</kbd>+<kbd>C</kbd> pour arrêter).</td></tr>
+</tbody></table></div>
+<pre data-copy><code>journalctl -u ssh.service -b -n 50
+journalctl -p err -b</code></pre>
+<p>Par défaut, chacun lit son propre journal ; le <strong>journal du système</strong> n'est lisible que par root et par les membres de quelques groupes (<code>systemd-journal</code>, <code>adm</code>, <code>wheel</code>). Si tu ne vois rien, c'est peut-être une question de droits, pas une absence d'erreurs.</p>
+<aside class="callout source"><p>Debian : <a href="https://manpages.debian.org/trixie/systemd/journalctl.1.en.html">journalctl(1)</a> (options <code>-u</code>, <code>-b</code>, <code>-p</code>, <code>-n</code>, <code>-e</code>, <code>-f</code> ; accès au journal du système).</p></aside>
+
+<h2 id="services">4. L'état d'un service : <code>systemctl status</code></h2>
+<p><code>systemctl status nom.service</code> affiche l'état d'exécution d'un service, suivi de ses dernières lignes de journal. Les lignes à lire :</p>
+<ul>
+  <li><strong>Loaded</strong> : le service est connu, et s'il démarre avec le système (<code>enabled</code>) ;</li>
+  <li><strong>Active</strong> : <code>active (running)</code> depuis telle date, ou un état d'arrêt ou d'échec ;</li>
+  <li>les <strong>dernières lignes du journal</strong>, souvent l'explication d'une panne.</li>
+</ul>
+<pre data-copy><code>systemctl status ssh.service</code></pre>
+<aside class="callout attention"><p>Démarrer, arrêter ou redémarrer un service (<code>systemctl start</code>, <code>stop</code>, <code>restart</code>) change l'état du serveur pour tous ses utilisateurs : au service desk, on lit l'état et on transmet aux experts.</p></aside>
+<aside class="callout source"><p>Debian : <a href="https://manpages.debian.org/trixie/systemd/systemctl.1.en.html">systemctl(1)</a> (commande <code>status</code> et exemple de sortie : Loaded, Active, journal).</p></aside>
+
+<h2 id="disque-reseau">5. Espace disque et réseau</h2>
+<ul>
+  <li><code>df -h</code> : l'espace utilisé et libre de chaque système de fichiers, en tailles lisibles (puissances de 1024 : <code>1023M</code>, <code>4,0G</code>). Un système de fichiers plein explique bien des pannes.</li>
+  <li><code>ip a</code> (abréviation de <code>ip address</code>) : les interfaces réseau et leurs adresses IP.</li>
+  <li><code>ping -c 4 serveur.example.org</code> : envoie quatre demandes d'écho ICMP puis s'arrête. Sans <code>-c</code>, <code>ping</code> continue jusqu'à <kbd>Ctrl</kbd>+<kbd>C</kbd> (sous Windows, il s'arrête seul après quatre).</li>
+</ul>
+<aside class="callout source"><p>Debian : <a href="https://manpages.debian.org/trixie/coreutils/df.1.en.html">df(1)</a> (<code>-h</code>), <a href="https://manpages.debian.org/trixie/iproute2/ip.8.en.html">ip(8)</a> (objet <code>address</code>, abrégé <code>a</code>), <a href="https://manpages.debian.org/trixie/iputils-ping/ping.8.en.html">ping(8)</a> (<code>-c</code>) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping">ping</a> (quatre demandes par défaut sous Windows).</p></aside>
+
+<h2 id="droits">6. Les droits et <code>sudo</code></h2>
+<p>En format long, <code>ls -l</code> commence chaque ligne par dix caractères, par exemple <code>-rw-r-----</code> :</p>
+<ul>
+  <li>le <strong>premier</strong> donne le type : <code>-</code> fichier ordinaire, <code>d</code> répertoire, <code>l</code> lien symbolique ;</li>
+  <li>puis trois groupes de trois : droits du <strong>propriétaire</strong> (<em>u</em>), du <strong>groupe</strong> du fichier (<em>g</em>), des <strong>autres</strong> (<em>o</em>) ;</li>
+  <li>dans chaque groupe : <code>r</code> lecture, <code>w</code> écriture, <code>x</code> exécution (ou, pour un répertoire, droit de le traverser), <code>-</code> si le droit manque.</li>
+</ul>
+<p>Dans l'exemple, le propriétaire lit et écrit, le groupe lit, les autres n'ont rien : un utilisateur qui « n'arrive pas à ouvrir le fichier » n'est peut-être simplement ni le propriétaire ni dans le groupe.</p>
+<p><code>sudo</code> permet à un utilisateur autorisé d'exécuter une commande en tant que superutilisateur (root) ou autre utilisateur, selon la politique de sécurité du serveur. Avec <code>sudo</code>, une erreur touche tout le système : on ne l'utilise jamais sans procédure ni demande explicite d'un expert.</p>
+<aside class="callout source"><p>POSIX (The Open Group) : <a href="https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html">ls</a> (type de fichier et trois classes de droits en format long) ; Debian : <a href="https://manpages.debian.org/trixie/coreutils/chmod.1.en.html">chmod(1)</a> (propriétaire <em>u</em>, groupe <em>g</em>, autres <em>o</em> ; <code>r</code>, <code>w</code>, <code>x</code>), <a href="https://manpages.debian.org/trixie/sudo/sudo.8.en.html">sudo(8)</a>.</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo : sans serveur ni machine virtuelle</h2>
+<p>Ton PC n'a pas assez de mémoire pour une machine virtuelle. WSL (le sous-système Windows pour Linux) en version 2, la version par défaut, fait tourner un noyau Linux dans une machine virtuelle légère : ne l'installe que si ton PC le supporte et si tu peux te le permettre (à vérifier). Le labo se fait donc en deux temps, sans rien installer.</p>
+<ol>
+  <li><strong>Sur ton PC Windows</strong> : ouvre PowerShell et lance <code>ssh -V</code>. Note la version affichée, ou le message d'erreur si le client est absent.</li>
+  <li><strong>Sur papier</strong>, avec la sortie ci-dessous (inventée pour l'exercice, au format de la documentation) : réponds aux questions.</li>
+</ol>
+<pre data-copy data-langage="Sortie d'exemple"><code>$ pwd
+/home/stagiaire
+$ ls -l /srv/partage
+-rw-r----- 1 compta compta  18432 nov 27 09:12 budget.ods
+drwxr-x--- 2 compta compta   4096 nov 20 14:03 archives
+$ df -h /srv
+Sys. de fichiers Taille Utilisé Dispo Uti% Monté sur
+/dev/sdb1          200G    196G  4,0G  98% /srv
+$ systemctl status partage.service
+● partage.service - Partage de fichiers
+     Loaded: loaded (/usr/lib/systemd/system/partage.service; enabled)
+     Active: failed (Result: exit-code) since Fri 2026-11-27 08:58:01 CET</code></pre>
+<ol start="3">
+  <li>Dans quel répertoire est-on ? Qui peut lire <code>budget.ods</code> ? Qu'est-ce que <code>archives</code> ?</li>
+  <li>Que dit <code>df -h</code> sur <code>/srv</code> ?</li>
+  <li>Dans quel état est le service <code>partage.service</code> ? Quelle commande montrerait ses derniers messages ?</li>
+  <li>Qu'écris-tu dans le ticket, et à qui le transmets-tu ?</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois constater</summary>
+<ul>
+  <li><code>ssh -V</code> affiche la version d'OpenSSH (par exemple <code>OpenSSH_for_Windows_…</code>) : le client est présent. Sinon, c'est une fonctionnalité facultative de Windows à ajouter selon la procédure, pas à toi de l'installer sur un poste de l'université.</li>
+  <li>On est dans <code>/home/stagiaire</code>. <code>budget.ods</code> (<code>-rw-r-----</code>) : le propriétaire <code>compta</code> lit et écrit, les membres du groupe <code>compta</code> lisent, les autres n'ont aucun droit. <code>archives</code> est un répertoire (<code>d</code>), traversable par le propriétaire et le groupe seulement.</li>
+  <li><code>/srv</code> est utilisé à 98 % : il ne reste que 4,0 Go.</li>
+  <li>Le service est en échec (<code>Active: failed</code>) depuis 8 h 58. Ses derniers messages : <code>journalctl -u partage.service -b -n 50</code> (avec les droits nécessaires).</li>
+  <li>Ticket : serveur, heure, sortie de <code>systemctl status</code>, disque <code>/srv</code> à 98 %, effet pour les utilisateurs ; transmis à l'équipe qui gère le serveur. Tu ne redémarres rien et tu ne libères pas d'espace toi-même.</li>
+</ul>
+</details>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/wsl/about">What is WSL?</a> (WSL 2 : noyau Linux dans une machine virtuelle légère, version par défaut).</p></aside>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « Il me demande yes ou no »</h3>
+<p>Un expert te demande de te connecter à un serveur de test. À la connexion, ton terminal affiche une empreinte et demande « Are you sure you want to continue connecting (yes/no)? ». Que fais-tu ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>C'est la première connexion à ce serveur : le client ne connaît pas encore sa clé. Tu compares l'empreinte affichée avec celle que l'expert ou l'équipe du serveur te donne ; si elles correspondent, <code>yes</code> l'ajoute aux hôtes connus. Si on ne peut pas te la confirmer, tu demandes avant de répondre.</p>
+</details>
+<h3>2. « Le site interne ne répond plus »</h3>
+<p>Un expert te montre son écran : <code>systemctl status</code> sur le serveur web indique <code>Active: active (running)</code>, et <code>df -h</code> montre la partition des journaux à 100 %. Que notes-tu ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Le service tourne, mais un système de fichiers plein peut empêcher d'écrire et provoquer des erreurs : tu notes les deux constats, l'heure et le symptôme des utilisateurs dans le ticket. C'est à l'équipe du serveur de libérer de l'espace.</p>
+</details>
+<h3>3. « Tape juste sudo… »</h3>
+<p>Un collègue d'un autre service te conseille au téléphone : « Connecte-toi et tape <code>sudo systemctl restart</code>, ça ira plus vite. »</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Tu ne le fais pas : <code>sudo</code> exécute la commande en tant que root, et redémarrer un service touche tous ses utilisateurs. Tu demandes que la demande passe par l'expert responsable du serveur et par un ticket.</p>
+</details>
+<aside class="callout source"><p>Corrections fondées sur les sources des sections : <a href="https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse">première connexion SSH</a> (Microsoft Learn), <a href="https://manpages.debian.org/trixie/systemd/systemctl.1.en.html">systemctl(1)</a>, <a href="https://manpages.debian.org/trixie/coreutils/df.1.en.html">df(1)</a> et <a href="https://manpages.debian.org/trixie/sudo/sudo.8.en.html">sudo(8)</a> (Debian).</p></aside>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-linux-support"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>SSH</strong> : <code>ssh -V</code> (client présent ?) ; <code>ssh utilisateur@serveur</code> ; première connexion : comparer l'empreinte, puis <code>yes</code>.</li>
+  <li><strong>Se repérer</strong> : <code>pwd</code> · <code>ls -l</code>, <code>ls -a</code> · <code>cd</code> · <code>cat</code> · <code>less</code> (<kbd>q</kbd>).</li>
+  <li><strong>Journaux</strong> : <code>journalctl -u service -b -n 50</code> · <code>-p err</code> · <code>-e</code> · <code>-f</code> ; journal du système : root ou groupes <code>systemd-journal</code>, <code>adm</code>, <code>wheel</code>.</li>
+  <li><strong>Service</strong> : <code>systemctl status service</code> → Loaded, Active, dernières lignes ; on ne redémarre pas.</li>
+  <li><strong>Disque et réseau</strong> : <code>df -h</code> · <code>ip a</code> · <code>ping -c 4 hôte</code>.</li>
+  <li><strong>Droits</strong> : <code>-rw-r-----</code> = type, puis propriétaire / groupe / autres (r, w, x). <strong><code>sudo</code></strong> : jamais sans procédure.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Quels serveurs Linux le service desk peut-il être amené à consulter, et avec quel compte ?</li>
+  <li>Comment vérifie-t-on l'empreinte d'un serveur à la première connexion ?</li>
+  <li>À qui transmet-on un service en échec ou un disque plein ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-linux-support"> Module terminé</label></p>
+<div data-module-suite="linux-support"></div>
+</div>
+</main>
+</body>
+</html>

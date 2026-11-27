@@ -293,8 +293,10 @@ Domaine Support. Pistes : où sont les données d'un utilisateur (profil, OneDri
 
 ## Lot 39 — Module « Bases de Linux pour le support »
 Domaine Linux et scripts. Pistes : se connecter en SSH depuis Windows (client OpenSSH intégré), se repérer (`pwd`, `ls`, `cd`, `cat`, `less`), lire des journaux (`journalctl`), état d'un service (`systemctl status`), espace disque (`df -h`), réseau (`ip a`, `ping`), droits (`ls -l`, `sudo` : jamais sans procédure). Sources : documentation Debian, pages de manuel, Microsoft Learn pour OpenSSH. Labo sans VM : WSL seulement si Marvin peut l'installer (à vérifier : WSL 2 utilise aussi la virtualisation et de la mémoire), sinon une console Linux en ligne d'un organisme officiel, ou sur papier avec des sorties décrites par la documentation. Serveurs de l'UMONS : « à vérifier sur place ».
-- [ ] 39.1 Page `modules/linux-support.html`.
-- [ ] 39.2 Données : `modules.js` (retirer de `aVenir` du domaine Linux), quiz `module-linux-support`, unité, index.
+- [x] 39.1 Page `modules/linux-support.html`.
+  Fait : page en six sections sourcées (SSH depuis Windows et empreinte, se repérer, journalctl, systemctl status, df et réseau, droits et sudo), labo sans VM (ssh -V puis lecture d'une sortie d'exemple), trois mises en situation.
+- [x] 39.2 Données : `modules.js` (retirer de `aVenir` du domaine Linux), quiz `module-linux-support`, unité, index.
+  Fait : entrée `linux-support` (domaine Linux), quiz de 6 questions, unité, index ; « Debian en ligne de commande » retiré des sujets à venir.
 - [ ] 39.3 Relecture croisée par Codex (`docs/relectures/module-linux-support.md`), puis test en situation ; corrections dans une autre conversation.
 - [ ] 39.4 `npm run controles`, coche, fusion.
 

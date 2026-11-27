@@ -274,3 +274,24 @@ window.IT_QUIZZES["module-deploiement-postes"] = { titre: "Quiz : déploiement e
     options: ["Oui, si la corbeille est vide", "Oui, après un redémarrage", "Non : il faut assainir le support selon la procédure, avec une technique adaptée à la sensibilité des données", "Non, il faut seulement retirer le compte de l'utilisateur"], reponse: 2,
     explication: "Le NIST (SP 800-88 Rev. 2) définit l'assainissement comme rendre l'accès aux données infaisable pour un niveau d'effort donné, avec une technique choisie selon la sensibilité des informations ; une simple suppression ne le garantit pas." }
 ] };
+
+window.IT_QUIZZES["module-linux-support"] = { titre: "Quiz : bases de Linux pour le support", questions: [
+  { q: "À la première connexion SSH à un serveur, le client affiche une empreinte et demande « yes/no ». Que se passe-t-il si tu réponds yes ?",
+    options: ["Le mot de passe est enregistré", "Le serveur est ajouté à la liste des hôtes connus de ton poste", "La connexion devient non chiffrée", "Le serveur redémarre"], reponse: 1,
+    explication: "Répondre yes ajoute le serveur à la liste des hôtes SSH connus du client Windows ; on compare d'abord l'empreinte avec celle donnée par l'équipe du serveur (Microsoft Learn, Get started with OpenSSH for Windows)." },
+  { q: "Quelle commande affiche seulement les 50 derniers messages du service ssh depuis le démarrage en cours ?",
+    options: ["journalctl -u ssh.service -b -n 50", "systemctl restart ssh.service", "cat /var/log -n 50", "ls -l ssh.service"], reponse: 0,
+    explication: "-u filtre sur une unité, -b sur le démarrage en cours, -n limite aux entrées les plus récentes (journalctl(1), Debian)." },
+  { q: "systemctl status affiche « Active: failed ». Que fais-tu au service desk ?",
+    options: ["sudo systemctl restart, puis je ferme le ticket", "Je supprime les journaux pour faire de la place", "Je note l'état, l'heure et les dernières lignes du journal, et je transmets à l'équipe du serveur", "Rien : c'est normal"], reponse: 2,
+    explication: "systemctl status montre l'état et les dernières lignes du journal ; démarrer ou redémarrer un service change le serveur pour tous : on lit et on transmet (systemctl(1), Debian)." },
+  { q: "Que signifie la ligne -rw-r----- au début d'une sortie de ls -l ?",
+    options: ["Un répertoire que tout le monde peut modifier", "Un fichier ordinaire : le propriétaire lit et écrit, le groupe lit, les autres n'ont aucun droit", "Un lien symbolique exécutable", "Un fichier caché"], reponse: 1,
+    explication: "Premier caractère : type (- fichier ordinaire) ; puis trois groupes rwx pour le propriétaire, le groupe et les autres (POSIX ls ; chmod(1), Debian)." },
+  { q: "df -h indique 98 % pour /srv. Qu'est-ce que cela veut dire ?",
+    options: ["Le processeur est chargé à 98 %", "Le réseau perd 98 % des paquets", "Le système de fichiers monté sur /srv est presque plein", "La mémoire vive est presque pleine"], reponse: 2,
+    explication: "df affiche l'espace utilisé et disponible par système de fichiers ; -h en tailles lisibles (df(1), Debian)." },
+  { q: "Pourquoi ne lance-t-on pas une commande avec sudo « pour aller plus vite » ?",
+    options: ["Parce que sudo est payant", "Parce que sudo exécute la commande en tant que root (ou un autre utilisateur), avec des effets sur tout le système", "Parce que sudo efface l'historique", "Parce que sudo ne marche qu'en SSH"], reponse: 1,
+    explication: "sudo permet à un utilisateur autorisé d'exécuter une commande en tant que superutilisateur ou autre utilisateur, selon la politique de sécurité (sudo(8), Debian) : jamais sans procédure." }
+] };
