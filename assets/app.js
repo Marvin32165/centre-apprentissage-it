@@ -149,10 +149,30 @@
     body.insertBefore(header, body.firstChild);
     body.insertBefore(skip, body.firstChild);
 
+    // Pied de page en colophon : marque, plan du site en colonnes, mentions, export de la progression.
     var footer = el("footer", { "class": "site-footer" });
-    var fw = el("div", { "class": "wrap" });
-    fw.appendChild(el("p", null, "Apprentissage IT — contenu libre, sans compte ni suivi."));
-    fw.appendChild(el("p", null, "Ta progression reste dans ce navigateur."));
+    var fw = el("div", { "class": "wrap colophon" });
+    var marque = el("div", { "class": "colo-marque" });
+    marque.appendChild(el("span", { "class": "stamp colo-tampon", "aria-hidden": "true" }, "IT"));
+    marque.appendChild(el("p", { "class": "colo-nom" }, "Apprentissage IT"));
+    marque.appendChild(el("p", null, "Contenu libre, sans compte ni suivi."));
+    marque.appendChild(el("p", null, "Ta progression reste dans ce navigateur."));
+    fw.appendChild(marque);
+    var plan = el("nav", { "class": "colo-plan", "aria-label": "Plan du site" });
+    [["Prépa stage", [["Programme", "stage/index.html"], ["Boîte à outils", "stage/outils.html"], ["Révision express", "stage/revision.html"], ["Entraînement aux tickets", "stage/tickets.html"]]],
+     ["Apprendre", [["Accueil", "index.html"], ["Modules", "modules/index.html"], ["Thèmes", "themes.html"], ["Atelier hardware", "atelier/index.html"]]]].forEach(function (col) {
+      var d = el("div");
+      d.appendChild(el("p", { "class": "colo-titre" }, col[0]));
+      var ul = el("ul");
+      col[1].forEach(function (l) { var li = el("li"); li.appendChild(el("a", { href: root + l[1] }, l[0])); ul.appendChild(li); });
+      d.appendChild(ul);
+      plan.appendChild(d);
+    });
+    var colo = el("div");
+    colo.appendChild(el("p", { "class": "colo-titre" }, "Colophon"));
+    colo.appendChild(el("p", null, "Composé en Newsreader, Instrument Sans et IBM Plex Mono. HTML, CSS et JavaScript natifs, sans étape de construction."));
+    plan.appendChild(colo);
+    fw.appendChild(plan);
     fw.appendChild(progressionPortable());
     footer.appendChild(fw);
     body.appendChild(footer);
