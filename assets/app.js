@@ -510,7 +510,10 @@
     if (!prose) return;
     var mj = /stage\/j(\d+)\.html$/.exec(location.pathname), meta = document.querySelector("[data-module-meta]");
     var num = null, nom = null, legende = "";
+    var ms = /stage\/(outils|revision|tickets|index\.html$|$)/.exec(location.pathname);
+    var PAGES_PREPA = { outils: ["Outils", "atelier"], revision: ["Révision", "revision"], tickets: ["Tickets", "ticket"] };
     if (mj) { num = (+mj[1] < 10 ? "0" : "") + mj[1]; nom = PICTO_JOUR[+mj[1]]; legende = "Jour"; }
+    else if (ms) { var pp = PAGES_PREPA[ms[1]] || ["Programme", "stage"]; num = pp[0]; nom = pp[1]; legende = "Prépa stage"; }
     else if (meta && window.IT_MODULES) {
       var mods = window.IT_MODULES.modules, id = meta.getAttribute("data-module-meta");
       for (var i = 0; i < mods.length; i++) if (mods[i].id === id) { num = "M" + (i < 9 ? "0" : "") + (i + 1); nom = mods[i].domaine; legende = "Module"; }
@@ -523,7 +526,7 @@
     b.innerHTML = '<svg class="bandeau-svg" viewBox="0 0 720 150" preserveAspectRatio="xMinYMid meet" focusable="false">'
       + '<defs><pattern id="bd-h" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" class="bd-hachure"/></pattern></defs>'
       + '<text class="bd-leg" x="4" y="20">' + legende.toUpperCase() + '</text>'
-      + '<text class="bd-num" x="0" y="138">' + num + '</text>'
+      + '<text class="bd-num' + (/^\d|^M\d/.test(num) ? '' : ' bd-mot') + '" x="0" y="' + (/^\d|^M\d/.test(num) ? 138 : 122) + '">' + num + '</text>'
       + '<line class="bd-filet" x1="250" y1="75" x2="560" y2="75"/><line class="bd-filet fin" x1="250" y1="81" x2="560" y2="81"/>'
       + '<circle class="bd-rond-h" cx="640" cy="75" r="62" fill="url(#bd-h)"/><circle class="bd-rond" cx="640" cy="75" r="62"/><circle class="bd-rond fin" cx="640" cy="75" r="54"/>'
       + '<g class="bd-picto" transform="translate(604 39) scale(3)">' + paths + '</g>'

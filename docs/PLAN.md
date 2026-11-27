@@ -210,7 +210,8 @@ Demande de Marvin (27/11) : une **énorme** amélioration graphique, bien au-del
   Fait : icônes au trait en masque SVG teinté (retenir, astuce, attention, UMONS, source), en-têtes Plex Mono sur filet épais, première colonne Newsreader, en-tête collant si le tableau tient dans la colonne.
 - [x] 40.7 Accueil : grande illustration gravée du poste de garde (casque, écran, ticket) dans l'en-tête, rubriques en grandes cartes illustrées ; pied de page sombre en colophon (plan du site en colonnes, tampon agrandi).
   Fait : gravure SVG du poste de garde (lampe, téléphone, écran et file de tickets, casque, ticket perforé, tasse), cartes de rubrique à médaillon hachuré et chiffre romain, pied en colophon sur toutes les pages.
-- [ ] 40.8 Passe finale : cohérence de toutes les pages (index des modules, thèmes, prépa, outils, révision, tickets), captures avant/après dans `docs/captures/lot-40/`, contrôles, fusion.
+- [x] 40.8 Passe finale : cohérence de toutes les pages (index des modules, thèmes, prépa, outils, révision, tickets), captures avant/après dans `docs/captures/lot-40/`, contrôles, fusion.
+  Fait : bandeau gravé sur programme, boîte à outils, révision et tickets ; captures avant / après dans `docs/captures/lot-40/` ; contrôles sans problème. Reste : rien pour ce lot.
 
 ## Lots 34 à 39 — Après la prépa : glossaire et modules pour la suite du stage
 Rédigé le 26/11/2026, à la demande de Marvin. But : accompagner la deuxième période du stage (janvier à février 2027 : maintenance avec le pôle opération, projets avec les experts N4) et les questions du quotidien. Chaque module suit `docs/procedures/nouveau-module.md` (sous-étapes N.1 page, N.2 données, N.3 relecture croisée puis test en situation, N.4 contrôles et fusion) ; labos **sans machine virtuelle** ; rien sur l'UMONS sans « à vérifier sur place ».

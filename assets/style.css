@@ -1419,3 +1419,6 @@ pre.colore .ln:not(.vide)::before { content: "›"; display: inline-block; width
 .colo-plan div > p:not(.colo-titre) { font-family: var(--font-text); font-size: 0.9375rem; font-style: italic; letter-spacing: 0; line-height: 1.55; }
 .site-footer .pied-progression { grid-column: 1 / -1; padding-top: var(--s4); border-top: 1px dashed rgba(237, 230, 218, 0.18); }
 @media (max-width: 40rem) { .colo-plan { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s5) var(--s4); } .colo-plan > div:last-child { grid-column: 1 / -1; } .site-footer .colo-tampon { width: 64px; height: 64px; font-size: 22px; } }
+
+/* ===== Lot 40.8 : passe finale (bandeau gravé des pages de la prépa) ===== */
+.bd-num.bd-mot { font-size: 92px; letter-spacing: -0.02em; }
