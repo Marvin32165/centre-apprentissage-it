@@ -213,6 +213,9 @@ Rédigé le 26/11/2026, à la demande de Marvin. But : accompagner la deuxième 
 - [x] Relire les corrections de J6, J7 et Active Directory pour le support, quiz compris.
   Fait : trois rapports `relecture2-*.md` dans `docs/relectures/` ; 56 corrects, 10 faux, 28 non vérifiés. Corrections réservées à une autre conversation.
 
+- [x] Vérifier sur `claude/exciting-newton-tg7h18` les pages à relire des lots 34, 35, 37 et 39.
+  Justifié : après `git fetch origin`, le commit `57b9b0a` de la branche Claude ne contient aucune des quatre pages attendues : `stage/glossaire.html`, `modules/securite-poste.html`, `modules/deploiement-postes.html`, `modules/linux-support.html`. Les quatre rapports restent à faire dès publication des pages sur cette branche.
+
 ## Lot 34 — Glossaire français-anglais du service desk
 Une page `stage/glossaire.html` : les termes que l'on croise en anglais dans Jira, Microsoft 365, Windows et ITIL, avec leur équivalent français, une définition d'une ligne, la page du site qui l'explique et la source officielle. Recherche intégrée (index), tri alphabétique, filtre par domaine, lisible au téléphone.
 - [ ] 34.1 Liste des termes (au moins 80) tirée **des pages du site** (incident, problem, known error, workaround, SLA, queue, assignee, escalation, Full Access, Send As, Send on Behalf, lease, gateway, OU, GPO, recovery key, safe mode…) ; données dans `assets/glossaire.js` ; chaque terme renvoie à sa section du site et à une source officielle.
