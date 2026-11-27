@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sauvegarde et restauration — Modules · Apprentissage IT</title>
+<meta name="description" content="Sauvegarde et restauration : retrouver les données, restaurer des fichiers via OneDrive ou Windows et vérifier la récupération.">
+<meta property="og:title" content="Sauvegarde et restauration — Modules · Apprentissage IT">
+<meta property="og:description" content="Sauvegarde et restauration : retrouver les données, restaurer des fichiers via OneDrive ou Windows et vérifier la récupération.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Support et service desk</p>
+<h1><em>Sauvegarde</em> et restauration</h1>
+<p class="lead">Un fichier a disparu ou une modification a écrasé le bon contenu. Le premier réflexe est de retrouver l’emplacement d’origine et de déterminer l’état recherché. Tu vas choisir où chercher une copie récupérable et vérifier le résultat d’une restauration.</p>
+<div data-module-meta="sauvegarde-restauration"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>repérer les fichiers locaux, synchronisés et stockés sur un partage</li>
+  <li>choisir entre historique des versions, corbeille et sauvegarde</li>
+  <li>lire la liste des versions récupérables dans l’Historique des fichiers</li>
+  <li>préparer une copie avant intervention et contrôler qu’elle se restaure</li>
+</ul>
+<aside class="callout umons"><p>À vérifier sur place : emplacements autorisés, périmètre de sauvegarde, droits de restauration, délais de conservation et procédure d’escalade à l’UMONS. Protège les fichiers de l’utilisateur en respectant les destinations et les accès prévus.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="emplacements">1. Retrouver où sont les données</h2>
+<p>Demande le <strong>chemin ou le lien exact</strong>, le compte utilisé et l’heure du dernier état correct. Vérifie si l’utilisateur a ouvert un dossier local, un emplacement OneDrive ou un partage réseau. Deux dossiers appelés « Documents » peuvent renvoyer à deux emplacements différents.</p>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Emplacement</th><th scope="col">Où chercher</th></tr></thead>
+<tbody>
+<tr><th scope="row">Profil local</th><td>Vérifie les dossiers concernés sur le poste, y compris les Téléchargements et les fichiers enregistrés ailleurs. Si un fichier est supprimé, regarde la corbeille de Windows et cherche une copie dans la sauvegarde disponible.</td></tr>
+<tr><th scope="row">OneDrive</th><td>Si la sauvegarde des dossiers est activée, Bureau, Documents ou Images peuvent se trouver dans OneDrive. Ouvre le bon compte sur le web pour voir ce qui est arrivé au serveur. Un nuage bleu signale un fichier disponible en ligne uniquement.</td></tr>
+<tr><th scope="row">Partage réseau</th><td>Relève le chemin partagé, par exemple <code>\\serveur-test\dossier</code>. Vérifie les versions précédentes uniquement si le serveur les expose. Si nécessaire, transmets le chemin, l’heure et le fichier demandé à l’équipe qui gère le partage.</td></tr>
+</tbody>
+</table></div>
+<aside class="callout source"><p>Microsoft : <a href="https://support.microsoft.com/en-us/onedrive/back-up-your-folders-with-onedrive">Dossiers sauvegardés avec OneDrive</a> · <a href="https://support.microsoft.com/en-us/onedrive/what-do-the-onedrive-icons-mean">Icônes et états de OneDrive</a> · <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/backup-and-storage/most-recent-previous-versions-missing-for-share">Versions précédentes sur un partage Windows</a> · <a href="https://support.microsoft.com/en-us/onedrive/restore-your-onedrive-files">Récupérer des fichiers supprimés de OneDrive</a>.</p></aside>
+
+<h2 id="onedrive">2. OneDrive : fichier écrasé ou supprimé</h2>
+<h3>Fichier présent, contenu écrasé</h3>
+<ol>
+  <li>Dans OneDrive sur le web, sélectionne le fichier puis ouvre <strong>Historique des versions</strong>.</li>
+  <li>Repère la version d’après l’heure et le contenu attendu. Dans un cas réel, préserve d’abord l’état courant si une modification récente doit être conservée.</li>
+  <li>Dans le menu de la version voulue, choisis <strong>Restaurer</strong>. Elle devient la version courante. Microsoft indique que l’ancienne version courante reste dans l’historique. Rouvre le fichier et contrôle son contenu.</li>
+</ol>
+<h3>Fichier absent</h3>
+<p>Si l’élément se trouvait dans OneDrive, ouvre sa <strong>Corbeille</strong> sur le web, retrouve l’élément puis choisis <strong>Restaurer</strong>. Un fichier en ligne uniquement supprimé depuis le cloud peut être absent de la corbeille de Windows. Si c’est un fichier partagé par quelqu’un d’autre, identifie son emplacement et son propriétaire avant d’escalader.</p>
+<aside class="callout attention"><p>La présence et la durée de conservation des versions et des éléments supprimés dépendent du compte et des paramètres. Vérifie ce qui est disponible dans le bon espace avant d’annoncer une récupération. Sur un poste avec des modifications encore en attente, préserve ces données avant de relancer une synchronisation.</p></aside>
+<aside class="callout source"><p>Microsoft : <a href="https://support.microsoft.com/en-us/onedrive/restore-a-previous-version-of-a-file-stored-in-onedrive">Restaurer une version précédente</a> · <a href="https://support.microsoft.com/en-us/onedrive/restore-your-onedrive-files">Récupérer des fichiers supprimés de OneDrive</a> · <a href="https://support.microsoft.com/en-us/onedrive/what-do-the-onedrive-icons-mean">Icônes et états de OneDrive</a>.</p></aside>
+
+<h2 id="historique-fichiers">3. Historique des fichiers sous Windows</h2>
+<p>Quand il est activé, l’<strong>Historique des fichiers</strong> enregistre des versions de fichiers et dossiers couverts sur un lecteur externe ou un emplacement réseau. Vérifie que le dossier était couvert, que la sauvegarde existait avant l’incident et que sa destination est disponible.</p>
+<p>Dans l’Explorateur, remonte au dossier d’origine. Pour un fichier supprimé, sélectionne son <strong>dossier parent</strong>, puis ouvre <strong>Restaurer les versions précédentes</strong>. Choisis une version qui précède l’incident. Ouvre-la pour contrôler le contenu, ou utilise <strong>Restaurer vers…</strong> quand l’option est disponible afin de préserver l’état actuel.</p>
+<p>Si le fichier était sur un partage, sa liste de versions dépend du serveur et de la configuration du partage. Transmets au responsable de la sauvegarde si la version recherchée n’est pas exposée.</p>
+<aside class="callout source"><p>Microsoft : <a href="https://support.microsoft.com/en-us/windows/experience/backup-recovery/backup-and-restore-with-file-history">Historique des fichiers de Windows</a> · <a href="https://learn.microsoft.com/en-us/troubleshoot/windows-client/backup-and-storage/most-recent-previous-versions-missing-for-share">Versions précédentes sur un partage Windows</a>.</p></aside>
+
+<h2 id="avant-intervention">4. Sauvegarder avant d’intervenir</h2>
+<ol>
+  <li><strong>Quoi ?</strong> Avec l’utilisateur, recense les fichiers nécessaires et les données locales que l’opération peut toucher : dossiers de travail, fichiers en attente de synchronisation, données d’une application ou archives locales.</li>
+  <li><strong>Où ?</strong> Choisis un emplacement approuvé et distinct de ce qui va être modifié. Note le périmètre, la destination et l’heure dans le ticket, en respectant les règles d’accès.</li>
+  <li><strong>Comment vérifier ?</strong> Contrôle que les données attendues figurent dans la copie. Restaure un échantillon dans un emplacement autorisé, vérifie qu’il s’ouvre et que son contenu correspond. Escalade si une donnée indispensable reste sans copie récupérable.</li>
+</ol>
+<aside class="callout astuce"><p>Comme repère de stratégie, Microsoft documente la règle <strong>3-2-1</strong> et ses extensions : trois copies au total, réparties sur deux types de stockage, dont une hors site. En support, vérifie surtout quel point de restauration est récupérable et qui peut l’utiliser.</p></aside>
+<aside class="callout source"><p>Microsoft : <a href="https://support.microsoft.com/en-us/onedrive/back-up-your-folders-with-onedrive">Dossiers sauvegardés avec OneDrive</a> · <a href="https://learn.microsoft.com/en-us/azure/backup/azure-backup-3-2-1-1-0-strategy">Stratégie Azure Backup et vérification d’une restauration</a>.</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo guidé : récupérer une version sur ton PC <span class="duree">≈ 30 min</span></h2>
+<p>Utilise uniquement un espace OneDrive personnel ou de test et un fichier fictif. Tu peux faire le scénario sur papier si l’historique n’est pas accessible.</p>
+<ol>
+  <li>Crée un fichier <code>exercice-restauration.txt</code> avec le texte « Version A — à retrouver ». Dépose-le dans un dossier de test OneDrive et vérifie sur le web qu’il s’ouvre.</li>
+  <li>Sur ton PC, change le texte en « Version B — état courant » et enregistre le fichier. Dans le dossier de test, confirme le remplacement du fichier du même nom si tu le téléverses depuis le navigateur. Si tu utilises le dossier OneDrive synchronisé, attends de voir B sur le web.</li>
+  <li>Sur le web, ouvre <strong>Historique des versions</strong>. Si aucune version antérieure n’apparaît, garde les fichiers et passe au scénario papier. Sinon, restaure A.</li>
+  <li>Rouvre le fichier sur le web. Note quel texte est courant et vérifie que B figure dans l’historique.</li>
+</ol>
+<p><strong>Sur papier :</strong> l’historique montre A à 10 h 05 et B à 10 h 20. Le bon contenu est celui d’avant 10 h 15. Écris la version à sélectionner, le résultat à contrôler et la trace à laisser dans le ticket.</p>
+<details class="correction"><summary>Voir ce que tu dois constater</summary><p>A est le contenu courant après restauration. B reste dans l’historique. Sur papier, choisir 10 h 05 puis rouvrir le fichier pour lire « Version A — à retrouver ». Exemple de trace : « Version de 10 h 05 restaurée ; fichier rouvert et contenu attendu confirmé. »</p></details>
+<aside class="callout source"><p>Microsoft : <a href="https://support.microsoft.com/en-us/onedrive/restore-a-previous-version-of-a-file-stored-in-onedrive">Restaurer une version précédente</a> · <a href="https://support.microsoft.com/en-us/onedrive/what-do-the-onedrive-icons-mean">Icônes et états de OneDrive</a>.</p></aside>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<h3>Un fichier OneDrive a disparu</h3>
+<p>Le document était marqué en ligne uniquement. Il a été supprimé et n’apparaît pas dans la corbeille de Windows. Où regardes-tu ?</p>
+<details class="correction"><summary>Voir la correction</summary><p>Vérifie le compte et le propriétaire, puis cherche dans la corbeille web de l’emplacement d’origine. Contrôle le nom et le dossier, restaure si tu y es autorisé et confirme que le document s’ouvre. Voir <a href="#onedrive">les deux chemins OneDrive</a>.</p></details>
+<h3>Un classeur partagé a été écrasé</h3>
+<p>La version du matin était correcte. Le contenu du soir doit rester disponible pour comparaison. Comment procèdes-tu ?</p>
+<details class="correction"><summary>Voir la correction</summary><p>Identifie le stockage d’origine. Conserve l’état du soir à l’emplacement autorisé. Consulte l’historique si le document est en ligne ou les versions exposées par le partage. Demande une restauration séparée si l’option existe, puis compare avec l’utilisateur. Voir <a href="#emplacements">les emplacements</a> et <a href="#historique-fichiers">les versions précédentes</a>.</p></details>
+<h3>Un poste doit être réinstallé</h3>
+<p>Le Bureau et Documents sont visibles dans OneDrive. Les Téléchargements contiennent un dossier de travail et une modification est encore en cours de synchronisation. Que vérifies-tu avant de remettre le poste ?</p>
+<details class="correction"><summary>Voir la correction</summary><p>Vérifie sur le web l’état des fichiers attendus. Préserve les Téléchargements et la modification encore locale dans un emplacement approuvé. Restaure et ouvre un échantillon, puis note le périmètre, le résultat et ce qui reste à confirmer. Voir <a href="#avant-intervention">la préparation</a>.</p></details>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-sauvegarde-restauration"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc"><ul>
+  <li><strong>Localiser</strong> : chemin, compte, stockage et heure du dernier état correct.</li>
+  <li><strong>OneDrive</strong> : fichier écrasé → historique. Fichier supprimé → corbeille de l’emplacement web.</li>
+  <li><strong>Local</strong> : vérifier corbeille et Historique des fichiers, si un point existe.</li>
+  <li><strong>Partage</strong> : vérifier les versions exposées ou transmettre aux responsables.</li>
+  <li><strong>Avant d’agir</strong> : préserver l’état courant et les changements encore locaux.</li>
+  <li><strong>Valider</strong> : restaurer et ouvrir un échantillon, puis tracer le résultat.</li>
+</ul></div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place"><ul>
+  <li>Quels emplacements et données faut-il contrôler avant une réinstallation ?</li>
+  <li>Qui peut restaurer un fichier d’un partage ou d’un espace OneDrive, et à quel emplacement ?</li>
+  <li>Quels éléments doivent figurer dans un ticket de restauration et qui valide le résultat ?</li>
+</ul></aside>
+<p><label class="done"><input type="checkbox" data-done="module-sauvegarde-restauration"> Module terminé</label></p>
+<div data-module-suite="sauvegarde-restauration"></div>
+</div>
+</main>
+</body>
+</html>
