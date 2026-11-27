@@ -1294,3 +1294,18 @@ body.livre { background-attachment: scroll; }
 .toc-liste .sec, .sommaire-mod .sec { display: inline; font-size: inherit; }
 .page-cours.lettrine .prose > .lead::first-letter { float: left; margin: 0.08em 0.1em 0 0; font-family: var(--font-text); font-size: 3.9em; font-weight: 400; line-height: 0.78; color: var(--accent); }
 @media print { .bandeau, .ornement-sep { display: none; } body { background-image: none; } }
+
+/* ===== Lot 40.4 : coloration syntaxique (fond de code toujours sombre, teintes de la palette sombre) ===== */
+.code-block { --tk-cmd: #E3916A; --tk-param: #D9AE66; --tk-str: #94B98C; --tk-var: #E88D79; --tk-com: #BBAF9F; --tk-op: #BBAF9F; --tk-invite: #8F8273; }
+.code-block::before { content: ""; position: absolute; top: 44px; bottom: 0; left: 0; width: 3px; background: linear-gradient(var(--bar-accent), transparent 85%); }
+pre.colore { padding-left: calc(var(--s4) + 2.25ch); }
+pre.colore .ln:not(.vide)::before { content: "›"; display: inline-block; width: 2.25ch; margin-left: -2.25ch; color: var(--tk-invite); }
+.tk-cmd { color: var(--tk-cmd); font-weight: 500; }
+.tk-param { color: var(--tk-param); }
+.tk-str { color: var(--tk-str); }
+.tk-var { color: var(--tk-var); }
+.tk-com { color: var(--tk-com); font-style: italic; }
+.tk-op { color: var(--tk-op); }
+.code-legende { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4); margin: 0; padding: var(--s2) var(--s4) var(--s3); border-top: 1px dashed rgba(237, 230, 218, 0.14); font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.06em; color: var(--tk-com); }
+.code-legende span::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 2px; background: currentColor; }
+@media print { pre.colore .ln::before { content: none; } pre.colore { padding-left: var(--s4); } .code-block::before, .code-legende { display: none; } }

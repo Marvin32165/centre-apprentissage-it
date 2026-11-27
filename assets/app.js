@@ -306,8 +306,63 @@
       ok ? resolve() : reject(new Error("copie impossible"));
     });
   }
+  /* ---------- Lot 40.4 : coloration syntaxique sobre (PowerShell, invite de commandes) ---------- */
+  var RE_JETON = /("[^"]*"?|'[^']*'?|\s+|[|(){};]|[^\s|(){};"']+)/g;
+  function jeton(cls, txt) { return cls ? el("span", { "class": "tk-" + cls }, txt) : document.createTextNode(txt); }
+  function colorerMot(frag, mot, cls) {
+    // %variable% (invite de commandes) ou $env:NOM au milieu d'un chemin
+    var re = /%\w+%|\$[\w:]+/g, m, i = 0;
+    while ((m = re.exec(mot))) {
+      if (m.index > i) frag.appendChild(jeton(cls, mot.slice(i, m.index)));
+      frag.appendChild(jeton("var", m[0]));
+      i = m.index + m[0].length;
+    }
+    if (i < mot.length) frag.appendChild(jeton(cls, mot.slice(i)));
+  }
+  function colorerLigne(ligne) {
+    var frag = document.createDocumentFragment(), attend = true, prec = "", table = false, m;
+    if (/^\s*(#|REM\b|::)/i.test(ligne)) { frag.appendChild(jeton("com", ligne)); return frag; }
+    RE_JETON.lastIndex = 0;
+    while ((m = RE_JETON.exec(ligne))) {
+      var t = m[0];
+      if (/^\s+$/.test(t)) { frag.appendChild(jeton(null, t)); continue; }
+      if (t.charAt(0) === "\"" || t.charAt(0) === "'") { colorerMot(frag, t, "str"); attend = false; continue; }
+      if (/^[|(){};]$/.test(t)) {
+        // Dans une table @{ clé=valeur; … }, ni « { » ni « ; » n'annoncent une commande.
+        if (t === "{" && prec === "@") table = true; else if (t === "}" && table) table = false;
+        frag.appendChild(jeton("op", t)); attend = /[|({;]/.test(t) && !table; prec = t; continue;
+      }
+      prec = t;
+      if (attend && !/^[-$@]/.test(t)) colorerMot(frag, t, "cmd");
+      else if (/^\$/.test(t)) frag.appendChild(jeton("var", t));
+      else if (/^-[A-Za-z]/.test(t)) frag.appendChild(jeton("param", t));
+      else if (/^\/[A-Za-z?]/.test(t)) {
+        var k = t.indexOf(":");
+        if (k > 1 && k < t.length - 1) { frag.appendChild(jeton("param", t.slice(0, k + 1))); colorerMot(frag, t.slice(k + 1), null); }
+        else frag.appendChild(jeton("param", t));
+      }
+      else if (/^[A-Z][a-z]+-[A-Z][A-Za-z]+$/.test(t)) frag.appendChild(jeton("cmd", t));
+      else if (t === "@") frag.appendChild(jeton("op", t));
+      else colorerMot(frag, t, null);
+      attend = false;
+    }
+    return frag;
+  }
+  function colorerCode(pre) {
+    var code = pre.querySelector("code") || pre;
+    if (code.children.length) return;
+    var lignes = code.textContent.replace(/\n$/, "").split("\n");
+    code.textContent = "";
+    lignes.forEach(function (l, i) {
+      var s = el("span", { "class": "ln" + (l.trim() ? "" : " vide") });
+      s.appendChild(colorerLigne(l));
+      code.appendChild(s);
+      if (i < lignes.length - 1) code.appendChild(document.createTextNode("\n"));
+    });
+    pre.classList.add("colore");
+  }
   function initCopy() {
-    var pres = document.querySelectorAll("pre[data-copy]");
+    var pres = document.querySelectorAll("pre[data-copy]"), legendeFaite = false;
     Array.prototype.forEach.call(pres, function (pre) {
       var wrap = el("div", { "class": "code-block" });
       pre.parentNode.insertBefore(wrap, pre);
@@ -315,6 +370,7 @@
       var code = pre.innerText;
       var langage = /\b[A-Z][a-z]+-[A-Z][A-Za-z]+\b|\$[A-Za-z_]/.test(code) ? "PowerShell" : "Invite de commandes ou PowerShell";
       if (pre.getAttribute("data-langage")) langage = pre.getAttribute("data-langage");
+      if (/PowerShell|commandes/.test(langage)) colorerCode(pre);
       var barre = el("div", { "class": "code-titre" });
       barre.appendChild(el("span", { "class": "code-points", "aria-hidden": "true" }));
       barre.appendChild(el("span", { "class": "code-langage" }, langage));
@@ -335,6 +391,14 @@
       });
       barre.appendChild(btn);
       wrap.insertBefore(barre, pre);
+      if (pre.classList.contains("colore") && !legendeFaite) {
+        legendeFaite = true;
+        var lg = el("p", { "class": "code-legende" });
+        [["cmd", "commande"], ["param", "paramètre"], ["str", "texte entre guillemets"], ["var", "variable"]].forEach(function (c) {
+          lg.appendChild(el("span", { "class": "tk-" + c[0] }, c[1]));
+        });
+        wrap.appendChild(lg);
+      }
     });
   }
 
