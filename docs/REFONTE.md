@@ -224,3 +224,9 @@ Couleurs, polices, contrastes AA et mouvement réduit inchangés ; chaque étape
 ### 6.3 Lot 40.3 — Numéros de section et lettrine
 - Titres de section des pages de cours : numéro « §N » en grand italique rouille (2,5 à 3,5 rem) au-dessus du titre ; il reste à sa taille dans le sommaire.
 - Lettrine rouille sur trois lignes au chapeau (`.lead`) des pages de cours, seulement s'il commence par une lettre (classe `lettrine` sur `body`, posée en JS) : pas de lettrine sur un guillemet « « » ni un chiffre.
+
+### 6.4 Lot 40.4 — Coloration syntaxique
+- `colorerCode` (`app.js`, sans dépendance) découpe chaque ligne des blocs « PowerShell » ou « Invite de commandes » : commande (premier mot, après `|`, `(`, `{`, `;`, ou tout `Verbe-Nom`), paramètre (`-Nom`, `/x`, `/x:` dont la valeur reste neutre), texte entre guillemets, variable (`$x`, `$env:X`, `%x%`), commentaire (`#`, `REM`, `::`), opérateurs. Les tables `@{ clé=valeur; … }` ne créent pas de fausse commande.
+- Teintes de la palette sombre (le fond de code est sombre dans les deux thèmes) : commande rouille `#E3916A` en graisse 500, paramètre ambre `#D9AE66`, texte vert `#94B98C`, variable rouge `#E88D79`, commentaire encre douce en italique.
+- Chaque ligne commence par une invite « › » dessinée en CSS (`::before`, non copiée), filet rouille dégradé à gauche du bloc ; légende des couleurs sous le premier bloc coloré de la page.
+- Les modèles de ticket (`data-langage="Modèle de texte"`) ne sont pas colorés ; le bouton Copier copie toujours le texte brut.
