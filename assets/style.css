@@ -1422,3 +1422,34 @@ pre.colore .ln:not(.vide)::before { content: "›"; display: inline-block; width
 
 /* ===== Lot 40.8 : passe finale (bandeau gravé des pages de la prépa) ===== */
 .bd-num.bd-mot { font-size: 92px; letter-spacing: -0.02em; }
+
+/* ===== Lot 34 : glossaire ===== */
+.g-outils { margin: var(--s4) 0 var(--s5); padding: var(--s3) 0; background: var(--paper); border-bottom: 1px solid var(--line); }
+.g-label { display: block; margin-bottom: var(--s1); font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+.g-outils input[type="search"] { box-sizing: border-box; width: 100%; min-height: 48px; padding: 0 14px; border: 1.5px solid var(--ink-pale); border-radius: var(--r-m); background: var(--surface); color: var(--ink); font: 1rem var(--font-ui); }
+.g-outils input[type="search"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+.g-filtres { display: flex; gap: var(--s2); margin-top: var(--s3); overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin; }
+.g-filtre { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink-soft); font: 500 0.875rem var(--font-ui); cursor: pointer; }
+.g-filtre:hover { border-color: var(--accent); color: var(--accent); }
+.g-filtre[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.g-n { font-family: var(--font-code); font-size: 0.75rem; opacity: 0.8; }
+.g-compte { margin: var(--s2) 0 0; font-family: var(--font-code); font-size: 0.8125rem; color: var(--ink-soft); }
+.g-lettre { margin-bottom: var(--s5); }
+.g-lettre[hidden], .g-terme[hidden] { display: none; }
+.prose .g-l { margin: 0 0 var(--s2); padding-bottom: var(--s1); border-bottom: 3px double var(--ink); font-size: 2.5rem; font-style: italic; font-weight: 400; line-height: 1; color: var(--accent); }
+.g-lettre dl { margin: 0; }
+.g-terme { padding: var(--s3) var(--s3) var(--s2); margin: 0 calc(var(--s3) * -1); border-bottom: 1px solid var(--line); border-radius: var(--r-m); scroll-margin-top: calc(var(--header-h) + 1rem); }
+.g-terme.cible { background: var(--accent-soft); box-shadow: inset 4px 0 0 var(--accent); }
+.g-terme dt { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px var(--s3); }
+.g-en { font-family: var(--font-text); font-size: 1.25rem; font-weight: 600; color: var(--ink); }
+.g-fr { font-family: var(--font-text); font-size: 1.0625rem; font-style: italic; color: var(--ink-soft); }
+.g-ancre { display: inline-grid; place-items: center; min-width: 44px; min-height: 44px; margin: -12px 0 -12px auto; font-family: var(--font-code); color: var(--ink-pale); text-decoration: none; }
+.g-ancre:hover, .g-ancre:focus-visible { color: var(--accent); }
+.g-terme dd { margin: 0; }
+.g-def { font-size: 1rem; line-height: 1.55; }
+.g-dom { display: inline-block; margin-right: var(--s2); padding: 1px 8px; border: 1px solid var(--line); border-radius: 999px; font-family: var(--font-code); font-size: 0.625rem; letter-spacing: 0.1em; text-transform: uppercase; vertical-align: 0.15em; color: var(--ink-soft); }
+.g-liens { display: flex; flex-wrap: wrap; gap: 0 var(--s4); font-family: var(--font-ui); font-size: 0.875rem; }
+.g-liens a { display: inline-flex; align-items: center; min-height: 44px; }
+.g-vide { font-style: italic; color: var(--ink-soft); }
+@media (min-width: 64rem) { .g-outils { position: sticky; top: var(--header-h); z-index: 5; } .g-terme { scroll-margin-top: calc(var(--header-h) + 12rem); } }
+@media print { .g-outils, .g-ancre { display: none; } .g-terme { break-inside: avoid; } }

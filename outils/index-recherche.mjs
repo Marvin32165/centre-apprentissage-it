@@ -13,7 +13,7 @@ const texte = (h) => h.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&
 
 const ctx = { window: {} };
 vm.createContext(ctx);
-for (const f of ["assets/data.js", "assets/modules.js", "assets/atelier-data.js", "assets/atelier-scenarios.js", "assets/atelier-pannes-data.js"]) vm.runInContext(lire(f), ctx, { filename: f });
+for (const f of ["assets/data.js", "assets/modules.js", "assets/atelier-data.js", "assets/atelier-scenarios.js", "assets/atelier-pannes-data.js", "assets/glossaire.js"]) vm.runInContext(lire(f), ctx, { filename: f });
 const W = ctx.window, D = W.IT_DATA, M = W.IT_MODULES, A = W.IT_ATELIER;
 
 const entrees = [];
@@ -40,6 +40,7 @@ D.stage.jours.forEach((j) => sections(j.href, `Prépa · jour ${j.n} · ${j.cour
 sections("stage/outils.html", "Prépa · boîte à outils", "outils");
 sections("stage/revision.html", "Prépa · révision express", "page");
 sections("stage/tickets.html", "Prépa · entraînement aux tickets", "page");
+sections("stage/glossaire.html", "Prépa · glossaire", "page");
 M.modules.forEach((mo) => sections(`modules/${mo.id}.html`, `Module · ${mo.titre.split(" : ")[0]}`, "module"));
 
 // Commandes de la boîte à outils (chaque ligne des blocs de code de la section « Commandes »)
@@ -53,6 +54,12 @@ M.modules.forEach((mo) => sections(`modules/${mo.id}.html`, `Module · ${mo.titr
       ajoute("Commandes", "cmd", cmd, "Boîte à outils · " + groupe, "stage/outils.html#commandes", groupe);
     });
   }
+}
+
+// Termes du glossaire (anglais · français), chacun avec son ancre
+{
+  const G = W.IT_GLOSSAIRE, dom = Object.fromEntries(G.domaines.map((d) => [d.id, d.titre]));
+  G.termes.forEach((t) => ajoute("Glossaire", "terme", `${t.en} · ${t.fr}`, `Glossaire · ${dom[t.d]}`, `stage/glossaire.html#${t.id}`, t.def));
 }
 
 // Modules du catalogue
