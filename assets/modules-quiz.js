@@ -44,6 +44,27 @@ window.IT_QUIZZES["module-itil"] = { titre: "Quiz : ITIL 4 pour le service desk"
     explication: "Les droits techniques ne valent pas autorisation : un changement touchant beaucoup de postes suit le circuit prévu." }
 ] };
 
+window.IT_QUIZZES["module-jira-quotidien"] = { titre: "Quiz : Jira Service Management au quotidien", questions: [
+  { q: "Quel ticket retient le filtre assignee IS EMPTY AND statusCategory != Done ?",
+    options: ["Un ticket non assigné et non terminé", "Un ticket assigné et non terminé", "Un ticket non assigné et terminé", "Tous les tickets créés aujourd’hui"], reponse: 0,
+    explication: "Les deux conditions portent sur l’assignation et sur la catégorie de statut. Atlassian, champs JQL : https://support.atlassian.com/jira-service-management-cloud/docs/jql-fields/" },
+  { q: "Le SLA de résolution est en pause. Que fais-tu avec le SLA de première réponse ?",
+    options: ["Je le considère comme arrêté", "Je change la priorité du ticket", "Je lis son état séparément et j’agis selon son échéance", "J’attends le prochain redémarrage de Jira"], reponse: 2,
+    explication: "Deux SLA peuvent mesurer des actions différentes selon leurs propres conditions. Atlassian, lecture des SLA : https://support.atlassian.com/jira-service-management-cloud/docs/what-are-slas-and-how-do-i-view-them-in-my-service-project/" },
+  { q: "Où consigner un résultat de diagnostic qui doit rester entre agents ?",
+    options: ["Dans le portail public", "Dans une note interne", "Dans la réponse au client", "Dans le titre de la file"], reponse: 1,
+    explication: "Le client ne voit pas les notes internes. Atlassian, communiquer depuis le ticket : https://support.atlassian.com/jira-service-management-cloud/docs/talk-to-the-customer-or-team-members-from-the-new-issue-view/" },
+  { q: "Deux tickets décrivent vraisemblablement le même incident. Quel geste conserve leur contexte ?",
+    options: ["Clôturer automatiquement les deux tickets", "Copier toutes les données dans le portail", "Effacer le premier ticket", "Lier les tickets avec la relation pertinente et garder les éléments propres à chacun"], reponse: 3,
+    explication: "Le lien permet de choisir un type de relation entre deux tickets. Atlassian, lier des éléments : https://support.atlassian.com/jira-service-management-cloud/docs/link-issues-pages-and-app-content-from-the-issue-view/" },
+  { q: "Tu trouves un guide interne et une réponse type. Comment écris-tu au client ?",
+    options: ["J’adapte la réponse type et je garde le guide interne dans la note d’équipe", "Je copie le lien interne dans la réponse publique", "Je publie le texte type sans relecture", "Je déplace le guide sur un espace public"], reponse: 0,
+    explication: "La visibilité de l’article détermine son canal de partage. Le texte inséré se relit avec le contexte du ticket. Atlassian : https://support.atlassian.com/jira-service-management-cloud/docs/use-internal-articles-in-the-knowledge-base-panel/" },
+  { q: "Quel indice montre pourquoi une automatisation a tourné sans produire l’action prévue ?",
+    options: ["Le nom de l’agent seulement", "Le statut de la file seulement", "L’exécution et le détail des étapes dans l’audit, si j’y ai accès", "Le titre de l’article de connaissances"], reponse: 2,
+    explication: "L’audit permet à la personne habilitée de consulter le résultat et les étapes d’une exécution. Atlassian : https://support.atlassian.com/cloud-automation/docs/view-execution-data-for-a-rule/" }
+] };
+
 window.IT_QUIZZES["module-reseau-base"] = { titre: "Quiz : réseau de base", questions: [
   { q: "Quel est le réseau de la machine 192.168.10.77/26 ?",
     options: ["192.168.10.0","192.168.10.77","192.168.10.128","192.168.10.64"], reponse: 3,
@@ -148,6 +169,27 @@ window.IT_QUIZZES["module-m365-messagerie"] = { titre: "Quiz : Microsoft 365 et 
     options: ["Le code par SMS", "Le code par courriel", "Une clé de sécurité FIDO2", "L'appel vocal"], reponse: 2,
     explication: "Windows Hello Entreprise, FIDO2 (clés et passkeys) et l'authentification par certificat sont résistants à l'hameçonnage ; SMS, courriel et applications d'authentification classiques y restent exposés." }
 ]};
+
+window.IT_QUIZZES["module-sauvegarde-restauration"] = { titre: "Quiz : Sauvegarde et restauration", questions: [
+  { q: "Un document OneDrive existe encore mais a été écrasé. Où chercher son ancien contenu ?",
+    options: ["Dans les paramètres d’affichage", "Dans l’historique des versions du fichier", "Dans la corbeille de Windows d’emblée", "Dans les mises à jour Windows"], reponse: 1,
+    explication: "L’historique donne accès aux versions précédentes du document. Microsoft Support : https://support.microsoft.com/en-us/onedrive/restore-a-previous-version-of-a-file-stored-in-onedrive" },
+  { q: "Un fichier OneDrive en ligne uniquement a été supprimé. Où vérifier d’abord ?",
+    options: ["Dans le gestionnaire des tâches", "Dans les propriétés de l’imprimante", "Dans le BIOS", "Dans la corbeille web de son emplacement d’origine"], reponse: 3,
+    explication: "Les fichiers supprimés depuis le cloud peuvent être absents de la corbeille de Windows. Microsoft Support : https://support.microsoft.com/en-us/onedrive/restore-your-onedrive-files" },
+  { q: "Que devient la version courante B quand tu restaures A depuis l’historique OneDrive ?",
+    options: ["A devient courante et B reste dans l’historique", "B disparaît immédiatement", "A est seulement placée dans la corbeille", "Toutes les versions sont effacées"], reponse: 0,
+    explication: "La version sélectionnée devient courante et l’ancienne version courante passe dans l’historique. Microsoft Support : https://support.microsoft.com/en-us/onedrive/restore-a-previous-version-of-a-file-stored-in-onedrive" },
+  { q: "Avec l’Historique des fichiers, où chercher un fichier supprimé ?",
+    options: ["Dans une nouvelle session Windows", "Dans l’historique du navigateur", "Dans une version du dossier qui contenait le fichier, si elle existe", "Dans la liste des applications installées"], reponse: 2,
+    explication: "Sélectionne une version du dossier parent antérieure à la suppression. Microsoft Support : https://support.microsoft.com/en-us/windows/experience/backup-recovery/backup-and-restore-with-file-history" },
+  { q: "Le dossier Bureau semble dans OneDrive avant une réinstallation. Que vérifies-tu ?",
+    options: ["Que le fond d’écran est enregistré", "Que les fichiers attendus s’ouvrent sur le web et que les autres données locales sont protégées", "Que l’utilisateur a fermé le site", "Que la date de Windows a changé"], reponse: 1,
+    explication: "Les fichiers du dossier sauvegardé sont accessibles après synchronisation. Compare avec le périmètre à sauver. Microsoft Support : https://support.microsoft.com/en-us/onedrive/back-up-your-folders-with-onedrive" },
+  { q: "Quel résultat vérifie qu’une copie de sauvegarde est exploitable ?",
+    options: ["L’outil est installé", "Le ticket est affecté", "Le dossier de destination a un nom", "Un échantillon restauré s’ouvre et son contenu correspond"], reponse: 3,
+    explication: "Le succès du traitement de sauvegarde ne dispense pas de tester la restauration. Microsoft Learn : https://learn.microsoft.com/en-us/azure/backup/azure-backup-3-2-1-1-0-strategy" }
+] };
 
 window.IT_QUIZZES["module-imprimantes-peripheriques"] = { titre: "Quiz : imprimantes et périphériques", questions: [
   { q: "Une imprimante ne répond plus. Quelle est la première étape conseillée par Microsoft, après l'utilitaire automatique ?",

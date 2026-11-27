@@ -227,6 +227,19 @@ Rédigé le 26/11/2026, à la demande de Marvin. But : accompagner la deuxième 
 | 38 | Module « Sauvegarde et restauration » | janvier | Codex | Claude Code | `high` |
 | 39 | Module « Bases de Linux pour le support » | février | Claude Code | Codex | `high` |
 
+### Relectures et contrôles de la branche `chatgpt-27-11`
+
+- [x] Relire les corrections de J6, J7 et Active Directory pour le support, quiz compris.
+  Fait : trois rapports `relecture2-*.md` dans `docs/relectures/` ; 56 corrects, 10 faux, 28 non vérifiés.
+  Fait (Claude Code, 27/11) : les 10 « faux » corrigés dans `stage/j6.html`, `stage/j7.html`, `modules/ad-support.html` et `assets/prepa.js`. Reste : les 28 « non vérifiés ».
+
+- [x] Vérifier sur `claude/exciting-newton-tg7h18` les pages à relire des lots 34, 35, 37 et 39.
+  Justifié : après `git fetch origin`, le commit `57b9b0a` de la branche Claude ne contient aucune des quatre pages attendues : `stage/glossaire.html`, `modules/securite-poste.html`, `modules/deploiement-postes.html`, `modules/linux-support.html`. Les quatre rapports restent à faire dès publication des pages sur cette branche.
+
+- [x] Lancer les contrôles complets sur `chatgpt-27-11`.
+  Fait : `npm run controles` réussi le 27/11/2026 sur 37 pages, quatre largeurs et deux thèmes, en serveur et en `file://`. Zéro problème, avertissement ou échec. Accessibilité, contrastes et parcours validés. Quiz, progression, recherche et mémo A4 vérifiés pour les deux nouveaux modules.
+  Justifié : Chromium a reçu les ressources Google Fonts via le réseau et le cache de l’environnement d’audit. Le site conserve ses liens de polices.
+
 ## Lot 34 — Glossaire français-anglais du service desk
 Une page `stage/glossaire.html` : les termes que l'on croise en anglais dans Jira, Microsoft 365, Windows et ITIL, avec leur équivalent français, une définition d'une ligne, la page du site qui l'explique et la source officielle. Recherche intégrée (index), tri alphabétique, filtre par domaine, lisible au téléphone.
 - [x] 34.1 Liste des termes (au moins 80) tirée **des pages du site** (incident, problem, known error, workaround, SLA, queue, assignee, escalation, Full Access, Send As, Send on Behalf, lease, gateway, OU, GPO, recovery key, safe mode…) ; données dans `assets/glossaire.js` ; chaque terme renvoie à sa section du site et à une source officielle.
@@ -247,10 +260,14 @@ Domaine Sécurité. Pistes, chacune à sourcer (Microsoft Learn, CISA, Centre po
 
 ## Lot 36 — Module « Jira Service Management au quotidien »
 Domaine Gestion. Approfondit le J3 : files et filtres, SLA (lire un compteur, pause, objectifs), liens entre tickets, commentaires internes et réponses au client, base de connaissances, macros et réponses types, automatisations simples (lecture), bonnes pratiques de rédaction. Sources : documentation Atlassian. Labo sur une instance Jira Service Management gratuite (si Marvin en crée une) ou sur papier. Configuration de Jira à l'UMONS : « à vérifier sur place ».
-- [ ] 36.1 Page `modules/jira-quotidien.html` (rédigée par Codex).
-- [ ] 36.2 Données : `modules.js`, quiz `module-jira-quotidien`, unité, index.
-- [ ] 36.3 Relecture croisée par Claude Code (`docs/relectures/module-jira-quotidien.md`), puis test en situation ; corrections dans une autre conversation.
-- [ ] 36.4 `npm run controles`, coche, fusion.
+- [x] 36.1 Page `modules/jira-quotidien.html` (rédigée par Codex).
+  Fait : Page Jira Service Management Cloud, avec files et JQL, SLA, communication, liens, base de connaissances, réponses types, automatisations en lecture et labo sur papier ou espace de test.
+- [x] 36.2 Données : `modules.js`, quiz `module-jira-quotidien`, unité, index.
+  Fait : entrée au catalogue, quiz de six questions avec sources, unité de progression et index de recherche.
+- [x] 36.3 Relecture croisée par Claude Code (`docs/relectures/module-jira-quotidien.md`), puis test en situation ; corrections dans une autre conversation.
+  Fait : relecture par Claude Code (0 faux, 1 non vérifié) et test en situation (labo et 390 px ratés) ; corrections : relation et type dans le labo, temps restant, tableau empilé, sources JQL et SLA, encadré des cas. Justifié : corrigé dans la même session, à la demande de Marvin.
+- [x] 36.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` sans problème, fusion de `chatgpt-27-11` dans `main`.
 
 ## Lot 37 — Module « Déploiement et gestion des postes »
 Domaine Matériel (ou Windows). Pistes : cycle de vie d'un poste (réception, inventaire, préparation, remise, retrait et effacement), image de référence et installation automatisée, Windows Autopilot et Intune en principe (sources Microsoft Learn), jonction au domaine ou à Entra ID, applications déployées, nommage et inventaire. Labo sans VM : lire l'état de gestion de son PC (`dsregcmd /status`, Paramètres → Comptes → Accès Professionnel ou Scolaire), exercice d'inventaire et de préparation sur papier. Outils de l'UMONS : « à vérifier sur place ».
@@ -261,10 +278,14 @@ Domaine Matériel (ou Windows). Pistes : cycle de vie d'un poste (réception, in
 
 ## Lot 38 — Module « Sauvegarde et restauration »
 Domaine Support. Pistes : où sont les données d'un utilisateur (profil, OneDrive, partages), versions précédentes et corbeille OneDrive, historique des fichiers, restauration d'un fichier supprimé ou écrasé, sauvegarde avant intervention (quoi, où, vérifier), règle « 3-2-1 » seulement si une source primaire l'établit. Sources : Microsoft Support et Learn. Labo sur son propre PC : restaurer une version précédente d'un fichier de test dans OneDrive. Politique de sauvegarde de l'UMONS : « à vérifier sur place ».
-- [ ] 38.1 Page `modules/sauvegarde-restauration.html` (rédigée par Codex).
-- [ ] 38.2 Données : `modules.js`, quiz `module-sauvegarde-restauration`, unité, index.
-- [ ] 38.3 Relecture croisée par Claude Code (`docs/relectures/module-sauvegarde-restauration.md`), puis test en situation ; corrections dans une autre conversation.
-- [ ] 38.4 `npm run controles`, coche, fusion.
+- [x] 38.1 Page `modules/sauvegarde-restauration.html` (rédigée par Codex).
+  Fait : Page sur les emplacements des données, OneDrive, l’Historique des fichiers, la préparation d’une intervention et le contrôle d’une restauration. Labo sur un fichier de test ou sur papier.
+- [x] 38.2 Données : `modules.js`, quiz `module-sauvegarde-restauration`, unité, index.
+  Fait : entrée au catalogue, quiz de six questions avec sources, unité de progression et index de recherche.
+- [x] 38.3 Relecture croisée par Claude Code (`docs/relectures/module-sauvegarde-restauration.md`), puis test en situation ; corrections dans une autre conversation.
+  Fait : relecture par Claude Code (2 faux, 1 non vérifié) et test en situation (8 critères réussis) ; corrections : « Restaurer sur… », stratégie 3-2-1-1-0, variante non vérifiée retirée, labo « sauvegarder avant d'intervenir » ajouté. Justifié : corrigé dans la même session, à la demande de Marvin.
+- [x] 38.4 `npm run controles`, coche, fusion.
+  Fait : `npm run controles` sans problème, fusion de `chatgpt-27-11` dans `main`.
 
 ## Lot 39 — Module « Bases de Linux pour le support »
 Domaine Linux et scripts. Pistes : se connecter en SSH depuis Windows (client OpenSSH intégré), se repérer (`pwd`, `ls`, `cd`, `cat`, `less`), lire des journaux (`journalctl`), état d'un service (`systemctl status`), espace disque (`df -h`), réseau (`ip a`, `ping`), droits (`ls -l`, `sudo` : jamais sans procédure). Sources : documentation Debian, pages de manuel, Microsoft Learn pour OpenSSH. Labo sans VM : WSL seulement si Marvin peut l'installer (à vérifier : WSL 2 utilise aussi la virtualisation et de la mémoire), sinon une console Linux en ligne d'un organisme officiel, ou sur papier avec des sorties décrites par la documentation. Serveurs de l'UMONS : « à vérifier sur place ».
