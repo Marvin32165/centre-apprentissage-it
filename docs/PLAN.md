@@ -208,6 +208,11 @@ Rédigé le 26/11/2026, à la demande de Marvin. But : accompagner la deuxième 
 | 38 | Module « Sauvegarde et restauration » | janvier | Codex | Claude Code | `high` |
 | 39 | Module « Bases de Linux pour le support » | février | Claude Code | Codex | `high` |
 
+### Relectures et contrôles de la branche `chatgpt-27-11`
+
+- [x] Relire les corrections de J6, J7 et Active Directory pour le support, quiz compris.
+  Fait : trois rapports `relecture2-*.md` dans `docs/relectures/` ; 56 corrects, 10 faux, 28 non vérifiés. Corrections réservées à une autre conversation.
+
 ## Lot 34 — Glossaire français-anglais du service desk
 Une page `stage/glossaire.html` : les termes que l'on croise en anglais dans Jira, Microsoft 365, Windows et ITIL, avec leur équivalent français, une définition d'une ligne, la page du site qui l'explique et la source officielle. Recherche intégrée (index), tri alphabétique, filtre par domaine, lisible au téléphone.
 - [ ] 34.1 Liste des termes (au moins 80) tirée **des pages du site** (incident, problem, known error, workaround, SLA, queue, assignee, escalation, Full Access, Send As, Send on Behalf, lease, gateway, OU, GPO, recovery key, safe mode…) ; données dans `assets/glossaire.js` ; chaque terme renvoie à sa section du site et à une source officielle.
