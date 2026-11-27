@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Déploiement et gestion des postes — Modules · Apprentissage IT</title>
+<meta name="description" content="Déploiement et gestion des postes : cycle de vie, méthodes de déploiement, Windows Autopilot et Intune, états de jonction avec dsregcmd, inventaire, retrait et effacement.">
+<meta property="og:title" content="Déploiement et gestion des postes — Modules · Apprentissage IT">
+<meta property="og:description" content="Déploiement et gestion des postes : cycle de vie, méthodes de déploiement, Windows Autopilot et Intune, états de jonction avec dsregcmd, inventaire, retrait et effacement.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Matériel et postes de travail</p>
+<h1>Déploiement et <em>gestion des postes</em></h1>
+<p class="lead">Installer un PC, c'est une étape ; le gérer de sa réception à son retrait, c'est le métier. Ce module prolonge le jour 9 : le cycle de vie d'un poste, les méthodes de déploiement que décrit Microsoft, Windows Autopilot et Intune en principe, la lecture de l'état de jonction d'un poste avec <code>dsregcmd /status</code>, l'inventaire, et le retrait avec effacement des données.</p>
+<div data-module-meta="deploiement-postes"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>décrire le cycle de vie d'un poste, de la réception au retrait ;</li>
+  <li>distinguer les méthodes de déploiement modernes, dynamiques et traditionnelles ;</li>
+  <li>expliquer à un utilisateur ce que font Windows Autopilot et Microsoft Intune ;</li>
+  <li>lire l'état de jonction d'un poste (domaine, Microsoft Entra, hybride) avec <code>dsregcmd /status</code> ;</li>
+  <li>tenir une fiche d'inventaire et préparer un retrait sans perdre de données ni en laisser fuir.</li>
+</ul>
+<aside class="callout umons"><p>Les outils de déploiement et de gestion de la DSI (image, Autopilot, Intune, Configuration Manager ou autres), la nomenclature des noms, l'outil d'inventaire et la procédure de retrait et d'effacement : à vérifier sur place. Ce module décrit les principes et les outils de Microsoft ; la procédure de la maison passe avant.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="cycle">1. Le cycle de vie d'un poste</h2>
+<p>Un poste passe par des étapes qui se retrouvent dans toutes les organisations ; les outils et les responsables changent, pas la logique :</p>
+<ol>
+  <li><strong>Réception</strong> : contrôle du colis et du bon de livraison, relevé du numéro de série (<a href="../stage/j9.html#salles">jour 9</a>).</li>
+  <li><strong>Inventaire</strong> : étiquette, enregistrement (numéro d'inventaire, série, modèle, lieu, état).</li>
+  <li><strong>Préparation</strong> : installation ou transformation de Windows, nom, jonction, logiciels, mises à jour, chiffrement (<a href="../stage/j9.html#deploiement">jour 9</a>).</li>
+  <li><strong>Remise</strong> à l'utilisateur, avec un test de ses usages et la mise à jour de l'inventaire.</li>
+  <li><strong>Vie du poste</strong> : mises à jour, dépannages, changements d'utilisateur.</li>
+  <li><strong>Retrait</strong> : sauvegarde des données utiles, effacement, sortie d'inventaire, recyclage ou réemploi (<a href="#retrait">§6</a>).</li>
+</ol>
+<p>Microsoft présente Windows Autopilot comme une façon de simplifier ce cycle « du premier déploiement à la fin de vie » : il sert aussi à <strong>réinitialiser, réaffecter et récupérer</strong> des appareils.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/autopilot/overview">Overview of Windows Autopilot</a> (cycle de vie, réinitialiser, réaffecter, récupérer).</p></aside>
+
+<h2 id="methodes">2. Les méthodes de déploiement</h2>
+<p>Microsoft range les façons de déployer Windows en trois familles, et recommande les méthodes <strong>modernes</strong> sauf besoin particulier :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Famille</th><th>Scénarios</th><th>En une phrase</th></tr></thead>
+<tbody>
+<tr><td>Moderne</td><td>Windows Autopilot ; mise à niveau sur place</td><td>Autopilot personnalise la première mise en route (OOBE) et livre un poste déjà configuré ; la mise à niveau sur place change de version en gardant applications et réglages (retour arrière dans <code>Windows.old</code>).</td></tr>
+<tr><td>Dynamique</td><td>Activation par abonnement ; Microsoft Entra ID et MDM ; packages d'approvisionnement</td><td>On configure le poste existant (passage de Pro à Entreprise, jonction et configuration automatiques, package appliqué) sans le réinstaller.</td></tr>
+<tr><td>Traditionnelle</td><td>Installation sur poste vierge (<em>bare metal</em>) ; actualisation (<em>refresh</em>) ; remplacement (<em>replace</em>)</td><td>On applique une <strong>image</strong> : sur un poste neuf ou effacé ; en sauvegardant l'état de l'utilisateur, en effaçant puis en le restaurant (« effacer et recharger ») ; ou en transférant cet état vers un nouveau poste.</td></tr>
+</tbody></table></div>
+<p>La différence de fond : la méthode traditionnelle construit et entretient des <strong>images</strong> de référence, alors qu'Autopilot part de la version de Windows <strong>installée par le constructeur</strong> et la transforme en poste d'entreprise (réglages et stratégies, applications, changement d'édition), sans réimager.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/windows/deployment/windows-deployment-scenarios">Windows deployment scenarios</a> (moderne, dynamique, traditionnel) ; <a href="https://learn.microsoft.com/en-us/autopilot/overview">Overview of Windows Autopilot</a> (version du constructeur, pas d'image à maintenir).</p></aside>
+
+<h2 id="autopilot-intune">3. Windows Autopilot et Microsoft Intune</h2>
+<ul>
+  <li><strong>Microsoft Intune</strong> est un service de gestion des appareils dans le cloud : il inscrit, configure, sécurise et met à jour les appareils, déploie et protège les applications, et contrôle quels utilisateurs et appareils accèdent aux ressources. En gestion des appareils (MDM), le poste est inscrit par l'utilisateur via le <strong>Portail d'entreprise</strong> ou automatiquement via Autopilot, et Intune gère alors tout l'appareil.</li>
+  <li><strong>Windows Autopilot</strong> : du point de vue de l'utilisateur, il lui suffit de se connecter à un réseau et de donner ses identifiants ; tout le reste est automatisé (jonction, stratégies, applications).</li>
+  <li><strong>Réinitialisation à distance</strong> (<em>Wipe</em> dans Intune) : remet l'appareil aux paramètres d'usine en supprimant toutes les données personnelles et professionnelles, applications et configurations ; on l'utilise pour un appareil retiré, réaffecté, à réinitialiser pour un dépannage, ou perdu ou volé.</li>
+</ul>
+<aside class="callout attention"><p>Une réinitialisation efface tout : le service desk ne la lance pas sans procédure, sans ticket et sans s'être assuré que les données utiles sont sauvegardées.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/what-is-intune">What is Microsoft Intune?</a> (MDM, Portail d'entreprise, Autopilot) ; <a href="https://learn.microsoft.com/en-us/autopilot/overview">Overview of Windows Autopilot</a> (réseau et identifiants, le reste automatisé) ; <a href="https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/devices-wipe">Wipe devices with Microsoft Intune</a>.</p></aside>
+
+<h2 id="jonction">4. Joint à quoi ? Lire <code>dsregcmd /status</code></h2>
+<p>Un poste peut être joint à un domaine Active Directory, à Microsoft Entra ID, ou aux deux. La commande <code>dsregcmd /status</code>, lancée avec un compte utilisateur du domaine, affiche dans sa section <strong>Device State</strong> trois indicateurs qui disent lequel :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>AzureAdJoined</th><th>EnterpriseJoined</th><th>DomainJoined</th><th>État du poste</th></tr></thead>
+<tbody>
+<tr><td>YES</td><td>NO</td><td>NO</td><td>Joint à Microsoft Entra</td></tr>
+<tr><td>NO</td><td>NO</td><td>YES</td><td>Joint au domaine</td></tr>
+<tr><td>YES</td><td>NO</td><td>YES</td><td>Joint hybride (domaine et Microsoft Entra)</td></tr>
+<tr><td>NO</td><td>YES</td><td>YES</td><td>Joint au service d'inscription local (DRS)</td></tr>
+</tbody></table></div>
+<p>L'état <strong>inscrit à Microsoft Entra</strong> (<em>Workplace Joined</em>), celui d'un compte professionnel ajouté sur un appareil, apparaît dans la section <strong>User State</strong> (<code>WorkplaceJoined : YES</code>).</p>
+<p>Côté interface : <strong>Paramètres → Comptes → Accès Professionnel ou Scolaire</strong> liste les comptes professionnels connectés. Le bouton <strong>Déconnecter</strong> retire le compte de Windows : c'est une action qui coupe l'accès aux ressources de l'organisation, à ne faire que dans le cadre d'une procédure.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd">Troubleshoot devices by using the dsregcmd command</a> (tableau des états, section User State) ; Microsoft Support : <a href="https://support.microsoft.com/fr-fr/windows/security/identity-signin/add-your-work-or-school-account-to-a-windows-device">Ajouter votre compte professionnel ou scolaire à un appareil Windows</a> (Comptes → Accès Professionnel ou Scolaire, Déconnecter).</p></aside>
+
+<h2 id="inventaire">5. Nommer et inventorier</h2>
+<p>Un inventaire n'est utile que s'il est juste. Pour chaque poste : numéro d'inventaire, <strong>numéro de série</strong>, fabricant et modèle, nom du poste, lieu, utilisateur, état (en stock, en service, en réparation, retiré). Le numéro de série et le modèle se lisent sur le poste lui-même, sans ouvrir le boîtier :</p>
+<pre data-copy><code>Get-CimInstance Win32_BIOS | Select-Object SerialNumber
+Get-CimInstance Win32_ComputerSystem | Select-Object Name, Manufacturer, Model</code></pre>
+<p>Le <strong>nom du poste</strong> suit la nomenclature de l'organisation (souvent lieu ou service, puis un numéro) : c'est lui qu'on retrouve dans l'annuaire, l'inventaire et les tickets. Un poste renommé ou déplacé sans mise à jour de l'inventaire devient introuvable.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/powershell/module/cimcmdlets/get-ciminstance">Get-CimInstance</a> ; classes <a href="https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-bios">Win32_BIOS</a> (<code>SerialNumber</code>) et <a href="https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem">Win32_ComputerSystem</a> (<code>Manufacturer</code>, <code>Model</code>). Identifier un poste : <a href="materiel-pc.html#identifier">module Matériel et PC, §1</a>.</p></aside>
+
+<h2 id="retrait">6. Retrait et effacement</h2>
+<p>Avant qu'un poste quitte son utilisateur (départ, remplacement, réemploi, recyclage) :</p>
+<ol>
+  <li><strong>Sauvegarder</strong> ce qui doit l'être, et vérifier qu'un échantillon se restaure (<a href="sauvegarde-restauration.html#avant-intervention">module Sauvegarde et restauration</a>).</li>
+  <li><strong>Effacer</strong> selon la procédure : réinitialisation gérée (Intune), réinstallation, ou effacement du support.</li>
+  <li><strong>Mettre à jour</strong> l'inventaire et l'annuaire (objet ordinateur), puis clôturer le ticket.</li>
+</ol>
+<p>Pour l'effacement des supports, la référence est le guide du NIST sur l'assainissement des supports (SP 800-88, révision 2 de septembre 2025) : <strong>assainir</strong> un support, c'est rendre l'accès aux données infaisable pour un niveau d'effort donné, et la technique se choisit selon la <strong>sensibilité</strong> des informations. Supprimer des fichiers ou vider la corbeille ne suffit pas.</p>
+<aside class="callout source"><p>NIST : <a href="https://csrc.nist.gov/pubs/sp/800/88/r2/final">SP 800-88 Rev. 2, Guidelines for Media Sanitization</a> (septembre 2025) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/devices-wipe">Wipe devices with Microsoft Intune</a>.</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo : l'état de gestion de ton PC, puis une fiche d'inventaire</h2>
+<p>Sur ton propre PC Windows, sans machine virtuelle, en lecture seulement.</p>
+<ol>
+  <li>Ouvre une invite de commandes et lance <code>dsregcmd /status</code>. Dans <strong>Device State</strong>, relève <code>AzureAdJoined</code>, <code>EnterpriseJoined</code> et <code>DomainJoined</code> ; dans <strong>User State</strong>, relève <code>WorkplaceJoined</code>.</li>
+  <li>Ouvre <strong>Paramètres → Comptes → Accès Professionnel ou Scolaire</strong> : y a-t-il un compte ? (Ne clique pas sur Déconnecter.)</li>
+  <li>Dans PowerShell, lance les deux commandes du <a href="#inventaire">§5</a> et remplis une fiche d'inventaire pour ton PC : numéro de série, fabricant, modèle, nom, lieu, état.</li>
+  <li><strong>Sur papier</strong> : trois PC du même modèle arrivent pour une salle. Écris, dans l'ordre, les étapes jusqu'à leur mise en service, et ce que tu notes à chaque étape.</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois constater</summary>
+<ul>
+  <li>Sur un PC personnel : <code>AzureAdJoined</code>, <code>EnterpriseJoined</code> et <code>DomainJoined</code> valent en général <code>NO</code> : le poste n'est dans aucun des états du tableau, ni joint au domaine ni à Microsoft Entra. Si tu as ajouté un compte professionnel ou scolaire, <code>WorkplaceJoined</code> peut valoir <code>YES</code> et le compte apparaît dans Accès Professionnel ou Scolaire.</li>
+  <li>Le numéro de série affiché est celui de l'étiquette du constructeur (sur un PC assemblé, il peut être vide ou générique : on le note).</li>
+  <li>Salle de trois PC : réception (colis, bon de livraison, numéros de série) → inventaire (étiquettes) → préparation d'<strong>un</strong> poste et test complet → déploiement des deux autres de la même façon → tests (session, réseau, logiciels, imprimante) → mise en service et inventaire mis à jour (lieu, état « en service ») → ticket clôturé.</li>
+</ul>
+</details>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<h3>1. Quel genre de poste ?</h3>
+<p>Sur le poste d'un utilisateur, <code>dsregcmd /status</code> affiche <code>AzureAdJoined : YES</code>, <code>EnterpriseJoined : NO</code>, <code>DomainJoined : YES</code>. Qu'est-ce que cela veut dire ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Le poste est <strong>joint hybride</strong> : il est joint au domaine Active Directory et aussi à Microsoft Entra ID (troisième ligne du tableau du <a href="#jonction">§4</a>). Pour un problème d'ouverture de session, les pistes « domaine » (DNS, contrôleur de domaine, canal sécurisé) et « Entra » sont donc toutes les deux possibles.</p>
+</details>
+<h3>2. « Je veux mettre mon compte perso sur ce PC »</h3>
+<p>Un utilisateur veut retirer le compte de l'université de son PC de bureau (Accès Professionnel ou Scolaire → Déconnecter) pour y mettre son compte personnel.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>On ne le fait pas et on lui déconseille de le faire : déconnecter le compte de l'organisation lui coupe l'accès aux ressources de l'université sur ce poste, qui appartient à l'organisation et suit sa procédure de gestion. On note la demande et on l'oriente vers la règle de la DSI sur les usages personnels (à vérifier sur place).</p>
+</details>
+<h3>3. Le PC d'un départ</h3>
+<p>Une personne quitte le service ; son PC doit être réaffecté à un nouvel arrivant. Que fais-tu avant de le remettre ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Selon la procédure : vérifier avec le responsable ce qui doit être conservé, sauvegarder et contrôler un échantillon, effacer le poste (réinitialisation gérée ou réinstallation), le préparer pour le nouvel utilisateur, puis mettre à jour l'inventaire (utilisateur, état) et l'annuaire, et noter chaque étape dans le ticket. On ne remet jamais un poste avec les données de la personne précédente.</p>
+</details>
+<h3>4. Inventaire faux</h3>
+<p>Dans l'outil d'inventaire, le poste « BIB-012 » est noté en bibliothèque, mais la personne qui appelle depuis le secrétariat lit ce nom sur son étiquette.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>On vérifie le numéro de série sur le poste (<code>Get-CimInstance Win32_BIOS</code> ou l'étiquette) et on le compare à l'inventaire. Si c'est bien ce poste, il a été déplacé sans mise à jour : on corrige le lieu dans l'inventaire (ou on signale l'écart à qui le gère) et on le note dans le ticket.</p>
+</details>
+<aside class="callout source"><p>Corrections fondées sur les sources des sections : <a href="https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd">états de jonction</a> et <a href="https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/devices-wipe">réinitialisation</a> (Microsoft Learn), <a href="https://support.microsoft.com/fr-fr/windows/security/identity-signin/add-your-work-or-school-account-to-a-windows-device">compte professionnel ou scolaire</a> (Microsoft Support), <a href="https://csrc.nist.gov/pubs/sp/800/88/r2/final">assainissement des supports</a> (NIST).</p></aside>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-deploiement-postes"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Cycle de vie</strong> : réception → inventaire → préparation → remise → vie du poste → retrait (sauvegarde, effacement, sortie d'inventaire).</li>
+  <li><strong>Méthodes (Microsoft)</strong> : moderne (Autopilot, mise à niveau sur place) · dynamique (abonnement, Entra ID et MDM, packages) · traditionnelle (image : poste vierge, actualisation, remplacement).</li>
+  <li><strong>Intune</strong> : gestion des appareils et applications dans le cloud ; <strong>Autopilot</strong> : l'utilisateur se connecte au réseau et s'identifie, le reste est automatisé ; <strong>Wipe</strong> : retour aux paramètres d'usine, tout est effacé.</li>
+  <li><strong><code>dsregcmd /status</code></strong> : AzureAdJoined / EnterpriseJoined / DomainJoined → YES NO NO Entra · NO NO YES domaine · YES NO YES hybride ; WorkplaceJoined (User State) = compte professionnel inscrit.</li>
+  <li><strong>Inventaire</strong> : n° d'inventaire, n° de série (<code>Win32_BIOS</code>), modèle (<code>Win32_ComputerSystem</code>), nom, lieu, utilisateur, état.</li>
+  <li><strong>Retrait</strong> : sauvegarder et vérifier, effacer selon la procédure (NIST SP 800-88 : selon la sensibilité), mettre à jour inventaire et annuaire.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>Comment les postes sont-ils déployés (image, Autopilot, Configuration Manager…) et gérés (Intune ou autre) ?</li>
+  <li>Quelle est la nomenclature des noms de postes, et quel outil sert d'inventaire ?</li>
+  <li>Les postes sont-ils joints au domaine, à Microsoft Entra, ou hybrides ?</li>
+  <li>Qui décide et réalise l'effacement d'un poste retiré, et comment est-il tracé ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-deploiement-postes"> Module terminé</label></p>
+<div data-module-suite="deploiement-postes"></div>
+</div>
+</main>
+</body>
+</html>

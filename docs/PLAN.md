@@ -253,8 +253,10 @@ Une page `stage/glossaire.html` : les termes que l'on croise en anglais dans Jir
 
 ## Lot 35 — Module « Sécurité du poste »
 Domaine Sécurité. Pistes, chacune à sourcer (Microsoft Learn, CISA, Centre pour la cybersécurité Belgique) : reconnaître un hameçonnage et le signaler, Microsoft Defender (état, analyse, quarantaine, sans désactiver), mises à jour et redémarrages, compte compromis (que faire, dans quel ordre), clé USB inconnue, données sensibles et verrouillage du poste. Labo sur son propre PC en lecture (état de Defender, historique de protection, `Get-MpComputerStatus`), mises en situation, quiz. Procédure de sécurité de l'UMONS : « à vérifier sur place ».
-- [ ] 35.1 Page `modules/securite-poste.html`.
-- [ ] 35.2 Données : `modules.js` (retirer de `aVenir` si présent), quiz `module-securite-poste`, unité, index.
+- [x] 35.1 Page `modules/securite-poste.html`.
+  Fait : page en six sections sourcées (hameçonnage, Defender et quarantaine, mises à jour, compte compromis, clé USB, verrouillage), labo en lecture sur son PC, quatre mises en situation.
+- [x] 35.2 Données : `modules.js` (retirer de `aVenir` si présent), quiz `module-securite-poste`, unité, index.
+  Fait : entrée `securite-poste` (domaine Sécurité), quiz de 6 questions sourcées, unité de progression, index.
 - [ ] 35.3 Relecture croisée par Codex (`docs/relectures/module-securite-poste.md`), puis test en situation ; corrections dans une autre conversation.
 - [ ] 35.4 `npm run controles`, coche, fusion.
 
@@ -271,8 +273,10 @@ Domaine Gestion. Approfondit le J3 : files et filtres, SLA (lire un compteur, pa
 
 ## Lot 37 — Module « Déploiement et gestion des postes »
 Domaine Matériel (ou Windows). Pistes : cycle de vie d'un poste (réception, inventaire, préparation, remise, retrait et effacement), image de référence et installation automatisée, Windows Autopilot et Intune en principe (sources Microsoft Learn), jonction au domaine ou à Entra ID, applications déployées, nommage et inventaire. Labo sans VM : lire l'état de gestion de son PC (`dsregcmd /status`, Paramètres → Comptes → Accès Professionnel ou Scolaire), exercice d'inventaire et de préparation sur papier. Outils de l'UMONS : « à vérifier sur place ».
-- [ ] 37.1 Page `modules/deploiement-postes.html`.
-- [ ] 37.2 Données : `modules.js`, quiz `module-deploiement-postes`, unité, index.
+- [x] 37.1 Page `modules/deploiement-postes.html`.
+  Fait : page en six sections sourcées (cycle de vie, méthodes de déploiement, Autopilot et Intune, dsregcmd, inventaire, retrait et NIST SP 800-88 Rev. 2), labo en lecture et fiche d'inventaire, quatre mises en situation.
+- [x] 37.2 Données : `modules.js`, quiz `module-deploiement-postes`, unité, index.
+  Fait : entrée `deploiement-postes` (domaine Matériel), quiz de 6 questions, unité, index ; « Gestion de parc et d'inventaire » retiré des sujets à venir.
 - [ ] 37.3 Relecture croisée par Codex (`docs/relectures/module-deploiement-postes.md`), puis test en situation ; corrections dans une autre conversation.
 - [ ] 37.4 `npm run controles`, coche, fusion.
 

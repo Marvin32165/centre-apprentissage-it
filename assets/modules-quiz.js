@@ -232,3 +232,45 @@ window.IT_QUIZZES["module-sous-reseaux"] = { titre: "Quiz : sous-réseaux et pla
     options: ["100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "127.0.0.0/8"], reponse: 2,
     explication: "Les plages privées sont 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16. 100.64/10 est l'espace partagé, 169.254/16 le lien local, 127/8 la boucle locale." }
 ]};
+
+window.IT_QUIZZES["module-securite-poste"] = { titre: "Quiz : sécurité du poste", questions: [
+  { q: "Un courriel demande de « valider ton compte » ; le texte du lien affiche le site de l'université, mais l'adresse réelle mène ailleurs. Que conclure ?",
+    options: ["Rien : c'est courant", "C'est un signe d'hameçonnage : on ne clique pas et on signale", "Il suffit de vérifier l'orthographe", "On clique pour voir si la page ressemble au vrai site"], reponse: 1,
+    explication: "Microsoft cite en premier signe un lien dont la destination réelle ne correspond pas à l'adresse affichée. On vérifie par un canal connu et on signale à l'équipe de sécurité (Microsoft Support, Protect yourself from phishing)." },
+  { q: "Dans l'historique de protection, un fichier est « mis en quarantaine ». Qu'est-ce que cela veut dire ?",
+    options: ["Il a été supprimé définitivement", "Il a été envoyé à Microsoft", "Il est bloqué mais pas encore supprimé ; on peut le supprimer ou le restaurer", "Il est autorisé jusqu'au redémarrage"], reponse: 2,
+    explication: "Une menace mise en quarantaine est bloquée, pas encore supprimée, et ne devrait plus présenter de risque ; les actions possibles sont Supprimer ou Restaurer (Microsoft Support, Historique de protection)." },
+  { q: "Un utilisateur « sûr à 100 % » te demande d'autoriser un fichier bloqué par Defender. Que fais-tu ?",
+    options: ["Je choisis « Autoriser sur l'appareil »", "Je désactive la protection en temps réel quelques minutes", "Je laisse en quarantaine, je note tout dans le ticket et j'escalade à la sécurité", "Je lui dis de le renommer"], reponse: 2,
+    explication: "Microsoft conseille la quarantaine en cas de doute : « Autoriser sur l'appareil » expose les données si c'était une vraie menace. La décision revient à l'équipe de sécurité, et on ne désactive pas l'antivirus." },
+  { q: "Dans la sortie de Get-MpComputerStatus, AMRunningMode vaut « Passive mode ». Qu'est-ce que cela signifie ?",
+    options: ["Defender tourne, mais un autre produit est l'antivirus principal", "Defender est désactivé par un virus", "Les définitions sont périmées", "Le poste n'a jamais été analysé"], reponse: 0,
+    explication: "Normal : Defender est l'antivirus actif. Passive mode : Defender tourne mais n'est pas l'antivirus principal, sur un poste inscrit à Defender for Endpoint (Microsoft Learn, Microsoft Defender Antivirus in Windows)." },
+  { q: "Une utilisatrice a saisi son mot de passe sur une page douteuse il y a vingt minutes. Quelle est ta première action ?",
+    options: ["Lui envoyer un nouveau mot de passe par courriel", "Signaler tout de suite l'incident selon la procédure de sécurité", "Attendre de voir si des courriels bizarres partent", "Supprimer le message reçu pour qu'elle ne clique plus"], reponse: 1,
+    explication: "C'est un incident de sécurité : on signale immédiatement. Microsoft rappelle de ne jamais envoyer le nouveau mot de passe par courriel (l'attaquant peut lire la boîte), et on ne supprime rien : ce sont des indices (Microsoft Learn, Responding to a compromised email account)." },
+  { q: "On t'apporte une clé USB trouvée dans un auditoire. Que recommande la CISA ?",
+    options: ["La brancher sur un poste isolé pour trouver le propriétaire", "La formater avant de la rendre", "Ne pas la brancher et la remettre au service désigné (sécurité ou informatique)", "La brancher si l'antivirus est à jour"], reponse: 2,
+    explication: "La CISA demande de ne pas brancher une clé inconnue et de remettre une clé trouvée aux personnes désignées, sans la brancher pour voir son contenu ou identifier son propriétaire (CISA, Using Caution with USB Drives)." }
+] };
+
+window.IT_QUIZZES["module-deploiement-postes"] = { titre: "Quiz : déploiement et gestion des postes", questions: [
+  { q: "Dans dsregcmd /status, un poste affiche AzureAdJoined : YES, EnterpriseJoined : NO, DomainJoined : YES. Quel est son état ?",
+    options: ["Joint au domaine seulement", "Joint à Microsoft Entra seulement", "Inscrit à Microsoft Entra (Workplace Joined)", "Joint hybride : domaine et Microsoft Entra"], reponse: 3,
+    explication: "YES / NO / YES correspond à « Microsoft Entra hybrid joined » dans le tableau de Microsoft (Troubleshoot devices by using the dsregcmd command)." },
+  { q: "Selon Microsoft, qu'est-ce qui distingue Windows Autopilot d'un déploiement traditionnel par image ?",
+    options: ["Il part de la version de Windows installée par le constructeur et la transforme, sans image à maintenir", "Il impose de réinstaller Windows depuis une clé USB", "Il ne fonctionne qu'avec Windows Famille", "Il remplace l'inventaire"], reponse: 0,
+    explication: "Autopilot utilise la version de Windows préinstallée par le constructeur et la transforme en poste d'entreprise (réglages, applications, édition), au lieu de réimager (Overview of Windows Autopilot)." },
+  { q: "Dans la classification de Microsoft, le scénario « refresh » (effacer et recharger) consiste à…",
+    options: ["Mettre Windows à jour sans rien effacer", "Sauvegarder l'état de l'utilisateur, effacer le disque, réinstaller, puis restaurer cet état", "Transférer l'utilisateur sur un nouveau PC", "Activer l'édition Entreprise par abonnement"], reponse: 1,
+    explication: "Refresh, ou « wipe and load » : on redéploie un appareil en sauvegardant l'état de l'utilisateur, en effaçant le disque puis en restaurant cet état (Windows deployment scenarios). Le transfert vers un nouveau PC, c'est « replace »." },
+  { q: "Que fait l'action « Wipe » de Microsoft Intune ?",
+    options: ["Elle supprime seulement les applications de l'entreprise", "Elle verrouille l'écran à distance", "Elle remet l'appareil aux paramètres d'usine en supprimant toutes les données, applications et configurations", "Elle met à jour Windows"], reponse: 2,
+    explication: "Wipe réinitialise l'appareil aux paramètres d'usine et supprime toutes les données personnelles et professionnelles, les applications et les configurations (Wipe devices with Microsoft Intune) : jamais sans procédure ni sauvegarde vérifiée." },
+  { q: "Quelle commande donne le numéro de série d'un poste pour l'inventaire ?",
+    options: ["ipconfig /all", "Get-CimInstance Win32_BIOS | Select-Object SerialNumber", "whoami /groups", "dsregcmd /status"], reponse: 1,
+    explication: "La classe Win32_BIOS expose la propriété SerialNumber ; le modèle et le fabricant sont dans Win32_ComputerSystem (Microsoft Learn)." },
+  { q: "Un poste doit être recyclé. Supprimer les fichiers de l'utilisateur et vider la corbeille suffit-il ?",
+    options: ["Oui, si la corbeille est vide", "Oui, après un redémarrage", "Non : il faut assainir le support selon la procédure, avec une technique adaptée à la sensibilité des données", "Non, il faut seulement retirer le compte de l'utilisateur"], reponse: 2,
+    explication: "Le NIST (SP 800-88 Rev. 2) définit l'assainissement comme rendre l'accès aux données infaisable pour un niveau d'effort donné, avec une technique choisie selon la sensibilité des informations ; une simple suppression ne le garantit pas." }
+] };
