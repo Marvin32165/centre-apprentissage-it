@@ -591,19 +591,40 @@
       function render() {
         box.textContent = "";
         box.classList.remove("corrige");
-        if (quiz.titre) box.appendChild(el("h3", null, quiz.titre));
+        var n = quiz.questions.length;
+        var tete = el("div", { "class": "quiz-tete" });
+        tete.appendChild(el("p", { "class": "quiz-surtitre" }, "Quiz · " + n + " question" + (n > 1 ? "s" : "")));
+        if (quiz.titre) tete.appendChild(el("h3", null, quiz.titre));
+        var compte = el("p", { "class": "quiz-compte" }, "0 / " + n + " répondue");
+        var barre = el("div", { "class": "quiz-barre", "aria-hidden": "true" });
+        var jauge = el("span");
+        barre.appendChild(jauge);
+        tete.appendChild(compte);
+        tete.appendChild(barre);
+        box.appendChild(tete);
         var form = el("form", { novalidate: "" });
         quiz.questions.forEach(function (qu, i) {
-          var fs = el("fieldset");
-          fs.appendChild(el("legend", null, (i + 1) + ". " + qu.q));
+          var fs = el("fieldset", { "class": "q-carte" });
+          var lg = el("legend");
+          lg.appendChild(el("span", { "class": "q-num" }, String(i + 1)));
+          lg.appendChild(el("span", { "class": "q-texte" }, qu.q));
+          fs.appendChild(lg);
           qu.options.forEach(function (opt, j) {
             var label = el("label", { "class": "opt" });
             var input = el("input", { type: "radio", name: "q" + i, value: String(j) });
             label.appendChild(input);
-            label.appendChild(el("span", null, opt));
+            label.appendChild(el("span", { "class": "lettre", "aria-hidden": "true" }, String.fromCharCode(65 + j)));
+            label.appendChild(el("span", { "class": "opt-texte" }, opt));
             fs.appendChild(label);
           });
           form.appendChild(fs);
+        });
+        form.addEventListener("change", function () {
+          var faites = 0;
+          for (var i = 0; i < n; i++) if (form.querySelector('input[name="q' + i + '"]:checked')) faites++;
+          compte.textContent = faites + " / " + n + " répondue" + (faites > 1 ? "s" : "");
+          jauge.style.width = Math.round(faites / n * 100) + "%";
+          box.classList.toggle("complet", faites === n);
         });
         var actions = el("div", { "class": "actions" });
         var submit = el("button", { type: "submit", "class": "btn" }, "Corriger");
@@ -634,7 +655,12 @@
             lab.querySelector("input").disabled = true;
             if (j === chosen) lab.classList.add(ok ? "bon" : "faux");
           });
-          fs.appendChild(el("p", { "class": "verdict " + (ok ? "bon" : "faux") }, ok ? "Bonne réponse." : "Pas tout à fait."));
+          fs.classList.add(ok ? "q-bon" : "q-faux");
+          fs.appendChild(el("span", { "class": "q-tampon", "aria-hidden": "true" }, ok ? "Juste" : "À revoir"));
+          var v = el("p", { "class": "verdict " + (ok ? "bon" : "faux") });
+          v.appendChild(icon(ok ? "check" : "close"));
+          v.appendChild(document.createTextNode(ok ? "Bonne réponse." : "Pas tout à fait."));
+          fs.appendChild(v);
           var d = el("details", { "class": "correction" });
           d.appendChild(el("summary", null, "Voir la correction"));
           d.appendChild(el("p", null, "Réponse : " + qu.options[qu.reponse]));

@@ -230,3 +230,9 @@ Couleurs, polices, contrastes AA et mouvement réduit inchangés ; chaque étape
 - Teintes de la palette sombre (le fond de code est sombre dans les deux thèmes) : commande rouille `#E3916A` en graisse 500, paramètre ambre `#D9AE66`, texte vert `#94B98C`, variable rouge `#E88D79`, commentaire encre douce en italique.
 - Chaque ligne commence par une invite « › » dessinée en CSS (`::before`, non copiée), filet rouille dégradé à gauche du bloc ; légende des couleurs sous le premier bloc coloré de la page.
 - Les modèles de ticket (`data-langage="Modèle de texte"`) ne sont pas colorés ; le bouton Copier copie toujours le texte brut.
+
+### 6.5 Lot 40.5 — Quiz redessiné
+- En-tête du quiz : filet double, surtitre « Quiz · N questions » en Plex Mono rouille, titre, compteur « n / N répondues » et jauge rouille qui avance à chaque réponse (décorative, `aria-hidden` ; le compteur reste lisible).
+- Une carte par question (`fieldset.q-carte`, surface, surface surélevée en sombre) : grand numéro en Newsreader italique rouille, question en Newsreader demi-gras.
+- Choix : pastilles A, B, C, D (`span.lettre`, `aria-hidden`) ; le bouton radio reste le vrai contrôle, posé invisible sur la pastille (cible de 44 px par l'étiquette entière) ; choix coché en rouille plein, anneau de focus autour de la pastille.
+- Correction : filet gauche vert ou rouge sur la carte, tampon incliné « Juste » ou « À revoir » posé sur le bord, verdict avec icône ; la bonne réponse reste cachée dans la correction repliée. Bloc d'action en pointillés, plein quand toutes les questions sont répondues ; score en grand italique.

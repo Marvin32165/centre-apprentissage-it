@@ -204,7 +204,8 @@ Demande de Marvin (27/11) : une **énorme** amélioration graphique, bien au-del
   Fait : « §N » en grand italique rouille au-dessus du titre ; lettrine seulement si le chapeau commence par une lettre (classe `lettrine`). Justifié : pas suspendu dans la marge, la gouttière entre la navigation et le texte ne fait que 40 px sur ordinateur.
 - [x] 40.4 Code : coloration syntaxique sobre (commandes, paramètres, chaînes, commentaires, variables) pour PowerShell et l'invite de commandes, dans la palette, sans dépendance.
   Fait : `colorerCode` dans `app.js` (commande, paramètre, texte, variable, commentaire), invite « › » non copiée, légende sous le premier bloc ; modèles de ticket exclus.
-- [ ] 40.5 Quiz redessiné : une carte par question, lettres A à D en pastilles, barre de progression des réponses, verdicts illustrés.
+- [x] 40.5 Quiz redessiné : une carte par question, lettres A à D en pastilles, barre de progression des réponses, verdicts illustrés.
+  Fait : cartes par question, pastilles A à D sur le vrai bouton radio, compteur et jauge, tampons « Juste » / « À revoir », score en grand.
 - [ ] 40.6 Encadrés avec icône (retenir, attention, astuce, source, UMONS) et tableaux plus éditoriaux (en-tête collant sur ordinateur, première colonne affirmée).
 - [ ] 40.7 Accueil : grande illustration gravée du poste de garde (casque, écran, ticket) dans l'en-tête, rubriques en grandes cartes illustrées ; pied de page sombre en colophon (plan du site en colonnes, tampon agrandi).
 - [ ] 40.8 Passe finale : cohérence de toutes les pages (index des modules, thèmes, prépa, outils, révision, tickets), captures avant/après dans `docs/captures/lot-40/`, contrôles, fusion.
