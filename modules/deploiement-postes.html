@@ -67,11 +67,11 @@
 <h2 id="autopilot-intune">3. Windows Autopilot et Microsoft Intune</h2>
 <ul>
   <li><strong>Microsoft Intune</strong> est un service de gestion des appareils dans le cloud : il inscrit, configure, sécurise et met à jour les appareils, déploie et protège les applications, et contrôle quels utilisateurs et appareils accèdent aux ressources. En gestion des appareils (MDM), le poste est inscrit par l'utilisateur via le <strong>Portail d'entreprise</strong> ou automatiquement via Autopilot, et Intune gère alors tout l'appareil.</li>
-  <li><strong>Windows Autopilot</strong> : du point de vue de l'utilisateur, il lui suffit de se connecter à un réseau et de donner ses identifiants ; tout le reste est automatisé (jonction, stratégies, applications).</li>
-  <li><strong>Réinitialisation à distance</strong> (<em>Wipe</em> dans Intune) : remet l'appareil aux paramètres d'usine en supprimant toutes les données personnelles et professionnelles, applications et configurations ; on l'utilise pour un appareil retiré, réaffecté, à réinitialiser pour un dépannage, ou perdu ou volé.</li>
+  <li><strong>Windows Autopilot</strong> : selon Microsoft, la seule intervention demandée à l'utilisateur est de se connecter à un réseau et de vérifier ses identifiants ; tout le reste est automatisé (jonction, stratégies, applications).</li>
+  <li><strong>Réinitialisation à distance</strong> (<em>Wipe</em> dans Intune, « Effacer » en français) : remet l'appareil aux paramètres d'usine en supprimant toutes les données personnelles et professionnelles, applications et configurations ; on l'utilise pour un appareil retiré, réaffecté, à réinitialiser pour un dépannage, ou perdu ou volé.</li>
 </ul>
 <aside class="callout attention"><p>Une réinitialisation efface tout : le service desk ne la lance pas sans procédure, sans ticket et sans s'être assuré que les données utiles sont sauvegardées.</p></aside>
-<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/intune/intune-service/fundamentals/what-is-intune">What is Microsoft Intune?</a> (MDM, Portail d'entreprise, Autopilot) ; <a href="https://learn.microsoft.com/en-us/autopilot/overview">Overview of Windows Autopilot</a> (réseau et identifiants, le reste automatisé) ; <a href="https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/devices-wipe">Wipe devices with Microsoft Intune</a>.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/intune/fundamentals/what-is-intune">What is Microsoft Intune?</a> (MDM, Portail d'entreprise, Autopilot) ; <a href="https://learn.microsoft.com/en-us/autopilot/overview">Overview of Windows Autopilot</a> (réseau et identifiants, le reste automatisé) ; <a href="https://learn.microsoft.com/en-us/intune/device-management/actions/wipe">Wipe devices with Microsoft Intune</a>.</p></aside>
 
 <h2 id="jonction">4. Joint à quoi ? Lire <code>dsregcmd /status</code></h2>
 <p>Un poste peut être joint à un domaine Active Directory, à Microsoft Entra ID, ou aux deux. La commande <code>dsregcmd /status</code>, lancée avec un compte utilisateur du domaine, affiche dans sa section <strong>Device State</strong> trois indicateurs qui disent lequel :</p>
@@ -84,8 +84,8 @@
 <tr><td>NO</td><td>YES</td><td>YES</td><td>Joint au service d'inscription local (DRS)</td></tr>
 </tbody></table></div>
 <p>L'état <strong>inscrit à Microsoft Entra</strong> (<em>Workplace Joined</em>), celui d'un compte professionnel ajouté sur un appareil, apparaît dans la section <strong>User State</strong> (<code>WorkplaceJoined : YES</code>).</p>
-<p>Côté interface : <strong>Paramètres → Comptes → Accès Professionnel ou Scolaire</strong> liste les comptes professionnels connectés. Le bouton <strong>Déconnecter</strong> retire le compte de Windows : c'est une action qui coupe l'accès aux ressources de l'organisation, à ne faire que dans le cadre d'une procédure.</p>
-<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd">Troubleshoot devices by using the dsregcmd command</a> (tableau des états, section User State) ; Microsoft Support : <a href="https://support.microsoft.com/fr-fr/windows/security/identity-signin/add-your-work-or-school-account-to-a-windows-device">Ajouter votre compte professionnel ou scolaire à un appareil Windows</a> (Comptes → Accès Professionnel ou Scolaire, Déconnecter).</p></aside>
+<p>Côté interface : <strong>Paramètres → Comptes → Accès Professionnel ou Scolaire</strong> liste les comptes professionnels connectés. Le bouton <strong>Déconnecter</strong> retire la jonction ou l'inscription : sur un poste joint à Microsoft Entra, on ne peut ensuite plus ouvrir de session avec un compte Microsoft Entra (il faut un compte administrateur local) ; sur un appareil inscrit, l'inscription à Microsoft Entra est supprimée. C'est une action à ne faire que dans le cadre d'une procédure.</p>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd">Troubleshoot devices by using the dsregcmd command</a> (tableau des états, section User State), <a href="https://learn.microsoft.com/en-us/entra/identity/devices/faq">Microsoft Entra device management FAQ</a> (Déconnecter : jonction et inscription) ; Microsoft Support : <a href="https://support.microsoft.com/fr-fr/windows/security/identity-signin/add-your-work-or-school-account-to-a-windows-device">Ajouter votre compte professionnel ou scolaire à un appareil Windows</a> (Comptes → Accès Professionnel ou Scolaire, Déconnecter).</p></aside>
 
 <h2 id="inventaire">5. Nommer et inventorier</h2>
 <p>Un inventaire n'est utile que s'il est juste. Pour chaque poste : numéro d'inventaire, <strong>numéro de série</strong>, fabricant et modèle, nom du poste, lieu, utilisateur, état (en stock, en service, en réparation, retiré). Le numéro de série et le modèle se lisent sur le poste lui-même, sans ouvrir le boîtier :</p>
@@ -99,10 +99,10 @@ Get-CimInstance Win32_ComputerSystem | Select-Object Name, Manufacturer, Model</
 <ol>
   <li><strong>Sauvegarder</strong> ce qui doit l'être, et vérifier qu'un échantillon se restaure (<a href="sauvegarde-restauration.html#avant-intervention">module Sauvegarde et restauration</a>).</li>
   <li><strong>Effacer</strong> selon la procédure : réinitialisation gérée (Intune), réinstallation, ou effacement du support.</li>
-  <li><strong>Mettre à jour</strong> l'inventaire et l'annuaire (objet ordinateur), puis clôturer le ticket.</li>
+  <li><strong>Mettre à jour</strong> l'inventaire et l'annuaire (objet ordinateur) ; après une réinitialisation gérée, Microsoft indique qu'on peut aussi retirer l'appareil de Windows Autopilot et de Microsoft Entra ID pour le détacher complètement de l'organisation ; puis clôturer le ticket.</li>
 </ol>
 <p>Pour l'effacement des supports, la référence est le guide du NIST sur l'assainissement des supports (SP 800-88, révision 2 de septembre 2025) : <strong>assainir</strong> un support, c'est rendre l'accès aux données infaisable pour un niveau d'effort donné, et la technique se choisit selon la <strong>sensibilité</strong> des informations. Supprimer des fichiers ou vider la corbeille ne suffit pas.</p>
-<aside class="callout source"><p>NIST : <a href="https://csrc.nist.gov/pubs/sp/800/88/r2/final">SP 800-88 Rev. 2, Guidelines for Media Sanitization</a> (septembre 2025) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/devices-wipe">Wipe devices with Microsoft Intune</a>.</p></aside>
+<aside class="callout source"><p>NIST : <a href="https://csrc.nist.gov/pubs/sp/800/88/r2/final">SP 800-88 Rev. 2, Guidelines for Media Sanitization</a> (septembre 2025) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/intune/device-management/actions/wipe">Wipe devices with Microsoft Intune</a>.</p></aside>
 
 <span class="phase">On fait ensemble</span>
 <h2 id="labo">Labo : l'état de gestion de ton PC, puis une fiche d'inventaire</h2>
@@ -116,10 +116,12 @@ Get-CimInstance Win32_ComputerSystem | Select-Object Name, Manufacturer, Model</
 <details class="correction"><summary>Voir ce que tu dois constater</summary>
 <ul>
   <li>Sur un PC personnel : <code>AzureAdJoined</code>, <code>EnterpriseJoined</code> et <code>DomainJoined</code> valent en général <code>NO</code> : le poste n'est dans aucun des états du tableau, ni joint au domaine ni à Microsoft Entra. Si tu as ajouté un compte professionnel ou scolaire, <code>WorkplaceJoined</code> peut valoir <code>YES</code> et le compte apparaît dans Accès Professionnel ou Scolaire.</li>
-  <li>Le numéro de série affiché est celui de l'étiquette du constructeur (sur un PC assemblé, il peut être vide ou générique : on le note).</li>
+  <li>Compare le numéro de série affiché à l'étiquette du constructeur (chez Dell, la commande renvoie le numéro de service, ou <em>Service Tag</em>) ; s'il est vide ou différent, note-le tel quel dans la fiche.</li>
   <li>Salle de trois PC : réception (colis, bon de livraison, numéros de série) → inventaire (étiquettes) → préparation d'<strong>un</strong> poste et test complet → déploiement des deux autres de la même façon → tests (session, réseau, logiciels, imprimante) → mise en service et inventaire mis à jour (lieu, état « en service ») → ticket clôturé.</li>
 </ul>
 </details>
+
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd">Troubleshoot devices by using the dsregcmd command</a> (Device State, User State) ; <a href="https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-bios">Win32_BIOS</a> (<code>SerialNumber</code>) ; Microsoft Support : <a href="https://support.microsoft.com/fr-fr/windows/security/identity-signin/add-your-work-or-school-account-to-a-windows-device">Ajouter votre compte professionnel ou scolaire à un appareil Windows</a> ; Dell : <a href="https://www.dell.com/support/kbdoc/000130711">How to Locate your System Service Tag</a> (le numéro de série affiché est le Service Tag).</p></aside>
 
 <span class="phase">Tu fais seul</span>
 <h2 id="cas">Mises en situation</h2>
@@ -131,7 +133,7 @@ Get-CimInstance Win32_ComputerSystem | Select-Object Name, Manufacturer, Model</
 <h3>2. « Je veux mettre mon compte perso sur ce PC »</h3>
 <p>Un utilisateur veut retirer le compte de l'université de son PC de bureau (Accès Professionnel ou Scolaire → Déconnecter) pour y mettre son compte personnel.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>On ne le fait pas et on lui déconseille de le faire : déconnecter le compte de l'organisation lui coupe l'accès aux ressources de l'université sur ce poste, qui appartient à l'organisation et suit sa procédure de gestion. On note la demande et on l'oriente vers la règle de la DSI sur les usages personnels (à vérifier sur place).</p>
+<p>On ne le fait pas et on lui déconseille de le faire : Déconnecter retire la jonction ou l'inscription du poste auprès de l'organisation (sur un poste joint à Microsoft Entra, on ne peut ensuite plus y ouvrir de session avec un compte de l'université, seulement avec un compte administrateur local), alors que ce poste appartient à l'organisation et suit sa procédure de gestion. On note la demande et on l'oriente vers la règle de la DSI sur les usages personnels (à vérifier sur place).</p>
 </details>
 <h3>3. Le PC d'un départ</h3>
 <p>Une personne quitte le service ; son PC doit être réaffecté à un nouvel arrivant. Que fais-tu avant de le remettre ?</p>
@@ -143,7 +145,7 @@ Get-CimInstance Win32_ComputerSystem | Select-Object Name, Manufacturer, Model</
 <details class="correction"><summary>Voir la correction</summary>
 <p>On vérifie le numéro de série sur le poste (<code>Get-CimInstance Win32_BIOS</code> ou l'étiquette) et on le compare à l'inventaire. Si c'est bien ce poste, il a été déplacé sans mise à jour : on corrige le lieu dans l'inventaire (ou on signale l'écart à qui le gère) et on le note dans le ticket.</p>
 </details>
-<aside class="callout source"><p>Corrections fondées sur les sources des sections : <a href="https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd">états de jonction</a> et <a href="https://learn.microsoft.com/en-us/intune/intune-service/remote-actions/devices-wipe">réinitialisation</a> (Microsoft Learn), <a href="https://support.microsoft.com/fr-fr/windows/security/identity-signin/add-your-work-or-school-account-to-a-windows-device">compte professionnel ou scolaire</a> (Microsoft Support), <a href="https://csrc.nist.gov/pubs/sp/800/88/r2/final">assainissement des supports</a> (NIST).</p></aside>
+<aside class="callout source"><p>Corrections fondées sur les sources des sections : <a href="https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd">états de jonction</a> et <a href="https://learn.microsoft.com/en-us/intune/device-management/actions/wipe">réinitialisation</a> (Microsoft Learn), <a href="https://support.microsoft.com/fr-fr/windows/security/identity-signin/add-your-work-or-school-account-to-a-windows-device">compte professionnel ou scolaire</a> (Microsoft Support) et la <a href="https://learn.microsoft.com/en-us/entra/identity/devices/faq">FAQ Microsoft Entra</a> (Déconnecter), <a href="https://csrc.nist.gov/pubs/sp/800/88/r2/final">assainissement des supports</a> (NIST).</p></aside>
 
 <h2 id="quiz">Quiz</h2>
 <div data-quiz="module-deploiement-postes"></div>
