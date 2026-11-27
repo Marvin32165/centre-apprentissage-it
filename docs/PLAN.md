@@ -247,7 +247,8 @@ Domaine Matériel (ou Windows). Pistes : cycle de vie d'un poste (réception, in
 Domaine Support. Pistes : où sont les données d'un utilisateur (profil, OneDrive, partages), versions précédentes et corbeille OneDrive, historique des fichiers, restauration d'un fichier supprimé ou écrasé, sauvegarde avant intervention (quoi, où, vérifier), règle « 3-2-1 » seulement si une source primaire l'établit. Sources : Microsoft Support et Learn. Labo sur son propre PC : restaurer une version précédente d'un fichier de test dans OneDrive. Politique de sauvegarde de l'UMONS : « à vérifier sur place ».
 - [x] 38.1 Page `modules/sauvegarde-restauration.html` (rédigée par Codex).
   Fait : Page sur les emplacements des données, OneDrive, l’Historique des fichiers, la préparation d’une intervention et le contrôle d’une restauration. Labo sur un fichier de test ou sur papier.
-- [ ] 38.2 Données : `modules.js`, quiz `module-sauvegarde-restauration`, unité, index.
+- [x] 38.2 Données : `modules.js`, quiz `module-sauvegarde-restauration`, unité, index.
+  Fait : entrée au catalogue, quiz de six questions avec sources, unité de progression et index de recherche.
 - [ ] 38.3 Relecture croisée par Claude Code (`docs/relectures/module-sauvegarde-restauration.md`), puis test en situation ; corrections dans une autre conversation.
 - [ ] 38.4 `npm run controles`, coche, fusion.
 
