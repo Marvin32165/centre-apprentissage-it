@@ -12,7 +12,7 @@
     if (txt != null) n.textContent = txt;
     return n;
   }
-  function plat(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  function plat(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[‘’ʼ]/g, "'").toLowerCase(); }
   function nomPage(lien) {
     var f = lien.split("#")[0], m = /^stage\/j(\d+)\.html$/.exec(f);
     if (m && D) { var j = D.stage.jours.filter(function (x) { return x.n === +m[1]; })[0]; return "Jour " + m[1] + (j ? " · " + j.court : ""); }

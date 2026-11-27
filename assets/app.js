@@ -748,7 +748,7 @@
   var R = null;
   var GROUPES = ["Commandes", "Notions", "Glossaire", "Modules", "Atelier"];
   var EXEMPLES = ["dns", "mot de passe", "bips", "gpupdate", "priorité"];
-  function norm(s) { return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+  function norm(s) { return String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[‘’ʼ]/g, "'"); } // apostrophe typographique = apostrophe droite
   function chargerIndex(cb) {
     if (window.IT_RECHERCHE) return cb(true);
     var sc = el("script", { src: root + "assets/recherche.js" });
