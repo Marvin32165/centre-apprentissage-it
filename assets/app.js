@@ -545,6 +545,18 @@
       });
       t.parentNode.classList.add("empile");
     });
+    // En-tête collant sur ordinateur, seulement pour les tableaux qui tiennent dans la colonne
+    // (un conteneur qui défile horizontalement empêcherait l'en-tête de coller à l'écran).
+    function coller() {
+      Array.prototype.forEach.call(document.querySelectorAll("main .table-wrap"), function (w) {
+        w.classList.remove("colle");
+        var t = w.querySelector("table");
+        if (t && t.querySelector("thead") && t.offsetWidth <= w.clientWidth + 1 && w.querySelectorAll("tbody tr").length > 3) w.classList.add("colle");
+      });
+    }
+    coller();
+    var minuterie;
+    window.addEventListener("resize", function () { clearTimeout(minuterie); minuterie = setTimeout(coller, 200); });
   }
 
   /* ---------- Notes en marge : sur grand écran, les sources et les « à vérifier sur place » d'un module passent dans la marge ---------- */

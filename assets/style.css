@@ -1349,3 +1349,32 @@ pre.colore .ln:not(.vide)::before { content: "›"; display: inline-block; width
 .quiz .score-grand { width: 100%; margin: 0; font-size: clamp(3rem, 2.4rem + 2.6vw, 4.5rem); font-style: italic; }
 @media (prefers-reduced-motion: reduce) { .quiz-barre span, .lettre { transition: none; } }
 @media print { .quiz-barre, .q-tampon { display: none; } }
+
+/* ===== Lot 40.6 : encadrés avec icône, tableaux éditoriaux ===== */
+.callout { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 3h10v18l-5-4-5 4z'/%3E%3C/svg%3E"); }
+.callout.astuce { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6M10 21h4'/%3E%3Cpath d='M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V17h5v-1.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z'/%3E%3C/svg%3E"); }
+.callout.attention { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3 2 20h20z'/%3E%3Cpath d='M12 10v4M12 17h.01'/%3E%3C/svg%3E"); }
+.callout.umons { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z'/%3E%3Ccircle cx='12' cy='10' r='2.3'/%3E%3C/svg%3E"); }
+.callout.source { --ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 5h6a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H3z'/%3E%3Cpath d='M21 5h-6a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h7z'/%3E%3C/svg%3E"); }
+:where(body:not(.livre)) .callout:not(.retenir) { position: relative; padding-left: 3.4rem; }
+:where(body:not(.livre)) .callout:not(.retenir)::after { content: ""; position: absolute; top: 1.05rem; left: 1.05rem; width: 24px; height: 24px; background: var(--c); -webkit-mask: var(--ico) center / contain no-repeat; mask: var(--ico) center / contain no-repeat; }
+:where(body:not(.livre)) .callout.astuce, :where(body:not(.livre)) .callout:not([class*=" "]) { border-left-width: 4px; }
+:where(body:not(.livre)) .callout.source, :where(body:not(.livre)) .callout.umons:not([data-titre]) { padding-left: 1.75rem; }
+:where(body:not(.livre)) .callout.source::after, :where(body:not(.livre)) .callout.umons:not([data-titre])::after { top: 0.15rem; left: 0; width: 18px; height: 18px; }
+:where(body:not(.livre)) .callout.umons[data-titre] { padding-left: 3.4rem; }
+@media (min-width: 75rem) {
+  .prose > .callout.en-marge { padding-left: calc(var(--s3) + 26px); }
+  :where(body:not(.livre)) .prose > .callout.en-marge::after { left: var(--s3); top: 0.1rem; width: 18px; height: 18px; }
+}
+/* Tableaux : en-tête en étiquettes Plex Mono sur filet épais, première colonne en Newsreader demi-gras */
+.table-wrap thead th { padding-top: 6px; padding-bottom: 9px; font-family: var(--font-code); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 2px solid var(--ink); }
+.table-wrap tbody td:first-child, .table-wrap tbody th { font-family: var(--font-text); font-size: 1.0625rem; font-weight: 600; line-height: 1.4; color: var(--ink); }
+.table-wrap tbody td:first-child code, .table-wrap tbody th code { font-size: 0.78em; }
+.table-wrap tbody tr:last-child td, .table-wrap tbody tr:last-child th { border-bottom: 1px solid var(--ink-pale); }
+@media (min-width: 64rem) {
+  .table-wrap tbody tr { transition: background 0.15s; }
+  .table-wrap tbody tr:hover { background: var(--accent-soft); }
+  .table-wrap.colle { overflow: visible; }
+  .table-wrap.colle thead th { position: sticky; top: var(--header-h); z-index: 2; background: var(--paper); box-shadow: inset 0 -2px 0 var(--ink); }
+}
+@media (prefers-reduced-motion: reduce) { .table-wrap tbody tr { transition: none; } }
