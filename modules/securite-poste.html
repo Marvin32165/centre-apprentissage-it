@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sécurité du poste — Modules · Apprentissage IT</title>
+<meta name="description" content="Sécurité du poste : reconnaître un hameçonnage, lire l'état de Microsoft Defender, quarantaine, mises à jour, compte compromis, clé USB inconnue et verrouillage.">
+<meta property="og:title" content="Sécurité du poste — Modules · Apprentissage IT">
+<meta property="og:description" content="Sécurité du poste : reconnaître un hameçonnage, lire l'état de Microsoft Defender, quarantaine, mises à jour, compte compromis, clé USB inconnue et verrouillage.">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>try{var t=localStorage.getItem('it.theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="../assets/data.js" defer></script>
+<script src="../assets/modules.js" defer></script>
+<script src="../assets/modules-quiz.js" defer></script>
+<script src="../assets/app.js" defer></script>
+<script src="../assets/modules-ui.js" defer></script>
+</head>
+<body data-root="../" data-nav="modules">
+<main id="contenu" class="wrap page">
+<div class="prose">
+<p class="kicker">Module · Sécurité</p>
+<h1>Sécurité <em>du poste</em></h1>
+<p class="lead">Au service desk, la sécurité commence au téléphone : un utilisateur qui a cliqué, un antivirus qui alerte, une clé trouvée dans un couloir. Ce module prolonge le jour 8 : reconnaître un hameçonnage, lire l'état de Microsoft Defender sans le désactiver, comprendre la quarantaine, faire passer les mises à jour, réagir à un compte compromis dans le bon ordre, et protéger les données du poste.</p>
+<div data-module-meta="securite-poste"></div>
+
+<h2 id="objectifs">À la fin de ce module, tu sauras</h2>
+<ul class="objectifs">
+  <li>repérer les signes d'un message d'hameçonnage et dire à l'utilisateur quoi faire ;</li>
+  <li>lire l'état de Microsoft Defender dans Sécurité Windows et avec <code>Get-MpComputerStatus</code> ;</li>
+  <li>expliquer la quarantaine et pourquoi on n'autorise pas un fichier « parce que l'utilisateur est sûr » ;</li>
+  <li>vérifier et faire installer les mises à jour de Windows, redémarrage compris ;</li>
+  <li>reconnaître les signes d'un compte de messagerie compromis et escalader sans perdre de temps ;</li>
+  <li>traiter une clé USB inconnue et rappeler le verrouillage du poste.</li>
+</ul>
+<aside class="callout umons"><p>La procédure de sécurité de la DSI (à qui signaler, par quel canal, y compris hors horaires), l'antivirus installé sur les postes et ce que le service desk a le droit de faire sur un compte : à vérifier sur place avec ton tuteur. Ce module décrit les outils intégrés à Windows et les recommandations des éditeurs ; la procédure de la maison passe avant.</p></aside>
+
+<span class="phase">Je montre</span>
+<h2 id="hameconnage">1. Reconnaître un hameçonnage</h2>
+<p>Un message d'hameçonnage (<em>phishing</em>) cherche à faire cliquer, saisir un mot de passe ou ouvrir une pièce jointe. Microsoft liste des signes qui doivent alerter :</p>
+<ul>
+  <li>un <strong>lien</strong> dont l'adresse réelle ne correspond pas au texte affiché, ou qui mène vers un site sans rapport avec l'expéditeur (survole le lien sans cliquer) ;</li>
+  <li>une <strong>demande d'informations personnelles</strong> ou financières : les communications officielles n'en demandent généralement pas par courriel ;</li>
+  <li>une <strong>adresse d'expéditeur</strong> presque juste (chiffres ajoutés, lettres changées), ou qui ne correspond pas à la signature ;</li>
+  <li>un message <strong>inattendu</strong>, venant de quelqu'un avec qui on échange rarement ;</li>
+  <li>une demande d'<strong>activer des macros</strong>, de modifier des réglages de sécurité ou d'installer une application ;</li>
+  <li>des <strong>fautes</strong>, de nombreux destinataires pris au hasard, une formule d'appel qui ne te nomme pas correctement ;</li>
+  <li>une page de connexion <strong>presque familière</strong> (logo ancien, faute, informations demandées en plus).</li>
+</ul>
+<p>Le bon réflexe, en cas de doute : <strong>vérifier par un canal connu</strong> (le numéro habituel, pas celui du message) et <strong>signaler</strong>. Microsoft demande aux organisations d'apprendre aux employés à signaler la menace tout de suite à l'équipe de sécurité. Au service desk, si l'utilisateur a déjà cliqué ou saisi son mot de passe, ce n'est plus un simple message douteux : c'est un incident de sécurité (<a href="#compromis">§4</a>).</p>
+<aside class="callout attention"><p>Ne transfère pas le message suspect à tes collègues « pour avis » et ne clique pas sur le lien pour « voir » : suis le canal de signalement de la DSI.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/defender-endpoint/malware/phishing">How to protect against phishing attacks</a> (signes d'un hameçonnage, signalement à l'équipe des opérations de sécurité, vérification par des canaux connus).</p></aside>
+
+<h2 id="defender">2. Microsoft Defender et Sécurité Windows</h2>
+<p>L'application <strong>Sécurité Windows</strong> regroupe Microsoft Defender Antivirus, le pare-feu Windows et <em>Smart App Control</em>, qui assurent une protection en temps réel. Ce que tu dois savoir y lire :</p>
+<ul>
+  <li><strong>Protection contre les virus et les menaces</strong> : l'état de l'antivirus et l'<strong>Analyse rapide</strong>, que Microsoft conseille de lancer tout de suite si l'on soupçonne un programme malveillant.</li>
+  <li><strong>Historique de la protection</strong> : les actions de Defender (menaces bloquées, mises en quarantaine, applications indésirables retirées, services importants désactivés). Il ne garde les événements que <strong>deux semaines</strong>.</li>
+</ul>
+<h3>La quarantaine</h3>
+<p>Un élément <strong>mis en quarantaine</strong> est bloqué mais pas encore supprimé ; il ne devrait plus présenter de risque. Deux actions sont possibles : <strong>Supprimer</strong>, ou <strong>Restaurer</strong> (le fichier revient, Defender le détecte de nouveau et crée un nouvel élément « Menace trouvée - action nécessaire »). Pour une menace qui attend une décision, <strong>Autoriser sur l'appareil</strong> laisse passer le fichier : Microsoft prévient que, s'il s'agissait bien d'une menace, les données et l'appareil sont alors exposés, et que <strong>dans le doute, il vaut mieux la quarantaine</strong>.</p>
+<h3>Lire l'état en PowerShell</h3>
+<p><code>Get-MpComputerStatus</code> affiche l'état de l'antivirus. Les lignes utiles au support :</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Propriété</th><th>Ce qu'elle dit</th></tr></thead>
+<tbody>
+<tr><td><code>AMRunningMode</code></td><td><strong>Normal</strong> : Defender est l'antivirus actif. <strong>Passive mode</strong> : il tourne, mais un autre produit est l'antivirus principal (cas des postes inscrits à Defender for Endpoint).</td></tr>
+<tr><td><code>AntivirusEnabled</code>, <code>RealTimeProtectionEnabled</code></td><td>Antivirus et protection en temps réel activés (<code>True</code>) ou non.</td></tr>
+<tr><td><code>AntivirusSignatureLastUpdated</code></td><td>Date de la dernière mise à jour des définitions.</td></tr>
+<tr><td><code>QuickScanEndTime</code></td><td>Fin de la dernière analyse rapide.</td></tr>
+</tbody></table></div>
+<p>Sur les postes gérés, la <strong>protection contre les falsifications</strong> (<em>tamper protection</em>) empêche de modifier ces réglages : la protection en temps réel, la protection cloud et les mises à jour de sécurité restent actives. Au service desk, on <strong>ne désactive pas l'antivirus</strong> pour « faire passer » une installation : on escalade.</p>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/fr-fr/windows/stay-protected-with-the-windows-security-app-2ae0363d-0ada-c064-8b56-6a39afb6a963">Rester protégé avec Sécurité Windows</a> (analyse rapide), <a href="https://support.microsoft.com/fr-fr/windows/protection-history-f1e5fd95-09b4-46d1-b8c7-1059a1e09708">Historique de la protection</a> (deux semaines, quarantaine, Autoriser sur l'appareil) ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/powershell/module/defender/get-mpcomputerstatus">Get-MpComputerStatus</a>, <a href="https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-antivirus-windows">Microsoft Defender Antivirus in Windows</a> (<code>AMRunningMode</code>), <a href="https://learn.microsoft.com/en-us/defender-endpoint/tamper-protection-overview">Tamper protection</a>.</p></aside>
+
+<h2 id="mises-a-jour">3. Mises à jour et redémarrages</h2>
+<p>Pour installer les mises à jour (Windows 11) : <strong>Démarrer → Paramètres → Windows Update → Rechercher des mises à jour Windows</strong>, puis <strong>Télécharger &amp; installer</strong> si des mises à jour sont proposées ; <strong>redémarrer</strong> quand Windows le demande, pour appliquer les mises à jour. Tant qu'un poste n'a pas redémarré, les mises à jour qui demandent un redémarrage ne sont pas appliquées : un poste qui « n'a pas redémarré depuis des semaines » se vérifie dans Windows Update.</p>
+<p>Windows 10 n'est plus pris en charge depuis le <strong>14 octobre 2025</strong> : Microsoft ne fournit plus de mises à jour gratuites par Windows Update. Un poste encore sous Windows 10 se signale selon la procédure (remplacement, mise à niveau ou programme de mises à jour étendues : à vérifier sur place).</p>
+<aside class="callout astuce"><p>Avec l'utilisateur : propose un créneau (pause de midi, fin de journée) plutôt qu'un redémarrage immédiat, et note dans le ticket si le poste a été redémarré et quelle mise à jour restait en attente.</p></aside>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/fr-fr/windows/install-windows-updates-3c5ae7fc-9fb6-9af1-1984-b5e0412c556a">Installer les mises à jour Windows</a> (chemin, redémarrage, fin de prise en charge de Windows 10 le 14 octobre 2025).</p></aside>
+
+<h2 id="compromis">4. Compte compromis : que faire, dans quel ordre</h2>
+<p>Microsoft liste les signes qui doivent faire penser qu'un compte de messagerie Microsoft 365 est compromis :</p>
+<ul>
+  <li>la boîte est <strong>bloquée à l'envoi</strong> ; des messages ont disparu ou ont été supprimés ;</li>
+  <li>des <strong>règles de boîte de réception</strong> suspectes : transfert automatique vers des adresses inconnues, déplacement vers Notes, Courrier indésirable ou Flux RSS ;</li>
+  <li>des messages suspects dans <strong>Éléments envoyés</strong> ou <strong>Éléments supprimés</strong> ;</li>
+  <li>des <strong>changements de mot de passe</strong> fréquents ou des <strong>verrouillages</strong> inexpliqués ; un <strong>transfert externe</strong> récemment ajouté ; une signature de message suspecte (fausse signature bancaire, par exemple).</li>
+</ul>
+<p>La reprise du compte est un travail d'administrateur : Microsoft recommande de <strong>désactiver le compte</strong> pendant l'enquête ou, à défaut, de <strong>réinitialiser le mot de passe</strong>, sans jamais envoyer le nouveau mot de passe par courriel (l'attaquant lit peut-être la boîte), puis de nettoyer règles, transferts et mots de passe d'application. Ta part, au service desk :</p>
+<ol>
+  <li><strong>Prendre au sérieux</strong> : l'utilisateur a saisi son mot de passe sur une page douteuse, ou un signe ci-dessus apparaît.</li>
+  <li><strong>Signaler tout de suite</strong> selon la procédure de sécurité, en priorité haute ; ne pas attendre la fin de l'appel pour prévenir.</li>
+  <li><strong>Noter les faits</strong> dans le ticket : heure du clic, message reçu (sans le transférer), ce que l'utilisateur a saisi, symptômes.</li>
+  <li><strong>Suivre la procédure</strong> pour le mot de passe : il est changé selon la procédure de la DSI, et le nouveau est transmis par un canal sûr, jamais par courriel (l'attaquant a peut-être accès à la boîte).</li>
+  <li><strong>Ne rien effacer</strong> : messages, règles et journaux sont des indices pour l'équipe de sécurité.</li>
+</ol>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/defender-office-365/responding-to-a-compromised-email-account">Responding to a compromised email account</a> (signes, désactivation du compte, réinitialisation du mot de passe, « ne pas envoyer le nouveau mot de passe par courriel »). Réflexes de la prépa : <a href="../stage/j8.html#securite">jour 8, incident de sécurité</a>.</p></aside>
+
+<h2 id="usb">5. Clé USB inconnue</h2>
+<p>Une clé USB peut transporter un programme malveillant qui infecte l'ordinateur sur lequel on la branche ; elle se perd et se vole aussi très facilement. La CISA (agence américaine de cybersécurité) est claire :</p>
+<ul>
+  <li><strong>ne pas brancher une clé inconnue</strong> sur son ordinateur ;</li>
+  <li>une clé <strong>trouvée</strong> se remet aux personnes désignées (service de sécurité du lieu, service informatique), sans la brancher pour voir son contenu ou retrouver son propriétaire ;</li>
+  <li><strong>l'exécution automatique</strong> (<em>AutoRun</em>) des supports amovibles doit être désactivée, pour qu'un code malveillant ne s'ouvre pas tout seul.</li>
+</ul>
+<aside class="callout source"><p>CISA : <a href="https://www.cisa.gov/news-events/news/using-caution-usb-drives">Using Caution with USB Drives</a> (page archivée, publiée le 1er février 2021).</p></aside>
+
+<h2 id="verrouillage">6. Données du poste et verrouillage</h2>
+<p>Un poste ouvert sans surveillance donne accès à la messagerie, aux partages et aux applications de son utilisateur. Le raccourci <kbd>Windows</kbd> + <kbd>L</kbd> <strong>verrouille le PC</strong> immédiatement. Au service desk, montre l'exemple : verrouille ton poste dès que tu le quittes, et ne laisse pas ouvert celui d'un utilisateur après une intervention sur place.</p>
+<p>Les sorties de commandes, captures et journaux contiennent des identifiants et des informations réseau : on ne les copie que dans le ticket. La classification des données de l'université (ce qui est sensible, où on a le droit de le stocker) est à vérifier sur place.</p>
+<aside class="callout source"><p>Microsoft Support : <a href="https://support.microsoft.com/en-us/windows/keyboard-shortcuts-in-windows-dcc61a57-8ff0-cffe-9796-cb9706c75eec">Keyboard shortcuts in Windows</a> (<kbd>Windows</kbd> + <kbd>L</kbd> : verrouiller le PC).</p></aside>
+
+<span class="phase">On fait ensemble</span>
+<h2 id="labo">Labo : l'état de sécurité de ton PC, en lecture</h2>
+<p>Sur ton propre PC Windows, sans machine virtuelle. Tout est en lecture, sauf l'analyse rapide, qui ne modifie rien si elle ne trouve rien.</p>
+<ol>
+  <li>Ouvre <strong>Sécurité Windows</strong> (menu Démarrer), puis <strong>Protection contre les virus et les menaces</strong>. Note ce qui est affiché : antivirus utilisé, date de la dernière analyse, état des mises à jour de la protection.</li>
+  <li>Ouvre <strong>Historique de la protection</strong>. Y a-t-il des événements ? De quand datent-ils ?</li>
+  <li>Ouvre PowerShell et lance :
+<pre data-copy><code>Get-MpComputerStatus | Select-Object AMRunningMode, AntivirusEnabled, RealTimeProtectionEnabled, AntivirusSignatureLastUpdated, QuickScanEndTime</code></pre>
+  Compare avec ce que montre l'application.</li>
+  <li>Lance une <strong>Analyse rapide</strong> depuis Sécurité Windows (ou <code>Start-MpScan -ScanType QuickScan</code>), puis relance la commande de l'étape 3 : qu'est-ce qui a changé ?</li>
+  <li>Ouvre <strong>Paramètres → Windows Update</strong> (Windows 11) : y a-t-il des mises à jour en attente ou un redémarrage demandé ?</li>
+  <li>Appuie sur <kbd>Windows</kbd> + <kbd>L</kbd>, puis rouvre ta session.</li>
+</ol>
+<details class="correction"><summary>Voir ce que tu dois constater</summary>
+<ul>
+  <li>Avec Defender comme antivirus : <code>AMRunningMode</code> vaut <code>Normal</code>, <code>AntivirusEnabled</code> et <code>RealTimeProtectionEnabled</code> valent <code>True</code>, et <code>AntivirusSignatureLastUpdated</code> est récent. Si un autre antivirus est installé, Sécurité Windows l'affiche et l'état de Defender diffère : c'est normal, ne « répare » rien.</li>
+  <li>L'historique de protection ne remonte pas au-delà de deux semaines ; il est souvent vide sur un PC sain.</li>
+  <li>Après l'analyse rapide, <code>QuickScanEndTime</code> affiche l'heure de fin de l'analyse que tu viens de lancer.</li>
+  <li><kbd>Windows</kbd> + <kbd>L</kbd> affiche l'écran de verrouillage ; ta session et tes fenêtres restent ouvertes derrière.</li>
+  <li>Ce que tu ne fais pas : désactiver la protection en temps réel, autoriser un élément en quarantaine, modifier les exclusions.</li>
+</ul>
+</details>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/powershell/module/defender/get-mpcomputerstatus">Get-MpComputerStatus</a>, <a href="https://learn.microsoft.com/en-us/powershell/module/defender/start-mpscan">Start-MpScan</a> (<code>-ScanType QuickScan</code>), <a href="https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-antivirus-windows">Microsoft Defender Antivirus in Windows</a> (<code>AMRunningMode</code>, fournisseur affiché dans Sécurité Windows).</p></aside>
+
+<span class="phase">Tu fais seul</span>
+<h2 id="cas">Mises en situation</h2>
+<h3>1. « J'ai mis mon mot de passe sur la page du lien »</h3>
+<p>Une utilisatrice a reçu un courriel « Votre boîte aux lettres est pleine, validez votre compte » ; elle a cliqué et saisi son identifiant et son mot de passe il y a vingt minutes. Que fais-tu, dans quel ordre ?</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>C'est un incident de sécurité, pas une simple question : 1) signaler immédiatement selon la procédure (priorité haute) ; 2) noter les faits (heure du clic, ce qui a été saisi, le message, sans le transférer à d'autres) ; 3) le mot de passe se change selon la procédure, et le nouveau ne s'envoie jamais par courriel ; 4) noter dans le ticket si elle a reçu des demandes d'authentification multifacteur qu'elle n'a pas faites : les administrateurs passent en revue les méthodes MFA inscrites sur le compte ; 5) ne rien supprimer. La reprise du compte (désactivation, règles, transferts) est faite par les administrateurs (<a href="#compromis">§4</a>).</p>
+</details>
+<h3>2. « Defender a bloqué mon fichier, autorisez-le »</h3>
+<p>Un utilisateur te dit qu'un fichier reçu d'un partenaire a été mis en quarantaine. Il est « sûr à 100 % » et te demande de l'autoriser.</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>On ne l'autorise pas sur sa parole : Microsoft conseille la quarantaine en cas de doute, et « Autoriser sur l'appareil » expose les données si c'était une vraie menace. Tu notes le nom du fichier, la menace affichée et l'heure dans le ticket, et tu escalades à l'équipe de sécurité, qui décide. Pendant ce temps, l'utilisateur peut demander à l'expéditeur un autre moyen d'envoi prévu par la procédure.</p>
+</details>
+<h3>3. La clé dans l'auditoire</h3>
+<p>Un enseignant t'apporte une clé USB trouvée dans un auditoire : « Branchez-la pour voir à qui elle est. »</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Tu ne la branches pas, ni sur ton poste ni sur le sien (CISA). Tu la remets au service désigné par la procédure (sécurité ou objets trouvés : à vérifier sur place) et tu notes la remise dans un ticket.</p>
+</details>
+<h3>4. Trois semaines sans redémarrer</h3>
+<p>Un poste remonte des mises à jour en attente depuis trois semaines. L'utilisatrice refuse de redémarrer : « J'ai trop de fenêtres ouvertes. »</p>
+<details class="correction"><summary>Voir la correction</summary>
+<p>Explique simplement que les mises à jour ne s'appliquent qu'après le redémarrage et qu'elles corrigent des failles. Propose un créneau précis (midi, fin de journée), vérifie ensuite dans Windows Update qu'il ne reste rien en attente, et note le tout dans le ticket. Si le poste est encore sous Windows 10, signale-le aussi (<a href="#mises-a-jour">§3</a>).</p>
+</details>
+<aside class="callout source"><p>Corrections fondées sur les sources des sections : <a href="https://learn.microsoft.com/en-us/defender-office-365/responding-to-a-compromised-email-account">compte compromis</a> (Microsoft Learn), <a href="https://support.microsoft.com/fr-fr/windows/protection-history-f1e5fd95-09b4-46d1-b8c7-1059a1e09708">historique de protection</a> (Microsoft Support), <a href="https://www.cisa.gov/news-events/news/using-caution-usb-drives">clés USB</a> (CISA), <a href="https://support.microsoft.com/fr-fr/windows/install-windows-updates-3c5ae7fc-9fb6-9af1-1984-b5e0412c556a">mises à jour</a> (Microsoft Support).</p></aside>
+
+<h2 id="quiz">Quiz</h2>
+<div data-quiz="module-securite-poste"></div>
+
+<h2 id="memo">Fiche mémo</h2>
+<div class="bloc">
+<ul>
+  <li><strong>Hameçonnage</strong> : lien qui ne mène pas où il dit, demande d'informations, expéditeur presque juste, message inattendu, macros à activer → vérifier par un canal connu, signaler à la sécurité.</li>
+  <li><strong>Defender</strong> : Sécurité Windows → Protection contre les virus et les menaces (Analyse rapide) ; Historique de la protection (deux semaines) ; <code>Get-MpComputerStatus</code> (<code>AMRunningMode</code>, <code>RealTimeProtectionEnabled</code>, <code>AntivirusSignatureLastUpdated</code>).</li>
+  <li><strong>Quarantaine</strong> : bloqué, pas supprimé ; dans le doute on laisse en quarantaine ; jamais « Autoriser » sur la parole de l'utilisateur ; ne jamais désactiver l'antivirus.</li>
+  <li><strong>Mises à jour</strong> : Paramètres → Windows Update → Rechercher, installer, redémarrer ; Windows 10 sans mises à jour gratuites depuis le 14/10/2025.</li>
+  <li><strong>Compte compromis</strong> : règles de transfert inconnues, envois suspects, verrouillages → signaler tout de suite, noter, mot de passe par un canal sûr (jamais par courriel), ne rien effacer.</li>
+  <li><strong>Clé USB inconnue</strong> : ne pas brancher, remettre au service désigné. <strong>Poste</strong> : <kbd>Windows</kbd> + <kbd>L</kbd> dès qu'on le quitte.</li>
+</ul>
+</div>
+<aside class="callout umons" data-titre="Questions pour ton tuteur — à vérifier sur place">
+<ul>
+  <li>À qui signale-t-on un clic sur un hameçonnage ou un compte compromis, et comment, y compris hors horaires ?</li>
+  <li>Quel antivirus est installé sur les postes, et qui peut décider d'autoriser un élément en quarantaine ?</li>
+  <li>Le service desk peut-il réinitialiser un mot de passe Microsoft 365, et comment transmet-on le nouveau ?</li>
+  <li>Que fait-on d'une clé USB trouvée, et reste-t-il des postes sous Windows 10 ?</li>
+</ul>
+</aside>
+
+<p><label class="done"><input type="checkbox" data-done="module-securite-poste"> Module terminé</label></p>
+<div data-module-suite="securite-poste"></div>
+</div>
+</main>
+</body>
+</html>

@@ -232,3 +232,66 @@ window.IT_QUIZZES["module-sous-reseaux"] = { titre: "Quiz : sous-réseaux et pla
     options: ["100.64.0.0/10", "169.254.0.0/16", "172.16.0.0/12", "127.0.0.0/8"], reponse: 2,
     explication: "Les plages privées sont 10.0.0.0/8, 172.16.0.0/12 et 192.168.0.0/16. 100.64/10 est l'espace partagé, 169.254/16 le lien local, 127/8 la boucle locale." }
 ]};
+
+window.IT_QUIZZES["module-securite-poste"] = { titre: "Quiz : sécurité du poste", questions: [
+  { q: "Un courriel demande de « valider ton compte » ; le texte du lien affiche le site de l'université, mais l'adresse réelle mène ailleurs. Que conclure ?",
+    options: ["Rien : c'est courant", "C'est un signe d'hameçonnage : on ne clique pas et on signale", "Il suffit de vérifier l'orthographe", "On clique pour voir si la page ressemble au vrai site"], reponse: 1,
+    explication: "Microsoft cite en premier signe un lien dont la destination réelle ne correspond pas à l'adresse affichée. On vérifie par un canal connu et on signale à l'équipe de sécurité (Microsoft Learn, How to protect against phishing attacks)." },
+  { q: "Dans l'historique de protection, un fichier est « mis en quarantaine ». Qu'est-ce que cela veut dire ?",
+    options: ["Il a été supprimé définitivement", "Il a été envoyé à Microsoft", "Il est bloqué mais pas encore supprimé ; on peut le supprimer ou le restaurer", "Il est autorisé jusqu'au redémarrage"], reponse: 2,
+    explication: "Une menace mise en quarantaine est bloquée, pas encore supprimée, et ne devrait plus présenter de risque ; les actions possibles sont Supprimer ou Restaurer (Microsoft Support, Historique de protection)." },
+  { q: "Un utilisateur « sûr à 100 % » te demande d'autoriser un fichier bloqué par Defender. Que fais-tu ?",
+    options: ["Je choisis « Autoriser sur l'appareil »", "Je désactive la protection en temps réel quelques minutes", "Je laisse en quarantaine, je note tout dans le ticket et j'escalade à la sécurité", "Je lui dis de le renommer"], reponse: 2,
+    explication: "Microsoft conseille la quarantaine en cas de doute : « Autoriser sur l'appareil » expose les données si c'était une vraie menace. La décision revient à l'équipe de sécurité, et on ne désactive pas l'antivirus." },
+  { q: "Dans la sortie de Get-MpComputerStatus, AMRunningMode vaut « Passive mode ». Qu'est-ce que cela signifie ?",
+    options: ["Defender tourne, mais un autre produit est l'antivirus principal", "Defender est désactivé par un virus", "Les définitions sont périmées", "Le poste n'a jamais été analysé"], reponse: 0,
+    explication: "Normal : Defender est l'antivirus actif. Passive mode : Defender tourne mais n'est pas l'antivirus principal, sur un poste inscrit à Defender for Endpoint (Microsoft Learn, Microsoft Defender Antivirus in Windows)." },
+  { q: "Une utilisatrice a saisi son mot de passe sur une page douteuse il y a vingt minutes. Quelle est ta première action ?",
+    options: ["Lui envoyer un nouveau mot de passe par courriel", "Signaler tout de suite l'incident selon la procédure de sécurité", "Attendre de voir si des courriels bizarres partent", "Supprimer le message reçu pour qu'elle ne clique plus"], reponse: 1,
+    explication: "C'est un incident de sécurité : on signale immédiatement. Microsoft rappelle de ne jamais envoyer le nouveau mot de passe par courriel, car l'attaquant peut avoir accès à la boîte (Microsoft Learn, Responding to a compromised email account). On ne supprime rien : l'équipe de sécurité examinera les messages envoyés et les journaux." },
+  { q: "On t'apporte une clé USB trouvée dans un auditoire. Que recommande la CISA ?",
+    options: ["La brancher sur un poste isolé pour trouver le propriétaire", "La formater avant de la rendre", "Ne pas la brancher et la remettre au service désigné (sécurité ou informatique)", "La brancher si l'antivirus est à jour"], reponse: 2,
+    explication: "La CISA demande de ne pas brancher une clé inconnue et de remettre une clé trouvée aux personnes désignées, sans la brancher pour voir son contenu ou identifier son propriétaire (CISA, Using Caution with USB Drives)." }
+] };
+
+window.IT_QUIZZES["module-deploiement-postes"] = { titre: "Quiz : déploiement et gestion des postes", questions: [
+  { q: "Dans dsregcmd /status, un poste affiche AzureAdJoined : YES, EnterpriseJoined : NO, DomainJoined : YES. Quel est son état ?",
+    options: ["Joint au domaine seulement", "Joint à Microsoft Entra seulement", "Inscrit à Microsoft Entra (Workplace Joined)", "Joint hybride : domaine et Microsoft Entra"], reponse: 3,
+    explication: "YES / NO / YES correspond à « Microsoft Entra hybrid joined » dans le tableau de Microsoft (Troubleshoot devices by using the dsregcmd command)." },
+  { q: "Selon Microsoft, qu'est-ce qui distingue Windows Autopilot d'un déploiement traditionnel par image ?",
+    options: ["Il part de la version de Windows installée par le constructeur et la transforme, sans image à maintenir", "Il impose de réinstaller Windows depuis une clé USB", "Il ne fonctionne qu'avec Windows Famille", "Il remplace l'inventaire"], reponse: 0,
+    explication: "Autopilot utilise la version de Windows préinstallée par le constructeur et la transforme en poste d'entreprise (réglages, applications, édition), au lieu de réimager (Overview of Windows Autopilot)." },
+  { q: "Dans la classification de Microsoft, le scénario « refresh » (effacer et recharger) consiste à…",
+    options: ["Mettre Windows à jour sans rien effacer", "Sauvegarder l'état de l'utilisateur, effacer le disque, réinstaller, puis restaurer cet état", "Transférer l'utilisateur sur un nouveau PC", "Activer l'édition Entreprise par abonnement"], reponse: 1,
+    explication: "Refresh, ou « wipe and load » : on redéploie un appareil en sauvegardant l'état de l'utilisateur, en effaçant le disque puis en restaurant cet état (Windows deployment scenarios). Le transfert vers un nouveau PC, c'est « replace »." },
+  { q: "Que fait l'action « Wipe » de Microsoft Intune ?",
+    options: ["Elle supprime seulement les applications de l'entreprise", "Elle verrouille l'écran à distance", "Elle remet l'appareil aux paramètres d'usine en supprimant toutes les données, applications et configurations", "Elle met à jour Windows"], reponse: 2,
+    explication: "Wipe réinitialise l'appareil aux paramètres d'usine et supprime toutes les données personnelles et professionnelles, les applications et les configurations (Wipe devices with Microsoft Intune) : jamais sans procédure ni sauvegarde vérifiée." },
+  { q: "Quelle commande donne le numéro de série d'un poste pour l'inventaire ?",
+    options: ["ipconfig /all", "Get-CimInstance Win32_BIOS | Select-Object SerialNumber", "whoami /groups", "dsregcmd /status"], reponse: 1,
+    explication: "La classe Win32_BIOS expose la propriété SerialNumber ; le modèle et le fabricant sont dans Win32_ComputerSystem (Microsoft Learn)." },
+  { q: "Un poste doit être recyclé. Supprimer les fichiers de l'utilisateur et vider la corbeille suffit-il ?",
+    options: ["Oui, si la corbeille est vide", "Oui, après un redémarrage", "Non : il faut assainir le support selon la procédure, avec une technique adaptée à la sensibilité des données", "Non, il faut seulement retirer le compte de l'utilisateur"], reponse: 2,
+    explication: "Le NIST (SP 800-88 Rev. 2) définit l'assainissement comme rendre l'accès aux données infaisable pour un niveau d'effort donné, avec une technique choisie selon la sensibilité des informations ; une simple suppression ne le garantit pas." }
+] };
+
+window.IT_QUIZZES["module-linux-support"] = { titre: "Quiz : bases de Linux pour le support", questions: [
+  { q: "À la première connexion SSH à un serveur, le client affiche une empreinte et demande « yes/no ». Que se passe-t-il si tu réponds yes ?",
+    options: ["Le mot de passe est enregistré", "Le serveur est ajouté à la liste des hôtes connus de ton poste", "La connexion devient non chiffrée", "Le serveur redémarre"], reponse: 1,
+    explication: "Répondre yes ajoute le serveur à la liste des hôtes SSH connus du client Windows (Microsoft Learn, Get started with OpenSSH for Windows) ; avant, on compare l'empreinte avec celle donnée par l'équipe du serveur (ssh(1), Debian, section VERIFYING HOST KEYS)." },
+  { q: "Quelle commande affiche seulement les 50 derniers messages du service ssh depuis le démarrage en cours ?",
+    options: ["journalctl -u ssh.service -b -n 50", "systemctl restart ssh.service", "cat /var/log -n 50", "ls -l ssh.service"], reponse: 0,
+    explication: "-u filtre sur une unité, -b sur le démarrage en cours, -n limite aux entrées les plus récentes (journalctl(1), Debian)." },
+  { q: "systemctl status affiche « Active: failed ». Que fais-tu au service desk ?",
+    options: ["sudo systemctl restart, puis je ferme le ticket", "Je supprime les journaux pour faire de la place", "Je note l'état, l'heure et les dernières lignes du journal, et je transmets à l'équipe du serveur", "Rien : c'est normal"], reponse: 2,
+    explication: "systemctl status montre l'état et les dernières lignes du journal ; démarrer ou redémarrer un service change le serveur pour tous : on lit et on transmet (systemctl(1), Debian)." },
+  { q: "Que signifie la ligne -rw-r----- au début d'une sortie de ls -l ?",
+    options: ["Un répertoire que tout le monde peut modifier", "Un fichier ordinaire : le propriétaire lit et écrit, le groupe lit, les autres n'ont aucun droit", "Un lien symbolique exécutable", "Un fichier caché"], reponse: 1,
+    explication: "Premier caractère : type (- fichier ordinaire) ; puis trois groupes rwx pour le propriétaire, le groupe et les autres (POSIX ls ; chmod(1), Debian)." },
+  { q: "df -h indique 98 % pour /srv. Qu'est-ce que cela veut dire ?",
+    options: ["Le processeur est chargé à 98 %", "Le réseau perd 98 % des paquets", "Le système de fichiers monté sur /srv est presque plein", "La mémoire vive est presque pleine"], reponse: 2,
+    explication: "df affiche l'espace utilisé et disponible par système de fichiers ; -h en tailles lisibles (df(1), Debian)." },
+  { q: "Pourquoi ne lance-t-on pas une commande avec sudo « pour aller plus vite » ?",
+    options: ["Parce que sudo est payant", "Parce que sudo exécute la commande en tant que root (ou un autre utilisateur), avec des effets sur tout le système", "Parce que sudo efface l'historique", "Parce que sudo ne marche qu'en SSH"], reponse: 1,
+    explication: "sudo permet à un utilisateur autorisé d'exécuter une commande en tant que superutilisateur ou autre utilisateur, selon la politique de sécurité (sudo(8), Debian) : jamais sans procédure." }
+] };
