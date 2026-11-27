@@ -194,6 +194,20 @@ Les tests en situation (`docs/procedures/test-chef.md`) coûtent cher : un seul 
 
 **Nouveau calendrier (25/11)** : une semaine, du lundi 30/11 au dimanche 6/12, week-end compris (lot 27), qui remplace le paragraphe suivant. **Changement de rythme (24/11)** : à partir du mercredi 25/11, séances de 3 à 4 h par jour en semaine seulement. Le lot 26 fixe le calendrier des huit séances et précise le programme des deux séances doubles.
 
+## Lot 40 — Refonte graphique poussée (« Poste de garde », édition illustrée)
+Demande de Marvin (27/11) : une **énorme** amélioration graphique, bien au-delà des retouches. Les couleurs, les polices, l'accessibilité et le mouvement réduit d'`AGENTS.md` restent la règle ; tout le reste peut changer franchement : matière, composition, illustration, ornements, mise en scène. Chaque étape ajoute sa section à `docs/REFONTE.md` (§ 6) et son CSS dans une section délimitée « Lot 40.N » de `assets/style.css`. Vérification visuelle 390 px sombre et 1280 px clair, `npm run controles`, fusion après chaque étape.
+- [x] 40.1 Matière : grain de papier très léger (filtre SVG en `data:`), filets doubles et ornements typographiques (✣, fleurons) entre les grandes parties ; bandeaux de phase « Je montre / On fait ensemble / Tu fais seul » en pleine largeur avec chiffre romain.
+  Fait : grain SVG en `data:` (clair et sombre), bandes de phase I-II-III à filet double, ornement ✣ avant quiz et mémo.
+- [x] 40.2 En-têtes illustrés : chaque page de jour et chaque module reçoit un bandeau d'en-tête gravé (grand numéro en relief, pictogramme agrandi en trait gravé, hachures), généré en CSS + SVG inline par `app.js` depuis les données (pas d'image).
+  Fait : bandeau SVG (`initCours`) avec numéro gravé, filets placés après la largeur réelle du numéro, médaillon hachuré et pictogramme.
+- [x] 40.3 Titres de section : numéro « §N » suspendu dans la marge sur ordinateur, en grand italique rouille ; lettrine rouille sur le premier paragraphe de chaque page de cours.
+  Fait : « §N » en grand italique rouille au-dessus du titre ; lettrine seulement si le chapeau commence par une lettre (classe `lettrine`). Justifié : pas suspendu dans la marge, la gouttière entre la navigation et le texte ne fait que 40 px sur ordinateur.
+- [ ] 40.4 Code : coloration syntaxique sobre (commandes, paramètres, chaînes, commentaires, variables) pour PowerShell et l'invite de commandes, dans la palette, sans dépendance.
+- [ ] 40.5 Quiz redessiné : une carte par question, lettres A à D en pastilles, barre de progression des réponses, verdicts illustrés.
+- [ ] 40.6 Encadrés avec icône (retenir, attention, astuce, source, UMONS) et tableaux plus éditoriaux (en-tête collant sur ordinateur, première colonne affirmée).
+- [ ] 40.7 Accueil : grande illustration gravée du poste de garde (casque, écran, ticket) dans l'en-tête, rubriques en grandes cartes illustrées ; pied de page sombre en colophon (plan du site en colonnes, tampon agrandi).
+- [ ] 40.8 Passe finale : cohérence de toutes les pages (index des modules, thèmes, prépa, outils, révision, tickets), captures avant/après dans `docs/captures/lot-40/`, contrôles, fusion.
+
 ## Lots 34 à 39 — Après la prépa : glossaire et modules pour la suite du stage
 Rédigé le 26/11/2026, à la demande de Marvin. But : accompagner la deuxième période du stage (janvier à février 2027 : maintenance avec le pôle opération, projets avec les experts N4) et les questions du quotidien. Chaque module suit `docs/procedures/nouveau-module.md` (sous-étapes N.1 page, N.2 données, N.3 relecture croisée puis test en situation, N.4 contrôles et fusion) ; labos **sans machine virtuelle** ; rien sur l'UMONS sans « à vérifier sur place ».
 

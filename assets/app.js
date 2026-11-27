@@ -46,6 +46,12 @@
     linux: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M12 15h5"/>',
     virtualisation: '<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
     cloud: '<path d="M7 18a4 4 0 0 1-.6-8 6 6 0 0 1 11.5 1.5A3.5 3.5 0 0 1 17.5 18z"/>',
+    telephone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+    ticket: '<path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4z"/><path d="M14 5v2M14 11v2M14 17v2"/>',
+    fenetre: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/>',
+    courriel: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+    ecran: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="M9 10l2 2 4-4"/>',
+    revision: '<path d="M9 5h10M9 12h10M9 19h10"/><path d="M4 5l1.2 1.2L7 4.5M4 12l1.2 1.2L7 11.5M4 19l1.2 1.2L7 18.5"/>',
     print: '<path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-2M6 14h12v7H6z"/>',
     download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
     upload: '<path d="M12 20V9M7 14l5-5 5 5M5 4h14"/>'
@@ -412,6 +418,57 @@
     });
   }
 
+  /* ---------- Lot 40 : pages de cours illustrées (bandeau gravé, phases, ornements) ---------- */
+  var ROMAINS = { "je montre": "I", "on fait ensemble": "II", "tu fais seul": "III" };
+  var PICTO_JOUR = { 1: "stage", 2: "telephone", 3: "ticket", 4: "fenetre", 5: "reseau", 6: "windows", 7: "courriel", 8: "ecran", 9: "materiel", 10: "revision" };
+  function initCours() {
+    var main = document.querySelector("main"), prose = main && main.querySelector(".prose");
+    if (!prose) return;
+    var mj = /stage\/j(\d+)\.html$/.exec(location.pathname), meta = document.querySelector("[data-module-meta]");
+    var num = null, nom = null, legende = "";
+    if (mj) { num = (+mj[1] < 10 ? "0" : "") + mj[1]; nom = PICTO_JOUR[+mj[1]]; legende = "Jour"; }
+    else if (meta && window.IT_MODULES) {
+      var mods = window.IT_MODULES.modules, id = meta.getAttribute("data-module-meta");
+      for (var i = 0; i < mods.length; i++) if (mods[i].id === id) { num = "M" + (i < 9 ? "0" : "") + (i + 1); nom = mods[i].domaine; legende = "Module"; }
+    }
+    if (!num) return;
+    document.body.classList.add("page-cours");
+    var h1 = prose.querySelector("h1"), kicker = h1 && h1.previousElementSibling;
+    var b = el("div", { "class": "bandeau", "aria-hidden": "true" });
+    var paths = ICONS[nom] || ICONS.modules;
+    b.innerHTML = '<svg class="bandeau-svg" viewBox="0 0 720 150" preserveAspectRatio="xMinYMid meet" focusable="false">'
+      + '<defs><pattern id="bd-h" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" class="bd-hachure"/></pattern></defs>'
+      + '<text class="bd-leg" x="4" y="20">' + legende.toUpperCase() + '</text>'
+      + '<text class="bd-num" x="0" y="138">' + num + '</text>'
+      + '<line class="bd-filet" x1="250" y1="75" x2="560" y2="75"/><line class="bd-filet fin" x1="250" y1="81" x2="560" y2="81"/>'
+      + '<circle class="bd-rond-h" cx="640" cy="75" r="62" fill="url(#bd-h)"/><circle class="bd-rond" cx="640" cy="75" r="62"/><circle class="bd-rond fin" cx="640" cy="75" r="54"/>'
+      + '<g class="bd-picto" transform="translate(604 39) scale(3)">' + paths + '</g>'
+      + '<text class="bd-orn" x="405" y="62" text-anchor="middle">✣</text></svg>';
+    prose.insertBefore(b, kicker && kicker.classList.contains("kicker") ? kicker : h1);
+    // Les filets partent après le numéro : leur départ dépend de sa largeur réelle (« 05 » contre « M04 »).
+    function placerFilets() {
+      var t = b.querySelector(".bd-num"), w = 0;
+      try { w = t.getComputedTextLength(); } catch (e) { w = 0; }
+      if (!w) w = num.length * 80;
+      var x1 = Math.min(Math.round(w + 30), 470);
+      Array.prototype.forEach.call(b.querySelectorAll(".bd-filet"), function (l) { l.setAttribute("x1", x1); });
+      b.querySelector(".bd-orn").setAttribute("x", Math.round((x1 + 560) / 2));
+    }
+    placerFilets();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(placerFilets);
+    // Lettrine seulement si le chapeau commence par une lettre (pas par « « » ni un chiffre).
+    var lead = prose.querySelector(":scope > .lead");
+    if (lead && /^\s*\p{L}/u.test(lead.textContent)) document.body.classList.add("lettrine");
+    Array.prototype.forEach.call(prose.querySelectorAll(".phase"), function (ph) {
+      var r = ROMAINS[ph.textContent.trim().toLowerCase()];
+      if (r) { ph.setAttribute("data-romain", r); ph.classList.add("phase-bande"); }
+    });
+    ["quiz", "memo"].forEach(function (id) {
+      var h = document.getElementById(id);
+      if (h && h.tagName === "H2") h.parentNode.insertBefore(el("p", { "class": "ornement-sep", "aria-hidden": "true" }, "✣  ✣  ✣"), h);
+    });
+  }
+
   /* ---------- Tableaux : sur mobile, chaque ligne devient une carte (étiquettes tirées de l'en-tête) ---------- */
   function initTableaux() {
     var tables = document.querySelectorAll("main .table-wrap > table");
@@ -710,6 +767,7 @@
   buildChrome();
   initSections();
   initCouvertures();
+  initCours();
   initDone();
   renderProgress();
   initCopy();

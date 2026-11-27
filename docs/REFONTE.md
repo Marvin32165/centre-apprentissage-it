@@ -207,3 +207,20 @@ DA inchangée (couleurs, polices, AA, cibles ≥ 44 px, mouvement réduit). Chaq
 - Touches `kbd` dessinées (bord inférieur épais, léger dégradé), soulignés des liens plus fins et décalés.
 - Favicon : le tampon IT incliné sur fond de barre, lisible sur onglet clair comme sombre (inchangé) ; impression déjà propre (en-tête et pied masqués, fiches A4).
 
+
+## 6. Lot 40 : refonte graphique poussée (« Poste de garde », édition illustrée)
+Couleurs, polices, contrastes AA et mouvement réduit inchangés ; chaque étape a sa section « Lot 40.N » dans `assets/style.css`. Rien ne s'imprime de ces ornements (bandeau, séparateurs, grain).
+
+### 6.1 Lot 40.1 — Matière
+- Grain de papier très léger sur tout le site : filtre SVG `feTurbulence` en `data:` (opacité 9 % en clair, 5 % en sombre), fixé à l'écran ; l'atelier garde son propre papier.
+- Bandes de phase « Je montre / On fait ensemble / Tu fais seul » : pleine largeur de colonne, filet double au-dessus, chiffre romain I, II, III en grand italique rouille (`data-romain`, posé par `initCours`).
+- Ornement « ✣ ✣ ✣ » en rouille avant le quiz et la fiche mémo (`.ornement-sep`, décoratif, `aria-hidden`).
+
+### 6.2 Lot 40.2 — Bandeau gravé des pages de cours
+- Pages de jour et modules : `initCours` (`app.js`) insère avant le surtitre un bandeau SVG décoratif (`aria-hidden`) tiré des données : légende « JOUR » ou « MODULE », grand numéro en Newsreader italique léger, contour rouille et remplissage rouille doux (« 05 », « M04 » d'après l'ordre de `IT_MODULES`), filet double avec fleuron, médaillon hachuré à 45° portant le pictogramme du jour ou du domaine agrandi au trait.
+- Les filets partent 30 unités après la largeur réelle du numéro (`getComputedTextLength`, recalculée quand les polices sont chargées) : « M04 » ne les chevauche plus.
+- Filet double sous le bandeau ; hauteur 150 px sur ordinateur, 96 px au téléphone.
+
+### 6.3 Lot 40.3 — Numéros de section et lettrine
+- Titres de section des pages de cours : numéro « §N » en grand italique rouille (2,5 à 3,5 rem) au-dessus du titre ; il reste à sa taille dans le sommaire.
+- Lettrine rouille sur trois lignes au chapeau (`.lead`) des pages de cours, seulement s'il commence par une lettre (classe `lettrine` sur `body`, posée en JS) : pas de lettrine sur un guillemet « « » ni un chiffre.
