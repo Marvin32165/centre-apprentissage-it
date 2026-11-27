@@ -58,12 +58,13 @@
 <aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/troubleshoot/outlook/synchronization/synchronization-issue-between-outlook-owa">Synchronization issues between Outlook and Outlook Web App</a>, <a href="https://learn.microsoft.com/troubleshoot/outlook/authentication/continually-prompts-password-office-365">Outlook continually prompts for password</a>, <a href="https://learn.microsoft.com/en-us/microsoft-365/enterprise/view-service-health">How to check Microsoft 365 service health</a> (l'état du service, consultable par les administrateurs).</p></aside>
 
 <h2 id="outlook">2. Outlook</h2>
+<p>Les profils, le mode mis en cache et le commutateur <code>outlook.exe /safe</code> ci-dessous concernent <strong>Outlook classique</strong> (l'application de bureau de Microsoft 365). Avec le nouvel Outlook pour Windows, ou si le client classique n'est pas installé, on commence par tester Outlook sur le web.</p>
 <h3>Profil, mode mis en cache et fichier OST</h3>
 <p>Un <strong>profil Outlook</strong> regroupe les comptes et paramètres de l'utilisateur. En <strong>mode mis en cache</strong>, une copie de la boîte aux lettres est conservée sur le poste dans un fichier <strong>.ost</strong> : l'affichage est rapide, et la boîte se resynchronise avec le serveur. Ce fichier n'est <strong>qu'une copie</strong> : le supprimer ou le recréer ne détruit pas les messages du serveur.</p>
 <aside class="callout attention"><p>Un fichier <strong>.pst</strong> est différent : c'est un fichier local qui sert à stocker, archiver ou exporter des éléments ; il peut contenir des messages que le serveur n'a plus, ou des copies. Faute de savoir lesquels, ne supprime jamais un .pst sans accord, et avant toute intervention, vérifie où se trouvent les archives de l'utilisateur.</p></aside>
 <h3>Les pannes classiques et les réflexes</h3>
 <ul>
-  <li><strong>Outlook se bloque ou ne démarre pas</strong> : lancer en mode sans échec (<code>outlook.exe /safe</code>, depuis Exécuter). S'il fonctionne ainsi, un module complémentaire devient la piste : on les désactive, puis on les réactive un par un pour trouver le coupable.</li>
+  <li><strong>Outlook classique se bloque ou ne démarre pas</strong> : lancer en mode sans échec (<code>outlook.exe /safe</code>, depuis Exécuter). S'il fonctionne ainsi, un module complémentaire devient la piste : on les désactive, puis on les réactive un par un pour trouver le coupable.</li>
   <li><strong>Mot de passe demandé en boucle</strong> : mot de passe changé, identifiants en cache obsolètes (Gestionnaire d'identifiants Windows), MFA, ou compte verrouillé (jour 6).</li>
   <li><strong>Courriels qui n'arrivent pas, dossiers pas à jour</strong> : vérifier le mode « Travail hors connexion », la connexion Internet, l'espace de la boîte, puis tester sur le web.</li>
   <li><strong>Profil corrompu</strong> : créer un <strong>nouveau profil</strong> (Panneau de configuration → Courrier → Afficher les profils → Ajouter), l'essayer, puis le définir par défaut s'il fonctionne. L'ancien reste en réserve.</li>
@@ -98,11 +99,11 @@
 <h2 id="mfa">4. L'authentification multifacteur (MFA)</h2>
 <p>La MFA combine au moins deux preuves de types différents : ce que l'on sait (un mot de passe), ce que l'on possède (un téléphone, une clé de sécurité), ce que l'on est (empreinte, visage). Le cas le plus courant : le mot de passe, puis une notification dans l'application d'authentification, un code ou un SMS ; certaines méthodes sans mot de passe (clé de sécurité, Windows Hello) réunissent déjà deux facteurs. Elle bloque l'immense majorité des piratages par mot de passe volé.</p>
 <ul>
-  <li><strong>Nouveau téléphone, ancien téléphone perdu</strong> : l'utilisateur n'a plus sa deuxième preuve. L'administrateur doit autoriser la réinscription de la méthode (procédure ou outil dédiés) <strong>après vérification d'identité renforcée</strong>.</li>
-  <li><strong>Notifications MFA reçues sans connexion en cours</strong> : un tiers connaît peut-être le mot de passe. Il ne faut <strong>jamais approuver</strong> : changement de mot de passe et signalement immédiat à la sécurité.</li>
+  <li><strong>Nouveau téléphone, ancien téléphone perdu</strong> : l'utilisateur n'a plus sa deuxième preuve. Selon le cas : s'il a déjà une <strong>autre méthode enregistrée</strong> (autre téléphone, SMS, clé), il s'en sert pour se connecter puis met à jour ses méthodes ; sinon, la réinscription passe par le canal autorisé (un administrateur peut exiger un nouvel enregistrement de la MFA), toujours <strong>après vérification d'identité renforcée</strong>.</li>
+  <li><strong>Notifications MFA reçues sans connexion en cours</strong> : c'est le signe d'une tentative de connexion, sans certitude sur la façon dont elle se fait (un tiers connaît peut-être le mot de passe). Il ne faut <strong>jamais approuver</strong> : changement de mot de passe et signalement immédiat à la sécurité.</li>
   <li><strong>Code qui ne marche pas</strong> : l'heure du téléphone est-elle correcte (codes basés sur l'heure) ? La bonne application, le bon compte ?</li>
 </ul>
-<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks">How it works: Microsoft Entra multifactor authentication</a>, <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/overview-authentication">What is Microsoft Entra authentication?</a>.</p></aside>
+<aside class="callout source"><p>Microsoft Learn : <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-mfa-howitworks">How it works: Microsoft Entra multifactor authentication</a>, <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/overview-authentication">What is Microsoft Entra authentication?</a>. ; Microsoft Learn : <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/howto-mfa-userdevicesettings">Manage user authentication methods</a> (exiger un nouvel enregistrement de la MFA).</p></aside>
 <aside class="callout attention"><p>N'accepte <strong>jamais</strong> de contourner ou désactiver la MFA « parce que c'est urgent » : c'est précisément ce que cherche un attaquant qui se fait passer pour l'utilisateur.</p></aside>
 <aside class="callout umons"><p>Méthodes de MFA acceptées à l'UMONS, procédure en cas de perte du téléphone, personnes habilitées à réinitialiser une méthode : à vérifier sur place.</p></aside>
 
@@ -110,7 +111,7 @@
 <p>Tu n'as pas besoin d'un abonnement d'entreprise : un <strong>compte Microsoft personnel gratuit</strong> (ou, si tu y as accès, un compte de test) suffit pour la plupart des manipulations. N'utilise aucun compte qui contient des données sensibles et ne reproduis jamais ici un compte réel de l'UMONS.</p>
 <ol>
   <li>Ouvre ta boîte dans le <strong>navigateur</strong> (outlook.com), repère les différences avec l'application Outlook de bureau si tu en disposes.</li>
-  <li>Si tu as Outlook : <code>outlook.exe /safe</code> ; compare avec le démarrage normal et liste les modules complémentaires (Fichier → Options → Compléments).</li>
+  <li>Si tu as Outlook classique : <code>outlook.exe /safe</code> ; compare avec le démarrage normal et liste les modules complémentaires (Fichier → Options → Compléments).</li>
   <li>Crée un <strong>second profil</strong> par le Panneau de configuration → Courrier, ajoute le compte, ouvre-le, puis supprime-le.</li>
   <li>Ouvre OneDrive : repère les états de l'icône ; essaie de renommer un fichier du dossier OneDrive avec un <code>:</code> et lis le refus de Windows (c'est Windows qui bloque, avant toute synchronisation) ; télécharge un fichier « en ligne seulement » puis libère de l'espace.</li>
   <li>Active la <strong>vérification en deux étapes</strong> sur ton compte de test avec l'application d'authentification, note comment on la réinitialise (« j'ai perdu mon appareil ») et ce que cela demande comme preuves.</li>
@@ -134,17 +135,17 @@
 <h3>2. « Je ne vois plus la boîte du secrétariat »</h3>
 <p>Une assistante a été ajoutée hier à la boîte partagée du secrétariat. Elle ne la voit pas dans Outlook.</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>On vérifie que le droit a bien été donné (ticket, validation), puis qu'elle a fermé et rouvert Outlook ; le mappage automatique peut mettre du temps. On teste sur le web via « Ouvrir une autre boîte aux lettres » : si ça marche, c'est un souci d'affichage du poste ; sinon, on vérifie l'adresse saisie et le message exact, et on transmet à l'équipe qui gère la messagerie (droit absent ou pas encore propagé) avec ces éléments.</p>
+<p>On vérifie que le droit a bien été donné (ticket, validation), puis qu'elle a fermé et rouvert Outlook : la boîte n'apparaît automatiquement (mappage automatique) que si le droit Accès total lui a été donné <strong>directement</strong>, avec le mappage actif, et cela peut prendre du temps ; un droit donné par un <strong>groupe</strong> n'ajoute pas la boîte au profil, il faut alors l'ajouter manuellement. On teste sur le web via « Ouvrir une autre boîte aux lettres » : si ça marche, c'est un souci d'affichage du poste ; sinon, on vérifie l'adresse saisie et le message exact, et on transmet à l'équipe qui gère la messagerie (droit absent ou pas encore propagé) avec ces éléments.</p>
 </details>
 <h3>3. Un nouveau téléphone</h3>
 <p>Un professeur a perdu son téléphone, ne peut plus approuver la connexion, et doit donner un cours dans vingt minutes. Il demande qu'on désactive la MFA « juste pour aujourd'hui ».</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>On ne désactive pas la MFA. On vérifie son identité selon la procédure renforcée, puis on déclenche la réinitialisation de sa méthode MFA via l'équipe habilitée, ou on lui indique l'alternative prévue (autre méthode déjà enregistrée, accès temporaire fourni par la procédure). On informe de l'urgence dans le ticket, et on recommande d'enregistrer une seconde méthode.</p>
+<p>On ne désactive pas la MFA. On vérifie son identité selon la procédure renforcée, puis : s'il a une autre méthode déjà enregistrée, il l'utilise ; sinon, on fait réinscrire sa méthode par le canal autorisé (équipe habilitée), ou on lui indique l'accès temporaire prévu par la procédure. On informe de l'urgence dans le ticket, et on recommande d'enregistrer une seconde méthode.</p>
 </details>
 <h3>4. Notifications MFA inattendues</h3>
 <p>Une étudiante dit : « Je reçois sans arrêt des demandes d'approbation sur mon téléphone, je n'ai rien fait. »</p>
 <details class="correction"><summary>Voir la correction</summary>
-<p>Quelqu'un tente de se connecter avec son mot de passe. Elle ne doit <strong>rien approuver</strong>. On l'aide à changer son mot de passe et on escalade au plus vite à la sécurité (compte potentiellement exposé), en notant les heures des notifications.</p>
+<p>C'est le signe d'une tentative de connexion à son compte, peut-être avec son mot de passe : on ne sait pas encore comment. Elle ne doit <strong>rien approuver</strong>. On l'aide à changer son mot de passe et on escalade au plus vite à la sécurité (compte potentiellement exposé), en notant les heures des notifications.</p>
 </details>
 
 <h2 id="quiz">Quiz</h2>
