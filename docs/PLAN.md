@@ -546,3 +546,50 @@ Reste : rien pour ce lot.
 À détailler après le 18/12, à partir du tableau ci-dessus. N'écrire que ce qui est public : aucune procédure interne, aucune IP, aucun nom.
 
 Après le 7/12 : le journal de stage reste privé, **hors de ce dépôt**.
+
+## Lots 41 à 48 — Refonte de l'atelier hardware en manuel technique
+Décision de Marvin (28/11/2026, conversation avec Claude Code) : refonte complète de l'atelier, **moteurs compris**, en manuel technique (manuel d'atelier + plan + notice constructeur), maquettes isométriques de PC qu'on assemble, démonte, éclate et mesure ; lecture hybride ; palette actuelle ; IM Fell retirée ; nom « Atelier hardware » ; PC génériques puis un ou deux vrais modèles pro en annexe ; **aucune image générée**, tout en SVG fait main ; lots enchaînés sans pause de validation. Cahier des charges : `docs/REFONTE.md` § 7.
+Moteur autorisé : assets/atelier-regles.js
+Moteur autorisé : assets/atelier-pannes-regles.js
+(Lignes écrites par Claude Code à la demande explicite de Marvin le 28/11/2026, valables pour les lots 41 à 48.)
+
+## Lot 41 — Socle « manuel technique » et entrée de l'atelier
+- [x] 41.1 Cahier des charges `REFONTE.md` § 7, `AGENTS.md` (IM Fell retirée, nouvelle identité), lots 41 à 48 dans ce plan.
+  Fait : § 7 écrit (identité, composants, maquette isométrique, mise en page hybride, pages) ; `AGENTS.md` à jour ; lots 41 à 48 détaillés.
+- [ ] 41.2 CSS « Lot 41 — Manuel technique » : planche, cartouche, repères, nomenclature, procédure, encadrés de manuel, fiche, mise en page hybride ; IM Fell retirée du CSS et des liens de police.
+- [ ] 41.3 `atelier/index.html` : couverture technique et sommaire en parties A à F, épreuves, index ; `atelier-index.js` adapté.
+- [ ] 41.4 Composants de référence dans `docs/composants.html` (§ 7 remplacé), `npm run controles`, fusion.
+
+## Lot 42 — Maquette isométrique
+- [ ] 42.1 `assets/atelier-iso.js` : projection, primitives (boîte, plaque, cylindre, connecteur), ordre de dessin, ombrage en trois tons, repères et lignes d'attache.
+- [ ] 42.2 `assets/atelier-iso-data.js` : boîte 3D et axe de montage de chaque emplacement des trois dispositions ; dessin de chaque type de pièce.
+- [ ] 42.3 Vues (3/4 avant, 3/4 arrière, carte mère), vue éclatée au curseur, repère ↔ nomenclature ↔ fiche.
+- [ ] 42.4 Branchement dans `montage.html` à la place des vues 2D (bac, glisser, toucher, clavier), contrôles, fusion.
+
+## Lot 43 — Procédures de montage et de démontage
+- [ ] 43.1 Moteur : démontage (ordre inverse, secteur débranché et ESD d'abord, dépendances), testé sous Node.
+- [ ] 43.2 Page de procédure façon manuel : étapes numérotées, outillage, attention, figure de l'étape (pièce surlignée, flèche de mouvement).
+- [ ] 43.3 Les six montages repris ; scénarios de remplacement (mémoire, SSD, alimentation) ; contrôles, fusion.
+
+## Lot 44 — Fiches composants (partie A)
+- [ ] 44.1 `atelier/composants.html` et données : processeur, mémoire, carte mère, alimentation, stockage, carte graphique, boîtier et refroidissement, câbles et connecteurs ; sources primaires ouvertes (Intel, AMD, JEDEC, spécification ATX, PCI-SIG, SATA-IO, NVM Express).
+- [ ] 44.2 Planches cotées et nomenclatures depuis la maquette ; liens depuis les repères.
+- [ ] 44.3 Relecture des sources par un agent qui n'a pas écrit la page ; corrections ; contrôles, fusion.
+
+## Lot 45 — Diagnostic (partie D)
+- [ ] 45.1 Moteur des pannes : instruments (multimètre, testeur d'alimentation, carte POST, LED de debug) et leurs mesures, testés sous Node.
+- [ ] 45.2 Arbres de diagnostic en SVG par famille de symptômes.
+- [ ] 45.3 Les 14 dossiers repris façon manuel de service ; relecture, contrôles, fusion.
+
+## Lot 46 — Missions du stage (partie E)
+- [ ] 46.1 Réception et contrôle d'un colis, intégration d'un PC neuf, salle informatique, maintenance préventive ; « à vérifier sur place » partout où l'UMONS décide.
+- [ ] 46.2 Relecture des sources, test en situation, contrôles, fusion.
+
+## Lot 47 — Annexes : modèles pro (partie F)
+- [ ] 47.1 Un ou deux PC de bureau d'entreprise d'après leurs manuels de service publics (ouverts et datés), maquette dédiée.
+- [ ] 47.2 Relecture des sources, contrôles, fusion.
+
+## Lot 48 — Épreuves, index et passe finale
+- [ ] 48.1 Épreuves et bilan imprimable dans la nouvelle identité ; index des pièces, pannes et missions.
+- [ ] 48.2 Test en situation (`test-chef`) de chaque partie ; corrections.
+- [ ] 48.3 Captures avant / après, `npm run controles`, fusion finale.

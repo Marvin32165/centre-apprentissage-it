@@ -250,3 +250,48 @@ Couleurs, polices, contrastes AA et mouvement réduit inchangés ; chaque étape
 - Le bandeau gravé couvre aussi les pages de la prépa : programme, boîte à outils, révision express, entraînement aux tickets (mot en grand italique de 92 unités au lieu du numéro, pictogramme de la page) ; lettrine et ornements y suivent les mêmes règles que les pages de cours.
 - Index des modules et atlas des thèmes gardent leur en-tête propre (parcours, atlas) et reçoivent le grain, les encadrés illustrés, les tableaux et le colophon communs.
 - Captures avant / après (accueil, jour 5, module Active Directory, quiz, code et encadrés) : `docs/captures/lot-40/`.
+
+## 7. Atelier hardware — manuel technique (lots 41 à 48, remplace le § 3)
+
+Décision de Marvin (28/11/2026) : l'atelier quitte le livre gravé ancien. Il devient un **manuel technique** qui mêle trois genres : le **manuel d'atelier** (procédures numérotées, vues éclatées, repères, nomenclatures, encadrés « Attention » et « Outillage »), le **plan** (grille, cotes, cartouche, planches numérotées) et la **notice constructeur** (dessin isométrique au trait, pictogrammes, peu de texte). Nom de la rubrique : **« Atelier hardware »**, sans sous-titre de livre. Le § 3 ne s'applique plus ; il reste pour l'historique. Pas d'image générée : tout est dessiné en SVG à la main.
+
+### 7.1 Identité
+- **Polices** : Instrument Sans (titres de partie et de procédure, gras, capitales espacées pour les surtitres), IBM Plex Mono (repères, cotes, cartouches, numéros de figure et d'étape, valeurs mesurées), Newsreader (texte d'explication). **IM Fell est retirée** du site (lien Google Fonts compris).
+- **Couleurs** : la palette d'`AGENTS.md`, sans ajout. Planche sur `--surface`, grille en `--border` (40 %), trait en `--ink`, repères et cotes en `--accent`, états en vert (juste, posé), rouge (danger, erreur), ambre (attention). Le thème sombre s'applique aussi aux planches (fini les pages toujours claires).
+- **Trait** : 1,25 px pour les contours, 0,75 px pour les détails, 0,5 px en tirets pour les axes de montage et les lignes d'attache. Ombrage isométrique en trois tons tirés de l'encre (dessus 0 %, face gauche 6 %, face droite 14 %), donc valable en clair et en sombre.
+
+### 7.2 Composants (CSS section « Lot 41 — Manuel technique »)
+- **Planche** (`.planche`) : cadre double, grille de 8 px, **cartouche** en bas à droite (`PLANCHE A-03 · TITRE · VUE · ÉCH. · FOLIO`), numéro de figure « FIG. 3-2 » en mono.
+- **Repères** (`.rep`) : chiffres dans des cercles rouille, reliés à la pièce par une ligne d'attache ; toucher un repère surligne la pièce et la ligne de nomenclature, et l'inverse.
+- **Nomenclature** (`.nomenclature`) : tableau Rep. · Désignation · Qté · Caractéristique ; repliable sur mobile.
+- **Procédure** (`.procedure`) : étapes numérotées (grand chiffre mono dans un carré), une figure par étape, verbe à l'infinitif en tête.
+- **Encadrés de manuel** : `ATTENTION` (rouge, risque matériel ou humain), `OUTILLAGE` (liste à pictogrammes), `REMARQUE` (ambre), `SOURCE` (existant). Bandeau latéral épais, étiquette en Plex Mono capitales.
+- **Fiche technique** (`.fiche`) : tableau de caractéristiques à deux colonnes, pictogramme de la pièce, « pièges » et « à vérifier sur place ».
+- **Arbre de diagnostic** (`.arbre`) : SVG, losanges pour les questions, rectangles pour les actions, chemin parcouru en rouille, fin en vert (cause trouvée).
+- **Instruments** (`.instrument`) : multimètre, testeur d'alimentation, carte de diagnostic POST, dessinés au trait, avec afficheur en Plex Mono.
+
+### 7.3 Maquette isométrique (`assets/atelier-iso.js`, données `assets/atelier-iso-data.js`)
+- Projection isométrique (30°) en SVG natif, sans bibliothèque. Chaque emplacement des dispositions a une boîte 3D (x, y, z, largeur, profondeur, hauteur) et un **axe de montage** (le sens dans lequel la pièce se pose ou se retire).
+- **Vues** : « 3/4 avant, panneau retiré » (intérieur), « 3/4 arrière » (prises), « carte mère » (agrandissement de la carte posée). Ordre de dessin calculé (le plus loin d'abord).
+- **Vue éclatée** : un curseur 0–100 % écarte chaque pièce le long de son axe de montage ; des tirets relient la pièce à sa place.
+- **Assembler / démonter** : toucher une pièce du bac puis un emplacement en pointillés (ou glisser à la souris) ; en démontage, toucher une pièce posée pour la retirer. L'ordre et la sécurité (secteur débranché, ESD) viennent du moteur.
+- **Repère → fiche** : chaque pièce posée reçoit un repère ; la nomenclature à côté ouvre la fiche de la pièce.
+- **Mesures** : en diagnostic, les instruments se posent sur la maquette (sonde sur un connecteur, testeur sur le 24 broches, carte POST dans un port).
+- Mouvement réduit : pas d'animation d'écartement ni de pointillés animés, positions finales directement.
+
+### 7.4 Mise en page hybride
+- **≥ 1100 px** : feuille de manuel en deux colonnes, texte à gauche (40 %), planche à droite (60 %, collante au défilement).
+- **< 1100 px** : défilement continu, planche pleine largeur au-dessus du texte, bac des pièces en tiroir bas, nomenclature repliée.
+- Sommaire de la rubrique : colonne collante sur ordinateur, liste repliable sur mobile.
+
+### 7.5 Pages
+- `atelier/index.html` : couverture technique (maquette éclatée d'un PC en grand, cartouche du manuel) et sommaire en parties : **A. Composants**, **B. Montage**, **C. Démontage et remplacement**, **D. Diagnostic**, **E. Missions du stage**, **F. Annexes (modèles pro)**, **Épreuves**, **Index**.
+- `atelier/composants.html?c=<id>` : une fiche technique par composant (processeur, mémoire, carte mère, alimentation, stockage, carte graphique, boîtier et refroidissement, câbles et connecteurs).
+- `atelier/montage.html?s=<id>` : procédures de montage et de démontage sur la maquette (même page, `type: "demontage"` dans les données).
+- `atelier/pannes.html?p=<id>` : diagnostic façon manuel de service (symptôme, arbre, mesures, réparation).
+- `atelier/missions.html?m=<id>` : missions de la convention de stage (colis, intégration d'un PC, salle informatique, maintenance préventive) ; ce qui dépend de l'UMONS est marqué « à vérifier sur place ».
+- `atelier/modeles.html` : annexes sur un ou deux PC de bureau d'entreprise, d'après leurs manuels de service publics (chaque détail sourcé).
+- Épreuves (`evaluation.html`, `pannes-eval.html`) et bilan imprimable dans la même identité.
+
+### 7.6 Vérification
+Chaque lot : 390 px sombre et 1280 px clair, sans erreur console, clavier complet, `npm run controles` sans problème ; captures dans `docs/captures/lot-4N/`.
