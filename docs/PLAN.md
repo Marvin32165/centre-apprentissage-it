@@ -634,9 +634,10 @@ Reste : relecture croisée par ChatGPT de tout l'atelier (fiches, démontage, pa
   Fait : relecture croisée des six fichiers dans `docs/relectures/atelier-relecture-chatgpt.md` ; sources AMD, Kingston, UPS Belgique, Noctua et manuel Dell ouverts.
 - [x] 49.2 Corriger les faits faux ou non vérifiés et ajouter le suivi au rapport.
   Fait : 12 affirmations fausses et 10 non vérifiées traitées ; sources primaires et suivi ajoutés, moteurs inchangés.
-- [ ] 49.3 Ajouter en annexe F un PC de bureau HP ou Lenovo d'après son manuel de maintenance public ouvert : référence, date, dimensions, outillage, pièces remplaçables et procédures de retrait.
+- [x] 49.3 Ajouter en annexe F un PC de bureau HP ou Lenovo d'après son manuel de maintenance public ouvert : référence, date, dimensions, outillage, pièces remplaçables et procédures de retrait.
+  Fait : annexe F-02, HP ProDesk 2 SFF G2i Desktop PC, d'après le manuel HP Q41672-001 (octobre 2026) ouvert sur Manualzz. Les cotes, le cartouche et la nomenclature suivent le modèle choisi.
 - [ ] 49.4 Tester la procédure B-01 en apprentissage et en mode test, puis l'annexe F, à 390 et 1280 px. Rapport : `docs/relectures/test-atelier-b-f.md` ; corriger les blocages.
 - [ ] 49.5 Forcer les jetons du thème clair à l'impression sur tout le site.
 - [ ] 49.6 Lancer `npm run controles` (0 problème, 0 avertissement, 0 échec), puis fusionner `lot-49` dans `main` avec `--no-ff` et pousser.
 
-Reste : sous-étapes 49.3 à 49.6.
+Reste : sous-étapes 49.4 à 49.6.
