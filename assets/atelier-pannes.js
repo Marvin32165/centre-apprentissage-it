@@ -53,7 +53,7 @@
     g.appendChild(ar);
     var sec = el("div", { "class": "mt-encadre source" });
     sec.appendChild(el("p", { "class": "mt-etiq" }, "Méthode et sources"));
-    sec.appendChild(el("p", null, "Méthode du module « Matériel et PC » (§ 3 : POST, bips, LED, configuration minimale, d'après ASUS) ; les codes de bips et de LED dépendent de la carte mère : on lit son manuel. Deux modes : apprentissage (indices, corrigé caché) et test noté sur 100 (diagnostic 40, réparation 30, observation utile 20, sécurité 10)."));
+    sec.appendChild(el("p", null, "Méthode du module « Matériel et PC » (§ 3 : POST, bips, LED, configuration minimale, d'après ASUS) ; guide Intel ATX 3 (rév. 2.1a) pour l'alimentation ; les codes de bips et de LED dépendent de la carte mère : on lit son manuel. Deux modes : apprentissage (indices, corrigé caché) et test noté sur 100 (diagnostic 40, réparation 30, observation utile 20, sécurité 10)."));
     g.appendChild(sec);
     d.appendChild(el("h2", { id: "dossiers" }, "Quatorze dossiers"));
     var ul = el("ul", { "class": "mt-entrees" });
@@ -120,7 +120,7 @@
     ticket.appendChild(el("p", null, p.contexte));
     var src = el("aside", { "class": "mt-encadre source" });
     src.appendChild(el("p", { "class": "mt-etiq" }, "Source"));
-    src.appendChild(el("p", null, "Les LED de debug, les bips et la liste des processeurs compatibles dépendent de la carte mère : la source de référence est son manuel et la page de support du constructeur. Tolérances des tensions d'une alimentation : spécification Intel ATX 2.2, tableau 6 (±5 % sur +12 V, +5 V, +3,3 V et +5 V de veille). Méthode : jour 8 de la prépa et module « Matériel et PC »."));
+    src.appendChild(el("p", null, "Les LED de debug, les bips et la liste des processeurs compatibles dépendent de la carte mère : la source de référence est son manuel et la page de support du constructeur. Sources : guide Intel des alimentations ATX version 3, rév. 2.1a (tolérances : +12 V de −7 % à +5 %, +5 V et +3,3 V à ±5 % ; signaux PWR_OK et PS_ON#) ; ASUS, FAQ des LED de diagnostic (Q-LED : CPU, DRAM, VGA, BOOT) ; Dell : surchauffe, nettoyage, pile CMOS ; Intel : protection thermique et pâte thermique. Les liens entre une panne et une LED précise sont ceux de la simulation : sur une vraie carte, on lit son manuel."));
     ticket.appendChild(src);
     corps.appendChild(ticket);
 

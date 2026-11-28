@@ -61,7 +61,7 @@
     "pate": { nom: "Déposer de la pâte thermique et remonter le ventirad" },
     "remonter-ventirad": { nom: "Retirer le film du ventirad, vérifier la pâte et le remonter" },
     "nettoyer": { nom: "Nettoyer la poussière (grilles, ventirad, ventilateurs)" },
-    "brancher-pcie": { nom: "Brancher le câble PCIe 6+2 à la carte graphique" },
+    "brancher-pcie": { nom: "Brancher le câble d'alimentation PCIe à la carte graphique" },
     "remplacer-gpu": { nom: "Remplacer la carte graphique", piece: true },
     "brancher-sata": { nom: "Brancher le câble de données SATA" },
     "remplacer-ssd": { nom: "Remplacer le SSD", piece: true },
@@ -77,8 +77,8 @@
   A.pannesSain = {
     visuel: "Rien d'anormal : câbles enfichés à fond, pièces bien en place, aucune trace de brûlure ni de liquide, pas de poussière gênante.",
     ventirad: "Le dessus du processeur et la plaque du ventirad sont propres, avec un film de pâte fin et régulier. Le ventirad est bien à plat.",
-    alim: "Testeur : +12 V = 12,1 V, +5 V = 5,0 V, +3,3 V = 3,3 V, signal PS_OK présent. Toutes les tensions sont dans la tolérance de ±5 % prévue par la norme ATX. L'alimentation est saine.",
-    bios: "L'UEFI s'affiche : processeur, mémoire et disque reconnus, température du processeur au repos normale (autour de 35 à 45 °C), date et heure exactes."
+    alim: "Testeur : +12 V = 12,1 V, +5 V = 5,0 V, +3,3 V = 3,3 V, signal PWR_OK présent. Toutes les tensions sont dans les tolérances du guide Intel des alimentations ATX (version 3, rév. 2.1a) : +12 V de −7 % à +5 %, +5 V et +3,3 V à ±5 %. L'alimentation est saine.",
+    bios: "L'UEFI s'affiche : processeur, mémoire et disque reconnus, température du processeur stable et loin de son maximum, date et heure exactes."
   };
 
   /* ---------- Les pannes ---------- */
@@ -99,7 +99,7 @@
       bios: "Impossible : sans mémoire initialisée, le PC n'arrive pas jusqu'à l'UEFI. Il n'y a aucune image." },
     utile: ["led", "bips", "temoin"],
     indices: ["Ce sont des signaux que la carte envoie elle-même : regarde les LED et écoute les bips.", "Une LED « DRAM » allumée fixe désigne la mémoire. Reste à savoir si c'est la barrette ou son emplacement.", "Isoler : on remplace une pièce par une pièce témoin, une seule à la fois."],
-    pourquoi: "Les LED de debug et les bips sont le premier outil : ils indiquent l'étape du POST où le démarrage s'arrête (CPU, DRAM, VGA, BOOT). Avec DRAM allumée, on isole : barrettes retirées puis remises une par une dans un emplacement connu bon, ou barrette témoin. Une panne mémoire intermittente se cherche aussi avec un outil de test (« Diagnostic de mémoire Windows » ou MemTest86) quand le PC démarre encore.",
+    pourquoi: "Les LED de debug et les bips sont le premier outil : ils indiquent l'étape du POST où le démarrage s'arrête (CPU, DRAM, VGA, BOOT). Avec DRAM allumée, on isole : barrettes retirées puis remises une par une dans un emplacement connu bon, ou barrette témoin. Une panne mémoire intermittente se cherche aussi avec un outil de test (l'Outil Diagnostics de mémoire Windows, mdsched.exe, ou MemTest86) quand le PC démarre encore.",
     reel: "Le code des bips et la signification des LED dépendent du constructeur de la carte mère : on lit toujours le manuel de la carte (sa version PDF est sur le site du constructeur)."
   });
 
@@ -109,15 +109,15 @@
     ticket: "« Plus rien ne se passe quand j'appuie sur le bouton : aucune lumière, aucun bruit. Il y a eu un orage cette nuit. La prise murale fonctionne, j'y ai branché une lampe. »",
     contexte: "PC de bureau de quatre ans. Câble secteur branché, interrupteur à l'arrière sur I (vérifié par l'utilisateur).",
     symp: { code: "rien", titre: "Rien ne s'allume : l'alimentation ne délivre aucune tension", ventilos: "immobiles", ecran: "Écran noir, pas de signal", leds: "Aucune LED, pas même la LED de veille de la carte mère", debug: null, bips: null, theme: "alim",
-      explication: ["Sans courant, aucun composant ne démarre : pas de LED, pas de ventilateur. Une surtension (orage) est une cause classique de mort d'alimentation."],
-      correction: ["Remplacer l'alimentation (jamais l'ouvrir : ses condensateurs gardent une charge dangereuse même débranchée)."] },
+      explication: ["Sans courant, aucun composant ne démarre : pas de LED, pas de ventilateur."],
+      correction: ["Remplacer l'alimentation (jamais l'ouvrir : un bloc d'alimentation contient des niveaux de tension et d'énergie dangereux, et aucune pièce réparable)."] },
     temoin: "alim",
     obs: { visuel: "Câble secteur enfoncé, interrupteur sur I, 24 broches et EPS en place, aucune trace extérieure. Rien d'évident ne se voit.",
-      alim: "Testeur : +12 V = 0 V, +5 V = 0 V, +3,3 V = 0 V, PS_OK absent. Au test du trombone (PS_ON# relié à une masse), le ventilateur de l'alimentation ne démarre pas : elle est morte.",
+      alim: "Testeur : +12 V = 0 V, +5 V = 0 V, +3,3 V = 0 V, PWR_OK absent. Au test du trombone (PS_ON# relié à une masse), le ventilateur de l'alimentation ne démarre pas : elle est morte.",
       bios: "Impossible : le PC ne s'allume pas." },
     utile: ["alim", "temoin"],
     indices: ["Aucune LED, même pas celle de veille : le courant n'arrive même pas à la carte mère.", "Câble, prise, interrupteur : tout est vérifié. Reste la pièce qui fabrique les tensions.", "Mesure ses tensions avec un testeur, ou remplace-la par une alimentation témoin."],
-    pourquoi: "On remonte la chaîne depuis la prise : prise murale, câble secteur, interrupteur de l'alimentation, alimentation, puis carte mère. Quand la LED de veille de la carte mère est éteinte, l'alimentation (ou son câble 24 broches) est la première suspecte. Un testeur donne la preuve : les tensions +12 V, +5 V et +3,3 V doivent rester dans ±5 % de leur valeur.",
+    pourquoi: "On remonte la chaîne depuis la prise : prise murale, câble secteur, interrupteur de l'alimentation, alimentation, puis carte mère. Quand la LED de veille de la carte mère est éteinte, l'alimentation (ou son câble 24 broches) est la première suspecte. Un testeur donne la preuve : les tensions doivent rester dans les tolérances du guide Intel ATX 3 : +12 V de −7 % à +5 %, +5 V et +3,3 V à ±5 %.",
     reel: "Une alimentation ne se répare pas et ne s'ouvre pas : on la remplace en respectant la puissance et les connecteurs de l'ancienne."
   });
 
@@ -143,8 +143,8 @@
       bios: "Accessible un instant : la température du processeur grimpe à plus de 90 °C en quelques secondes, ventilateur du ventirad à fond, puis le PC s'arrête." },
     utile: ["bios", "ventirad"],
     indices: ["Les ventilateurs tournent à fond : le PC essaie de refroidir quelque chose.", "Dans l'UEFI, regarde la température du processeur.", "Le ventirad est bien fixé : que se passe-t-il entre le processeur et lui ? Démonte-le pour voir."],
-    pourquoi: "Même polies, les surfaces du processeur et du ventirad ont des micro-creux remplis d'air, mauvais conducteur de chaleur : la pâte thermique les comble. Sans elle, la chaleur ne passe pas, le processeur atteint sa température critique, ralentit puis la carte coupe le PC pour le protéger.",
-    reel: "Une noisette de la taille d'un petit pois au centre du processeur suffit : la pression du ventirad l'étale."
+    pourquoi: "La pâte thermique assure un transfert de chaleur efficace entre le processeur et le ventirad (Intel). Sans elle, la chaleur ne passe pas, le processeur atteint sa température critique, ralentit puis la carte coupe le PC pour le protéger.",
+    reel: "D'après Intel, une noisette de la taille d'un petit pois au centre du processeur suffit."
   });
 
   panne("ventirad-film", {
@@ -160,7 +160,7 @@
       bios: "Accessible environ vingt secondes : la température du processeur dépasse 95 °C, ventilateur du ventirad à fond, puis arrêt de protection." },
     utile: ["bios", "ventirad"],
     indices: ["Le ventirad est bien vissé et le ventilateur tourne à fond. Pourtant le processeur chauffe : regarde la température dans l'UEFI.", "La chaleur doit passer du processeur vers le ventirad : qu'y a-t-il entre eux ?", "Démonte le ventirad et regarde sa plaque."],
-    pourquoi: "Beaucoup de ventirads neufs ont un film plastique qui protège la plaque et la pâte pré-appliquée pendant le transport : il doit être retiré avant la pose. Resté en place, il isole thermiquement le ventirad du processeur. Même symptôme que « pas de pâte » : seule l'inspection de la plaque les distingue.",
+    pourquoi: "Dans ce dossier, le ventirad neuf avait un film plastique sur sa plaque : il doit être retiré avant la pose. Resté en place, il isole thermiquement le ventirad du processeur. Même symptôme que « pas de pâte » : seule l'inspection de la plaque les distingue.",
     reel: "Lis la notice du ventirad : elle dit s'il y a un film à retirer, si la pâte est déjà posée et dans quel ordre serrer les vis."
   });
 
@@ -174,11 +174,11 @@
       correction: ["Nettoyer : grilles, ventirad et ventilateurs, PC éteint et débranché."] },
     obs: { visuel: "La grille avant et les ailettes du ventirad sont bouchées par un feutre de poussière ; les pales du ventilateur arrière en sont chargées.",
       ventirad: "La plaque du ventirad est propre, la pâte est en bon état. En revanche, les ailettes sont obstruées par la poussière.",
-      bios: "Température du processeur au repos : environ 80 °C, nettement trop haute (autour de 30 à 50 °C est normal au repos), ventilateurs à pleine vitesse." },
+      bios: "Température du processeur élevée dès le repos et qui monte vite en charge, ventilateurs à pleine vitesse." },
     utile: ["visuel", "bios"],
     indices: ["Un PC qui ne chauffe qu'en charge, après des années : pense à l'usure, pas au montage.", "Regarde dans le boîtier, ouvert et hors tension.", "Qu'est-ce qui obstrue le passage de l'air ?"],
     pourquoi: "Un PC qui a travaillé des années au ras du sol accumule de la poussière sur les grilles et les ailettes : le débit d'air chute. Le symptôme apparaît d'abord en charge (visioconférence, gros calculs). Le nettoyage coûte moins cher que n'importe quelle pièce.",
-    reel: "On nettoie PC éteint et débranché, avec de l'air comprimé en bloquant les pales du ventilateur pour ne pas le faire tourner trop vite, ou avec un aspirateur antistatique."
+    reel: "On nettoie PC éteint et débranché, à l'air comprimé, comme l'indique Dell, qui déconseille l'aspirateur et le souffleur (ils créent de l'électricité statique)."
   });
 
   panne("gpu-cable-oublie", {
@@ -186,7 +186,7 @@
     titre: "Une carte graphique neuve, mais pas d'image",
     ticket: "« Je viens d'installer ma nouvelle carte graphique. Le PC s'allume mais l'écran dit « pas de signal ». L'écran est branché sur la carte graphique. »",
     contexte: "Carte graphique ajoutée hier dans un PC qui marchait. Écran branché sur la carte graphique.",
-    obs: { visuel: "La carte graphique est bien enfoncée dans le port PCIe, mais son connecteur d'alimentation 6+2 broches est vide : le câble PCIe de l'alimentation est resté non branché." },
+    obs: { visuel: "La carte graphique est bien enfoncée dans le port PCIe, mais son connecteur d'alimentation PCIe (8 broches) est vide : le câble PCIe de l'alimentation est resté non branché." },
     utile: ["visuel", "led"],
     indices: ["Regarde la LED de debug : elle désigne la vidéo.", "Une carte graphique puissante a besoin de plus d'énergie que le port PCIe ne peut en fournir.", "Vérifie le connecteur d'alimentation de la carte."],
     pourquoi: "Le port PCIe x16 ne fournit qu'une partie de l'énergie (jusqu'à 75 W d'après la spécification PCI Express) : une carte plus gourmande a besoin d'un câble d'alimentation en plus. Sans lui, elle ne démarre pas, et la LED VGA reste allumée.",
@@ -199,14 +199,14 @@
     ticket: "« Mon PC de jeu s'allume, les ventilateurs tournent, mais l'écran est noir. Avant, j'avais parfois des lignes bizarres à l'image. »",
     contexte: "PC de jeu de quatre ans, carte graphique dédiée. Écran branché sur la carte graphique, câble testé sur un autre PC.",
     symp: { code: "sans-image", titre: "Les ventilateurs tournent, mais pas d'image", ventilos: "tournent (ceux de la carte graphique aussi)", ecran: "Pas de signal", leds: "LED de debug « VGA » allumée fixe", debug: "VGA", bips: null, theme: "video",
-      explication: ["La carte graphique ne produit plus d'image : le démarrage atteint l'étape vidéo et y reste. Les lignes parasites vues avant sont un signe classique d'usure ou de surchauffe de la carte."],
+      explication: ["La carte graphique ne produit plus d'image : le démarrage atteint l'étape vidéo et y reste."],
       correction: ["Remplacer la carte graphique."] },
     temoin: "gpu",
     obs: { visuel: "Carte graphique enfoncée, câble PCIe branché, ventilateurs de la carte en rotation, câble d'écran bien enfiché. Rien d'anormal à l'œil nu.",
       bios: "Impossible : l'écran ne reçoit aucune image, même pour l'UEFI." },
     utile: ["led", "temoin"],
     indices: ["Le câble d'écran fonctionne ailleurs : il ne s'agit pas du câble. Observe les LED.", "La LED « VGA » désigne l'étape vidéo.", "Câbles et branchements sont corrects : essaie une carte graphique témoin."],
-    pourquoi: "Câble d'écran, écran, câble d'alimentation de la carte et enfichage sont vérifiés : reste la carte elle-même. La LED VGA et l'historique (lignes parasites avant la panne) vont dans le même sens, et une carte témoin le confirme.",
+    pourquoi: "Câble d'écran, écran, câble d'alimentation de la carte et enfichage sont vérifiés : reste la carte elle-même. La LED VGA va dans le même sens, et une carte témoin le confirme.",
     reel: "Autre test, si le processeur a un graphique intégré : retirer la carte graphique et brancher l'écran sur la sortie de la carte mère. Si l'image revient, la carte graphique est en cause."
   });
 
@@ -245,13 +245,13 @@
     titre: "Heure fausse et message avant Windows à chaque démarrage",
     ticket: "« À chaque démarrage, un message demande d'appuyer sur F1, et l'heure de Windows est fausse. Mes réglages du BIOS disparaissent quand je débranche le PC. »",
     contexte: "PC de bureau de huit ans, jamais ouvert, qui reste débranché le week-end.",
-    symp: { code: "avert", titre: "Le PC démarre avec un avertissement : réglages perdus (pile CMOS)", ventilos: "tournent", ecran: "Message « CMOS checksum error — defaults loaded », F1 pour continuer", leds: "Normales", debug: null, bips: null, theme: "cmos",
+    symp: { code: "avert", titre: "Le PC démarre avec un avertissement : réglages perdus (pile CMOS)", ventilos: "tournent", ecran: "Message d'avertissement (par exemple « CMOS checksum error », le texte dépend du BIOS), F1 pour continuer", leds: "Normales", debug: null, bips: null, theme: "cmos",
       explication: ["Le PC démarre, mais la mémoire CMOS (réglages du BIOS, date et heure) n'est plus alimentée quand le PC est débranché : la pile de la carte mère est usée."],
       correction: ["Remplacer la pile CMOS (modèle CR2032 sur la plupart des cartes), puis refaire les réglages et la date."],
       etapesPlus: [{ nom: "Réglages mémorisés (pile CMOS)", etat: "avert" }] },
     temoin: "pile",
-    obs: { visuel: "Une pile ronde CR2032 est en place sur la carte mère, sans fuite visible. Au multimètre : environ 2,0 V (une pile neuve donne environ 3 V).",
-      bios: "L'UEFI affiche une date par défaut et des réglages d'usine rechargés, avec un message « CMOS checksum error »." },
+    obs: { visuel: "Une pile ronde CR2032 est en place sur la carte mère, sans fuite visible. Elle a plus de trois ans ; d'après Dell, une pile CMOS dure en général deux à trois ans.",
+      bios: "L'UEFI affiche une date par défaut et des réglages d'usine rechargés,  avec un message d'avertissement sur les réglages." },
     utile: ["visuel", "bios"],
     indices: ["Le PC démarre : le matériel principal va bien. Qu'est-ce qui est mémorisé quand le PC est débranché ?", "Date, heure et réglages du BIOS sont mémorisés par une petite pile de la carte mère.", "Mesure sa tension ou essaie une pile neuve."],
     pourquoi: "La pile CMOS (souvent une CR2032) alimente l'horloge et la mémoire des réglages de la carte quand le PC est débranché. Elle dure plusieurs années. Usée, la carte oublie la date et ses réglages à chaque extinction : d'où l'heure fausse et le message au démarrage. Dans un domaine, l'heure fausse peut aussi gêner l'authentification (Kerberos tolère un écart limité) : à vérifier sur place.",
@@ -267,11 +267,11 @@
       explication: ["Le BIOS de la carte ne contient pas encore le support de ce processeur : la carte ne sait pas l'initialiser et reste bloquée à l'étape CPU, sans afficher d'image."],
       correction: ["Mettre à jour le BIOS (fonction USB BIOS Flashback sans processeur si la carte l'a, ou avec un processeur plus ancien compatible)."] },
     temoinTxt: { cpu: "Avec un processeur plus ancien, compatible avec ce BIOS, le PC démarre. Ce n'est donc pas le processeur d'origine qui est en panne : c'est la carte qui ne le reconnaît pas encore." },
-    obs: { visuel: "Processeur bien posé, ventirad en place, EPS branché. L'étiquette de la carte indique une version de BIOS ancienne ; la liste « CPU Support » du constructeur donne, pour ce processeur, une version minimale plus récente.",
+    obs: { visuel: "Processeur bien posé, ventirad en place, EPS branché. L'étiquette de la carte indique une version de BIOS ancienne ; d'après la documentation du constructeur, ce processeur demande une version plus récente.",
       bios: "Impossible : le PC ne produit aucune image." },
     utile: ["led", "visuel"],
     indices: ["Les LED désignent le processeur, et pourtant il est bien posé et alimenté.", "Pièces neuves, montage correct : cherche du côté de la compatibilité logicielle.", "La carte vient du stock : quelle est la version de son BIOS ? Que dit la liste de compatibilité du constructeur ?"],
-    pourquoi: "Chaque version de BIOS prend en charge une liste de processeurs. Une carte restée en stock peut avoir un BIOS antérieur à la sortie du processeur monté : elle ne le reconnaît pas. Le constructeur publie la liste (page « CPU Support » de la carte) avec la version minimale requise. Les symptômes ressemblent à ceux d'un processeur mort.",
+    pourquoi: "Chaque version de BIOS prend en charge une liste de processeurs. Une carte restée en stock peut avoir un BIOS antérieur à la sortie du processeur monté : elle ne le reconnaît pas. Pour prendre en charge les processeurs récents, une carte a souvent besoin d'une mise à jour du BIOS (ASRock) ; la documentation de la carte indique les processeurs pris en charge. Les symptômes ressemblent à ceux d'un processeur mort.",
     reel: "On ne coupe jamais le courant pendant une mise à jour de BIOS : elle peut rendre la carte inutilisable. On utilise uniquement le fichier officiel du constructeur."
   });
 
@@ -279,16 +279,15 @@
     niveau: "Avancé", base: "bureau", theme: "ordre", cause: "entretoise", fix: "refaire-entretoises", flag: "entretoise", ko: "Carte mère alimentée (24 broches)",
     titre: "Un claquement, puis plus rien : un PC tout juste monté",
     ticket: "« On a monté le PC et on a appuyé sur le bouton. Un petit claquement, puis plus rien : aucune LED, aucun ventilateur. »",
-    contexte: "Montage de la veille. Le kit d'entretoises posé est celui d'une carte ATX, alors que la carte est une micro-ATX.",
-    place: { standoffs: "entretoises-atx" },
+    contexte: "Montage de la veille, dans un boîtier livré avec des entretoises déjà vissées sur le plateau.",
     symp: { code: "rien", titre: "Rien ne s'allume : court-circuit sous la carte mère", ventilos: "immobiles", ecran: "Écran noir, pas de signal", leds: "Aucune LED, l'alimentation se met en protection", debug: null, bips: null, theme: "ordre",
       explication: ["Une entretoise placée sous la carte, en face d'aucun trou, touche les soudures de la face arrière : court-circuit. L'alimentation le détecte et se met en protection."],
       correction: ["Retirer la carte, ne garder que les entretoises en face de ses trous, la reposer et la revisser."] },
-    obs: { visuel: "Vu de côté, une entretoise se trouve sous la carte à un endroit où elle n'a pas de trou : elle touche le circuit imprimé. Le kit posé est un kit ATX ; la carte est une micro-ATX.",
-      alim: "Testeur : tensions correctes à vide, PS_OK présent : l'alimentation est saine quand elle n'est pas raccordée à la carte. Le défaut vient d'ailleurs." },
+    obs: { visuel: "Vu de côté, une entretoise déjà vissée sur le plateau se trouve sous la carte à un endroit où elle n'a pas de trou : elle touche le circuit imprimé.",
+      alim: "Testeur : tensions correctes à vide, PWR_OK présent : l'alimentation est saine quand elle n'est pas raccordée à la carte. Le défaut vient d'ailleurs." },
     utile: ["alim", "visuel"],
-    indices: ["Un claquement, puis plus rien : une protection a coupé. L'alimentation est-elle en cause ? Teste-la.", "L'alimentation est saine : le court-circuit vient de ce qu'elle alimente. Regarde sous la carte mère.", "Compare le format du kit d'entretoises et celui de la carte."],
-    pourquoi: "Les entretoises tiennent la carte à distance du plateau, uniquement en face de ses trous de fixation (9 pour une ATX, moins pour une micro-ATX). Une entretoise sans trou en face touche la carte, et peut provoquer un court-circuit : l'alimentation se met en protection. Tester l'alimentation seule permet de l'écarter.",
+    indices: ["Un claquement, puis plus rien : une protection a coupé. L'alimentation est-elle en cause ? Teste-la.", "L'alimentation est saine : le court-circuit vient de ce qu'elle alimente. Regarde sous la carte mère.", "Compare la position de chaque entretoise avec les trous de la carte."],
+    pourquoi: "Les entretoises tiennent la carte à distance du plateau, uniquement en face de ses trous de fixation (leur nombre dépend du format et de la carte). Une entretoise sans trou en face touche la carte, et peut provoquer un court-circuit : l'alimentation se met en protection. Tester l'alimentation seule permet de l'écarter.",
     reel: "Méthode éprouvée : monter la carte hors boîtier sur son carton, avec processeur, mémoire et vidéo. Si elle démarre, le défaut vient du montage dans le boîtier."
   });
 
@@ -301,7 +300,7 @@
     utile: ["led", "visuel"],
     indices: ["Une LED de la carte est allumée : elle est alimentée. L'alimentation va donc bien.", "Le bouton marche de la façade doit être relié à la carte : par quoi ?", "Regarde les broches F_PANEL, en bas de la carte."],
     pourquoi: "Le bouton marche n'est qu'un interrupteur qui ferme deux broches (PWR_SW) de F_PANEL. Si la nappe n'est pas branchée, la carte ne reçoit jamais l'ordre de démarrer : la LED de veille s'allume (la carte est alimentée) mais rien ne se passe.",
-    reel: "Pour tester sans nappe, on peut toucher les deux broches PWR_SW avec un tournevis isolé : si la carte démarre, tout le reste va bien."
+    reel: "Le manuel de la carte donne le brochage de F_PANEL (PWR_SW, LED, HDD) : c'est lui qu'on suit pour rebrancher la nappe."
   });
 
   /* ---------- Évaluation ---------- */

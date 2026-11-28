@@ -15,11 +15,12 @@
     cim: ["Microsoft Learn : classe Win32_BIOS (SerialNumber)", "https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-bios"],
     cs: ["Microsoft Learn : classe Win32_ComputerSystem (Manufacturer, Model)", "https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem"],
     dsreg: ["Microsoft Learn : dsregcmd /status", "https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd"],
-    nist: ["NIST : SP 800-88 Rev. 2, Guidelines for Media Sanitization", "https://csrc.nist.gov/pubs/sp/800/88/r2/final"],
     ups: ["UPS Belgique : déclarer un dommage (exemple de transporteur)", "https://www.ups.com/be/en/support/file-a-claim"],
     chaud: ["Dell : surchauffe et nettoyage des aérations", "https://www.dell.com/support/kbdoc/en-ed/000130867/how-to-troubleshoot-a-overheating-shutdown-or-thermal-issue-on-a-dell-pc"],
     disque: ["Microsoft Learn : Get-StorageReliabilityCounter", "https://learn.microsoft.com/en-us/powershell/module/storage/get-storagereliabilitycounter"],
     batterie: ["Microsoft Learn : options de powercfg (/batteryreport)", "https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/powercfg-command-line-options"],
+    dellBat: ["Dell : rapport de batterie (Design Capacity, Full Charge Capacity)", "https://www.dell.com/support/kbdoc/en-us/000130117"],
+    dellNet: ["Dell : nettoyer son ordinateur", "https://www.dell.com/support/kbdoc/en-us/000124077"],
     secu: ["Dell : sécurité électrique et protection ESD (article 000137973)", "https://www.dell.com/support/kbdoc/en-us/000137973/safety-precautions-when-working-with-electrical-equipment"]
   };
 
@@ -28,7 +29,7 @@
       id: "colis", titre: "Réceptionner et contrôler un colis", illus: "colis",
       role: "Un transporteur livre des PC : on contrôle avant de signer, on compare au bon de livraison, on relève les numéros de série, on étiquette et on range.",
       procedure: [
-        ["Regarder l'extérieur", "Carton abîmé ou humide : le noter et le photographier avant de signer la livraison, selon la procédure."],
+        ["Regarder l'extérieur", "Carton abîmé ou humide : le noter (et le photographier) avant de signer la livraison, selon la procédure de l'organisation et du transporteur."],
         ["Comparer au bon de livraison", "Quantité, références et modèles, ligne par ligne, avec la commande."],
         ["Vérifier le contenu", "Appareil, alimentation ou chargeur, câbles, accessoires."],
         ["Relever les numéros de série", "Et les associer au bon de livraison."],
@@ -38,7 +39,7 @@
       cases: ["Extérieur du carton contrôlé (photo si dommage)", "Bon de livraison comparé à la commande", "Contenu complet", "Numéros de série relevés", "Étiquette d'inventaire posée", "Inventaire à jour, écarts signalés"],
       exercice: {
         consigne: "Le bon de livraison annonce 10 PC de bureau du même modèle, 10 alimentations externes et 10 claviers. Tu comptes 10 cartons de PC, dont un est enfoncé sur un coin, et 9 claviers. Le transporteur attend ta signature. Que fais-tu, dans l'ordre ?",
-        correction: ["Avant de signer : noter le carton enfoncé et le clavier manquant sur le bon (ou selon la procédure du transporteur), photographier le carton.", "Ouvrir et vérifier le carton abîmé (appareil intact ? accessoires ?), relever tous les numéros de série et les associer au bon.", "Étiqueter et enregistrer les 10 PC ; signaler l'écart (1 clavier manquant, 1 carton abîmé) au responsable des commandes.", "Ne rien jeter (carton, calage) tant qu'une réclamation est possible : délais et formalités dépendent du transporteur et du contrat."]
+        correction: ["Avant de signer : noter le carton enfoncé et le clavier manquant sur le bon (ou selon la procédure du transporteur), photographier le carton.", "Ouvrir et vérifier le carton abîmé (appareil intact ? accessoires ?), relever tous les numéros de série et les associer au bon.", "Étiqueter et enregistrer les 10 PC ; signaler l'écart (1 clavier manquant, 1 carton abîmé) au responsable des commandes.", "Délais et formalités d'une réclamation : ils dépendent du transporteur et du contrat (à vérifier sur place, avec la page du transporteur)."]
       },
       umons: ["Qui signe les livraisons et où sont rangés les colis", "L'outil d'inventaire et le format des étiquettes", "À qui signaler un écart et sous quel délai"],
       sources: [J9, S.ups, DEP],
@@ -86,7 +87,7 @@
       id: "maintenance", titre: "Maintenance préventive", illus: "maintenance",
       role: "Repérer avant la panne : état des disques, poussière, batterie, mises à jour et inventaire, sur le planning de l'organisation.",
       procedure: [
-        ["Disques", "État de santé avec Get-PhysicalDisk ; compteurs de fiabilité (température, erreurs, usure) avec Get-StorageReliabilityCounter, en console administrateur."],
+        ["Disques", "État de santé avec Get-PhysicalDisk ; compteurs de fiabilité (température, erreurs, usure) avec Get-StorageReliabilityCounter."],
         ["Poussière et aérations", "Poussière sur les ailettes et les aérations = surchauffe : nettoyage machine éteinte et débranchée, en suivant la page du constructeur."],
         ["Batterie des portables", "powercfg /batteryreport : comparer la capacité d'origine (Design capacity) et la capacité actuelle (Full charge capacity)."],
         ["Mises à jour", "Système et logiciels selon la politique de l'organisation."],
@@ -95,11 +96,11 @@
       cases: ["Santé des disques relevée", "Aérations contrôlées (nettoyage hors tension si besoin)", "Rapport de batterie lu (portables)", "Mises à jour faites", "Inventaire vérifié"],
       exercice: {
         consigne: "Sur un portable, powercfg /batteryreport donne Design capacity 50 000 mWh et Full charge capacity 30 000 mWh. Get-StorageReliabilityCounter affiche Wear à 5. Que notes-tu dans le ticket de maintenance ?",
-        correction: ["Batterie : 30 000 / 50 000 = 60 % de la capacité d'origine ; autonomie réduite, remplacement à proposer selon la procédure et la garantie.", "SSD : usure estimée à 5 % (Wear) : rien à signaler.", "On note les deux valeurs et la date : la comparaison avec la prochaine maintenance montre l'évolution."]
+        correction: ["Batterie : 30 000 / 50 000 = 60 % de la capacité d'origine ; on note la valeur et on suit son évolution. Dell recommande le remplacement sous 40 % de la capacité d'origine ; avant, selon la procédure et la garantie.", "SSD : usure estimée à 5 % (Wear) : rien à signaler.", "On note les deux valeurs et la date : la comparaison avec la prochaine maintenance montre l'évolution."]
       },
       umons: ["Planning de maintenance et parc concerné", "Qui nettoie et avec quel matériel", "Procédure de remplacement des batteries"],
       attention: "Nettoyage ou ouverture : machine éteinte, câble secteur débranché, bouton marche maintenu 15 à 20 s, décharge électrostatique avant de toucher (support Dell, article 000137973).",
-      sources: [MAT, S.disque, S.batterie, S.chaud, S.secu],
+      sources: [MAT, S.disque, S.batterie, S.dellBat, S.chaud, S.dellNet, S.secu],
       liens: [["D", "pannes.html", "Diagnostic des pannes"], ["C-02", "montage.html?s=remplacer-ssd", "Remplacer un SSD"]]
     }
   };
