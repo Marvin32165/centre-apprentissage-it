@@ -556,9 +556,14 @@ Moteur autorisé : assets/atelier-pannes-regles.js
 ## Lot 41 — Socle « manuel technique » et entrée de l'atelier
 - [x] 41.1 Cahier des charges `REFONTE.md` § 7, `AGENTS.md` (IM Fell retirée, nouvelle identité), lots 41 à 48 dans ce plan.
   Fait : § 7 écrit (identité, composants, maquette isométrique, mise en page hybride, pages) ; `AGENTS.md` à jour ; lots 41 à 48 détaillés.
-- [ ] 41.2 CSS « Lot 41 — Manuel technique » : planche, cartouche, repères, nomenclature, procédure, encadrés de manuel, fiche, mise en page hybride ; IM Fell retirée du CSS et des liens de police.
-- [ ] 41.3 `atelier/index.html` : couverture technique et sommaire en parties A à F, épreuves, index ; `atelier-index.js` adapté.
-- [ ] 41.4 Composants de référence dans `docs/composants.html` (§ 7 remplacé), `npm run controles`, fusion.
+- [x] 41.2 CSS « Lot 41 — Manuel technique » : planche, cartouche, repères, nomenclature, procédure, encadrés de manuel, fiche, mise en page hybride ; IM Fell retirée du CSS et des liens de police.
+  Fait : section « Lot 41 » de `style.css` (planche à grille, cartouche, maquette en trois tons, repères, nomenclature, encadrés Attention / Outillage / Remarque / Source, procédure, fiche, feuille hybride, sommaire) ; IM Fell retirée des 6 pages et de `--fell` ; noyau isométrique `assets/atelier-iso.js` et géométrie des trois boîtiers `assets/atelier-iso-data.js` (avance sur 42.1 et 42.2).
+- [x] 41.3 `atelier/index.html` : couverture technique et sommaire en parties A à F, épreuves, index ; `atelier-index.js` adapté.
+  Fait : couverture avec vue éclatée réglable et nomenclature, sommaire A à F et épreuves (« bientôt » tant que la partie n'existe pas), index renvoyant à B-01… et D-01… ; carte de l'accueil et 404 renommées.
+- [x] 41.4 Composants de référence dans `docs/composants.html` (§ 7 remplacé), `npm run controles`, fusion.
+  Fait : § 7 de `composants.html` remplacé ; contrôles : 0 problème (verif serveur et `file://`, accessibilité, contrastes). Justifié : un échec de `parcours` (« calendrier de la prépa » en `file://`) touche l'accueil, pas l'atelier ; vérifié sur `main` (voir lot 42).
+
+Reste : pages de montage, pannes et épreuves encore dans l'ancien habillage (lots 42, 45 et 48).
 
 ## Lot 42 — Maquette isométrique
 - [ ] 42.1 `assets/atelier-iso.js` : projection, primitives (boîte, plaque, cylindre, connecteur), ordre de dessin, ombrage en trois tons, repères et lignes d'attache.

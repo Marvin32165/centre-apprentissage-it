@@ -14,7 +14,7 @@
   --font-text: "Newsreader", Georgia, "Times New Roman", serif;
   --font-ui: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-code: "IBM Plex Mono", Consolas, "Courier New", monospace;
-  --fell: "IM Fell English", Georgia, "Times New Roman", serif; --fell-sc: "IM Fell English SC", "IM Fell English", Georgia, serif; --gravure: #E3B49A;
+  --fell: var(--font-ui); --fell-sc: var(--font-code); /* IM Fell retirée (lot 41) : l'ancien habillage du livre retombe sur les polices du site */ --gravure: #E3B49A;
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
   --r-s: 4px; --r-m: 6px; --r-l: 10px;
   --shadow-float: 0 18px 48px -16px rgba(27, 23, 19, 0.55);
@@ -337,7 +337,7 @@ a.case:hover { border-color: var(--accent); }
 .anneau-fond, .anneau-val { fill: none; stroke-width: 3.2; }
 .anneau-fond { stroke: var(--line); }
 .anneau-val { stroke: var(--green); }
-.card.livre { background-color: var(--paper); background-image: repeating-linear-gradient(0deg, transparent 0 27px, color-mix(in srgb, var(--line) 55%, transparent) 27px 28px); }
+.card.livre { background-color: var(--surface); background-image: linear-gradient(var(--plan) 1px, transparent 1px), linear-gradient(90deg, var(--plan) 1px, transparent 1px); background-size: 16px 16px; }
 .trois { list-style: none; margin: 0 0 var(--s5); padding: 0; display: grid; gap: var(--s6); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
 .trois li { margin: 0; }
 .romain { display: block; margin-bottom: 6px; font-size: 2.5rem; font-style: italic; line-height: 1; color: var(--accent); }
@@ -972,10 +972,10 @@ details.rabat[open] { background: #F3EBDD; }
 .index-liste { list-style: none; margin: 0; padding: 0; font-size: 0.9375rem; line-height: 1.4; }
 @media (min-width: 40rem) { .index-liste:not(.pannes) { columns: 2; column-gap: var(--s5); } }
 .index-liste li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 var(--s2); margin: 0; padding: 2px 0; break-inside: avoid; }
-.index-liste .index-lettre { margin-top: var(--s2); font-family: var(--fell-sc); color: var(--accent); }
-.index-refs { font-family: var(--fell); }
+.index-liste .index-lettre { margin-top: var(--s2); font-family: var(--font-code); color: var(--accent); }
+.index-refs { font-family: var(--font-code); font-size: 0.8125rem; }
 .index-refs a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; margin: -6px 0; padding: 0 4px; }
-.index-sous { flex-basis: 100%; font-family: var(--fell); font-style: italic; font-size: 0.84375rem; color: var(--ink-pale); }
+.index-sous { flex-basis: 100%; font-family: var(--font-text); font-style: italic; font-size: 0.84375rem; color: var(--ink-pale); }
 
 /* ---------- Mouvement réduit ---------- */
 @media (prefers-reduced-motion: reduce) {
@@ -1165,7 +1165,7 @@ a.card:hover, a.mod-card:hover { transform: translateY(-2px); box-shadow: 0 10px
 .picto svg { width: 22px; height: 22px; stroke-width: 1.5; }
 .card.rub > .picto { width: 44px; height: 44px; margin-bottom: var(--s1); border: 1px solid var(--line); border-radius: var(--r-m); background: var(--paper); }
 .card.rub > .picto svg { width: 24px; height: 24px; }
-.card.rub.livre > .picto { font-family: var(--fell, serif); }
+.card.rub.livre > .picto { font-family: var(--font-code); }
 /* Ticket de l'accueil : perforations, tampon, code-barres */
 .ticket { position: relative; }
 .ticket::before, .ticket::after { content: ""; position: absolute; top: 58%; width: 22px; height: 22px; border-radius: 50%; background: var(--paper); transform: translateY(-50%); }
@@ -1453,3 +1453,129 @@ pre.colore .ln:not(.vide)::before { content: "›"; display: inline-block; width
 .g-vide { font-style: italic; color: var(--ink-soft); }
 @media (min-width: 64rem) { .g-outils { position: sticky; top: var(--header-h); z-index: 5; } .g-terme { scroll-margin-top: calc(var(--header-h) + 12rem); } }
 @media print { .g-outils, .g-ancre { display: none; } .g-terme { break-inside: avoid; } }
+
+/* ===== Lot 41 — Manuel technique (atelier hardware, REFONTE.md § 7) ===== */
+:root { --plan: color-mix(in srgb, var(--line) 55%, transparent); --mt-t1: color-mix(in srgb, var(--ink) 7%, var(--surface)); --mt-t2: color-mix(in srgb, var(--ink) 15%, var(--surface)); }
+.mt .wrap.page { max-width: 84rem; }
+.mt-surtitre { margin: 0 0 var(--s2); font-family: var(--font-code); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.mt h1, .mt-titre { font-family: var(--font-ui); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+.mt h1 { font-size: clamp(2rem, 1.3rem + 2.8vw, 3.25rem); margin: 0 0 var(--s4); }
+.mt h2 { font-family: var(--font-ui); font-weight: 700; letter-spacing: -0.01em; }
+.mt-chapeau { font-size: 1.1875rem; color: var(--ink-soft); max-width: 38rem; }
+
+/* Planche : cadre double, grille, cartouche */
+.mt-planche { position: relative; margin: 0; padding: 14px; background-color: var(--surface); background-image: linear-gradient(var(--plan) 1px, transparent 1px), linear-gradient(90deg, var(--plan) 1px, transparent 1px); background-size: 16px 16px; border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 4px; }
+.mt-planche > svg { display: block; width: 100%; height: auto; }
+.mt-cartouche { display: grid; grid-template-columns: repeat(4, auto); justify-content: end; margin: 10px -14px -14px auto; width: max-content; max-width: calc(100% + 28px); border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); background: var(--surface); font-family: var(--font-code); font-size: 0.6875rem; line-height: 1.3; letter-spacing: 0.06em; text-transform: uppercase; }
+.mt-cartouche > span { padding: 5px 10px; border-right: 1px solid var(--line); color: var(--ink-soft); }
+.mt-cartouche > span:last-child { border-right: 0; }
+.mt-cartouche b { display: block; font-weight: 500; color: var(--ink); }
+.mt-fig { margin: 8px 0 0; font-family: var(--font-code); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--ink-soft); }
+.mt-fig b { color: var(--accent); font-weight: 500; }
+
+/* Maquette isométrique : trois tons tirés de l'encre, valables en clair et en sombre */
+.iso { overflow: visible; }
+.iso polygon, .iso path { stroke: var(--ink); stroke-width: 1.25; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.iso-t { fill: var(--surface); } .iso-g { fill: var(--mt-t1); } .iso-d { fill: var(--mt-t2); }
+.iso-pcb.iso-t { fill: color-mix(in srgb, var(--green) 14%, var(--surface)); } .iso-pcb.iso-g { fill: color-mix(in srgb, var(--green) 24%, var(--surface)); } .iso-pcb.iso-d { fill: color-mix(in srgb, var(--green) 34%, var(--surface)); }
+.iso-plastique.iso-t { fill: color-mix(in srgb, var(--ink) 22%, var(--surface)); } .iso-plastique.iso-g { fill: color-mix(in srgb, var(--ink) 32%, var(--surface)); } .iso-plastique.iso-d { fill: color-mix(in srgb, var(--ink) 42%, var(--surface)); }
+.iso-laiton.iso-t, .iso-laiton.iso-g, .iso-laiton.iso-d { fill: color-mix(in srgb, var(--amber) 45%, var(--surface)); }
+.iso-connecteur.iso-t, .iso-connecteur.iso-g, .iso-connecteur.iso-d { fill: color-mix(in srgb, var(--ink) 70%, var(--surface)); }
+.iso-tole.iso-g { fill: color-mix(in srgb, var(--ink) 5%, var(--surface)); }
+.iso .iso-det, .iso .iso-socket, .iso .iso-vis { fill: none; stroke-width: 0.75; }
+.iso .iso-socket { fill: var(--surface); }
+.iso .iso-grille { fill: color-mix(in srgb, var(--ink) 12%, transparent); stroke-width: 0.75; }
+.iso .iso-trou, .iso .iso-slot, .iso .iso-puce { fill: color-mix(in srgb, var(--ink) 72%, var(--surface)); stroke-width: 0.5; }
+.iso .iso-etiquette { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 0.75; }
+.iso .iso-pate { fill: color-mix(in srgb, var(--ink) 30%, var(--surface)); stroke-width: 0.5; }
+.iso .iso-metal-f { fill: color-mix(in srgb, var(--ink) 8%, var(--surface)); stroke-width: 0.75; }
+.iso .iso-sol, .iso .iso-fond { fill: color-mix(in srgb, var(--ink) 4%, transparent); stroke: none; }
+.iso line { stroke: var(--ink); vector-effect: non-scaling-stroke; }
+.iso .iso-trait { stroke-width: 1.25; } .iso .iso-arete { stroke-width: 0.75; stroke-dasharray: 5 4; opacity: 0.7; } .iso .iso-ailette { stroke-width: 0.5; }
+.iso .iso-axe { stroke: var(--accent); stroke-width: 0.75; stroke-dasharray: 3 4; }
+.iso .iso-cable { fill: none; stroke: var(--ink-soft); stroke-width: 3; stroke-linecap: round; }
+.iso-rep line { stroke: var(--accent); stroke-width: 0.75; }
+.iso-rep circle { fill: var(--surface); stroke: var(--accent); stroke-width: 1.25; vector-effect: non-scaling-stroke; }
+.iso-rep .iso-rep-pt { fill: var(--accent); stroke: none; }
+.iso-rep text { font-family: var(--font-code); font-size: 12px; font-weight: 500; text-anchor: middle; fill: var(--accent); }
+.iso-piece.is-hl polygon, .iso-piece.is-sel polygon { stroke: var(--accent); stroke-width: 2.25; }
+.iso-rep.is-hl circle { fill: var(--accent); } .iso-rep.is-hl text { fill: var(--on-accent); }
+
+/* Nomenclature */
+.mt-nomenclature { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: 0.9375rem; }
+.mt-nomenclature th { padding: 6px 8px; border-bottom: 2px solid var(--ink); font-family: var(--font-code); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-align: left; color: var(--ink-soft); }
+.mt-nomenclature td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.mt-nomenclature td:first-child { width: 3rem; }
+.mt-nomenclature tr.is-hl td { background: var(--accent-soft); }
+.mt-rep { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 4px; border: 1.25px solid var(--accent); border-radius: 13px; font-family: var(--font-code); font-size: 0.75rem; font-weight: 500; color: var(--accent); background: var(--surface); }
+button.mt-rep { min-width: 44px; min-height: 44px; border-radius: 22px; cursor: pointer; }
+.mt-nomenclature a { color: var(--ink); }
+
+/* Encadrés de manuel */
+.mt-encadre { margin: var(--s4) 0; padding: var(--s3) var(--s4); border: 1px solid var(--line); border-left: 6px solid var(--ink-soft); background: var(--surface); font-family: var(--font-ui); font-size: 0.96875rem; line-height: 1.55; }
+.mt-encadre > :last-child { margin-bottom: 0; }
+.mt-etiq { display: flex; align-items: center; gap: 8px; margin: 0 0 6px; font-family: var(--font-code); font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; }
+.mt-encadre.attention { border-left-color: var(--red); } .mt-encadre.attention .mt-etiq { color: var(--red); }
+.mt-encadre.attention .mt-etiq::before { content: "!"; display: inline-grid; place-items: center; width: 18px; height: 16px; clip-path: polygon(50% 0, 100% 100%, 0 100%); background: var(--red); color: var(--surface); font-size: 0.625rem; line-height: 1; padding-top: 4px; }
+.mt-encadre.outillage { border-left-color: var(--ink); } .mt-encadre.outillage ul { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.mt-encadre.outillage li::before { content: "▸ "; color: var(--accent); }
+.mt-encadre.remarque { border-left-color: var(--amber); } .mt-encadre.remarque .mt-etiq { color: var(--amber); }
+.mt-encadre.source { border-left-color: var(--accent); } .mt-encadre.source .mt-etiq { color: var(--accent); }
+
+/* Procédure numérotée */
+.mt-proc { counter-reset: etape; margin: var(--s4) 0; padding: 0; list-style: none; }
+.mt-proc > li { counter-increment: etape; position: relative; padding: 0 0 var(--s4) 56px; min-height: 44px; }
+.mt-proc > li::before { content: counter(etape, decimal-leading-zero); position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 40px; height: 40px; border: 1.5px solid var(--ink); font-family: var(--font-code); font-size: 0.9375rem; font-weight: 500; }
+.mt-proc > li.fait::before { background: var(--ink); color: var(--paper); }
+.mt-proc > li.courant::before { border-color: var(--accent); color: var(--accent); outline: 3px solid var(--accent-soft); }
+.mt-proc > li > strong:first-child { display: block; font-family: var(--font-ui); font-weight: 600; }
+
+/* Fiche technique */
+.mt-fiche { width: 100%; border-collapse: collapse; border-top: 2px solid var(--ink); font-family: var(--font-ui); font-size: 0.9375rem; }
+.mt-fiche th, .mt-fiche td { padding: 7px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.mt-fiche th { width: 40%; font-weight: 500; color: var(--ink-soft); }
+.mt-fiche td { font-family: var(--font-code); font-size: 0.875rem; }
+
+/* Mise en page hybride : deux colonnes sur grand écran, planche collante */
+.mt-feuille { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s5); align-items: start; }
+@media (min-width: 68.75rem) {
+  .mt-feuille { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: var(--s6); }
+  .mt-feuille > .mt-colle { position: sticky; top: calc(var(--header-h) + 16px); }
+}
+@media (max-width: 68.74rem) { .mt-feuille > .mt-avant { order: -1; } }
+
+/* Couverture et sommaire de l'atelier */
+.mt-couv { display: grid; gap: var(--s6); align-items: center; margin: var(--s5) 0 var(--s7); }
+@media (min-width: 68.75rem) { .mt-couv { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } }
+.mt-mode { display: grid; gap: 6px; margin: var(--s4) 0; padding: 0; list-style: none; font-family: var(--font-ui); font-size: 0.9375rem; color: var(--ink-soft); }
+.mt-mode b { color: var(--ink); font-weight: 600; }
+.mt-couv-nomen { margin-top: var(--s4); columns: 2 12rem; column-gap: var(--s5); padding: 0; list-style: none; font-family: var(--font-ui); font-size: 0.875rem; }
+.mt-couv-nomen li { display: flex; align-items: center; gap: 8px; break-inside: avoid; min-height: 32px; }
+.mt-sommaire { display: grid; gap: var(--s5); margin: 0 0 var(--s7); }
+@media (min-width: 48rem) { .mt-sommaire { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 75rem) { .mt-sommaire { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.mt-partie { padding: var(--s4); border: 1px solid var(--ink); background: var(--surface); }
+.mt-partie-tete { display: flex; gap: 12px; align-items: flex-start; margin-bottom: var(--s3); padding-bottom: var(--s3); border-bottom: 1px solid var(--line); }
+.mt-lettre { flex: none; display: grid; place-items: center; width: 44px; height: 44px; background: var(--ink); color: var(--paper); font-family: var(--font-code); font-size: 1.25rem; font-weight: 500; }
+.mt-partie h2 { margin: 0; font-size: 1.25rem; line-height: 1.2; }
+.mt-partie-tete p { margin: 2px 0 0; font-family: var(--font-ui); font-size: 0.875rem; color: var(--ink-soft); }
+.mt-entrees { margin: 0; padding: 0; list-style: none; font-family: var(--font-ui); font-size: 0.9375rem; }
+.mt-entrees li { display: flex; align-items: center; gap: 8px; }
+.mt-entrees a, .mt-entrees .bientot { flex: 1; display: flex; align-items: center; gap: 8px; min-height: 44px; color: var(--ink); text-decoration: none; }
+.mt-entrees a:hover .mt-e-t { text-decoration: underline; }
+.mt-e-n { flex: none; width: 2.6rem; font-family: var(--font-code); font-size: 0.75rem; color: var(--accent); }
+.mt-e-t { flex: 0 1 auto; min-width: 0; }
+.mt-e-pts { flex: 1 1 12px; min-width: 12px; border-bottom: 1px dotted var(--ink-pale); transform: translateY(-4px); }
+.mt-e-etat { flex: none; font-family: var(--font-code); font-size: 0.75rem; color: var(--ink-pale); }
+.mt-e-etat.ok { color: var(--green); }
+.mt-entrees .bientot { color: var(--ink-pale); }
+.mt-entrees .mt-test { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; font-family: var(--font-code); font-size: 0.75rem; }
+.mt-index { display: grid; gap: var(--s5); margin-bottom: var(--s7); }
+@media (min-width: 48rem) { .mt-index { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.mt-index h2 { font-size: 1.25rem; padding-bottom: var(--s2); border-bottom: 2px solid var(--ink); }
+.mt-ecart { display: flex; align-items: center; gap: 12px; margin: var(--s3) 0 0; font-family: var(--font-ui); font-size: 0.875rem; }
+.mt-ecart input { flex: 1; max-width: 16rem; min-height: 44px; accent-color: var(--accent); }
+.mt-couv-nomen li.is-hl .mt-rep { background: var(--accent); color: var(--on-accent); }
+.mt-couv > * { min-width: 0; }
+@media (max-width: 39.99rem) { .mt-cartouche { grid-template-columns: repeat(2, auto); } .mt-cartouche > span:nth-child(2n) { border-right: 0; } }
+.mt-entrees .mt-test { min-width: 44px; justify-content: center; }
