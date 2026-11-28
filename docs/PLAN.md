@@ -645,3 +645,10 @@ Reste : relecture croisée par ChatGPT de tout l'atelier (fiches, démontage, pa
   Fait : `npm run controles` réussi, 44 pages à 4 largeurs et 2 thèmes sur serveur et en `file://`, 0 problème, 0 avertissement, 0 échec et aucun contraste sous le seuil. Le verrou Playwright est installable sur un clone propre et l'audit vérifie les ancres dynamiques à leur adresse exacte.
 
 Reste : modèles effectivement en service et droits d'intervention à vérifier sur place à l'UMONS.
+
+## Lot 50 — Accueil : rapprocher le calendrier
+- [x] 50.1 Retirer l'illustration décorative du poste de garde et rapprocher le calendrier de la mission et du ticket.
+  Fait : illustration et styles associés retirés. Le calendrier suit la mission et le ticket à 32 px, vérifié à 390 px en sombre et à 1280 px en clair.
+- [ ] 50.2 Vérifier l'accueil et les contrôles du site, puis fusionner dans `main`.
+
+Reste : vérifier l'accueil et les contrôles du site.

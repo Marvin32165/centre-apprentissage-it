@@ -241,8 +241,8 @@ Couleurs, polices, contrastes AA et mouvement réduit inchangés ; chaque étape
 - Chaque encadré porte son icône au trait (masque SVG en `data:` teinté par `--c`, donc juste en clair comme en sombre) : marque-page (à retenir), ampoule (astuce), triangle (attention), repère de lieu (UMONS, questions au tuteur), livre ouvert (source). Grands encadrés : icône de 24 px à gauche, filet de 4 px ; étiquettes en ligne (source, UMONS) et notes en marge : icône de 18 px devant la pastille. La citation « À retenir » garde son grand guillemet. L'atelier n'est pas touché.
 - Tableaux : en-têtes en étiquettes Plex Mono capitales sur filet épais d'encre, première colonne en Newsreader demi-gras (code réduit à 0,78 em), filet de fin de tableau ; sur ordinateur, survol de ligne rouille doux et en-tête collant sous la barre (`.colle`, posé par `initTableaux` seulement si le tableau tient dans la colonne et compte plus de trois lignes).
 
-### 6.7 Lot 40.7 — Accueil illustré et pied de page en colophon
-- Sous la mission et le ticket, sur toute la largeur : gravure du poste de garde en SVG inline (`figure.garde-illu`, décorative) posée sur un plateau à double filet : lampe et ses rayons pointillés ambre, téléphone hachuré, écran avec une file de tickets (pastilles rouille), clavier, casque rouille posé sur le coin de l'écran, ticket perforé incliné, tasse fumante. Traits en jetons (`--ink`, `--accent`), donc justes en sombre ; recadrée au centre sur téléphone (`slice`).
+### 6.7 Lots 40.7 et 50 — Accueil et pied de page en colophon
+- Le calendrier suit directement la mission et le ticket. L'espace entre les deux sections utilise `--s6`.
 - Rubriques en grandes cartes : médaillon de 84 px hachuré à 45° et double anneau, pictogramme agrandi au trait fin, titre plus grand, chiffre romain I à IV en filigrane (`counter`, couleur de bordure, décoratif).
 - Pied de page en colophon sur toutes les pages : tampon « IT » agrandi à double filet, nom en Newsreader, mentions ; plan du site en colonnes (Prépa stage, Apprendre ; deux colonnes au téléphone) avec liens de 44 px ; colophon typographique en italique ; export / import de la progression sous un filet pointillé.
 
