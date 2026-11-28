@@ -566,10 +566,16 @@ Moteur autorisé : assets/atelier-pannes-regles.js
 Reste : pages de montage, pannes et épreuves encore dans l'ancien habillage (lots 42, 45 et 48).
 
 ## Lot 42 — Maquette isométrique
-- [ ] 42.1 `assets/atelier-iso.js` : projection, primitives (boîte, plaque, cylindre, connecteur), ordre de dessin, ombrage en trois tons, repères et lignes d'attache.
-- [ ] 42.2 `assets/atelier-iso-data.js` : boîte 3D et axe de montage de chaque emplacement des trois dispositions ; dessin de chaque type de pièce.
-- [ ] 42.3 Vues (3/4 avant, 3/4 arrière, carte mère), vue éclatée au curseur, repère ↔ nomenclature ↔ fiche.
-- [ ] 42.4 Branchement dans `montage.html` à la place des vues 2D (bac, glisser, toucher, clavier), contrôles, fusion.
+- [x] 42.1 `assets/atelier-iso.js` : projection, primitives (boîte, plaque, cylindre, connecteur), ordre de dessin, ombrage en trois tons, repères et lignes d'attache.
+  Fait : projection, boîte, rectangle et cercle sur une face, fil de fer, scène triée (priorités), vue éclatée, repères à lignes d'attache orientés vers l'extérieur, cadrage (loupe).
+- [x] 42.2 `assets/atelier-iso-data.js` : boîte 3D et axe de montage de chaque emplacement des trois dispositions ; dessin de chaque type de pièce.
+  Fait : tours micro-ATX et ATX, compact mini-ITX (SFX, deux barrettes) ; dessin de chaque type de pièce ; câbles en courbe depuis leur source.
+- [x] 42.3 Vues (3/4 avant, 3/4 arrière, carte mère), vue éclatée au curseur, repère ↔ nomenclature ↔ fiche.
+  Fait : trois vues (l'arrière est une vraie rotation de 180°, avec interrupteur et prises), bouton marche et LED sur la face avant, curseur « Vue éclatée », repères de l'étape ou de toute la planche, nomenclature dépliable dont chaque repère ouvre la fiche de la pièce.
+- [x] 42.4 Branchement dans `montage.html` à la place des vues 2D (bac, glisser, toucher, clavier), contrôles, fusion.
+  Fait : `montage.html` et `evaluation.html` passent en `body.mt` (fiche de travail, feuille de procédure, planche à cartouche, bac à maquettes miniatures) ; la pièce dessinée sous le doigt gagne, la loupe de la vue carte mère écarte les barrettes voisines ; tests d'accessibilité adaptés (clic au point dessiné) et course corrigée dans le test du calendrier.
+
+Reste : pannes (lot 45) et ancien CSS du livre encore présents.
 
 ## Lot 43 — Procédures de montage et de démontage
 - [ ] 43.1 Moteur : démontage (ordre inverse, secteur débranché et ESD d'abord, dépendances), testé sous Node.

@@ -51,7 +51,7 @@ for (const theme of ['light','dark']) {
   await p.evaluate(()=>localStorage.removeItem('it.atelier.bureautique-intel'));await p.goto(base+'atelier/montage.html?s=bureautique-intel');await p.getByRole('button',{name:/Commencer le montage/}).click();
   for(let i=0;i<8;i++)await p.getByRole('button',{name:'Montre-moi'}).click();
   for(const [piece,slot] of [['ram-ddr4-a','dimm-a2'],['ram-ddr4-b','dimm-b2']]){
-   await p.getByRole('tab',{name:/Composants/}).click();await p.locator('.at-piece[data-id="'+piece+'"]').click();const zone=p.locator('.slot-cible[data-slot="'+slot+'"] .zone-tactile');const b=await zone.boundingBox();assert.ok(b&&b.width>=44&&b.height>=44,slot);await zone.click();assert.equal(await p.evaluate(s=>JSON.parse(localStorage.getItem('it.atelier.bureautique-intel')).placed[s],slot),piece);
+   await p.getByRole('tab',{name:/Composants/}).click();await p.locator('.at-piece[data-id="'+piece+'"]').click();const zone=p.locator('.slot-cible[data-slot="'+slot+'"] .zone-tactile');const b=await zone.boundingBox();assert.ok(b&&b.width>=44&&b.height>=44,slot);await zone.scrollIntoViewIfNeeded();const c=await p.locator('.slot-cible[data-slot="'+slot+'"]').evaluate(g=>{const r=g.getBoundingClientRect();for(let y=r.top+2;y<r.bottom;y+=3)for(let x=r.left+2;x<r.right;x+=3){const e=document.elementFromPoint(x,y);if(e&&e.tagName==='polygon'&&e.closest('[data-slot]')===g)return [x,y]}return [r.left+r.width/2,r.top+r.height/2]});await p.mouse.click(c[0],c[1]);assert.equal(await p.evaluate(s=>JSON.parse(localStorage.getItem('it.atelier.bureautique-intel')).placed[s],slot),piece);
   }
  });
  await test(theme+' mesure de la cible EPS sur la planche',async()=>{
@@ -59,7 +59,7 @@ for (const theme of ['light','dark']) {
   for(let i=0;i<10;i++)await p.getByRole('button',{name:'Montre-moi'}).click();
   await p.getByRole('tab',{name:/Câbles/}).click();await p.locator('.at-piece[data-id="cab-eps"]').click();
   const cible=p.locator('.slot-cible[data-slot="con-eps"] .zone-tactile'); const box=await cible.boundingBox(); assert.ok(box); assert.ok(box.width>=44&&box.height>=44, 'Cible EPS : '+Math.round(box.width)+' × '+Math.round(box.height)+' px');
-  await cible.click(); assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.atelier.bureautique-intel')).placed['con-eps']),'cab-eps');
+  await cible.scrollIntoViewIfNeeded(); const bx=await cible.boundingBox(); await p.mouse.click(bx.x+bx.width/2,bx.y+bx.height/2); assert.equal(await p.evaluate(()=>JSON.parse(localStorage.getItem('it.atelier.bureautique-intel')).placed['con-eps']),'cab-eps');
  });
  await ctx.close();
 }

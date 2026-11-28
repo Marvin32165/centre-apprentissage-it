@@ -1579,3 +1579,97 @@ button.mt-rep { min-width: 44px; min-height: 44px; border-radius: 22px; cursor: 
 .mt-couv > * { min-width: 0; }
 @media (max-width: 39.99rem) { .mt-cartouche { grid-template-columns: repeat(2, auto); } .mt-cartouche > span:nth-child(2n) { border-right: 0; } }
 .mt-entrees .mt-test { min-width: 44px; justify-content: center; }
+
+/* ===== Lot 42 — Maquette isométrique et page de montage (REFONTE.md § 7.3) ===== */
+.mt .retour-mt { margin: 0 0 var(--s3); font-family: var(--font-ui); font-size: 0.9375rem; }
+.mt .retour-mt a, .mt .at-modes a { display: inline-flex; align-items: center; min-height: 44px; }
+.mt .at-head { margin-bottom: var(--s5); }
+.mt .at-head h1 { margin-bottom: var(--s2); }
+.mt .at-head .progress { max-width: 24rem; }
+.mt .badge { background: transparent; border: 1px solid var(--ink-pale); color: var(--ink-soft); font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.mt .badge.mode { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+.mt-feuille[hidden], .mt [hidden] { display: none !important; }
+.mt-texte h2 { margin: 0 0 var(--s3); font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); line-height: 1.15; }
+.mt-texte .at-client { font-size: 1.125rem; }
+.mt .at-besoins { margin: var(--s3) 0 var(--s4); padding: 0; list-style: none; font-family: var(--font-ui); font-size: 0.96875rem; }
+.mt .at-besoins li { position: relative; padding: 6px 0 6px 30px; border-bottom: 1px solid var(--line); }
+.mt .at-besoins li::before { content: ""; position: absolute; left: 0; top: 10px; width: 16px; height: 16px; border: 1.5px solid var(--ink); }
+.mt .cahier-actions { margin: var(--s4) 0 0; }
+.mt .at-tabs { gap: 0; margin: 0 0 var(--s2); border: 1px solid var(--ink); overflow-x: auto; }
+.mt .at-tab { flex: 1 0 auto; border: 0; border-right: 1px solid var(--ink); border-radius: 0; background: var(--surface); color: var(--ink); font-family: var(--font-code); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; }
+.mt .at-tab:last-child { border-right: 0; }
+.mt .at-tab:hover { background: var(--accent-soft); }
+.mt .at-tab[aria-selected="true"] { background: var(--ink); color: var(--paper); }
+.mt .at-tabs.petit .at-tab { font-size: 0.6875rem; padding: 0 8px; }
+.at-planche { padding: 8px; }
+.at-scene svg { display: block; width: 100%; height: auto; max-height: min(70vh, 640px); margin: 0 auto; }
+.at-iso { overflow: hidden; }
+.iso .iso-cible { fill: color-mix(in srgb, var(--accent) 16%, transparent); stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 5 4; animation: iso-fourmis 1.2s linear infinite; }
+.iso .iso-vide { fill: none; stroke: var(--ink-pale); stroke-width: 1; stroke-dasharray: 3 4; }
+.iso .slot-vide.guide .iso-vide { stroke: var(--green); stroke-width: 2; }
+@keyframes iso-fourmis { to { stroke-dashoffset: -18; } }
+.slot-cible, .pose, .iso-bouton { cursor: pointer; }
+.iso .iso-led { fill: var(--ink-pale); } .iso .iso-led.ok { fill: var(--green); } .iso .iso-led.ko { fill: var(--red); }
+.iso .iso-bouton-c { fill: var(--surface); stroke-width: 1.5; }
+.iso .iso-inter { fill: color-mix(in srgb, var(--ink) 70%, var(--surface)); } .iso .iso-inter.on { fill: var(--green); }
+.iso .iso-cable-l { stroke: var(--ink-soft); stroke-width: 3; stroke-linecap: round; }
+.iso-bouton:hover .iso-bouton-c, .iso-bouton:focus .iso-bouton-c { fill: var(--accent-soft); }
+.at-ico { width: 100%; height: 64px; }
+.mt .legende { display: grid; gap: 4px; margin: var(--s3) 0 0; padding: 0; list-style: none; }
+.mt .leg { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 4px 8px; border: 1px solid var(--line); border-radius: 0; background: var(--surface); color: var(--ink); font-family: var(--font-ui); font-size: 0.875rem; text-align: left; cursor: pointer; }
+.mt .leg[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.mt .leg .mt-rep { flex: none; }
+.mt .at-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: var(--s3) 0; }
+.mt .at-msg { margin: var(--s3) 0; }
+.mt .at-msg.ok { border-left-color: var(--green); } .mt .at-msg.ok .mt-etiq { color: var(--green); }
+.mt .at-msg.attention { border-left-color: var(--amber); } .mt .at-msg.attention .mt-etiq { color: var(--amber); }
+.mt .at-msg.bloque, .mt .at-msg.danger { border-left-color: var(--red); } .mt .at-msg.bloque .mt-etiq, .mt .at-msg.danger .mt-etiq { color: var(--red); }
+.mt .at-etape h2 { margin-top: 0; }
+.mt .at-etape .texte { font-size: 1.0625rem; }
+.mt .at-etape-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: var(--s3) 0; }
+.mt .marge-indices .mt-encadre { margin: var(--s2) 0; }
+.mt .at-bac { margin-top: var(--s5); padding-top: var(--s3); border-top: 2px solid var(--ink); }
+.mt .at-bac h3 { margin: 0 0 var(--s2); font-family: var(--font-code); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+.mt .at-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: 8px; }
+.mt .at-piece { display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-height: 120px; padding: 8px; border: 1px solid var(--ink); border-radius: 0; background: var(--surface); color: var(--ink); font-family: var(--font-ui); text-align: left; cursor: pointer; }
+.mt .at-piece:hover { background: var(--accent-soft); border-color: var(--accent); }
+.mt .at-piece[aria-pressed="true"] { outline: 3px solid var(--accent); outline-offset: -3px; background: var(--accent-soft); padding: 8px; border: 1px solid var(--accent); }
+.mt .at-piece.guide { box-shadow: 0 0 0 3px var(--green); }
+.mt .at-piece .ico { min-height: 64px; }
+.mt .at-piece .nom { font-size: 0.875rem; font-weight: 600; }
+.mt .at-piece .res { font-family: var(--font-code); font-size: 0.6875rem; font-style: normal; color: var(--ink-soft); }
+.mt .at-sel { margin: var(--s4) 0; }
+.mt .at-sel.bloc { padding: var(--s3) var(--s4); border: 1px solid var(--ink); background: var(--surface); }
+.mt .at-sel-top { display: grid; grid-template-columns: 96px 1fr; gap: 12px; align-items: center; }
+.mt .at-sel-top h2 { margin: 0; font-size: 1.125rem; }
+.mt .at-sel-top .muted { margin: 0; font-family: var(--font-code); font-size: 0.75rem; }
+.mt .at-specs { margin: var(--s3) 0; border-top: 2px solid var(--ink); gap: 0; }
+.mt .at-specs dt, .mt .at-specs dd { padding: 5px 6px; border-bottom: 1px solid var(--line); }
+.mt .at-specs dd { font-family: var(--font-code); font-size: 0.8125rem; }
+.mt .at-cibles { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 var(--s3); }
+.mt .at-label { margin: var(--s3) 0 var(--s2); font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+.mt .at-liste { margin-top: var(--s5); }
+.mt .at-liste h3 { font-family: var(--font-code); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+.mt .at-liste .mt-proc > li { padding: 0 0 6px 44px; min-height: 36px; font-family: var(--font-ui); font-size: 0.9375rem; line-height: 1.3; display: flex; align-items: center; }
+.mt .at-liste .mt-proc > li::before { width: 32px; height: 32px; font-size: 0.75rem; }
+.mt .at-post { margin: var(--s5) 0; padding: var(--s4); border: 1px solid var(--ink); background: var(--surface); }
+.mt .at-post h2 { margin-top: 0; }
+.mt .at-rapport, .mt .at-rap.bilan { padding: var(--s4); border: 1px solid var(--ink); outline: 1px solid var(--ink); outline-offset: 4px; background: var(--surface); margin-bottom: var(--s6); }
+.mt .at-ghost { width: 96px; }
+@media (prefers-reduced-motion: reduce) { .iso .iso-cible { animation: none; } }
+@media print {
+  body.mt:has(.at-rap.bilan) main > :not(#atelier):not(#pannes), body.mt:has(.at-rap.bilan) #atelier > :not(.bilan) { display: none !important; }
+  .mt .at-rap.bilan { outline: 0; border: 0; padding: 0; }
+}
+.mt .at-msg::before { content: none; }
+.mt .at-etape > .texte::first-letter, .mt .cahier .at-client::first-letter { float: none; margin: 0; padding: 0; font: inherit; color: inherit; border: 0; background: none; }
+.mt .at-etape > .texte, .mt .cahier .at-client { border: 0; padding: 0; }
+.iso .iso-cable, .iso .iso-cable-l, .iso .iso-axe, .iso .iso-arete, .iso .iso-trait, .iso-rep { pointer-events: none; }
+@media (max-width: 68.74rem) {
+  .at-layout > .mt-colle { display: contents; }
+  .at-layout .at-main { order: -1; min-width: 0; }
+  .at-layout .at-bac { order: 1; min-width: 0; }
+}
+.mt-nomen-d { margin: var(--s3) 0 0; border: 1px solid var(--line); background: var(--surface); }
+.mt-nomen-d > summary { display: flex; align-items: center; min-height: 44px; padding: 0 var(--s3); font-family: var(--font-code); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+.mt-nomen-d .mt-nomenclature { margin: 0 0 var(--s2); }

@@ -1,9 +1,9 @@
 /* Atelier hardware — interface : scène, bac de pièces, étapes guidées, démarrage simulé. */
 (function () {
   "use strict";
-  var A = window.IT_ATELIER, R = window.IT_ATELIER_RULES, Art = window.IT_ATELIER_ART;
+  var A = window.IT_ATELIER, R = window.IT_ATELIER_RULES;
   var host = document.getElementById("atelier");
-  if (!host || !A || !R || !Art) return;
+  if (!host || !A || !R || !window.IT_ISO_DATA) return;
 
   var params = new URLSearchParams(location.search);
   var P = A.pieces;
@@ -31,14 +31,13 @@
   st.indices = {}; st.aides = 0;
   var hist = [];
   var sel = null;                 /* { type: "tray", id } ou { type: "slot", id } */
-  var vue = "cote";
+  var vue = "interieur";
   var onglet = "composant";
   var msgTxt = "", msgNiv = "info";
   var postTimer = null, confirmTimer = null, finTimer = null, justDragged = false, fini = false;
 
-  var VUES = [["cote", "Côté"], ["zoom", "Zoom carte"], ["face", "Face"], ["arriere", "Arrière"]];
+  var VUES = [["interieur", "3/4 avant"], ["carte", "Carte mère"], ["arriere", "Arrière"]];
   var CATS = [["composant", "Composants"], ["accessoire", "Accessoires"], ["cable", "Câbles"]];
-  var ARR_FIL = { "mains": [20, 604], "mon-board": [6, 80], "mon-gpu": [6, 240] };
 
   /* ---------- Utilitaires ---------- */
   function slotById(id) { return R.slotDef(sc, id); }
@@ -64,14 +63,17 @@
     } catch (e) { /* sauvegarde illisible : on repart de zéro */ }
   }
 
-  /* ---------- Squelette ---------- */
+  /* ---------- Squelette « manuel technique » (REFONTE.md § 7) ---------- */
   host.textContent = "";
-  host.insertAdjacentHTML("afterbegin", Art.DEFS);
+  var I = window.IT_ISO, ID = window.IT_ISO_DATA, G = ID.GEO[sc.disposition] || ID.GEO["tour-matx"];
+  var W = G.boitier.w, Dp = G.boitier.d;
+  var num = /-s(\d+)$/.exec(sc.unite || "");
+  var code = ctx.eval ? "EP-1." + (ctx.eval.i + 1) : (sc.code || ("B-0" + (num ? num[1] : "1")));
+  function deux(n) { return (n < 10 ? "0" : "") + n; }
 
   var head = el("header", { "class": "at-head" });
-  var num = /-s(\d+)$/.exec(sc.unite || "");
-  head.innerHTML = '<p class="kicker"></p><h1></h1><div class="at-badges"></div><div class="progress at-progress" aria-live="polite"></div><p class="at-modes"></p>';
-  head.querySelector(".kicker").textContent = "Atelier hardware" + (ctx.eval ? " · Évaluation finale, scénario " + (ctx.eval.i + 1) + " / " + ctx.eval.n : (num ? " · Scénario " + num[1] : ""));
+  head.innerHTML = '<p class="mt-surtitre"></p><h1></h1><div class="at-badges"></div><div class="progress at-progress" aria-live="polite"></div><p class="at-modes"></p>';
+  head.querySelector(".mt-surtitre").textContent = "Atelier hardware · " + code + " · " + (ctx.eval ? "Épreuve des montages, " + (ctx.eval.i + 1) + " / " + ctx.eval.n : (sc.type === "demontage" ? "Procédure de démontage" : "Procédure de montage"));
   head.querySelector("h1").textContent = sc.titre;
   var badges = head.querySelector(".at-badges");
   [[TEST ? "Test noté" : "Apprentissage", "mode"], [sc.niveau, ""], [sc.duree, ""]].forEach(function (b) { badges.appendChild(el("span", { "class": "badge" + (b[1] ? " mode" : "") }, b[0])); });
@@ -81,72 +83,63 @@
   }
   host.appendChild(head);
 
-  /* ---------- Habillage « Le Livre du montage » : chapitre, cahier des charges, double page ---------- */
-  var ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
-  var chap = ctx.eval ? "Épreuve VIII, " + (ctx.eval.i + 1) : "Chap. " + (num ? ROM[+num[1]] : "I");
-  function titreCourant(gauche, droite) {
-    var t = el("p", { "class": "titre-courant" });
-    t.appendChild(el("span", null, gauche));
-    if (droite != null) t.appendChild(el("span", null, droite));
-    return t;
+  function cartouche(cells) {
+    var c = el("div", { "class": "mt-cartouche", "aria-hidden": "true" });
+    cells.forEach(function (x) { var s = el("span", null, x[0]); s.appendChild(el("b", null, x[1])); c.appendChild(s); });
+    return c;
   }
 
-  var brief = el("div", { "class": "livre-double cahier" });
-  var cG = el("section", { "class": "livre-page gauche", "aria-labelledby": "cahier-titre" });
-  cG.appendChild(titreCourant(chap + " — " + sc.titre, "Cahier des charges"));
-  var cCorps = el("div", { "class": "livre-corps" });
-  cCorps.appendChild(el("h2", { id: "cahier-titre", tabindex: "-1" }, "Cahier des charges"));
-  cCorps.appendChild(el("p", { "class": "texte at-client" }, sc.brief.client));
+  /* Fiche de travail : cahier des charges + planche du boîtier vide */
+  var brief = el("div", { "class": "mt-feuille cahier" });
+  var cG = el("section", { "class": "mt-texte", "aria-labelledby": "cahier-titre" });
+  cG.appendChild(el("p", { "class": "mt-surtitre" }, code + " · Fiche de travail"));
+  cG.appendChild(el("h2", { id: "cahier-titre", tabindex: "-1" }, "Cahier des charges"));
+  cG.appendChild(el("p", { "class": "at-client" }, sc.brief.client));
   var ulb = el("ul", { "class": "at-besoins" });
   sc.brief.besoin.forEach(function (x) { ulb.appendChild(el("li", null, x)); });
-  cCorps.appendChild(ulb);
-  cCorps.appendChild(el("p", { "class": "at-materiel" }, sc.brief.materiel));
-  cCorps.appendChild(el("p", { "class": "ornement", "aria-hidden": "true" }, "✣"));
-  var srcA = el("aside", { "class": "callout source" });
-  srcA.innerHTML = '<p>Les pièces sont des modèles génériques : leurs caractéristiques sont réalistes mais simplifiées. Référence pour les fiches de processeurs : Intel ARK (ark.intel.com) et AMD ; normes mémoire : JEDEC (DDR4, DDR5) ; exigences de Windows 11 : Microsoft Learn. Théorie : <a href="../stage/j9.html">jour 9 de la prépa</a> (matériel et PC).</p>';
-  cCorps.appendChild(srcA);
-  [["source", sc.brief.source], ["umons", sc.brief.umons]].forEach(function (x) {
+  cG.appendChild(ulb);
+  var mat = el("div", { "class": "mt-encadre outillage" });
+  mat.appendChild(el("p", { "class": "mt-etiq" }, "Matériel fourni"));
+  mat.appendChild(el("p", null, sc.brief.materiel));
+  cG.appendChild(mat);
+  var srcA = el("aside", { "class": "mt-encadre source" });
+  srcA.innerHTML = '<p class="mt-etiq">Source</p><p>Les pièces sont des modèles génériques : leurs caractéristiques sont réalistes mais simplifiées. Référence pour les fiches de processeurs : Intel ARK (ark.intel.com) et AMD ; normes mémoire : JEDEC (DDR4, DDR5) ; exigences de Windows 11 : Microsoft Learn. Théorie : <a href="../stage/j9.html">jour 9 de la prépa</a> (matériel et PC).</p>';
+  cG.appendChild(srcA);
+  [["source", sc.brief.source, "Source"], ["remarque", sc.brief.umons, "À vérifier sur place"]].forEach(function (x) {
     if (!x[1]) return;
-    var a = el("aside", { "class": "callout " + x[0] });
+    var a = el("aside", { "class": "mt-encadre " + x[0] });
+    a.appendChild(el("p", { "class": "mt-etiq" }, x[2]));
     a.appendChild(el("p", null, x[1]));
-    cCorps.appendChild(a);
+    cG.appendChild(a);
   });
-  cG.appendChild(cCorps);
-  cG.appendChild(el("p", { "class": "folio" }, "1"));
-  var cD = el("section", { "class": "livre-page droite", "aria-label": "Planche d'ouverture du chapitre" });
-  cD.appendChild(titreCourant("Planche d'ouverture"));
-  var cFig = el("figure", { "class": "livre-figure" });
-  cFig.innerHTML = '<svg class="at-svg" viewBox="0 0 860 620" role="img" aria-label="Gravure : le boîtier vide, vu de côté, panneau retiré">' + Art.coteFond() + "</svg>";
-  cFig.appendChild(el("figcaption", null, "Fig. 1. — Le boîtier, vu de côté, avant le montage."));
+  var cD = el("section", { "class": "mt-colle mt-avant", "aria-label": "Planche d'ouverture" });
+  var cFig = el("figure", { "class": "mt-planche" });
+  var depart0 = {}; Object.keys(sc.depart || {}).forEach(function (k) { depart0[k] = sc.depart[k]; });
+  cFig.innerHTML = sceneSVG({ placed: depart0, vue: "interieur", t: 0, titre: "Le boîtier avant l'intervention, vu de trois quarts avant, panneau latéral retiré" });
+  cFig.appendChild(cartouche([["Planche", code + ".00"], ["Vue", "3/4 avant"], ["Objet", G.nom], ["Modèle", "Générique"]]));
   cD.appendChild(cFig);
+  cD.appendChild(el("p", { "class": "mt-fig" }, "FIG. 0 · Le boîtier avant l'intervention, panneau latéral retiré."));
   var cAct = el("p", { "class": "cahier-actions" });
   var bCommencer = el("button", { type: "button", "class": "btn" }, TEST ? "Commencer le test ›" : "Commencer le montage ›");
   cAct.appendChild(bCommencer);
   cD.appendChild(cAct);
-  cD.appendChild(el("p", { "class": "folio" }, "2"));
   brief.appendChild(cG); brief.appendChild(cD);
   host.appendChild(brief);
 
-  var layout = el("div", { "class": "livre-double at-layout" });
-  var pageG = el("section", { "class": "livre-page gauche", "aria-label": "Page de texte" });
-  var pageD = el("section", { "class": "livre-page droite", "aria-label": "Planche illustrée" });
+  /* Feuille de procédure : texte à gauche, planche collante à droite (au-dessus sur mobile) */
+  var layout = el("div", { "class": "mt-feuille at-layout" });
+  var pageG = el("section", { "class": "mt-texte", "aria-label": "Procédure" });
+  var pageD = el("section", { "class": "mt-colle mt-avant", "aria-label": "Planche et bac de pièces" });
   layout.appendChild(pageG); layout.appendChild(pageD);
   host.appendChild(layout);
-  var tcG = el("p", { "class": "titre-courant" });
-  var tcD = el("p", { "class": "titre-courant" });
-  var corps = el("div", { "class": "livre-corps" });
-  var marge = el("aside", { "class": "livre-marge", "aria-label": "Notes en marge" });
+  var corps = el("div", { "class": "mt-corps" });
   var margeIndices = el("div", { "class": "marge-indices" });
-  var folioG = el("div", { "class": "folio-ligne" }), folioD = el("div", { "class": "folio-ligne" });
-  var bCahier = el("button", { type: "button", "class": "lien-livre" }, "Relire le cahier des charges");
-  pageG.appendChild(tcG); pageG.appendChild(corps);
-  if (!TEST) pageG.appendChild(marge);
-  pageG.appendChild(folioG);
+  var bCahier = el("button", { type: "button", "class": "btn ghost" }, "Relire le cahier des charges");
+  pageG.appendChild(corps);
   var main = el("div", { "class": "at-main" });
-  var side = corps;
-  pageD.appendChild(tcD); pageD.appendChild(main);
-  var fig = el("div", { "class": "livre-fig" });
-  var lettreSel = null, dernierEtape = null;
+  pageD.appendChild(main);
+  var fig = el("div", { "class": "mt-legende-zone" });
+  var lettreSel = null, dernierEtape = null, ecart = 0;
   function voirCahier(on) {
     brief.hidden = !on; layout.hidden = on;
     if (!on) renderScene();
@@ -165,15 +158,19 @@
   });
   main.appendChild(tabsVue);
 
+  var planche = el("figure", { "class": "mt-planche at-planche" });
   var scene = el("div", { "class": "at-scene" });
-  var svgCote = svgEl("cote"), svgFace = svgEl("face"), svgArr = svgEl("arriere");
-  function svgEl(id) {
-    var s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    s.setAttribute("class", "at-svg"); s.setAttribute("data-svg", id); s.setAttribute("role", "img");
-    return s;
-  }
-  scene.appendChild(svgCote); scene.appendChild(svgFace); scene.appendChild(svgArr);
-  main.appendChild(scene);
+  planche.appendChild(scene);
+  var cart = el("div");
+  planche.appendChild(cart);
+  main.appendChild(planche);
+  var figCap = el("p", { "class": "mt-fig" });
+  main.appendChild(figCap);
+  var ecartP = el("p", { "class": "mt-ecart" });
+  ecartP.innerHTML = '<label for="at-ecart">Vue éclatée</label> <input type="range" id="at-ecart" min="0" max="100" step="10" value="0">';
+  var ecartIn = ecartP.querySelector("input");
+  ecartIn.addEventListener("input", function () { ecart = ecartIn.value / 100; renderScene(); });
+  main.appendChild(ecartP);
   main.appendChild(fig);
 
   var actions = el("div", { "class": "at-actions" });
@@ -187,27 +184,31 @@
   [bUndo, bHint, bSwitch, bPower, bFin, bReset].forEach(function (b) { actions.appendChild(b); });
   main.appendChild(actions);
 
-  var msgBox = el("p", { "class": "at-msg note-marge", role: "status", "aria-live": "polite" });
-  if (TEST) main.appendChild(msgBox); else { marge.appendChild(msgBox); marge.appendChild(margeIndices); }
-
+  var msgBox = el("div", { "class": "at-msg mt-encadre", role: "status", "aria-live": "polite" });
   var secEtape = el("section", { "class": "at-etape", "aria-label": "Étape en cours" });
   var secSel = el("section", { "class": "at-sel", "aria-label": "Pièce sélectionnée" });
   var secBac = el("section", { "class": "at-bac", "aria-label": "Bac de pièces" });
   var secListe = el("section", { "class": "at-liste", "aria-label": "Toutes les étapes" });
-  corps.appendChild(secEtape); corps.appendChild(secSel); corps.appendChild(secListe); corps.appendChild(bCahier);
-  pageD.appendChild(secBac); pageD.appendChild(folioD);
+  corps.appendChild(secEtape); corps.appendChild(msgBox); corps.appendChild(margeIndices); corps.appendChild(secSel); corps.appendChild(secListe); corps.appendChild(bCahier);
+  pageD.appendChild(secBac);
 
   var secPost = el("section", { "class": "at-post bloc", id: "at-post", hidden: "", "aria-label": "Démarrage du PC" });
   host.appendChild(secPost);
 
   /* ---------- Messages ---------- */
+  var ETIQ = { info: "Atelier", ok: "Juste", attention: "Attention", bloque: "Refusé", danger: "Danger" };
   function msg(txt, niv, html) {
     msgTxt = txt; msgNiv = niv || "info";
-    msgBox.className = "at-msg note-marge " + msgNiv;
-    if (html) msgBox.innerHTML = html; else msgBox.textContent = txt;
+    msgBox.className = "at-msg mt-encadre " + msgNiv;
+    msgBox.textContent = "";
+    msgBox.appendChild(el("p", { "class": "mt-etiq" }, ETIQ[msgNiv] || "Atelier"));
+    var p = el("p");
+    if (html) p.innerHTML = html; else p.textContent = txt;
+    msgBox.appendChild(p);
   }
 
   /* ---------- Vues ---------- */
+  function vueDe(v) { return v === "arriere" ? "arriere" : v === "zoom" ? "carte" : "interieur"; }
   function setVue(v) {
     vue = v;
     renderScene();
@@ -223,62 +224,129 @@
     if ((st.indices[e.id] || 0) > e.indices.length) (e.solution || []).forEach(function (p) { if (!st.placed[p[0]]) out[p[0]] = p[1]; });
     return out;
   }
-
-  /* ---------- Dessin de la scène ---------- */
-  function wire(x1, y1, x2, y2, color) {
-    var d = "M" + x1 + " " + y1 + " C " + x1 + " " + (y1 + (y2 - y1) * 0.6).toFixed(0) + ", " + (x1 + (x2 - x1) * 0.4).toFixed(0) + " " + y2 + ", " + x2 + " " + y2;
-    return '<path d="' + d + '" fill="none" stroke="rgba(0,0,0,.35)" stroke-width="6" stroke-linecap="round" transform="translate(2 3)"/>' +
-      '<path d="' + d + '" fill="none" stroke="#2B2723" stroke-width="5" stroke-linecap="round"/>' +
-      '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="1 6"/>';
-  }
   function isCable(s) { return s.accepte[0].indexOf("cab-") === 0; }
   function dispo(s) {
     return (s.requiert || []).every(function (r) { return !!st.placed[r]; });
   }
-  function drawSlots(slots, rotate) {
-    var cand = {}, guide = guideSlots(), out = "", pass = [[], [], [], []];
-    candidatSlots().forEach(function (s) { cand[s.id] = true; });
-    var sorted = slots.slice().sort(function (a, b) { return a.z - b.z; });
-    sorted.forEach(function (s) {
-      var it = st.placed[s.id], p = it && P[it];
-      var sx = s.x, sy = s.y;
-      if (!p) {
-        if (!TEST && dispo(s) && !cand[s.id]) pass[0].push('<rect class="slot-vide' + (guide[s.id] ? " guide" : "") + '" x="' + sx + '" y="' + sy + '" width="' + s.w + '" height="' + s.h + '" rx="3"/>');
-        return;
-      }
-      var cls = "pose" + (sel && sel.type === "slot" && sel.id === s.id ? " sel" : "");
-      var g;
-      if (isCable(s)) {
-        var f = rotate ? ARR_FIL[s.id] : s.fil;
-        pass[1].push(f ? wire(sx + s.w / 2, sy + s.h / 2, f[0], f[1], p.o.couleur) : "");
-        g = '<g class="' + cls + '" data-slot="' + s.id + '"><title>' + esc(p.nom) + "</title>" + Art.fit("plug", sx, sy, s.w, s.h, { couleur: p.o.couleur, pins: p.pins }) +
-          '<rect x="' + (sx - 4) + '" y="' + (sy - 4) + '" width="' + (s.w + 8) + '" height="' + (s.h + 8) + '" fill="transparent"/></g>';
-        pass[3].push(g);
-      } else {
-        g = '<g class="' + cls + '" data-slot="' + s.id + '"><title>' + esc(p.nom) + "</title>" +
-          '<g filter="url(#f-ombre)">' + Art.pieceScene(p, sx, sy, s.w, s.h) + "</g>" +
-          (s.id === "fan-rear" || s.id === "fan-front" ? '<text x="' + (sx + s.w / 2) + '" y="' + (sy + s.h + 11) + '" font-size="9" text-anchor="middle" class="lbl-cote" fill="#BBAF9F" font-family="IBM Plex Mono, monospace">←</text>' : "") + "</g>";
-        pass[s.z < 5 ? 0 : 2].push(g);
+
+  /* ---------- Dessin de la maquette isométrique ---------- */
+  function rot(b) { var o = {}; for (var k in b) o[k] = b[k]; o.x = W - b.x - b.w; o.y = Dp - b.y - b.d; return o; }
+  function contour(b, cls) {
+    var x = b.x, y = b.y, z = b.z, X = x + b.w, Y = y + b.d, Z = z + b.h;
+    return '<polygon class="' + cls + '" points="' + I.pts([[x, y, Z], [X, y, Z], [X, Y, Z], [x, Y, Z]]) + '"/>' +
+      '<polygon class="' + cls + '" points="' + I.pts([[x, Y, z], [X, Y, z], [X, Y, Z], [x, Y, Z]]) + '"/>' +
+      '<polygon class="' + cls + '" points="' + I.pts([[X, y, z], [X, Y, z], [X, Y, Z], [X, y, Z]]) + '"/>';
+  }
+  /* Point de départ d'un câble : l'alimentation, un ventilateur, la façade ou la carte mère. */
+  function departCable(p) {
+    var t = p.type, g = G.slots;
+    if (t === "cab-fan") { var f = g[p.source] || g["fan-rear"]; return f ? I.centre(f) : G.sortieAlim; }
+    if (t === "cab-facade" || t === "cab-usb3" || t === "cab-audio") return [W - 8, 30, G.boitier.h - 60];
+    if (t === "cab-sata-data") return [g.board.x + g.board.w - 8, 12, g.board.z + 40];
+    return G.sortieAlim;
+  }
+  function boutonsFace(o) {
+    var c = G.boitier, Hh = c.h, s = "";
+    s += I.rect("x", { x: W, y: 24, z: Hh - 70, d: 14, h: 6 }, "iso-trou") + I.rect("x", { x: W, y: 44, z: Hh - 70, d: 14, h: 6 }, "iso-trou");
+    var led = o.post === "ok" ? "iso-led ok" : o.post ? "iso-led ko" : "iso-led";
+    s += I.cercle("x", [W, 120, Hh - 66], 3, led);
+    s += '<g data-bouton="power" class="iso-bouton"><title>Bouton marche</title>' + I.cercle("x", [W, 150, Hh - 66], 9, "iso-bouton-c") + I.cercle("x", [W, 150, Hh - 66], 4, "iso-det") + "</g>";
+    return s;
+  }
+  function arrierePanneau(o) {
+    var c = G.boitier, Hh = c.h, s = "", g = G.slots, X = W;
+    s += I.boite({ x: 0, y: 0, z: 0, w: W, d: Dp, h: Hh }, { cls: "iso-tole" });
+    function r(b, cls) { var q = rot(b); return I.rect("x", { x: X, y: q.y, z: q.z, d: q.d, h: q.h }, cls); }
+    s += r(g.ioshield, "iso-metal-f");
+    for (var i = 0; i < 4; i++) s += r({ x: 0, y: g.ioshield.y + 6, z: g.ioshield.z + 12 + i * 34, w: 2, d: 30, h: 22 }, "iso-trou");
+    if (g["fan-rear"]) { var fr = rot(g["fan-rear"]); s += I.cercle("x", [X, fr.y + fr.d / 2, fr.z + fr.h / 2], fr.h / 2 - 8, "iso-grille"); }
+    var ps = rot(g.psu); s += I.rect("x", { x: X, y: ps.y, z: ps.z, d: ps.d, h: ps.h }, "iso-metal-f");
+    for (var k = 0; k < 4; k++) s += r({ x: 0, y: g.ioshield.y + 2, z: g.ioshield.z - 26 - k * 20, w: 2, d: 112, h: 12 }, "iso-det");
+    var m = rot(g.mains);
+    s += '<g data-bouton="switch" class="iso-bouton"><title>Interrupteur de l\'alimentation : ' + (o.switchOn ? "I" : "O") + "</title>" +
+      I.rect("x", { x: X, y: m.y - 22, z: m.z + 4, d: 14, h: 18 }, o.switchOn ? "iso-inter on" : "iso-inter") + "</g>";
+    return s;
+  }
+  function itemsPieces(o, cand, guide, rotation) {
+    var items = [], avant = "";
+    disp.slots.forEach(function (s) {
+      var gs = G.slots[s.id];
+      if (!gs) return;
+      if (rotation ? !gs.arriere : gs.arriere) return;
+      var it = o.placed[s.id], p = it && P[it];
+      var b = rotation ? rot(gs) : gs, axe = rotation && gs.axe ? [-gs.axe[0], -gs.axe[1], gs.axe[2]] : gs.axe;
+      if (p) {
+        if (isCable(s)) {
+          if (!rotation) avant += ID.cable(departCable(p), b);
+          else { var cc = I.centre(b); avant += I.ligne([cc[0], cc[1], cc[2]], [cc[0] + 70, cc[1] + 10, cc[2] - 40], "iso-cable-l"); }
+          items.push({ id: s.id, boite: b, cls: "pose" + (o.sel === s.id ? " is-sel" : ""), titre: p.nom, prio: 60, dessin: function (bb) { return I.boite(bb, { cls: "iso-connecteur" }); }, slot: s.id });
+        } else {
+          items.push({ id: s.id, boite: b, axe: axe, ecart: gs.ecart, prio: gs.prio, cls: "pose" + (o.sel === s.id ? " is-sel" : "") + (o.hl === s.id ? " is-hl" : ""), titre: p.nom, slot: s.id,
+            dessin: function (bb) { return ID.dessin(p.type, bb, p); } });
+        }
+      } else if (cand[s.id] || guide[s.id] || (o.etape && o.etape.indexOf(s.id) >= 0 && dispo(s))) {
+        var cls = cand[s.id] ? "iso-cible" : "iso-vide";
+        items.push({ id: s.id, boite: b, prio: 2000, cible: !!cand[s.id], titre: s.nom, slot: s.id, cls: cand[s.id] ? "slot-cible" : "slot-vide" + (guide[s.id] ? " guide" : ""),
+          dessin: function (bb) { return contour(bb, cls); } });
       }
     });
-    /* zones de dépôt (au-dessus de tout) */
-    sorted.forEach(function (s) {
-      if (!cand[s.id]) return;
-      var pad = 6;
-      out += '<g data-slot="' + s.id + '" class="slot-cible"><title>' + esc(s.nom) + '</title><rect class="slot-hit cand" x="' + (s.x - pad) + '" y="' + (s.y - pad) + '" width="' + (s.w + pad * 2) + '" height="' + (s.h + pad * 2) + '" rx="5"/></g>';
+    return { items: items, avant: avant };
+  }
+  /* Une planche complète, en texte SVG (utilisée aussi pour la planche d'ouverture). */
+  function sceneSVG(o) {
+    var rotation = o.vue === "arriere", cand = o.cand || {}, guide = o.guide || {};
+    var r = itemsPieces(o, cand, guide, rotation);
+    r.items.forEach(function (it) {
+      var d = it.dessin;
+      it.dessin = function (bb) { return d(bb); };
+      it.rep = o.reps && o.reps[it.id] ? o.reps[it.id] : null;
     });
-    return pass[0].join("") + pass[1].join("") + pass[2].join("") + pass[3].join("") + out;
+    var fond = rotation ? arrierePanneau(o) : ID.boitier(G);
+    var cad = null;
+    if (o.vue === "carte") {
+      var bo = G.slots.board;
+      cad = [{ x: bo.x - 6, y: 0, z: bo.z - 6, w: bo.w + 12, d: 60, h: bo.h + 12 }];
+      /* Loupe : quand des emplacements de la carte sont proposés, on cadre sur eux (barrettes voisines, embases). */
+      var lp = Object.keys(cand).map(function (id) { return G.slots[id]; }).filter(function (b) { return b && !b.arriere && b.y < 20; });
+      if (lp.length) {
+        var x0 = 1e9, z0 = 1e9, x1 = -1e9, z1 = -1e9;
+        lp.forEach(function (b) { x0 = Math.min(x0, b.x); z0 = Math.min(z0, b.z); x1 = Math.max(x1, b.x + b.w); z1 = Math.max(z1, b.z + b.h); });
+        var pad = 36;
+        cad = [{ x: x0 - pad, y: 0, z: z0 - pad, w: x1 - x0 + 2 * pad, d: 40, h: z1 - z0 + 2 * pad }];
+      }
+    }
+    var svg = I.scene(r.items, { t: o.t || 0, fond: fond, avant: r.avant + (rotation ? "" : boutonsFace(o)), titre: o.titre, classe: "at-iso", bornes: cad || [G.boitier], cadrage: cad, repLong: 34 });
+    return svg.replace(/<g class="iso-piece ([^"]*)" data-id="([^"]+)"/g, function (m, cls, id) { return '<g class="iso-piece ' + cls + '" data-id="' + id + '" data-slot="' + id + '"'; });
+  }
+
+  /* Petite maquette d'une pièce pour le bac et la fiche. */
+  var BOITE_TYPE = {};
+  disp.slots.forEach(function (s) { s.accepte.forEach(function (t) { if (!BOITE_TYPE[t] && G.slots[s.id] && !isCable(s)) BOITE_TYPE[t] = G.slots[s.id]; }); });
+  function icone(p) {
+    var b = BOITE_TYPE[p.type], d;
+    if (p.type === "entretoises") {
+      d = ""; [[0, 0], [40, 0], [0, 40], [40, 40]].forEach(function (q) { d += I.boite({ x: q[0], y: 0, z: q[1], w: 6, d: 10, h: 6 }, { cls: "iso-laiton" }); });
+      return I.scene([{ id: p.id, boite: { x: 0, y: 0, z: 0, w: 46, d: 10, h: 46 }, dessin: function () { return d; } }], { reperes: false, marge: 4, classe: "at-ico" });
+    }
+    if (!b) {
+      var cb = { x: 0, y: 0, z: 0, w: 8, d: 14, h: 26 };
+      return I.scene([{ id: p.id, boite: cb, dessin: function (bb) { return I.boite(bb, { cls: "iso-connecteur" }) + ID.cable([60, 40, -10], bb); } }], { reperes: false, marge: 6, classe: "at-ico", bornes: [{ x: 0, y: 0, z: -10, w: 60, d: 40, h: 36 }] });
+    }
+    var o = { x: 0, y: 0, z: 0, w: b.w, d: b.d, h: b.h };
+    if (p.type === "carte-mere") { var f = ID.FORMAT[p.format] || ID.FORMAT.mATX; o.w = f.w; o.h = f.h; }
+    if (p.type === "alim" && p.o && p.o.fmt === "SFX") { o.w = 100; o.d = 125; o.h = 63.5; }
+    return I.scene([{ id: p.id, boite: o, dessin: function (bb) { return ID.dessin(p.type, bb, p); } }], { reperes: false, marge: 4, classe: "at-ico" });
   }
 
   /* Les éléments SVG restent inchangés visuellement : un rectangle transparent
      agrandit leur zone de contact à 44 px, selon le zoom et la taille de l'écran. */
   function agrandirZones(svg) {
-    var m = svg.getScreenCTM();
+    var m = svg && svg.getScreenCTM();
     if (!m) return;
     var sx = Math.hypot(m.a, m.b), sy = Math.hypot(m.c, m.d);
     if (!sx || !sy) return;
     var vb = svg.viewBox.baseVal;
-    Array.prototype.forEach.call(svg.querySelectorAll('[data-slot], [data-bouton], [data-lettre]'), function (g) {
+    Array.prototype.forEach.call(svg.querySelectorAll('.slot-cible[data-slot], .pose[data-slot], [data-bouton]'), function (g) {
       var b;
       try { b = g.getBBox(); } catch (e) { return; }
       if (!b.width || !b.height || b.x + b.width <= vb.x || b.y + b.height <= vb.y || b.x >= vb.x + vb.width || b.y >= vb.y + vb.height) return;
@@ -289,7 +357,8 @@
       var r = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       r.setAttribute('x', x); r.setAttribute('y', y); r.setAttribute('width', w); r.setAttribute('height', h);
       r.setAttribute('fill', 'transparent'); r.setAttribute('pointer-events', 'all'); r.setAttribute('class', 'zone-tactile');
-      g.appendChild(r);
+      /* La zone passe sous le dessin de la pièce : une pièce dessinée par-dessus (barrette voisine) garde la main. */
+      g.insertBefore(r, g.firstChild.nextSibling || null);
     });
   }
   function pointSVG(svg, e) {
@@ -306,6 +375,12 @@
   function cibleAuPoint(svg, e, selecteur) {
     var pt = pointSVG(svg, e), meilleur = null, distance = Infinity, aire = Infinity;
     if (!pt) return null;
+    /* D'abord la pièce réellement dessinée sous le point (la plus haute), puis la zone agrandie la plus proche. */
+    var dessus = document.elementFromPoint(e.clientX, e.clientY);
+    if (dessus && dessus.tagName.toLowerCase() === "polygon") {
+      var gd = dessus.closest(selecteur);
+      if (gd && svg.contains(gd)) return gd;
+    }
     Array.prototype.forEach.call(svg.querySelectorAll(selecteur), function (g) {
       var zone = g.querySelector('.zone-tactile'), raw = (g.getAttribute('data-zone-originale') || '').split(',').map(Number);
       if (!zone || raw.length !== 4) return;
@@ -318,90 +393,100 @@
     });
     return meilleur;
   }
-  function dansZoneOriginale(g, e) {
-    var pt = pointSVG(g.ownerSVGElement, e), a = (g.getAttribute('data-zone-originale') || '').split(',').map(Number);
-    return !!pt && a.length === 4 && dansRectangle(pt, { x: a[0], y: a[1], width: a[2], height: a[3] });
-  }
 
-  var VB = { cote: "0 0 860 620", zoom: "100 150 350 350", face: "0 0 420 610", arriere: "0 0 420 610" };
+  var NOM_VUE = { interieur: "Vue de trois quarts avant, panneau latéral retiré", carte: "La carte mère de près", arriere: "Vue de trois quarts arrière : prises et interrupteur" };
+  function legendeSlots() {
+    var l = steps(), i = cur();
+    var etape = !TEST && i < l.length ? l[i].def : null;
+    if (!etape) return [];
+    return (etape.slots || []).map(slotById).filter(function (s) {
+      if (!s || !G.slots[s.id]) return false;
+      var arr = !!G.slots[s.id].arriere;
+      return (vue === "arriere") === arr && (st.placed[s.id] || dispo(s));
+    });
+  }
   function renderScene() {
-    var slotsBoitier = disp.slots.filter(function (s) { return s.vue === "cote" || s.vue === "zoom"; });
-    var slotsArr = disp.slots.filter(function (s) { return s.vue === "arriere"; });
-    svgCote.setAttribute("viewBox", VB[vue === "zoom" ? "zoom" : "cote"]);
-    svgCote.setAttribute("aria-label", vue === "zoom" ? "Zoom sur la carte mère : socket, mémoire, M.2, PCIe, connecteurs" : "Boîtier vu de côté, panneau retiré : arrière à gauche, avant à droite");
-    if (vue === "zoom") svgCote.setAttribute("data-zoom", ""); else svgCote.removeAttribute("data-zoom");
-    svgCote.innerHTML = Art.coteFond() + drawSlots(slotsBoitier, false);
-    svgFace.setAttribute("viewBox", VB.face); svgFace.setAttribute("aria-label", "Face avant du boîtier : grille, panneau d'entrée-sortie et bouton marche");
-    svgFace.innerHTML = Art.faceVue({ placed: st.placed, etatPost: st.post ? st.post.code : null });
-    svgArr.setAttribute("viewBox", VB.arriere); svgArr.setAttribute("aria-label", "Arrière du boîtier : ventilateur, ports de la carte mère, alimentation et interrupteur");
-    svgArr.innerHTML = Art.arriereVue({ placed: st.placed, switchOn: st.switchOn }) + drawSlots(slotsArr, true);
-    svgCote.style.display = (vue === "cote" || vue === "zoom") ? "" : "none";
-    svgFace.style.display = vue === "face" ? "" : "none";
-    svgArr.style.display = vue === "arriere" ? "" : "none";
+    var cand = {}, l = steps(), i = cur(), etape = !TEST && i < l.length ? l[i].def : null;
+    candidatSlots().forEach(function (s) { cand[s.id] = true; });
+    var reps = {};
+    if (ecart > 0) nomenSlots().forEach(function (s, k) { reps[s.id] = String(k + 1); });
+    else legendeSlots().forEach(function (s, k) { reps[s.id] = String(k + 1); });
+    scene.innerHTML = sceneSVG({
+      placed: st.placed, vue: vue, t: ecart, cand: cand, guide: guideSlots(), reps: reps,
+      sel: sel && sel.type === "slot" ? sel.id : null, hl: lettreSel, etape: etape ? etape.slots : null,
+      post: st.post ? st.post.code : null, switchOn: st.switchOn, titre: NOM_VUE[vue]
+    });
     Array.prototype.forEach.call(tabsVue.children, function (b) {
       var on = b.getAttribute("data-vue") === vue;
       b.setAttribute("aria-selected", on ? "true" : "false");
       b.setAttribute("tabindex", on ? "0" : "-1");
     });
+    var nomVue = VUES.filter(function (v) { return v[0] === vue; })[0][1];
+    cart.textContent = "";
+    cart.appendChild(cartouche([["Planche", code + "." + deux(Math.min(i, l.length - 1) + 1)], ["Vue", nomVue], ["Objet", G.nom], [TEST ? "Mode" : "Étape", TEST ? "Test noté" : (i >= l.length ? "Fin" : (i + 1) + " / " + l.length)]]));
+    figCap.innerHTML = "";
+    figCap.appendChild(el("b", null, "FIG. " + (Math.min(i, l.length - 1) + 1)));
+    figCap.appendChild(document.createTextNode(" · " + NOM_VUE[vue] + (etape ? " — " + etape.titre.toLowerCase() + "." : ".")));
     renderLettres();
-    agrandirZones(vue === "arriere" ? svgArr : (vue === "face" ? svgFace : svgCote));
+    agrandirZones(scene.querySelector("svg"));
     bSwitch.textContent = "Interrupteur : " + (st.switchOn ? "I" : "O");
     bSwitch.setAttribute("aria-pressed", st.switchOn ? "true" : "false");
   }
 
-  /* ---------- Planche : lettres A, B, C… et légende cliquable ---------- */
-  var NOM_VUE = { cote: "le boîtier vu de côté", zoom: "la carte mère de près", face: "la face avant", arriere: "l'arrière du boîtier" };
+  /* Nomenclature : les pièces posées visibles dans la vue (hors câbles), dans l'ordre des emplacements. */
+  function nomenSlots() {
+    return disp.slots.filter(function (s) { return st.placed[s.id] && !isCable(s) && G.slots[s.id] && (vue === "arriere") === !!G.slots[s.id].arriere; });
+  }
+  function renderNomenclature() {
+    var liste = nomenSlots();
+    if (!liste.length) return;
+    var d = el("details", { "class": "mt-nomen-d" });
+    if (ecart > 0) d.open = true;
+    d.appendChild(el("summary", null, "Nomenclature de la planche (" + liste.length + " pièce" + (liste.length > 1 ? "s" : "") + ")"));
+    var t = el("table", { "class": "mt-nomenclature" });
+    t.innerHTML = "<thead><tr><th>Rep.</th><th>Désignation</th><th>Emplacement</th></tr></thead>";
+    var tb = el("tbody");
+    liste.forEach(function (s, k) {
+      var tr = el("tr", { "class": lettreSel === s.id ? "is-hl" : "" });
+      var td = el("td");
+      var b = el("button", { type: "button", "class": "mt-rep", "aria-label": "Repère " + (k + 1) + " : voir la fiche de " + P[st.placed[s.id]].nom }, String(k + 1));
+      b.addEventListener("click", function () { sel = { type: "slot", id: s.id }; lettreSel = s.id; renderAll(); secSel.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "nearest" }); });
+      td.appendChild(b); tr.appendChild(td);
+      tr.appendChild(el("td", null, P[st.placed[s.id]].nom));
+      tr.appendChild(el("td", null, s.nom));
+      tr.addEventListener("mouseenter", function () { var g = scene.querySelector('[data-id="' + s.id + '"]'); if (g) g.classList.add("is-hl"); });
+      tr.addEventListener("mouseleave", function () { var g = scene.querySelector('[data-id="' + s.id + '"]'); if (g && lettreSel !== s.id) g.classList.remove("is-hl"); });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    d.appendChild(t);
+    fig.appendChild(d);
+  }
+
+  /* ---------- Légende de la planche : repères de l'étape, cliquables ---------- */
   function renderLettres() {
     fig.textContent = "";
-    var l = steps(), i = cur();
-    var etape = !TEST && i < l.length ? l[i].def : null;
-    var svgVue = vue === "arriere" ? svgArr : (vue === "face" ? null : svgCote);
-    var lettres = [];
-    if (etape && svgVue) {
-      (etape.slots || []).forEach(function (id) {
-        var s = slotById(id);
-        if (!s) return;
-        var surVue = vue === "arriere" ? s.vue === "arriere" : (s.vue === "cote" || s.vue === "zoom");
-        if (surVue) lettres.push(s);
-      });
-    }
-    var svgTxt = "";
+    var lettres = ecart > 0 ? [] : legendeSlots();
+    if (!lettres.length) { renderNomenclature(); return; }
+    var ol = el("ol", { "class": "legende", "aria-label": "Repères de la planche" });
     lettres.forEach(function (s, k) {
-      var L = String.fromCharCode(65 + k), on = lettreSel === s.id;
-      var r = vue === "zoom" ? 7 : 11, cx = s.x + Math.min(14, s.w / 2), cy = s.y + Math.min(14, s.h / 2);
-      if (on) svgTxt += '<rect class="surligne" x="' + (s.x - 3) + '" y="' + (s.y - 3) + '" width="' + (s.w + 6) + '" height="' + (s.h + 6) + '" rx="3"/>';
-      svgTxt += '<g class="lettre' + (on ? " on" : "") + '" data-lettre="' + s.id + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + r + '"/><text x="' + cx + '" y="' + (cy + r * 0.38) + '" font-size="' + (r * 1.15) + '" text-anchor="middle">' + L + "</text></g>";
-    });
-    if (svgTxt && svgVue) svgVue.insertAdjacentHTML("beforeend", svgTxt);
-    var cap = el("p", { "class": "figcaption" }, "Fig. " + (etape ? i + 2 : 1) + ". — " + NOM_VUE[vue].charAt(0).toUpperCase() + NOM_VUE[vue].slice(1) + (etape ? " : " + etape.titre.toLowerCase() + "." : "."));
-    fig.appendChild(cap);
-    if (lettres.length) {
-      var ol = el("ol", { "class": "legende", "aria-label": "Légende de la planche" });
-      lettres.forEach(function (s, k) {
-        var b = el("button", { type: "button", "class": "leg", "aria-pressed": String(lettreSel === s.id) });
-        b.appendChild(el("span", { "class": "leg-l" }, String.fromCharCode(65 + k)));
-        b.appendChild(document.createTextNode(s.nom));
-        b.addEventListener("click", function () {
-          lettreSel = lettreSel === s.id ? null : s.id;
-          renderScene();
-          var boutons = fig.querySelectorAll(".leg");
-          if (boutons[k]) boutons[k].focus();
-        });
-        var li = el("li"); li.appendChild(b); ol.appendChild(li);
+      var b = el("button", { type: "button", "class": "leg", "aria-pressed": String(lettreSel === s.id) });
+      b.appendChild(el("span", { "class": "mt-rep" }, String(k + 1)));
+      b.appendChild(document.createTextNode(s.nom + (st.placed[s.id] ? " — " + P[st.placed[s.id]].nom : "")));
+      b.addEventListener("click", function () {
+        lettreSel = lettreSel === s.id ? null : s.id;
+        renderScene();
+        var boutons = fig.querySelectorAll(".leg");
+        if (boutons[k]) boutons[k].focus();
       });
-      fig.appendChild(ol);
-    }
+      var li = el("li"); li.appendChild(b); ol.appendChild(li);
+    });
+    fig.appendChild(ol);
+    renderNomenclature();
   }
   scene.addEventListener("click", function (e) {
-    var lt = e.target.closest("[data-lettre]");
-    if (lt) {
-      var cible = sel && sel.type === "tray" && !dansZoneOriginale(lt, e) ? cibleAuPoint(lt.ownerSVGElement, e, ".slot-cible") : null;
-      e.stopImmediatePropagation();
-      if (cible) { tryPlace(sel.id, cible.getAttribute("data-slot")); return; }
-      var id = lt.getAttribute("data-lettre"); lettreSel = lettreSel === id ? null : id; renderScene(); return;
-    }
     var g = e.target.closest("[data-slot]");
-    if (g && !TEST) {
+    if (g && !TEST && !(sel && sel.type === "tray")) {
       var sid = g.getAttribute("data-slot"), l = steps(), i = cur();
       if (i < l.length && (l[i].def.slots || []).indexOf(sid) >= 0) lettreSel = sid;
     }
@@ -437,7 +522,7 @@
     liste.forEach(function (id) {
       var p = P[id];
       var b = el("button", { type: "button", "class": "at-piece" + (glow[id] ? " guide" : ""), "data-id": id, "aria-pressed": sel && sel.type === "tray" && sel.id === id ? "true" : "false" });
-      b.innerHTML = '<span class="ico">' + Art.icone(p) + '</span><span class="nom"></span><span class="res"></span>';
+      b.innerHTML = '<span class="ico">' + icone(p) + '</span><span class="nom"></span><span class="res"></span>';
       b.querySelector(".nom").textContent = p.nom;
       b.querySelector(".res").textContent = p.resume;
       grid.appendChild(b);
@@ -459,8 +544,8 @@
     sel = { type: "tray", id: id };
     var c = R.candidats(sc, st, id);
     if (c.length) {
-      var vues = c.map(function (s) { return s.vue; });
-      if (vues.indexOf(vue) < 0 && !(vue === "zoom" && vues.indexOf("cote") >= 0)) vue = vues[0];
+      var vues = c.map(function (s) { return vueDe(s.vue); });
+      if (vues.indexOf(vue) < 0) vue = vues[0];
     }
     if (!(opts && opts.silent)) msg("« " + P[id].nom + " » sélectionné. Touche l'emplacement en surbrillance, ou choisis-le dans la liste.", "info");
   }
@@ -476,7 +561,7 @@
     secSel.className = "at-sel bloc";
     var p = P[sel.type === "tray" ? sel.id : st.placed[sel.id]];
     var top = el("div", { "class": "at-sel-top" });
-    top.innerHTML = '<span class="ico">' + Art.icone(p) + '</span><div><h2></h2><p class="muted"></p></div>';
+    top.innerHTML = '<span class="ico">' + icone(p) + '</span><div><h2></h2><p class="muted"></p></div>';
     top.querySelector("h2").textContent = p.nom;
     top.querySelector("p").textContent = sel.type === "tray" ? "Dans le bac" : "Posée : " + slotById(sel.id).nom;
     secSel.appendChild(top);
@@ -510,85 +595,62 @@
   }
 
   /* ---------- Étapes ---------- */
+  function encadre(cls, etiq, txt) {
+    var d = el("div", { "class": "mt-encadre " + cls });
+    d.appendChild(el("p", { "class": "mt-etiq" }, etiq));
+    d.appendChild(el("p", null, txt));
+    return d;
+  }
   function renderEtape() {
     if (TEST) { renderTest(); return; }
     var l = steps(), i = cur();
     secEtape.textContent = "";
     var done = l.filter(function (x) { return x.fait; }).length;
     drawProgress(done, l.length);
+    habillerEtape(l, i);
     if (i >= l.length) {
-      habillerEtape(l, i);
       margeIndices.textContent = "";
-      secEtape.appendChild(el("h2", null, "Fin du chapitre"));
-      secEtape.appendChild(el("p", null, "Toutes les étapes sont faites. Tu peux modifier le montage pour voir ce qui change au démarrage, ou recommencer."));
+      secEtape.appendChild(el("p", { "class": "mt-surtitre" }, code + " · Terminé"));
+      secEtape.appendChild(el("h2", null, "Fin de la procédure"));
+      secEtape.appendChild(el("p", null, "Toutes les étapes sont faites. Tu peux modifier le montage pour voir ce qui change au démarrage, éclater la maquette pour la relire, ou recommencer."));
       return;
     }
     var e = l[i].def, n = st.indices[e.id] || 0;
-    habillerEtape(l, i);
+    secEtape.appendChild(el("p", { "class": "mt-surtitre" }, "Étape " + deux(i + 1) + " / " + deux(l.length)));
     secEtape.appendChild(el("h2", null, e.titre));
     secEtape.appendChild(el("p", { "class": "texte" }, e.texte));
-    secEtape.appendChild(el("p", { "class": "ornement", "aria-hidden": "true" }, "✣"));
     margeIndices.textContent = "";
-    for (var k = 0; k < Math.min(n, e.indices.length); k++) {
-      var ni = el("p", { "class": "note-marge indice" });
-      ni.appendChild(el("span", { "class": "note-tit" }, "Indice " + (k + 1)));
-      ni.appendChild(document.createTextNode(e.indices[k]));
-      margeIndices.appendChild(ni);
-    }
-    if (n > e.indices.length) {
-      var ns = el("p", { "class": "note-marge indice" });
-      ns.appendChild(el("span", { "class": "note-tit" }, "Solution"));
-      ns.appendChild(document.createTextNode("Les pièces et emplacements concernés sont surlignés."));
-      margeIndices.appendChild(ns);
-    }
+    for (var k = 0; k < Math.min(n, e.indices.length); k++) margeIndices.appendChild(encadre("remarque", "Indice " + (k + 1), e.indices[k]));
+    if (n > e.indices.length) margeIndices.appendChild(encadre("remarque", "Solution", "Les pièces et les emplacements de l'étape sont surlignés en vert."));
     var row = el("div", { "class": "at-etape-actions" });
     var bi = el("button", { type: "button", "class": "btn ghost" }, n >= e.indices.length + 1 ? "Indice (tout est montré)" : "Indice");
     bi.addEventListener("click", indice);
     var bm = el("button", { type: "button", "class": "btn ghost" }, "Montre-moi");
     bm.addEventListener("click", montre);
     row.appendChild(bi); row.appendChild(bm);
-    if (e.vue !== vue && !(e.vue === "cote" && vue === "zoom")) {
-      var bv = el("button", { type: "button", "class": "btn ghost" }, "Aller à la vue « " + VUES.filter(function (v) { return v[0] === e.vue; })[0][1] + " »");
-      bv.addEventListener("click", function () { setVue(e.vue); renderEtape(); });
+    if (vueDe(e.vue) !== vue) {
+      var cible = vueDe(e.vue);
+      var bv = el("button", { type: "button", "class": "btn ghost" }, "Aller à la vue « " + VUES.filter(function (v) { return v[0] === cible; })[0][1] + " »");
+      bv.addEventListener("click", function () { setVue(cible); renderEtape(); });
       row.appendChild(bv);
     }
     secEtape.appendChild(row);
-    var d = el("details", { "class": "correction" });
-    d.className = "correction plus-loin";
-    d.appendChild(el("summary", null, "Pour aller plus loin : pourquoi cette étape ?"));
+    var d = el("details", { "class": "correction plus-loin" });
+    d.appendChild(el("summary", null, "Pourquoi cette étape ?"));
     d.appendChild(el("p", null, e.pourquoi));
     secEtape.appendChild(d);
   }
 
   function habillerEtape(l, i) {
-    var fin = i >= l.length, page = 2 * (Math.min(i, l.length - 1) + 1) + 1;
-    tcG.textContent = ""; tcD.textContent = "";
-    tcG.appendChild(el("span", null, chap + " — " + sc.titre));
-    tcG.appendChild(el("span", null, fin ? "Fin du chapitre" : "Étape " + (i + 1) + " sur " + l.length));
-    tcD.appendChild(el("span", null, "Planche " + (ROM[Math.min(i, l.length - 1) + 1] || String(i + 1))));
-    folioG.textContent = ""; folioD.textContent = "";
-    folioG.appendChild(el("span", { "class": "voisin" }, i > 0 ? "‹ " + l[Math.min(i, l.length) - 1].def.titre.toLowerCase() : ""));
-    folioG.appendChild(el("span", { "class": "folio" }, String(page)));
-    folioD.appendChild(el("span", { "class": "folio" }, String(page + 1)));
-    folioD.appendChild(el("span", { "class": "voisin" }, !fin && i + 1 < l.length ? l[i + 1].def.titre.toLowerCase() + " ›" : ""));
-    if (dernierEtape !== null && dernierEtape !== i && !reduced) {
-      pageD.classList.remove("tourne"); void pageD.offsetWidth; pageD.classList.add("tourne");
-      setTimeout(function () { pageD.classList.remove("tourne"); }, 750);
-    }
     if (dernierEtape !== i) lettreSel = null;
     dernierEtape = i;
   }
 
   function renderTest() {
-    tcG.textContent = ""; tcD.textContent = "";
-    tcG.appendChild(el("span", null, chap + " — " + sc.titre));
-    tcG.appendChild(el("span", null, "Test noté"));
-    tcD.appendChild(el("span", null, "Planche du montage"));
-    folioG.innerHTML = '<span class="voisin"></span><span class="folio">3</span>';
-    folioD.innerHTML = '<span class="folio">4</span><span class="voisin"></span>';
     secEtape.textContent = "";
     secListe.hidden = true;
     head.querySelector(".at-progress").textContent = "";
+    secEtape.appendChild(el("p", { "class": "mt-surtitre" }, code + " · Test noté"));
     secEtape.appendChild(el("h2", null, "Monte le PC du cahier des charges"));
     secEtape.appendChild(el("p", { "class": "texte" }, "Pas d'indices, pas d'ordre imposé, pas d'alerte : les erreurs se voient au démarrage. Allume le PC autant de fois que nécessaire, puis termine le test."));
     var ul = el("ul", { "class": "at-bareme" });
@@ -601,11 +663,10 @@
     if (TEST) return;
     var l = steps(), i = cur();
     secListe.textContent = "";
-    secListe.appendChild(el("h3", { "class": "petites-caps" }, "Table des étapes"));
-    var ol = el("ol", { "class": "at-etapes" });
+    secListe.appendChild(el("h3", null, "Déroulé de la procédure"));
+    var ol = el("ol", { "class": "mt-proc at-etapes" });
     l.forEach(function (x, k) {
-      var li = el("li", { "class": x.fait ? "fait" : (k === i ? "courante" : "") });
-      li.appendChild(el("span", { "class": "pastille", "aria-hidden": "true" }, x.fait ? "✓" : String(k + 1)));
+      var li = el("li", { "class": x.fait ? "fait" : (k === i ? "courant" : "") });
       li.appendChild(el("span", { "class": "lbl" }, x.def.titre));
       li.appendChild(el("span", { "class": "sr-only" }, x.fait ? " (faite)" : (k === i ? " (en cours)" : " (à venir)")));
       ol.appendChild(li);
@@ -718,7 +779,7 @@
     }
     clearTimeout(confirmTimer);
     bReset.removeAttribute("data-confirm"); bReset.textContent = "Recommencer";
-    st = R.nouvelEtat(sc, TEST ? "test" : "apprentissage"); st.indices = {}; st.aides = 0; hist = []; sel = null; vue = "cote";
+    st = R.nouvelEtat(sc, TEST ? "test" : "apprentissage"); st.indices = {}; st.aides = 0; hist = []; sel = null; vue = "interieur";
     store.del(KEY); secPost.hidden = true;
     msg("Montage remis à zéro. Les pièces sont toutes dans le bac.", "info");
     renderAll();
@@ -760,7 +821,7 @@
         selectTray(id, { silent: true });
         renderScene(); renderSel();
         ghost = el("div", { "class": "at-ghost", "aria-hidden": "true" });
-        ghost.innerHTML = Art.icone(P[id]);
+        ghost.innerHTML = icone(P[id]);
         document.body.appendChild(ghost);
         document.body.classList.add("at-dragging");
       }
@@ -982,7 +1043,7 @@
   function rapportScenario(rec) {
     var box = el("div", { "class": "at-rap" });
     var ok = rec.total >= rec.seuil;
-    box.appendChild(el("p", { "class": "kicker" }, "Rapport · " + rec.titre));
+    box.appendChild(el("p", { "class": "mt-surtitre" }, "Rapport · " + rec.titre));
     var top = el("div", { "class": "at-score" });
     top.appendChild(el("span", { "class": "n" }, String(rec.total)));
     top.appendChild(el("span", { "class": "sur" }, "/ 100"));
@@ -1057,7 +1118,7 @@
   function entete(titre, kicker) {
     host.textContent = "";
     var h = el("header", { "class": "at-head" });
-    h.appendChild(el("p", { "class": "kicker" }, kicker));
+    h.appendChild(el("p", { "class": "mt-surtitre" }, kicker));
     h.appendChild(el("h1", null, titre));
     host.appendChild(h);
     window.scrollTo(0, 0);
@@ -1104,7 +1165,7 @@
     if (ok) store.set("done." + E.unite, "1");
     entete("Rapport de l'évaluation finale", "Atelier hardware · Évaluation");
     var box = el("div", { "class": "at-rap bilan" });
-    box.appendChild(el("p", { "class": "titre-courant" })).appendChild(el("span", null, "Bilan"));
+    box.appendChild(el("p", { "class": "mt-surtitre" }, "Bilan"));
     var top = el("div", { "class": "at-score" });
     top.appendChild(el("span", { "class": "n" }, String(moy)));
     top.appendChild(el("span", { "class": "sur" }, "/ 100 de moyenne"));
