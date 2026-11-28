@@ -75,7 +75,7 @@
         var kit = inst(st, "standoffs");
         if (kit && kit.format !== p.format) {
           return bloque(RANG[kit.format] > RANG[p.format]
-            ? "Le kit posé est un kit " + FMT[kit.format] + " : des entretoises se retrouveraient sous la carte (format " + FMT[p.format] + ") sans trou en face, et toucheraient ses soudures : court-circuit. Retire le kit et pose celui du format de la carte."
+            ? "Le kit posé est un kit " + FMT[kit.format] + " : il est prévu pour une carte plus grande. On ne pose que les entretoises qui sont en face des trous de la carte (format " + FMT[p.format] + ") ; une entretoise sans trou en face toucherait ses soudures. Retire le kit et pose celui du format de la carte."
             : "Le kit posé est un kit " + FMT[kit.format] + " : il manque des entretoises pour une carte " + FMT[p.format] + ". Mal soutenue, la carte plierait à l'enfoncement des barrettes. Retire le kit et pose celui du format de la carte.", false, "ordre");
         }
         break;

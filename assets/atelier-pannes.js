@@ -45,15 +45,13 @@
     feuille.appendChild(g); feuille.appendChild(d);
     host.appendChild(feuille);
     g.appendChild(el("h2", { id: "arbre" }, "Arbre de diagnostic"));
-    g.appendChild(el("p", null, "La méthode du service desk : observer ce que la machine montre avant d'ouvrir, puis isoler. Chaque question ouvre ses causes ; chaque cause renvoie à un dossier."));
+    g.appendChild(el("p", null, "La méthode du service desk : observer ce que la machine montre avant d'ouvrir, puis isoler. Chaque question ouvre ses causes possibles ; le corrigé de chaque dossier trace son chemin dans l'arbre."));
     var ar = el("div", { "class": "arbre-zone" });
-    var parCause = {};
-    Object.keys(A.pannes).forEach(function (pid) { parCause[A.pannes[pid].cause] = pid; });
-    ar.innerHTML = window.IT_DIAG ? window.IT_DIAG.arbre({ lien: function (c) { return parCause[c] ? "pannes.html?p=" + parCause[c] : null; } }) : "";
+    ar.innerHTML = window.IT_DIAG ? window.IT_DIAG.arbre() : "";
     g.appendChild(ar);
     var sec = el("div", { "class": "mt-encadre source" });
     sec.appendChild(el("p", { "class": "mt-etiq" }, "Méthode et sources"));
-    sec.appendChild(el("p", null, "Méthode du module « Matériel et PC » (§ 3 : POST, bips, LED, configuration minimale, d'après ASUS) ; les codes de bips et de LED dépendent de la carte mère : on lit son manuel. Deux modes : apprentissage (indices, corrigé caché) et test noté sur 100 (diagnostic 40, réparation 30, observation utile 20, sécurité 10)."));
+    sec.appendChild(el("p", null, "Méthode du module « Matériel et PC » (§ 3 : POST, bips, LED, configuration minimale, d'après ASUS) ; guide Intel ATX 3 (rév. 2.1a) pour l'alimentation ; les codes de bips et de LED dépendent de la carte mère : on lit son manuel. Deux modes : apprentissage (indices, corrigé caché) et test noté sur 100 (diagnostic 40, réparation 30, observation utile 20, sécurité 10)."));
     g.appendChild(sec);
     d.appendChild(el("h2", { id: "dossiers" }, "Quatorze dossiers"));
     var ul = el("ul", { "class": "mt-entrees" });
@@ -100,6 +98,7 @@
 
     /* Squelette « manuel de service » : fiche d'intervention à gauche, planche et instruments à droite */
     host.textContent = "";
+    document.title = p.titre + " — Atelier hardware";
     var num = Object.keys(A.pannes).indexOf(id) + 1, code = ctx.eval ? "EP-2." + (ctx.eval.i + 1) : "D-" + (num < 10 ? "0" : "") + num;
     var head = el("header", { "class": "at-head" });
     head.innerHTML = '<p class="mt-surtitre"></p><h1></h1><div class="at-badges"></div><p class="at-modes"></p>';
@@ -120,7 +119,7 @@
     ticket.appendChild(el("p", null, p.contexte));
     var src = el("aside", { "class": "mt-encadre source" });
     src.appendChild(el("p", { "class": "mt-etiq" }, "Source"));
-    src.appendChild(el("p", null, "Les LED de debug, les bips et la liste des processeurs compatibles dépendent de la carte mère : la source de référence est son manuel et la page de support du constructeur. Tolérances des tensions d'une alimentation : spécification Intel ATX 2.2, tableau 6 (±5 % sur +12 V, +5 V, +3,3 V et +5 V de veille). Méthode : jour 8 de la prépa et module « Matériel et PC »."));
+    src.appendChild(el("p", null, "Les LED de debug, les bips et la liste des processeurs compatibles dépendent de la carte mère : la source de référence est son manuel et la page de support du constructeur. Sources : guide Intel des alimentations ATX version 3, rév. 2.1a (tolérances : +12 V de −7 % à +5 %, +5 V et +3,3 V à ±5 % ; signaux PWR_OK et PS_ON#) ; ASUS, FAQ des LED de diagnostic (Q-LED : CPU, DRAM, VGA, BOOT) ; Dell : surchauffe, nettoyage, pile CMOS ; Intel : protection thermique et pâte thermique. Les liens entre une panne et une LED précise sont ceux de la simulation : sur une vraie carte, on lit son manuel."));
     ticket.appendChild(src);
     corps.appendChild(ticket);
 
@@ -233,14 +232,17 @@
     }
 
     /* Diagnostic et intervention */
+    var choixCause = "", choixInter = "";
     function renderDiag() {
       secDiag.textContent = "";
       secDiag.appendChild(el("h2", null, "Diagnostic · quelle est la cause ?"));
       var d1 = el("div", { "class": "pn-champ" });
       d1.appendChild(el("label", { "for": "pn-cause" }, "Cause de la panne"));
       var s1 = el("select", { id: "pn-cause" });
+      s1.addEventListener("change", function () { choixCause = s1.value; });
       s1.appendChild(el("option", { value: "" }, "Choisir une cause…"));
       trier(A.pannesCauses).forEach(function (c) { s1.appendChild(el("option", { value: c.id }, c.nom)); });
+      s1.value = choixCause;
       var b1 = el("button", { type: "button", "class": "btn" }, "Poser ce diagnostic");
       b1.addEventListener("click", function () {
         if (fini) return;
@@ -270,8 +272,10 @@
       var d2 = el("div", { "class": "pn-champ" });
       d2.appendChild(el("label", { "for": "pn-inter" }, "Intervention (PC hors tension)"));
       var s2 = el("select", { id: "pn-inter" });
+      s2.addEventListener("change", function () { choixInter = s2.value; });
       s2.appendChild(el("option", { value: "" }, "Choisir une intervention…"));
       trier(Object.keys(A.pannesInter).map(function (k) { return { id: k, nom: A.pannesInter[k].nom }; })).forEach(function (c) { s2.appendChild(el("option", { value: c.id }, c.nom)); });
+      s2.value = choixInter;
       var b2 = el("button", { type: "button", "class": "btn" }, "Intervenir");
       b2.addEventListener("click", function () {
         if (fini) return;
@@ -522,14 +526,16 @@
   }
   function commencerEval() { evalEffacer(); evalEcrire({ i: 0, res: [], demarre: true, ids: T.tirage(A.pannesEval.n) }); lancerEval(); }
   function introEval() {
-    entete("Évaluation : pannes", "Atelier hardware · Évaluation des pannes");
-    var b = el("div", { "class": "prose" });
-    b.appendChild(el("p", { "class": "lead" }, "Cinq dossiers de panne tirés au sort, enchaînés, sans aide et notés. À la fin : un rapport avec ce qu'il faut revoir, et où le réviser."));
-    var c = el("div", { "class": "callout retenir" });
+    entete("Épreuve des pannes", "Atelier hardware · EP-2 · Épreuve");
+    var b = el("div", { "class": "mt-texte ep-intro" });
+    b.appendChild(el("p", { "class": "mt-chapeau" }, "Cinq dossiers de panne tirés au sort, enchaînés, sans aide et notés. À la fin : un rapport avec ce qu'il faut revoir, et où le réviser."));
+    var c = el("div", { "class": "mt-encadre outillage" });
+    c.appendChild(el("p", { "class": "mt-etiq" }, "Barème"));
     c.appendChild(el("p", null, "Chaque dossier est noté sur 100 : diagnostic 40, réparation 30, observation utile 20, sécurité 10. Pas d'indices ni de corrigé pendant le test. Seuil de réussite : " + SEUIL + " de moyenne. Ta progression est enregistrée dans ce navigateur : tu peux fermer la page et reprendre."));
     b.appendChild(c);
-    var c2 = el("div", { "class": "callout astuce" });
-    c2.appendChild(el("p", null, "Conseil : passe d'abord les dossiers en mode apprentissage. Mets toujours le PC hors tension avant d'ouvrir ou de remplacer une pièce."));
+    var c2 = el("div", { "class": "mt-encadre remarque" });
+    c2.appendChild(el("p", { "class": "mt-etiq" }, "Conseil"));
+    c2.appendChild(el("p", null, "Passe d'abord les dossiers en mode apprentissage. Mets toujours le PC hors tension avant d'ouvrir ou de remplacer une pièce."));
     b.appendChild(c2);
     var act = el("div", { "class": "at-etape-actions" });
     var go = el("button", { type: "button", "class": "btn" }, "Commencer");

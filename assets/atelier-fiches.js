@@ -131,7 +131,12 @@
     tf.appendChild(tbf); s2.appendChild(tf);
     var s3 = section("verif", "Avant de poser : vérifier");
     var ol = el("ol", { "class": "mt-proc" });
-    f.verifier.forEach(function (v) { var li = el("li"); li.appendChild(el("strong", null, v[0])); li.appendChild(document.createTextNode(v[1])); ol.appendChild(li); });
+    f.verifier.forEach(function (v) {
+      var li = el("li"), deuxPoints = /^ : /.test(v[1]);
+      li.appendChild(el("strong", null, v[0] + (deuxPoints ? " :" : "")));
+      li.appendChild(document.createTextNode(deuxPoints ? v[1].replace(/^ : /, "") : v[1].replace(/^ /, "")));
+      ol.appendChild(li);
+    });
     s3.appendChild(ol);
     (f.pieges || []).forEach(function (p) {
       var d = el("div", { "class": "mt-encadre attention" });

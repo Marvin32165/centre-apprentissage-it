@@ -13,7 +13,7 @@ const texte = (h) => h.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&
 
 const ctx = { window: {} };
 vm.createContext(ctx);
-for (const f of ["assets/data.js", "assets/modules.js", "assets/atelier-data.js", "assets/atelier-scenarios.js", "assets/atelier-demontage.js", "assets/atelier-fiches-data.js", "assets/atelier-pannes-data.js", "assets/glossaire.js"]) vm.runInContext(lire(f), ctx, { filename: f });
+for (const f of ["assets/data.js", "assets/modules.js", "assets/atelier-data.js", "assets/atelier-scenarios.js", "assets/atelier-demontage.js", "assets/atelier-fiches-data.js", "assets/atelier-missions-data.js", "assets/atelier-modeles-data.js", "assets/atelier-pannes-data.js", "assets/glossaire.js"]) vm.runInContext(lire(f), ctx, { filename: f });
 const W = ctx.window, D = W.IT_DATA, M = W.IT_MODULES, A = W.IT_ATELIER;
 
 const entrees = [];
@@ -74,7 +74,22 @@ M.domaines.forEach((d) => ajoute("Modules", "thème", d.titre, "Thèmes · domai
 Object.values(A.scenarios || {}).forEach((s) => ajoute("Atelier", "montage", s.titre, `Atelier · ${s.type === "demontage" ? "démontage" : "montage"} · ${s.niveau || ""}`.replace(/ · $/, ""), `atelier/montage.html?s=${s.id}`, s.client || ""));
 const causes = Object.fromEntries((A.pannesCauses || []).map((c) => [c.id, c.nom]));
 Object.entries(A.pannes || {}).forEach(([id, p]) => ajoute("Atelier", "panne", p.titre, `Atelier · dossier de panne · ${p.niveau}`, `atelier/pannes.html?p=${id}`, (p.symp ? p.symp.titre + " " : "") + (p.ticket || "") + " " + (causes[p.cause] || "")));
-Object.entries(A.fiches || {}).forEach(([id, f]) => ajoute("Atelier", "fiche", f.titre, "Atelier · fiche technique", `atelier/composants.html?c=${id}`, f.role));
+// Atelier : codes du sommaire (A-01, D-01, E-01, F-01) et sections des fiches et des missions (pages construites en JavaScript)
+const deux = (n) => (n < 10 ? "0" : "") + n;
+Object.entries(A.missions || {}).forEach(([id, m], i) => {
+  const c = "E-" + deux(i + 1), u = `atelier/missions.html?m=${id}`;
+  ajoute("Atelier", "mission", m.titre, `Atelier · mission du stage · ${c}`, u, `${c} ${m.role} ${m.procedure.map((x) => x[0]).join(" ")}`);
+  [["proc", "procédure, je montre"], ["liste", "liste de contrôle, on fait ensemble"], ["seul", "exercice, tu fais seul"]].forEach(([a, t]) => ajoute("Atelier", "section", `${m.titre} · ${t}`, `Atelier · ${c}`, `${u}#${id}-${a}`, `${c} ${t}`));
+});
+Object.entries(A.modeles || {}).forEach(([id, m], i) => ajoute("Atelier", "annexe", m.titre, `Atelier · modèle d'entreprise · F-${deux(i + 1)}`, `atelier/modeles.html?m=${id}`, `F-${deux(i + 1)} CRU FRU ${m.role}`));
+Object.entries(A.fiches || {}).forEach(([id, f], i) => {
+  const c = "A-" + deux(i + 1), u = `atelier/composants.html?c=${id}`;
+  ajoute("Atelier", "fiche", f.titre, `Atelier · fiche technique · ${c}`, u, `${c} ${f.role} ${f.carac.map((x) => x.join(" ")).join(" ")}`);
+  [["carac", "caractéristiques à lire"], ["verif", "avant de poser : vérifier"]].forEach(([a, t]) => ajoute("Atelier", "section", `${f.titre} · ${t}`, `Atelier · ${c}`, `${u}#${id}-${a}`, `${c} ${t} ${a === "carac" ? f.carac.map((x) => x[0]).join(" ") : f.verifier.map((x) => x[0]).join(" ")}`));
+});
+Object.entries(A.pannes || {}).forEach(([id], i) => { const e = entrees.find((x) => x.u === `atelier/pannes.html?p=${id}`); if (e) { e.o += ` · D-${deux(i + 1)}`; e.m = (`D-${deux(i + 1)} carnet de bord ` + e.m).slice(0, 220); } });
+const MONT = ["bureautique-intel", "salle-info", "gamer-amd", "station", "mini-itx", "mise-a-niveau"];
+Object.values(A.scenarios || {}).forEach((sc) => { const c = sc.code || (MONT.indexOf(sc.id) >= 0 ? "B-" + deux(MONT.indexOf(sc.id) + 1) : ""); const e = entrees.find((x) => x.u === `atelier/montage.html?s=${sc.id}`); if (e && c) { e.o += ` · ${c}`; e.m = (`${c} ` + e.m).slice(0, 220); } });
 ajoute("Atelier", "page", "Évaluation finale des montages", "Atelier · évaluation", "atelier/evaluation.html", "test noté examen");
 ajoute("Atelier", "page", "Évaluation des pannes", "Atelier · évaluation", "atelier/pannes-eval.html", "test noté examen diagnostic");
 

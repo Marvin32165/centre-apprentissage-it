@@ -147,6 +147,8 @@ for (const cle of liensVus) {
     const [chemin, ancre] = e.u.split("#");
     const fichier = chemin.split("?")[0];
     if (!fs.existsSync(path.join(RACINE, fichier))) { note(problemes, "assets/recherche.js", "index", `page introuvable : ${e.u}`); continue; }
+    /* Pages de l'atelier construites en JavaScript : leurs ancres sont vérifiées dans le navigateur par outils/parcours.mjs. */
+    if (ancre && /^atelier\/(composants|missions)\.html$/.test(fichier)) continue;
     if (ancre && !idsStatiques(fichier).has(ancre)) note(problemes, "assets/recherche.js", "index", `ancre morte : ${e.u}`);
   }
 }
