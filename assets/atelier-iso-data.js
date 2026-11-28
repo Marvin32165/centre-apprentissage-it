@@ -146,11 +146,20 @@
       s += B({ x: b.x - 2, y: b.y, z: b.z, w: 2, d: b.d + 8, h: b.h }, { cls: "iso-metal" });
       return s;
     },
-    connecteur: function (b) { return B(b, { cls: "iso-connecteur" }); }
+    connecteur: function (b, t) {
+      /* Broches dessinées sur la face visible (côté ouvert) : colonnes × rangées selon le connecteur. */
+      var G = { "cab-atx24": [2, 12], "cab-eps": [2, 4], "cab-pcie": [2, 4], "cab-sata-pwr": [1, 1], "cab-sata-data": [1, 1], "cab-facade": [2, 5], "cab-usb3": [2, 10], "cab-audio": [2, 5], "cab-fan": [1, 4] }[t];
+      var s = B(b, { cls: "iso-connecteur" });
+      if (!G) return s;
+      var c = G[0], r = G[1], pw = b.w / (c + 1), ph = b.h / (r + 1), q = Math.min(pw, ph) * 0.55;
+      if (c === 1 && r === 1) return s + R("y", { x: b.x + b.w * 0.2, y: b.y + b.d, z: b.z + b.h * 0.3, w: b.w * 0.6, h: b.h * 0.4 }, "iso-broche");
+      for (var i = 1; i <= c; i++) for (var j = 1; j <= r; j++) s += R("y", { x: b.x + i * pw - q / 2, y: b.y + b.d, z: b.z + j * ph - q / 2, w: q, h: q }, "iso-broche");
+      return s;
+    }
   };
   function dessin(type, b, piece) {
     if (D[type]) return D[type](b, piece);
-    return /^cab-/.test(type) ? D.connecteur(b) : B(b);
+    return /^cab-/.test(type) ? D.connecteur(b, type) : B(b);
   }
 
   /* Câble : trajet en courbe de la sortie de l'alimentation (ou d'un point donné) jusqu'au connecteur. */

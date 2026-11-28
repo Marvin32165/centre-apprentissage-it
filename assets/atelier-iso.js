@@ -85,7 +85,12 @@
     });
     (o.bornes || []).forEach(borne);
     rendus.sort(function (a, b) { return a.p - b.p; });
-    var corps = "", axes = "", reps = "", n = 0, cx = (mx + Mx) / 2, cy = (my + My) / 2, L = o.repLong || 44;
+    var corps = "", axes = "", reps = "", n = 0, cx = (mx + Mx) / 2, cy = (my + My) / 2, K = o.repK || 1, L = (o.repLong || 44) * K;
+    function pastille(id, p, lx, ly) {
+      return '<g class="iso-rep" data-rep="' + esc(id) + '"><line x1="' + f(p[0]) + '" y1="' + f(p[1]) + '" x2="' + f(lx) + '" y2="' + f(ly) + '"/>' +
+        '<circle class="iso-rep-pt" cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="' + f(2 * K) + '"/><circle cx="' + f(lx) + '" cy="' + f(ly) + '" r="' + f(11 * K) + '"/>' +
+        '<text x="' + f(lx) + '" y="' + f(ly + 4 * K) + '"' + (K !== 1 ? ' style="font-size:' + f(12 * K) + 'px"' : "") + ">";
+    }
     rendus.forEach(function (r) {
       var it = r.it;
       if (t > 0 && it.axe && it.ecart) axes += ligne(centre(it.boite), centre(r.b), "iso-axe");
@@ -97,18 +102,41 @@
         var p = P(c[0], c[1], c[2]), vx = p[0] - cx, vy = p[1] - cy, nv = Math.sqrt(vx * vx + vy * vy) || 1;
         var dx = it.repDir ? it.repDir[0] : vx / nv * L, dy = it.repDir ? it.repDir[1] : vy / nv * L;
         var lx = p[0] + dx, ly = p[1] + dy;
-        reps += '<g class="iso-rep" data-rep="' + esc(it.id) + '"><line x1="' + f(p[0]) + '" y1="' + f(p[1]) + '" x2="' + f(lx) + '" y2="' + f(ly) + '"/>' +
-          '<circle class="iso-rep-pt" cx="' + f(p[0]) + '" cy="' + f(p[1]) + '" r="2"/><circle cx="' + f(lx) + '" cy="' + f(ly) + '" r="11"/>' +
-          '<text x="' + f(lx) + '" y="' + f(ly + 4) + '">' + esc(it.rep) + "</text></g>";
-        mx = Math.min(mx, lx - 14); Mx = Math.max(Mx, lx + 14); my = Math.min(my, ly - 14); My = Math.max(My, ly + 14);
+        reps += pastille(it.id, p, lx, ly) + esc(it.rep) + "</text></g>";
+        mx = Math.min(mx, lx - 14 * K); Mx = Math.max(Mx, lx + 14 * K); my = Math.min(my, ly - 14 * K); My = Math.max(My, ly + 14 * K);
       }
     });
     if (o.cadrage) { mx = 1e9; my = 1e9; Mx = -1e9; My = -1e9; o.cadrage.forEach(borne); }
+    (o.notes || []).forEach(function (nt) {
+      var p = P(nt.ancre[0], nt.ancre[1], nt.ancre[2]), d = nt.dir || [40, -30], lx = p[0] + d[0] * K, ly = p[1] + d[1] * K;
+      reps += pastille(nt.rep, p, lx, ly) + esc(nt.rep) + "</text></g>";
+      if (!o.cadrage) { mx = Math.min(mx, lx - 14 * K); Mx = Math.max(Mx, lx + 14 * K); my = Math.min(my, ly - 14 * K); My = Math.max(My, ly + 14 * K); }
+    });
     var m = o.marge == null ? 16 : o.marge;
     var vb = [f(mx - m), f(my - m), f(Mx - mx + 2 * m), f(My - my + 2 * m)];
     return '<svg class="iso' + (o.classe ? " " + o.classe : "") + '" viewBox="' + vb.join(" ") + '" role="img"' + (o.titre ? ' aria-label="' + esc(o.titre) + '"' : "") + ">" +
       (o.fond || "") + axes + corps + (o.avant || "") + reps + "</svg>";
   }
 
-  window.IT_ISO = { P: P, pts: pts, boite: boite, rect: rect, cercle: cercle, ligne: ligne, cadre: cadre, scene: scene, decale: decale, centre: centre, esc: esc };
+  /* Cote : ligne de mesure entre deux points 3D, décalée de `dec` (vecteur 3D), avec traits de rappel, flèches et texte. */
+  function cote(a, b, txt, dec, k) {
+    dec = dec || [0, 0, 0]; k = k || 1;
+    var a2 = [a[0] + dec[0], a[1] + dec[1], a[2] + dec[2]], b2 = [b[0] + dec[0], b[1] + dec[1], b[2] + dec[2]];
+    var A = P(a2[0], a2[1], a2[2]), Bp = P(b2[0], b2[1], b2[2]), dx = Bp[0] - A[0], dy = Bp[1] - A[1], n = Math.sqrt(dx * dx + dy * dy) || 1, ux = dx / n, uy = dy / n;
+    function pointe(q, s) { return '<polygon class="iso-cote-p" points="' + f(q[0]) + "," + f(q[1]) + " " + f(q[0] + s * k * (ux * 7 - uy * 3)) + "," + f(q[1] + s * k * (uy * 7 + ux * 3)) + " " + f(q[0] + s * k * (ux * 7 + uy * 3)) + "," + f(q[1] + s * k * (uy * 7 - ux * 3)) + '"/>'; }
+    var mxp = (A[0] + Bp[0]) / 2, myp = (A[1] + Bp[1]) / 2, ang = Math.atan2(dy, dx) * 180 / Math.PI;
+    if (ang > 90) ang -= 180; if (ang < -90) ang += 180;
+    return '<g class="iso-cote">' + ligne(a, a2, "iso-rappel") + ligne(b, b2, "iso-rappel") +
+      '<line x1="' + f(A[0]) + '" y1="' + f(A[1]) + '" x2="' + f(Bp[0]) + '" y2="' + f(Bp[1]) + '"/>' + pointe(A, 1) + pointe(Bp, -1) +
+      '<text transform="translate(' + f(mxp) + " " + f(myp) + ") rotate(" + f(ang) + ')" y="' + f(-5 * k) + '"' + (k !== 1 ? ' style="font-size:' + f(11 * k) + 'px;stroke-width:' + f(3 * k) + 'px"' : "") + ">" + esc(txt) + "</text></g>";
+  }
+  /* Boîte qui englobe une cote (pour le cadrage). */
+  function boiteDe(a, b, dec) {
+    dec = dec || [0, 0, 0];
+    var xs = [a[0], b[0], a[0] + dec[0], b[0] + dec[0]], ys = [a[1], b[1], a[1] + dec[1], b[1] + dec[1]], zs = [a[2], b[2], a[2] + dec[2], b[2] + dec[2]];
+    var x = Math.min.apply(null, xs), y = Math.min.apply(null, ys), z = Math.min.apply(null, zs);
+    return { x: x, y: y, z: z - 8, w: Math.max.apply(null, xs) - x, d: Math.max.apply(null, ys) - y, h: Math.max.apply(null, zs) - z + 16 };
+  }
+
+  window.IT_ISO = { cote: cote, boiteDe: boiteDe, P: P, pts: pts, boite: boite, rect: rect, cercle: cercle, ligne: ligne, cadre: cadre, scene: scene, decale: decale, centre: centre, esc: esc };
 })();
