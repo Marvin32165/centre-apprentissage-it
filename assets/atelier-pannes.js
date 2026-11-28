@@ -522,14 +522,16 @@
   }
   function commencerEval() { evalEffacer(); evalEcrire({ i: 0, res: [], demarre: true, ids: T.tirage(A.pannesEval.n) }); lancerEval(); }
   function introEval() {
-    entete("Évaluation : pannes", "Atelier hardware · Évaluation des pannes");
-    var b = el("div", { "class": "prose" });
-    b.appendChild(el("p", { "class": "lead" }, "Cinq dossiers de panne tirés au sort, enchaînés, sans aide et notés. À la fin : un rapport avec ce qu'il faut revoir, et où le réviser."));
-    var c = el("div", { "class": "callout retenir" });
+    entete("Épreuve des pannes", "Atelier hardware · EP-2 · Épreuve");
+    var b = el("div", { "class": "mt-texte ep-intro" });
+    b.appendChild(el("p", { "class": "mt-chapeau" }, "Cinq dossiers de panne tirés au sort, enchaînés, sans aide et notés. À la fin : un rapport avec ce qu'il faut revoir, et où le réviser."));
+    var c = el("div", { "class": "mt-encadre outillage" });
+    c.appendChild(el("p", { "class": "mt-etiq" }, "Barème"));
     c.appendChild(el("p", null, "Chaque dossier est noté sur 100 : diagnostic 40, réparation 30, observation utile 20, sécurité 10. Pas d'indices ni de corrigé pendant le test. Seuil de réussite : " + SEUIL + " de moyenne. Ta progression est enregistrée dans ce navigateur : tu peux fermer la page et reprendre."));
     b.appendChild(c);
-    var c2 = el("div", { "class": "callout astuce" });
-    c2.appendChild(el("p", null, "Conseil : passe d'abord les dossiers en mode apprentissage. Mets toujours le PC hors tension avant d'ouvrir ou de remplacer une pièce."));
+    var c2 = el("div", { "class": "mt-encadre remarque" });
+    c2.appendChild(el("p", { "class": "mt-etiq" }, "Conseil"));
+    c2.appendChild(el("p", null, "Passe d'abord les dossiers en mode apprentissage. Mets toujours le PC hors tension avant d'ouvrir ou de remplacer une pièce."));
     b.appendChild(c2);
     var act = el("div", { "class": "at-etape-actions" });
     var go = el("button", { type: "button", "class": "btn" }, "Commencer");

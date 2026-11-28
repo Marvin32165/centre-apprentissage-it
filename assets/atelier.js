@@ -1183,20 +1183,22 @@
   }
   function introEval() {
     var E = A.evaluation;
-    entete(E.titre, "Atelier hardware · Évaluation");
-    var b = el("div", { "class": "prose" });
-    b.appendChild(el("p", { "class": "lead" }, "Quatre montages enchaînés, sans aide et notés. À la fin : un rapport avec ce qu'il faut revoir, et où le réviser."));
-    var ol = el("ol");
+    entete("Épreuve des montages", "Atelier hardware · EP-1 · Épreuve");
+    var b = el("div", { "class": "mt-texte ep-intro" });
+    b.appendChild(el("p", { "class": "mt-chapeau" }, "Quatre montages enchaînés, sans aide et notés. À la fin : un rapport avec ce qu'il faut revoir, et où le réviser."));
+    var ol = el("ol", { "class": "mt-proc" });
     E.scenarios.forEach(function (id) {
       var sc = A.scenarios[id];
       ol.appendChild(el("li", null, sc.titre + " — " + sc.niveau + ", " + sc.duree + " en apprentissage"));
     });
     b.appendChild(ol);
-    var c = el("div", { "class": "callout retenir" });
+    var c = el("div", { "class": "mt-encadre outillage" });
+    c.appendChild(el("p", { "class": "mt-etiq" }, "Barème"));
     c.appendChild(el("p", null, "Chaque scénario est noté sur 100 : démarrage 40, cahier des charges 50, gestes 10. Il n'y a pas d'indices, pas d'ordre imposé et aucune alerte. Seuil de réussite : " + E.seuil + " de moyenne. Ta progression est enregistrée dans ce navigateur : tu peux fermer la page et reprendre."));
     b.appendChild(c);
-    var c2 = el("div", { "class": "callout astuce" });
-    c2.appendChild(el("p", null, "Conseil : fais d'abord les scénarios en mode apprentissage (page de l'atelier). Les mêmes montages sont ici sans filet."));
+    var c2 = el("div", { "class": "mt-encadre remarque" });
+    c2.appendChild(el("p", { "class": "mt-etiq" }, "Conseil"));
+    c2.appendChild(el("p", null, "Fais d'abord les scénarios en mode apprentissage (page de l'atelier). Les mêmes montages sont ici sans filet."));
     b.appendChild(c2);
     var act = el("div", { "class": "at-etape-actions" });
     var go = el("button", { type: "button", "class": "btn" }, "Commencer");

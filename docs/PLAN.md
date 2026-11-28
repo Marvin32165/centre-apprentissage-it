@@ -618,6 +618,7 @@ Reste : relecture des faits des dossiers de pannes (lot 48).
 - [ ] 47.2 Relecture des sources, contrôles, fusion.
 
 ## Lot 48 — Épreuves, index et passe finale
-- [ ] 48.1 Épreuves et bilan imprimable dans la nouvelle identité ; index des pièces, pannes et missions.
+- [x] 48.1 Épreuves et bilan imprimable dans la nouvelle identité ; index des pièces, pannes et missions.
+  Fait : épreuves EP-1 et EP-2 en `body.mt` (intro en procédure numérotée, encadrés Barème et Conseil, bilan imprimable vérifié par `parcours`) ; index des pièces (B-xx) et des pannes (D-xx) ; missions et annexes dans le sommaire et la recherche. Captures « après » dans `docs/captures/lot-48/` (avant : `docs/captures/atelier.jpg`). Justifié : pas d'index séparé des missions, le sommaire suffit (4 entrées).
 - [ ] 48.2 Test en situation (`test-chef`) de chaque partie ; corrections.
 - [ ] 48.3 Captures avant / après, `npm run controles`, fusion finale.
