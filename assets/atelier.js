@@ -191,7 +191,9 @@
   var secSel = el("section", { "class": "at-sel", "aria-label": "Pièce sélectionnée" });
   var secBac = el("section", { "class": "at-bac", "aria-label": "Bac de pièces" });
   var secListe = el("section", { "class": "at-liste", "aria-label": "Toutes les étapes" });
-  corps.appendChild(secEtape); corps.appendChild(msgBox); corps.appendChild(margeIndices); corps.appendChild(secSel); corps.appendChild(secListe); corps.appendChild(bCahier);
+  corps.appendChild(secEtape); corps.appendChild(margeIndices); corps.appendChild(secListe); corps.appendChild(bCahier);
+  /* Le message et le panneau de la pièce choisie restent sous la planche : sur téléphone, le retour est visible sans défiler. */
+  main.appendChild(msgBox); main.appendChild(secSel);
   pageD.appendChild(secBac);
 
   var secPost = el("section", { "class": "at-post bloc", id: "at-post", hidden: "", "aria-label": "Démarrage du PC" });
@@ -663,7 +665,7 @@
     if (vueDe(e.vue) !== vue) {
       var cible = vueDe(e.vue);
       var bv = el("button", { type: "button", "class": "btn ghost" }, "Aller à la vue « " + VUES.filter(function (v) { return v[0] === cible; })[0][1] + " »");
-      bv.addEventListener("click", function () { setVue(cible); renderEtape(); });
+      bv.addEventListener("click", function () { setVue(cible); renderEtape(); planche.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); });
       row.appendChild(bv);
     }
     secEtape.appendChild(row);
@@ -795,9 +797,16 @@
   }
   function annuler() {
     if (fini) return;
+    if (sel) { sel = null; msg("Sélection annulée.", "info"); renderAll(); return; }
     var h = hist.pop();
     if (!h) { msg("Rien à annuler.", "info"); return; }
     if (h.op === "place") delete st.placed[h.slot];
+    /* Démontage (étapes mémorisées) : défaire un geste remet « à faire » l'étape qui le concernait et les suivantes. */
+    if (sc.memo && st.faites && h.slot) {
+      var j = -1;
+      sc.etapes.forEach(function (e, k) { if (j < 0 && ((e.slots || []).indexOf(h.slot) >= 0 || (e.vide || []).indexOf(h.slot) >= 0)) j = k; });
+      if (j >= 0) sc.etapes.forEach(function (e, k) { if (k >= j) delete st.faites[e.id]; });
+    }
     else if (h.op === "remove") st.placed[h.slot] = h.item;
     else if (h.op === "switch") st.switchOn = h.val;
     else if (h.op === "esd") st.esd = h.val;
@@ -928,7 +937,7 @@
       }
       resultatPost(res, ecran, rest);
       bPower.disabled = false;
-      renderAll();
+      renderAll(); save();
     }
     secPost.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "nearest" });
     msg("Démarrage en cours…", "info");
@@ -1086,7 +1095,8 @@
   }
   window.addEventListener("resize", redimensionnerScene);
   load();
-  msg(TEST ? "Test noté : lis le cahier des charges, monte le PC sans aide, allume-le pour vérifier, puis termine le test." : "Bienvenue ! Lis le cahier des charges, puis suis les étapes : touche une pièce du bac, puis son emplacement.", "info");
+  document.title = sc.titre + " — Atelier hardware";
+  if (!TEST && cur() >= sc.etapes.length) msg("Procédure terminée : tu peux relire la maquette, l'éclater, ou recommencer.", "ok"); else msg(TEST ? "Test noté : lis le cahier des charges, monte le PC sans aide, allume-le pour vérifier, puis termine le test." : "Bienvenue ! Lis le cahier des charges, puis suis les étapes : touche une pièce du bac, puis son emplacement.", "info");
   renderAll();
   }   /* fin de demarrer */
 

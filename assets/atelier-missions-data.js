@@ -38,8 +38,8 @@
       ],
       cases: ["Extérieur du carton contrôlé (photo si dommage)", "Bon de livraison comparé à la commande", "Contenu complet", "Numéros de série relevés", "Étiquette d'inventaire posée", "Inventaire à jour, écarts signalés"],
       exercice: {
-        consigne: "Le bon de livraison annonce 10 PC de bureau du même modèle, 10 alimentations externes et 10 claviers. Tu comptes 10 cartons de PC, dont un est enfoncé sur un coin, et 9 claviers. Le transporteur attend ta signature. Que fais-tu, dans l'ordre ?",
-        correction: ["Avant de signer : noter le carton enfoncé et le clavier manquant sur le bon (ou selon la procédure du transporteur), photographier le carton.", "Ouvrir et vérifier le carton abîmé (appareil intact ? accessoires ?), relever tous les numéros de série et les associer au bon.", "Étiqueter et enregistrer les 10 PC ; signaler l'écart (1 clavier manquant, 1 carton abîmé) au responsable des commandes.", "Délais et formalités d'une réclamation : ils dépendent du transporteur et du contrat (à vérifier sur place, avec la page du transporteur)."]
+        consigne: "Le bon de livraison annonce 10 PC de bureau du même modèle, 10 alimentations externes et 10 claviers. Tu comptes 10 cartons de PC, dont un est enfoncé sur un coin, 10 alimentations et 9 claviers. Le transporteur attend ta signature. Que fais-tu, dans l'ordre ?",
+        correction: ["Avant de signer : noter le carton enfoncé et le clavier manquant sur le bon (ou selon la procédure du transporteur), photographier le carton.", "Ouvrir et vérifier le carton abîmé (appareil intact ? accessoires ?), relever tous les numéros de série et les associer au bon.", "Étiqueter et enregistrer les 10 PC ; les alimentations sont au complet ; signaler l'écart (1 clavier manquant, 1 carton abîmé) au responsable des commandes.", "Délais et formalités d'une réclamation : ils dépendent du transporteur et du contrat (à vérifier sur place, avec la page du transporteur)."]
       },
       umons: ["Qui signe les livraisons et où sont rangés les colis", "L'outil d'inventaire et le format des étiquettes", "À qui signaler un écart et sous quel délai"],
       sources: [J9, S.ups, DEP],

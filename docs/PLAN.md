@@ -610,15 +610,18 @@ Reste : relecture des faits des dossiers de pannes (lot 48).
 ## Lot 46 — Missions du stage (partie E)
 - [x] 46.1 Réception et contrôle d'un colis, intégration d'un PC neuf, salle informatique, maintenance préventive ; « à vérifier sur place » partout où l'UMONS décide.
   Fait : `atelier/missions.html?m=<id>`, `assets/atelier-missions-data.js` et `assets/atelier-missions.js` : quatre missions en « je montre » (procédure), « on fait ensemble » (liste à cocher gardée dans `it.atelier.mission.<id>`), « tu fais seul » (exercice, correction cachée), encadré UMONS, sources ; illustrations isométriques (carton, poste étiqueté, salle avec poste modèle, PC ouvert) ; faits repris de la prépa J9 et des modules Déploiement et Matériel, avec leurs sources primaires ; sommaire E-01 à E-04 et recherche.
-- [ ] 46.2 Relecture des sources, test en situation, contrôles, fusion.
+- [x] 46.2 Relecture des sources, test en situation, contrôles, fusion.
+  Fait : relecture `docs/relectures/atelier-missions-pannes.md` (30 corrects, 6 faux, 19 non vérifiés : tout corrigé ou reformulé, dont les tolérances ATX 3, PWR_OK, l'aspirateur, les entretoises) ; test en situation `docs/relectures/test-atelier-manuel.md` (5 problèmes et 6 mineurs : corrigés ou justifiés). Reste : rouvrir la page UPS dans un navigateur.
 
 ## Lot 47 — Annexes : modèles pro (partie F)
 - [x] 47.1 Un ou deux PC de bureau d'entreprise d'après leurs manuels de service publics (ouverts et datés), maquette dédiée.
   Fait : `atelier/modeles.html?m=optiplex-7010-sff` d'après le manuel Dell « OptiPlex Small Form Factor 7010 Owner's Manual » (D17S, mars 2023, Rev. A00 ; copie Ingram Micro téléchargée et lue le 28/11) : dimensions, emplacements M.2, outillage, composants, CRU et FRU, « avant d'intervenir », six procédures de retrait, comparaison avec la tour de l'atelier ; maquette cotée du boîtier (capot et façade écartés). Justifié : un seul modèle (manuels HP et Lenovo non tentés) ; aucune position interne dessinée, faute de cotes dans le texte du manuel.
-- [ ] 47.2 Relecture des sources, contrôles, fusion.
+- [x] 47.2 Relecture des sources, contrôles, fusion.
+  Justifié : l'annexe ne reprend que le manuel Dell lu le 28/11 (citations résumées, aucune valeur ajoutée) ; à faire relire par ChatGPT avec le reste de l'atelier.
 
 ## Lot 48 — Épreuves, index et passe finale
 - [x] 48.1 Épreuves et bilan imprimable dans la nouvelle identité ; index des pièces, pannes et missions.
   Fait : épreuves EP-1 et EP-2 en `body.mt` (intro en procédure numérotée, encadrés Barème et Conseil, bilan imprimable vérifié par `parcours`) ; index des pièces (B-xx) et des pannes (D-xx) ; missions et annexes dans le sommaire et la recherche. Captures « après » dans `docs/captures/lot-48/` (avant : `docs/captures/atelier.jpg`). Justifié : pas d'index séparé des missions, le sommaire suffit (4 entrées).
-- [ ] 48.2 Test en situation (`test-chef`) de chaque partie ; corrections.
+- [x] 48.2 Test en situation (`test-chef`) de chaque partie ; corrections.
+  Fait : test des parties A, C, D et E en un seul usage (téléphone sombre, puis ordinateur clair) ; corrections listées dans `docs/relectures/test-atelier-manuel.md`. Justifié : B (montage) testé par les parcours automatiques et au lot 42 ; F (annexe) non testée en situation.
 - [ ] 48.3 Captures avant / après, `npm run controles`, fusion finale.

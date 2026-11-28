@@ -167,12 +167,12 @@
       });
       ip.appendChild(ul);
     }
-    /* Index des pannes : cause → dossier */
+    /* Index des pannes : symptôme → dossier (la cause reste cachée jusqu'au corrigé) */
     var ipn = document.querySelector("[data-index-pannes]");
     if (ipn && A.pannes) {
       var causes = {};
       (A.pannesCauses || []).forEach(function (c) { causes[c.id] = c.nom; });
-      var items = Object.keys(A.pannes).map(function (id, i) { return { id: id, n: i + 1, t: A.pannes[id].titre, c: causes[A.pannes[id].cause] || "" }; });
+      var items = Object.keys(A.pannes).map(function (id, i) { return { id: id, n: i + 1, t: A.pannes[id].titre, c: A.pannes[id].titre }; });
       items.sort(function (a, b) { return a.c.localeCompare(b.c, "fr"); });
       var ul2 = el("ul", { "class": "index-liste pannes" });
       items.forEach(function (x) {
@@ -181,7 +181,6 @@
         var a = el("a", { href: "pannes.html?p=" + x.id, "aria-label": x.c + " : dossier D-" + deux(x.n) + ", " + x.t }, "D-" + deux(x.n));
         var r = el("span", { "class": "index-refs" }); r.appendChild(a);
         li.appendChild(r);
-        li.appendChild(el("span", { "class": "index-sous" }, "« " + x.t + " »"));
         ul2.appendChild(li);
       });
       ipn.appendChild(ul2);

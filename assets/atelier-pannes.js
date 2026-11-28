@@ -45,11 +45,9 @@
     feuille.appendChild(g); feuille.appendChild(d);
     host.appendChild(feuille);
     g.appendChild(el("h2", { id: "arbre" }, "Arbre de diagnostic"));
-    g.appendChild(el("p", null, "La méthode du service desk : observer ce que la machine montre avant d'ouvrir, puis isoler. Chaque question ouvre ses causes ; chaque cause renvoie à un dossier."));
+    g.appendChild(el("p", null, "La méthode du service desk : observer ce que la machine montre avant d'ouvrir, puis isoler. Chaque question ouvre ses causes possibles ; le corrigé de chaque dossier trace son chemin dans l'arbre."));
     var ar = el("div", { "class": "arbre-zone" });
-    var parCause = {};
-    Object.keys(A.pannes).forEach(function (pid) { parCause[A.pannes[pid].cause] = pid; });
-    ar.innerHTML = window.IT_DIAG ? window.IT_DIAG.arbre({ lien: function (c) { return parCause[c] ? "pannes.html?p=" + parCause[c] : null; } }) : "";
+    ar.innerHTML = window.IT_DIAG ? window.IT_DIAG.arbre() : "";
     g.appendChild(ar);
     var sec = el("div", { "class": "mt-encadre source" });
     sec.appendChild(el("p", { "class": "mt-etiq" }, "Méthode et sources"));
@@ -100,6 +98,7 @@
 
     /* Squelette « manuel de service » : fiche d'intervention à gauche, planche et instruments à droite */
     host.textContent = "";
+    document.title = p.titre + " — Atelier hardware";
     var num = Object.keys(A.pannes).indexOf(id) + 1, code = ctx.eval ? "EP-2." + (ctx.eval.i + 1) : "D-" + (num < 10 ? "0" : "") + num;
     var head = el("header", { "class": "at-head" });
     head.innerHTML = '<p class="mt-surtitre"></p><h1></h1><div class="at-badges"></div><p class="at-modes"></p>';
@@ -233,14 +232,17 @@
     }
 
     /* Diagnostic et intervention */
+    var choixCause = "", choixInter = "";
     function renderDiag() {
       secDiag.textContent = "";
       secDiag.appendChild(el("h2", null, "Diagnostic · quelle est la cause ?"));
       var d1 = el("div", { "class": "pn-champ" });
       d1.appendChild(el("label", { "for": "pn-cause" }, "Cause de la panne"));
       var s1 = el("select", { id: "pn-cause" });
+      s1.addEventListener("change", function () { choixCause = s1.value; });
       s1.appendChild(el("option", { value: "" }, "Choisir une cause…"));
       trier(A.pannesCauses).forEach(function (c) { s1.appendChild(el("option", { value: c.id }, c.nom)); });
+      s1.value = choixCause;
       var b1 = el("button", { type: "button", "class": "btn" }, "Poser ce diagnostic");
       b1.addEventListener("click", function () {
         if (fini) return;
@@ -270,8 +272,10 @@
       var d2 = el("div", { "class": "pn-champ" });
       d2.appendChild(el("label", { "for": "pn-inter" }, "Intervention (PC hors tension)"));
       var s2 = el("select", { id: "pn-inter" });
+      s2.addEventListener("change", function () { choixInter = s2.value; });
       s2.appendChild(el("option", { value: "" }, "Choisir une intervention…"));
       trier(Object.keys(A.pannesInter).map(function (k) { return { id: k, nom: A.pannesInter[k].nom }; })).forEach(function (c) { s2.appendChild(el("option", { value: c.id }, c.nom)); });
+      s2.value = choixInter;
       var b2 = el("button", { type: "button", "class": "btn" }, "Intervenir");
       b2.addEventListener("click", function () {
         if (fini) return;
