@@ -11,6 +11,34 @@
   var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var EVAL = host.getAttribute("data-eval") === "1";
   var SEUIL = A.pannesEval.seuil;
+  var SOURCES = {
+    methode: ["ASUS : démarrage, affichage et configuration minimale", "https://www.asus.com/support/faq/1042632/"],
+    voyants: ["ASUS : voyants de diagnostic", "https://www.asus.com/support/faq/1042678/"],
+    intel: ["Intel : guide ATX, rév. 2.1a", "https://cdrdv2-public.intel.com/336521/336521_Rev2p1a.pdf"],
+    tester: ["Corsair : mesures d'un bloc d'alimentation", "https://www.corsair.com/uk/en/explorer/diy-builder/power-supply-units/how-to-test-a-psu-power-supply-unit/"],
+    pate: ["Intel : appliquer ou renouveler la pâte thermique", "https://www.intel.com/content/www/us/en/gaming/resources/how-to-apply-thermal-paste.html"],
+    film: ["Noctua : retirer la protection, notice du NH-U12S TR4-SP3", "https://cdn.noctua.at/media/noctua_nh_u12s_tr4-sp3_manual_en.pdf?download=true"],
+    chaud: ["Dell : surchauffe et aérations", "https://www.dell.com/support/kbdoc/en-ed/000130867/how-to-troubleshoot-a-overheating-shutdown-or-thermal-issue-on-a-dell-pc"],
+    disque: ["ASUS : disque SATA ou SSD M.2 absent", "https://www.asus.com/us/support/faq/1044083/"],
+    cmos: ["HP : messages CMOS et BIOS", "https://support.hp.com/in-en/document/ish_9432008-9432063-16"],
+    pile: ["Dell : remplacement de la pile CMOS", "https://www.dell.com/support/kbdoc/en-us/000135183/how-to-replace-a-cmos-coin-cell-battery-on-your-dell-desktop-computer"]
+  };
+  var SOURCES_DOSSIER = {
+    "ram-defectueuse": ["voyants", "methode"], "alim-hs": ["intel", "tester"], "eps-oublie": ["intel", "methode"],
+    "pate-oubliee": ["pate", "chaud"], "ventirad-film": ["film", "pate"], poussiere: ["chaud"],
+    "gpu-cable-oublie": ["intel", "voyants"], "gpu-hs": ["methode"],
+    "sata-donnees": ["disque"], "ssd-hs": ["disque"], "pile-cmos": ["cmos", "pile"],
+    "bios-ancien": ["methode"], entretoise: ["intel", "methode"], "facade-nappe": ["intel", "methode"]
+  };
+  function liensSources(zone, cles) {
+    if (!cles) return;
+    var liste = el("ul");
+    cles.forEach(function (cle) {
+      var source = SOURCES[cle];
+      liste.appendChild(el("li")).appendChild(el("a", { href: source[1] }, source[0]));
+    });
+    zone.appendChild(liste);
+  }
   function el(tag, attrs, text) {
     var n = document.createElement(tag);
     if (attrs) for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) n.setAttribute(k, attrs[k]);
@@ -52,6 +80,7 @@
     var sec = el("div", { "class": "mt-encadre source" });
     sec.appendChild(el("p", { "class": "mt-etiq" }, "Méthode et sources"));
     sec.appendChild(el("p", null, "Méthode du module « Matériel et PC » (§ 3 : POST, bips, LED, configuration minimale, d'après ASUS) ; guide Intel ATX 3 (rév. 2.1a) pour l'alimentation ; les codes de bips et de LED dépendent de la carte mère : on lit son manuel. Deux modes : apprentissage (indices, corrigé caché) et test noté sur 100 (diagnostic 40, réparation 30, observation utile 20, sécurité 10)."));
+    liensSources(sec, ["methode", "intel", "chaud", "cmos", "disque"]);
     g.appendChild(sec);
     d.appendChild(el("h2", { id: "dossiers" }, "Quatorze dossiers"));
     var ul = el("ul", { "class": "mt-entrees" });
@@ -120,6 +149,7 @@
     var src = el("aside", { "class": "mt-encadre source" });
     src.appendChild(el("p", { "class": "mt-etiq" }, "Source"));
     src.appendChild(el("p", null, "Les LED de debug, les bips et la liste des processeurs compatibles dépendent de la carte mère : la source de référence est son manuel et la page de support du constructeur. Sources : guide Intel des alimentations ATX version 3, rév. 2.1a (tolérances : +12 V de −7 % à +5 %, +5 V et +3,3 V à ±5 % ; signaux PWR_OK et PS_ON#) ; ASUS, FAQ des LED de diagnostic (Q-LED : CPU, DRAM, VGA, BOOT) ; Dell : surchauffe, nettoyage, pile CMOS ; Intel : protection thermique et pâte thermique. Les liens entre une panne et une LED précise sont ceux de la simulation : sur une vraie carte, on lit son manuel."));
+    if (!TEST) liensSources(src, SOURCES_DOSSIER[id]);
     ticket.appendChild(src);
     corps.appendChild(ticket);
 
@@ -480,6 +510,7 @@
     (rec.explication || []).forEach(function (t) { d.appendChild(el("p", null, t)); });
     d.appendChild(el("p", null, rec.pourquoi));
     d.appendChild(el("p", null, rec.reel));
+    liensSources(d, SOURCES_DOSSIER[rec.id]);
     box.appendChild(d);
     box.appendChild(blocRevoir(rec.revoir));
     return box;

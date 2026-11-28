@@ -81,7 +81,19 @@ Object.entries(A.missions || {}).forEach(([id, m], i) => {
   ajoute("Atelier", "mission", m.titre, `Atelier · mission du stage · ${c}`, u, `${c} ${m.role} ${m.procedure.map((x) => x[0]).join(" ")}`);
   [["proc", "procédure, je montre"], ["liste", "liste de contrôle, on fait ensemble"], ["seul", "exercice, tu fais seul"]].forEach(([a, t]) => ajoute("Atelier", "section", `${m.titre} · ${t}`, `Atelier · ${c}`, `${u}#${id}-${a}`, `${c} ${t}`));
 });
-Object.entries(A.modeles || {}).forEach(([id, m], i) => ajoute("Atelier", "annexe", m.titre, `Atelier · modèle d'entreprise · F-${deux(i + 1)}`, `atelier/modeles.html?m=${id}`, `F-${deux(i + 1)} CRU FRU ${m.role}`));
+Object.entries(A.modeles || {}).forEach(([id, m], i) => {
+  const c = "F-" + deux(i + 1), u = `atelier/modeles.html?m=${id}`;
+  ajoute("Atelier", "annexe", m.titre, `Atelier · modèle d'entreprise · ${c}`, u, `${c} CRU FRU ${m.role}`);
+  [["carac", "Caractéristiques"], ["compo", "Composants et pièces remplaçables"],
+    ["avant", "Avant d'intervenir"], ["proc", "Procédures de retrait"], ["compar", "Comparer avec la tour de l'atelier"]]
+    .forEach(([ancre, titre]) => ajoute("Atelier", "section", `${m.titreCourt} · ${titre}`, `Atelier · ${c}`, `${u}#f-${ancre}`, titre));
+});
+const bureautique = A.scenarios["bureautique-intel"];
+if (bureautique) {
+  [["cahier-titre", "Cahier des charges"], ["montage-etape", "Étapes du montage"]].forEach(([ancre, titre]) => {
+    ajoute("Atelier", "section", `${bureautique.titre} · ${titre}`, "Atelier · B-01", `atelier/montage.html?s=bureautique-intel#${ancre}`, titre);
+  });
+}
 Object.entries(A.fiches || {}).forEach(([id, f], i) => {
   const c = "A-" + deux(i + 1), u = `atelier/composants.html?c=${id}`;
   ajoute("Atelier", "fiche", f.titre, `Atelier · fiche technique · ${c}`, u, `${c} ${f.role} ${f.carac.map((x) => x.join(" ")).join(" ")}`);

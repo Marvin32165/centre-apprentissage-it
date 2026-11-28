@@ -628,3 +628,20 @@ Reste : relecture des faits des dossiers de pannes (lot 48).
   Fait : `npm run controles` réussi le 28/11 (44 pages × 4 largeurs × 2 thèmes, serveur et `file://` : 0 problème, 0 avertissement ; accessibilité, contrastes et parcours : 0 échec) ; captures dans `docs/captures/lot-48/` ; fusion dans `main`. Les lots 46 à 48 ont été faits à la suite sur la branche `lot-46`.
 
 Reste : relecture croisée par ChatGPT de tout l'atelier (fiches, démontage, pannes, missions, annexe) ; rouvrir AMD, Kingston et UPS dans un navigateur ; un deuxième modèle d'entreprise (HP ou Lenovo) si besoin.
+
+## Lot 49 — Relecture croisée et compléments de l'atelier
+- [x] 49.1 Relire les faits des fiches, du démontage, des pannes, de l'arbre, des missions et des modèles, dans cet ordre, à partir des deux rapports précédents. Rouvrir AMD, Kingston, UPS Belgique et Noctua. Rapport : `docs/relectures/atelier-relecture-chatgpt.md`.
+  Fait : relecture croisée des six fichiers dans `docs/relectures/atelier-relecture-chatgpt.md` ; sources AMD, Kingston, UPS Belgique, Noctua et manuel Dell ouverts.
+- [x] 49.2 Corriger les faits faux ou non vérifiés et ajouter le suivi au rapport.
+  Fait : 12 affirmations fausses et 10 non vérifiées traitées ; sources primaires et suivi ajoutés, moteurs inchangés.
+- [x] 49.3 Ajouter en annexe F un PC de bureau HP ou Lenovo d'après son manuel de maintenance public ouvert : référence, date, dimensions, outillage, pièces remplaçables et procédures de retrait.
+  Fait : annexe F-02, HP ProDesk 2 SFF G2i Desktop PC, d'après le manuel HP Q41672-001 (octobre 2026) ouvert sur Manualzz. Les cotes, le cartouche et la nomenclature suivent le modèle choisi.
+- [x] 49.4 Tester la procédure B-01 en apprentissage et en mode test, puis l'annexe F, à 390 et 1280 px. Rapport : `docs/relectures/test-atelier-b-f.md` ; corriger les blocages.
+  Fait : `docs/relectures/test-atelier-b-f.md` ; montage B-01 guidé et test à 100/100, comparaison Dell et HP à 390 et 1280 px. Cibles superposées, recherche, tableau mobile et impression du rapport corrigés.
+- [x] 49.5 Forcer les jetons du thème clair à l'impression sur tout le site.
+  Fait : palette claire à l'impression, fond blanc sans grain et couleurs du code adaptées. Vérifié sur l'accueil, le jour 9, un module, l'annexe HP et un dossier de panne, en clair, en sombre forcé et en sombre système.
+- [x] 49.6 Lancer `npm run controles` (0 problème, 0 avertissement, 0 échec), puis fusionner `lot-49` dans `main` avec `--no-ff` et pousser.
+
+  Fait : `npm run controles` réussi, 44 pages à 4 largeurs et 2 thèmes sur serveur et en `file://`, 0 problème, 0 avertissement, 0 échec et aucun contraste sous le seuil. Le verrou Playwright est installable sur un clone propre et l'audit vérifie les ancres dynamiques à leur adresse exacte.
+
+Reste : modèles effectivement en service et droits d'intervention à vérifier sur place à l'UMONS.
