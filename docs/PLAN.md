@@ -628,3 +628,14 @@ Reste : relecture des faits des dossiers de pannes (lot 48).
   Fait : `npm run controles` réussi le 28/11 (44 pages × 4 largeurs × 2 thèmes, serveur et `file://` : 0 problème, 0 avertissement ; accessibilité, contrastes et parcours : 0 échec) ; captures dans `docs/captures/lot-48/` ; fusion dans `main`. Les lots 46 à 48 ont été faits à la suite sur la branche `lot-46`.
 
 Reste : relecture croisée par ChatGPT de tout l'atelier (fiches, démontage, pannes, missions, annexe) ; rouvrir AMD, Kingston et UPS dans un navigateur ; un deuxième modèle d'entreprise (HP ou Lenovo) si besoin.
+
+## Lot 49 — Relecture croisée et compléments de l'atelier
+- [x] 49.1 Relire les faits des fiches, du démontage, des pannes, de l'arbre, des missions et des modèles, dans cet ordre, à partir des deux rapports précédents. Rouvrir AMD, Kingston, UPS Belgique et Noctua. Rapport : `docs/relectures/atelier-relecture-chatgpt.md`.
+  Fait : relecture croisée des six fichiers dans `docs/relectures/atelier-relecture-chatgpt.md` ; sources AMD, Kingston, UPS Belgique, Noctua et manuel Dell ouverts.
+- [ ] 49.2 Corriger les faits faux ou non vérifiés et ajouter le suivi au rapport.
+- [ ] 49.3 Ajouter en annexe F un PC de bureau HP ou Lenovo d'après son manuel de maintenance public ouvert : référence, date, dimensions, outillage, pièces remplaçables et procédures de retrait.
+- [ ] 49.4 Tester la procédure B-01 en apprentissage et en mode test, puis l'annexe F, à 390 et 1280 px. Rapport : `docs/relectures/test-atelier-b-f.md` ; corriger les blocages.
+- [ ] 49.5 Forcer les jetons du thème clair à l'impression sur tout le site.
+- [ ] 49.6 Lancer `npm run controles` (0 problème, 0 avertissement, 0 échec), puis fusionner `lot-49` dans `main` avec `--no-ff` et pousser.
+
+Reste : sous-étapes 49.2 à 49.6.
