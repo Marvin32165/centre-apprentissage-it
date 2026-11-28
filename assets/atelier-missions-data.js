@@ -14,9 +14,13 @@
     scenarios: ["Microsoft Learn : Windows deployment scenarios", "https://learn.microsoft.com/en-us/windows/deployment/windows-deployment-scenarios"],
     cim: ["Microsoft Learn : classe Win32_BIOS (SerialNumber)", "https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-bios"],
     cs: ["Microsoft Learn : classe Win32_ComputerSystem (Manufacturer, Model)", "https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem"],
+    inventaire: ["Microsoft Learn : exemple PowerShell pour relever fabricant, modèle et numéro de série", "https://learn.microsoft.com/en-us/intune/device-enrollment/add-corporate-identifiers"],
     dsreg: ["Microsoft Learn : dsregcmd /status", "https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd"],
     ups: ["UPS Belgique : déclarer un dommage (exemple de transporteur)", "https://www.ups.com/be/en/support/file-a-claim"],
+    upsPhotos: ["UPS Belgique : justificatifs et photos d'un colis endommagé", "https://www.ups.com/be/en/support/file-a-claim/supporting-documents"],
     chaud: ["Dell : surchauffe et nettoyage des aérations", "https://www.dell.com/support/kbdoc/en-ed/000130867/how-to-troubleshoot-a-overheating-shutdown-or-thermal-issue-on-a-dell-pc"],
+    statutDisque: ["Microsoft Learn : Get-PhysicalDisk", "https://learn.microsoft.com/en-us/powershell/module/storage/get-physicaldisk"],
+    usureDisque: ["Microsoft Learn : définition du compteur Wear", "https://learn.microsoft.com/en-us/windows-hardware/drivers/storage/msft-storagereliabilitycounter"],
     disque: ["Microsoft Learn : Get-StorageReliabilityCounter", "https://learn.microsoft.com/en-us/powershell/module/storage/get-storagereliabilitycounter"],
     batterie: ["Microsoft Learn : options de powercfg (/batteryreport)", "https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/powercfg-command-line-options"],
     dellBat: ["Dell : rapport de batterie (Design Capacity, Full Charge Capacity)", "https://www.dell.com/support/kbdoc/en-us/000130117"],
@@ -27,9 +31,9 @@
   A.missions = {
     colis: {
       id: "colis", titre: "Réceptionner et contrôler un colis", illus: "colis",
-      role: "Un transporteur livre des PC : on contrôle avant de signer, on compare au bon de livraison, on relève les numéros de série, on étiquette et on range.",
+      role: "Un transporteur livre des PC : on contrôle le colis et son contenu selon la procédure de réception, puis on enregistre les appareils.",
       procedure: [
-        ["Regarder l'extérieur", "Carton abîmé ou humide : le noter (et le photographier) avant de signer la livraison, selon la procédure de l'organisation et du transporteur."],
+        ["Regarder l'extérieur", "Si le carton est abîmé ou humide, signaler le dommage selon les consignes de réception et noter le numéro de suivi. Signature, réserves et photos à la livraison : à vérifier sur place."],
         ["Comparer au bon de livraison", "Quantité, références et modèles, ligne par ligne, avec la commande."],
         ["Vérifier le contenu", "Appareil, alimentation ou chargeur, câbles, accessoires."],
         ["Relever les numéros de série", "Et les associer au bon de livraison."],
@@ -39,10 +43,10 @@
       cases: ["Extérieur du carton contrôlé (photo si dommage)", "Bon de livraison comparé à la commande", "Contenu complet", "Numéros de série relevés", "Étiquette d'inventaire posée", "Inventaire à jour, écarts signalés"],
       exercice: {
         consigne: "Le bon de livraison annonce 10 PC de bureau du même modèle, 10 alimentations externes et 10 claviers. Tu comptes 10 cartons de PC, dont un est enfoncé sur un coin, 10 alimentations et 9 claviers. Le transporteur attend ta signature. Que fais-tu, dans l'ordre ?",
-        correction: ["Avant de signer : noter le carton enfoncé et le clavier manquant sur le bon (ou selon la procédure du transporteur), photographier le carton.", "Ouvrir et vérifier le carton abîmé (appareil intact ? accessoires ?), relever tous les numéros de série et les associer au bon.", "Étiqueter et enregistrer les 10 PC ; les alimentations sont au complet ; signaler l'écart (1 clavier manquant, 1 carton abîmé) au responsable des commandes.", "Délais et formalités d'une réclamation : ils dépendent du transporteur et du contrat (à vérifier sur place, avec la page du transporteur)."]
+        correction: ["Signaler au responsable la trace sur le carton et l'écart de quantité. Signature et réserves sur le bon : à vérifier sur place selon la procédure de réception.", "Ouvrir et vérifier le carton abîmé (appareil intact ? accessoires ?), relever tous les numéros de série et les associer au bon.", "Étiqueter et enregistrer les 10 PC ; les alimentations sont au complet ; signaler l'écart (1 clavier manquant, 1 carton abîmé) au responsable des commandes.", "Pour un dommage traité par UPS Belgique : conserver le contenu et l'emballage et préparer les photos demandées, dont celle de l'étiquette avec le numéro de suivi. Délais, modalités et personne chargée de la réclamation : à vérifier sur place."]
       },
       umons: ["Qui signe les livraisons et où sont rangés les colis", "L'outil d'inventaire et le format des étiquettes", "À qui signaler un écart et sous quel délai"],
-      sources: [J9, S.ups, DEP],
+      sources: [J9, S.ups, S.upsPhotos, DEP],
       liens: [["E-02", "missions.html?m=integration", "Intégrer un PC neuf"]]
     },
     integration: {
@@ -57,16 +61,16 @@
       ],
       cases: ["Fiche d'inventaire complète (série et modèle relevés)", "Windows préparé selon la méthode de l'organisation", "Nom conforme et jonction vérifiée (dsregcmd /status)", "Logiciels et mises à jour faits", "Test avec l'utilisateur, inventaire « en service »"],
       exercice: {
-        consigne: "Après la préparation d'un poste, dsregcmd /status affiche dans Device State : AzureAdJoined : YES, EnterpriseJoined : NO, DomainJoined : YES. Le poste est-il prêt pour un établissement qui utilise l'AD local et Microsoft Entra ? Quelle commande donne son numéro de série pour l'inventaire ?",
-        correction: ["YES / NO / YES = joint hybride (domaine Active Directory et Microsoft Entra) : c'est l'état attendu dans ce cas.", "Numéro de série : Get-CimInstance Win32_BIOS | Select-Object SerialNumber ; modèle : Get-CimInstance Win32_ComputerSystem | Select-Object Manufacturer, Model.", "On reporte les deux dans la fiche d'inventaire avant la remise."]
+        consigne: "Après la préparation d'un poste, dsregcmd /status affiche dans Device State : AzureAdJoined : YES, EnterpriseJoined : NO, DomainJoined : YES. Quel est l'état de jonction du poste ? Quelle commande donne son numéro de série pour l'inventaire ?",
+        correction: ["YES / NO / YES = joint hybride (domaine Active Directory et Microsoft Entra). Pour valider la remise, faire aussi les tests prévus par l'établissement (à vérifier sur place).", "Numéro de série : Get-CimInstance Win32_BIOS | Select-Object SerialNumber ; modèle : Get-CimInstance Win32_ComputerSystem | Select-Object Manufacturer, Model.", "On reporte les deux dans la fiche d'inventaire avant la remise."]
       },
       umons: ["Méthode de déploiement (image, Autopilot, installation automatisée)", "Nomenclature des noms de machines", "Logiciels de base et procédure de chiffrement", "Formulaire de remise à l'utilisateur"],
-      sources: [DEP, S.autopilot, S.scenarios, S.cim, S.cs, S.dsreg],
+      sources: [DEP, S.autopilot, S.scenarios, S.cim, S.cs, S.dsreg, S.inventaire],
       liens: [["E-01", "missions.html?m=colis", "Réceptionner un colis"], ["E-03", "missions.html?m=salle", "Préparer une salle"]]
     },
     salle: {
       id: "salle", titre: "Préparer une salle informatique", illus: "salle",
-      role: "Une salle de cours veut des postes identiques : même image, mêmes logiciels, même configuration. On teste toujours un seul poste complet avant de multiplier.",
+      role: "Dans cet exercice, une salle de cours a besoin des mêmes logiciels et réglages sur chaque poste. On valide un poste pilote et on applique la méthode de déploiement de l'organisation.",
       procedure: [
         ["Besoin", "Nombre de postes, logiciels des cours, contraintes de la salle."],
         ["Commande et réception", "Voir la mission E-01 pour chaque livraison."],
@@ -96,11 +100,11 @@
       cases: ["Santé des disques relevée", "Aérations contrôlées (nettoyage hors tension si besoin)", "Rapport de batterie lu (portables)", "Mises à jour faites", "Inventaire vérifié"],
       exercice: {
         consigne: "Sur un portable, powercfg /batteryreport donne Design capacity 50 000 mWh et Full charge capacity 30 000 mWh. Get-StorageReliabilityCounter affiche Wear à 5. Que notes-tu dans le ticket de maintenance ?",
-        correction: ["Batterie : 30 000 / 50 000 = 60 % de la capacité d'origine ; on note la valeur et on suit son évolution. Dell recommande le remplacement sous 40 % de la capacité d'origine ; avant, selon la procédure et la garantie.", "SSD : usure estimée à 5 % (Wear) : rien à signaler.", "On note les deux valeurs et la date : la comparaison avec la prochaine maintenance montre l'évolution."]
+        correction: ["Batterie : 30 000 / 50 000 = 60 % de la capacité d'origine ; on note la valeur et on suit son évolution. Dell recommande le remplacement sous 40 % de la capacité d'origine ; avant, selon la procédure et la garantie.", "SSD : consigner le compteur Wear à 5 % d'usure estimée. Consulter les autres compteurs et l'état de santé pour compléter le contrôle.", "On note les deux valeurs et la date : la comparaison avec la prochaine maintenance montre l'évolution."]
       },
       umons: ["Planning de maintenance et parc concerné", "Qui nettoie et avec quel matériel", "Procédure de remplacement des batteries"],
       attention: "Nettoyage ou ouverture : machine éteinte, câble secteur débranché, bouton marche maintenu 15 à 20 s, décharge électrostatique avant de toucher (support Dell, article 000137973).",
-      sources: [MAT, S.disque, S.batterie, S.dellBat, S.chaud, S.dellNet, S.secu],
+      sources: [MAT, S.statutDisque, S.disque, S.usureDisque, S.batterie, S.dellBat, S.chaud, S.dellNet, S.secu],
       liens: [["D", "pannes.html", "Diagnostic des pannes"], ["C-02", "montage.html?s=remplacer-ssd", "Remplacer un SSD"]]
     }
   };

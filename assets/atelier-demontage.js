@@ -37,6 +37,9 @@
   }
 
   var SOURCE_SECU = "Consignes de sécurité : support Dell, « Electrical Safety for Dell Product Repair: ESD Protection and Precautions » (dell.com/support, article 000137973, modifié le 27/07/2026, consulté le 28/11/2026) : arrêt complet, câble secteur débranché, bouton marche maintenu 15 à 20 s pour vider l'énergie résiduelle ; toucher au moins 5 s une partie métallique non peinte ou porter un bracelet antistatique relié à une masse métallique, recommencer toutes les quelques minutes ; tenir barrettes, cartes et processeurs par les bords ; après le travail : vis, pièces, périphériques, puis secteur, mise sous tension et vérification. Bloc d'alimentation : consignes de sécurité Dell (dell_emc_safety_english_us.pdf) : tensions dangereuses, intervention réservée aux techniciens formés.";
+  var SOURCE_RAM = "ASUS, pose et retrait de la mémoire (asus.com/support/faq/1047257) : repérer l'encoche et suivre le manuel de la carte pour les clips et les emplacements.";
+  var SOURCE_SSD = "ASUS, dépannage du stockage (asus.com/us/support/faq/1044083) : vérifier le support M.2 dans le manuel. Dell, manuel OptiPlex 7010 SFF, p. 58-59 : exemple de SSD M.2 fixé par une vis.";
+  var SOURCE_CABLES = "Dell, manuel OptiPlex 7010 SFF, p. 29 et 74 : dégager les loquets éventuels, saisir les connecteurs et repérer les guides.";
   var UMONS = "À vérifier sur place : la procédure de l'UMONS pour une pièce défectueuse (ticket, étiquetage, retour au fournisseur sous garantie, destruction des données d'un disque).";
 
   /* Étapes communes */
@@ -83,17 +86,17 @@
       client: "Ticket : un PC de bureau plante plusieurs fois par jour. Le diagnostic mémoire de Windows a signalé des erreurs, et un test barrette par barrette désigne celle de l'emplacement B2. Une barrette neuve de même référence est arrivée.",
       besoin: ["Ouvrir le PC en sécurité (secteur débranché, bracelet antistatique)", "Remplacer la barrette de l'emplacement B2 par la neuve", "Garder la mémoire en double canal (16 Go)", "Refermer, rebrancher et vérifier le démarrage"],
       materiel: "Le PC bureautique monté en B-01, une barrette DDR4-3200 8 Go neuve. Outillage : tournevis cruciforme, bracelet antistatique.",
-      source: SOURCE_SECU, umons: UMONS
+      source: SOURCE_SECU + " " + SOURCE_RAM, umons: UMONS
     },
     criteres: [{ t: "securite" }, { t: "piece", slot: "dimm-b2", id: "ram-ddr4-neuve", label: "Barrette neuve en B2", theme: "memoire" }, { t: "ram", min: 16 }, { t: "canal" }],
     etapes: suite(["debrancher", "esd", "retirer", "poser", "rebrancher", "interrupteur", "demarrage"], {
-      retirer: { id: "retirer", titre: "Retirer la barrette défectueuse", slots: [], vide: ["dimm-b2"], vue: "zoom", outillage: ["Bracelet antistatique", "Sachet antistatique pour la barrette retirée", "Étiquette « défectueuse »"],
-        texte: "Écarte les clips de l'emplacement B2 : la barrette se soulève. Tiens-la par les bords et retire-la (touche-la sur la planche, puis « Retirer cette pièce »).",
+      retirer: { id: "retirer", titre: "Retirer la barrette défectueuse", slots: [], vide: ["dimm-b2"], vue: "zoom", outillage: ["Bracelet antistatique", "Sachet antistatique pour la barrette retirée", "Étiquette si la procédure locale le prévoit"],
+        texte: "Sur la maquette, ouvre les clips mobiles de l'emplacement B2 pour libérer la barrette. Tiens-la par les bords et retire-la (touche-la sur la planche, puis « Retirer cette pièce »).",
         indices: ["Vue « Carte mère » : B2 est la quatrième fente en partant du processeur.", "La barrette défectueuse porte la mention « défectueuse » dans sa fiche."],
-        pourquoi: "On manipule une barrette par ses bords, sans toucher les contacts dorés. La barrette défectueuse s'étiquette et se met de côté (sachet antistatique) pour le retour au fournisseur.",
+        pourquoi: "On manipule une barrette par ses bords, sans toucher les contacts dorés. Place la barrette dans un sachet antistatique. Étiquetage et retour au fournisseur : à vérifier sur place.",
         solution: [] },
       poser: { id: "poser", titre: "Poser la barrette neuve", slots: ["dimm-b2"], attendu: [["dimm-b2", "ram-ddr4-neuve"]], vue: "zoom",
-        texte: "Pose la barrette neuve dans le même emplacement B2 : encoche alignée, appui aux deux extrémités jusqu'au « clic » des clips.",
+        texte: "Pose la barrette neuve dans le même emplacement B2, encoche alignée. Appuie aux deux extrémités jusqu'à l'enclenchement. Pour le retrait et la pose sur un vrai poste, suis le manuel de la carte.",
         indices: ["Onglet « Composants » du bac : la barrette « (neuve) »."],
         pourquoi: "Même emplacement, même référence : la mémoire reste en double canal (A2 et B2) et les deux barrettes fonctionnent à la même fréquence.",
         solution: [["dimm-b2", "ram-ddr4-neuve"]] }
@@ -111,14 +114,14 @@
       client: "Ticket : l'état SMART du SSD d'un PC de bureau annonce une fin de vie. Les données ont été sauvegardées. Un SSD M.2 NVMe de 1 To le remplace ; Windows sera réinstallé par déploiement.",
       besoin: ["Ouvrir le PC en sécurité", "Retirer le SSD M.2 en fin de vie (une vis à son extrémité)", "Poser le SSD de 1 To", "Refermer, rebrancher et vérifier que le disque est détecté"],
       materiel: "Le PC bureautique monté, un SSD M.2 NVMe 1 To. Outillage : petit tournevis cruciforme, bracelet antistatique.",
-      source: SOURCE_SECU, umons: UMONS
+      source: SOURCE_SECU + " " + SOURCE_SSD, umons: UMONS
     },
     criteres: [{ t: "securite" }, { t: "piece", slot: "m2-1", id: "ssd-nvme-1to", label: "SSD de 1 To en place", theme: "stockage" }, { t: "ssd", min: 1000, type: "ssd-m2" }],
     etapes: suite(["debrancher", "esd", "retirer", "poser", "rebrancher", "interrupteur", "demarrage"], {
       retirer: { id: "retirer", titre: "Retirer le SSD en fin de vie", slots: [], vide: ["m2-1"], vue: "zoom", outillage: ["Petit tournevis cruciforme", "Bracelet antistatique"],
         texte: "Dévisse la petite vis au bout du SSD : il se relève en biais. Tire-le doucement hors du connecteur M.2.",
-        indices: ["Vue « Carte mère » : le connecteur M.2 est sous le processeur, souvent caché par le ventirad ou la carte graphique."],
-        pourquoi: "Un SSD M.2 tient par son connecteur et une vis (ou un clip sans outil, selon la carte). Un disque qui part contient des données : il suit la procédure de destruction ou d'effacement de l'établissement.",
+        indices: ["Vue « Carte mère » : sur cette maquette, le connecteur M.2 est sous le processeur. Consulte le manuel du poste pour l'accès sur le vrai matériel."],
+        pourquoi: "Un SSD M.2 tient par son connecteur et une vis (ou un clip sans outil, selon la carte). L'effacement, la destruction ou le retour de ce disque suivent les règles de l'établissement : à vérifier sur place.",
         solution: [] },
       poser: { id: "poser", titre: "Poser le SSD de 1 To", slots: ["m2-1"], attendu: [["m2-1", "ssd-nvme-1to"]], vue: "zoom",
         texte: "Insère le SSD neuf en biais dans le connecteur M.2, rabats-le et revisse.",
@@ -140,14 +143,14 @@
       client: "Ticket : un PC ne s'allume plus du tout, aucun ventilateur ne tourne. Le testeur d'alimentation confirme que le bloc est en panne. Un bloc neuf du même modèle est arrivé.",
       besoin: ["Ouvrir le PC en sécurité", "Débrancher les câbles qui sortent de l'alimentation, puis la retirer", "Poser l'alimentation neuve et rebrancher ses câbles", "Refermer, rebrancher et vérifier le démarrage"],
       materiel: "Le PC bureautique monté, une alimentation ATX 450 W neuve. Outillage : tournevis cruciforme, bracelet antistatique.",
-      source: SOURCE_SECU, umons: UMONS
+      source: SOURCE_SECU + " " + SOURCE_CABLES, umons: UMONS
     },
     criteres: [{ t: "securite" }, { t: "piece", slot: "psu", id: "psu-450-neuve", label: "Alimentation neuve en place", theme: "alim" }],
     etapes: suite(["debrancher", "esd", "cables", "retirer", "poser", "recabler", "rebrancher", "interrupteur", "demarrage"], {
       cables: { id: "cables", titre: "Débrancher les câbles de l'alimentation", slots: [], vide: CAB_ALIM, vue: "zoom",
-        texte: "Retire un par un les câbles qui sortent de l'alimentation : le 24 broches de la carte mère et l'EPS du processeur (ce PC n'a pas de disque SATA). Appuie sur le loquet de chaque connecteur avant de tirer.",
+        texte: "Retire un par un les câbles qui sortent de l'alimentation : le 24 broches de la carte mère et l'EPS du processeur (ce PC n'a pas de disque SATA). S'il y a un loquet, libère-le avant de retirer le connecteur.",
         indices: ["Le moteur refuse de retirer l'alimentation tant qu'un de ses câbles est branché : il te dit lequel.", "Vue « Carte mère » : le 24 broches au bord droit de la carte, l'EPS en haut, près du processeur."],
-        pourquoi: "Bonne pratique : chaque connecteur a un loquet ; on appuie dessus et on tire par le connecteur, pas par les fils. Prendre une photo du câblage avant de débrancher aide à tout remettre.",
+        pourquoi: "Repère le passage des câbles dans les guides. Libère les loquets présents et tire par les connecteurs ou leurs languettes.",
         solution: [] },
       retirer: { id: "retirer", titre: "Retirer l'alimentation en panne", slots: [], vide: ["psu"], vue: "cote", outillage: ["Tournevis cruciforme"],
         attention: "Le bloc d'alimentation ne s'ouvre pas : il peut produire des tensions dangereuses, et seuls des techniciens formés interviennent dedans (consignes de sécurité Dell).",

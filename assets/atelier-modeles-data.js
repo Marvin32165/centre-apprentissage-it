@@ -5,13 +5,13 @@
   "use strict";
   var A = window.IT_ATELIER;
   if (!A) return;
-  var MAN = ["Dell : OptiPlex Small Form Factor 7010 Owner's Manual (modèle réglementaire D17S, mars 2023, Rev. A00), copie du document Dell publiée par Ingram Micro", "https://inquirecontent2.ingrammicro.com/User-Manual/1077071020.pdf"];
+  var MAN = ["Dell : OptiPlex Small Form Factor 7010 Owner's Manual (modèle réglementaire D17S, type D17S003, mars 2023, Rev. A00), copie du document Dell publiée par Ingram Micro", "https://inquirecontent2.ingrammicro.com/User-Manual/1077071020.pdf"];
   A.modeles = {
     "optiplex-7010-sff": {
       id: "optiplex-7010-sff", titre: "Dell OptiPlex Small Form Factor 7010",
       role: "Un PC de bureau compact d'entreprise : même logique qu'une tour, mais un ordre d'accès imposé par le constructeur, et des pièces que l'utilisateur peut changer (CRU) ou non (FRU).",
       dims: { h: 290, w: 92.6, d: 292.8 },
-      carac: [["Hauteur", "290,00 mm"], ["Largeur", "92,60 mm"], ["Profondeur", "292,80 mm"], ["Poids", "3,68 kg à 4,87 kg selon la configuration"], ["M.2", "Un emplacement 2230 pour la carte Wi-Fi et Bluetooth, un emplacement 2230/2280 pour le SSD"], ["SSD", "M.2 2230 ou 2280, PCIe NVMe"], ["Outillage", "Tournevis cruciformes n° 0 et n° 1, tournevis Torx T5"]],
+      carac: [["Hauteur", "290,00 mm"], ["Largeur", "92,60 mm"], ["Profondeur", "292,80 mm"], ["Poids", "3,68 kg à 4,87 kg selon la configuration"], ["M.2", "Un emplacement 2230 pour la carte Wi-Fi et Bluetooth, un emplacement 2230/2280 pour le SSD"], ["SSD", "M.2 2230 ou 2280, PCIe NVMe"], ["Outillage", "Tournevis cruciformes n° 0 et n° 1, tournevis Torx T5, pointe en plastique"]],
       composants: ["Capot latéral", "Ensemble disque dur", "Dissipateur et ventilateur", "Barrette de mémoire", "Carte sans fil", "SSD M.2", "Carte mère", "Façade avant", "Bloc d'alimentation", "Châssis", "Carte d'extension", "Lecteur optique", "Processeur", "Haut-parleur"],
       cru: "Le manuel classe les pièces en deux familles. Les CRU (Customer Replaceable Units) peuvent être remplacées par le client en suivant les consignes de sécurité : capot, façade, disques, cage des disques, mémoire, SSD, carte sans fil, carte graphique, pile bouton… Les FRU (Field Replaceable Units) sont réservées aux techniciens de service autorisés : bouton marche, bloc d'alimentation, ventilateur et dissipateur, processeur, carte mère.",
       avant: ["Enregistrer et fermer les fichiers, quitter les applications.", "Arrêter l'ordinateur (Démarrer > Marche/Arrêt > Arrêter).", "Débrancher l'ordinateur et tous les appareils reliés de leurs prises électriques.", "Débrancher les câbles réseau et les périphériques (clavier, souris, écran) ; pour un câble réseau, d'abord côté ordinateur.", "Retirer cartes mémoire et disques optiques ; travailler avec un kit ESD et poser chaque pièce retirée sur un tapis antistatique."],

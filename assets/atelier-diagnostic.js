@@ -9,11 +9,11 @@
   /* Une chaîne de questions : « oui » descend, « non » ouvre la branche de ses causes. */
   var ARBRE = [
     { id: "q1", q: "Au bouton marche, une LED ou un ventilateur réagit-il ?", non: "Rien ne s'allume", conseil: "Secteur et interrupteur d'abord, puis nappe de façade, alimentation (testeur), court-circuit sous la carte.", causes: ["facade", "alim", "entretoise"] },
-    { id: "q2", q: "Une image apparaît-elle à l'écran ?", non: "Pas d'image", conseil: "Lire la LED de debug et écouter les bips : ils disent où le POST s'arrête (CPU, DRAM, VGA, BOOT).", causes: ["eps", "bios", "cpu", "ram", "gpu-cable", "gpu"],
+    { id: "q2", q: "Une image apparaît-elle à l'écran ?", non: "Pas d'image", conseil: "Vérifier l'écran et son câble. Si la carte a des voyants de diagnostic ou un buzzer, comparer leurs signaux au manuel.", causes: ["eps", "bios", "cpu", "ram", "gpu-cable", "gpu"],
       sous: [["CPU", ["eps", "bios", "cpu"]], ["DRAM", ["ram"]], ["VGA", ["gpu-cable", "gpu"]]] },
-    { id: "q3", q: "Le PC reste-t-il allumé, même sous charge ?", non: "Il s'éteint tout seul", conseil: "Surchauffe probable : ventirad, pâte thermique, poussière. Vérifier la température dans l'UEFI.", causes: ["ventirad", "pate", "poussiere"] },
-    { id: "q4", q: "Le démarrage se passe-t-il sans message d'avertissement ?", non: "Message au démarrage", conseil: "Lire le message : réglages perdus, date fausse = pile CMOS.", causes: ["cmos"] },
-    { id: "q5", q: "L'UEFI voit-il le disque de démarrage ?", non: "Aucun disque", conseil: "Câbles du disque (données et alimentation) d'abord, puis le disque lui-même (pièce témoin).", causes: ["sata", "ssd"] }
+    { id: "q3", q: "Le PC reste-t-il allumé, même sous charge ?", non: "Il s'éteint tout seul", conseil: "Parmi les pistes : une surchauffe. Consulter la température dans l'UEFI si accessible, puis vérifier le refroidissement.", causes: ["ventirad", "pate", "poussiere"] },
+    { id: "q4", q: "Le démarrage se passe-t-il sans message d'avertissement ?", non: "Message au démarrage", conseil: "Lire le message. Si la date et les réglages se perdent, vérifier la pile d'après le manuel.", causes: ["cmos"] },
+    { id: "q5", q: "L'UEFI voit-il le disque de démarrage ?", non: "Aucun disque", conseil: "Pour un disque SATA, vérifier ses deux câbles. Pour un M.2, vérifier le logement et le montage. Puis essayer un disque compatible connu fonctionnel.", causes: ["sata", "ssd"] }
   ];
 
   /* Rend l'arbre en HTML (lisible sur mobile et au lecteur d'écran). cause : chemin à tracer (corrigé), lien(cause) : URL d'un dossier. */
