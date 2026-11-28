@@ -578,9 +578,14 @@ Reste : pages de montage, pannes et épreuves encore dans l'ancien habillage (lo
 Reste : pannes (lot 45) et ancien CSS du livre encore présents.
 
 ## Lot 43 — Procédures de montage et de démontage
-- [ ] 43.1 Moteur : démontage (ordre inverse, secteur débranché et ESD d'abord, dépendances), testé sous Node.
-- [ ] 43.2 Page de procédure façon manuel : étapes numérotées, outillage, attention, figure de l'étape (pièce surlignée, flèche de mouvement).
-- [ ] 43.3 Les six montages repris ; scénarios de remplacement (mémoire, SSD, alimentation) ; contrôles, fusion.
+- [x] 43.1 Moteur : démontage (ordre inverse, secteur débranché et ESD d'abord, dépendances), testé sous Node.
+  Fait : `sc.securite` (pièce interne refusée sous tension ou sans bracelet en apprentissage, comptée comme erreur « securite » en test), étapes `vide` / `attendu`, étapes mémorisées dans l'ordre (`sc.memo`), fonctions `debranche` et `esd`, critères `piece` et `securite` ; les trois procédures se terminent sous Node, B-01 inchangé.
+- [x] 43.2 Page de procédure façon manuel : étapes numérotées, outillage, attention, figure de l'étape (pièce surlignée, flèche de mouvement).
+  Fait : encadrés « Attention » et « Outillage » par étape (`attention`, `outillage`), flèche rouille de pose (vers l'emplacement) ou de retrait (vers l'extérieur), bouton « Bracelet antistatique », câbles dessinés.
+- [x] 43.3 Les six montages repris ; scénarios de remplacement (mémoire, SSD, alimentation) ; contrôles, fusion.
+  Fait : `assets/atelier-demontage.js` (C-01 barrette, C-02 SSD M.2, C-03 alimentation ; unités `atelier-c1` à `c3`), consignes tirées de la page de sécurité du support Dell (article 000137973, ouverte le 28/11/2026) ; test de parcours « démontage guidé et sécurité » ; attente ajoutée dans le test du calendrier (instable en `file://`).
+
+Reste : relecture des faits du démontage (lot 48).
 
 ## Lot 44 — Fiches composants (partie A)
 - [ ] 44.1 `atelier/composants.html` et données : processeur, mémoire, carte mère, alimentation, stockage, carte graphique, boîtier et refroidissement, câbles et connecteurs ; sources primaires ouvertes (Intel, AMD, JEDEC, spécification ATX, PCI-SIG, SATA-IO, NVM Express).

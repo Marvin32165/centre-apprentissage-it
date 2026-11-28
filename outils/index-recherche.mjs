@@ -13,7 +13,7 @@ const texte = (h) => h.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&
 
 const ctx = { window: {} };
 vm.createContext(ctx);
-for (const f of ["assets/data.js", "assets/modules.js", "assets/atelier-data.js", "assets/atelier-scenarios.js", "assets/atelier-pannes-data.js", "assets/glossaire.js"]) vm.runInContext(lire(f), ctx, { filename: f });
+for (const f of ["assets/data.js", "assets/modules.js", "assets/atelier-data.js", "assets/atelier-scenarios.js", "assets/atelier-demontage.js", "assets/atelier-pannes-data.js", "assets/glossaire.js"]) vm.runInContext(lire(f), ctx, { filename: f });
 const W = ctx.window, D = W.IT_DATA, M = W.IT_MODULES, A = W.IT_ATELIER;
 
 const entrees = [];
@@ -71,7 +71,7 @@ M.modules.forEach((mo) => {
 M.domaines.forEach((d) => ajoute("Modules", "thème", d.titre, "Thèmes · domaine", `themes.html?domaine=${d.id}`, d.desc || ""));
 
 // Atelier : montages et dossiers de pannes
-Object.values(A.scenarios || {}).forEach((s) => ajoute("Atelier", "montage", s.titre, `Atelier · montage · ${s.niveau || ""}`.replace(/ · $/, ""), `atelier/montage.html?s=${s.id}`, s.client || ""));
+Object.values(A.scenarios || {}).forEach((s) => ajoute("Atelier", "montage", s.titre, `Atelier · ${s.type === "demontage" ? "démontage" : "montage"} · ${s.niveau || ""}`.replace(/ · $/, ""), `atelier/montage.html?s=${s.id}`, s.client || ""));
 const causes = Object.fromEntries((A.pannesCauses || []).map((c) => [c.id, c.nom]));
 Object.entries(A.pannes || {}).forEach(([id, p]) => ajoute("Atelier", "panne", p.titre, `Atelier · dossier de panne · ${p.niveau}`, `atelier/pannes.html?p=${id}`, (p.symp ? p.symp.titre + " " : "") + (p.ticket || "") + " " + (causes[p.cause] || "")));
 ajoute("Atelier", "page", "Évaluation finale des montages", "Atelier · évaluation", "atelier/evaluation.html", "test noté examen");
