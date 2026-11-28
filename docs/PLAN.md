@@ -588,9 +588,14 @@ Reste : pannes (lot 45) et ancien CSS du livre encore présents.
 Reste : relecture des faits du démontage (lot 48).
 
 ## Lot 44 — Fiches composants (partie A)
-- [ ] 44.1 `atelier/composants.html` et données : processeur, mémoire, carte mère, alimentation, stockage, carte graphique, boîtier et refroidissement, câbles et connecteurs ; sources primaires ouvertes (Intel, AMD, JEDEC, spécification ATX, PCI-SIG, SATA-IO, NVM Express).
-- [ ] 44.2 Planches cotées et nomenclatures depuis la maquette ; liens depuis les repères.
-- [ ] 44.3 Relecture des sources par un agent qui n'a pas écrit la page ; corrections ; contrôles, fusion.
+- [x] 44.1 `atelier/composants.html` et données : processeur, mémoire, carte mère, alimentation, stockage, carte graphique, boîtier et refroidissement, câbles et connecteurs ; sources primaires ouvertes (Intel, AMD, JEDEC, spécification ATX, PCI-SIG, SATA-IO, NVM Express).
+  Fait : `assets/atelier-fiches-data.js` (8 fiches) et `assets/atelier-fiches.js` ; sources ouvertes le 28/11 : Intel ARK i5-12400 et 12400F, Intel ATX 2.2 (§ 3.1, 305 × 244 mm), page Intel 336521, Dell M.2 et sécurité, livre blanc SATA-IO ; le reste vient du module « Matériel et PC » relu au lot 21. Justifié : AMD (erreur 503), MSI, Gigabyte et Crucial (accès refusé aux robots), PDF JEDEC et Kingston illisibles : aucune valeur tirée d'eux ; pas de cote chiffrée pour le micro-ATX, le mini-ITX ni le bloc ATX, faute de source lue ; pas de puissance du port PCIe.
+- [x] 44.2 Planches cotées et nomenclatures depuis la maquette ; liens depuis les repères.
+  Fait : cotes isométriques (`IT_ISO.cote`), repères libres (`notes`) de taille constante à l'écran, broches dessinées sur les connecteurs, nomenclature survolable, liens « Dans l'atelier » vers les procédures B et C ; fiches dans le sommaire (A-01 à A-08) et dans la recherche.
+- [x] 44.3 Relecture des sources par un agent qui n'a pas écrit la page ; corrections ; contrôles, fusion.
+  Fait : rapport `docs/relectures/atelier-fiches-demontage.md` (agent de relecture Claude Code, nouvelle conversation : 47 corrects, 3 faux mineurs, 11 non vérifiés sur 61) ; toutes les corrections faites (reformulations, retraits, sources primaires ajoutées). Reste : rouvrir AMD et Kingston quand ils répondent ; une relecture par ChatGPT reste possible.
+
+Reste : rien d'autre pour ce lot.
 
 ## Lot 45 — Diagnostic (partie D)
 - [ ] 45.1 Moteur des pannes : instruments (multimètre, testeur d'alimentation, carte POST, LED de debug) et leurs mesures, testés sous Node.

@@ -36,7 +36,7 @@
     return l.concat(ajout).filter(function (v, i, a) { return a.indexOf(v) === i; });
   }
 
-  var SOURCE_SECU = "Consignes de sécurité : support Dell, « Electrical Safety for Dell Product Repair: ESD Protection and Precautions » (dell.com/support, article 000137973, modifié le 27/07/2026, consulté le 28/11/2026) : arrêt complet, câble secteur débranché, bouton marche maintenu 15 à 20 s pour vider l'énergie résiduelle ; toucher au moins 5 s une partie métallique non peinte ou porter un bracelet antistatique relié à une masse métallique, recommencer toutes les quelques minutes ; tenir barrettes, cartes et processeurs par les bords ; après le travail : vis, pièces, puis secteur, mise sous tension et vérification.";
+  var SOURCE_SECU = "Consignes de sécurité : support Dell, « Electrical Safety for Dell Product Repair: ESD Protection and Precautions » (dell.com/support, article 000137973, modifié le 27/07/2026, consulté le 28/11/2026) : arrêt complet, câble secteur débranché, bouton marche maintenu 15 à 20 s pour vider l'énergie résiduelle ; toucher au moins 5 s une partie métallique non peinte ou porter un bracelet antistatique relié à une masse métallique, recommencer toutes les quelques minutes ; tenir barrettes, cartes et processeurs par les bords ; après le travail : vis, pièces, périphériques, puis secteur, mise sous tension et vérification. Bloc d'alimentation : consignes de sécurité Dell (dell_emc_safety_english_us.pdf) : tensions dangereuses, intervention réservée aux techniciens formés.";
   var UMONS = "À vérifier sur place : la procédure de l'UMONS pour une pièce défectueuse (ticket, étiquetage, retour au fournisseur sous garantie, destruction des données d'un disque).";
 
   /* Étapes communes */
@@ -44,7 +44,7 @@
     debrancher: { id: "debrancher", titre: "Éteindre et débrancher le secteur", slots: [], fn: "debranche", vue: "arriere",
       texte: "Le PC est éteint mais branché. Mets l'interrupteur de l'alimentation sur O, puis retire le câble secteur à l'arrière (touche la prise, puis « Retirer cette pièce »). En vrai, on maintient ensuite le bouton marche 15 à 20 secondes pour vider l'énergie résiduelle.",
       indices: ["Passe en vue « Arrière » : l'interrupteur et la prise sont sur l'alimentation, en bas.", "Le bouton « Interrupteur » sous la planche bascule I / O ; le câble secteur se retire comme une pièce."],
-      attention: "Jamais de travail dans un PC relié au secteur : éteint, il reçoit encore une tension de veille. On n'ouvre jamais le bloc d'alimentation lui-même.",
+      attention: "Jamais de travail dans un PC relié au secteur : éteint, il reçoit encore une tension de veille. Le bloc d'alimentation lui-même ne s'ouvre pas : il peut produire des tensions dangereuses.",
       pourquoi: "On ne travaille jamais dans un PC relié au secteur : PC éteint, l'alimentation fournit encore une tension de veille à la carte mère (c'est elle qui permet au bouton marche de fonctionner). Le constructeur demande de débrancher le câble secteur puis de maintenir le bouton marche 15 à 20 secondes pour vider la charge restante.",
       solution: [] },
     esd: { id: "esd", titre: "Mettre le bracelet antistatique", slots: [], fn: "esd", vue: "cote",
@@ -60,7 +60,7 @@
       solution: [["mains", "cab-secteur"]] },
     interrupteur: { id: "interrupteur", titre: "Interrupteur sur I", slots: [], fn: "interrupteur", vue: "arriere",
       texte: "Remets l'interrupteur de l'alimentation sur I.", indices: ["Bouton « Interrupteur » sous la planche."],
-      pourquoi: "Sur O, l'alimentation ne fournit rien, même pas la tension de veille : le bouton marche de la façade resterait sans effet.",
+      pourquoi: "Sur O (quand le bloc a un interrupteur), l'alimentation ne fournit rien, même pas la tension de veille : le bouton marche de la façade resterait sans effet.",
       solution: [] },
     demarrage: { id: "demarrage", titre: "Allumer et vérifier", slots: [], fn: "post-ok", vue: "face",
       texte: "Appuie sur le bouton marche (ou « Allumer le PC ») et vérifie que le démarrage se passe bien.",
@@ -118,7 +118,7 @@
       retirer: { id: "retirer", titre: "Retirer le SSD en fin de vie", slots: [], vide: ["m2-1"], vue: "zoom", outillage: ["Petit tournevis cruciforme", "Bracelet antistatique"],
         texte: "Dévisse la petite vis au bout du SSD : il se relève en biais. Tire-le doucement hors du connecteur M.2.",
         indices: ["Vue « Carte mère » : le connecteur M.2 est sous le processeur, souvent caché par le ventirad ou la carte graphique."],
-        pourquoi: "Un SSD M.2 tient par son connecteur et une seule vis. Un disque qui part contient des données : il suit la procédure de destruction ou d'effacement de l'établissement.",
+        pourquoi: "Un SSD M.2 tient par son connecteur et une vis (ou un clip sans outil, selon la carte). Un disque qui part contient des données : il suit la procédure de destruction ou d'effacement de l'établissement.",
         solution: [] },
       poser: { id: "poser", titre: "Poser le SSD de 1 To", slots: ["m2-1"], attendu: [["m2-1", "ssd-nvme-1to"]], vue: "zoom",
         texte: "Insère le SSD neuf en biais dans le connecteur M.2, rabats-le et revisse.",
@@ -147,13 +147,13 @@
       cables: { id: "cables", titre: "Débrancher les câbles de l'alimentation", slots: [], vide: CAB_ALIM, vue: "zoom",
         texte: "Retire un par un les câbles qui sortent de l'alimentation : le 24 broches de la carte mère et l'EPS du processeur (ce PC n'a pas de disque SATA). Appuie sur le loquet de chaque connecteur avant de tirer.",
         indices: ["Le moteur refuse de retirer l'alimentation tant qu'un de ses câbles est branché : il te dit lequel.", "Vue « Carte mère » : le 24 broches au bord droit de la carte, l'EPS en haut, près du processeur."],
-        pourquoi: "Chaque connecteur a un loquet : on appuie dessus et on tire par le connecteur, jamais par les fils. Prendre une photo du câblage avant de débrancher aide à tout remettre.",
+        pourquoi: "Bonne pratique : chaque connecteur a un loquet ; on appuie dessus et on tire par le connecteur, pas par les fils. Prendre une photo du câblage avant de débrancher aide à tout remettre.",
         solution: [] },
       retirer: { id: "retirer", titre: "Retirer l'alimentation en panne", slots: [], vide: ["psu"], vue: "cote", outillage: ["Tournevis cruciforme"],
-        attention: "Le bloc d'alimentation ne s'ouvre jamais : ses condensateurs peuvent garder une charge dangereuse, même débranché.",
+        attention: "Le bloc d'alimentation ne s'ouvre pas : il peut produire des tensions dangereuses, et seuls des techniciens formés interviennent dedans (consignes de sécurité Dell).",
         texte: "Dévisse les quatre vis à l'arrière du boîtier et sors l'alimentation.",
         indices: ["Touche l'alimentation sur la planche, puis « Retirer cette pièce »."],
-        pourquoi: "Une alimentation en panne ne s'ouvre jamais : ses condensateurs peuvent garder une charge dangereuse même débranchée. Elle se remplace en entier.",
+        pourquoi: "Une alimentation en panne ne s'ouvre pas au service desk : elle peut produire des tensions dangereuses (consignes de sécurité Dell). Elle se remplace en entier.",
         solution: [] },
       poser: { id: "poser", titre: "Poser l'alimentation neuve", slots: ["psu"], attendu: [["psu", "psu-450-neuve"]], vue: "cote",
         texte: "Glisse l'alimentation neuve à sa place et revisse-la.",
