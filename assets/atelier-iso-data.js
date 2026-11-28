@@ -210,5 +210,36 @@
     };
   }
 
-  window.IT_ISO_DATA = { GEO: GEO, FORMAT: FORMAT, dessin: dessin, cable: cable, boitier: boitier, panneau: panneau, couverture: couverture };
+  /* ---------- PC complet (diagnostic, missions, annexes) ----------
+     placed : { emplacement: idPiece } ; o.ouvert : panneau latéral retiré ; o.led : "ok" | "ko" | null ; o.tension : sous tension. */
+  function pc(dispoId, placed, o) {
+    o = o || {};
+    var A = window.IT_ATELIER, g = GEO[dispoId] || GEO["tour-matx"], c = g.boitier, W = c.w, H = c.h, items = [], avant = "";
+    var d = A && A.dispositions[dispoId] || (A && A.dispositions["tour-matx"]);
+    function face() {
+      var led = o.led === "ok" ? "iso-led ok" : o.led ? "iso-led ko" : "iso-led";
+      return I.rect("x", { x: W, y: 24, z: H - 70, d: 14, h: 6 }, "iso-trou") + I.rect("x", { x: W, y: 44, z: H - 70, d: 14, h: 6 }, "iso-trou") +
+        I.cercle("x", [W, 120, H - 66], 3, led) +
+        '<g data-bouton="power" class="iso-bouton"><title>Bouton marche</title>' + I.cercle("x", [W, 150, H - 66], 9, "iso-bouton-c") + I.cercle("x", [W, 150, H - 66], 4, "iso-det") + "</g>";
+    }
+    if (!o.ouvert) {
+      var ferme = I.boite({ x: 0, y: -4, z: 0, w: W, d: c.d + 4, h: H }, { cls: "iso-tole" }) +
+        I.rect("y", { x: 40, y: c.d, z: 40, w: W - 80, h: H - 80 }, "iso-det") + face();
+      return I.scene([], { fond: ferme, bornes: [c], classe: "at-iso pc-iso", titre: o.titre || "PC fermé, vu de trois quarts avant" });
+    }
+    (d ? d.slots : []).forEach(function (s) {
+      var gs = g.slots[s.id], it = placed[s.id], p = it && A.pieces[it];
+      if (!gs || !p || gs.arriere) return;
+      if (/^cab-/.test(p.type)) {
+        var t = p.type, dep = t === "cab-fan" ? (g.slots[p.source] ? I.centre(g.slots[p.source]) : g.sortieAlim)
+          : (t === "cab-facade" || t === "cab-usb3" || t === "cab-audio") ? [W - 8, 30, H - 60]
+          : t === "cab-sata-data" ? [g.slots.board.x + g.slots.board.w - 8, 12, g.slots.board.z + 40] : g.sortieAlim;
+        avant += cable(dep, gs);
+        items.push({ id: s.id, boite: gs, prio: 60, titre: p.nom, dessin: function (bb) { return dessin(t, bb, p); } });
+      } else items.push({ id: s.id, boite: gs, prio: gs.prio, titre: p.nom, cls: o.hl && o.hl.indexOf(s.id) >= 0 ? "is-hl" : "", dessin: function (bb) { return dessin(p.type, bb, p); } });
+    });
+    return I.scene(items, { fond: boitier(g), avant: avant + face(), bornes: [c], classe: "at-iso pc-iso", titre: o.titre || "PC ouvert, vu de trois quarts avant, panneau latéral retiré", reperes: false });
+  }
+
+  window.IT_ISO_DATA = { pc: pc, GEO: GEO, FORMAT: FORMAT, dessin: dessin, cable: cable, boitier: boitier, panneau: panneau, couverture: couverture };
 })();

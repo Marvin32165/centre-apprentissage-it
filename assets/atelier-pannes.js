@@ -1,10 +1,10 @@
-/* Atelier hardware — lot 6 : pannes. Interface : catalogue, dossier de panne (apprentissage ou test noté), évaluation. */
+/* Atelier hardware — partie D : diagnostic des pannes. Interface « manuel de service » (lot 45) : catalogue et arbre,
+   dossier de panne (apprentissage ou test noté) avec maquette du PC et instruments dessinés, évaluation. */
 (function () {
   "use strict";
-  var ROM = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV"];
-  var A = window.IT_ATELIER, T = window.IT_PANNES, Art = window.IT_ATELIER_ART;
+  var A = window.IT_ATELIER, T = window.IT_PANNES;
   var host = document.getElementById("pannes");
-  if (!host || !A || !T || !Art) return;
+  if (!host || !A || !T || !window.IT_ISO_DATA) return;
 
   var params = new URLSearchParams(location.search);
   var store = (window.IT && window.IT.store) || { get: function () { return null; }, set: function () {}, del: function () {} };
@@ -20,7 +20,7 @@
   function entete(titre, kicker) {
     host.textContent = "";
     var h = el("header", { "class": "at-head" });
-    h.appendChild(el("p", { "class": "kicker" }, kicker));
+    h.appendChild(el("p", { "class": "mt-surtitre" }, kicker));
     h.appendChild(el("h1", null, titre));
     host.appendChild(h);
     window.scrollTo(0, 0);
@@ -37,46 +37,45 @@
 
   /* ---------- Catalogue ---------- */
   function catalogue() {
-    entete("Pannes : diagnostiquer et réparer", "Atelier hardware · Pannes");
-    var b = el("div", { "class": "prose" });
-    b.appendChild(el("p", { "class": "lead" }, "Un utilisateur décrit un symptôme. Tu inspectes le PC, tu poses un diagnostic, puis tu répares ou tu remplaces la bonne pièce. Les pièces et les mesures sont des modèles génériques."));
-    var c = el("div", { "class": "callout retenir" });
-    c.appendChild(el("p", null, "Deux modes : « apprentissage » (indices, explications, corrigé caché) et « test noté » (sans aide, sur 100 : diagnostic 40, réparation 30, observation utile 20, sécurité 10). Avant toute intervention, mets le PC hors tension."));
-    b.appendChild(c);
-    host.appendChild(b);
-    var livre = el("div", { "class": "livre-double observations-table" });
-    var pg = el("section", { "class": "livre-page gauche", "aria-labelledby": "obs-titre" });
-    pg.appendChild(el("p", { "class": "titre-courant" })).appendChild(el("span", null, "Chap. VII — Observations"));
-    var corps = el("div", { "class": "livre-corps" });
-    corps.appendChild(el("h2", { id: "obs-titre" }, "Quatorze dossiers"));
-    corps.appendChild(el("p", { "class": "texte" }, "Chaque dossier part d'un ticket réel dans sa forme : un symptôme décrit par l'utilisateur. On examine, on note ce qu'on observe, on pose un diagnostic, puis on répare. Le rabat de chaque dossier explique le pourquoi."));
-    corps.appendChild(el("p", { "class": "ornement", "aria-hidden": "true" }, "✣"));
-    corps.appendChild(el("h3", { "class": "petites-caps" }, "Épreuve IX"));
-    corps.appendChild(el("p", null, "Cinq dossiers tirés au sort, sans aide, notés sur 100. À la fin : un bilan des points à revoir."));
-    corps.appendChild(el("p")).appendChild(el("a", { "class": "btn", href: "pannes-eval.html" }, "Commencer l'évaluation"));
-    pg.appendChild(corps);
-    var pd = el("section", { "class": "livre-page droite", "aria-label": "Liste des dossiers" });
-    pd.appendChild(el("p", { "class": "titre-courant" })).appendChild(el("span", null, "Table des observations"));
-    var ol = el("ol", { "class": "toc-livre" });
-    Object.keys(A.pannes).forEach(function (id, i) {
-      var p = A.pannes[id], fait = store.get("panne." + id) === "1", best = parseInt(store.get("score.panne." + id), 10);
-      var li = el("li");
-      var a = el("a", { href: "pannes.html?p=" + id });
-      a.appendChild(el("span", { "class": "toc-num" }, ROM[i + 1] + "."));
-      a.appendChild(el("span", { "class": "toc-t" }, p.titre));
-      a.appendChild(el("span", { "class": "toc-pts", "aria-hidden": "true" }));
-      a.appendChild(el("span", { "class": "toc-p" }, fait ? "✓" : p.niveau.charAt(0)));
-      a.setAttribute("aria-label", "Dossier " + (i + 1) + " : " + p.titre + ", " + p.niveau + (fait ? ", résolu" : "") + (!isNaN(best) ? ", meilleur test " + best + " sur 100" : ""));
+    entete("Diagnostic des pannes", "Atelier hardware · Partie D");
+    var ch = el("p", { "class": "mt-chapeau" }, "Un utilisateur décrit un symptôme. Tu observes, tu mesures, tu poses un diagnostic, puis tu répares la bonne pièce. Pièces et mesures : modèles génériques.");
+    host.appendChild(ch);
+    var feuille = el("div", { "class": "mt-feuille" });
+    var g = el("div", { "class": "mt-texte" }), d = el("div", { "class": "mt-colle" });
+    feuille.appendChild(g); feuille.appendChild(d);
+    host.appendChild(feuille);
+    g.appendChild(el("h2", { id: "arbre" }, "Arbre de diagnostic"));
+    g.appendChild(el("p", null, "La méthode du service desk : observer ce que la machine montre avant d'ouvrir, puis isoler. Chaque question ouvre ses causes ; chaque cause renvoie à un dossier."));
+    var ar = el("div", { "class": "arbre-zone" });
+    var parCause = {};
+    Object.keys(A.pannes).forEach(function (pid) { parCause[A.pannes[pid].cause] = pid; });
+    ar.innerHTML = window.IT_DIAG ? window.IT_DIAG.arbre({ lien: function (c) { return parCause[c] ? "pannes.html?p=" + parCause[c] : null; } }) : "";
+    g.appendChild(ar);
+    var sec = el("div", { "class": "mt-encadre source" });
+    sec.appendChild(el("p", { "class": "mt-etiq" }, "Méthode et sources"));
+    sec.appendChild(el("p", null, "Méthode du module « Matériel et PC » (§ 3 : POST, bips, LED, configuration minimale, d'après ASUS) ; les codes de bips et de LED dépendent de la carte mère : on lit son manuel. Deux modes : apprentissage (indices, corrigé caché) et test noté sur 100 (diagnostic 40, réparation 30, observation utile 20, sécurité 10)."));
+    g.appendChild(sec);
+    d.appendChild(el("h2", { id: "dossiers" }, "Quatorze dossiers"));
+    var ul = el("ul", { "class": "mt-entrees" });
+    Object.keys(A.pannes).forEach(function (pid, i) {
+      var p = A.pannes[pid], fait = store.get("panne." + pid) === "1", best = parseInt(store.get("score.panne." + pid), 10);
+      var li = el("li"), a = el("a", { href: "pannes.html?p=" + pid });
+      a.appendChild(el("span", { "class": "mt-e-n" }, "D-" + (i < 9 ? "0" : "") + (i + 1)));
+      a.appendChild(el("span", { "class": "mt-e-t" }, p.titre));
+      a.appendChild(el("span", { "class": "mt-e-pts", "aria-hidden": "true" }));
+      a.appendChild(el("span", { "class": "mt-e-etat" + (fait ? " ok" : "") }, fait ? "✓" : p.niveau));
+      a.setAttribute("aria-label", "Dossier " + (i + 1) + " : " + p.titre + ", " + p.niveau + (fait ? ", résolu" : ""));
       li.appendChild(a);
-      var t = el("a", { "class": "toc-test", href: "pannes.html?p=" + id + "&m=test" }, "test" + (!isNaN(best) ? " · " + best : ""));
-      t.setAttribute("aria-label", "Dossier " + (i + 1) + " en test noté");
+      var t = el("a", { "class": "mt-test", href: "pannes.html?p=" + pid + "&m=test", "aria-label": "Dossier " + (i + 1) + " en test noté" }, "test" + (!isNaN(best) ? " " + best : ""));
       li.appendChild(t);
-      ol.appendChild(li);
+      ul.appendChild(li);
     });
-    pd.appendChild(ol);
-    pd.appendChild(el("p", { "class": "legende-toc" }, "D, I, A : débutant, intermédiaire, avancé · ✓ résolu"));
-    livre.appendChild(pg); livre.appendChild(pd);
-    host.appendChild(livre);
+    d.appendChild(ul);
+    var ep = el("div", { "class": "mt-encadre outillage" });
+    ep.appendChild(el("p", { "class": "mt-etiq" }, "Épreuve des pannes"));
+    ep.appendChild(el("p", null, "Cinq dossiers tirés au sort, sans aide, notés sur 100, puis un bilan des points à revoir."));
+    ep.appendChild(el("p")).appendChild(el("a", { "class": "btn", href: "pannes-eval.html" }, "Commencer l'évaluation"));
+    d.appendChild(ep);
   }
 
   /* ---------- Un dossier de panne ---------- */
@@ -99,46 +98,44 @@
       } catch (e) { /* sauvegarde illisible : on repart de zéro */ }
     }
 
-    /* Squelette */
+    /* Squelette « manuel de service » : fiche d'intervention à gauche, planche et instruments à droite */
     host.textContent = "";
-    host.insertAdjacentHTML("afterbegin", Art.DEFS);
-    var num = Object.keys(A.pannes).indexOf(id) + 1;
+    var num = Object.keys(A.pannes).indexOf(id) + 1, code = ctx.eval ? "EP-2." + (ctx.eval.i + 1) : "D-" + (num < 10 ? "0" : "") + num;
     var head = el("header", { "class": "at-head" });
-    head.innerHTML = '<p class="kicker"></p><h1></h1><div class="at-badges"></div><p class="at-modes"></p>';
-    head.querySelector(".kicker").textContent = "Atelier hardware · Pannes" + (ctx.eval ? " · Évaluation, dossier " + (ctx.eval.i + 1) + " / " + ctx.eval.n : " · Dossier " + num);
+    head.innerHTML = '<p class="mt-surtitre"></p><h1></h1><div class="at-badges"></div><p class="at-modes"></p>';
+    head.querySelector(".mt-surtitre").textContent = "Atelier hardware · " + code + " · " + (ctx.eval ? "Épreuve des pannes, dossier " + (ctx.eval.i + 1) + " / " + ctx.eval.n : "Dossier de panne");
     head.querySelector("h1").textContent = p.titre;
     [[TEST ? "Test noté" : "Apprentissage", true], [p.niveau, false]].forEach(function (b) { head.querySelector(".at-badges").appendChild(el("span", { "class": "badge" + (b[1] ? " mode" : "") }, b[0])); });
     if (!ctx.eval) head.querySelector(".at-modes").appendChild(el("a", { href: "pannes.html?p=" + id + (TEST ? "" : "&m=test") }, TEST ? "Passer en mode apprentissage (indices)" : "Passer en mode test (sans aide, noté)"));
     host.appendChild(head);
 
-    var ticket = el("section", { "class": "pn-ticket", "aria-label": "Ticket reçu" });
-    ticket.appendChild(el("h2", { "class": "petites-caps" }, "Le ticket"));
-    ticket.appendChild(el("blockquote", { "class": "citation" }, p.ticket));
-    ticket.appendChild(el("p", { "class": "texte" }, p.contexte));
-    var src = el("aside", { "class": "callout source" });
-    src.appendChild(el("p", null, "Les LED de debug, les bips et la liste des processeurs compatibles dépendent de la carte mère : la source de référence est son manuel et la page de support du constructeur. Tolérances des tensions d'une alimentation : spécification ATX (±5 % sur +12 V, +5 V, +3,3 V). Théorie : jour 9 de la prépa (matériel et PC) et jour 8 (méthode de diagnostic)."));
-    ticket.appendChild(src);
-    var layout = el("div", { "class": "livre-double at-layout observations" });
-    var pageG = el("section", { "class": "livre-page gauche", "aria-label": "Page d'observation" });
-    var pageD = el("section", { "class": "livre-page droite", "aria-label": "Planche du symptôme et diagnostic" });
-    var tc = el("p", { "class": "titre-courant" });
-    tc.appendChild(el("span", null, ctx.eval ? "Épreuve IX — dossier " + (ctx.eval.i + 1) + " sur " + ctx.eval.n : "Chap. VII — Observations"));
-    tc.appendChild(el("span", null, "Dossier " + (ctx.eval ? ctx.eval.i + 1 : num)));
-    var corps = el("div", { "class": "livre-corps" });
-    var marge = el("aside", { "class": "livre-marge", "aria-label": "Observations notées en marge" });
-    pageG.appendChild(tc); pageG.appendChild(corps); pageG.appendChild(marge);
-    corps.appendChild(ticket);
-    var tcD = el("p", { "class": "titre-courant" });
-    tcD.appendChild(el("span", null, "Planche du symptôme"));
-    pageD.appendChild(tcD);
-    var main = el("div", { "class": "at-main" }), side = corps;
-    pageD.appendChild(main);
+    var layout = el("div", { "class": "mt-feuille at-layout pn-layout" });
+    var pageG = el("section", { "class": "mt-texte", "aria-label": "Fiche d'intervention" });
+    var pageD = el("section", { "class": "mt-colle", "aria-label": "Planche et instruments" });
     layout.appendChild(pageG); layout.appendChild(pageD); host.appendChild(layout);
+    var corps = pageG;
+    var ticket = el("section", { "class": "pn-ticket", "aria-label": "Ticket reçu" });
+    ticket.appendChild(el("p", { "class": "mt-surtitre" }, code + " · Ticket reçu"));
+    ticket.appendChild(el("blockquote", { "class": "pn-citation" }, p.ticket));
+    ticket.appendChild(el("p", null, p.contexte));
+    var src = el("aside", { "class": "mt-encadre source" });
+    src.appendChild(el("p", { "class": "mt-etiq" }, "Source"));
+    src.appendChild(el("p", null, "Les LED de debug, les bips et la liste des processeurs compatibles dépendent de la carte mère : la source de référence est son manuel et la page de support du constructeur. Tolérances des tensions d'une alimentation : spécification Intel ATX 2.2, tableau 6 (±5 % sur +12 V, +5 V, +3,3 V et +5 V de veille). Méthode : jour 8 de la prépa et module « Matériel et PC »."));
+    ticket.appendChild(src);
+    corps.appendChild(ticket);
 
+    var main = el("div", { "class": "at-main" });
+    pageD.appendChild(main);
+    var planche = el("figure", { "class": "mt-planche at-planche" });
     var scene = el("div", { "class": "at-scene pn-scene" });
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("class", "at-svg"); svg.setAttribute("viewBox", "0 0 420 610"); svg.setAttribute("role", "img");
-    scene.appendChild(svg); main.appendChild(scene);
+    planche.appendChild(scene);
+    var cart = el("div");
+    planche.appendChild(cart);
+    main.appendChild(planche);
+    var figCap = el("p", { "class": "mt-fig" });
+    main.appendChild(figCap);
+    var instr = el("div", { "class": "pn-instrument", "aria-live": "polite" });
+    main.appendChild(instr);
 
     var actions = el("div", { "class": "at-actions" });
     var bTension = el("button", { type: "button", "class": "btn ghost", "aria-pressed": "false" });
@@ -147,8 +144,7 @@
     var bGive = el("button", { type: "button", "class": "btn ghost" }, TEST ? "Terminer le test" : "Voir la solution");
     [bTension, bPower].concat(TEST ? [] : [bHint]).concat([bGive]).forEach(function (b) { actions.appendChild(b); });
     main.appendChild(actions);
-    var msgBox = el("p", { "class": "at-msg note-marge", role: "status", "aria-live": "polite" });
-    marge.appendChild(msgBox);
+    var msgBox = el("div", { "class": "at-msg mt-encadre", role: "status", "aria-live": "polite" });
     var secPost = el("section", { "class": "at-post bloc", hidden: "", "aria-label": "Démarrage du PC" });
     main.appendChild(secPost);
 
@@ -157,18 +153,30 @@
     var secDiag = el("section", { "class": "pn-diag", "aria-label": "Diagnostic et intervention" });
     var secIndices = el("section", { "class": "pn-indices", "aria-label": "Indices" });
     var secCorrige = el("section", { "class": "pn-corrige", "aria-label": "Corrigé" });
-    corps.appendChild(secOutils);
-    marge.appendChild(secIndices); marge.appendChild(secCarnet);
+    corps.appendChild(msgBox); corps.appendChild(secOutils); corps.appendChild(secIndices); corps.appendChild(secCarnet);
     pageD.appendChild(secDiag); pageD.appendChild(secCorrige);
 
-    function msg(t, niv) { msgBox.className = "at-msg note-marge " + (niv || "info"); msgBox.textContent = t; }
+    var ETIQ = { info: "Atelier", ok: "Juste", attention: "Attention", bloque: "Refusé", danger: "Danger" };
+    function msg(t, niv) {
+      niv = niv || "info";
+      msgBox.className = "at-msg mt-encadre " + niv; msgBox.textContent = "";
+      msgBox.appendChild(el("p", { "class": "mt-etiq" }, ETIQ[niv] || "Atelier"));
+      msgBox.appendChild(el("p", null, t));
+    }
 
-    /* Scène : face avant du PC, bouton marche et LED. */
+    /* Scène : le PC fermé, ouvert dès qu'on l'inspecte hors tension. */
+    var DISPO = p.base === "gamer" ? "tour-atx" : "tour-matx";
+    var OUVRE = { visuel: 1, ventirad: 1, alim: 1, temoin: 1 };
     function renderScene() {
       var etat = (!run.hors && post) ? post.code : null;
-      svg.setAttribute("aria-label", "Face avant du PC. " + (run.hors ? "Hors tension, câble secteur débranché." : "Sous tension."));
-      svg.innerHTML = Art.faceVue({ placed: run.placed, etatPost: etat === "avert" ? "x" : etat }) +
-        (run.hors ? '<rect x="40" y="16" width="340" height="580" rx="12" fill="rgba(0,0,0,.45)"/><text x="210" y="320" text-anchor="middle" font-size="17" font-family="IBM Plex Mono, monospace" fill="#EDE6DA" letter-spacing="2">HORS TENSION</text><text x="210" y="344" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#BBAF9F">interrupteur sur O, câble débranché</text>' : "");
+      var ouvert = run.hors && run.vu.some(function (v) { return OUVRE[v]; });
+      scene.innerHTML = window.IT_ISO_DATA.pc(DISPO, run.placed, { ouvert: ouvert, led: etat ? (etat === "ok" ? "ok" : "ko") : null,
+        titre: ouvert ? "PC ouvert, hors tension : inspection" : (run.hors ? "PC fermé, hors tension" : "PC fermé, sous tension") });
+      cart.textContent = "";
+      var c = el("div", { "class": "mt-cartouche", "aria-hidden": "true" });
+      [["Dossier", code], ["État", run.hors ? "Hors tension" : "Sous tension"], ["Boîtier", ouvert ? "Ouvert" : "Fermé"], ["Mode", TEST ? "Test" : "Apprentissage"]].forEach(function (x) { var sp = el("span", null, x[0]); sp.appendChild(el("b", null, x[1])); c.appendChild(sp); });
+      cart.appendChild(c);
+      figCap.innerHTML = "<b>FIG. " + code + "</b> · " + (ouvert ? "Boîtier ouvert, PC hors tension (interrupteur sur O, câble secteur débranché)." : run.hors ? "PC hors tension : l'inspection ouvre le boîtier." : "PC sous tension, boîtier fermé : bouton marche et LED en façade.");
       bTension.textContent = run.hors ? "Rebrancher (interrupteur sur I)" : "Mettre hors tension (O + débrancher)";
       bTension.setAttribute("aria-pressed", run.hors ? "true" : "false");
     }
@@ -176,8 +184,8 @@
     /* Outils */
     function renderOutils() {
       secOutils.textContent = "";
-      secOutils.appendChild(el("h2", { "class": "petites-caps" }, "Examen · choisis tes outils"));
-      secOutils.appendChild(el("p", { "class": "muted pn-note" }, "Ouvrir le boîtier, tester ou remplacer une pièce : PC hors tension. Observer les LED, les bips ou l'UEFI : PC sous tension."));
+      secOutils.appendChild(el("h2", null, "Examen · choisis tes instruments"));
+      secOutils.appendChild(el("p", { "class": "pn-note" }, "Ouvrir le boîtier, tester ou remplacer une pièce : PC hors tension. Observer les LED, les bips ou l'UEFI : PC sous tension."));
       var l = el("div", { "class": "pn-outils-liste" });
       A.pannesOutils.forEach(function (o) {
         if (o.id === "temoin") return;
@@ -206,15 +214,18 @@
       if (!r.ok) { msg(r.texte, r.niveau); return; }
       var nom = T.nomOutil(id) + (id === "temoin" ? " (" + (A.pannesTemoins.filter(function (t) { return t[0] === arg; })[0] || [0, arg])[1] + ")" : "");
       run.journal.push({ o: nom, t: r.texte });
-      save(); msg(nom + " : observation notée en marge.", "info"); renderCarnet(); renderOutils();
+      var dessinI = window.IT_DIAG ? window.IT_DIAG.instrument(id, r.texte, post || T.post(p, run)) : "";
+      instr.innerHTML = dessinI ? '<figure class="pn-instr">' + dessinI + '<figcaption class="mt-fig"><b>' + nom + "</b> · " + r.texte.replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }) + "</figcaption></figure>" : "";
+      save(); msg(nom + " : observation notée au carnet de bord.", "info"); renderCarnet(); renderOutils(); renderScene();
     }
     function renderCarnet() {
       secCarnet.textContent = "";
-      if (!run.journal.length) { secCarnet.appendChild(el("p", { "class": "note-marge vide" }, "Rien noté pour l'instant. Allume le PC pour voir le symptôme, puis examine.")); return; }
+      secCarnet.appendChild(el("h2", null, "Carnet de bord"));
+      if (!run.journal.length) { secCarnet.appendChild(el("p", { "class": "pn-note" }, "Rien noté pour l'instant. Allume le PC pour voir le symptôme, puis examine.")); return; }
       var ol = el("ol", { "class": "pn-carnet", "aria-label": "Observations" });
       run.journal.slice().reverse().forEach(function (e) {
-        var li = el("li", { "class": "note-marge" });
-        li.appendChild(el("span", { "class": "note-tit" }, e.o));
+        var li = el("li");
+        li.appendChild(el("span", { "class": "pn-carnet-o" }, e.o));
         li.appendChild(document.createTextNode(e.t));
         ol.appendChild(li);
       });
@@ -224,7 +235,7 @@
     /* Diagnostic et intervention */
     function renderDiag() {
       secDiag.textContent = "";
-      secDiag.appendChild(el("h2", { "class": "petites-caps" }, "Diagnostic · quelle est la cause ?"));
+      secDiag.appendChild(el("h2", null, "Diagnostic · quelle est la cause ?"));
       var d1 = el("div", { "class": "pn-champ" });
       d1.appendChild(el("label", { "for": "pn-cause" }, "Cause de la panne"));
       var s1 = el("select", { id: "pn-cause" });
@@ -281,9 +292,9 @@
       secIndices.textContent = "";
       if (TEST || !run.indices) return;
       for (var k = 0; k < Math.min(run.indices, p.indices.length); k++) {
-        var n = el("p", { "class": "note-marge indice" });
-        n.appendChild(el("span", { "class": "note-tit" }, "Indice " + (k + 1)));
-        n.appendChild(document.createTextNode(p.indices[k]));
+        var n = el("div", { "class": "mt-encadre remarque" });
+        n.appendChild(el("p", { "class": "mt-etiq" }, "Indice " + (k + 1)));
+        n.appendChild(el("p", null, p.indices[k]));
         secIndices.appendChild(n);
       }
     }
@@ -291,7 +302,7 @@
       secCorrige.textContent = "";
       if (TEST || !(run.resolu || run.abandon)) return;
       var d = el("details", { "class": "correction rabat" });
-      d.appendChild(el("summary", null, "Soulever le rabat : pourquoi ?"));
+      d.appendChild(el("summary", null, "Corrigé : la cause et le chemin dans l'arbre"));
       d.appendChild(el("p", null, "Cause : " + T.causeNom(p.cause) + ". Intervention : " + A.pannesInter[p.fix].nom + "."));
       var po = T.post(p, T.nouveau(p, "apprentissage"));
       d.appendChild(el("p", { "class": "at-label" }, "Ce qui se passait au démarrage"));
@@ -308,6 +319,12 @@
       d.appendChild(el("p", null, p.pourquoi));
       d.appendChild(el("p", { "class": "at-label" }, "Dans la vraie vie"));
       d.appendChild(el("p", null, p.reel));
+      if (window.IT_DIAG) {
+        d.appendChild(el("p", { "class": "at-label" }, "Le chemin dans l'arbre de diagnostic"));
+        var az = el("div", { "class": "arbre-zone" });
+        az.innerHTML = window.IT_DIAG.arbre({ cause: p.cause });
+        d.appendChild(az);
+      }
       secCorrige.appendChild(d);
       var nav = el("div", { "class": "at-etape-actions" });
       var ids = Object.keys(A.pannes), suivant = ids[(ids.indexOf(id) + 1) % ids.length];
@@ -442,7 +459,7 @@
   /* ---------- Rapport d'un dossier noté ---------- */
   function rapportPanne(rec) {
     var box = el("div", { "class": "at-rap" }), ok = rec.total >= SEUIL;
-    box.appendChild(el("p", { "class": "kicker" }, "Rapport · " + rec.titre));
+    box.appendChild(el("p", { "class": "mt-surtitre" }, "Rapport · " + rec.titre));
     var top = el("div", { "class": "at-score" });
     top.appendChild(el("span", { "class": "n" }, String(rec.total)));
     top.appendChild(el("span", { "class": "sur" }, "/ 100"));

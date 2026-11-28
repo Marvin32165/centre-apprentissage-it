@@ -598,9 +598,14 @@ Reste : relecture des faits du démontage (lot 48).
 Reste : rien d'autre pour ce lot.
 
 ## Lot 45 — Diagnostic (partie D)
-- [ ] 45.1 Moteur des pannes : instruments (multimètre, testeur d'alimentation, carte POST, LED de debug) et leurs mesures, testés sous Node.
-- [ ] 45.2 Arbres de diagnostic en SVG par famille de symptômes.
-- [ ] 45.3 Les 14 dossiers repris façon manuel de service ; relecture, contrôles, fusion.
+- [x] 45.1 Moteur des pannes : instruments (multimètre, testeur d'alimentation, carte POST, LED de debug) et leurs mesures, testés sous Node.
+  Justifié : le moteur fournit déjà les observations des instruments (testeur d'alimentation, LED de debug, buzzer, UEFI) ; il ne change pas. Les instruments sont dessinés côté interface (`assets/atelier-diagnostic.js`, afficheur de l'observation). Pas de multimètre : aucune valeur de mesure sourcée par point de test.
+- [x] 45.2 Arbres de diagnostic en SVG par famille de symptômes.
+  Fait : un arbre unique en cinq questions (rien ne s'allume, pas d'image avec LED CPU / DRAM / VGA, extinction, message, disque), en HTML accessible plutôt qu'en SVG (lisible sur mobile et au lecteur d'écran) ; feuilles reliées aux dossiers, chemin du dossier tracé dans le corrigé.
+- [x] 45.3 Les 14 dossiers repris façon manuel de service ; relecture, contrôles, fusion.
+  Fait : catalogue et dossiers en `body.mt` (ticket, instruments, carnet de bord, planche du PC fermé puis ouvert à l'inspection, cartouche, corrigé avec l'arbre) ; rendu de PC partagé `IT_ISO_DATA.pc` ; `atelier-art.js` et l'ancien CSS du livre supprimés ; tolérance ±5 % désormais sourcée (ATX 2.2, tableau 6). Relecture des données des pannes : au lot 48.
+
+Reste : relecture des faits des dossiers de pannes (lot 48).
 
 ## Lot 46 — Missions du stage (partie E)
 - [ ] 46.1 Réception et contrôle d'un colis, intégration d'un PC neuf, salle informatique, maintenance préventive ; « à vérifier sur place » partout où l'UMONS décide.
