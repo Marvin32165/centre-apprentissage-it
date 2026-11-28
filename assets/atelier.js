@@ -46,7 +46,7 @@
 
   /* ---------- Sauvegarde ---------- */
   function save() {
-    store.set(KEY, JSON.stringify({ placed: st.placed, switchOn: st.switchOn, indices: st.indices, aides: st.aides, erreurs: st.erreurs, errT: st.errT, echecs: st.echecs }));
+    store.set(KEY, JSON.stringify({ placed: st.placed, switchOn: st.switchOn, indices: st.indices, aides: st.aides, erreurs: st.erreurs, errT: st.errT, echecs: st.echecs, esd: st.esd, faites: st.faites }));
   }
   function load() {
     var raw = store.get(KEY);
@@ -59,7 +59,7 @@
         if (slotById(s) && sc.inventaire.indexOf(it) >= 0 && !used[it]) { st.placed[s] = it; used[it] = 1; }
       });
       st.switchOn = !!d.switchOn; st.indices = d.indices || {}; st.aides = d.aides || 0; st.erreurs = d.erreurs || 0;
-      st.errT = d.errT || {}; st.echecs = d.echecs || [];
+      st.errT = d.errT || {}; st.echecs = d.echecs || []; st.esd = !!d.esd; st.faites = d.faites || {};
     } catch (e) { /* sauvegarde illisible : on repart de zéro */ }
   }
 
@@ -120,7 +120,7 @@
   cD.appendChild(cFig);
   cD.appendChild(el("p", { "class": "mt-fig" }, "FIG. 0 · Le boîtier avant l'intervention, panneau latéral retiré."));
   var cAct = el("p", { "class": "cahier-actions" });
-  var bCommencer = el("button", { type: "button", "class": "btn" }, TEST ? "Commencer le test ›" : "Commencer le montage ›");
+  var bCommencer = el("button", { type: "button", "class": "btn" }, TEST ? "Commencer le test ›" : (sc.type === "demontage" ? "Commencer l'intervention ›" : "Commencer le montage ›"));
   cAct.appendChild(bCommencer);
   cD.appendChild(cAct);
   brief.appendChild(cG); brief.appendChild(cD);
@@ -181,7 +181,9 @@
   var bReset = el("button", { type: "button", "class": "btn ghost" }, "Recommencer");
   var bFin = el("button", { type: "button", "class": "btn" }, "Terminer le test");
   bHint.hidden = TEST; bFin.hidden = !TEST;
-  [bUndo, bHint, bSwitch, bPower, bFin, bReset].forEach(function (b) { actions.appendChild(b); });
+  var bEsd = el("button", { type: "button", "class": "btn ghost", "aria-pressed": "false" }, "Bracelet antistatique : non");
+  bEsd.hidden = !sc.securite;
+  [bUndo, bHint, bEsd, bSwitch, bPower, bFin, bReset].forEach(function (b) { actions.appendChild(b); });
   main.appendChild(actions);
 
   var msgBox = el("div", { "class": "at-msg mt-encadre", role: "status", "aria-live": "polite" });
@@ -302,6 +304,17 @@
       it.rep = o.reps && o.reps[it.id] ? o.reps[it.id] : null;
     });
     var fond = rotation ? arrierePanneau(o) : ID.boitier(G);
+    var fl = "";
+    (o.fleches || []).forEach(function (f) {
+      var gs = G.slots[f.slot];
+      if (!gs || !gs.axe || (rotation ? !gs.arriere : gs.arriere)) return;
+      var b = rotation ? rot(gs) : gs, ax = rotation ? [-gs.axe[0], -gs.axe[1], gs.axe[2]] : gs.axe;
+      var c = I.centre(b), loin = [c[0] + ax[0] * 90, c[1] + ax[1] * 90, c[2] + ax[2] * 90], pres = [c[0] + ax[0] * 18, c[1] + ax[1] * 18, c[2] + ax[2] * 18];
+      var a = I.P.apply(null, f.sens === "retrait" ? pres : loin), z = I.P.apply(null, f.sens === "retrait" ? loin : pres);
+      var dx = z[0] - a[0], dy = z[1] - a[1], n = Math.sqrt(dx * dx + dy * dy) || 1, ux = dx / n, uy = dy / n;
+      fl += '<g class="iso-fleche"><line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + (z[0] - ux * 8).toFixed(1) + '" y2="' + (z[1] - uy * 8).toFixed(1) + '"/>' +
+        '<polygon points="' + z[0].toFixed(1) + "," + z[1].toFixed(1) + " " + (z[0] - ux * 12 - uy * 6).toFixed(1) + "," + (z[1] - uy * 12 + ux * 6).toFixed(1) + " " + (z[0] - ux * 12 + uy * 6).toFixed(1) + "," + (z[1] - uy * 12 - ux * 6).toFixed(1) + '"/></g>';
+    });
     var cad = null;
     if (o.vue === "carte") {
       var bo = G.slots.board;
@@ -315,7 +328,7 @@
         cad = [{ x: x0 - pad, y: 0, z: z0 - pad, w: x1 - x0 + 2 * pad, d: 40, h: z1 - z0 + 2 * pad }];
       }
     }
-    var svg = I.scene(r.items, { t: o.t || 0, fond: fond, avant: r.avant + (rotation ? "" : boutonsFace(o)), titre: o.titre, classe: "at-iso", bornes: cad || [G.boitier], cadrage: cad, repLong: 34 });
+    var svg = I.scene(r.items, { t: o.t || 0, fond: fond, avant: r.avant + (rotation ? "" : boutonsFace(o)) + fl, titre: o.titre, classe: "at-iso", bornes: cad || [G.boitier], cadrage: cad, repLong: 34 });
     return svg.replace(/<g class="iso-piece ([^"]*)" data-id="([^"]+)"/g, function (m, cls, id) { return '<g class="iso-piece ' + cls + '" data-id="' + id + '" data-slot="' + id + '"'; });
   }
 
@@ -405,6 +418,14 @@
       return (vue === "arriere") === arr && (st.placed[s.id] || dispo(s));
     });
   }
+  /* Flèches de mouvement de l'étape : vers l'emplacement pour une pose, vers l'extérieur pour un retrait. */
+  function flechesEtape(e) {
+    if (!e || TEST) return [];
+    var f = [];
+    (e.slots || []).forEach(function (id) { if (!st.placed[id] && G.slots[id] && G.slots[id].axe) f.push({ slot: id, sens: "pose" }); });
+    (e.vide || []).forEach(function (id) { if (st.placed[id] && st.placed[id] === (sc.depart || {})[id]) f.push({ slot: id, sens: "retrait" }); });
+    return f;
+  }
   function renderScene() {
     var cand = {}, l = steps(), i = cur(), etape = !TEST && i < l.length ? l[i].def : null;
     candidatSlots().forEach(function (s) { cand[s.id] = true; });
@@ -414,7 +435,7 @@
     scene.innerHTML = sceneSVG({
       placed: st.placed, vue: vue, t: ecart, cand: cand, guide: guideSlots(), reps: reps,
       sel: sel && sel.type === "slot" ? sel.id : null, hl: lettreSel, etape: etape ? etape.slots : null,
-      post: st.post ? st.post.code : null, switchOn: st.switchOn, titre: NOM_VUE[vue]
+      post: st.post ? st.post.code : null, switchOn: st.switchOn, titre: NOM_VUE[vue], fleches: flechesEtape(etape)
     });
     Array.prototype.forEach.call(tabsVue.children, function (b) {
       var on = b.getAttribute("data-vue") === vue;
@@ -431,6 +452,8 @@
     agrandirZones(scene.querySelector("svg"));
     bSwitch.textContent = "Interrupteur : " + (st.switchOn ? "I" : "O");
     bSwitch.setAttribute("aria-pressed", st.switchOn ? "true" : "false");
+    bEsd.textContent = "Bracelet antistatique : " + (st.esd ? "oui" : "non");
+    bEsd.setAttribute("aria-pressed", st.esd ? "true" : "false");
   }
 
   /* Nomenclature : les pièces posées visibles dans la vue (hors câbles), dans l'ordre des emplacements. */
@@ -619,6 +642,15 @@
     secEtape.appendChild(el("p", { "class": "mt-surtitre" }, "Étape " + deux(i + 1) + " / " + deux(l.length)));
     secEtape.appendChild(el("h2", null, e.titre));
     secEtape.appendChild(el("p", { "class": "texte" }, e.texte));
+    if (e.attention) secEtape.appendChild(encadre("attention", "Attention", e.attention));
+    if (e.outillage) {
+      var ou = el("div", { "class": "mt-encadre outillage" });
+      ou.appendChild(el("p", { "class": "mt-etiq" }, "Outillage"));
+      var ul = el("ul");
+      e.outillage.forEach(function (t) { ul.appendChild(el("li", null, t)); });
+      ou.appendChild(ul);
+      secEtape.appendChild(ou);
+    }
     margeIndices.textContent = "";
     for (var k = 0; k < Math.min(n, e.indices.length); k++) margeIndices.appendChild(encadre("remarque", "Indice " + (k + 1), e.indices[k]));
     if (n > e.indices.length) margeIndices.appendChild(encadre("remarque", "Solution", "Les pièces et les emplacements de l'étape sont surlignés en vert."));
@@ -699,6 +731,15 @@
     var i = cur(); if (i >= sc.etapes.length) return;
     var e = sc.etapes[i], noms = [];
     (e.retire || []).forEach(function (r) { if (st.placed[r[0]] === r[1]) R.retirerTout(sc, st, r[0]); });
+    if (e.fn === "debranche") {
+      if (st.switchOn) { hist.push({ op: "switch", val: true }); st.switchOn = false; }
+      if (st.placed.mains) { hist.push({ op: "remove", slot: "mains", item: st.placed.mains }); delete st.placed.mains; }
+      noms.push("interrupteur sur O, câble secteur débranché");
+    }
+    if (e.fn === "esd" && !st.esd) { st.esd = true; hist.push({ op: "esd", val: false }); noms.push("bracelet antistatique en place"); }
+    (e.vide || []).forEach(function (v) {
+      if (st.placed[v] && st.placed[v] === (sc.depart || {})[v]) { var it = st.placed[v]; R.retirerTout(sc, st, v); hist.push({ op: "remove", slot: v, item: it }); noms.push(P[it].nom + " retiré"); }
+    });
     (e.solution || []).forEach(function (pr) {
       if (st.placed[pr[0]]) return;
       var r = R.place(sc, st, pr[1], pr[0]);
@@ -759,6 +800,7 @@
     if (h.op === "place") delete st.placed[h.slot];
     else if (h.op === "remove") st.placed[h.slot] = h.item;
     else if (h.op === "switch") st.switchOn = h.val;
+    else if (h.op === "esd") st.esd = h.val;
     sel = null; changed();
     msg("Dernière action annulée.", "info");
     renderAll();
@@ -771,6 +813,15 @@
     msg("Interrupteur de l'alimentation sur " + (st.switchOn ? "I (marche)." : "O (arrêt)."), "info");
     renderAll();
   }
+  function bracelet() {
+    if (fini) return;
+    hist.push({ op: "esd", val: st.esd });
+    st.esd = !st.esd;
+    changed();
+    msg(st.esd ? "Bracelet antistatique en place : tu es au potentiel du boîtier." : "Bracelet antistatique retiré.", "info");
+    renderAll();
+  }
+  bEsd.addEventListener("click", bracelet);
   function recommencer() {
     if (bReset.getAttribute("data-confirm") !== "1") {
       bReset.setAttribute("data-confirm", "1"); bReset.textContent = "Confirmer ?";

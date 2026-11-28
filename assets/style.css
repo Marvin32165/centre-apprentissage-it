@@ -1673,3 +1673,6 @@ button.mt-rep { min-width: 44px; min-height: 44px; border-radius: 22px; cursor: 
 .mt-nomen-d { margin: var(--s3) 0 0; border: 1px solid var(--line); background: var(--surface); }
 .mt-nomen-d > summary { display: flex; align-items: center; min-height: 44px; padding: 0 var(--s3); font-family: var(--font-code); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
 .mt-nomen-d .mt-nomenclature { margin: 0 0 var(--s2); }
+.iso-fleche line { stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; }
+.iso-fleche polygon { fill: var(--accent); stroke: none; }
+.iso-fleche { pointer-events: none; }

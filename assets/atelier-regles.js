@@ -2,6 +2,8 @@
    - canPlace / place / canRemove / remove : compatibilité et ordre des étapes
    - simulerPOST : démarrage simulé, symptômes et explications
    - bilan : vérification du cahier des charges
+   - démontage (lot 43, `sc.securite`) : secteur débranché et bracelet antistatique avant de toucher une pièce interne ;
+     étapes « vide » (la pièce de départ est retirée), « attendu » (une pièce précise est posée), mémorisées dans l'ordre (`sc.memo`)
    Modes : « apprentissage » (l'ordre est imposé, des alertes expliquent les choix douteux)
            « test » (l'ordre n'est plus imposé et il n'y a pas d'alerte : les conséquences se voient au POST). */
 (function (root) {
@@ -28,7 +30,7 @@
 
   /* Un état neuf : le montage de départ (mise à niveau) est déjà posé. */
   function nouvelEtat(sc, mode) {
-    var st = { mode: mode || sc.mode || "apprentissage", placed: {}, switchOn: !!sc.departSwitch, hints: 0, erreurs: 0, errT: {}, echecs: [] };
+    var st = { mode: mode || sc.mode || "apprentissage", placed: {}, switchOn: !!sc.departSwitch, hints: 0, erreurs: 0, errT: {}, echecs: [], esd: false, faites: {} };
     var dep = sc.depart || {};
     Object.keys(dep).forEach(function (k) { st.placed[k] = dep[k]; });
     return st;
@@ -111,7 +113,24 @@
     return ok(p.pose || "");
   }
 
+  /* ---------- Sécurité de l'intervention (scénarios de démontage) ---------- */
+  var EXTERNES = { mains: 1, "mon-board": 1, "mon-gpu": 1 };
+  function noterErreur(st, theme) { st.erreurs++; st.errT = st.errT || {}; st.errT[theme] = (st.errT[theme] || 0) + 1; }
+  /* Renvoie un refus (apprentissage) si une pièce interne est touchée sous tension ou sans bracelet ;
+     en mode test, le geste passe mais compte comme erreur (thème « securite », critère du bilan). */
+  function securite(sc, st, slotId) {
+    if (!sc.securite || EXTERNES[slotId]) return null;
+    var msg = null, danger = false;
+    if (st.placed.mains) { msg = "Danger : le PC est encore relié au secteur. Interrupteur sur O, câble secteur débranché, puis seulement on touche aux pièces."; danger = true; }
+    else if (!st.esd) msg = "Pas encore : mets d'abord le bracelet antistatique (ou touche une partie métallique non peinte du boîtier). Une décharge électrostatique peut abîmer la pièce sans qu'on la sente.";
+    if (!msg) return null;
+    if (st.mode === "test") { noterErreur(st, "securite"); return null; }
+    return bloque(msg, danger, "securite");
+  }
+
   function place(sc, st, itemId, slotId) {
+    var sec = securite(sc, st, slotId);
+    if (sec) return sec;
     var r = canPlace(sc, st, itemId, slotId);
     if (r.ok) st.placed[slotId] = itemId;
     else { st.erreurs++; if (r.theme) { st.errT = st.errT || {}; st.errT[r.theme] = (st.errT[r.theme] || 0) + 1; } }
@@ -134,6 +153,7 @@
   }
   function remove(sc, st, slotId) {
     var r = canRemove(sc, st, slotId);
+    if (r.ok) { var sec = securite(sc, st, slotId); if (sec) return sec; }
     if (r.ok) delete st.placed[slotId];
     return r;
   }
@@ -179,15 +199,30 @@
     interrupteur: function (st) { return !!st.switchOn; },
     "psu-change": function (st) { return !!(st.placed["psu"] && st.placed["psu"] !== "psu-300"); },
     "video-gpu": function (st) { return !!(st.placed["mon-gpu"] && !st.placed["mon-board"]); },
-    "post-ok": function (st) { return !!(st.post && st.post.code === "ok"); }
+    "post-ok": function (st) { return !!(st.post && st.post.code === "ok"); },
+    debranche: function (st) { return !st.placed.mains && !st.switchOn; },
+    esd: function (st) { return !!st.esd; }
   };
-  function etapeFaite(e, st) {
+  function etapeFaite(e, st, sc) {
     var okSlots = (e.slots || []).every(function (s) { return !!st.placed[s]; });
     var okFn = e.fn ? FN[e.fn](st) : true;
-    return okSlots && okFn;
+    var dep = (sc && sc.depart) || {};
+    var okVide = (e.vide || []).every(function (s) { return st.placed[s] !== dep[s]; });
+    var okAttendu = (e.attendu || []).every(function (p) { return st.placed[p[0]] === p[1]; });
+    return okSlots && okFn && okVide && okAttendu;
   }
+  /* Sans `sc.memo`, une étape est faite si son état est atteint. Avec `sc.memo` (démontage), une étape faite
+     dans l'ordre le reste (on débranche le secteur au début, on le rebranche à la fin). */
   function etapes(sc, st) {
-    return sc.etapes.map(function (e) { return { def: e, fait: etapeFaite(e, st) }; });
+    if (!sc.memo) return sc.etapes.map(function (e) { return { def: e, fait: etapeFaite(e, st, sc) }; });
+    st.faites = st.faites || {};
+    var avant = true;
+    return sc.etapes.map(function (e) {
+      var f = !!st.faites[e.id] || (avant && etapeFaite(e, st, sc));
+      if (f && avant) st.faites[e.id] = true;
+      if (!f) avant = false;
+      return { def: e, fait: f };
+    });
   }
   function etapeCourante(sc, st) {
     var l = etapes(sc, st);
@@ -388,6 +423,11 @@
       }
       case "amd": return item("amd", "Processeur AMD", cpu && /^AM/.test(cpu.socket), cpu ? cpu.nom : "Pas de processeur", "choix");
       case "coeurs": return item("coeurs", "Processeur d'au moins " + c.min + " cœurs", cpu && cpu.coeurs >= c.min, cpu ? cpu.coeurs + " cœurs" : "Pas de processeur", "choix");
+      case "piece": return item("piece-" + c.slot, c.label, pl[c.slot] === c.id, pl[c.slot] ? P[pl[c.slot]].nom : "Emplacement vide", c.theme || "choix");
+      case "securite": {
+        var n = (st.errT && st.errT.securite) || 0;
+        return item("securite", "Consignes de sécurité respectées (secteur débranché, bracelet antistatique)", n === 0, n ? n + " geste(s) sous tension ou sans bracelet" : "Aucun geste dangereux", "securite");
+      }
     }
     return item(c.t, c.t, false, "Critère inconnu", "choix");
   }
@@ -439,6 +479,6 @@
   root.IT_ATELIER_RULES = {
     slotDef: slotDef, nouvelEtat: nouvelEtat, canPlace: canPlace, place: place, canRemove: canRemove, remove: remove,
     candidats: candidats, restantes: restantes, ramInfo: ramInfo, stockage: stockage, puissanceEstimee: puissanceEstimee,
-    etapes: etapes, etapeCourante: etapeCourante, simulerPOST: simulerPOST, bilan: bilan, noter: noter, pointsARevoir: pointsARevoir, retirerTout: retirerTout, RAM_ORDRE: RAM_ORDRE
+    etapes: etapes, etapeCourante: etapeCourante, simulerPOST: simulerPOST, bilan: bilan, noter: noter, pointsARevoir: pointsARevoir, retirerTout: retirerTout, RAM_ORDRE: RAM_ORDRE, FN: FN
   };
 })(typeof window !== "undefined" ? window : global);
