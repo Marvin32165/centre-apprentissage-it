@@ -608,7 +608,8 @@ Reste : rien d'autre pour ce lot.
 Reste : relecture des faits des dossiers de pannes (lot 48).
 
 ## Lot 46 — Missions du stage (partie E)
-- [ ] 46.1 Réception et contrôle d'un colis, intégration d'un PC neuf, salle informatique, maintenance préventive ; « à vérifier sur place » partout où l'UMONS décide.
+- [x] 46.1 Réception et contrôle d'un colis, intégration d'un PC neuf, salle informatique, maintenance préventive ; « à vérifier sur place » partout où l'UMONS décide.
+  Fait : `atelier/missions.html?m=<id>`, `assets/atelier-missions-data.js` et `assets/atelier-missions.js` : quatre missions en « je montre » (procédure), « on fait ensemble » (liste à cocher gardée dans `it.atelier.mission.<id>`), « tu fais seul » (exercice, correction cachée), encadré UMONS, sources ; illustrations isométriques (carton, poste étiqueté, salle avec poste modèle, PC ouvert) ; faits repris de la prépa J9 et des modules Déploiement et Matériel, avec leurs sources primaires ; sommaire E-01 à E-04 et recherche.
 - [ ] 46.2 Relecture des sources, test en situation, contrôles, fusion.
 
 ## Lot 47 — Annexes : modèles pro (partie F)

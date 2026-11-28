@@ -1523,3 +1523,16 @@ details.rabat > summary { min-height: 44px; display: flex; align-items: center; 
 .arbre .cible { font-weight: 700; color: var(--accent); }
 .arbre.trace .arbre-n:not(.passe):not(.ici) { opacity: 0.55; }
 .arbre-fin { font-family: var(--font-ui); font-size: 0.875rem; color: var(--ink-soft); }
+
+/* ===== Lot 46 — Missions du stage ===== */
+.mt-cases { margin: var(--s3) 0; padding: 0; list-style: none; font-family: var(--font-ui); }
+.mt-cases li { display: flex; align-items: center; gap: 12px; min-height: 44px; border-bottom: 1px solid var(--line); }
+.mt-cases input { flex: none; width: 22px; height: 22px; accent-color: var(--green); }
+.mt-cases label { flex: 1; padding: 10px 0; cursor: pointer; }
+.mt-cases input:checked + label { color: var(--ink-soft); text-decoration: line-through; text-decoration-color: var(--green); }
+.mt-texte section > .mt-surtitre { margin-top: var(--s5); }
+.iso-carton.iso-t, .iso-carton.iso-g, .iso-carton.iso-d { fill: color-mix(in srgb, var(--amber) 22%, var(--surface)); }
+.iso-carton.iso-d { fill: color-mix(in srgb, var(--amber) 34%, var(--surface)); }
+.iso .iso-scotch { fill: color-mix(in srgb, var(--amber) 45%, var(--surface)); stroke-width: 0.5; }
+.iso-modele.iso-t, .iso-modele.iso-g, .iso-modele.iso-d { fill: var(--accent-soft); stroke: var(--accent); }
+.iso .iso-ecran-dalle { fill: color-mix(in srgb, var(--ink) 80%, var(--surface)); stroke-width: 0.75; }
