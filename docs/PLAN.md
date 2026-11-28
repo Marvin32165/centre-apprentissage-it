@@ -649,6 +649,7 @@ Reste : modèles effectivement en service et droits d'intervention à vérifier 
 ## Lot 50 — Accueil : rapprocher le calendrier
 - [x] 50.1 Retirer l'illustration décorative du poste de garde et rapprocher le calendrier de la mission et du ticket.
   Fait : illustration et styles associés retirés. Le calendrier suit la mission et le ticket à 32 px, vérifié à 390 px en sombre et à 1280 px en clair.
-- [ ] 50.2 Vérifier l'accueil et les contrôles du site, puis fusionner dans `main`.
+- [x] 50.2 Vérifier l'accueil et les contrôles du site, puis fusionner dans `main`.
+  Fait : `npm run controles` réussi sur les 44 pages, sur serveur et en `file://` avec zéro problème, zéro avertissement et zéro échec.
 
-Reste : vérifier l'accueil et les contrôles du site.
+Reste : rien pour ce lot.
