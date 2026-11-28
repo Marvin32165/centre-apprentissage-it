@@ -1536,3 +1536,11 @@ details.rabat > summary { min-height: 44px; display: flex; align-items: center; 
 .iso .iso-scotch { fill: color-mix(in srgb, var(--amber) 45%, var(--surface)); stroke-width: 0.5; }
 .iso-modele.iso-t, .iso-modele.iso-g, .iso-modele.iso-d { fill: var(--accent-soft); stroke: var(--accent); }
 .iso .iso-ecran-dalle { fill: color-mix(in srgb, var(--ink) 80%, var(--surface)); stroke-width: 0.75; }
+
+/* ===== Lot 47 — Annexes : modèles d'entreprise ===== */
+.mt-colonnes { columns: 2 12rem; column-gap: var(--s5); margin: 0 0 var(--s3); padding-left: 18px; font-family: var(--font-ui); font-size: 0.9375rem; }
+.mt-procbloc { margin: 0 0 var(--s2); border: 1px solid var(--ink); background: var(--surface); padding: 0 var(--s3); }
+.mt-procbloc > summary { display: flex; align-items: center; min-height: 44px; font-family: var(--font-ui); font-weight: 600; cursor: pointer; }
+.mt-pre { margin: 0 0 var(--s2); font-family: var(--font-code); font-size: 0.75rem; color: var(--ink-soft); }
+.mt-fiche thead th { font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 2px solid var(--ink); }
+.mt-compar { table-layout: fixed; overflow-wrap: anywhere; } .mt-compar th { width: 28%; }

@@ -613,7 +613,8 @@ Reste : relecture des faits des dossiers de pannes (lot 48).
 - [ ] 46.2 Relecture des sources, test en situation, contrôles, fusion.
 
 ## Lot 47 — Annexes : modèles pro (partie F)
-- [ ] 47.1 Un ou deux PC de bureau d'entreprise d'après leurs manuels de service publics (ouverts et datés), maquette dédiée.
+- [x] 47.1 Un ou deux PC de bureau d'entreprise d'après leurs manuels de service publics (ouverts et datés), maquette dédiée.
+  Fait : `atelier/modeles.html?m=optiplex-7010-sff` d'après le manuel Dell « OptiPlex Small Form Factor 7010 Owner's Manual » (D17S, mars 2023, Rev. A00 ; copie Ingram Micro téléchargée et lue le 28/11) : dimensions, emplacements M.2, outillage, composants, CRU et FRU, « avant d'intervenir », six procédures de retrait, comparaison avec la tour de l'atelier ; maquette cotée du boîtier (capot et façade écartés). Justifié : un seul modèle (manuels HP et Lenovo non tentés) ; aucune position interne dessinée, faute de cotes dans le texte du manuel.
 - [ ] 47.2 Relecture des sources, contrôles, fusion.
 
 ## Lot 48 — Épreuves, index et passe finale
