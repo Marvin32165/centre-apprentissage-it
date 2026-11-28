@@ -308,6 +308,7 @@ details.correction .table-wrap, details.correction .code-block { margin-top: var
 .progress.sombre .track { background: rgba(237, 230, 218, 0.14); }
 .progress.sombre .fill { background: var(--bar-accent); }
 .accueil section + section { margin-top: var(--s8); }
+.accueil > .frise-zone { margin-top: var(--s6); }
 .accueil h2 { margin: 0 0 20px; font-size: 1.75rem; }
 .titre-ligne { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s2) var(--s4); margin-bottom: var(--s4); }
 .titre-ligne h2 { margin: 0; }
@@ -1157,21 +1158,7 @@ pre.colore .ln:not(.vide)::before { content: "›"; display: inline-block; width
 }
 @media (prefers-reduced-motion: reduce) { .table-wrap tbody tr { transition: none; } }
 
-/* ===== Lot 40.7 : accueil illustré (gravure du poste de garde, grandes cartes, pied en colophon) ===== */
-.garde-illu { grid-column: 1 / -1; margin: calc(var(--s2) * -1) 0 0; }
-.garde-illu svg { display: block; width: 100%; height: clamp(120px, 18vw, 230px); }
-.gi-trait, .gi-acc-trait, .gi-rayons, .gi-sol { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.gi-trait { stroke: var(--ink); stroke-width: 1.6; }
-.gi-acc-trait { stroke: var(--accent); stroke-width: 2.2; }
-.gi-plein { fill: var(--paper); }
-.gi-plein-h { stroke: var(--ink); }
-.gi-fin { stroke-width: 1.1; }
-.gi-acc { fill: var(--accent-soft); stroke: var(--accent); }
-.gi-hachure { stroke: var(--ink-pale); stroke-width: 1; opacity: 0.55; }
-.gi-rayons { stroke: var(--amber); stroke-width: 1; stroke-dasharray: 2 5; opacity: 0.7; }
-.gi-sol { stroke: var(--ink); stroke-width: 1.4; }
-.gi-sol + .gi-sol { stroke-width: 0.7; }
-@media (max-width: 40rem) { .garde-illu { margin: 0 calc(var(--s4) * -1); } }
+/* ===== Lot 40.7 : cartes des rubriques et pied en colophon ===== */
 /* Grandes cartes de rubrique : médaillon hachuré, pictogramme agrandi au trait, chiffre romain en filigrane */
 .rubriques { counter-reset: rub; }
 .card.rub { position: relative; overflow: hidden; min-height: 17rem; padding-top: var(--s5); counter-increment: rub; }
