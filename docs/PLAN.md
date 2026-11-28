@@ -638,7 +638,8 @@ Reste : relecture croisée par ChatGPT de tout l'atelier (fiches, démontage, pa
   Fait : annexe F-02, HP ProDesk 2 SFF G2i Desktop PC, d'après le manuel HP Q41672-001 (octobre 2026) ouvert sur Manualzz. Les cotes, le cartouche et la nomenclature suivent le modèle choisi.
 - [x] 49.4 Tester la procédure B-01 en apprentissage et en mode test, puis l'annexe F, à 390 et 1280 px. Rapport : `docs/relectures/test-atelier-b-f.md` ; corriger les blocages.
   Fait : `docs/relectures/test-atelier-b-f.md` ; montage B-01 guidé et test à 100/100, comparaison Dell et HP à 390 et 1280 px. Cibles superposées, recherche, tableau mobile et impression du rapport corrigés.
-- [ ] 49.5 Forcer les jetons du thème clair à l'impression sur tout le site.
+- [x] 49.5 Forcer les jetons du thème clair à l'impression sur tout le site.
+  Fait : palette claire à l'impression, fond blanc sans grain et couleurs du code adaptées. Vérifié sur l'accueil, le jour 9, un module, l'annexe HP et un dossier de panne, en clair, en sombre forcé et en sombre système.
 - [ ] 49.6 Lancer `npm run controles` (0 problème, 0 avertissement, 0 échec), puis fusionner `lot-49` dans `main` avec `--no-ff` et pousser.
 
-Reste : sous-étapes 49.5 et 49.6.
+Reste : sous-étape 49.6.

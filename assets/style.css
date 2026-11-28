@@ -1547,3 +1547,23 @@ details.rabat > summary { min-height: 44px; display: flex; align-items: center; 
 .mt-fiche thead th { font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 2px solid var(--ink); }
 .mt-compar { table-layout: fixed; overflow-wrap: anywhere; } .mt-compar th { width: 28%; white-space: normal; }
 .ep-intro { max-width: 46rem; }
+
+/* ===== Lot 49 — Impression, palette claire ===== */
+@media print {
+  :root, :root[data-theme="dark"], :root:not([data-theme="light"]) {
+    --paper: #F3EEE5; --surface: #F9F6F0; --surface-2: var(--surface); --line: #DDD3C3;
+    --ink: #1B1713; --ink-soft: #544A40; --ink-pale: #6B5F52;
+    --accent: #9C3F1D; --accent-soft: #F1E2D6; --on-accent: #FFFFFF;
+    --green: #3F6140; --red: #9A3524; --red-soft: #F3EAE4; --amber: #7C561A;
+    --bar: #2C1F16; --code-bg: #FFFFFF; --code-ink: var(--ink);
+    color-scheme: light;
+  }
+
+  :root body, :root[data-theme="dark"] body, :root:not([data-theme="light"]) body { background: #fff; }
+  .code-block {
+    --tk-cmd: var(--accent); --tk-param: var(--amber); --tk-str: var(--green);
+    --tk-var: var(--red); --tk-com: var(--ink-soft); --tk-op: var(--ink-soft);
+  }
+  .ins-ecran { fill: var(--code-bg); }
+  .ins-ecran-t { fill: var(--code-ink); }
+}
