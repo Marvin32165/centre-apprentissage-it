@@ -69,7 +69,8 @@
 
   /* Rendu d'une scène.
      items : [{ id, boite, axe, ecart, dessin(b) → svg, cls, rep, titre }]
-     o : { t (0–1, écartement), fond (svg dessiné d'abord), avant (svg dessiné après), reperes (true), marge, classe, titre } */
+     o : { t (0–1, écartement), fond (svg dessiné d'abord), avant (svg dessiné après), reperes (true), marge, classe, titre,
+         bornes (boîtes ajoutées au cadre), cadrage (boîtes qui seules fixent le cadre : agrandissement), repLong (longueur des lignes d'attache) } */
   function scene(items, o) {
     o = o || {};
     var t = o.t || 0, mx = 1e9, my = 1e9, Mx = -1e9, My = -1e9;
@@ -80,7 +81,7 @@
     var rendus = items.map(function (it) {
       var b = decale(it.boite, it.axe, (it.ecart || 0) * t);
       borne(b);
-      return { it: it, b: b, p: profondeur(b) };
+      return { it: it, b: b, p: profondeur(b) + (it.prio || 0) };
     });
     (o.bornes || []).forEach(borne);
     rendus.sort(function (a, b) { return a.p - b.p; });
@@ -102,6 +103,7 @@
         mx = Math.min(mx, lx - 14); Mx = Math.max(Mx, lx + 14); my = Math.min(my, ly - 14); My = Math.max(My, ly + 14);
       }
     });
+    if (o.cadrage) { mx = 1e9; my = 1e9; Mx = -1e9; My = -1e9; o.cadrage.forEach(borne); }
     var m = o.marge == null ? 16 : o.marge;
     var vb = [f(mx - m), f(my - m), f(Mx - mx + 2 * m), f(My - my + 2 * m)];
     return '<svg class="iso' + (o.classe ? " " + o.classe : "") + '" viewBox="' + vb.join(" ") + '" role="img"' + (o.titre ? ' aria-label="' + esc(o.titre) + '"' : "") + ">" +
