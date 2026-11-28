@@ -624,4 +624,7 @@ Reste : relecture des faits des dossiers de pannes (lot 48).
   Fait : épreuves EP-1 et EP-2 en `body.mt` (intro en procédure numérotée, encadrés Barème et Conseil, bilan imprimable vérifié par `parcours`) ; index des pièces (B-xx) et des pannes (D-xx) ; missions et annexes dans le sommaire et la recherche. Captures « après » dans `docs/captures/lot-48/` (avant : `docs/captures/atelier.jpg`). Justifié : pas d'index séparé des missions, le sommaire suffit (4 entrées).
 - [x] 48.2 Test en situation (`test-chef`) de chaque partie ; corrections.
   Fait : test des parties A, C, D et E en un seul usage (téléphone sombre, puis ordinateur clair) ; corrections listées dans `docs/relectures/test-atelier-manuel.md`. Justifié : B (montage) testé par les parcours automatiques et au lot 42 ; F (annexe) non testée en situation.
-- [ ] 48.3 Captures avant / après, `npm run controles`, fusion finale.
+- [x] 48.3 Captures avant / après, `npm run controles`, fusion finale.
+  Fait : `npm run controles` réussi le 28/11 (44 pages × 4 largeurs × 2 thèmes, serveur et `file://` : 0 problème, 0 avertissement ; accessibilité, contrastes et parcours : 0 échec) ; captures dans `docs/captures/lot-48/` ; fusion dans `main`. Les lots 46 à 48 ont été faits à la suite sur la branche `lot-46`.
+
+Reste : relecture croisée par ChatGPT de tout l'atelier (fiches, démontage, pannes, missions, annexe) ; rouvrir AMD, Kingston et UPS dans un navigateur ; un deuxième modèle d'entreprise (HP ou Lenovo) si besoin.
