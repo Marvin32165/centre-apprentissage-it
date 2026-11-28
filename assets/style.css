@@ -1438,6 +1438,8 @@ button.mt-rep { min-width: 44px; min-height: 44px; border-radius: 22px; cursor: 
 @media print {
   body.mt:has(.at-rap.bilan) main > :not(#atelier):not(#pannes), body.mt:has(.at-rap.bilan) #atelier > :not(.bilan) { display: none !important; }
   .mt .at-rap.bilan { outline: 0; border: 0; padding: 0; }
+  body.mt:has(#atelier .at-rapport) { min-height: 0; display: block; }
+  body.mt:has(#atelier .at-rapport) .retour-mt, #atelier:has(.at-rapport) .at-modes, #atelier .at-rapport > .at-etape-actions { display: none; }
 }
 .mt .at-msg::before { content: none; }
 .mt .at-etape > .texte::first-letter, .mt .cahier .at-client::first-letter { float: none; margin: 0; padding: 0; font: inherit; color: inherit; border: 0; background: none; }
@@ -1543,5 +1545,5 @@ details.rabat > summary { min-height: 44px; display: flex; align-items: center; 
 .mt-procbloc > summary { display: flex; align-items: center; min-height: 44px; font-family: var(--font-ui); font-weight: 600; cursor: pointer; }
 .mt-pre { margin: 0 0 var(--s2); font-family: var(--font-code); font-size: 0.75rem; color: var(--ink-soft); }
 .mt-fiche thead th { font-family: var(--font-code); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 2px solid var(--ink); }
-.mt-compar { table-layout: fixed; overflow-wrap: anywhere; } .mt-compar th { width: 28%; }
+.mt-compar { table-layout: fixed; overflow-wrap: anywhere; } .mt-compar th { width: 28%; white-space: normal; }
 .ep-intro { max-width: 46rem; }

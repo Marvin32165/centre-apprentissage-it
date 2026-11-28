@@ -95,6 +95,11 @@
   tc.appendChild(tbc);
   tc.classList.add("mt-compar");
   var tw = el("div", { "class": "table-wrap" }); tw.appendChild(tc); s5.appendChild(tw);
+  var choix = el("nav", { "class": "at-etape-actions", "aria-label": "Autres modèles d'entreprise" });
+  ids.filter(function (autre) { return autre !== id; }).forEach(function (autre) {
+    choix.appendChild(el("a", { "class": "btn ghost", href: "modeles.html?m=" + autre + "#f-compar" }, "Comparer avec " + A.modeles[autre].titreCourt));
+  });
+  s5.appendChild(choix);
   var u = el("div", { "class": "mt-encadre remarque" }); u.appendChild(el("p", { "class": "mt-etiq" }, "À vérifier sur place (UMONS)"));
   var ulu = el("ul"); m.umons.forEach(function (x) { ulu.appendChild(el("li", null, x)); }); u.appendChild(ulu); txt.appendChild(u);
   var src = el("aside", { "class": "mt-encadre source" }); src.appendChild(el("p", { "class": "mt-etiq" }, "Sources"));

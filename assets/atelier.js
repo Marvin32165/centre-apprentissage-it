@@ -83,6 +83,10 @@
   }
   host.appendChild(head);
 
+  function lienAnnexe() {
+    return el("a", { "class": "btn ghost", href: "modeles.html#f-compar" }, "Comparer avec un PC compact");
+  }
+
   function cartouche(cells) {
     var c = el("div", { "class": "mt-cartouche", "aria-hidden": "true" });
     cells.forEach(function (x) { var s = el("span", null, x[0]); s.appendChild(el("b", null, x[1])); c.appendChild(s); });
@@ -187,7 +191,7 @@
   main.appendChild(actions);
 
   var msgBox = el("div", { "class": "at-msg mt-encadre", role: "status", "aria-live": "polite" });
-  var secEtape = el("section", { "class": "at-etape", "aria-label": "Étape en cours" });
+  var secEtape = el("section", { id: "montage-etape", "class": "at-etape", "aria-label": "Étape en cours" });
   var secSel = el("section", { "class": "at-sel", "aria-label": "Pièce sélectionnée" });
   var secBac = el("section", { "class": "at-bac", "aria-label": "Bac de pièces" });
   var secListe = el("section", { "class": "at-liste", "aria-label": "Toutes les étapes" });
@@ -391,9 +395,10 @@
     var pt = pointSVG(svg, e), meilleur = null, distance = Infinity, aire = Infinity;
     if (!pt) return null;
     /* D'abord la pièce réellement dessinée sous le point (la plus haute), puis la zone agrandie la plus proche. */
-    var dessus = document.elementFromPoint(e.clientX, e.clientY);
-    if (dessus && dessus.tagName.toLowerCase() === "polygon") {
-      var gd = dessus.closest(selecteur);
+    var dessins = document.elementsFromPoint(e.clientX, e.clientY);
+    for (var i = 0; i < dessins.length; i++) {
+      if (dessins[i].tagName.toLowerCase() !== "polygon") continue;
+      var gd = dessins[i].closest(selecteur);
       if (gd && svg.contains(gd)) return gd;
     }
     Array.prototype.forEach.call(svg.querySelectorAll(selecteur), function (g) {
@@ -638,6 +643,7 @@
       secEtape.appendChild(el("p", { "class": "mt-surtitre" }, code + " · Terminé"));
       secEtape.appendChild(el("h2", null, "Fin de la procédure"));
       secEtape.appendChild(el("p", null, "Toutes les étapes sont faites. Tu peux modifier le montage pour voir ce qui change au démarrage, éclater la maquette pour la relire, ou recommencer."));
+      if (sc.id === "bureautique-intel") secEtape.appendChild(lienAnnexe());
       return;
     }
     var e = l[i].def, n = st.indices[e.id] || 0;
@@ -851,6 +857,12 @@
 
   /* ---------- Clic sur la scène ---------- */
   scene.addEventListener("click", function (e) {
+    var svg = e.target.closest("svg");
+    if (!svg) return;
+    if (sel && sel.type === "tray") {
+      var cible = cibleAuPoint(svg, e, ".slot-cible");
+      if (cible) { tryPlace(sel.id, cible.getAttribute("data-slot")); return; }
+    }
     var bt = e.target.closest("[data-bouton]");
     if (bt) {
       if (bt.getAttribute("data-bouton") === "power") allumer(); else basculer();
@@ -858,11 +870,8 @@
     }
     var g = e.target.closest("[data-slot]");
     if (!g) return;
-    var svg = g.ownerSVGElement;
-    if (sel && sel.type === "tray") g = cibleAuPoint(svg, e, ".slot-cible") || g;
-    else if (g.classList.contains("pose")) g = cibleAuPoint(svg, e, ".pose[data-slot]") || g;
+    if (g.classList.contains("pose")) g = cibleAuPoint(svg, e, ".pose[data-slot]") || g;
     var id = g.getAttribute("data-slot");
-    if (sel && sel.type === "tray" && R.candidats(sc, st, sel.id).some(function (s) { return s.id === id; })) { tryPlace(sel.id, id); return; }
     if (st.placed[id]) {
       sel = { type: "slot", id: id };
       msg("« " + P[st.placed[id]].nom + " » : tu peux la retirer avec le bouton du panneau.", "info");
@@ -1079,6 +1088,7 @@
       again.addEventListener("click", function () { demarrer(scId, ctx); });
       act.appendChild(again);
       act.appendChild(el("a", { "class": "btn ghost", href: "montage.html?s=" + sc.id }, "Mode apprentissage"));
+      if (sc.id === "bureautique-intel") act.appendChild(lienAnnexe());
       act.appendChild(el("a", { "class": "btn ghost", href: "index.html" }, "Retour à l'atelier"));
     }
     rapport.appendChild(act);
