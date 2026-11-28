@@ -640,6 +640,8 @@ Reste : relecture croisée par ChatGPT de tout l'atelier (fiches, démontage, pa
   Fait : `docs/relectures/test-atelier-b-f.md` ; montage B-01 guidé et test à 100/100, comparaison Dell et HP à 390 et 1280 px. Cibles superposées, recherche, tableau mobile et impression du rapport corrigés.
 - [x] 49.5 Forcer les jetons du thème clair à l'impression sur tout le site.
   Fait : palette claire à l'impression, fond blanc sans grain et couleurs du code adaptées. Vérifié sur l'accueil, le jour 9, un module, l'annexe HP et un dossier de panne, en clair, en sombre forcé et en sombre système.
-- [ ] 49.6 Lancer `npm run controles` (0 problème, 0 avertissement, 0 échec), puis fusionner `lot-49` dans `main` avec `--no-ff` et pousser.
+- [x] 49.6 Lancer `npm run controles` (0 problème, 0 avertissement, 0 échec), puis fusionner `lot-49` dans `main` avec `--no-ff` et pousser.
 
-Reste : sous-étape 49.6.
+  Fait : `npm run controles` réussi, 44 pages à 4 largeurs et 2 thèmes sur serveur et en `file://`, 0 problème, 0 avertissement, 0 échec et aucun contraste sous le seuil. Le verrou Playwright est installable sur un clone propre et l'audit vérifie les ancres dynamiques à leur adresse exacte.
+
+Reste : modèles effectivement en service et droits d'intervention à vérifier sur place à l'UMONS.
